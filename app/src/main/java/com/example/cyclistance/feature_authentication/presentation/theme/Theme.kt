@@ -1,4 +1,4 @@
-package com.example.cyclistance.ui.theme
+package com.example.cyclistance.feature_authentication.presentation.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
