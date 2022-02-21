@@ -30,7 +30,7 @@ import com.example.cyclistance.feature_authentication.presentation.theme.TextFie
 fun TextFieldsArea() {
     Column(
         modifier = Modifier
-            .layoutId(ConstraintsItem.TextFields.layoutId)
+            .layoutId(SignInConstraintsItem.TextFields.layoutId)
             .fillMaxWidth(fraction = 0.9f),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {

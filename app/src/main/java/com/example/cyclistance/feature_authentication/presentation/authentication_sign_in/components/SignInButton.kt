@@ -20,7 +20,7 @@ fun SignInButton() {
 
     Box(
         modifier = Modifier
-            .layoutId(layoutId = ConstraintsItem.SignInButton.layoutId)
+            .layoutId(layoutId = SignInConstraintsItem.SignInButton.layoutId)
             .wrapContentSize()
             .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)
         ,

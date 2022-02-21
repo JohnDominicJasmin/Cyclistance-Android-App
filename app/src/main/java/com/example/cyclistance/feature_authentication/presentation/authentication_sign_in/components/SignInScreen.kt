@@ -25,9 +25,9 @@ fun SignInScreen(
             .background(BackgroundColor)) {
 
 
-        AppImageIcon()
+        AppImageIcon(SignInConstraintsItem.AppIcon.layoutId)
         TextArea()
-        Waves()
+        Waves(topWaveLayoutId = SignInConstraintsItem.TopWave.layoutId, bottomWaveLayoutId = SignInConstraintsItem.BottomWave.layoutId)
         TextFieldsArea()
         GoogleAndFacebookSignIn()
         SignInButton()

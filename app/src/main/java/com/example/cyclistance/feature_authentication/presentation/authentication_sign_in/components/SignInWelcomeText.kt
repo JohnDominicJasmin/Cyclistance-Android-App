@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun TextArea() {
-    Column(modifier = Modifier.layoutId(ConstraintsItem.WelcomeTextArea.layoutId)) {
+    Column(modifier = Modifier.layoutId(SignInConstraintsItem.WelcomeTextArea.layoutId)) {
 
         Text(
             text = "Welcome  to  Cyclistance",

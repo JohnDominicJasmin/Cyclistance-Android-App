@@ -24,7 +24,7 @@ import com.example.cyclistance.feature_authentication.presentation.theme.GoogleB
 fun GoogleAndFacebookSignIn() {
     Row(
         modifier = Modifier
-            .layoutId( ConstraintsItem.OtherSignIns.layoutId)
+            .layoutId( SignInConstraintsItem.OtherSignIns.layoutId)
             .wrapContentSize(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center

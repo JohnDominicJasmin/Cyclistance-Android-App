@@ -5,17 +5,16 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 
 
 @Composable
- fun AppImageIcon() {
+ fun AppImageIcon(layoutId:String) {
 
 
     CustomImage(
-        layoutId =  ConstraintsItem.AppIcon.layoutId,
+        layoutId =  layoutId,
         contentDescription = "App Icon",
         imageId = R.drawable.ic_cyclistance_app_icon,
         modifier = Modifier

@@ -4,15 +4,16 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 
+
 val constrains = ConstraintSet {
-    val appIcon = createRefFor(id = ConstraintsItem.AppIcon.layoutId)
-    val topWave = createRefFor(id = ConstraintsItem.TopWave.layoutId)
-    val bottomWave = createRefFor(id = ConstraintsItem.BottomWave.layoutId)
-    val welcomeTextArea = createRefFor(id = ConstraintsItem.WelcomeTextArea.layoutId)
-    val textFieldArea = createRefFor(id = ConstraintsItem.TextFields.layoutId)
-    val facebookAndGoogle = createRefFor(id = ConstraintsItem.OtherSignIns.layoutId)
-    val signInButton = createRefFor(id = ConstraintsItem.SignInButton.layoutId)
-    val dontHaveAccountText = createRefFor(id = ConstraintsItem.DontHaveAccountText.layoutId)
+    val appIcon = createRefFor(id = SignInConstraintsItem.AppIcon.layoutId)
+    val topWave = createRefFor(id = SignInConstraintsItem.TopWave.layoutId)
+    val bottomWave = createRefFor(id = SignInConstraintsItem.BottomWave.layoutId)
+    val welcomeTextArea = createRefFor(id = SignInConstraintsItem.WelcomeTextArea.layoutId)
+    val textFieldArea = createRefFor(id = SignInConstraintsItem.TextFields.layoutId)
+    val facebookAndGoogle = createRefFor(id = SignInConstraintsItem.OtherSignIns.layoutId)
+    val signInButton = createRefFor(id = SignInConstraintsItem.SignInButton.layoutId)
+    val dontHaveAccountText = createRefFor(id = SignInConstraintsItem.DontHaveAccountText.layoutId)
 
 
     constrain(appIcon) {
