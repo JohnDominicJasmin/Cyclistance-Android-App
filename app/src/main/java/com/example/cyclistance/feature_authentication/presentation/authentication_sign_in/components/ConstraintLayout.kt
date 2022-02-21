@@ -12,7 +12,7 @@ val constrains = ConstraintSet {
     val textFieldArea = createRefFor(id = ConstraintsItem.TextFields.layoutId)
     val facebookAndGoogle = createRefFor(id = ConstraintsItem.OtherSignIns.layoutId)
     val signInButton = createRefFor(id = ConstraintsItem.SignInButton.layoutId)
-
+    val dontHaveAccountText = createRefFor(id = ConstraintsItem.DontHaveAccountText.layoutId)
 
 
     constrain(appIcon) {
@@ -62,7 +62,14 @@ val constrains = ConstraintSet {
     }
 
     constrain(signInButton) {
-        top.linkTo(facebookAndGoogle.bottom, margin = 5.dp)
+        top.linkTo(facebookAndGoogle.bottom, margin = 10.dp)
+        end.linkTo(parent.end)
+        start.linkTo(parent.start)
+        width = Dimension.wrapContent
+        height = Dimension.wrapContent
+    }
+    constrain(dontHaveAccountText){
+        top.linkTo(signInButton.bottom, margin = 16.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         width = Dimension.wrapContent

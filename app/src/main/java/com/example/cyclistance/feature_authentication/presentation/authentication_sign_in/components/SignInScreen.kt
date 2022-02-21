@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.navigation.NavController
 import com.example.cyclistance.feature_authentication.presentation.theme.*
 
 
@@ -14,7 +15,8 @@ import com.example.cyclistance.feature_authentication.presentation.theme.*
 
 
 @Composable
-fun SignInScreen() {
+fun SignInScreen(
+    navController: NavController) {
 
 
     ConstraintLayout(
@@ -29,6 +31,7 @@ fun SignInScreen() {
         TextFieldsArea()
         GoogleAndFacebookSignIn()
         SignInButton()
+        DontHaveAccountText()
 
     }
 
@@ -38,10 +41,3 @@ fun SignInScreen() {
 
 
 
-
-
-@Preview
-@Composable
-fun PreviewSignInScreen() {
-    SignInScreen()
-}

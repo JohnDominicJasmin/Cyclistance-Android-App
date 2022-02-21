@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
@@ -24,7 +25,7 @@ fun GoogleAndFacebookSignIn() {
     Row(
         modifier = Modifier
             .layoutId( ConstraintsItem.OtherSignIns.layoutId)
-            .fillMaxWidth(),
+            .wrapContentSize(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
@@ -34,9 +35,10 @@ fun GoogleAndFacebookSignIn() {
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
-                .width(150.dp)
-                .wrapContentHeight()
                 .padding(top = 15.dp, bottom = 15.dp)
+                .shadow(12.dp,shape = RoundedCornerShape(15.dp), clip = true)
+                .width(150.dp)
+                .height(50.dp)
         ) {
 
             Row(
@@ -73,9 +75,10 @@ fun GoogleAndFacebookSignIn() {
             colors = ButtonDefaults.buttonColors(backgroundColor = FacebookColor),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
-                .width(150.dp)
-                .wrapContentHeight()
                 .padding(top = 15.dp, bottom = 15.dp)
+                .shadow(12.dp,shape = RoundedCornerShape(15.dp), clip = true)
+                .width(150.dp)
+                .height(50.dp)
         ) {
 
 

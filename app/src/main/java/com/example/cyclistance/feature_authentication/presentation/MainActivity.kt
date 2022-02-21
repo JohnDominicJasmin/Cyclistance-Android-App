@@ -39,7 +39,7 @@ fun Navigation() {
         }
 
         composable(Screen.MainScreen.route){
-            SignInScreen()
+            SignInScreen(navController)
         }
         
     }

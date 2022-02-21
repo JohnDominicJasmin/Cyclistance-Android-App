@@ -8,4 +8,5 @@ sealed class ConstraintsItem(val layoutId:String){
     object TextFields:ConstraintsItem(layoutId = "text_fields")
     object OtherSignIns:ConstraintsItem(layoutId = "fb_and_google")
     object SignInButton:ConstraintsItem(layoutId = "sign_in_button")
+    object DontHaveAccountText:ConstraintsItem(layoutId = "dont_have_account")
 }

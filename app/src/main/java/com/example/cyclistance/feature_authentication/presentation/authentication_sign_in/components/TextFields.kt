@@ -15,6 +15,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -32,8 +33,7 @@ fun TextFieldsArea() {
             .layoutId(ConstraintsItem.TextFields.layoutId)
             .fillMaxWidth(fraction = 0.9f),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+        verticalArrangement = Arrangement.Center) {
 
         var email by remember { mutableStateOf(TextFieldValue("")) }
         var password by remember { mutableStateOf(TextFieldValue("")) }
@@ -42,7 +42,8 @@ fun TextFieldsArea() {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
+                .wrapContentHeight()
+                .shadow(15.dp, shape = RoundedCornerShape(12.dp), clip = true),
             value = email,
             singleLine = true,
             shape = RoundedCornerShape(12.dp),
@@ -86,7 +87,8 @@ fun TextFieldsArea() {
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
+                .wrapContentHeight()
+                .shadow(15.dp, shape = RoundedCornerShape(12.dp), clip = true),
             value = password,
             onValueChange = { password = it },
             singleLine = true,
