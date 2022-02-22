@@ -8,6 +8,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
+import com.example.cyclistance.feature_authentication.presentation.AuthenticationScreen
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.theme.*
 
 
@@ -16,22 +18,27 @@ import com.example.cyclistance.feature_authentication.presentation.theme.*
 
 @Composable
 fun SignInScreen(
-    navController: NavController) {
+    navController: NavController?) {
 
 
     ConstraintLayout(
-        constraintSet = constrains, modifier = Modifier
+        constraintSet = signInConstrains, modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)) {
 
 
-        AppImageIcon(SignInConstraintsItem.AppIcon.layoutId)
-        TextArea()
-        Waves(topWaveLayoutId = SignInConstraintsItem.TopWave.layoutId, bottomWaveLayoutId = SignInConstraintsItem.BottomWave.layoutId)
-        TextFieldsArea()
-        GoogleAndFacebookSignIn()
+        AppImageIcon(layoutId = AuthenticationConstraintsItem.AppIcon.layoutId)
+        SignUpTextArea()
+        Waves(
+            topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
+            bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId
+        )
+        SignInTextFieldsArea()
+        SignInGoogleAndFacebookButton()
         SignInButton()
-        DontHaveAccountText()
+        SignInClickableText(onClick = {
+            navController?.navigate(AuthenticationScreen.SignUpScreen.route)
+        })
 
     }
 
@@ -39,5 +46,9 @@ fun SignInScreen(
 }
 
 
-
+@Preview
+@Composable
+fun Preview() {
+    SignInScreen(navController = null)
+}
 

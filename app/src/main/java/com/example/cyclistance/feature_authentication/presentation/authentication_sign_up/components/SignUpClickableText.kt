@@ -1,8 +1,8 @@
-package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components
+package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material.Text
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -11,26 +11,21 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 
 @Composable
-fun DontHaveAccountText() {
-    Box(modifier = Modifier.wrapContentSize().layoutId(SignInConstraintsItem.DontHaveAccountText.layoutId)){
-        Text(text = buildAnnotatedString {
+fun SignUpClickableText(onClick:()->Unit) {
+    Box(modifier = Modifier.wrapContentSize().layoutId(AuthenticationConstraintsItem.ClickableTexts.layoutId)){
+        ClickableText(text = buildAnnotatedString {
             withStyle(style = SpanStyle(color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)){
-                append(text = "Don't have an account?" )
+                append(text = "Already have an account?" )
             }
             withStyle(style = SpanStyle(color = Color(0xFF799DFC),fontWeight = FontWeight.SemiBold,fontSize = 14.sp)){
                 append(" ")
-                append(text = "Sign up")
+                append(text = "Sign In")
             }
-        })
+        }, onClick = { onClick() })
     }
-}
 
-@Preview
-@Composable
-fun PreviewDonthaveAccountText() {
-    DontHaveAccountText()
 }

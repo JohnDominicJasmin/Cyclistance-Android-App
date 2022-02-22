@@ -17,18 +17,17 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.R
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.theme.FacebookColor
 import com.example.cyclistance.feature_authentication.presentation.theme.GoogleButtonTextColor
 
 @Composable
-fun GoogleAndFacebookSignIn() {
-    Row(
-        modifier = Modifier
-            .layoutId( SignInConstraintsItem.OtherSignIns.layoutId)
+fun SignInGoogleAndFacebookButton() {
+    Row(modifier = Modifier
+            .layoutId( AuthenticationConstraintsItem.OtherSignIns.layoutId)
             .wrapContentSize(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
-    ) {
+        horizontalArrangement = Arrangement.Center) {
 
         Button(
             onClick = { /*TODO*/ },
@@ -38,14 +37,11 @@ fun GoogleAndFacebookSignIn() {
                 .padding(top = 15.dp, bottom = 15.dp)
                 .shadow(12.dp,shape = RoundedCornerShape(15.dp), clip = true)
                 .width(150.dp)
-                .height(50.dp)
-        ) {
+                .height(50.dp)) {
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
+            Row(modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
+                horizontalArrangement = Arrangement.Center) {
 
                 Icon(
                     painter = painterResource(id = R.drawable.ic_google),
@@ -59,16 +55,13 @@ fun GoogleAndFacebookSignIn() {
                     color = GoogleButtonTextColor,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
-                    fontSize = 14.sp
-                )
+                    fontSize = 14.sp)
             }
 
 
         }
 
         Spacer(modifier = Modifier.width(20.dp))
-
-
 
         Button(
             onClick = { /*TODO*/ },
@@ -85,8 +78,7 @@ fun GoogleAndFacebookSignIn() {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
-            ) {
+                horizontalArrangement = Arrangement.Center) {
 
 
                 Icon(

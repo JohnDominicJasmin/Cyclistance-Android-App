@@ -3,16 +3,14 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
@@ -45,9 +43,15 @@ fun SignUpTextFields() {
 
         NameTextField(name)
 
+        Spacer(modifier = Modifier.height(10.dp)) // todo: for each spacer if has an error then set height to 0.dp else 13.dp, for now its 13.dp
+
         EmailTextField(email)
 
+        Spacer(modifier = Modifier.height(10.dp))
+
         PasswordTextField(password)
+
+        Spacer(modifier = Modifier.height(10.dp))
 
         ConfirmPasswordTextField(confirmPassword)
 
@@ -57,7 +61,7 @@ fun SignUpTextFields() {
 @Composable
 fun ConfirmPasswordTextField(confirmPassword:MutableState<TextFieldValue>) {
     var confirmPasswordVisibility by remember { mutableStateOf(false) }
-    OutlinedTextField(
+    TextField(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
@@ -70,7 +74,7 @@ fun ConfirmPasswordTextField(confirmPassword:MutableState<TextFieldValue>) {
             Text(
                 text = "Confirm Password",
                 color = TextFieldColor,
-                fontSize = 13.sp,
+                fontSize = 12.sp,
                 textAlign = TextAlign.Center
             )
         },
@@ -97,7 +101,7 @@ fun ConfirmPasswordTextField(confirmPassword:MutableState<TextFieldValue>) {
 }
 @Composable
 fun PasswordTextField(password:MutableState<TextFieldValue>) {
-    OutlinedTextField(
+    TextField(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
@@ -110,7 +114,7 @@ fun PasswordTextField(password:MutableState<TextFieldValue>) {
             Text(
                 text = "Password",
                 color = TextFieldColor,
-                fontSize = 13.sp,
+                fontSize = 12.sp,
                 textAlign = TextAlign.Center
             )
         },
@@ -130,7 +134,7 @@ fun PasswordTextField(password:MutableState<TextFieldValue>) {
 fun EmailTextField(email:MutableState<TextFieldValue>) {
 
 
-    OutlinedTextField(
+    TextField(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
@@ -143,7 +147,7 @@ fun EmailTextField(email:MutableState<TextFieldValue>) {
             Text(
                 text = "Email",
                 color = TextFieldColor,
-                fontSize = 13.sp,
+                fontSize = 12.sp,
                 textAlign = TextAlign.Center
             )
         },
@@ -162,19 +166,19 @@ fun EmailTextField(email:MutableState<TextFieldValue>) {
 @Composable
 private fun NameTextField(name: MutableState<TextFieldValue>) {
 
-    OutlinedTextField(
+    TextField(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .shadow(elevation = 15.dp, shape = RoundedCornerShape(12.dp), clip = true),
+            .shadow(elevation = 12.dp, shape = RoundedCornerShape(12.dp), clip = true),
         value = name.value,
         onValueChange = { name.value = it },
         singleLine = true,
         shape = RoundedCornerShape(12.dp), label = {
             Text(
-                text = "Name",
+                text = "Name",//todo when textfield has error then set value color to red
                 color = TextFieldColor,
-                fontSize = 13.sp,
+                fontSize = 12.sp,
                 textAlign = TextAlign.Center
             )
 
@@ -193,8 +197,3 @@ private fun NameTextField(name: MutableState<TextFieldValue>) {
 
 
 
-@Preview
-@Composable
-fun SignUpTextFieldsPreview() {
-    SignUpTextFields()
-}

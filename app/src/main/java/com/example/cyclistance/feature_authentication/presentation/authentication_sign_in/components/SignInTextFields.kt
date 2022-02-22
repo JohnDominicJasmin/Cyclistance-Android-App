@@ -3,10 +3,7 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
@@ -22,105 +19,53 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.ConfirmPasswordTextField
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.EmailTextField
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.theme.TextFieldColor
 
 @Composable
-fun TextFieldsArea() {
+fun SignInTextFieldsArea() {
+
+
+    val email = remember { mutableStateOf(TextFieldValue("")) }
+    val password = remember { mutableStateOf(TextFieldValue("")) }
+
+
     Column(
         modifier = Modifier
-            .layoutId(SignInConstraintsItem.TextFields.layoutId)
+            .layoutId(AuthenticationConstraintsItem.TextFields.layoutId)
             .fillMaxWidth(fraction = 0.9f),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
 
-        var email by remember { mutableStateOf(TextFieldValue("")) }
-        var password by remember { mutableStateOf(TextFieldValue("")) }
-        var passwordVisibility by remember { mutableStateOf(false) }
 
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .shadow(15.dp, shape = RoundedCornerShape(12.dp), clip = true),
-            value = email,
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp),
-            onValueChange = { email = it },
-            label = {
-                Text(
-                    text = "Email",
-                    color = TextFieldColor,
-                    fontSize = 13.sp,
-                    textAlign = TextAlign.Center
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Email,
-                    contentDescription = "Email Icon",
-                    tint = TextFieldColor
-                )
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            colors = TextFieldColors(),
-        )
+        EmailTextField(email)
 
         /*
-        val textColor = if (true) {
-            MaterialTheme.colors.error
-        } else {
-            MaterialTheme.colors.onSurface
-        }
+
+        FOR VALIDATION
+
         Text(
             textAlign = TextAlign.Center,
             text = if (true) "Requires '@' and at least 5 symbols" else "Helper message",
-            style = MaterialTheme.typography.caption.copy(color = textColor),
+            style = MaterialTheme.typography.caption.copy(color = if(true) MaterialTheme.colors.error else MaterialTheme.colors.onSurface
+
+            ),
         )
-         */
-
-
-
-        Spacer(modifier = Modifier.height(15.dp))
-
-        OutlinedTextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .shadow(15.dp, shape = RoundedCornerShape(12.dp), clip = true),
-            value = password,
-            onValueChange = { password = it },
-            singleLine = true,
-            shape = RoundedCornerShape(12.dp),
-            label = {
-                Text(
-                    text = "Password",
-                    color = TextFieldColor,
-                    fontSize = 13.sp,
-                    textAlign = TextAlign.Center
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Lock,
-                    contentDescription = "Password Icon",
-                    tint = TextFieldColor
-                )
-            },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            colors = TextFieldColors(),
-            trailingIcon = {
-                val image =
-                    if (passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-
-                IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
-                    Icon(imageVector = image, "", tint = TextFieldColor)
-                }
-            },
-            visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-        )
+        */
+        Spacer(modifier = Modifier.height(13.dp))// todo: if has an error then set height to 0.dp else 13.dp, for now its 13.dp
+        ConfirmPasswordTextField(password)
 
     }
 
+}
+
+@Preview
+@Composable
+fun Prev() {
+    SignInTextFieldsArea()
 }

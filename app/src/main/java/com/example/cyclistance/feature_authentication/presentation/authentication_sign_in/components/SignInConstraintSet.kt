@@ -3,17 +3,18 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 
 
-val constrains = ConstraintSet {
-    val appIcon = createRefFor(id = SignInConstraintsItem.AppIcon.layoutId)
-    val topWave = createRefFor(id = SignInConstraintsItem.TopWave.layoutId)
-    val bottomWave = createRefFor(id = SignInConstraintsItem.BottomWave.layoutId)
-    val welcomeTextArea = createRefFor(id = SignInConstraintsItem.WelcomeTextArea.layoutId)
-    val textFieldArea = createRefFor(id = SignInConstraintsItem.TextFields.layoutId)
-    val facebookAndGoogle = createRefFor(id = SignInConstraintsItem.OtherSignIns.layoutId)
-    val signInButton = createRefFor(id = SignInConstraintsItem.SignInButton.layoutId)
-    val dontHaveAccountText = createRefFor(id = SignInConstraintsItem.DontHaveAccountText.layoutId)
+val signInConstrains = ConstraintSet {
+    val appIcon = createRefFor(id = AuthenticationConstraintsItem.AppIcon.layoutId)
+    val topWave = createRefFor(id = AuthenticationConstraintsItem.TopWave.layoutId)
+    val bottomWave = createRefFor(id = AuthenticationConstraintsItem.BottomWave.layoutId)
+    val welcomeTextArea = createRefFor(id = AuthenticationConstraintsItem.WelcomeTextArea.layoutId)
+    val textFieldArea = createRefFor(id = AuthenticationConstraintsItem.TextFields.layoutId)
+    val facebookAndGoogle = createRefFor(id = AuthenticationConstraintsItem.OtherSignIns.layoutId)
+    val signInButton = createRefFor(id = AuthenticationConstraintsItem.SignInButton.layoutId)
+    val dontHaveAccountText = createRefFor(id = AuthenticationConstraintsItem.ClickableTexts.layoutId)
 
 
     constrain(appIcon) {
@@ -25,7 +26,7 @@ val constrains = ConstraintSet {
     }
 
     constrain(welcomeTextArea) {
-        top.linkTo(appIcon.bottom, margin = 10.dp)
+        top.linkTo(appIcon.bottom, margin = 8.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         width = Dimension.wrapContent
@@ -55,7 +56,7 @@ val constrains = ConstraintSet {
     }
 
     constrain(facebookAndGoogle) {
-        top.linkTo(textFieldArea.bottom, margin = 4.dp)
+        top.linkTo(textFieldArea.bottom, margin = 15.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         width = Dimension.wrapContent

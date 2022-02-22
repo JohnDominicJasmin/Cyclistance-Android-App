@@ -10,8 +10,8 @@ import com.example.cyclistance.feature_authentication.presentation.theme.ThemeCo
 fun TextFieldColors() = TextFieldDefaults.textFieldColors(
     textColor = Color.White,
     backgroundColor = TextFieldBackgroundColor,
-    focusedIndicatorColor = ThemeColor,
-    unfocusedIndicatorColor = ThemeColor,
+    focusedIndicatorColor = TextFieldBackgroundColor,
+    unfocusedIndicatorColor = TextFieldBackgroundColor,
     cursorColor = Color.White
 
 )
