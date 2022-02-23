@@ -43,15 +43,15 @@ fun SignUpTextFields() {
 
         NameTextField(name)
 
-        Spacer(modifier = Modifier.height(10.dp)) // todo: for each spacer if has an error then set height to 0.dp else 13.dp, for now its 13.dp
+        Spacer(modifier = Modifier.height(13.dp)) // todo: for each spacer if has an error then set height to 0.dp else 13.dp, for now its 13.dp
 
         EmailTextField(email)
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(13.dp))
 
         PasswordTextField(password)
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(13.dp))
 
         ConfirmPasswordTextField(confirmPassword)
 

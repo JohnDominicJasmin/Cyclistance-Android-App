@@ -27,7 +27,7 @@ fun SignInScreen(
             .background(BackgroundColor)) {
 
 
-        AppImageIcon(layoutId = AuthenticationConstraintsItem.AppIcon.layoutId)
+        AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
         SignUpTextArea()
         Waves(
             topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
@@ -44,11 +44,3 @@ fun SignInScreen(
 
 
 }
-
-
-@Preview
-@Composable
-fun Preview() {
-    SignInScreen(navController = null)
-}
-

@@ -23,7 +23,6 @@ fun SignInButton() {
         modifier = Modifier
             .layoutId(layoutId = AuthenticationConstraintsItem.SignInButton.layoutId)
             .wrapContentSize()
-            .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)
         ,
         contentAlignment = Alignment.Center
     ) {

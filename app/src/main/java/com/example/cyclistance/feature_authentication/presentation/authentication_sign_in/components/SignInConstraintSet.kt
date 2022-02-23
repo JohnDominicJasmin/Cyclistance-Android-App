@@ -7,7 +7,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 
 
 val signInConstrains = ConstraintSet {
-    val appIcon = createRefFor(id = AuthenticationConstraintsItem.AppIcon.layoutId)
+    val appIcon = createRefFor(id = AuthenticationConstraintsItem.IconDisplay.layoutId)
     val topWave = createRefFor(id = AuthenticationConstraintsItem.TopWave.layoutId)
     val bottomWave = createRefFor(id = AuthenticationConstraintsItem.BottomWave.layoutId)
     val welcomeTextArea = createRefFor(id = AuthenticationConstraintsItem.WelcomeTextArea.layoutId)

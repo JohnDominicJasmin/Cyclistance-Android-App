@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
@@ -64,8 +66,3 @@ fun SignInTextFieldsArea() {
 
 }
 
-@Preview
-@Composable
-fun Prev() {
-    SignInTextFieldsArea()
-}

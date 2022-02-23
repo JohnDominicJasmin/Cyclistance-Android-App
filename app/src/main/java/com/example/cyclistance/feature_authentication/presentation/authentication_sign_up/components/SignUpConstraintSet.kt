@@ -7,7 +7,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 
 val signUpConstraints = ConstraintSet {
 
-    val appIcon = createRefFor(id = AuthenticationConstraintsItem.AppIcon.layoutId)
+    val appIcon = createRefFor(id = AuthenticationConstraintsItem.IconDisplay.layoutId)
     val topWave = createRefFor(id = AuthenticationConstraintsItem.TopWave.layoutId)
     val bottomWave = createRefFor(id = AuthenticationConstraintsItem.BottomWave.layoutId)
     val welcomeTextArea = createRefFor(id = AuthenticationConstraintsItem.WelcomeTextArea.layoutId)
@@ -51,7 +51,7 @@ val signUpConstraints = ConstraintSet {
         height = Dimension.wrapContent
     }
     constrain(signUpButton) {
-        top.linkTo(textFieldArea.bottom, margin = 15.dp)
+        top.linkTo(textFieldArea.bottom, margin = 25.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         width = Dimension.wrapContent

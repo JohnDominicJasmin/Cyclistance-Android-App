@@ -107,4 +107,7 @@ dependencies {
     //Coil
     implementation("io.coil-kt:coil-compose:1.4.0")
 
+
+    //for notification color
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
 }

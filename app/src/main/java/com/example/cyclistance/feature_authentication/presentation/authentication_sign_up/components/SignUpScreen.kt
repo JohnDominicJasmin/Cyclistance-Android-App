@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,7 +23,7 @@ fun SignUpScreen(navController: NavController?) {
             .background(BackgroundColor)
     ) {
 
-        AppImageIcon(layoutId = AuthenticationConstraintsItem.AppIcon.layoutId)
+        AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
         SignUpTextArea()
 
         Waves(
