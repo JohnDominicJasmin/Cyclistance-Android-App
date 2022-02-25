@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         
         setContent {
-            CyclistanceTheme { // todo add theming(dark mode and light mode
+            CyclistanceTheme(darkTheme = true) {
                     Navigation()
                 }
         }

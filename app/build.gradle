@@ -109,5 +109,5 @@ dependencies {
 
 
     //for notification color
-    implementation "com.google.accompanist:accompanist-systemuicontroller:0.17.0"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.2-alpha"
 }
