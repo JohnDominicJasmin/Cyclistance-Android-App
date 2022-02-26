@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.*
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_authentication.presentation.AuthenticationScreen
@@ -22,7 +21,7 @@ fun SignInScreen(
 
 
     ConstraintLayout(
-        constraintSet = signInConstrains, modifier = Modifier
+        constraintSet = signInConstraints, modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)) {
 

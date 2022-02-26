@@ -10,22 +10,18 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.TextFieldColors
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
-import com.example.cyclistance.feature_authentication.presentation.theme.TextFieldColor
+import com.example.cyclistance.feature_authentication.presentation.theme.TextFieldTextColor
 
 @Composable
 fun SignUpTextFields() {
 
-
-    val name = remember { mutableStateOf(TextFieldValue("")) }
     val email = remember { mutableStateOf(TextFieldValue("")) }
     val password = remember { mutableStateOf(TextFieldValue("")) }
     val confirmPassword = remember { mutableStateOf(TextFieldValue("")) }
@@ -36,23 +32,15 @@ fun SignUpTextFields() {
             .layoutId(AuthenticationConstraintsItem.TextFields.layoutId)
             .fillMaxWidth(fraction = 0.9f),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center) {
+        verticalArrangement = Arrangement.spacedBy(13.dp)) {
 
 
 
 
-        NameTextField(name)
-
-        Spacer(modifier = Modifier.height(13.dp)) // todo: for each spacer if has an error then set height to 0.dp else 13.dp, for now its 13.dp
+       // todo: for each spacer if has an error then set height to 0.dp else 13.dp, for now its 13.dp
 
         EmailTextField(email)
-
-        Spacer(modifier = Modifier.height(13.dp))
-
         PasswordTextField(password)
-
-        Spacer(modifier = Modifier.height(13.dp))
-
         ConfirmPasswordTextField(confirmPassword)
 
     }
@@ -73,7 +61,7 @@ fun ConfirmPasswordTextField(confirmPassword:MutableState<TextFieldValue>) {
         label = {
             Text(
                 text = "Confirm Password",
-                color = TextFieldColor,
+                color = TextFieldTextColor,
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center
             )
@@ -82,7 +70,7 @@ fun ConfirmPasswordTextField(confirmPassword:MutableState<TextFieldValue>) {
             Icon(
                 imageVector = Icons.Default.Lock,
                 contentDescription = "Password Icon",
-                tint = TextFieldColor
+                tint = TextFieldTextColor
             )
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -92,7 +80,7 @@ fun ConfirmPasswordTextField(confirmPassword:MutableState<TextFieldValue>) {
                 if (confirmPasswordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
 
             IconButton(onClick = { confirmPasswordVisibility = !confirmPasswordVisibility }) {
-                Icon(imageVector = image, "", tint = TextFieldColor)
+                Icon(imageVector = image, "", tint = TextFieldTextColor)
             }
         },
         visualTransformation = if (confirmPasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
@@ -113,7 +101,7 @@ fun PasswordTextField(password:MutableState<TextFieldValue>) {
         label = {
             Text(
                 text = "Password",
-                color = TextFieldColor,
+                color = TextFieldTextColor,
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center
             )
@@ -122,7 +110,7 @@ fun PasswordTextField(password:MutableState<TextFieldValue>) {
             Icon(
                 imageVector = Icons.Default.Lock,
                 contentDescription = "Password Icon",
-                tint = TextFieldColor
+                tint = TextFieldTextColor
             )
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
@@ -146,7 +134,7 @@ fun EmailTextField(email:MutableState<TextFieldValue>) {
         label = {
             Text(
                 text = "Email",
-                color = TextFieldColor,
+                color = TextFieldTextColor,
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center
             )
@@ -155,7 +143,7 @@ fun EmailTextField(email:MutableState<TextFieldValue>) {
             Icon(
                 imageVector = Icons.Default.Email,
                 contentDescription = "Email Icon",
-                tint = TextFieldColor
+                tint = TextFieldTextColor
             )
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
@@ -177,7 +165,7 @@ private fun NameTextField(name: MutableState<TextFieldValue>) {
         shape = RoundedCornerShape(12.dp), label = {
             Text(
                 text = "Name",//todo when textfield has error then set value color to red
-                color = TextFieldColor,
+                color = TextFieldTextColor,
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center
             )
@@ -187,7 +175,7 @@ private fun NameTextField(name: MutableState<TextFieldValue>) {
             Icon(
                 imageVector = Icons.Default.Person,
                 contentDescription = "Email Icon",
-                tint = TextFieldColor
+                tint = TextFieldTextColor
             )
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),

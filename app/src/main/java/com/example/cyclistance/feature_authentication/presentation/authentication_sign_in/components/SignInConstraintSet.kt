@@ -6,7 +6,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 
 
-val signInConstrains = ConstraintSet {
+val signInConstraints = ConstraintSet {
     val appIcon = createRefFor(id = AuthenticationConstraintsItem.IconDisplay.layoutId)
     val topWave = createRefFor(id = AuthenticationConstraintsItem.TopWave.layoutId)
     val bottomWave = createRefFor(id = AuthenticationConstraintsItem.BottomWave.layoutId)
@@ -26,7 +26,7 @@ val signInConstrains = ConstraintSet {
     }
 
     constrain(welcomeTextArea) {
-        top.linkTo(appIcon.bottom, margin = 8.dp)
+        top.linkTo(appIcon.bottom, margin = 15.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         width = Dimension.wrapContent
@@ -48,7 +48,7 @@ val signInConstrains = ConstraintSet {
     }
 
     constrain(textFieldArea) {
-        top.linkTo(welcomeTextArea.bottom, margin = 27.dp)
+        top.linkTo(welcomeTextArea.bottom, margin = 20.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         width = Dimension.wrapContent

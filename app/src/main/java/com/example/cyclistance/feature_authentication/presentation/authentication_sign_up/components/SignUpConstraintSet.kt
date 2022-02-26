@@ -24,7 +24,7 @@ val signUpConstraints = ConstraintSet {
     }
 
     constrain(welcomeTextArea){
-        top.linkTo(appIcon.bottom, margin = 8.dp)
+        top.linkTo(appIcon.bottom, margin = 15.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         width = Dimension.wrapContent
@@ -44,7 +44,7 @@ val signUpConstraints = ConstraintSet {
         height = Dimension.wrapContent
     }
     constrain(textFieldArea) {
-        top.linkTo(welcomeTextArea.bottom, margin = 27.dp)
+        top.linkTo(welcomeTextArea.bottom, margin = 20.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         width = Dimension.wrapContent

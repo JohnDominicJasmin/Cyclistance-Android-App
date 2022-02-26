@@ -37,7 +37,7 @@ fun SignInGoogleAndFacebookButton() {
                 .padding(top = 15.dp, bottom = 15.dp)
                 .shadow(12.dp,shape = RoundedCornerShape(15.dp), clip = true)
                 .width(150.dp)
-                .height(50.dp)) {
+                .height(45.dp)) {
 
             Row(modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -61,7 +61,7 @@ fun SignInGoogleAndFacebookButton() {
 
         }
 
-        Spacer(modifier = Modifier.width(20.dp))
+        Spacer(modifier = Modifier.width(14.dp))
 
         Button(
             onClick = { /*TODO*/ },
@@ -71,7 +71,7 @@ fun SignInGoogleAndFacebookButton() {
                 .padding(top = 15.dp, bottom = 15.dp)
                 .shadow(12.dp,shape = RoundedCornerShape(15.dp), clip = true)
                 .width(150.dp)
-                .height(50.dp)
+                .height(45.dp)
         ) {
 
 
