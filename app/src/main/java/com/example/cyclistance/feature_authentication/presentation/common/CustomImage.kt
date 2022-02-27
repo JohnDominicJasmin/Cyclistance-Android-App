@@ -17,8 +17,7 @@ fun CustomImage(
 ) {
 
     Box(modifier = Modifier
-        .layoutId(layoutId)
-        ) {
+        .layoutId(layoutId)) {
         Image(
             painter = painterResource(id = imageId),
             contentDescription = contentDescription,

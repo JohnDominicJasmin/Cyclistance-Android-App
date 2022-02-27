@@ -16,7 +16,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 
 @Composable
 fun SignUpClickableText(onClick:()->Unit) {
-    Box(modifier = Modifier.wrapContentSize().layoutId(AuthenticationConstraintsItem.ClickableTexts.layoutId)){
+    Box(modifier = Modifier.wrapContentSize().layoutId(AuthenticationConstraintsItem.ClickableTextSection.layoutId)){
         ClickableText(text = buildAnnotatedString {
             withStyle(style = SpanStyle(color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)){
                 append(text = "Already have an account?" )

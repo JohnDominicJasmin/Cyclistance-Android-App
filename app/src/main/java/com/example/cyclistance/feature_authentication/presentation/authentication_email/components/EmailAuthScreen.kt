@@ -12,14 +12,16 @@ import com.example.cyclistance.feature_authentication.presentation.theme.Backgro
 @Composable
 fun EmailAuthScreen(navController: NavController?) {
     ConstraintLayout(
-        constraintSet = emailAuthConstrains, modifier = Modifier
+        constraintSet = emailAuthConstraints,
+        modifier = Modifier
             .fillMaxSize()
-            .background(
-                BackgroundColor)) {
+            .background(BackgroundColor)) {
 
         EmailIcon()
         EmailAuthTextStatus(email = "johndominicjasmin@gmail.com")
-        EmailAuthResendButton()
+        EmailAuthResendButton(onClick = {
+
+        })
 
 
     }

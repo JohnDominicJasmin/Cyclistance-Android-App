@@ -16,7 +16,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_authentication.presentation.AuthenticationScreen
+import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
 import kotlinx.coroutines.delay
 
@@ -31,8 +31,8 @@ fun SplashScreen(navController: NavController) {
             ))
         delay(1200L)
 
-        navController.navigate(AuthenticationScreen.SignInScreen.route){
-            popUpTo(AuthenticationScreen.SplashScreen.route){ inclusive = true }
+        navController.navigate(Screens.IntroSliderScreen.route){
+            popUpTo(Screens.SplashScreen.route){ inclusive = true }
             launchSingleTop = true
         }
     }

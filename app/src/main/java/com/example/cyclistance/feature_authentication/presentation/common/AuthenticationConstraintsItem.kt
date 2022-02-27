@@ -8,7 +8,7 @@ sealed class AuthenticationConstraintsItem(val layoutId:String){
     object TextFields: AuthenticationConstraintsItem(layoutId = "text_fields")
     object OtherSignIns: AuthenticationConstraintsItem(layoutId = "fb_and_google")
     object SignInButton: AuthenticationConstraintsItem(layoutId = "sign_in_button")
-    object ClickableTexts: AuthenticationConstraintsItem(layoutId = "dont_have_account")
+    object ClickableTextSection: AuthenticationConstraintsItem(layoutId = "dont_have_account")
     object SignUpButton: AuthenticationConstraintsItem(layoutId = "sign_up_button")
     object ResendButton: AuthenticationConstraintsItem(layoutId = "resend_email_button")
 }

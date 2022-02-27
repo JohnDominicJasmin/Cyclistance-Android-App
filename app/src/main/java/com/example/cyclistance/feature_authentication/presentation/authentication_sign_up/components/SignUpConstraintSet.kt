@@ -10,10 +10,10 @@ val signUpConstraints = ConstraintSet {
     val appIcon = createRefFor(id = AuthenticationConstraintsItem.IconDisplay.layoutId)
     val topWave = createRefFor(id = AuthenticationConstraintsItem.TopWave.layoutId)
     val bottomWave = createRefFor(id = AuthenticationConstraintsItem.BottomWave.layoutId)
-    val welcomeTextArea = createRefFor(id = AuthenticationConstraintsItem.WelcomeTextArea.layoutId)
-    val textFieldArea = createRefFor(id = AuthenticationConstraintsItem.TextFields.layoutId)
+    val welcomeTextSection = createRefFor(id = AuthenticationConstraintsItem.WelcomeTextArea.layoutId)
+    val textFieldSection = createRefFor(id = AuthenticationConstraintsItem.TextFields.layoutId)
     val signUpButton = createRefFor(id = AuthenticationConstraintsItem.SignUpButton.layoutId)
-    val alreadyHaveAnAccountText = createRefFor(id = AuthenticationConstraintsItem.ClickableTexts.layoutId)
+    val alreadyHaveAnAccountText = createRefFor(id = AuthenticationConstraintsItem.ClickableTextSection.layoutId)
 
     constrain(appIcon){
         top.linkTo(parent.top, margin = 12.dp)
@@ -23,7 +23,7 @@ val signUpConstraints = ConstraintSet {
         height = Dimension.wrapContent
     }
 
-    constrain(welcomeTextArea){
+    constrain(welcomeTextSection){
         top.linkTo(appIcon.bottom, margin = 15.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
@@ -43,15 +43,15 @@ val signUpConstraints = ConstraintSet {
         width = Dimension.wrapContent
         height = Dimension.wrapContent
     }
-    constrain(textFieldArea) {
-        top.linkTo(welcomeTextArea.bottom, margin = 20.dp)
+    constrain(textFieldSection) {
+        top.linkTo(welcomeTextSection.bottom, margin = 20.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         width = Dimension.wrapContent
         height = Dimension.wrapContent
     }
     constrain(signUpButton) {
-        top.linkTo(textFieldArea.bottom, margin = 25.dp)
+        top.linkTo(textFieldSection.bottom, margin = 25.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         width = Dimension.wrapContent

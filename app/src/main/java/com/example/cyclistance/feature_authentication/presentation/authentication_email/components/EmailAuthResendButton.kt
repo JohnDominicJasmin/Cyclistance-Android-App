@@ -17,7 +17,7 @@ import com.example.cyclistance.feature_authentication.presentation.theme.ThemeCo
 import com.example.cyclistance.feature_authentication.presentation.theme.DisabledTextColor
 
 @Composable
-fun EmailAuthResendButton() {
+fun EmailAuthResendButton(onClick: ()->Unit) {
 
     Box(
         modifier = Modifier
@@ -27,7 +27,7 @@ fun EmailAuthResendButton() {
 
 
         TextButton(
-            onClick = { /* todo */ },
+            onClick = onClick,
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent,
                 contentColor = ThemeColor,
@@ -42,8 +42,3 @@ fun EmailAuthResendButton() {
     }
 }
 
-@Preview
-@Composable
-fun ButtonPrev() {
-    EmailAuthResendButton()
-}

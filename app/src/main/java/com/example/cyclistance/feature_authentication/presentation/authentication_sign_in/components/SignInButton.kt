@@ -17,18 +17,17 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
 
 @Composable
-fun SignInButton() {
+fun SignInButton(onClickButton: ()-> Unit) {
 
     Box(
         modifier = Modifier
             .layoutId(layoutId = AuthenticationConstraintsItem.SignInButton.layoutId)
             .wrapContentSize()
         ,
-        contentAlignment = Alignment.Center
-    ) {
+        contentAlignment = Alignment.Center) {
         Button(
 
-            onClick = { },
+            onClick = onClickButton,
             modifier = Modifier
                 .height(50.dp)
                 .width(220.dp)

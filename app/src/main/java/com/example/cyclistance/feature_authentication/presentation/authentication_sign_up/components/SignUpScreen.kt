@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_authentication.presentation.AuthenticationScreen
+import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.AppImageIcon
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
@@ -18,10 +18,10 @@ fun SignUpScreen(navController: NavController?) {
 
 
     ConstraintLayout(
-        constraintSet = signUpConstraints, modifier = Modifier
+        constraintSet = signUpConstraints,
+        modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)
-    ) {
+            .background(BackgroundColor)) {
 
         AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
         SignUpTextArea()
@@ -32,9 +32,11 @@ fun SignUpScreen(navController: NavController?) {
         )
 
         SignUpTextFields()
-        SignUpButton()
+        SignUpButton(onClickButton = {
+
+        })
         SignUpClickableText() {
-            navController?.navigate(AuthenticationScreen.SignInScreen.route)
+            navController?.navigate(Screens.SignInScreen.route)
         }
 
 

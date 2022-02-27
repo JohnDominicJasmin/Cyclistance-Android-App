@@ -7,13 +7,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_authentication.presentation.AuthenticationScreen
+import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.theme.*
-
-
-
-
 
 @Composable
 fun SignInScreen(
@@ -34,9 +30,14 @@ fun SignInScreen(
         )
         SignInTextFieldsArea()
         SignInGoogleAndFacebookButton()
-        SignInButton()
+
+        SignInButton(onClickButton = {
+
+        })
+
+
         SignInClickableText(onClick = {
-            navController?.navigate(AuthenticationScreen.SignUpScreen.route)
+            navController?.navigate(Screens.SignUpScreen.route)
         })
 
     }

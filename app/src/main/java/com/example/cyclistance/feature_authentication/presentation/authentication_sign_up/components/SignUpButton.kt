@@ -20,18 +20,20 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
 
 @Composable
-fun SignUpButton() {
+fun SignUpButton(onClickButton: ()-> Unit) {
+
+
     Box(
         modifier = Modifier
             .layoutId(layoutId = AuthenticationConstraintsItem.SignUpButton.layoutId)
             .wrapContentSize()
-            .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)
-        ,
-        contentAlignment = Alignment.Center
-    ) {
+            .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
+        contentAlignment = Alignment.Center) {
+
+
         Button(
 
-            onClick = { },
+            onClick = onClickButton,
             modifier = Modifier
                 .height(50.dp)
                 .width(220.dp)

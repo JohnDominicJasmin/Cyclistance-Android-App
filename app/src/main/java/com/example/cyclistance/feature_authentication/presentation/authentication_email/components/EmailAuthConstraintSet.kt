@@ -5,7 +5,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 
-val emailAuthConstrains = ConstraintSet {
+val emailAuthConstraints = ConstraintSet {
     val emailIcon =  createRefFor(id = AuthenticationConstraintsItem.IconDisplay.layoutId)
     val textDisplay = createRefFor(id = AuthenticationConstraintsItem.WelcomeTextArea.layoutId)
     val resendEmail = createRefFor(id = AuthenticationConstraintsItem.ResendButton.layoutId)
