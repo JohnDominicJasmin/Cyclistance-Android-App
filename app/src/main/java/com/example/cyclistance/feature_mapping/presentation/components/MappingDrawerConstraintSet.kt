@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation
+package com.example.cyclistance.feature_mapping.presentation.components
 
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet

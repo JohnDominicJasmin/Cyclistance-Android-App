@@ -139,6 +139,13 @@
         <entry key="../../../../layout/compose-model-1646226220564.xml" value="0.15635451505016723" />
         <entry key="../../../../layout/compose-model-1646228193998.xml" value="0.2" />
         <entry key="../../../../layout/compose-model-1646228194015.xml" value="0.15635451505016723" />
+        <entry key="../../../../layout/compose-model-1646232085374.xml" value="0.15677257525083613" />
+        <entry key="../../../../layout/compose-model-1646233541206.xml" value="0.15677257525083613" />
+        <entry key="../../../../layout/compose-model-1646237100890.xml" value="0.31630067567567566" />
+        <entry key="../../../../layout/compose-model-1646237321457.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1646239890889.xml" value="0.67" />
+        <entry key="../../../../layout/compose-model-1646241739120.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1646242367774.xml" value="1.0" />
         <entry key="app/src/main/res/drawable-v24/ic_facebook_.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.187" />
         <entry key="app/src/main/res/drawable/ic_about.xml" value="0.258" />
@@ -155,9 +162,10 @@
         <entry key="app/src/main/res/drawable/ic_help_and_rescue.xml" value="0.24" />
         <entry key="app/src/main/res/drawable/ic_live_location.xml" value="0.1195" />
         <entry key="app/src/main/res/drawable/ic_real_time_messaging.xml" value="0.1195" />
+        <entry key="app/src/main/res/drawable/ic_rescue_request.xml" value="0.204" />
         <entry key="app/src/main/res/drawable/ic_sign_out.xml" value="0.213" />
         <entry key="app/src/main/res/drawable/ic_top_wave.xml" value="0.18" />
-        <entry key="app/src/main/res/layout/activity_mapping.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_mapping.xml" value="0.33" />
       </map>
     </option>
   </component>

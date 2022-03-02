@@ -6,22 +6,59 @@
     android:layout_height="match_parent">
 
 
-
-
-
     <com.mapbox.maps.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:elevation="2dp"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:mapbox_cameraTargetLat="40.7128"
         app:mapbox_cameraTargetLng="-74.0060"
         app:mapbox_cameraZoom="9.0"
-        app:mapbox_resourcesAccessToken="@string/MapsToken" />
+        app:mapbox_resourcesAccessToken="@string/MapsToken">
+
+
+    </com.mapbox.maps.MapView>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button"
+        android:layout_width="229dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="22dp"
+        android:backgroundTint="@color/ThemeColor"
+        android:drawableLeft="@drawable/ic_mechanic"
+        android:padding="10dp"
+        android:text="@string/request_help"
+        android:textAlignment="center"
+        android:textAllCaps="false"
+        android:textColor="@color/Black"
+        app:cornerRadius="14dp"
+        android:textSize="14sp"
+
+        app:layout_constraintBottom_toBottomOf="@+id/mapView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButtonLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="180dp"
+        android:backgroundTint="@color/White"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_baseline_my_location_24"
+        android:tint="@color/Black"
+        app:backgroundTint="@color/White"
+        app:elevation="4dp"
+        app:fabCustomSize="54.5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

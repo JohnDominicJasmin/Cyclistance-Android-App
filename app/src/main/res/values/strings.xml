@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Cyclistance</string>
+    <string name="request_help">Request Help</string>
 </resources>
