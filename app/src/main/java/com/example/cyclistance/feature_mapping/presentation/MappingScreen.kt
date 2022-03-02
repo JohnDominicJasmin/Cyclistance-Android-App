@@ -29,16 +29,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
-
 import com.example.cyclistance.feature_authentication.presentation.theme.TopAppBarBackgroundColor
 import kotlinx.coroutines.launch
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
 import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
-import com.mapbox.mapboxsdk.Mapbox
-import com.mapbox.mapboxsdk.camera.CameraPosition
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
-import com.mapbox.mapboxsdk.maps.Style
+import com.example.cyclistance.feature_mapping.presentation.components.MappingDrawerConstraintItem
+import com.example.cyclistance.feature_mapping.presentation.components.drawerMappingConstraintSet
 import com.mapbox.maps.MapView
 
 
