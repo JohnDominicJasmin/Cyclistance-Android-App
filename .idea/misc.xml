@@ -135,6 +135,10 @@
         <entry key="../../../../layout/compose-model-1646215151587.xml" value="0.15677257525083613" />
         <entry key="../../../../layout/compose-model-1646219149865.xml" value="0.1" />
         <entry key="../../../../layout/compose-model-1646220732189.xml" value="0.15635451505016723" />
+        <entry key="../../../../layout/compose-model-1646226220562.xml" value="0.2" />
+        <entry key="../../../../layout/compose-model-1646226220564.xml" value="0.15635451505016723" />
+        <entry key="../../../../layout/compose-model-1646228193998.xml" value="0.2" />
+        <entry key="../../../../layout/compose-model-1646228194015.xml" value="0.15635451505016723" />
         <entry key="app/src/main/res/drawable-v24/ic_facebook_.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.187" />
         <entry key="app/src/main/res/drawable/ic_about.xml" value="0.258" />
@@ -147,12 +151,13 @@
         <entry key="app/src/main/res/drawable/ic_facebook_svgrepo_com.xml" value="0.195" />
         <entry key="app/src/main/res/drawable/ic_facebook_svgrepo_com__1_.xml" value="0.195" />
         <entry key="app/src/main/res/drawable/ic_google.xml" value="0.183" />
+        <entry key="app/src/main/res/drawable/ic_group_35.xml" value="0.173" />
         <entry key="app/src/main/res/drawable/ic_help_and_rescue.xml" value="0.24" />
         <entry key="app/src/main/res/drawable/ic_live_location.xml" value="0.1195" />
         <entry key="app/src/main/res/drawable/ic_real_time_messaging.xml" value="0.1195" />
         <entry key="app/src/main/res/drawable/ic_sign_out.xml" value="0.213" />
         <entry key="app/src/main/res/drawable/ic_top_wave.xml" value="0.18" />
-        <entry key="app/src/main/res/layout/activity_mapping.xml" value="0.35208333333333336" />
+        <entry key="app/src/main/res/layout/activity_mapping.xml" value="0.25" />
       </map>
     </option>
   </component>
