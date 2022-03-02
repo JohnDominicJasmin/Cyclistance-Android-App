@@ -1,6 +1,6 @@
-package com.example.cyclistance.feature_readable_displays.presentation.domain.use_case.read_intro_slider
+package com.example.cyclistance.feature_readable_displays.domain.use_case.read_intro_slider
 
-import com.example.cyclistance.feature_readable_displays.presentation.domain.repository.IntroSliderRepository
+import com.example.cyclistance.feature_readable_displays.domain.repository.IntroSliderRepository
 import kotlinx.coroutines.flow.Flow
 
 class ReadIntroSliderStateUseCase(

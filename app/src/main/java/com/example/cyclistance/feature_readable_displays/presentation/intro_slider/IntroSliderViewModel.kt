@@ -2,7 +2,7 @@ package com.example.cyclistance.feature_readable_displays.presentation.intro_sli
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.feature_readable_displays.presentation.domain.use_case.IntroSliderUseCase
+import com.example.cyclistance.feature_readable_displays.domain.use_case.IntroSliderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject

@@ -31,9 +31,6 @@ fun IntroSliderScreen(navController: NavController) {
             .fillMaxSize()
             .background(BackgroundColor)) {
 
-
-
-
         IntroSliderItem(pagerState = pagerState)
 
         IntroSliderButtons(

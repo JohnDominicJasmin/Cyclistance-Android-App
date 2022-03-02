@@ -151,37 +151,5 @@ fun EmailTextField(email:MutableState<TextFieldValue>) {
     )
 
 }
-@Composable
-private fun NameTextField(name: MutableState<TextFieldValue>) {
-
-    TextField(
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .shadow(elevation = 12.dp, shape = RoundedCornerShape(12.dp), clip = true),
-        value = name.value,
-        onValueChange = { name.value = it },
-        singleLine = true,
-        shape = RoundedCornerShape(12.dp), label = {
-            Text(
-                text = "Name",//todo when textfield has error then set value color to red
-                color = TextFieldTextColor,
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center
-            )
-
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Person,
-                contentDescription = "Email Icon",
-                tint = TextFieldTextColor
-            )
-        },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        colors = TextFieldColors()
-    )
-}
-
 
 

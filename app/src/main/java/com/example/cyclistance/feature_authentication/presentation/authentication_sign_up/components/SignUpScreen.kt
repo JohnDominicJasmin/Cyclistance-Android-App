@@ -9,7 +9,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.navigation.NavController
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.AppImageIcon
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.Waves
+import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
 

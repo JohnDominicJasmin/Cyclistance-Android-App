@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_readable_displays.presentation.domain.repository
+package com.example.cyclistance.feature_readable_displays.domain.repository
 
 import kotlinx.coroutines.flow.Flow
 

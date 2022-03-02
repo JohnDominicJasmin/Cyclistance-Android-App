@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components
+package com.example.cyclistance.feature_authentication.presentation.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box

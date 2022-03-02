@@ -5,12 +5,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.feature_readable_displays.presentation.domain.use_case.IntroSliderUseCase
+import com.example.cyclistance.feature_readable_displays.domain.use_case.IntroSliderUseCase
 import com.example.cyclistance.navigation.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber

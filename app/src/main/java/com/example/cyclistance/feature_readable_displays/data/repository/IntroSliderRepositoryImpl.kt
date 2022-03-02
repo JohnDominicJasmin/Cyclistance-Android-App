@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_readable_displays.presentation.data.repository
+package com.example.cyclistance.feature_readable_displays.data.repository
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -6,10 +6,9 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.cyclistance.common.ReadableDisplaysConstants
 import com.example.cyclistance.common.ReadableDisplaysConstants.DATA_STORE_INTRO_SLIDER_KEY
-import com.example.cyclistance.feature_readable_displays.presentation.domain.exceptions.Exceptions
-import com.example.cyclistance.feature_readable_displays.presentation.domain.repository.IntroSliderRepository
+import com.example.cyclistance.feature_readable_displays.domain.exceptions.Exceptions
+import com.example.cyclistance.feature_readable_displays.domain.repository.IntroSliderRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
