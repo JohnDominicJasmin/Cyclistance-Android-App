@@ -5,11 +5,30 @@ pluginManagement {
         mavenCentral()
     }
 }
+
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
+
+        Properties props = new Properties()
+        props.load(new FileInputStream(new File('local.properties')))
+
+        maven {
+            url 'https://api.mapbox.com/downloads/v2/releases/maven'
+            authentication {
+                basic(BasicAuthentication)
+            }
+            credentials {
+                // Do not change the username below.
+                // This should always be `mapbox` (not your username).
+                username = "mapbox"
+                // Use the secret token you stored in gradle.properties as the password
+                password = props["MAPBOX_DOWNLOADS_TOKEN"]
+            }
+        }
     }
 }
 rootProject.name = "Cyclistance"
