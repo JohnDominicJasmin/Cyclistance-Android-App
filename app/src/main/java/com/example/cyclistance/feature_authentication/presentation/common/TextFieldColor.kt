@@ -12,6 +12,6 @@ fun TextFieldColors() = TextFieldDefaults.textFieldColors(
     backgroundColor = TextFieldBackgroundColor,
     focusedIndicatorColor = TextFieldBackgroundColor,
     unfocusedIndicatorColor = TextFieldBackgroundColor,
-    cursorColor = Color.White
+    cursorColor = Color.White,
 
 )

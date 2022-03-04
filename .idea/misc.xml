@@ -146,17 +146,54 @@
         <entry key="../../../../layout/compose-model-1646239890889.xml" value="0.67" />
         <entry key="../../../../layout/compose-model-1646241739120.xml" value="0.33" />
         <entry key="../../../../layout/compose-model-1646242367774.xml" value="1.0" />
+        <entry key="../../../../layout/compose-model-1646246693482.xml" value="0.15635451505016723" />
+        <entry key="../../../../layout/compose-model-1646246854644.xml" value="0.2935185185185185" />
+        <entry key="../../../../layout/compose-model-1646248926952.xml" value="0.1" />
+        <entry key="../../../../layout/compose-model-1646289541883.xml" value="0.22" />
+        <entry key="../../../../layout/compose-model-1646289682900.xml" value="0.18" />
+        <entry key="../../../../layout/compose-model-1646298420132.xml" value="0.18703703703703703" />
+        <entry key="../../../../layout/compose-model-1646301257945.xml" value="0.31630067567567566" />
+        <entry key="../../../../layout/compose-model-1646304298028.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1646311374565.xml" value="0.31630067567567566" />
+        <entry key="../../../../layout/compose-model-1646311402586.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1646313096350.xml" value="0.1" />
+        <entry key="../../../../layout/compose-model-1646313170319.xml" value="0.1" />
+        <entry key="../../../../layout/compose-model-1646313177210.xml" value="0.2601851851851852" />
+        <entry key="../../../../layout/compose-model-1646313536169.xml" value="0.75" />
+        <entry key="../../../../layout/compose-model-1646316554751.xml" value="0.67" />
+        <entry key="../../../../layout/compose-model-1646319873516.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1646321588069.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1646323525264.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1646324209127.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1646325892089.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1646326426441.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1646329158017.xml" value="0.2" />
+        <entry key="../../../../layout/compose-model-1646332517582.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1646375643662.xml" value="0.3171452702702703" />
+        <entry key="../../../../layout/compose-model-1646376887833.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1646379240120.xml" value="0.3171452702702703" />
+        <entry key="../../../../layout/compose-model-1646379546102.xml" value="0.22" />
+        <entry key="../../../../layout/compose-model-1646397284705.xml" value="0.3171452702702703" />
+        <entry key="../../../../layout/compose-model-1646398386828.xml" value="0.3171452702702703" />
+        <entry key="../../../../layout/compose-model-1646398797331.xml" value="0.67" />
+        <entry key="../../../../layout/compose-model-1646399265918.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1646400251998.xml" value="0.25" />
+        <entry key="../../.gradle/caches/transforms-3/dfd8fd68048be80345bd978b987de6ce/transformed/material-1.5.0/res/drawable/mtrl_ic_error.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-v24/ic_facebook_.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.187" />
+        <entry key="app/src/main/res/drawable/ic__670665_200.xml" value="0.2215" />
         <entry key="app/src/main/res/drawable/ic_about.xml" value="0.258" />
+        <entry key="app/src/main/res/drawable/ic_accident.xml" value="0.278" />
         <entry key="app/src/main/res/drawable/ic_baseline_logout_24.xml" value="0.213" />
         <entry key="app/src/main/res/drawable/ic_baseline_person_outline_24.xml" value="0.2415" />
         <entry key="app/src/main/res/drawable/ic_bottom_wave.xml" value="0.366" />
+        <entry key="app/src/main/res/drawable/ic_check.xml" value="0.2405" />
         <entry key="app/src/main/res/drawable/ic_cyclistance_app_icon.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_email.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_facebook.xml" value="0.195" />
         <entry key="app/src/main/res/drawable/ic_facebook_svgrepo_com.xml" value="0.195" />
         <entry key="app/src/main/res/drawable/ic_facebook_svgrepo_com__1_.xml" value="0.195" />
+        <entry key="app/src/main/res/drawable/ic_flat_tire.xml" value="0.2305" />
         <entry key="app/src/main/res/drawable/ic_google.xml" value="0.183" />
         <entry key="app/src/main/res/drawable/ic_group_35.xml" value="0.173" />
         <entry key="app/src/main/res/drawable/ic_help_and_rescue.xml" value="0.24" />
@@ -164,6 +201,7 @@
         <entry key="app/src/main/res/drawable/ic_real_time_messaging.xml" value="0.1195" />
         <entry key="app/src/main/res/drawable/ic_rescue_request.xml" value="0.204" />
         <entry key="app/src/main/res/drawable/ic_sign_out.xml" value="0.213" />
+        <entry key="app/src/main/res/drawable/ic_snapped_chain.xml" value="0.2305" />
         <entry key="app/src/main/res/drawable/ic_top_wave.xml" value="0.18" />
         <entry key="app/src/main/res/layout/activity_mapping.xml" value="0.33" />
       </map>

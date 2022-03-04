@@ -33,7 +33,7 @@ fun MappingDrawerContent() {
 
         Box(
             modifier = Modifier
-                .layoutId(MappingDrawerConstraintItem.UpperSection.layoutId)
+                .layoutId(MappingConstraintItem.UpperSection.layoutId)
                 .background(Color(0xFF3F3F3F))) {
 
 
@@ -72,7 +72,7 @@ fun MappingDrawerContent() {
 
         Column(
             modifier = Modifier
-                .layoutId(MappingDrawerConstraintItem.BottomSection.layoutId),
+                .layoutId(MappingConstraintItem.BottomSection.layoutId),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(space = 1.5.dp)
         ) {

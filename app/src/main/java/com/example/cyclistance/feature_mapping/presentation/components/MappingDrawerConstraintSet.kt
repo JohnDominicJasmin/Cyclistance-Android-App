@@ -7,8 +7,8 @@ import androidx.constraintlayout.compose.Dimension
 val drawerMappingConstraintSet = ConstraintSet {
 
 
-    val upperSection = createRefFor(id = MappingDrawerConstraintItem.UpperSection.layoutId)
-    val bottomSection = createRefFor(id = MappingDrawerConstraintItem.BottomSection.layoutId)
+    val upperSection = createRefFor(id = MappingConstraintItem.UpperSection.layoutId)
+    val bottomSection = createRefFor(id = MappingConstraintItem.BottomSection.layoutId)
 
 
 

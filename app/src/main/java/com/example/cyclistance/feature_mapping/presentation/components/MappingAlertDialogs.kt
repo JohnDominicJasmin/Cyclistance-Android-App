@@ -7,10 +7,12 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -19,10 +21,14 @@ import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
 import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
 
+
+@Preview
 @Composable
 fun Preview() {
+
     val dialogState = remember{ mutableStateOf(true) }
-    RescueDialogCreator(dialogState,
+
+    AlertDialogCreator(dialogState,
         onClickDismissButton = {
          dialogState.value = false
     }, onClickConfirmButton = {
@@ -40,7 +46,7 @@ fun Preview() {
 
          */
 
-        DialogContent(
+        AlertDialogContent(
             mappingDialogData = MappingDialogData(
                 icon = R.drawable.ic_question,
                 title = "Are you sure?",
@@ -53,7 +59,7 @@ fun Preview() {
 
 
 @Composable
-fun RescueDialogCreator(
+fun AlertDialogCreator(
     show: MutableState<Boolean>,
     onClickDismissButton: () -> Unit,
     onClickConfirmButton: () -> Unit,
@@ -61,17 +67,18 @@ fun RescueDialogCreator(
         onDismiss: () -> Unit,
         onConfirm: () -> Unit, ) -> Unit
 ) {
+    if (show.value) {
     Dialog(onDismissRequest = { show.value = false }, properties = DialogProperties()) {
 
-        if (show.value) {
             content(onClickDismissButton, onClickConfirmButton)
         }
     }
 }
 
 
+
 @Composable
-fun DialogContent(
+fun AlertDialogContent(
     mappingDialogData: MappingDialogData,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit) {
@@ -80,7 +87,7 @@ fun DialogContent(
             .fillMaxWidth()
             .wrapContentHeight(),
         shape = RoundedCornerShape(12.dp),
-        backgroundColor = BackgroundColor) {
+        backgroundColor = BackgroundColor ) {
 
         Column(
             modifier = Modifier
@@ -124,7 +131,8 @@ fun DialogContent(
                 Button(
                     modifier = Modifier
                         .wrapContentSize()
-                        .padding(all = 3.dp),
+                        .padding(all = 7.dp)
+                        .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF8C8C8C)),
                     shape = RoundedCornerShape(6.dp),
                     onClick = onDismiss) {
@@ -132,6 +140,7 @@ fun DialogContent(
                         text = "Dismiss",
                         style = MaterialTheme.typography.button,
                         color = Color.Black,
+                        textAlign = TextAlign.Center
                     )
                 }
 
@@ -139,7 +148,8 @@ fun DialogContent(
                 Button(
                     modifier = Modifier
                         .wrapContentSize()
-                        .padding(all = 3.dp),
+                        .padding(all = 7.dp)
+                        .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
                     colors = ButtonDefaults.buttonColors(backgroundColor = ThemeColor),
                     shape = RoundedCornerShape(6.dp),
                     onClick = onConfirm) {
@@ -149,6 +159,7 @@ fun DialogContent(
                         text = "Confirm",
                         style = MaterialTheme.typography.button,
                         color = Color.Black,
+                        textAlign = TextAlign.Center
                     )
                 }
 
@@ -159,5 +170,4 @@ fun DialogContent(
         }
     }
 }
-
 
