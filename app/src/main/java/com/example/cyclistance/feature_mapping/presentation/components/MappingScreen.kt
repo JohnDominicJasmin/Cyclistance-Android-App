@@ -53,7 +53,6 @@ fun MappingScreen() {
         drawerContent = { MappingDrawerContent() },
     ) {
         SetupMapScreen()
-
     }
 }
 

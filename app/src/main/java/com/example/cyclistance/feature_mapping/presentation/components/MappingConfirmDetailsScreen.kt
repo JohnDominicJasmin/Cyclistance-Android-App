@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_mapping.presentation.components
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -17,7 +16,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,7 +39,7 @@ private val bikeList = listOf(
 
 @Preview
 @Composable
-fun MappingDetailsDialog() {
+fun MappingDetailsDialogScreen() {
 
     ConstraintLayout(
         modifier = Modifier
@@ -49,7 +47,7 @@ fun MappingDetailsDialog() {
             .verticalScroll(rememberScrollState())
             .background(BackgroundColor)) {
 
-        val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageArea, buttonNavButtonSection) = createRefs()
+        val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection) = createRefs()
 
 
 
@@ -88,7 +86,7 @@ fun MappingDetailsDialog() {
 
         SetupAdditionalMessageSection(
             modifier = Modifier
-                .constrainAs(additionalMessageArea) {
+                .constrainAs(additionalMessageSection) {
                     top.linkTo(buttonDescriptionSection.bottom, margin = 15.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
@@ -98,14 +96,14 @@ fun MappingDetailsDialog() {
                 }
         )
 
-        BottomNavigationButtonSection(
+        ButtonDialogSection(
             modifier = Modifier
                 .constrainAs(buttonNavButtonSection) {
-                    top.linkTo(additionalMessageArea.bottom, margin = 15.dp)
-                    bottom.linkTo(parent.bottom,margin = 5.dp)
+                    top.linkTo(additionalMessageSection.bottom, margin = 15.dp)
+                    bottom.linkTo(parent.bottom,margin = 2.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
-                    height = Dimension.percent(0.15f)
+                    height = Dimension.wrapContent
                     width = Dimension.percent(0.9f)
                 },
         onClickCancelButton = {
@@ -371,7 +369,6 @@ fun SetupButtonDescriptionItem(
         }
 
         if (selectedState.value) {
-
             Icon(
                 painter = painterResource(id = R.drawable.ic_check_icon),
                 contentDescription = "null",
@@ -389,93 +386,4 @@ fun SetupButtonDescriptionItem(
 }
 
 
-@Composable
-fun SetupAdditionalMessageSection(modifier: Modifier) {
-    Column(modifier = modifier) {
 
-        Text(
-            text = "Message",
-            color = Color.White,
-            style = MaterialTheme.typography.h6,
-            modifier = Modifier.padding(top = 5.dp,bottom = 5.dp))
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(
-                10.dp,
-                alignment = Alignment.CenterVertically)) {
-
-
-            var text by remember { mutableStateOf(TextFieldValue("")) }
-
-            TextField(
-                modifier = Modifier.fillMaxSize(),
-                value = text,
-                onValueChange = { newText ->
-                    text = newText
-                },
-                shape = RoundedCornerShape(12.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = Color.White,
-                    backgroundColor = Color(0xFF404040),
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = Color.White,
-                    disabledIndicatorColor = Color.Transparent
-
-                ),
-                placeholder = {
-                    Text(
-                        text = "Leave a message",
-                        color = Color(0xFFB7B7B7),
-                        style = MaterialTheme.typography.body2)
-                },
-            )
-
-
-        }
-    }
-}
-
-
-@Composable
-fun BottomNavigationButtonSection(
-    modifier: Modifier,
-    onClickCancelButton: () -> Unit,
-    onClickConfirmButton: () -> Unit) {
-    Column(modifier = modifier) {
-        Row(
-            modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically) {
-
-            Button(
-                onClick = onClickCancelButton,
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .weight(0.5f)
-                    .padding(all = 7.dp)
-                    .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
-             colors = buttonColors(backgroundColor = Color(0xFF8C8C8C)),
-                shape = RoundedCornerShape(12.dp)) {
-                Text(text = "Dismiss", color = Color.Black, style = MaterialTheme.typography.button)
-            }
-
-
-            Button(
-                onClick = onClickConfirmButton,
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .weight(0.5f)
-                    .padding(all = 5.dp)
-                    .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
-                colors = buttonColors(backgroundColor = ThemeColor),
-                shape = RoundedCornerShape(12.dp)) {
-                Text(text = "Confirm", color = Color.Black, style = MaterialTheme.typography.button)
-            }
-
-
-
-        }
-    }
-}
