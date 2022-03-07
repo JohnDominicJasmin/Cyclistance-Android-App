@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.TextFieldColors
+import com.example.cyclistance.feature_authentication.presentation.common.TextFieldColors
 import com.example.cyclistance.feature_authentication.presentation.theme.*
 
 

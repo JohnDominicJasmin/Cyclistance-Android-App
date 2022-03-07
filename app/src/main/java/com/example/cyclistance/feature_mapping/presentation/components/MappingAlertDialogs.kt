@@ -20,6 +20,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
 import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
+import com.example.cyclistance.feature_mapping.domain.model.MappingDialogData
 
 
 @Preview
@@ -133,7 +134,7 @@ fun AlertDialogContent(
                         .wrapContentSize()
                         .padding(all = 7.dp)
                         .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF8C8C8C)),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF696969)),
                     shape = RoundedCornerShape(6.dp),
                     onClick = onDismiss) {
                     Text(

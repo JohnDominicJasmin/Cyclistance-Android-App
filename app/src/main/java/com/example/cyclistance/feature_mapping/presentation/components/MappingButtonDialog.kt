@@ -9,6 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -33,7 +34,7 @@ fun ButtonDialogSection(
                     .weight(0.5f)
                     .padding(all = 7.dp)
                     .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF8C8C8C)),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF696969)),
                 shape = RoundedCornerShape(12.dp)) {
                 Text(text = "Dismiss", color = Color.Black, style = MaterialTheme.typography.button)
             }

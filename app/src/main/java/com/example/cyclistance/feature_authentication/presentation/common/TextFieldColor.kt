@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components
+package com.example.cyclistance.feature_authentication.presentation.common
 
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable

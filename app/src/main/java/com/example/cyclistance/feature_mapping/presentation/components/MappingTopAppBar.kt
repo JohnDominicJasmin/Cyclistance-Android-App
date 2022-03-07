@@ -27,6 +27,7 @@ fun TopAppBarCreator(
     scaffoldState: ScaffoldState,
     topAppBarTitle: @Composable () -> Unit) {
     val coroutineScope = rememberCoroutineScope()
+
     TopAppBar(
         elevation = 10.dp,
         title = { topAppBarTitle() },

@@ -1,4 +1,5 @@
-package com.example.cyclistance.feature_mapping.presentation.components
+package com.example.cyclistance.feature_mapping.domain.model
+
 
 data class MappingDialogData(
     var icon: Int = 0,
