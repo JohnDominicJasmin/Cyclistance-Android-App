@@ -20,7 +20,7 @@ import com.example.cyclistance.feature_readable_displays.presentation.splash_scr
 @Composable
 fun Navigation(navController:NavHostController) {
     val splashScreenViewModel: SplashScreenViewModel = hiltViewModel()
-    val screen by splashScreenViewModel._state
+    val screen by splashScreenViewModel.state
 
     NavHost(navController = navController, startDestination = screen.navigationStartingDestination){
 

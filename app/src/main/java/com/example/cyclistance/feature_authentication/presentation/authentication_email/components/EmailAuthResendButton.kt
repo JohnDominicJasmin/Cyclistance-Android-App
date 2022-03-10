@@ -10,11 +10,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
-import com.example.cyclistance.feature_authentication.presentation.theme.DisabledTextColor
+import com.example.cyclistance.feature_authentication.presentation.theme.DisabledColor
 
 @Composable
 fun EmailAuthResendButton(onClick: ()->Unit) {
@@ -31,7 +30,7 @@ fun EmailAuthResendButton(onClick: ()->Unit) {
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent,
                 contentColor = ThemeColor,
-                disabledContentColor = DisabledTextColor)) {
+                disabledContentColor = DisabledColor)) {
             Text(
                 "Resend email",
                 textAlign = TextAlign.Center,

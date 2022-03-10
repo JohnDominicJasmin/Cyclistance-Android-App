@@ -17,8 +17,8 @@ import javax.inject.Inject
 class SplashScreenViewModel @Inject constructor(
     private val introSliderUseCase: IntroSliderUseCase) : ViewModel() {
 
-    private val state: MutableState<SplashScreenState> = mutableStateOf(SplashScreenState())
-    val _state: State<SplashScreenState> = state
+    private val _state: MutableState<SplashScreenState> = mutableStateOf(SplashScreenState())
+    val state: State<SplashScreenState> = this._state
 
 
     init {
@@ -30,10 +30,10 @@ class SplashScreenViewModel @Inject constructor(
             }.onSuccess { result ->
                 result.collect { userCompletedWalkThrough ->
                     if (userCompletedWalkThrough) {
-                        state.value =
+                        this@SplashScreenViewModel._state.value =
                             SplashScreenState(navigationStartingDestination = Screens.SignInScreen.route)
                     } else {
-                        state.value =
+                        this@SplashScreenViewModel._state.value =
                             SplashScreenState(navigationStartingDestination = Screens.SplashScreen.route)
                     }
                 }

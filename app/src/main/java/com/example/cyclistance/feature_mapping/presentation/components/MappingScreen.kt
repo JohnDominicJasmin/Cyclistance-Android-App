@@ -57,11 +57,11 @@ fun MappingScreen() {
 }
 
 @Composable
-fun SetupMapScreen() {
+fun SetupMapScreen() {// todo remove later
+
     AndroidView(
         factory = { context: Context ->
-            val view =
-                LayoutInflater.from(context).inflate(R.layout.activity_mapping, null, false)
+            val view = LayoutInflater.from(context).inflate(R.layout.activity_mapping, null, false)
             val mapView: MapView = view.findViewById(R.id.mapView)
             mapView.getMapboxMap().loadStyleUri(com.mapbox.maps.Style.DARK)
             view
