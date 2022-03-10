@@ -34,7 +34,7 @@ class SplashScreenViewModel @Inject constructor(
                             SplashScreenState(navigationStartingDestination = Screens.SignInScreen.route)
                     } else {
                         this@SplashScreenViewModel._state.value =
-                            SplashScreenState(navigationStartingDestination = Screens.SplashScreen.route)
+                            SplashScreenState(navigationStartingDestination = Screens.IntroSliderScreen.route)
                     }
                 }
             }.onFailure {

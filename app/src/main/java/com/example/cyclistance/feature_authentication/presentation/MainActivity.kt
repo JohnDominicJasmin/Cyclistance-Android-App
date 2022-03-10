@@ -21,13 +21,9 @@ class MainActivity : ComponentActivity() {
         
         setContent {
             CyclistanceTheme(darkTheme = true) {
-                val navController = rememberNavController()
-
 
                 Navigation(
-                    navController = navController)
-
-
+                    navController = rememberNavController())
                 }
         }
     }

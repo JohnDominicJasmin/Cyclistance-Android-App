@@ -9,19 +9,25 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
+import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.SplashScreenViewModel
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(navController: NavController) {
+    val splashScreenViewModel: SplashScreenViewModel = hiltViewModel()
+    val screen by splashScreenViewModel.state
+
     val scale = remember{ Animatable(initialValue = 0f) }
     LaunchedEffect(key1 = true){
         scale.animateTo(0.9f,
@@ -31,7 +37,7 @@ fun SplashScreen(navController: NavController) {
             ))
         delay(1200L)
 
-        navController.navigate(Screens.IntroSliderScreen.route){
+        navController.navigate(screen.navigationStartingDestination){
             popUpTo(Screens.SplashScreen.route){ inclusive = true }
             launchSingleTop = true
         }
