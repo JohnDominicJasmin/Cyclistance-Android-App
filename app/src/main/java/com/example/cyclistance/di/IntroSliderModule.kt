@@ -9,24 +9,26 @@ import com.example.cyclistance.feature_readable_displays.domain.use_case.read_in
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ViewModelComponent::class)
 object IntroSliderModule {
 
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideIntroSliderRepository(@ApplicationContext context: Context): IntroSliderRepository {
         return IntroSliderRepositoryImpl(context = context)
     }
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideIntroSliderUseCase(repository: IntroSliderRepository):IntroSliderUseCase
         = IntroSliderUseCase(
         completedIntroSliderUseCase = CompletedIntroSliderUseCase(repository),
