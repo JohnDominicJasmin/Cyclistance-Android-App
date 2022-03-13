@@ -2,9 +2,9 @@ package com.example.cyclistance.feature_readable_displays.domain.use_case.comple
 import com.example.cyclistance.feature_readable_displays.domain.repository.IntroSliderRepository
 
 class CompletedIntroSliderUseCase(
-    private val repositoryImpl: IntroSliderRepository) {
+    private val repository: IntroSliderRepository) {
 
     suspend operator fun invoke(){
-        repositoryImpl.completedIntroSlider()
+        repository.completedIntroSlider()
     }
 }

@@ -4,10 +4,10 @@ import com.example.cyclistance.feature_readable_displays.domain.repository.Intro
 import kotlinx.coroutines.flow.Flow
 
 class ReadIntroSliderStateUseCase(
-    private val repositoryImpl: IntroSliderRepository) {
+    private val repository: IntroSliderRepository) {
 
     operator fun invoke():Flow<Boolean> =
-        repositoryImpl.readIntroSliderState()
+        repository.readIntroSliderState()
 
 
 }

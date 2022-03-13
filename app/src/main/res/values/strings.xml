@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">Cyclistance</string>
     <string name="request_help">Request Help</string>
+    <string name="no_internet_message">Please Check your Internet Connection.</string>
+    <string name="failed_email_verification">Failed to Send Email Verification, Please try again.</string>
+    <string name="incorrectEmailOrPasswordMessage">Email or password is incorrect.</string>
+    <string name="fieldLeftBlankMessage">Field cannot be left blank.</string>
+    <string name="emailIsInvalidMessage">Email is invalid</string>
+    <string name="passwordIsNotMatchMessage">The specified password do not match.</string>
+    <string name="passwordIsWeakMessage">Password must contain at least 8 characters, including numbers or special characters.</string>
 </resources>
