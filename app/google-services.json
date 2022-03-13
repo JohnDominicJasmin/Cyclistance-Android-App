@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "517879896386",
+    "project_id": "cyclistance",
+    "storage_bucket": "cyclistance.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:517879896386:android:d0c112b8ec70b7231c10db",
+        "android_client_info": {
+          "package_name": "com.example.jetpack_testing"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "517879896386-7sn2tm0058k24n1ikc3ge8ido3nbskvf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2yYg0ZxCbZ5vwoVEJhwlVUR4bXFpIz2Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "517879896386-7sn2tm0058k24n1ikc3ge8ido3nbskvf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
