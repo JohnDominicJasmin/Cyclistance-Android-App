@@ -5,25 +5,32 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_readable_displays.domain.use_case.IntroSliderUseCase
 import com.example.cyclistance.navigation.Screens
-import com.google.firebase.auth.GoogleAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
 class SplashScreenViewModel @Inject constructor(
-    private val introSliderUseCase: IntroSliderUseCase) : ViewModel() {
+    private val introSliderUseCase: IntroSliderUseCase,
+    private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
     private val _state: MutableState<SplashScreenState> = mutableStateOf(SplashScreenState())
     val state: State<SplashScreenState> = this._state
 
+
     init {
+        isUserCompletedWalkThrough()
+    }
+
+
+
+
+    private fun isUserCompletedWalkThrough() {
         viewModelScope.launch {
             kotlin.runCatching {
 
@@ -45,6 +52,4 @@ class SplashScreenViewModel @Inject constructor(
 
         }
     }
-
-
 }

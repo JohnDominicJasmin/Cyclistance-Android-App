@@ -15,62 +15,54 @@ import javax.inject.Inject
 class EmailAuthViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
-    private val _reloadState: MutableState<AuthState> = mutableStateOf(AuthState())
-    val reloadState: State<AuthState> = _reloadState
+    private val _reloadState: MutableState<AuthState<Boolean>> = mutableStateOf(AuthState())
+    val reloadState: State<AuthState<Boolean>> = _reloadState
 
-    private val _isEmailVerifyState: MutableState<AuthState> = mutableStateOf(AuthState())
-    val isEmailVerifyState: State<AuthState> = _isEmailVerifyState
+    private val _isEmailVerifyState: MutableState<AuthState<Boolean>> =
+        mutableStateOf(AuthState<Boolean>())
+    val isEmailVerifyState: State<AuthState<Boolean>> = _isEmailVerifyState
 
-    private val _sendEmailVerificationState: MutableState<AuthState> = mutableStateOf(AuthState())
-    val sendEmailVerification: State<AuthState> = _sendEmailVerificationState
+    private val _sendEmailVerificationState: MutableState<AuthState<Boolean>> =
+        mutableStateOf(AuthState<Boolean>())
+    val sendEmailVerification: State<AuthState<Boolean>> = _sendEmailVerificationState
 
     fun reloadEmail() {
+        viewModelScope.launch {
 
-        kotlin.runCatching {
-            viewModelScope.launch {
+            kotlin.runCatching {
+
                 _reloadState.value = AuthState(isLoading = true)
                 val result = authUseCase.reloadEmailUseCase()
-                _reloadState.value = AuthState(isLoading = false, isSuccessful = result)
+                _reloadState.value = AuthState(isLoading = false, result = result)
             }
-        }
-            .onFailure {
-                _reloadState.value = AuthState(
-                    isLoading = false,
-                    isSuccessful = false,
-                    error = it.message ?: "An unexpected error occurred.")
-            }
+                .onFailure {
+                    _reloadState.value = AuthState(
+                        isLoading = false,
+                        result = false,
+                        error = it.message ?: "An unexpected error occurred.")
+                }
 
-    }
-
-    fun verifyEmail() {
-
-        kotlin.runCatching {
-            viewModelScope.launch {
-                _isEmailVerifyState.value = AuthState(isLoading = true)
-                val result = authUseCase.isEmailVerifiedUseCase()
-                _isEmailVerifyState.value = AuthState(isLoading = false, isSuccessful = result)
-            }
-        }.onFailure {
-            _isEmailVerifyState.value = AuthState(
-                isLoading = false,
-                isSuccessful = false,
-                error = it.message ?: "An unexpected error occurred")
         }
     }
+
+    fun isEmailVerified() =
+        mutableStateOf(AuthState<Boolean>(result = authUseCase.isEmailVerifiedUseCase()))
+
 
     fun sendEmailVerification() {
-        kotlin.runCatching {
-            viewModelScope.launch {
+        viewModelScope.launch {
+            kotlin.runCatching {
                 _sendEmailVerificationState.value = AuthState(isLoading = true)
                 val result = authUseCase.sendEmailVerificationUseCase()
                 _sendEmailVerificationState.value =
-                    AuthState(isLoading = false, isSuccessful = result)
+                    AuthState(isLoading = false, result = result)
+
+            }.onFailure {
+                _sendEmailVerificationState.value = AuthState(
+                    isLoading = false,
+                    result = false,
+                    error = it.message ?: "An unexpected error occurred")
             }
-        }.onFailure {
-            _sendEmailVerificationState.value = AuthState(
-                isLoading = false,
-                isSuccessful = false,
-                error = it.message ?: "An unexpected error occurred")
         }
     }
 

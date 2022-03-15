@@ -3,7 +3,7 @@ package com.example.cyclistance.feature_authentication.domain.repository
 import com.google.firebase.auth.UserInfo
 import kotlinx.coroutines.flow.Flow
 
-interface AuthRepository<in T> {
+interface AuthRepository< T> {
     suspend fun reloadEmail(): Boolean
     fun signOut()
     fun registerAccount()

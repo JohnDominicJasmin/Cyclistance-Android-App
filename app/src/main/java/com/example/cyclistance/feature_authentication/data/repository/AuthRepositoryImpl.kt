@@ -9,14 +9,15 @@ import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 
 
-class AuthRepositoryImpl(
+class AuthRepositoryImpl @Inject constructor(
+    private val context: Context,
     private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance(),
-    private var firebaseUser: FirebaseUser? = firebaseAuth.currentUser,
-    val context: Context
+    private var firebaseUser: FirebaseUser? = firebaseAuth.currentUser
 ) : AuthRepository<AuthCredential> {
 
 
@@ -32,7 +33,6 @@ class AuthRepositoryImpl(
             }
         }
     }
-
     override suspend fun sendEmailVerification(): Boolean {
         return suspendCoroutine { continuation ->
             firebaseUser?.sendEmailVerification()?.addOnCompleteListener { sendEmail ->
@@ -43,7 +43,6 @@ class AuthRepositoryImpl(
             }
         }
     }
-
     override suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean {
         return suspendCoroutine { continuation ->
             firebaseAuth.createUserWithEmailAndPassword(email, password)
@@ -61,8 +60,6 @@ class AuthRepositoryImpl(
                 }
         }
     }
-
-
     override suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean {
 
         return suspendCoroutine { continuation ->
@@ -81,7 +78,6 @@ class AuthRepositoryImpl(
                 }
         }
     }
-
     override suspend fun signInWithCredentials(v: AuthCredential): Boolean {
         return suspendCoroutine { continuation ->
             firebaseAuth.signInWithCredential(v).addOnCompleteListener { signInWithCredential ->
@@ -96,8 +92,6 @@ class AuthRepositoryImpl(
             }
         }
     }
-
-
     override fun signOut() {
         firebaseAuth.signOut()
     }
@@ -108,12 +102,12 @@ class AuthRepositoryImpl(
 
 
     @Throws(NullPointerException::class)
-    override fun getEmail(): String {
+    override  fun getEmail(): String {
         return firebaseUser?.email!!
     }
 
     @Throws(NullPointerException::class)
-    override fun getName(): String {
+    override  fun getName(): String {
         return firebaseUser?.displayName!!
     }
 

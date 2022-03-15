@@ -1,9 +1,6 @@
 package com.example.cyclistance.feature_mapping.presentation.components
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -16,7 +13,7 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun SetupAdditionalMessageSection(modifier: Modifier) {
+fun SetupAdditionalMessageSection(modifier: Modifier ) {
     Column(modifier = modifier) {
 
 
@@ -26,14 +23,12 @@ fun SetupAdditionalMessageSection(modifier: Modifier) {
             style = MaterialTheme.typography.h6,
             modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(
-                10.dp,
-                alignment = Alignment.CenterVertically)) {
+        Box(modifier = Modifier.wrapContentHeight()) {
 
 
             var text by remember { mutableStateOf(TextFieldValue("")) }
+            val numberOfCharacters = remember { mutableStateOf(0)}
+            val maxCharacter = 256
 
             TextField(
                 modifier = Modifier
@@ -41,7 +36,10 @@ fun SetupAdditionalMessageSection(modifier: Modifier) {
                     .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
                 value = text,
                 onValueChange = { newText ->
-                    text = newText
+                    if(newText.text.length <= maxCharacter) {
+                        numberOfCharacters.value = newText.text.length
+                        text = newText
+                    }
                 },
                 shape = RoundedCornerShape(12.dp),
                 colors = TextFieldDefaults.textFieldColors(
@@ -51,7 +49,6 @@ fun SetupAdditionalMessageSection(modifier: Modifier) {
                     unfocusedIndicatorColor = Color.Transparent,
                     cursorColor = Color.White,
                     disabledIndicatorColor = Color.Transparent
-
                 ),
                 placeholder = {
                     Text(
@@ -60,6 +57,11 @@ fun SetupAdditionalMessageSection(modifier: Modifier) {
                         style = MaterialTheme.typography.body2)
                 },
             )
+            Text(
+                text = "Message",
+                color = Color.White,
+                style = MaterialTheme.typography.h6,
+                modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))
 
 
         }
