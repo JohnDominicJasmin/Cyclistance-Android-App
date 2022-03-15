@@ -334,14 +334,14 @@ fun SetupButtonDescriptionItem(
             modifier = Modifier
                 .wrapContentWidth()
                 .height(130.dp)
-                .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)
+                .shadow(7.dp, shape = RoundedCornerShape(15.dp), clip = true)
                 .constrainAs(buttonItem) {
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom)
                 },
-            shape = RoundedCornerShape(15.dp)) {
+            shape = RoundedCornerShape(12.dp)) {
 
 
             Column(
