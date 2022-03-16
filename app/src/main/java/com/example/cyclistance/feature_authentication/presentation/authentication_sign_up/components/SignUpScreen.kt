@@ -3,19 +3,29 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInViewModel
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.AppImageIcon
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpViewModel
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
 
 @Composable
 fun SignUpScreen(navController: NavController?) {
-
+    val signUpViewModel: SignUpViewModel = hiltViewModel()
+    val email = remember { mutableStateOf(TextFieldValue("")) }
+    val password = remember { mutableStateOf(TextFieldValue("")) }
+    val confirmPassword = remember { mutableStateOf(TextFieldValue("")) }
+    val signUpState = signUpViewModel.createAccountState.value
 
     ConstraintLayout(
         constraintSet = signUpConstraints,
@@ -31,7 +41,12 @@ fun SignUpScreen(navController: NavController?) {
             bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId
         )
 
-        SignUpTextFields()
+        SignUpTextFieldsSection(
+            email = email,
+            password = password,
+            confirmPassword = confirmPassword,
+            signUpState = signUpState
+        )
         SignUpButton(onClickButton = {
 
         })

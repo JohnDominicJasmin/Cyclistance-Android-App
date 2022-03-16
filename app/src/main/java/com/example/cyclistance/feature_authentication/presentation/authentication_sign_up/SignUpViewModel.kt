@@ -16,9 +16,9 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
-    private val _createAccountState: MutableState<AuthState<Boolean>> =
-        mutableStateOf(AuthState<Boolean>())
-    val createAccountState: State<AuthState<Boolean>> = _createAccountState
+    private val _createAccountState: MutableState<SignUpState<Boolean>> =
+        mutableStateOf(SignUpState<Boolean>())
+    val createAccountState: State<SignUpState<Boolean>> = _createAccountState
 
     fun createUserWithEmailAndPassword(authModel: AuthModel) {
         viewModelScope.launch {
@@ -28,10 +28,10 @@ class SignUpViewModel @Inject constructor(
                 _createAccountState.value = AuthState(isLoading = false, result = result)
 
             }.onFailure {
-                _createAccountState.value = AuthState(
+                _createAccountState.value = SignUpState(authState = AuthState(
                     isLoading = false,
                     result = false,
-                    error = it.message ?: "An unexpected error occurred.")
+                    error = it.message ?: "An unexpected error occurred."))
             }
         }
     }

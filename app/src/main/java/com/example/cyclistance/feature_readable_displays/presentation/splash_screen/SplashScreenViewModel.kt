@@ -40,7 +40,7 @@ class SplashScreenViewModel @Inject constructor(
                 result.collect { userCompletedWalkThrough ->
                     if (userCompletedWalkThrough) {
 
-                        if (authUseCase.isSignedInWithProviderUseCase() || authUseCase.isEmailVerifiedUseCase()) {
+                        if (authUseCase.isSignedInWithProviderUseCase() == true || authUseCase.isEmailVerifiedUseCase() == true) {
                             _splashScreenState.value = SplashScreenState(navigationStartingDestination = Screens.MappingScreen.route)
                             return@collect
                         }

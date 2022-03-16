@@ -15,16 +15,21 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInState
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpState
 import com.example.cyclistance.feature_authentication.presentation.common.TextFieldColors
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.theme.TextFieldTextColor
 
 @Composable
-fun SignUpTextFields() {
+fun SignUpTextFieldsSection(
+    email : MutableState<TextFieldValue>,
+    password: MutableState<TextFieldValue>,
+    confirmPassword: MutableState<TextFieldValue>,
+    signUpState: SignUpState<Boolean>
+) {
 
-    val email = remember { mutableStateOf(TextFieldValue("")) }
-    val password = remember { mutableStateOf(TextFieldValue("")) }
-    val confirmPassword = remember { mutableStateOf(TextFieldValue("")) }
+
 
 
     Column(
@@ -121,7 +126,7 @@ fun PasswordTextField(password:MutableState<TextFieldValue>) {
 @Composable
 fun EmailTextField(email:MutableState<TextFieldValue>) {
 
-
+    //todo change color when errors are displayed
     TextField(
         modifier = Modifier
             .fillMaxWidth()

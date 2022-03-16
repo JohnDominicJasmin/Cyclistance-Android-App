@@ -5,6 +5,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_authentication.presentation.common.AuthState
@@ -17,8 +18,8 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
-    private val _signInWithEmailAndPasswordState: MutableState<AuthState<Boolean>> = mutableStateOf(AuthState<Boolean>())
-    val signInWithEmailAndPasswordState: State<AuthState<Boolean>> = _signInWithEmailAndPasswordState
+    private val _signInWithEmailAndPasswordState: MutableState<SignInState<Boolean>> = mutableStateOf(SignInState<Boolean>())
+    val signInWithEmailAndPasswordState: State<SignInState<Boolean>> = _signInWithEmailAndPasswordState
 
 
     private val _signInWithCredentialState: MutableState<AuthState<Boolean>> = mutableStateOf(AuthState<Boolean>())
@@ -30,11 +31,28 @@ class SignInViewModel @Inject constructor(
         viewModelScope.launch {
             kotlin.runCatching {
 
-                _signInWithEmailAndPasswordState.value = AuthState(isLoading = true)
-                val result = authUseCase.signInWithEmailAndPasswordUseCase(authModel)
-                _signInWithEmailAndPasswordState.value = AuthState(isLoading = false, result = result)
-            }.onFailure {
-                _signInWithEmailAndPasswordState.value = AuthState(isLoading = false, error = it.message?:"An unexpected error occurred.")
+                _signInWithEmailAndPasswordState.value = SignInState(authState = AuthState(isLoading = true))
+                 authUseCase.signInWithEmailAndPasswordUseCase(authModel)
+
+            }.onSuccess {result ->
+                _signInWithEmailAndPasswordState.value = SignInState(authState = AuthState(isLoading = false, result = result))
+            }.onFailure { exception ->
+
+                when(exception){
+                    is AuthExceptions.EmailException ->{
+                        _signInWithEmailAndPasswordState.value = SignInState(emailExceptionMessage = exception.message ?: "Invalid Email.")
+                    }
+                    is AuthExceptions.PasswordException ->{
+                        _signInWithEmailAndPasswordState.value = SignInState(passwordExceptionMessage = exception.message ?: "Invalid Password.")
+                    }
+                    is AuthExceptions.InternetException ->{
+                        _signInWithEmailAndPasswordState.value = SignInState(internetExceptionMessage = exception.message ?: "No internet connection.")
+                    }
+                    is AuthExceptions.InvalidUserException ->{
+                        _signInWithEmailAndPasswordState.value = SignInState(invalidUserExceptionMessage = exception.message ?: "Invalid User.")
+                    }
+
+                }
             }
         }
     }

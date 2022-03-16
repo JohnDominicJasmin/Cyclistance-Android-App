@@ -114,12 +114,13 @@ class AuthRepositoryImpl @Inject constructor(
     @Throws(NullPointerException::class)
     override suspend fun isSignedInWithProvider(): Flow<Boolean> = flow {
         firebaseUser?.providerData?.forEach {
-            emit(value =
-            (it.providerId == FacebookAuthProvider.PROVIDER_ID ||
-            it.providerId == GoogleAuthProvider.PROVIDER_ID))
+            emit(
+                value = (it.providerId == FacebookAuthProvider.PROVIDER_ID ||
+                         it.providerId == GoogleAuthProvider.PROVIDER_ID))
         }
 
     }
+
 
     @Throws(NullPointerException::class)
     override fun isEmailVerified(): Boolean {
