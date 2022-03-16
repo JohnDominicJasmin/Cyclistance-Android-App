@@ -27,7 +27,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
 
     @Provides
     @ViewModelScoped
-    fun provideAuthenticationUseCase(repository: AuthRepositoryImpl, @ApplicationContext context: Context):AuthenticationUseCase =
+    fun provideAuthenticationUseCase(repository: AuthRepository<AuthCredential>, @ApplicationContext context: Context):AuthenticationUseCase =
         AuthenticationUseCase(
             reloadEmailUseCase = ReloadEmailUseCase(repository = repository),// EmailScreen & SignInScreen(EmailAuthViewModel)
             signOutUseCase = SignOutUseCase(repository = repository),//Mapping Screen
