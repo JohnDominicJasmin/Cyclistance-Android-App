@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpScreen
+import com.example.cyclistance.feature_mapping.presentation.components.MappingScreen
 import com.example.cyclistance.feature_readable_displays.presentation.IntroSliderScreen
 import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.SplashScreenViewModel
 
@@ -40,6 +41,10 @@ fun Navigation(navController:NavHostController) {
 
         composable(Screens.EmailAuthScreen.route){
             EmailAuthScreen(navController = navController)
+        }
+
+        composable(Screens.MappingScreen.route){
+            MappingScreen(navController = navController)
         }
 
     }

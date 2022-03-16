@@ -48,7 +48,7 @@ fun MappingCancellationReasonScreen() {
                     top.linkTo(radioButtonsSection.bottom, margin = 15.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
-                    height = Dimension.percent(0.25f)
+                    height = Dimension.percent(0.30f)
                     width = Dimension.percent(0.9f)
 
                 }
@@ -58,11 +58,11 @@ fun MappingCancellationReasonScreen() {
         ButtonDialogSection(
             modifier = Modifier
                 .constrainAs(buttonNavButtonSection) {
-                    top.linkTo(additionalMessageSection.bottom, margin = 15.dp)
+                    top.linkTo(additionalMessageSection.bottom, margin = 50.dp)
                     bottom.linkTo(parent.bottom,margin = 5.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
-                    height = Dimension.wrapContent
+                    height = Dimension.percent(0.1f)
                     width = Dimension.percent(0.9f)
                 },
             onClickCancelButton = {

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
@@ -27,58 +28,65 @@ fun SetupAdditionalMessageSection(modifier: Modifier) {
             style = MaterialTheme.typography.h6,
             modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))
 
-        ConstraintLayout(modifier = Modifier.wrapContentHeight()) {
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(
+                10.dp,
+                alignment = Alignment.CenterVertically)) {
+
+            ConstraintLayout(modifier = Modifier.wrapContentHeight()) {
 
 
-            var text by remember { mutableStateOf(TextFieldValue("")) }
-            val(textField, numberOfCharactersText) = createRefs()
-            val numberOfCharacters = remember { mutableStateOf(0)}
+                var text by remember { mutableStateOf(TextFieldValue("")) }
+                val (textField, numberOfCharactersText) = createRefs()
+                val numberOfCharacters = remember { mutableStateOf(0) }
 
-            TextField(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)
-                    .constrainAs(textField) {
-                        top.linkTo(parent.top)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
+                TextField(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)
+                        .constrainAs(textField) {
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
 
+                        },
+                    value = text,
+                    onValueChange = { newText ->
+                        if (newText.text.length <= maxCharacter) {
+                            numberOfCharacters.value = newText.text.length
+                            text = newText
+                        }
                     },
-                value = text,
-                onValueChange = { newText ->
-                    if(newText.text.length <= maxCharacter) {
-                        numberOfCharacters.value = newText.text.length
-                        text = newText
-                    }
-                },
-                shape = RoundedCornerShape(12.dp),
-                colors = TextFieldDefaults.textFieldColors(
-                    textColor = Color.White,
-                    backgroundColor = Color(0xFF404040),
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    cursorColor = Color.White,
-                    disabledIndicatorColor = Color.Transparent
-                ),
-                placeholder = {
-                    Text(
-                        text = "(Optional) Leave a message",
-                        color = Color(0xFFB7B7B7),
-                        style = MaterialTheme.typography.body2)
-                },
-            )
+                    shape = RoundedCornerShape(12.dp),
+                    colors = TextFieldDefaults.textFieldColors(
+                        textColor = Color.White,
+                        backgroundColor = Color(0xFF404040),
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        cursorColor = Color.White,
+                        disabledIndicatorColor = Color.Transparent
+                    ),
+                    placeholder = {
+                        Text(
+                            text = "(Optional) Leave a message",
+                            color = Color(0xFFB7B7B7),
+                            style = MaterialTheme.typography.body2)
+                    },
+                )
 
-            Text(
-                text = "${numberOfCharacters.value}/$maxCharacter",
-                color = DisabledColor,
-                modifier = Modifier
-                    .padding(top = 5.dp, bottom = 5.dp)
-                    .constrainAs(numberOfCharactersText) {
-                        top.linkTo(textField.bottom)
-                        end.linkTo(parent.end)
-                    })
+                Text(
+                    text = "${numberOfCharacters.value}/$maxCharacter",
+                    color = DisabledColor,
+                    modifier = Modifier
+                        .padding(top = 5.dp, bottom = 5.dp)
+                        .constrainAs(numberOfCharactersText) {
+                            top.linkTo(textField.bottom)
+                            end.linkTo(parent.end)
+                        })
+            }
+
         }
-
-
     }
 }

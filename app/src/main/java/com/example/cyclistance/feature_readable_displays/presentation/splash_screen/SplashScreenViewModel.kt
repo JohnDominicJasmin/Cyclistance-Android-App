@@ -6,10 +6,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
+import com.example.cyclistance.feature_authentication.presentation.common.AuthState
 import com.example.cyclistance.feature_readable_displays.domain.use_case.IntroSliderUseCase
 import com.example.cyclistance.navigation.Screens
+import com.google.firebase.auth.FacebookAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -19,15 +20,14 @@ class SplashScreenViewModel @Inject constructor(
     private val introSliderUseCase: IntroSliderUseCase,
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
-    private val _state: MutableState<SplashScreenState> = mutableStateOf(SplashScreenState())
-    val state: State<SplashScreenState> = this._state
+    private val _splashScreenState: MutableState<SplashScreenState> =
+        mutableStateOf(SplashScreenState())
+    val splashScreenState: State<SplashScreenState> = this._splashScreenState
 
 
     init {
         isUserCompletedWalkThrough()
     }
-
-
 
 
     private fun isUserCompletedWalkThrough() {
@@ -39,11 +39,15 @@ class SplashScreenViewModel @Inject constructor(
             }.onSuccess { result ->
                 result.collect { userCompletedWalkThrough ->
                     if (userCompletedWalkThrough) {
-                        this@SplashScreenViewModel._state.value =
-                            SplashScreenState(navigationStartingDestination = Screens.SignInScreen.route)
+
+                        if (authUseCase.isSignedInWithProviderUseCase() || authUseCase.isEmailVerifiedUseCase()) {
+                            _splashScreenState.value = SplashScreenState(navigationStartingDestination = Screens.MappingScreen.route)
+                            return@collect
+                        }
+                        _splashScreenState.value = SplashScreenState(navigationStartingDestination = Screens.SignInScreen.route)
+
                     } else {
-                        this@SplashScreenViewModel._state.value =
-                            SplashScreenState(navigationStartingDestination = Screens.IntroSliderScreen.route)
+                        _splashScreenState.value = SplashScreenState(navigationStartingDestination = Screens.IntroSliderScreen.route)
                     }
                 }
             }.onFailure {

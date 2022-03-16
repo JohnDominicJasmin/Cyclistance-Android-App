@@ -10,7 +10,7 @@ interface AuthRepository< T> {
     fun getEmail(): String
     suspend fun sendEmailVerification(): Boolean
     fun getName(): String
-    suspend fun isSignedInWithProvider(id:String): Flow<Boolean>
+    suspend fun isSignedInWithProvider(): Flow<Boolean>
     fun isEmailVerified(): Boolean
     fun hasAccountSignedIn(): Boolean
     suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean

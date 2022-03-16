@@ -26,7 +26,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(navController: NavController) {
     val splashScreenViewModel: SplashScreenViewModel = hiltViewModel()
-    val screen by splashScreenViewModel.state
+    val screen by splashScreenViewModel.splashScreenState
 
     val scale = remember{ Animatable(initialValue = 0f) }
     LaunchedEffect(key1 = true){

@@ -7,4 +7,5 @@ sealed class Screens(val route:String){
     object SignUpScreen: Screens(route = "sign_up_screen")
     object EmailAuthScreen: Screens(route = "email_auth_screen")
     object IntroSliderScreen: Screens(route="intro_slider_screen")
+    object MappingScreen: Screens(route="mapping_screen")
 }

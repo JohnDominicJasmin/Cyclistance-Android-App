@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.navigation.NavController
 
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
@@ -27,9 +28,8 @@ import com.example.cyclistance.feature_authentication.presentation.theme.TextFie
 import com.mapbox.maps.MapView
 
 
-@Preview
 @Composable
-fun MappingScreen() {
+fun MappingScreen(navController: NavController) {
     val scaffoldState =
         rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
 
