@@ -69,8 +69,4 @@ fun SignInScreen(
 
 
 }
-@Preview
-@Composable
-fun SignInScreenPreview() {
-    SignInScreen(navController = null)
-}
+

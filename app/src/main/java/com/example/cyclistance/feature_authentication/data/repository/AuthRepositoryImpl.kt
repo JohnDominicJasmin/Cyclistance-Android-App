@@ -26,7 +26,7 @@ class AuthRepositoryImpl @Inject constructor(
             firebaseUser?.reload()?.addOnCompleteListener { reload ->
                 reload.exception?.let { exception ->
                     if (exception is FirebaseNetworkException) {
-                        throw AuthExceptions.NoInternetException(message = context.getString(R.string.no_internet_message))
+                        throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
                     }
                 }
                 continuation.resume(reload.isSuccessful)
@@ -49,7 +49,7 @@ class AuthRepositoryImpl @Inject constructor(
                 .addOnCompleteListener { createAccount ->
                     createAccount.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
-                            throw AuthExceptions.NoInternetException(message = context.getString(R.string.no_internet_message))
+                            throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
                         } else {
                             throw exception
                         }
@@ -67,7 +67,7 @@ class AuthRepositoryImpl @Inject constructor(
                 .addOnCompleteListener { signInWithEmailAndPassword ->
                     signInWithEmailAndPassword.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
-                            throw AuthExceptions.NoInternetException(message = context.getString(R.string.no_internet_message))
+                            throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
                         }
                         if (exception is FirebaseAuthInvalidUserException) {
                             throw AuthExceptions.InvalidUserException(message = context.getString(R.string.incorrectEmailOrPasswordMessage))
@@ -83,7 +83,7 @@ class AuthRepositoryImpl @Inject constructor(
             firebaseAuth.signInWithCredential(v).addOnCompleteListener { signInWithCredential ->
                 signInWithCredential.exception?.let { exception ->
                     if (exception.message == FB_CONNECTION_FAILURE) {
-                        throw AuthExceptions.NoInternetException(message = context.getString(R.string.no_internet_message))
+                        throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
                     } else {
                         throw AuthExceptions.ConflictFBTokenException("// todo Remove existing fb token to refresh")
                     }
@@ -101,18 +101,15 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
 
-    @Throws(NullPointerException::class)
-    override  fun getEmail(): String {
-        return firebaseUser?.email!!
+    override  fun getEmail(): String? {
+        return firebaseUser?.email
     }
 
-    @Throws(NullPointerException::class)
-    override  fun getName(): String {
-        return firebaseUser?.displayName!!
+    override  fun getName(): String? {
+        return firebaseUser?.displayName
     }
 
-    @Throws(NullPointerException::class)
-    override suspend fun isSignedInWithProvider(): Flow<Boolean> = flow {
+    override  fun isSignedInWithProvider(): Flow<Boolean> = flow {
         firebaseUser?.providerData?.forEach {
             emit(
                 value = (it.providerId == FacebookAuthProvider.PROVIDER_ID ||
@@ -122,9 +119,9 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
 
-    @Throws(NullPointerException::class)
-    override fun isEmailVerified(): Boolean {
-        return firebaseUser?.isEmailVerified!!
+
+    override fun isEmailVerified(): Boolean? {
+        return firebaseUser?.isEmailVerified
     }
 
     override fun hasAccountSignedIn(): Boolean {

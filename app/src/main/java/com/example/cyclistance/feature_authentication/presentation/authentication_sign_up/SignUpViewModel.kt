@@ -23,10 +23,10 @@ class SignUpViewModel @Inject constructor(
     fun createUserWithEmailAndPassword(authModel: AuthModel) {
         viewModelScope.launch {
             kotlin.runCatching {
-                _createAccountState.value = AuthState(isLoading = true)
-                val result = authUseCase.createWithEmailAndPasswordUseCase(authModel)
-                _createAccountState.value = AuthState(isLoading = false, result = result)
-
+                _createAccountState.value = SignUpState(authState = AuthState(isLoading = true))
+                authUseCase.createWithEmailAndPasswordUseCase(authModel)
+            }.onSuccess {result ->
+                _createAccountState.value = SignUpState(authState = AuthState(isLoading = false, result = result))
             }.onFailure {
                 _createAccountState.value = SignUpState(authState = AuthState(
                     isLoading = false,
