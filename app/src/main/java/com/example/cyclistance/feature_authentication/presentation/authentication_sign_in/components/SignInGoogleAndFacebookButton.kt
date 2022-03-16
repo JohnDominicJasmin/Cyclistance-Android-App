@@ -22,7 +22,7 @@ import com.example.cyclistance.feature_authentication.presentation.theme.Faceboo
 import com.example.cyclistance.feature_authentication.presentation.theme.GoogleButtonTextColor
 
 @Composable
-fun SignInGoogleAndFacebookButton() {
+fun SignInGoogleAndFacebookSection(facebookButtonOnClick: ()-> Unit, googleSignInButtonOnClick: ()-> Unit) {
     Row(modifier = Modifier
             .layoutId( AuthenticationConstraintsItem.OtherSignIns.layoutId)
             .wrapContentSize(),
@@ -30,7 +30,7 @@ fun SignInGoogleAndFacebookButton() {
         horizontalArrangement = Arrangement.Center) {
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = googleSignInButtonOnClick,
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
@@ -64,7 +64,7 @@ fun SignInGoogleAndFacebookButton() {
         Spacer(modifier = Modifier.width(14.dp))
 
         Button(
-            onClick = { /*TODO*/ },
+            onClick = facebookButtonOnClick,
             colors = ButtonDefaults.buttonColors(backgroundColor = FacebookColor),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
