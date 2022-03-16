@@ -4,5 +4,5 @@ import com.example.cyclistance.feature_authentication.domain.repository.AuthRepo
 import com.google.firebase.auth.AuthCredential
 
 class IsEmailVerifiedUseCase(private val repository: AuthRepository<AuthCredential>) {
-    operator fun invoke() = repository.isEmailVerified()
+    operator fun invoke():Boolean? = repository.isEmailVerified()
 }

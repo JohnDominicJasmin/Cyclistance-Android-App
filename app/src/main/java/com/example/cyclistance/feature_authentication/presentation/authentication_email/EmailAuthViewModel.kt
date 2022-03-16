@@ -30,12 +30,11 @@ class EmailAuthViewModel @Inject constructor(
         viewModelScope.launch {
 
             kotlin.runCatching {
-
                 _reloadState.value = AuthState(isLoading = true)
-                val result = authUseCase.reloadEmailUseCase()
+                authUseCase.reloadEmailUseCase()
+            }.onSuccess { result ->
                 _reloadState.value = AuthState(isLoading = false, result = result)
-            }
-                .onFailure {
+            }.onFailure {
                     _reloadState.value = AuthState(
                         isLoading = false,
                         result = false,
