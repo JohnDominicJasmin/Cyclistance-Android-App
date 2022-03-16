@@ -19,7 +19,7 @@ class CreateWithEmailAndPasswordUseCase(
 
         return when {
             ConnectionStatus.hasInternetConnection(context) == true ->
-                throw AuthExceptions.NoInternetException(message = context.getString(R.string.no_internet_message))
+                throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
 
             authModel.password.isEmpty() ->
                 throw AuthExceptions.PasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
