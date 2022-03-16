@@ -16,17 +16,21 @@ class SignInWithEmailAndPasswordUseCase(
     suspend operator fun invoke(authModel: AuthModel):Boolean {
 
         return when {
-            ConnectionStatus.hasInternetConnection(context) == true ->
-                throw AuthExceptions.NoInternetException(message = context.getString(R.string.no_internet_message))
-
-            authModel.password.isEmpty() ->
-                throw AuthExceptions.PasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
-
             authModel.email.isEmpty() ->
                 throw AuthExceptions.EmailException(message = context.getString(R.string.fieldLeftBlankMessage))
 
             !validEmail(authModel.email) ->
                 throw AuthExceptions.EmailException(message = context.getString(R.string.emailIsInvalidMessage))
+
+
+            authModel.password.isEmpty() ->
+                throw AuthExceptions.PasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
+
+            ConnectionStatus.hasInternetConnection(context) == true ->
+                throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
+
+
+
 
             else -> repository.signInWithEmailAndPassword(
                 authModel.email,
