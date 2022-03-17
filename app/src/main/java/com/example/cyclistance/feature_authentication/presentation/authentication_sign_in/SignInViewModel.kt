@@ -28,7 +28,7 @@ class SignInViewModel @Inject constructor(
     private val _signInWithCredentialState: MutableState<AuthState<Boolean>> = mutableStateOf(AuthState<Boolean>())
     val signInWithCredentialState: State<AuthState<Boolean>> = _signInWithCredentialState
 
-    fun textFieldOnValueChanged(){
+    fun clearState(){
         _signInWithEmailAndPasswordState.value = InputResultState()
     }
 

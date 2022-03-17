@@ -40,22 +40,20 @@ fun SignInScreen(
 
         SignInTextFieldsSection(
             email = email,
-            emailExceptionMessage = signInState.emailExceptionMessage,
             password = password,
-            passwordExceptionMessage = signInState.passwordExceptionMessage,
-
             passwordOnValueChange = {
                 password.value = it
                 if(signInState.passwordExceptionMessage.isNotEmpty()){
-                    signInViewModel.textFieldOnValueChanged()
+                    signInViewModel.clearState()
                 }
             },
             emailOnValueChange = {
                 email.value = it
                 if(signInState.emailExceptionMessage.isNotEmpty()){
-                    signInViewModel.textFieldOnValueChanged()
+                    signInViewModel.clearState()
                 }
-            }
+            },
+            inputResultState = signInState
         )
 
         SignInGoogleAndFacebookSection(
