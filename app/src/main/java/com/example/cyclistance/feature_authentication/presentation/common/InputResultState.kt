@@ -7,6 +7,7 @@ data class InputResultState<T>(
     val passwordExceptionMessage:String = "",
     val confirmPasswordExceptionMessage:String = "",
     val internetExceptionMessage:String = "",
-    val invalidUserExceptionMessage:String = ""
+    val invalidUserExceptionMessage:String = "",
+    val userCollisionExceptionMessage:String = "",
 
-)
+    )

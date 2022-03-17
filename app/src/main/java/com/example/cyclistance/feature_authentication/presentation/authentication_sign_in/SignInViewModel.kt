@@ -11,8 +11,10 @@ import com.example.cyclistance.feature_authentication.domain.use_case.Authentica
 import com.example.cyclistance.feature_authentication.presentation.common.AuthState
 import com.example.cyclistance.feature_authentication.presentation.common.InputResultState
 import com.google.firebase.auth.AuthCredential
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -53,6 +55,12 @@ class SignInViewModel @Inject constructor(
                     }
                     is AuthExceptions.InvalidUserException ->{
                         _signInWithEmailAndPasswordState.value = InputResultState(invalidUserExceptionMessage = exception.message ?: "Invalid User.")
+                    }
+                    is FirebaseAuthUserCollisionException ->{
+                        _signInWithEmailAndPasswordState.value = InputResultState(userCollisionExceptionMessage = exception.message ?: "An unexpected error occurred.")
+                    }
+                    else ->{
+                        Timber.e("${this@SignInViewModel.javaClass.name}: ${exception.message}")
                     }
 
                 }
