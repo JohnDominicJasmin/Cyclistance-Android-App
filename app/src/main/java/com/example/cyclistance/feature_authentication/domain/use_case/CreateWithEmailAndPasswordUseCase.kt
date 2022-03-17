@@ -18,8 +18,12 @@ class CreateWithEmailAndPasswordUseCase(
     suspend operator fun invoke(authModel: AuthModel): Boolean {
 
         return when {
-            ConnectionStatus.hasInternetConnection(context) == true ->
-                throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
+
+            authModel.email.isEmpty() ->
+                throw AuthExceptions.EmailException(message = context.getString(R.string.fieldLeftBlankMessage))
+
+            !validEmail(authModel.email) ->
+                throw AuthExceptions.EmailException(message = context.getString(R.string.emailIsInvalidMessage))
 
             authModel.password.isEmpty() ->
                 throw AuthExceptions.PasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
@@ -34,11 +38,8 @@ class CreateWithEmailAndPasswordUseCase(
             !strongPassword(authModel.confirmPassword) ->
                 throw AuthExceptions.ConfirmPasswordException(message = context.getString(R.string.passwordIsWeakMessage))
 
-            authModel.email.isEmpty() ->
-                throw AuthExceptions.EmailException(message = context.getString(R.string.fieldLeftBlankMessage))
-
-            !validEmail(authModel.email) ->
-                throw AuthExceptions.EmailException(message = context.getString(R.string.emailIsInvalidMessage))
+            !ConnectionStatus.hasInternetConnection(context) ->
+                throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
 
             else -> repository.createUserWithEmailAndPassword(
                 authModel.email,

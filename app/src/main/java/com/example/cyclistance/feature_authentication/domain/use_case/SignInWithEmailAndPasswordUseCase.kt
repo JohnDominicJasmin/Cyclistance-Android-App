@@ -26,7 +26,7 @@ class SignInWithEmailAndPasswordUseCase(
             authModel.password.isEmpty() ->
                 throw AuthExceptions.PasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
 
-            ConnectionStatus.hasInternetConnection(context) == true ->
+            !ConnectionStatus.hasInternetConnection(context) ->
                 throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
 
 

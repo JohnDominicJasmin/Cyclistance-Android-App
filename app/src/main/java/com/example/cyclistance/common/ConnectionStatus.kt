@@ -10,9 +10,9 @@ object ConnectionStatus {
 
     @SuppressLint("MissingPermission")
     @Suppress("Deprecation")
-    fun hasInternetConnection(context: Context): Boolean? =
-        (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).activeNetworkInfo?.let { networkInfo ->
-            networkInfo.isConnected && networkInfo.isAvailable
+    fun hasInternetConnection(context: Context): Boolean =
+        (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).activeNetworkInfo.let {networkInfo->
+            networkInfo?.isConnected == true && networkInfo.isAvailable
         }
 
 
