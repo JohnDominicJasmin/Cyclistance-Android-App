@@ -31,7 +31,7 @@ class CreateWithEmailAndPasswordUseCase(
                     authModel.confirmPassword ->
                 throw AuthExceptions.ConfirmPasswordException(message = context.getString(R.string.passwordIsNotMatchMessage))
 
-            !strongPassword(authModel) ->
+            !strongPassword(authModel.confirmPassword) ->
                 throw AuthExceptions.ConfirmPasswordException(message = context.getString(R.string.passwordIsWeakMessage))
 
             authModel.email.isEmpty() ->

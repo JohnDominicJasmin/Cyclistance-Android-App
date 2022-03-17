@@ -15,12 +15,12 @@ object InputValidate {
         return Pattern.compile(REGEX_SPECIAL_CHARACTERS_VALUE).matcher(input).find()
     }
      fun validEmail(email: String) = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-     fun strongPassword(authModel: AuthModel): Boolean {
-        return isNumberOfCharactersLongEnough(authModel) &&
-               (containsNumeric(authModel.confirmPassword) ||
-                containSpecialCharacters(authModel.confirmPassword))
+     fun strongPassword(password:String): Boolean {
+        return isNumberOfCharactersLongEnough(password) &&
+               (containsNumeric(password) ||
+                containSpecialCharacters(password))
     }
 
-     private fun isNumberOfCharactersLongEnough(authModel: AuthModel) =
-         authModel.confirmPassword.toCharArray().size >= AuthConstants.USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS
+     private fun isNumberOfCharactersLongEnough(password:String) =
+         password.toCharArray().size >= AuthConstants.USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS
 }

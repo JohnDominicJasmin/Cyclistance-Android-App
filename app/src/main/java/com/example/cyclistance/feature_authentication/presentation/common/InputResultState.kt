@@ -1,8 +1,6 @@
-package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up
+package com.example.cyclistance.feature_authentication.presentation.common
 
-import com.example.cyclistance.feature_authentication.presentation.common.AuthState
-
-data class SignUpState<T>(
+data class InputResultState<T>(
 
     val authState: AuthState<T>? = null,
     val emailExceptionMessage:String = "",

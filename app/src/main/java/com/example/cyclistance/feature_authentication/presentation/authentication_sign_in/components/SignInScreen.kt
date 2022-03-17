@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -22,9 +21,9 @@ fun SignInScreen(
     navController: NavController?) {
 
     val signInViewModel: SignInViewModel = hiltViewModel()
-    val email = remember { mutableStateOf(TextFieldValue()) }
-    val password = remember { mutableStateOf(TextFieldValue()) }
-    val signInstate =  signInViewModel.signInWithEmailAndPasswordState.value
+    val email = remember { mutableStateOf(TextFieldValue("")) }
+    val password = remember { mutableStateOf(TextFieldValue("")) }
+    val signInState by remember { signInViewModel.signInWithEmailAndPasswordState }
 
     ConstraintLayout(
         constraintSet = signInConstraints, modifier = Modifier
@@ -41,8 +40,22 @@ fun SignInScreen(
 
         SignInTextFieldsSection(
             email = email,
+            emailExceptionMessage = signInState.emailExceptionMessage,
             password = password,
-            signInState = signInstate
+            passwordExceptionMessage = signInState.passwordExceptionMessage,
+
+            passwordOnValueChange = {
+                password.value = it
+                if(signInState.passwordExceptionMessage.isNotEmpty()){
+                    signInViewModel.textFieldOnValueChanged()
+                }
+            },
+            emailOnValueChange = {
+                email.value = it
+                if(signInState.emailExceptionMessage.isNotEmpty()){
+                    signInViewModel.textFieldOnValueChanged()
+                }
+            }
         )
 
         SignInGoogleAndFacebookSection(
@@ -69,4 +82,5 @@ fun SignInScreen(
 
 
 }
+
 
