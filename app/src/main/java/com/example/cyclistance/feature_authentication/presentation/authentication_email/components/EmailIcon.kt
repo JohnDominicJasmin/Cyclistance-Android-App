@@ -16,8 +16,8 @@ fun EmailIcon() {
         contentDescription = "App Icon",
         imageId = R.drawable.ic_email,
         modifier = Modifier
-            .height(180.dp)
-            .width(170.dp)
+            .height(165.dp)
+            .width(155.dp)
 
     )
 

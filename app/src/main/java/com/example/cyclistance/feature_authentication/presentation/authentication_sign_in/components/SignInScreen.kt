@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -25,60 +26,72 @@ fun SignInScreen(
     val password = remember { mutableStateOf(TextFieldValue("")) }
     val signInState by remember { signInViewModel.signInWithEmailAndPasswordState }
 
-    ConstraintLayout(
-        constraintSet = signInConstraints, modifier = Modifier
+
+
+    Column(
+
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)) {
 
+        ConstraintLayout(
+            constraintSet = signInConstraints,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(BackgroundColor)) {
 
-        AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
-        SignUpTextArea()
-        Waves(
-            topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
-            bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId
-        )
 
-        SignInTextFieldsSection(
-            email = email,
-            password = password,
-            passwordOnValueChange = {
-                password.value = it
-                if(signInState.passwordExceptionMessage.isNotEmpty()){
-                    signInViewModel.clearState()
+            AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
+            SignUpTextArea()
+            Waves(
+                topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
+                bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId
+            )
+
+            SignInTextFieldsSection(
+                email = email,
+                password = password,
+                passwordOnValueChange = {
+                    password.value = it
+                    if (signInState.passwordExceptionMessage.isNotEmpty()) {
+                        signInViewModel.clearState()
+                    }
+                },
+                emailOnValueChange = {
+                    email.value = it
+                    if (signInState.emailExceptionMessage.isNotEmpty()) {
+                        signInViewModel.clearState()
+                    }
+                },
+                inputResultState = signInState
+            )
+
+            SignInGoogleAndFacebookSection(
+                facebookButtonOnClick = {
+
+                },
+                googleSignInButtonOnClick = {
+
                 }
-            },
-            emailOnValueChange = {
-                email.value = it
-                if(signInState.emailExceptionMessage.isNotEmpty()){
-                    signInViewModel.clearState()
-                }
-            },
-            inputResultState = signInState
-        )
+            )
 
-        SignInGoogleAndFacebookSection(
-            facebookButtonOnClick = {
-
-            },
-            googleSignInButtonOnClick = {
-
-            }
-        )
-
-        SignInButton(onClickButton = {
-            signInViewModel.signInWithEmailAndPassword(authModel = AuthModel(
-                email = email.value.text,
-                password = password.value.text))
-        })
+            SignInButton(onClickButton = {
+                signInViewModel.signInWithEmailAndPassword(
+                    authModel = AuthModel(
+                        email = email.value.text,
+                        password = password.value.text))
+            })
 
 
-        SignInClickableText(onClick = {
-            navController?.navigate(Screens.SignUpScreen.route)
-        })
+            SignInClickableText(onClick = {
+                navController?.navigate(Screens.SignUpScreen.route)
+            })
+
+        }
 
     }
-
-
 }
 
 

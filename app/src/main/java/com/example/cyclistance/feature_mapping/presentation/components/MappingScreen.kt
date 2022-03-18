@@ -29,7 +29,7 @@ import com.mapbox.maps.MapView
 
 
 @Composable
-fun MappingScreen(navController: NavController) {
+fun MappingScreen(navController: NavController?) {
     val scaffoldState =
         rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
 
@@ -45,7 +45,7 @@ fun MappingScreen(navController: NavController) {
                 icon = Icons.Filled.Close,
                 scaffoldState = scaffoldState) {
 
-                DetailsTitleTopAppBar()
+                DefaultTitleTopAppBar()
             }
 
 
@@ -74,6 +74,11 @@ fun SetupMapScreen() {// todo remove later
 
 }
 
+@Preview
+@Composable
+fun PrevDeleteLater() {
+    MappingScreen(null)
+}
 
 
 

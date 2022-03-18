@@ -3,7 +3,7 @@ package com.example.cyclistance.feature_mapping.presentation.components
  val clientCancellationReasons = listOf(
     "Change of mind",
     "Rescue time is too long",
-    "Modifying existing rescue details (description, message and address)",
+    "Modifying existing rescue details (description, message and address).",
     "Not responsive to my questions.",
     "Problem already fixed.",
     "Other")

@@ -1,8 +1,12 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_email.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -11,19 +15,28 @@ import com.example.cyclistance.feature_authentication.presentation.theme.Backgro
 
 @Composable
 fun EmailAuthScreen(navController: NavController?) {
-    ConstraintLayout(
-        constraintSet = emailAuthConstraints,
+
+    Column(
+
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
             .background(BackgroundColor)) {
+        ConstraintLayout(
+            constraintSet = emailAuthConstraints,
+            modifier = Modifier
+                .fillMaxHeight(0.9f)
+                .background(BackgroundColor)) {
 
-        EmailIcon()
-        EmailAuthTextStatus(email = "johndominicjasmin@gmail.com")
-        EmailAuthResendButton(onClick = {
+            EmailIcon()
+            EmailAuthTextStatus(email = "johndominicjasmin@gmail.com")
+            EmailAuthResendButton(onClick = {
 
-        })
+            })
 
 
+        }
     }
 }
 
