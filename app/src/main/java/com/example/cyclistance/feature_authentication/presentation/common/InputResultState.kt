@@ -2,7 +2,7 @@ package com.example.cyclistance.feature_authentication.presentation.common
 
 data class InputResultState<T>(
 
-    val authState: AuthState<T>? = null,
+    val authState: AuthState<T> = AuthState(),
     val emailExceptionMessage:String = "",
     val passwordExceptionMessage:String = "",
     val confirmPasswordExceptionMessage:String = "",
