@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -96,7 +97,8 @@ fun ConfirmPasswordTextField(
                 Icon(imageVector = image, "", tint = TextFieldTextColor)
             }
         },
-        visualTransformation = if (confirmPasswordVisibility) VisualTransformation.None else PasswordVisualTransformation()
+        visualTransformation = if (confirmPasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrect = false, imeAction = ImeAction.Done)
     )
 }
 
@@ -130,9 +132,27 @@ fun PasswordTextField(
             )
         },
         trailingIcon = {
-            if (hasError)
-                Icon(Icons.Filled.Error, "error", tint = MaterialTheme.colors.error)
+            if (hasError) {
+                Icon(
+                    imageVector = Icons.Filled.Error,
+                    contentDescription = "error",
+                    tint = MaterialTheme.colors.error)
+            }
+
+            if(password.value.text.isNotEmpty()){
+                IconButton(onClick = {
+                    password.value = TextFieldValue("")
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Cancel,
+                        contentDescription = "",
+                        tint = TextFieldTextColor,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
         },
+       keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, autoCorrect = false, imeAction = ImeAction.Next)
 
 
         )
@@ -147,7 +167,9 @@ private fun SetupPasswordTextField(
     placeholder: @Composable (() -> Unit)? = null,
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
-    visualTransformation: VisualTransformation = VisualTransformation.None,) {
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+    keyboardOptions:KeyboardOptions
+    ) {
     val hasError = passwordExceptionMessage.isNotEmpty()
     Column(
         modifier = Modifier.fillMaxWidth(),
@@ -162,12 +184,13 @@ private fun SetupPasswordTextField(
             value = password.value,
             onValueChange = onValueChange,
             singleLine = true,
+            maxLines = 1,
             shape = RoundedCornerShape(12.dp),
             placeholder = placeholder,
             trailingIcon = trailingIcon,
             leadingIcon = leadingIcon,
             isError = hasError,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            keyboardOptions = keyboardOptions,
             colors = TextFieldColors(),
             visualTransformation = visualTransformation
         )
@@ -202,6 +225,7 @@ fun EmailTextField(
                 .shadow(15.dp, shape = RoundedCornerShape(12.dp), clip = true),
             value = email.value,
             singleLine = true,
+            maxLines = 1,
             shape = RoundedCornerShape(12.dp),
             onValueChange = onValueChange,
             placeholder = {
@@ -249,7 +273,7 @@ fun EmailTextField(
                 )
             },
             isError = hasError,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
             colors = TextFieldColors(),
         )
 
@@ -267,5 +291,6 @@ fun EmailTextField(
     }
 
 }
+
 
 
