@@ -25,10 +25,10 @@ class MappingViewModel @Inject constructor(
 
     fun signOutAccount() = authUseCase.signOutUseCase()
 
-    fun getName() =
+    fun getName():State<AuthState<String>> =
         mutableStateOf(AuthState<String>(result = authUseCase.getNameUseCase()))
 
-    fun getEmail() =
+    fun getEmail(): State<AuthState<String>> =
         mutableStateOf(AuthState<String>(result = authUseCase.getEmailUseCase()))
 
 

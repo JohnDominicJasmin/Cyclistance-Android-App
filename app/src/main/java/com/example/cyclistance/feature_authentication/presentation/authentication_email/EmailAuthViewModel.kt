@@ -18,10 +18,6 @@ class EmailAuthViewModel @Inject constructor(
     private val _reloadState: MutableState<AuthState<Boolean>> = mutableStateOf(AuthState())
     val reloadState: State<AuthState<Boolean>> = _reloadState
 
-    private val _isEmailVerifyState: MutableState<AuthState<Boolean>> =
-        mutableStateOf(AuthState<Boolean>())
-    val isEmailVerifyState: State<AuthState<Boolean>> = _isEmailVerifyState
-
     private val _sendEmailVerificationState: MutableState<AuthState<Boolean>> =
         mutableStateOf(AuthState<Boolean>())
     val sendEmailVerification: State<AuthState<Boolean>> = _sendEmailVerificationState
@@ -44,7 +40,8 @@ class EmailAuthViewModel @Inject constructor(
         }
     }
 
-    fun isEmailVerified() =
+
+    fun isEmailVerified():State<AuthState<Boolean>> =
         mutableStateOf(AuthState<Boolean>(result = authUseCase.isEmailVerifiedUseCase()))
 
 

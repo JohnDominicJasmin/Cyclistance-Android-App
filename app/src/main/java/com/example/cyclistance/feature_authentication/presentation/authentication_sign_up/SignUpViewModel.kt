@@ -20,8 +20,7 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
-    private val _createAccountState: MutableState<InputResultState<Boolean>> =
-        mutableStateOf(InputResultState<Boolean>())
+    private val _createAccountState: MutableState<InputResultState<Boolean>> = mutableStateOf(InputResultState<Boolean>())
     val createAccountState: State<InputResultState<Boolean>> = _createAccountState
 
 
@@ -62,11 +61,11 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    fun registerAccount() {
+    fun saveAccount() {
         authUseCase.registerAccountUseCase()
     }
 
-    fun hasAccountSignedIn() =
+    fun hasAccountSignedIn(): State<AuthState<Boolean>> =
         mutableStateOf(AuthState<Boolean>(result = authUseCase.hasAccountSignedInUseCase()))
 
 
