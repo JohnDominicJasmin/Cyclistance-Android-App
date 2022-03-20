@@ -7,10 +7,12 @@ import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExce
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.*
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 
@@ -22,30 +24,32 @@ class AuthRepositoryImpl @Inject constructor(
 
 
     override suspend fun reloadEmail(): Boolean {
-        return suspendCoroutine { continuation ->
+        return CompletableDeferred<Boolean>().run {
             firebaseUser?.reload()?.addOnCompleteListener { reload ->
                 reload.exception?.let { exception ->
                     if (exception is FirebaseNetworkException) {
                         throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
                     }
                 }
-                continuation.resume(reload.isSuccessful)
+                this.complete(reload.isSuccessful)
             }
+            this.await()
         }
     }
     override suspend fun sendEmailVerification(): Boolean {
-        return suspendCoroutine { continuation ->
+        return CompletableDeferred<Boolean>().run {
             firebaseUser?.sendEmailVerification()?.addOnCompleteListener { sendEmail ->
                 sendEmail.exception?.let {
                     throw AuthExceptions.EmailVerificationException(message = context.getString(R.string.failed_email_verification))
                 }
-                continuation.resume(sendEmail.isSuccessful)
+                this.complete(sendEmail.isSuccessful)
             }
+            this.await()
         }
     }
     override suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean {
-        return suspendCoroutine { continuation ->
-            firebaseAuth.createUserWithEmailAndPassword(email, password)
+        return CompletableDeferred<Boolean>().run {
+            firebaseAuth.createUserWithEmailAndPassword(email.trim(), password.trim())
                 .addOnCompleteListener { createAccount ->
                     createAccount.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
@@ -54,16 +58,15 @@ class AuthRepositoryImpl @Inject constructor(
                             throw exception
                         }
                     }
-
-                    continuation.resume(createAccount.isSuccessful)
-
+                    this.complete(createAccount.isSuccessful)
                 }
+            this.await()
         }
     }
     override suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean {
+        return CompletableDeferred<Boolean>().run {
 
-        return suspendCoroutine { continuation ->
-            firebaseAuth.signInWithEmailAndPassword(email, password)
+            firebaseAuth.signInWithEmailAndPassword(email.trim(), password.trim())
                 .addOnCompleteListener { signInWithEmailAndPassword ->
                     signInWithEmailAndPassword.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
@@ -74,12 +77,16 @@ class AuthRepositoryImpl @Inject constructor(
                         }
                         throw exception
                     }
-                    continuation.resume(signInWithEmailAndPassword.isSuccessful)
+                    this.complete(signInWithEmailAndPassword.isSuccessful)
                 }
+
+
+            this.await()
         }
     }
+
     override suspend fun signInWithCredentials(v: AuthCredential): Boolean {
-        return suspendCoroutine { continuation ->
+        return CompletableDeferred<Boolean>().run {
             firebaseAuth.signInWithCredential(v).addOnCompleteListener { signInWithCredential ->
                 signInWithCredential.exception?.let { exception ->
                     if (exception.message == FB_CONNECTION_FAILURE) {
@@ -88,8 +95,9 @@ class AuthRepositoryImpl @Inject constructor(
                         throw AuthExceptions.ConflictFBTokenException("// todo Remove existing fb token to refresh")
                     }
                 }
-                continuation.resume(signInWithCredential.isSuccessful)
+                this.complete(signInWithCredential.isSuccessful)
             }
+            this.await()
         }
     }
     override fun signOut() {
