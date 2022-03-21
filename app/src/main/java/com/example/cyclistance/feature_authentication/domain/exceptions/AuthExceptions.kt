@@ -1,11 +1,11 @@
 package com.example.cyclistance.feature_authentication.domain.exceptions
 
-sealed class AuthExceptions(message: String):RuntimeException(message){
-    class InternetException(message: String):AuthExceptions(message)
-    class EmailVerificationException(message:String):AuthExceptions(message)
-    class InvalidUserException(message:String):AuthExceptions(message)
-    class ConflictFBTokenException(message:String):AuthExceptions(message)
-    class PasswordException(message:String):AuthExceptions(message)
-    class ConfirmPasswordException(message:String):AuthExceptions(message)
-    class EmailException(message:String):AuthExceptions(message)
+sealed class AuthExceptions{
+    class InternetException(message: String):RuntimeException(message)
+    class EmailVerificationException(message:String):RuntimeException(message)
+    class InvalidUserException(message:String):RuntimeException(message)
+    class ConflictFBTokenException(message:String):RuntimeException(message)
+    class PasswordException(message:String):RuntimeException(message)
+    class ConfirmPasswordException(message:String):RuntimeException(message)
+    class EmailException(message:String):RuntimeException(message)
 }

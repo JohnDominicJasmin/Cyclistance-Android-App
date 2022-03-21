@@ -18,9 +18,10 @@ class EmailAuthViewModel @Inject constructor(
     private val _reloadState: MutableState<AuthState<Boolean>> = mutableStateOf(AuthState())
     val reloadState: State<AuthState<Boolean>> = _reloadState
 
-    private val _sendEmailVerificationState: MutableState<AuthState<Boolean>> =
-        mutableStateOf(AuthState<Boolean>())
-    val sendEmailVerification: State<AuthState<Boolean>> = _sendEmailVerificationState
+    private val _sendEmailVerificationState: MutableState<AuthState<Boolean>> = mutableStateOf(AuthState<Boolean>())
+    val sendEmailVerificationState: State<AuthState<Boolean>> = _sendEmailVerificationState
+
+    val isEmailVerified: State<Boolean?> = mutableStateOf(authUseCase.isEmailVerifiedUseCase())
 
     fun reloadEmail() {
         viewModelScope.launch {
@@ -41,18 +42,17 @@ class EmailAuthViewModel @Inject constructor(
     }
 
 
-    fun isEmailVerified():State<AuthState<Boolean>> =
-        mutableStateOf(AuthState<Boolean>(result = authUseCase.isEmailVerifiedUseCase()))
+
 
 
     fun sendEmailVerification() {
         viewModelScope.launch {
             kotlin.runCatching {
                 _sendEmailVerificationState.value = AuthState(isLoading = true)
-                val result = authUseCase.sendEmailVerificationUseCase()
+                authUseCase.sendEmailVerificationUseCase()
+            }.onSuccess { result ->
                 _sendEmailVerificationState.value =
                     AuthState(isLoading = false, result = result)
-
             }.onFailure {
                 _sendEmailVerificationState.value = AuthState(
                     isLoading = false,

@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
@@ -23,6 +24,7 @@ class SignUpViewModel @Inject constructor(
     private val _createAccountState: MutableState<InputResultState<Boolean>> = mutableStateOf(InputResultState<Boolean>())
     val createAccountState: State<InputResultState<Boolean>> = _createAccountState
 
+    val hasAccountSignedIn: State<Boolean> = mutableStateOf(authUseCase.hasAccountSignedInUseCase())
 
     fun clearState(){
         _createAccountState.value = InputResultState()
@@ -47,7 +49,7 @@ class SignUpViewModel @Inject constructor(
                         _createAccountState.value = InputResultState(confirmPasswordExceptionMessage = exception.message ?: "Invalid Password.")
                     }
                     is AuthExceptions.InternetException -> {
-                        _createAccountState.value = InputResultState(internetExceptionMessage = exception.message ?: "No internet connection.")
+                        _createAccountState.value = InputResultState(internetExceptionMessage = exception.message ?: "No Internet Connection.")
                     }
                     is FirebaseAuthUserCollisionException -> {
                         _createAccountState.value = InputResultState(userCollisionExceptionMessage = exception.message ?: "An unexpected error occurred.")
@@ -65,8 +67,6 @@ class SignUpViewModel @Inject constructor(
         authUseCase.registerAccountUseCase()
     }
 
-    fun hasAccountSignedIn(): State<AuthState<Boolean>> =
-        mutableStateOf(AuthState<Boolean>(result = authUseCase.hasAccountSignedInUseCase()))
 
 
 }

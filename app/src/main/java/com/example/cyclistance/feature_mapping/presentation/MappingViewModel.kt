@@ -16,20 +16,13 @@ import javax.inject.Inject
 class MappingViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase):ViewModel() {
 
-    private val _emailState: MutableState<AuthState<String>> = mutableStateOf(AuthState<String>())
-    val emailState: State<AuthState<String>> = _emailState
+    val email: State<String?> = mutableStateOf(authUseCase.getEmailUseCase())
+    val name: State<String?> = mutableStateOf(authUseCase.getNameUseCase())
 
-    private val _nameState: MutableState<AuthState<String>> = mutableStateOf(AuthState<String>())
-    val nameState: State<AuthState<String>> = _nameState
 
 
     fun signOutAccount() = authUseCase.signOutUseCase()
 
-    fun getName():State<AuthState<String>> =
-        mutableStateOf(AuthState<String>(result = authUseCase.getNameUseCase()))
-
-    fun getEmail(): State<AuthState<String>> =
-        mutableStateOf(AuthState<String>(result = authUseCase.getEmailUseCase()))
 
 
 }
