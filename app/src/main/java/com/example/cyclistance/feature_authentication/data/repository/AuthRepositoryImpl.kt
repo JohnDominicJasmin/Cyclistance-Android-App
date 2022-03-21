@@ -11,9 +11,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
+
 
 
 class AuthRepositoryImpl @Inject constructor(
@@ -28,7 +26,7 @@ class AuthRepositoryImpl @Inject constructor(
             firebaseUser?.reload()?.addOnCompleteListener { reload ->
                 reload.exception?.let { exception ->
                     if (exception is FirebaseNetworkException) {
-                        throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
+                        this.completeExceptionally(AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message)))
                     }
                 }
                 this.complete(reload.isSuccessful)
@@ -40,7 +38,7 @@ class AuthRepositoryImpl @Inject constructor(
         return CompletableDeferred<Boolean>().run {
             firebaseUser?.sendEmailVerification()?.addOnCompleteListener { sendEmail ->
                 sendEmail.exception?.let {
-                    throw AuthExceptions.EmailVerificationException(message = context.getString(R.string.failed_email_verification))
+                    this.completeExceptionally(AuthExceptions.EmailVerificationException(message = context.getString(R.string.failed_email_verification)))
                 }
                 this.complete(sendEmail.isSuccessful)
             }
@@ -53,9 +51,9 @@ class AuthRepositoryImpl @Inject constructor(
                 .addOnCompleteListener { createAccount ->
                     createAccount.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
-                            throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
+                            this.completeExceptionally(AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message)))
                         } else {
-                            throw exception
+                            this.completeExceptionally(exception)
                         }
                     }
                     this.complete(createAccount.isSuccessful)
@@ -70,29 +68,28 @@ class AuthRepositoryImpl @Inject constructor(
                 .addOnCompleteListener { signInWithEmailAndPassword ->
                     signInWithEmailAndPassword.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
-                            throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
+                            this.completeExceptionally(AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message)))
                         }
                         if (exception is FirebaseAuthInvalidUserException) {
-                            throw AuthExceptions.InvalidUserException(message = context.getString(R.string.incorrectEmailOrPasswordMessage))
+                            this.completeExceptionally(AuthExceptions.InvalidUserException(message = context.getString(R.string.incorrectEmailOrPasswordMessage)))
                         }
-                        throw exception
+                        this.completeExceptionally(exception)
                     }
                     this.complete(signInWithEmailAndPassword.isSuccessful)
                 }
-
-
             this.await()
         }
     }
+
 
     override suspend fun signInWithCredentials(v: AuthCredential): Boolean {
         return CompletableDeferred<Boolean>().run {
             firebaseAuth.signInWithCredential(v).addOnCompleteListener { signInWithCredential ->
                 signInWithCredential.exception?.let { exception ->
                     if (exception.message == FB_CONNECTION_FAILURE) {
-                        throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
+                        this.completeExceptionally(AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message)))
                     } else {
-                        throw AuthExceptions.ConflictFBTokenException("// todo Remove existing fb token to refresh")
+                        this.completeExceptionally(AuthExceptions.ConflictFBTokenException("// todo Remove existing fb token to refresh"))
                     }
                 }
                 this.complete(signInWithCredential.isSuccessful)
