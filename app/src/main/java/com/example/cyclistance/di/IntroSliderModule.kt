@@ -17,18 +17,18 @@ import javax.inject.Singleton
 
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 object IntroSliderModule {
 
 
     @Provides
-    @ViewModelScoped
+    @Singleton
     fun provideIntroSliderRepository(@ApplicationContext context: Context): IntroSliderRepository {
         return IntroSliderRepositoryImpl(context = context)
     }
 
     @Provides
-    @ViewModelScoped
+    @Singleton
     fun provideIntroSliderUseCase(repository: IntroSliderRepository):IntroSliderUseCase
         = IntroSliderUseCase(
         completedIntroSliderUseCase = CompletedIntroSliderUseCase(repository),
