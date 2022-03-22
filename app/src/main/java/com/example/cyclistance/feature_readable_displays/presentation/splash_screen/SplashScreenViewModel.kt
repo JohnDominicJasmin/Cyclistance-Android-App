@@ -6,10 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_authentication.presentation.common.AuthState
 import com.example.cyclistance.feature_readable_displays.domain.use_case.IntroSliderUseCase
 import com.example.cyclistance.navigation.Screens
-import com.google.firebase.auth.FacebookAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -20,9 +18,8 @@ class SplashScreenViewModel @Inject constructor(
     private val introSliderUseCase: IntroSliderUseCase,
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
-    private val _splashScreenState: MutableState<SplashScreenState> =
-        mutableStateOf(SplashScreenState())
-    val splashScreenState: State<SplashScreenState> = this._splashScreenState
+    private val _splashScreenState: MutableState<SplashScreenState> = mutableStateOf(SplashScreenState())
+    val splashScreenState: State<SplashScreenState> = _splashScreenState
 
 
     init {
@@ -40,7 +37,7 @@ class SplashScreenViewModel @Inject constructor(
                 result.collect { userCompletedWalkThrough ->
                     if (userCompletedWalkThrough) {
 
-                        if (authUseCase.isSignedInWithProviderUseCase() == true || authUseCase.isEmailVerifiedUseCase() == true) {
+                        if (isUserSignedIn()) {
                             _splashScreenState.value = SplashScreenState(navigationStartingDestination = Screens.MappingScreen.route)
                             return@collect
                         }
@@ -55,5 +52,9 @@ class SplashScreenViewModel @Inject constructor(
             }
 
         }
+    }
+    private suspend fun isUserSignedIn():Boolean{
+        return (authUseCase.isSignedInWithProviderUseCase() == true || authUseCase.isEmailVerifiedUseCase() == true) &&
+                authUseCase.hasAccountSignedInUseCase()
     }
 }

@@ -26,25 +26,28 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(navController: NavController) {
     val splashScreenViewModel: SplashScreenViewModel = hiltViewModel()
-    val screen = splashScreenViewModel.splashScreenState.value
+    val screen by remember{ splashScreenViewModel.splashScreenState}
 
-    val scale = remember{ Animatable(initialValue = 0f) }
-    LaunchedEffect(key1 = true){
+    val scale = remember { Animatable(initialValue = 0f) }
+    LaunchedEffect(key1 = true) {
         scale.animateTo(0.9f,
             animationSpec = tween(
                 durationMillis = 500,
-                easing =  {  OvershootInterpolator(1.2f).getInterpolation(it) }
+                easing = { OvershootInterpolator(1.2f).getInterpolation(it) }
             ))
         delay(1200L)
 
-        navController.navigate(screen.navigationStartingDestination){
-            popUpTo(Screens.SplashScreen.route){ inclusive = true }
+            navController.navigate(screen.navigationStartingDestination) {
+            popUpTo(Screens.SplashScreen.route) { inclusive = true }
             launchSingleTop = true
         }
     }
 
-    Box(contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize().background(BackgroundColor)){
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .background(BackgroundColor)) {
         Image(
             painter = painterResource(id = R.drawable.ic_cyclistance_app_icon),
             contentDescription = "App Icon", modifier = Modifier.scale(scale.value))

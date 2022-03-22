@@ -73,10 +73,12 @@ class SignInViewModel @Inject constructor(
         viewModelScope.launch {
             kotlin.runCatching {
                 _signInWithCredentialState.value = AuthState(isLoading = true)
-                val result = authUseCase.signInWithCredentialUseCase(authCredential)
+                authUseCase.signInWithCredentialUseCase(authCredential)
+            }.onSuccess { result ->
                 _signInWithCredentialState.value = AuthState(isLoading = false, result = result)
             }.onFailure {
                 _signInWithCredentialState.value = AuthState(isLoading = false, error = it.message?:"An unexpected error occurred.")
+                //todo catch specific exceptions
             }
         }
     }
