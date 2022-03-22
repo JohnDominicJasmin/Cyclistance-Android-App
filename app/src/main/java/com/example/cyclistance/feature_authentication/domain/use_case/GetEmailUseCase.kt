@@ -10,6 +10,7 @@ class GetEmailUseCase(private val repository: AuthRepository<AuthCredential>){
             repository.getEmail()
         }catch(e: NullPointerException){
             throw AuthExceptions.EmailException(message = "Email not found")
+            //TODO CATCH THIS LATER
         }
     }
 }

@@ -1,3 +1,4 @@
+
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components
 
 import androidx.compose.foundation.layout.*
@@ -56,7 +57,7 @@ fun SignUpTextFieldsSection(
         ConfirmPasswordTextField(
             confirmPassword = confirmPassword,
             confirmPasswordExceptionMessage = confirmPasswordExceptionMessage,
-        onValueChange = confirmPasswordOnValueChange)
+            onValueChange = confirmPasswordOnValueChange)
 
     }
 }
@@ -152,10 +153,10 @@ fun PasswordTextField(
                 }
             }
         },
-       keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, autoCorrect = false, imeAction = ImeAction.Next)
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, autoCorrect = false, imeAction = ImeAction.Next)
 
 
-        )
+    )
 }
 
 
@@ -169,7 +170,7 @@ private fun SetupPasswordTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions:KeyboardOptions
-    ) {
+) {
     val hasError = passwordExceptionMessage.isNotEmpty()
     Column(
         modifier = Modifier.fillMaxWidth(),

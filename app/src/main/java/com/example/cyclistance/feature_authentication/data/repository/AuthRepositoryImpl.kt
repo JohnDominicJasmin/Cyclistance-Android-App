@@ -15,11 +15,11 @@ import javax.inject.Inject
 
 
 class AuthRepositoryImpl @Inject constructor(
-    private val context: Context,
-    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance(),
-    private var firebaseUser: FirebaseUser? = firebaseAuth.currentUser
+    private val context: Context
 ) : AuthRepository<AuthCredential> {
 
+    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
+    private var firebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
 
     override suspend fun reloadEmail(): Boolean {
         return CompletableDeferred<Boolean>().run {
@@ -102,7 +102,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun registerAccount() {
-        firebaseUser = firebaseAuth.currentUser
+        firebaseUser = FirebaseAuth.getInstance().currentUser
     }
 
 

@@ -158,4 +158,9 @@ dependencies {
     //firebase auth
     implementation platform('com.google.firebase:firebase-bom:29.1.0')
     implementation 'com.google.firebase:firebase-auth'
+
+    implementation 'com.github.farhanroy:compose-awesome-dialog:1.0.1'
+
+    //lottie animation
+    implementation "com.airbnb.android:lottie-compose:5.0.3"
 }
