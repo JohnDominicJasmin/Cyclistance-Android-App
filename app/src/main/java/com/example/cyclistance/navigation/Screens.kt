@@ -8,4 +8,5 @@ sealed class Screens(val route:String){
     object EmailAuthScreen: Screens(route = "email_auth_screen")
     object IntroSliderScreen: Screens(route="intro_slider_screen")
     object MappingScreen: Screens(route="mapping_screen")
+    object NoInternetScreen: Screens(route="no_internet_screen")
 }

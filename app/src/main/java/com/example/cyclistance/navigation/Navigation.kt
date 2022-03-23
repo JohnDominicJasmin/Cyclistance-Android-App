@@ -6,6 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.example.cyclistance.common.NoInternetScreen
 
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInScreen
@@ -44,6 +45,9 @@ fun Navigation(navController:NavHostController) {
 
         composable(Screens.MappingScreen.route){
             MappingScreen(navController = navController)
+        }
+        composable(Screens.NoInternetScreen.route){
+            NoInternetScreen(navController = navController)
         }
 
     }
