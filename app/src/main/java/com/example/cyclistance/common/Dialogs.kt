@@ -34,39 +34,24 @@ import com.example.cyclistance.feature_authentication.presentation.theme.ThemeCo
 import io.github.farhanroy.composeawesomedialog.R
 import io.github.farhanroy.composeawesomedialog.themes.Shapes
 
-@Preview
+
+
+
+
 @Composable
-fun PreviewDialog() {
+fun SetupAlertDialog(
+    title: String,
+    desc: String ,
+    @RawRes resId: Int,
+
+) {
     val openDialog = remember { mutableStateOf(false) }
 
     Button(onClick = { openDialog.value = true }) {
         Text(text = "Open")
     }
-
     if (openDialog.value) {
-
-        Dialog(onDismissRequest = { openDialog.value = false }, properties = DialogProperties()) {
-            SetupDialog(
-                title = "Success",
-                desc = "This is a success message.",
-                resId = R.raw.success,
-                onDismiss = { openDialog.value = false }
-            )
-        }
-
-    }
-}
-
-
-
-@Composable
-private fun SetupDialog(
-    title: String,
-    desc: String ,
-    resId: Int,
-    onDismiss: () -> Unit
-) {
-    Dialog(onDismissRequest = onDismiss) {
+    Dialog(onDismissRequest = { openDialog.value = false  }, properties = DialogProperties()) {
         Box(
             Modifier
                 .width(300.dp)
@@ -102,7 +87,7 @@ private fun SetupDialog(
                             verticalAlignment = Alignment.CenterVertically) {
                             Button(
                                 modifier = Modifier.width(100.dp),
-                                onClick = onDismiss,
+                                onClick = { openDialog.value = false  },
                                 shape = RoundedCornerShape(12.dp),
                                 colors = ButtonDefaults.buttonColors(
                                     backgroundColor = ThemeColor,
@@ -125,6 +110,7 @@ private fun SetupDialog(
                         shape = CircleShape
                     ), resId)
         }
+    }
     }
 }
 
