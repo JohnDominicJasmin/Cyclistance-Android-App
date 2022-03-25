@@ -74,7 +74,14 @@ fun IntroSliderScreen(navController: NavController) {
 
 private fun showSignInScreen(navController: NavController, introSliderViewModel: IntroSliderViewModel){
     introSliderViewModel.userCompletedWalkThrough()
-    navController.popBackStack()
-    navController.navigate(Screens.SignInScreen.route)
+
+    navController.navigate(Screens.SignInScreen.route){
+        popUpTo(Screens.IntroSliderScreen.route){
+            inclusive = true
+
+        }
+        launchSingleTop = true
+
+    }
 }
 

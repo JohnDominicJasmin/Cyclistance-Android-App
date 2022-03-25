@@ -16,7 +16,7 @@ import com.example.cyclistance.feature_authentication.presentation.theme.ThemeCo
 import com.example.cyclistance.feature_authentication.presentation.theme.DisabledColor
 
 @Composable
-fun EmailAuthResendButton(onClick: ()->Unit) {
+fun EmailAuthResendButton(text: String, isEnabled: Boolean, onClick: () -> Unit) {
 
     Box(
         modifier = Modifier
@@ -26,13 +26,14 @@ fun EmailAuthResendButton(onClick: ()->Unit) {
 
 
         TextButton(
+            enabled = isEnabled,
             onClick = onClick,
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent,
                 contentColor = ThemeColor,
                 disabledContentColor = DisabledColor)) {
             Text(
-                "Resend email",
+                text,
                 textAlign = TextAlign.Center,
                 fontSize = 22.sp,
                 fontWeight = FontWeight.Bold)
