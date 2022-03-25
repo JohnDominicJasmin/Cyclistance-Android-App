@@ -1,9 +1,8 @@
 
-package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components
+package com.example.cyclistance.feature_authentication.presentation.common
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -17,15 +16,14 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cyclistance.feature_authentication.presentation.common.InputResultState
-import com.example.cyclistance.feature_authentication.presentation.common.TextFieldColors
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.theme.TextFieldTextColor
 
 @Composable
 fun SignUpTextFieldsSection(
     email: MutableState<TextFieldValue>,
     emailOnValueChange: (TextFieldValue) -> Unit,
+    name: MutableState<TextFieldValue>,
+    nameOnValueChange: (TextFieldValue) -> Unit,
     password: MutableState<TextFieldValue>,
     passwordOnValueChange: (TextFieldValue) -> Unit,
     confirmPassword: MutableState<TextFieldValue>,
@@ -49,6 +47,12 @@ fun SignUpTextFieldsSection(
             emailExceptionMessage = emailExceptionMessage,
             onValueChange = emailOnValueChange)
 
+        NameTextField(
+            name = name,
+            nameExceptionMessage = "",
+            onValueChange = nameOnValueChange
+        )
+
         PasswordTextField(
             password = password,
             passwordExceptionMessage = passwordExceptionMessage,
@@ -61,6 +65,9 @@ fun SignUpTextFieldsSection(
 
     }
 }
+
+
+
 
 @Composable
 fun ConfirmPasswordTextField(
@@ -153,9 +160,8 @@ fun PasswordTextField(
                 }
             }
         },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, autoCorrect = false, imeAction = ImeAction.Next)
-
-
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrect = false, imeAction = ImeAction.Next),
+        visualTransformation = PasswordVisualTransformation()
     )
 }
 
@@ -206,6 +212,99 @@ private fun SetupPasswordTextField(
     }
 }
 
+
+
+@Composable
+fun NameTextField(
+    name: MutableState<TextFieldValue>,
+    nameExceptionMessage:String,
+    onValueChange: (TextFieldValue) -> Unit) {
+
+
+    val hasError = nameExceptionMessage.isNotEmpty()
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.spacedBy(3.dp)) {
+
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .shadow(15.dp, shape = RoundedCornerShape(12.dp), clip = true),
+            value = name.value,
+            singleLine = true,
+            maxLines = 1,
+            shape = RoundedCornerShape(12.dp),
+            onValueChange = onValueChange,
+            placeholder = {
+                Text(
+                    text = "Email",
+                    color = if (hasError) MaterialTheme.colors.error else TextFieldTextColor,
+                    fontSize = 14.sp,
+                    textAlign = TextAlign.Center
+                )
+            },
+            trailingIcon = {
+
+
+                if (hasError) {
+                    Icon(
+                        imageVector = Icons.Filled.Error,
+                        contentDescription = "",
+                        tint = MaterialTheme.colors.error,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+
+                if (name.value.text.isNotEmpty()) {
+                    IconButton(onClick = {
+                        name.value = TextFieldValue("")
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Cancel,
+                            contentDescription = "",
+                            tint = TextFieldTextColor,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
+
+            },
+            leadingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Email,
+                    contentDescription = "Email Icon",
+                    tint = TextFieldTextColor,
+                    modifier = Modifier.size(18.dp)
+                )
+            },
+            isError = hasError,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = ImeAction.Next),
+            colors = TextFieldColors(),
+        )
+
+        if (hasError) {
+
+            Text(
+                text = nameExceptionMessage,
+                color = MaterialTheme.colors.error,
+                style = MaterialTheme.typography.caption,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+
+
+        }
+    }
+
+
+
+}
+
 @Composable
 fun EmailTextField(
     emailExceptionMessage: String,
@@ -231,7 +330,7 @@ fun EmailTextField(
             onValueChange = onValueChange,
             placeholder = {
                 Text(
-                    text = "Email",
+                    text = "Name",
                     color = if (hasError) MaterialTheme.colors.error else TextFieldTextColor,
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center
@@ -267,7 +366,7 @@ fun EmailTextField(
             },
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Default.Email,
+                    imageVector = Icons.Default.Person,
                     contentDescription = "Email Icon",
                     tint = TextFieldTextColor,
                     modifier = Modifier.size(18.dp)
