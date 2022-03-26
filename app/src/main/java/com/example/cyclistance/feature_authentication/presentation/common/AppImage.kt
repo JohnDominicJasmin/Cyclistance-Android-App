@@ -19,8 +19,8 @@ import com.example.cyclistance.feature_authentication.presentation.common.Custom
         contentDescription = "App Icon",
         imageId = R.drawable.ic_cyclistance_app_icon,
         modifier = Modifier
-            .height(100.dp)
-            .width(90.dp)
+            .height(80.dp)
+            .width(70.dp)
             .shadow(elevation = 10.dp, clip = true, shape = RoundedCornerShape(12.dp))
     )
 }
