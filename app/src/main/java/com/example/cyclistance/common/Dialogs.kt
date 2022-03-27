@@ -37,19 +37,17 @@ import io.github.farhanroy.composeawesomedialog.themes.Shapes
 
 
 
-
+data class AlertDialogData(
+    var title:String = "",
+    var description:String = "",
+    @RawRes var resId: Int = 0
+)
 @Composable
 fun SetupAlertDialog(
-    title: String,
-    desc: String ,
-    @RawRes resId: Int,
+    alertDialog:AlertDialogData) {
+    val openDialog = remember { mutableStateOf(true) }
 
-) {
-    val openDialog = remember { mutableStateOf(false) }
 
-    Button(onClick = { openDialog.value = true }) {
-        Text(text = "Open")
-    }
     if (openDialog.value) {
     Dialog(onDismissRequest = { openDialog.value = false  }, properties = DialogProperties()) {
         Box(
@@ -75,11 +73,11 @@ fun SetupAlertDialog(
                     ) {
                         Spacer(modifier = Modifier.height(24.dp))
                         Text(
-                            title.uppercase(),
+                            alertDialog.title.uppercase(),
                             style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
                             color = Color.White)
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(desc, style = TextStyle(fontSize = 14.sp), color = Color.White)
+                        Text(alertDialog.description, style = TextStyle(fontSize = 14.sp), color = Color.White)
                         Spacer(modifier = Modifier.height(24.dp))
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -108,7 +106,7 @@ fun SetupAlertDialog(
                     .border(
                         border = BorderStroke(width = 5.dp, color = Color.White),
                         shape = CircleShape
-                    ), resId)
+                    ), alertDialog.resId)
         }
     }
     }
