@@ -240,7 +240,7 @@ fun NameTextField(
             onValueChange = onValueChange,
             placeholder = {
                 Text(
-                    text = "Email",
+                    text = "Name",
                     color = if (hasError) MaterialTheme.colors.error else TextFieldTextColor,
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center
@@ -275,8 +275,8 @@ fun NameTextField(
             },
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Default.Email,
-                    contentDescription = "Email Icon",
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Person Icon",
                     tint = TextFieldTextColor,
                     modifier = Modifier.size(18.dp)
                 )
@@ -330,7 +330,7 @@ fun EmailTextField(
             onValueChange = onValueChange,
             placeholder = {
                 Text(
-                    text = "Name",
+                    text = "Email",
                     color = if (hasError) MaterialTheme.colors.error else TextFieldTextColor,
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center
@@ -366,7 +366,7 @@ fun EmailTextField(
             },
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Default.Person,
+                    imageVector = Icons.Default.Email,
                     contentDescription = "Email Icon",
                     tint = TextFieldTextColor,
                     modifier = Modifier.size(18.dp)
