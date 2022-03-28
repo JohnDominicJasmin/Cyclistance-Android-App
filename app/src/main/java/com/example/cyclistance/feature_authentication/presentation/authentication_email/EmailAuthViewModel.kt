@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_email
 
 import android.os.CountDownTimer
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.lifecycle.viewModelScope
 import androidx.compose.runtime.mutableStateOf
@@ -24,32 +23,30 @@ class EmailAuthViewModel @Inject constructor(
     private lateinit var verificationTimer: CountDownTimer
     private var job: Job? = null
 
-    private val _reloadState: MutableState<AuthState<Boolean>> = mutableStateOf(AuthState())
-    val reloadState: State<AuthState<Boolean>> = _reloadState
-
-    private val _secondsLeftState: MutableState<Int> = mutableStateOf(0)
-    val secondsLeftState: State<Int> = _secondsLeftState
-
-    private val _isTimerFinished: MutableState<Boolean> = mutableStateOf(false)
-    val isTimerFinished: State<Boolean> = _isTimerFinished // for button if not finished then show default button else show timer updating button
 
 
-    //TODO WRAP THIS TO DATA CLASS
-    private val _emailVerifyState: MutableState<AuthState<Boolean>> = mutableStateOf(AuthState())
-    val emailVerifyState: State<AuthState<Boolean>> = _emailVerifyState
 
-    private val _sendEmailVerificationState: MutableState<AuthState<Boolean>> = mutableStateOf(AuthState<Boolean>())
-    val sendEmailVerificationState: State<AuthState<Boolean>> = _sendEmailVerificationState// if success then show dialog
+    private val _state = mutableStateOf(EmailAuthState())
+    val state: State<EmailAuthState> = _state
 
+    private val _sendEmailVerificationState = mutableStateOf(AuthState<Boolean>())
+    val sendEmailVerificationState = _sendEmailVerificationState
+
+    private val _verifyEmailState = mutableStateOf(AuthState<Boolean>())
+    val verifyEmailState = _verifyEmailState
+
+    private val _reloadEmailState = mutableStateOf(AuthState<Boolean>())
+    val reloadEmailState = _reloadEmailState
 
 
     fun verifyEmail() {
 
         viewModelScope.launch {
             kotlin.runCatching {
+                _verifyEmailState.value = AuthState(isLoading = true)
                 authUseCase.isEmailVerifiedUseCase() == true
             }.onSuccess { result ->
-                _emailVerifyState.value = AuthState(result = result, isLoading = false)
+                _verifyEmailState.value = AuthState(result = result, isLoading = false)
             }
         }
     }
@@ -68,16 +65,16 @@ class EmailAuthViewModel @Inject constructor(
 
     fun reloadEmail() {
         viewModelScope.launch {
-
+            //todo change this viewmodelscope
             kotlin.runCatching {
-                _reloadState.value = AuthState(isLoading = true)
+                _reloadEmailState.value = AuthState(isLoading = true)
                 authUseCase.reloadEmailUseCase()
             }.onSuccess { result ->
-                _reloadState.value = AuthState(isLoading = false, result = result)
+                _reloadEmailState.value = AuthState(isLoading = false, result = result)
             }.onFailure { exception ->
                 when (exception) {
                     is AuthExceptions.InternetException -> {
-                        _reloadState.value = AuthState(isLoading = false, result = false, error = exception.message ?: "No Internet Connection.")
+                        _reloadEmailState.value = AuthState( isLoading = false, result = false, internetExceptionMessage = exception.message ?: "No Internet Connection.")
                     }
                     else -> {
                         Timber.e("${this.javaClass.name}: ${exception.message}")
@@ -93,17 +90,20 @@ class EmailAuthViewModel @Inject constructor(
 
     fun startTimer() {
         viewModelScope.launch() {
+            _state.value = EmailAuthState(isTimerRunning = true)
             verificationTimer = object : CountDownTimer(TIMER_COUNTS, ONE_SECOND_TO_MILLIS) {
                 override fun onTick(millisUntilFinished: Long) {
                     val timeLeft = millisUntilFinished / ONE_SECOND_TO_MILLIS
-                    _secondsLeftState.value = timeLeft.toInt()
+                    _state.value = EmailAuthState(secondsLeft = timeLeft.toInt())
                 }
 
                 override fun onFinish() {
                     stopTimer()
-                    _isTimerFinished.value = true
+                    _state.value = EmailAuthState(isTimerRunning = false)
+
                 }
             }.start()
+
         }
     }
 
@@ -121,7 +121,7 @@ class EmailAuthViewModel @Inject constructor(
             }.onSuccess { result ->
                 _sendEmailVerificationState.value = AuthState(isLoading = false, result = result)
             }.onFailure {
-                _sendEmailVerificationState.value = AuthState(isLoading = false, result = false, error = it.message ?: "An unexpected error occurred.")
+                _sendEmailVerificationState.value =  AuthState(isLoading = false, result = false, sendEmailExceptionMessage = it.message ?: "An unexpected error occurred.")
             }
         }
     }
