@@ -22,7 +22,7 @@ class SignUpViewModel @Inject constructor(
     private val _createAccountState: MutableState<AuthState<Boolean>> = mutableStateOf(AuthState<Boolean>())
     val createAccountState: State<AuthState<Boolean>> = _createAccountState
 
-    val hasAccountSignedIn: State<Boolean> = mutableStateOf(authUseCase.hasAccountSignedInUseCase())
+     fun hasAccountSignedIn(): Boolean = authUseCase.hasAccountSignedInUseCase()
 
     fun clearState(){
         _createAccountState.value = AuthState()
