@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layoutId
 
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -43,7 +44,80 @@ fun SignInScreen(
 
 
 
+    LaunchedEffect(key1 = signInState.result) {
+        signInState.result?.let { signInIsSuccessful ->
+            if (signInIsSuccessful) {
+                emailAuthViewModel.reloadEmail()
+            }
+        }
+    }
 
+    LaunchedEffect(key1 = emailReloadState.result) {
+        emailReloadState.result?.let { reloadEmailIsSuccessful ->
+            if (reloadEmailIsSuccessful) {
+                emailAuthViewModel.verifyEmail()
+            }
+        }
+    }
+
+
+    LaunchedEffect(key1 = emailVerifyState.result) {
+        emailVerifyState.result?.let { isSuccessful ->
+            if (isSuccessful) {
+                navController?.navigate(Screens.MappingScreen.route) {
+                    popUpTo(Screens.SignInScreen.route) { inclusive = true }
+                    launchSingleTop = true
+                }
+            } else {
+                navController?.navigate(Screens.EmailAuthScreen.route) {
+                    popUpTo(Screens.SignInScreen.route) { inclusive = true }
+                    launchSingleTop = true
+                }
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = signInState.internetExceptionMessage) {
+        signInState.internetExceptionMessage.let { message ->
+            if (message.isNotEmpty()) {
+                navController?.navigate(Screens.NoInternetScreen.route) {
+                    launchSingleTop = true
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    signInState.invalidUserExceptionMessage.let{ message ->
+        if(message.isNotEmpty()){
+            SetupAlertDialog(
+                alertDialog = AlertDialogData(
+                title = "Error",
+                description = message,
+                resId = io.github.farhanroy.composeawesomedialog.R.raw.error))
+        }
+    }
+
+    signInState.userCollisionExceptionMessage.let { message ->
+        if(message.isNotEmpty()){
+            SetupAlertDialog(
+                alertDialog = AlertDialogData(
+                title = "Error",
+                description = message,
+                resId = io.github.farhanroy.composeawesomedialog.R.raw.error))
+        }
+    }
 
 
     Column(
@@ -67,71 +141,6 @@ fun SignInScreen(
                 topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
                 bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId
             )
-
-
-
-
-            emailReloadState.result?.let { reloadEmailIsSuccessful ->
-                if (reloadEmailIsSuccessful) {
-                    emailAuthViewModel.verifyEmail()
-                }
-            }
-
-
-            signInState.internetExceptionMessage.let { message ->
-                if (message.isNotEmpty()) {
-                    navController?.navigate(Screens.NoInternetScreen.route) {
-                        launchSingleTop = true
-                    }
-                }
-            }
-
-
-
-            emailVerifyState.result?.let { isSuccessful ->
-                if (isSuccessful) {
-                    navController?.navigate(Screens.MappingScreen.route) {
-                        popUpTo(Screens.SignInScreen.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                } else {
-                    navController?.navigate(Screens.EmailAuthScreen.route) {
-                        popUpTo(Screens.SignInScreen.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
-            }
-
-            signInState.result?.let { signInIsSuccessful ->
-                if (signInIsSuccessful) {
-                    emailAuthViewModel.reloadEmail()
-                }
-            }
-
-
-            signInState.invalidUserExceptionMessage.let{ message ->
-                if(message.isNotEmpty()){
-                    SetupAlertDialog(
-                        alertDialog = AlertDialogData(
-                            title = "Error",
-                            description = message,
-                            resId = io.github.farhanroy.composeawesomedialog.R.raw.error))
-                }
-            }
-
-            signInState.userCollisionExceptionMessage.let { message ->
-                if(message.isNotEmpty()){
-                    SetupAlertDialog(
-                        alertDialog = AlertDialogData(
-                            title = "Error",
-                            description = message,
-                            resId = io.github.farhanroy.composeawesomedialog.R.raw.error))
-                }
-            }
-
-
-
-
 
             SignInTextFieldsSection(
                 email = email,
@@ -172,13 +181,15 @@ fun SignInScreen(
                 navController?.navigate(Screens.SignUpScreen.route)
             })
 
+            if (signInState.isLoading || emailReloadState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
+                )
+            }
+
         }
 
-        if (signInState.isLoading || emailReloadState.isLoading) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
-            )
-        }
+
     }
 }
 

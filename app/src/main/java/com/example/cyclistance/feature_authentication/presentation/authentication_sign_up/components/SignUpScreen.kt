@@ -7,6 +7,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -39,8 +40,57 @@ fun SignUpScreen(
     val confirmPassword = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
 
     val signUpState by remember { signUpViewModel.createAccountState }
-    val hasAccountSignedIn by remember { signUpViewModel.hasAccountSignedIn }
+    val hasAccountSignedIn = remember { signUpViewModel.hasAccountSignedIn() }
     val isUserCreatedNewAccount =  remember { email.value.text != mappingViewModel.getEmail() }
+
+
+
+    LaunchedEffect(key1 = signUpState.result) {
+        signUpState.result?.let { signUpIsSuccessful ->
+
+            if (signUpIsSuccessful) {
+                navController?.popBackStack()
+                navController?.navigate(Screens.EmailAuthScreen.route) {
+                    popUpTo(Screens.SignUpScreen.route) { inclusive = true }
+                    launchSingleTop = true
+                }
+            } else {
+                Timber.e("Sign up not success.")
+            }
+        }
+    }
+
+    LaunchedEffect(key1 = signUpState.internetExceptionMessage) {
+        signUpState.internetExceptionMessage.let { message ->
+            if (message.isNotEmpty()) {
+                navController?.navigate(Screens.NoInternetScreen.route) {
+                    launchSingleTop = true
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+    signUpState.userCollisionExceptionMessage.let{ message->
+        if(message.isNotEmpty()){
+
+            SetupAlertDialog(
+                alertDialog = AlertDialogData(
+                title = "Error",
+                description = message,
+                resId = error
+            ))
+
+        }
+    }
+
 
 
 
@@ -57,41 +107,6 @@ fun SignUpScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(BackgroundColor)) {
-
-            signUpState.result?.let { signUpIsSuccessful ->
-
-                if (signUpIsSuccessful) {
-                    navController?.popBackStack()
-                    navController?.navigate(Screens.EmailAuthScreen.route) {
-                        popUpTo(Screens.SignUpScreen.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                } else {
-                    Timber.e("Sign up not success.")
-                }
-            }
-
-            signUpState.internetExceptionMessage.let { message ->
-                if (message.isNotEmpty()) {
-                    navController?.navigate(Screens.NoInternetScreen.route) {
-                        launchSingleTop = true
-                    }
-                }
-            }
-
-            signUpState.userCollisionExceptionMessage.let{ message->
-                if(message.isNotEmpty()){
-
-                    SetupAlertDialog(
-                        alertDialog = AlertDialogData(
-                            title = "Error",
-                            description = message,
-                            resId = error
-                        ))
-
-                }
-            }
-
 
             AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
             SignUpTextArea()
@@ -151,15 +166,15 @@ fun SignUpScreen(
                     launchSingleTop = true
                 }
             }
-
+            if (signUpState.isLoading ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
+                )
+            }
 
         }
 
-        if (signUpState.isLoading ) {
-            CircularProgressIndicator(
-                modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
-            )
-        }
+
     }
 
 

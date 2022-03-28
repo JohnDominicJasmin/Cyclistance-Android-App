@@ -11,4 +11,5 @@ sealed class AuthenticationConstraintsItem(val layoutId:String){
     object ClickableTextSection: AuthenticationConstraintsItem(layoutId = "dont_have_account")
     object SignUpButton: AuthenticationConstraintsItem(layoutId = "sign_up_button")
     object ResendButton: AuthenticationConstraintsItem(layoutId = "resend_email_button")
+    object ProgressBar: AuthenticationConstraintsItem(layoutId = "progress_bar")
 }

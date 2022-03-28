@@ -15,7 +15,7 @@ val signInConstraints = ConstraintSet {
     val facebookAndGoogle = createRefFor(id = AuthenticationConstraintsItem.OtherSignIns.layoutId)
     val signInButton = createRefFor(id = AuthenticationConstraintsItem.SignInButton.layoutId)
     val dontHaveAccountText = createRefFor(id = AuthenticationConstraintsItem.ClickableTextSection.layoutId)
-
+    val progressBar = createRefFor(id = AuthenticationConstraintsItem.ProgressBar.layoutId)
 
     constrain(appIcon) {
         top.linkTo(parent.top, margin = 15.dp)
@@ -31,6 +31,14 @@ val signInConstraints = ConstraintSet {
         start.linkTo(parent.start)
         width = Dimension.wrapContent
         height = Dimension.wrapContent
+    }
+
+    constrain(progressBar){
+        top.linkTo(parent.top)
+        end.linkTo(parent.end)
+        start.linkTo(parent.start)
+        bottom.linkTo(parent.bottom)
+        this.centerTo(parent)
     }
 
     constrain(topWave) {

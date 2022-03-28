@@ -67,7 +67,7 @@ fun EmailAuthScreen(
                 .fillMaxHeight(0.9f)
                 .background(BackgroundColor)) {
 
-
+        LaunchedEffect(key1 = emailVerifyState.result) {
             emailVerifyState.result?.let { isSuccessful ->
                 if (isSuccessful) {
                     navController?.navigate(Screens.MappingScreen.route) {
@@ -78,22 +78,25 @@ fun EmailAuthScreen(
                     }
                 }
             }
+        }
 
 
+            LaunchedEffect(key1 = emailReloadState.internetExceptionMessage) {
+                emailReloadState.internetExceptionMessage.let { message ->
+                    if (message.isNotEmpty()) {
 
-            emailReloadState.internetExceptionMessage.let { message ->
-                if (message.isNotEmpty()) {
-
-                    navController?.navigate(Screens.NoInternetScreen.route){
-                        launchSingleTop = true
+                        navController?.navigate(Screens.NoInternetScreen.route) {
+                            launchSingleTop = true
+                        }
                     }
                 }
             }
 
-            if (emailReloadState.result == true) {
-                emailAuthViewModel.verifyEmail()
+            LaunchedEffect(key1 = emailReloadState.result) {
+                if (emailReloadState.result == true) {
+                    emailAuthViewModel.verifyEmail()
+                }
             }
-
 
 
             EmailIcon()

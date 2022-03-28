@@ -14,6 +14,8 @@ val signUpConstraints = ConstraintSet {
     val textFieldSection = createRefFor(id = AuthenticationConstraintsItem.TextFields.layoutId)
     val signUpButton = createRefFor(id = AuthenticationConstraintsItem.SignUpButton.layoutId)
     val alreadyHaveAnAccountText = createRefFor(id = AuthenticationConstraintsItem.ClickableTextSection.layoutId)
+    val progressBar = createRefFor(id = AuthenticationConstraintsItem.ProgressBar.layoutId)
+
 
     constrain(appIcon){
         top.linkTo(parent.top, margin = 12.dp)
@@ -30,6 +32,15 @@ val signUpConstraints = ConstraintSet {
         width = Dimension.wrapContent
         height = Dimension.wrapContent
     }
+
+    constrain(progressBar){
+        top.linkTo(parent.top)
+        end.linkTo(parent.end)
+        start.linkTo(parent.start)
+        bottom.linkTo(parent.bottom)
+        this.centerTo(parent)
+    }
+
 
     constrain(topWave){
         top.linkTo(parent.top)
