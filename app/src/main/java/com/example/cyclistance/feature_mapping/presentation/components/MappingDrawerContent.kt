@@ -83,7 +83,7 @@ fun MappingDrawerContent() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_baseline_person_outline_24,
-                buttonText = "Profile") { /* todo onClick here */ }
+                buttonText = "Profile") {  }
 
             DrawerContentButton(
                 modifier = Modifier
@@ -91,7 +91,7 @@ fun MappingDrawerContent() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_baseline_settings_24,
-                buttonText = "Settings") { /* todo onClick here */ }
+                buttonText = "Settings") {  }
 
             DrawerContentButton(
                 modifier = Modifier
@@ -99,7 +99,7 @@ fun MappingDrawerContent() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_baseline_chat_bubble_outline_24,
-                buttonText = "Chat") { /* todo onClick here */ }
+                buttonText = "Chat") {  }
 
             DrawerContentButton(
                 modifier = Modifier
@@ -107,7 +107,7 @@ fun MappingDrawerContent() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_baseline_notifications_none_24,
-                buttonText = "Notifications") { /* todo onClick here */ }
+                buttonText = "Notifications") {   }
 
             DrawerContentButton(
                 modifier = Modifier
@@ -115,7 +115,7 @@ fun MappingDrawerContent() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_about,
-                buttonText = "About") { /* todo onClick here */ }
+                buttonText = "About") {   }
 
 
 
@@ -126,7 +126,7 @@ fun MappingDrawerContent() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_group_35,
-                buttonText = "Sign out") { /* todo onClick here */ }
+                buttonText = "Sign out") {   }
         }
 
 

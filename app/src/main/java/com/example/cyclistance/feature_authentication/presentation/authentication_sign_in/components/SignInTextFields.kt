@@ -8,10 +8,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.ConfirmPasswordTextField
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.EmailTextField
+import com.example.cyclistance.feature_authentication.presentation.common.AuthState
+import com.example.cyclistance.feature_authentication.presentation.common.ConfirmPasswordTextField
+import com.example.cyclistance.feature_authentication.presentation.common.EmailTextField
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
-import com.example.cyclistance.feature_authentication.presentation.common.InputResultState
 
 @Composable
 fun SignInTextFieldsSection(
@@ -19,7 +19,7 @@ fun SignInTextFieldsSection(
     emailOnValueChange: (TextFieldValue) -> Unit,
     password: MutableState<TextFieldValue>,
     passwordOnValueChange: (TextFieldValue) -> Unit,
-    inputResultState: InputResultState<Boolean>
+    inputResultState: AuthState<Boolean>
     ) {
 
     val emailExceptionMessage = inputResultState.emailExceptionMessage

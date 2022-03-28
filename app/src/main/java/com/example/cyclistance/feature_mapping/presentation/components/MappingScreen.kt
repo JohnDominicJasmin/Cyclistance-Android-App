@@ -57,7 +57,7 @@ fun MappingScreen(navController: NavController?) {
 }
 
 @Composable
-fun SetupMapScreen() {// todo remove later
+fun SetupMapScreen() {
 
     AndroidView(
         factory = { context: Context ->

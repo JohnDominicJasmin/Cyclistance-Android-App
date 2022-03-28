@@ -24,8 +24,10 @@ import com.example.cyclistance.feature_readable_displays.presentation.splash_scr
 import kotlinx.coroutines.delay
 
 @Composable
-fun SplashScreen(navController: NavController) {
-    val splashScreenViewModel: SplashScreenViewModel = hiltViewModel()
+fun SplashScreen(
+    navController: NavController,
+    splashScreenViewModel: SplashScreenViewModel = hiltViewModel()) {
+
     val screen by remember{ splashScreenViewModel.splashScreenState}
 
     val scale = remember { Animatable(initialValue = 0f) }

@@ -28,7 +28,7 @@ fun SignUpTextFieldsSection(
     passwordOnValueChange: (TextFieldValue) -> Unit,
     confirmPassword: MutableState<TextFieldValue>,
     confirmPasswordOnValueChange: (TextFieldValue) -> Unit,
-    inputResultState: InputResultState<Boolean>) {
+    inputResultState: AuthState<Boolean>) {
 
     val emailExceptionMessage = inputResultState.emailExceptionMessage
     val passwordExceptionMessage = inputResultState.passwordExceptionMessage

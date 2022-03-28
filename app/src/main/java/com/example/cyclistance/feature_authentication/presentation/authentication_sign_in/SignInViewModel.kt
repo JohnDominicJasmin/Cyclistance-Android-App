@@ -9,7 +9,6 @@ import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExce
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_authentication.presentation.common.AuthState
-import com.example.cyclistance.feature_authentication.presentation.common.InputResultState
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,43 +20,43 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
-    private val _signInWithEmailAndPasswordState: MutableState<InputResultState<Boolean>> = mutableStateOf(InputResultState<Boolean>())
-    val signInWithEmailAndPasswordState: State<InputResultState<Boolean>> = _signInWithEmailAndPasswordState
+    private val _signInWithEmailAndPasswordState: MutableState<AuthState<Boolean>> = mutableStateOf(AuthState<Boolean>())
+    val signInWithEmailAndPasswordState: State<AuthState<Boolean>> = _signInWithEmailAndPasswordState
 
 
     private val _signInWithCredentialState: MutableState<AuthState<Boolean>> = mutableStateOf(AuthState<Boolean>())
     val signInWithCredentialState: State<AuthState<Boolean>> = _signInWithCredentialState
 
     fun clearState(){
-        _signInWithEmailAndPasswordState.value = InputResultState()
+        _signInWithEmailAndPasswordState.value = AuthState()
     }
 
     fun signInWithEmailAndPassword(authModel: AuthModel) {
         viewModelScope.launch {
             kotlin.runCatching {
 
-                _signInWithEmailAndPasswordState.value = InputResultState(authState = AuthState(isLoading = true))
+                _signInWithEmailAndPasswordState.value =  AuthState(isLoading = true)
                  authUseCase.signInWithEmailAndPasswordUseCase(authModel)
 
             }.onSuccess {result ->
-                _signInWithEmailAndPasswordState.value = InputResultState(authState = AuthState(isLoading = false, result = result))
+                _signInWithEmailAndPasswordState.value =  AuthState(isLoading = false, result = result)
             }.onFailure { exception ->
 
                 when(exception){
                     is AuthExceptions.EmailException ->{
-                        _signInWithEmailAndPasswordState.value = InputResultState(emailExceptionMessage = exception.message ?: "Invalid Email.")
+                        _signInWithEmailAndPasswordState.value = AuthState(emailExceptionMessage = exception.message ?: "Invalid Email.")
                     }
                     is AuthExceptions.PasswordException ->{
-                        _signInWithEmailAndPasswordState.value = InputResultState(passwordExceptionMessage = exception.message ?: "Invalid Password.")
+                        _signInWithEmailAndPasswordState.value = AuthState(passwordExceptionMessage = exception.message ?: "Invalid Password.")
                     }
                     is AuthExceptions.InternetException ->{
-                        _signInWithEmailAndPasswordState.value = InputResultState(internetExceptionMessage = exception.message ?: "No internet connection.")
+                        _signInWithEmailAndPasswordState.value = AuthState(internetExceptionMessage = exception.message ?: "No internet connection.")
                     }
                     is AuthExceptions.InvalidUserException ->{
-                        _signInWithEmailAndPasswordState.value = InputResultState(invalidUserExceptionMessage = exception.message ?: "Invalid User.")
+                        _signInWithEmailAndPasswordState.value = AuthState(invalidUserExceptionMessage = exception.message ?: "Invalid User.")
                     }
                     is FirebaseAuthUserCollisionException ->{
-                        _signInWithEmailAndPasswordState.value = InputResultState(userCollisionExceptionMessage = exception.message ?: "An unexpected error occurred.")
+                        _signInWithEmailAndPasswordState.value = AuthState(userCollisionExceptionMessage = exception.message ?: "An unexpected error occurred.")
                     }
                     else ->{
                         Timber.e("${this@SignInViewModel.javaClass.name}: ${exception.message}")
@@ -69,17 +68,29 @@ class SignInViewModel @Inject constructor(
     }
 
 
-    fun signInWithCredential(authCredential: AuthCredential){
+    fun signInWithCredential(authCredential: AuthCredential) {
         viewModelScope.launch {
             kotlin.runCatching {
                 _signInWithCredentialState.value = AuthState(isLoading = true)
                 authUseCase.signInWithCredentialUseCase(authCredential)
             }.onSuccess { result ->
                 _signInWithCredentialState.value = AuthState(isLoading = false, result = result)
-            }.onFailure {
-                _signInWithCredentialState.value = AuthState(isLoading = false, error = it.message?:"An unexpected error occurred.")
-                //todo catch specific exceptions
+            }.onFailure { exception ->
+
+                when (exception) {
+
+                    is AuthExceptions.InternetException -> {
+                        _signInWithCredentialState.value = AuthState(internetExceptionMessage = exception.message ?: "No Internet Connection.")
+                    }
+                    is AuthExceptions.ConflictFBTokenException -> {
+                        _signInWithCredentialState.value = AuthState(conflictFBTokenExceptionMessage = exception.message ?: "Login Failed.")
+
+                    }
+                }
             }
         }
     }
+
+
+
 }

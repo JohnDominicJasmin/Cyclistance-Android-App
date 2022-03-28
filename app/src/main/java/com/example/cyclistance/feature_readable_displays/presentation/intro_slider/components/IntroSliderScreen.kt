@@ -27,9 +27,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun IntroSliderScreen(navController: NavController) {
+fun IntroSliderScreen(
+    navController: NavController,
+    introSliderViewModel: IntroSliderViewModel = hiltViewModel()) {
+
     val pagerState = rememberPagerState()
-    val introSliderViewModel:IntroSliderViewModel = hiltViewModel()
     val scope = rememberCoroutineScope()
 
     Column(
