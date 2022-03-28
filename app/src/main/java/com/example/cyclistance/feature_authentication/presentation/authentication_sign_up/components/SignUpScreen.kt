@@ -1,77 +1,46 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components
 
-import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.cyclistance.R
+import com.example.cyclistance.common.AlertDialogData
+import com.example.cyclistance.common.SetupAlertDialog
+import io.github.farhanroy.composeawesomedialog.R.raw.error
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.AppImageIcon
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpViewModel
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.SignUpTextFieldsSection
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
 import com.example.cyclistance.feature_mapping.presentation.MappingViewModel
 import timber.log.Timber
 
 @Composable
-fun SignUpScreen(navController: NavController?) {
-    val signUpViewModel: SignUpViewModel = hiltViewModel()
-    val mappingViewModel: MappingViewModel = hiltViewModel()
+fun SignUpScreen(
+    navController: NavController?,
+    signUpViewModel: SignUpViewModel = hiltViewModel(),
+    mappingViewModel: MappingViewModel = hiltViewModel()) {
 
-    val email = remember { mutableStateOf(TextFieldValue("")) }
-    val password = remember { mutableStateOf(TextFieldValue("")) }
-    val confirmPassword = remember { mutableStateOf(TextFieldValue("")) }
+
+    val email = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
+    val name = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
+    val password = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
+    val confirmPassword = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
 
     val signUpState by remember { signUpViewModel.createAccountState }
     val hasAccountSignedIn by remember { signUpViewModel.hasAccountSignedIn }
-    val context = LocalContext.current
-    val isUserCreatedNewAccount =  email.value.text != mappingViewModel.email.value
-
-
-
-
-    signUpState.authState.result?.let { signUpIsSuccessful ->
-        LaunchedEffect(key1 = signUpIsSuccessful) {
-
-            if (signUpIsSuccessful) {
-                signUpViewModel.saveAccount()
-                navController?.navigate(Screens.EmailAuthScreen.route) {
-                    popUpTo(Screens.SignUpScreen.route) { inclusive = true }
-                    launchSingleTop = true
-                }
-            } else {
-                Timber.e("Sign up not success.")
-            }
-        }
-    }
-
-
-
-
-
-
-    if(signUpState.internetExceptionMessage.isNotEmpty()){
-        //Show dialog
-        Toast.makeText(context,"No internet", Toast.LENGTH_SHORT).show()
-    }
-    if(signUpState.userCollisionExceptionMessage.isNotEmpty()){
-        //Show dialog
-        Toast.makeText(context, "Collision", Toast.LENGTH_SHORT).show()
-    }
+    val isUserCreatedNewAccount =  remember { email.value.text != mappingViewModel.getEmail() }
 
 
 
@@ -89,6 +58,41 @@ fun SignUpScreen(navController: NavController?) {
                 .fillMaxSize()
                 .background(BackgroundColor)) {
 
+            signUpState.result?.let { signUpIsSuccessful ->
+
+                if (signUpIsSuccessful) {
+                    navController?.popBackStack()
+                    navController?.navigate(Screens.EmailAuthScreen.route) {
+                        popUpTo(Screens.SignUpScreen.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                } else {
+                    Timber.e("Sign up not success.")
+                }
+            }
+
+            signUpState.internetExceptionMessage.let { message ->
+                if (message.isNotEmpty()) {
+                    navController?.navigate(Screens.NoInternetScreen.route) {
+                        launchSingleTop = true
+                    }
+                }
+            }
+
+            signUpState.userCollisionExceptionMessage.let{ message->
+                if(message.isNotEmpty()){
+
+                    SetupAlertDialog(
+                        alertDialog = AlertDialogData(
+                            title = "Error",
+                            description = message,
+                            resId = error
+                        ))
+
+                }
+            }
+
+
             AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
             SignUpTextArea()
 
@@ -104,6 +108,11 @@ fun SignUpScreen(navController: NavController?) {
                     if (signUpState.emailExceptionMessage.isNotEmpty()) {
                         signUpViewModel.clearState()
                     }
+                },
+                name = name,
+                nameOnValueChange = {
+                    name.value = it
+
                 },
                 password = password,
                 passwordOnValueChange = {
@@ -146,7 +155,7 @@ fun SignUpScreen(navController: NavController?) {
 
         }
 
-        if (signUpState.authState.isLoading ) {
+        if (signUpState.isLoading ) {
             CircularProgressIndicator(
                 modifier = Modifier.align(alignment = Alignment.CenterHorizontally)
             )
