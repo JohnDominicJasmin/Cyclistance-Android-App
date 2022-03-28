@@ -278,6 +278,18 @@
         <entry key="../../../../layout/compose-model-1648038326007.xml" value="0.33" />
         <entry key="../../../../layout/compose-model-1648038513548.xml" value="0.31841216216216217" />
         <entry key="../../../../layout/compose-model-1648044846719.xml" value="0.15833333333333333" />
+        <entry key="../../../../layout/compose-model-1648058549372.xml" value="0.2388888888888889" />
+        <entry key="../../../../layout/compose-model-1648059087082.xml" value="0.2388888888888889" />
+        <entry key="../../../../layout/compose-model-1648111469342.xml" value="0.1" />
+        <entry key="../../../../layout/compose-model-1648112116587.xml" value="0.2388888888888889" />
+        <entry key="../../../../layout/compose-model-1648122575692.xml" value="1.0" />
+        <entry key="../../../../layout/compose-model-1648297708955.xml" value="0.1" />
+        <entry key="../../../../layout/compose-model-1648385744910.xml" value="0.1" />
+        <entry key="../../../../layout/compose-model-1648388028891.xml" value="0.75" />
+        <entry key="../../../../layout/compose-model-1648388215573.xml" value="0.22" />
+        <entry key="../../../../layout/compose-model-1648395849979.xml" value="0.31203703703703706" />
+        <entry key="../../../../layout/compose-model-1648403057281.xml" value="0.30185185185185187" />
+        <entry key="../../../../layout/compose-model-1648403701229.xml" value="0.17440878378378377" />
         <entry key="../../.gradle/caches/transforms-3/dfd8fd68048be80345bd978b987de6ce/transformed/material-1.5.0/res/drawable/mtrl_ic_error.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-v24/ic_facebook_.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.187" />
@@ -286,7 +298,7 @@
         <entry key="app/src/main/res/drawable/ic_accident.xml" value="0.278" />
         <entry key="app/src/main/res/drawable/ic_baseline_logout_24.xml" value="0.213" />
         <entry key="app/src/main/res/drawable/ic_baseline_person_outline_24.xml" value="0.2415" />
-        <entry key="app/src/main/res/drawable/ic_bottom_wave.xml" value="0.366" />
+        <entry key="app/src/main/res/drawable/ic_bottom_wave.xml" value="0.2" />
         <entry key="app/src/main/res/drawable/ic_check.xml" value="0.2405" />
         <entry key="app/src/main/res/drawable/ic_cyclistance_app_icon.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_email.xml" value="0.1" />
