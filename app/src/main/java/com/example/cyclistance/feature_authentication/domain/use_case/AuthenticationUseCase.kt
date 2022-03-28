@@ -4,7 +4,6 @@ data class AuthenticationUseCase(
     val reloadEmailUseCase: ReloadEmailUseCase,
     val signOutUseCase: SignOutUseCase,
     val createWithEmailAndPasswordUseCase: CreateWithEmailAndPasswordUseCase,
-    val registerAccountUseCase: RegisterAccountUseCase,
     val getEmailUseCase: GetEmailUseCase,
     val getNameUseCase: GetNameUseCase,
     val hasAccountSignedInUseCase: HasAccountSignedInUseCase,

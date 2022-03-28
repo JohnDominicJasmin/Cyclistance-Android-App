@@ -32,7 +32,6 @@ import dagger.hilt.android.scopes.ViewModelScoped
             reloadEmailUseCase = ReloadEmailUseCase(repository = repository),// EmailScreen & SignInScreen(EmailAuthViewModel)
             signOutUseCase = SignOutUseCase(repository = repository),//Mapping Screen
             createWithEmailAndPasswordUseCase = CreateWithEmailAndPasswordUseCase(repository = repository, context = context), // Sign Up Screen
-            registerAccountUseCase = RegisterAccountUseCase(repository = repository),//Sign In & Sign Up Screen
             getEmailUseCase = GetEmailUseCase(repository = repository), // Main screen
             getNameUseCase = GetNameUseCase(repository = repository),// Main screen
             hasAccountSignedInUseCase = HasAccountSignedInUseCase(repository = repository),//SplashScreen & Sign Up Screen

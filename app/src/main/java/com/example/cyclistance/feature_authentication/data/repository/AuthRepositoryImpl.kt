@@ -18,12 +18,12 @@ class AuthRepositoryImpl @Inject constructor(
     private val context: Context
 ) : AuthRepository<AuthCredential> {
 
-    private val firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance()
-    private var firebaseUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
+
+
 
     override suspend fun reloadEmail(): Boolean {
         return CompletableDeferred<Boolean>().run {
-            firebaseUser?.reload()?.addOnCompleteListener { reload ->
+            FirebaseAuth.getInstance().currentUser?.reload()?.addOnCompleteListener { reload ->
                 reload.exception?.let { exception ->
                     if (exception is FirebaseNetworkException) {
                         this.completeExceptionally(AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message)))
@@ -36,7 +36,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
     override suspend fun sendEmailVerification(): Boolean {
         return CompletableDeferred<Boolean>().run {
-            firebaseUser?.sendEmailVerification()?.addOnCompleteListener { sendEmail ->
+            FirebaseAuth.getInstance().currentUser?.sendEmailVerification()?.addOnCompleteListener { sendEmail ->
                 sendEmail.exception?.let {
                     this.completeExceptionally(AuthExceptions.EmailVerificationException(message = context.getString(R.string.failed_email_verification)))
                 }
@@ -47,7 +47,7 @@ class AuthRepositoryImpl @Inject constructor(
     }
     override suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean {
         return CompletableDeferred<Boolean>().run {
-            firebaseAuth.createUserWithEmailAndPassword(email.trim(), password.trim())
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.trim(), password.trim())
                 .addOnCompleteListener { createAccount ->
                     createAccount.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
@@ -64,7 +64,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean {
         return CompletableDeferred<Boolean>().run {
 
-            firebaseAuth.signInWithEmailAndPassword(email.trim(), password.trim())
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email.trim(), password.trim())
                 .addOnCompleteListener { signInWithEmailAndPassword ->
                     signInWithEmailAndPassword.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
@@ -84,7 +84,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun signInWithCredentials(v: AuthCredential): Boolean {
         return CompletableDeferred<Boolean>().run {
-            firebaseAuth.signInWithCredential(v).addOnCompleteListener { signInWithCredential ->
+            FirebaseAuth.getInstance().signInWithCredential(v).addOnCompleteListener { signInWithCredential ->
                 signInWithCredential.exception?.let { exception ->
                     if (exception.message == FB_CONNECTION_FAILURE) {
                         this.completeExceptionally(AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message)))
@@ -98,24 +98,21 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
     override fun signOut() {
-        firebaseAuth.signOut()
+        FirebaseAuth.getInstance().signOut()
     }
 
-    override fun registerAccount() {
-        firebaseUser = FirebaseAuth.getInstance().currentUser
-    }
 
 
     override  fun getEmail(): String? {
-        return firebaseUser?.email
+        return FirebaseAuth.getInstance().currentUser?.email
     }
 
     override  fun getName(): String? {
-        return firebaseUser?.displayName
+        return FirebaseAuth.getInstance().currentUser?.displayName
     }
 
-    override  fun isSignedInWithProvider(): Flow<Boolean> = flow {
-        firebaseUser?.providerData?.forEach {
+    override fun isSignedInWithProvider(): Flow<Boolean> = flow {
+        FirebaseAuth.getInstance().currentUser?.providerData?.forEach {
             emit(
                 value = (it.providerId == FacebookAuthProvider.PROVIDER_ID ||
                          it.providerId == GoogleAuthProvider.PROVIDER_ID))
@@ -123,14 +120,20 @@ class AuthRepositoryImpl @Inject constructor(
 
     }
 
+    override fun setName(name: String): Boolean {
+        UserProfileChangeRequest.Builder()
+            .setDisplayName(name)
+            .build()
 
+        return false
+    }
 
     override fun isEmailVerified(): Boolean? {
-        return firebaseUser?.isEmailVerified
+        return FirebaseAuth.getInstance().currentUser?.isEmailVerified
     }
 
     override fun hasAccountSignedIn(): Boolean {
-        return firebaseUser != null
+        return FirebaseAuth.getInstance().currentUser != null
     }
 
 
