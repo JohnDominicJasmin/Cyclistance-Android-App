@@ -1,8 +1,6 @@
 package com.example.cyclistance.navigation
 
 import androidx.compose.runtime.*
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -12,8 +10,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpScreen
 import com.example.cyclistance.feature_mapping.presentation.components.MappingScreen
-import com.example.cyclistance.feature_readable_displays.presentation.IntroSliderScreen
-import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.SplashScreenViewModel
+import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderScreen
 
 import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.components.SplashScreen
 

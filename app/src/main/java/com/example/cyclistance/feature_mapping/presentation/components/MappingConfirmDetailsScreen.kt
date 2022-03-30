@@ -100,18 +100,18 @@ fun MappingDetailsDialogScreen() {
             modifier = Modifier
                 .constrainAs(buttonNavButtonSection) {
                     top.linkTo(additionalMessageSection.bottom, margin = 15.dp)
-                    bottom.linkTo(parent.bottom,margin = 2.dp)
+                    bottom.linkTo(parent.bottom, margin = 2.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
                     height = Dimension.wrapContent
                     width = Dimension.percent(0.9f)
                 },
-        onClickCancelButton = {
+            onClickCancelButton = {
 
-        },
-        onClickConfirmButton = {
+            },
+            onClickConfirmButton = {
 
-        })
+            })
 
 
     }
@@ -231,7 +231,11 @@ fun DropDownBikeList(modifier: Modifier) {
 
 @Composable
 fun ButtonDescriptionDetails(modifier: Modifier) {
-    val selectedButtonState = remember { mutableStateOf(false) }// todo fix this later
+    val selectedButtonState =
+        remember { mutableStateListOf(false, false, false, false, false, false) }
+
+
+
 
 
     Column(modifier = modifier) {
@@ -262,19 +266,43 @@ fun ButtonDescriptionDetails(modifier: Modifier) {
                     alignment = Alignment.CenterHorizontally)) {
 
                 SetupButtonDescriptionItem(
-                    selectedState = selectedButtonState,
+                    selectedState = selectedButtonState[0],
                     image = R.drawable.ic_injury,
-                    description = "Injury")
+                    description = "Injury") {
+                    selectedButtonState[0] = !selectedButtonState[0]
+                    selectedButtonState[1] = false
+                    selectedButtonState[2] = false
+                    selectedButtonState[3] = false
+                    selectedButtonState[4] = false
+                    selectedButtonState[5] = false
+
+                }
 
                 SetupButtonDescriptionItem(
-                    selectedState = selectedButtonState,
+                    selectedState = selectedButtonState[1],
                     image = R.drawable.ic_broken_frame,
-                    description = "Broken Frame")
+                    description = "Broken Frame") {
+                    selectedButtonState[1] = !selectedButtonState[1]
+                    selectedButtonState[0] = false
+                    selectedButtonState[2] = false
+                    selectedButtonState[3] = false
+                    selectedButtonState[4] = false
+                    selectedButtonState[5] = false
+
+                }
 
                 SetupButtonDescriptionItem(
-                    selectedState = selectedButtonState,
+                    selectedState = selectedButtonState[2],
                     image = R.drawable.ic_accident,
-                    description = "Accident")
+                    description = "Accident") {
+                    selectedButtonState[2] = !selectedButtonState[2]
+                    selectedButtonState[0] = false
+                    selectedButtonState[1] = false
+                    selectedButtonState[3] = false
+                    selectedButtonState[4] = false
+                    selectedButtonState[5] = false
+
+                }
 
 
             }
@@ -283,7 +311,6 @@ fun ButtonDescriptionDetails(modifier: Modifier) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-
                     .padding(top = 7.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(
@@ -292,44 +319,67 @@ fun ButtonDescriptionDetails(modifier: Modifier) {
 
 
                 SetupButtonDescriptionItem(
-                    selectedState = selectedButtonState,
+                    selectedState = selectedButtonState[3],
                     image = R.drawable.ic__670665_200,
-                    description = "Snapped \nChain")
+                    description = "Snapped \nChain") {
+                    selectedButtonState[3] = !selectedButtonState[3]
+                    selectedButtonState[0] = false
+                    selectedButtonState[1] = false
+                    selectedButtonState[2] = false
+                    selectedButtonState[4] = false
+                    selectedButtonState[5] = false
+                }
 
                 SetupButtonDescriptionItem(
-                    selectedState = selectedButtonState,
+                    selectedState = selectedButtonState[4],
                     image = R.drawable.ic_flat_tire,
-                    description = "Flat tire")
+                    description = "Flat tire") {
+                    selectedButtonState[4] = !selectedButtonState[4]
+                    selectedButtonState[0] = false
+                    selectedButtonState[1] = false
+                    selectedButtonState[2] = false
+                    selectedButtonState[3] = false
+                    selectedButtonState[5] = false
+                }
 
                 SetupButtonDescriptionItem(
-                    selectedState = selectedButtonState,
+                    selectedState = selectedButtonState[5],
                     image = R.drawable.ic_broken_brakes,
-                    description = "Broken \nBrakes")
+                    description = "Broken \nBrakes") {
+                    selectedButtonState[5] = !selectedButtonState[5]
+                    selectedButtonState[0] = false
+                    selectedButtonState[1] = false
+                    selectedButtonState[2] = false
+                    selectedButtonState[3] = false
+                    selectedButtonState[4] = false
+                }
 
 
             }
 
         }
-
     }
 }
 
 @Composable
 fun SetupButtonDescriptionItem(
-    selectedState: MutableState<Boolean>,
+    selectedState: Boolean,
     image: Int,
-    description: String) {
+    description: String,
+    onClick: () -> Unit) {
 
     ConstraintLayout(modifier = Modifier.wrapContentSize()) {
 
 
         val (checkIcon, buttonItem) = createRefs()
-        val borderColor = if (selectedState.value) ThemeColor else DisabledColor
+        val borderColor = if (selectedState) ThemeColor else DisabledColor
 
         OutlinedButton(
             contentPadding = PaddingValues(start = 13.dp, end = 13.dp),
-            colors = buttonColors(backgroundColor = BackgroundColor),
-            onClick = { selectedState.value = !selectedState.value },
+            colors = buttonColors(
+                backgroundColor = BackgroundColor,
+                disabledBackgroundColor = BackgroundColor),
+            onClick = onClick,
             border = BorderStroke(width = 2.dp, color = borderColor),
             modifier = Modifier
                 .wrapContentWidth()
@@ -368,7 +418,7 @@ fun SetupButtonDescriptionItem(
             }
         }
 
-        if (selectedState.value) {
+        if (selectedState) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_check_icon),
                 contentDescription = "null",

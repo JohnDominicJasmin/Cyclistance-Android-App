@@ -63,8 +63,7 @@ fun IntroSliderButtons(text:String,
             text = "Skip",
             modifier = Modifier
                 .clickable { onClickSkipButton() }
-                .wrapContentSize()
-                .padding(top = 10.dp),
+                .wrapContentSize(),
             color = Color.White,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Medium)
