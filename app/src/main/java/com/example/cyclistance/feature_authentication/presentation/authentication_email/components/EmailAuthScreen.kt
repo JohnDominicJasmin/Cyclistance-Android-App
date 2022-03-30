@@ -36,7 +36,6 @@ fun EmailAuthScreen(
     val email = remember { mappingViewModel.getEmail() }
 
     val emailAuthState by remember{ emailAuthViewModel.state }
-    // todo refactor this long if statement
     val secondsRemainingText by derivedStateOf { if (emailAuthState.isTimerRunning) "Resend E-mail in ${emailAuthState.secondsLeft}" + if (emailAuthState.secondsLeft < 2) "" else "s" else "Resend E-mail" }
 
     var isEmailResendClicked by remember { mutableStateOf(false) }

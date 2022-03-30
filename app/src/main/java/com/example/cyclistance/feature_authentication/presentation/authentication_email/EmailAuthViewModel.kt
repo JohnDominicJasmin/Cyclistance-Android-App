@@ -63,27 +63,28 @@ class EmailAuthViewModel @Inject constructor(
         }
     }
 
-    fun reloadEmail() {
-        viewModelScope.launch {
-            //todo change this viewmodelscope
-            kotlin.runCatching {
-                _reloadEmailState.value = AuthState(isLoading = true)
-                authUseCase.reloadEmailUseCase()
-            }.onSuccess { result ->
-                _reloadEmailState.value = AuthState(isLoading = false, result = result)
-            }.onFailure { exception ->
-                when (exception) {
-                    is AuthExceptions.InternetException -> {
-                        _reloadEmailState.value = AuthState( isLoading = false, result = false, internetExceptionMessage = exception.message ?: "No Internet Connection.")
-                    }
-                    else -> {
-                        Timber.e("${this.javaClass.name}: ${exception.message}")
-                    }
+    private suspend fun reloadEmail(){
+        kotlin.runCatching {
+            _reloadEmailState.value = AuthState(isLoading = true)
+            authUseCase.reloadEmailUseCase()
+        }.onSuccess { result ->
+            _reloadEmailState.value = AuthState(isLoading = false, result = result)
+        }.onFailure { exception ->
+            when (exception) {
+                is AuthExceptions.InternetException -> {
+                    _reloadEmailState.value = AuthState( isLoading = false, result = false, internetExceptionMessage = exception.message ?: "No Internet Connection.")
                 }
-
-
+                else -> {
+                    Timber.e("${this.javaClass.name}: ${exception.message}")
+                }
             }
 
+
+        }
+    }
+    fun refreshEmail() {
+        viewModelScope.launch {
+            reloadEmail()
         }
     }
 

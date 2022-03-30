@@ -20,7 +20,6 @@ import com.example.cyclistance.common.SetupAlertDialog
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInViewModel
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpViewModel
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
@@ -52,7 +51,7 @@ fun SignInScreen(
     LaunchedEffect(key1 = signInState.result) {
         signInState.result?.let { signInIsSuccessful ->
             if (signInIsSuccessful) {
-                emailAuthViewModel.reloadEmail()
+                emailAuthViewModel.refreshEmail()
             }
         }
     }
