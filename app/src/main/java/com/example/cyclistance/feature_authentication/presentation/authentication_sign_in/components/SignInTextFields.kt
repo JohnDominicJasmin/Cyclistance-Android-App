@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActionScope
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,7 +20,8 @@ fun SignInTextFieldsSection(
     emailOnValueChange: (TextFieldValue) -> Unit,
     password: MutableState<TextFieldValue>,
     passwordOnValueChange: (TextFieldValue) -> Unit,
-    inputResultState: AuthState<Boolean>
+    inputResultState: AuthState<Boolean>,
+    keyboardActionOnDone: (KeyboardActionScope.() -> Unit)
     ) {
 
     val emailExceptionMessage = inputResultState.emailExceptionMessage
@@ -43,7 +45,8 @@ fun SignInTextFieldsSection(
         ConfirmPasswordTextField(
             confirmPassword = password,
             confirmPasswordExceptionMessage = passwordExceptionMessage,
-            onValueChange = passwordOnValueChange)
+            onValueChange = passwordOnValueChange,
+            keyboardActionOnDone = keyboardActionOnDone)
 
 
 

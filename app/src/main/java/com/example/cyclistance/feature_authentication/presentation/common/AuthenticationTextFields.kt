@@ -3,6 +3,8 @@ package com.example.cyclistance.feature_authentication.presentation.common
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActionScope
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -28,7 +30,8 @@ fun SignUpTextFieldsSection(
     passwordOnValueChange: (TextFieldValue) -> Unit,
     confirmPassword: MutableState<TextFieldValue>,
     confirmPasswordOnValueChange: (TextFieldValue) -> Unit,
-    inputResultState: AuthState<Boolean>) {
+    inputResultState: AuthState<Boolean>,
+    keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
 
     val emailExceptionMessage = inputResultState.emailExceptionMessage
     val passwordExceptionMessage = inputResultState.passwordExceptionMessage
@@ -61,7 +64,8 @@ fun SignUpTextFieldsSection(
         ConfirmPasswordTextField(
             confirmPassword = confirmPassword,
             confirmPasswordExceptionMessage = confirmPasswordExceptionMessage,
-            onValueChange = confirmPasswordOnValueChange)
+            onValueChange = confirmPasswordOnValueChange,
+            keyboardActionOnDone = keyboardActionOnDone)
 
     }
 }
@@ -73,7 +77,8 @@ fun SignUpTextFieldsSection(
 fun ConfirmPasswordTextField(
     confirmPassword: MutableState<TextFieldValue>,
     confirmPasswordExceptionMessage: String,
-    onValueChange: (TextFieldValue) -> Unit) {
+    onValueChange: (TextFieldValue) -> Unit,
+    keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
 
     var confirmPasswordVisibility by remember { mutableStateOf(false) }
     val hasError = confirmPasswordExceptionMessage.isNotEmpty()
@@ -106,7 +111,9 @@ fun ConfirmPasswordTextField(
             }
         },
         visualTransformation = if (confirmPasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrect = false, imeAction = ImeAction.Done)
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrect = false, imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(onDone = keyboardActionOnDone)
+
     )
 }
 
@@ -175,7 +182,8 @@ private fun SetupPasswordTextField(
     leadingIcon: @Composable (() -> Unit)? = null,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions:KeyboardOptions
+    keyboardOptions:KeyboardOptions,
+    keyboardActions: KeyboardActions = KeyboardActions()
 ) {
     val hasError = passwordExceptionMessage.isNotEmpty()
     Column(
@@ -199,7 +207,8 @@ private fun SetupPasswordTextField(
             isError = hasError,
             keyboardOptions = keyboardOptions,
             colors = TextFieldColors(),
-            visualTransformation = visualTransformation
+            visualTransformation = visualTransformation,
+
         )
         if (hasError) {
             Text(

@@ -31,8 +31,7 @@ import com.example.cyclistance.feature_authentication.presentation.theme.*
 fun SignInScreen(
     navController: NavController?,
     signInViewModel: SignInViewModel = hiltViewModel(),
-    emailAuthViewModel: EmailAuthViewModel = hiltViewModel()
-) {
+    emailAuthViewModel: EmailAuthViewModel = hiltViewModel()) {
 
 
 
@@ -42,6 +41,12 @@ fun SignInScreen(
     val emailReloadState by remember { emailAuthViewModel.reloadEmailState }
     val emailVerifyState by remember { emailAuthViewModel.verifyEmailState }
 
+    val signInAccount = {
+        signInViewModel.signInWithEmailAndPassword(
+            authModel = AuthModel(
+                email = email.value.text,
+                password = password.value.text))
+    }
 
 
     LaunchedEffect(key1 = signInState.result) {
@@ -157,7 +162,10 @@ fun SignInScreen(
                         signInViewModel.clearState()
                     }
                 },
-                inputResultState = signInState
+                inputResultState = signInState,
+                keyboardActionOnDone = {
+                    signInAccount()
+                }
             )
 
             SignInGoogleAndFacebookSection(
@@ -170,10 +178,7 @@ fun SignInScreen(
             )
 
             SignInButton(onClickButton = {
-                signInViewModel.signInWithEmailAndPassword(
-                    authModel = AuthModel(
-                        email = email.value.text,
-                        password = password.value.text))
+                signInAccount()
             })
 
 

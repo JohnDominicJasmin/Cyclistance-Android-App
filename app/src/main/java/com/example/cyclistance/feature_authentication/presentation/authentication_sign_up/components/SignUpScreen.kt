@@ -43,7 +43,18 @@ fun SignUpScreen(
     val hasAccountSignedIn = remember { signUpViewModel.hasAccountSignedIn() }
     val isUserCreatedNewAccount =  remember { email.value.text != mappingViewModel.getEmail() }
 
+    val signUpAccount = {
+        if(hasAccountSignedIn && isUserCreatedNewAccount){
+            mappingViewModel.signOutAccount()
+        }
 
+        signUpViewModel.createUserWithEmailAndPassword(
+            authModel = AuthModel(
+                email = email.value.text,
+                password = password.value.text,
+                confirmPassword = confirmPassword.value.text
+            ))
+    }
 
     LaunchedEffect(key1 = signUpState.result) {
         signUpState.result?.let { signUpIsSuccessful ->
@@ -143,21 +154,15 @@ fun SignUpScreen(
                         signUpViewModel.clearState()
                     }
                 },
-                inputResultState = signUpState
+                inputResultState = signUpState,
+                keyboardActionOnDone = {
+                    signUpAccount()
+                }
             )
 
 
             SignUpButton(onClickButton = {
-                if(hasAccountSignedIn && isUserCreatedNewAccount){
-                    mappingViewModel.signOutAccount()
-                }
-
-                signUpViewModel.createUserWithEmailAndPassword(
-                    authModel = AuthModel(
-                        email = email.value.text,
-                        password = password.value.text,
-                        confirmPassword = confirmPassword.value.text
-                    ))
+                signUpAccount()
             })
 
             SignUpClickableText() {
