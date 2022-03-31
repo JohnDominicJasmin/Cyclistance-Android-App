@@ -20,62 +20,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_authentication.presentation.theme.TextFieldTextColor
 
-@Composable
-fun SignUpTextFieldsSection(
-    email: MutableState<TextFieldValue>,
-    emailOnValueChange: (TextFieldValue) -> Unit,
-    name: MutableState<TextFieldValue>,
-    nameOnValueChange: (TextFieldValue) -> Unit,
-    password: MutableState<TextFieldValue>,
-    passwordOnValueChange: (TextFieldValue) -> Unit,
-    confirmPassword: MutableState<TextFieldValue>,
-    confirmPasswordOnValueChange: (TextFieldValue) -> Unit,
-    inputResultState: AuthState<Boolean>,
-    keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
-
-    val emailExceptionMessage = inputResultState.emailExceptionMessage
-    val passwordExceptionMessage = inputResultState.passwordExceptionMessage
-    val confirmPasswordExceptionMessage = inputResultState.confirmPasswordExceptionMessage
-
-    Column(
-        modifier = Modifier
-            .layoutId(AuthenticationConstraintsItem.TextFields.layoutId)
-            .fillMaxWidth(fraction = 0.9f),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(13.dp)) {
-
-
-        EmailTextField(
-            email = email,
-            emailExceptionMessage = emailExceptionMessage,
-            onValueChange = emailOnValueChange)
-
-        NameTextField(
-            name = name,
-            nameExceptionMessage = "",
-            onValueChange = nameOnValueChange
-        )
-
-        PasswordTextField(
-            password = password,
-            passwordExceptionMessage = passwordExceptionMessage,
-            onValueChange = passwordOnValueChange)
-
-        ConfirmPasswordTextField(
-            confirmPassword = confirmPassword,
-            confirmPasswordExceptionMessage = confirmPasswordExceptionMessage,
-            onValueChange = confirmPasswordOnValueChange,
-            keyboardActionOnDone = keyboardActionOnDone)
-
-    }
-}
-
-
 
 
 @Composable
 fun ConfirmPasswordTextField(
-    confirmPassword: MutableState<TextFieldValue>,
+    confirmPassword: TextFieldValue,
     confirmPasswordExceptionMessage: String,
     onValueChange: (TextFieldValue) -> Unit,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
@@ -119,8 +68,9 @@ fun ConfirmPasswordTextField(
 
 @Composable
 fun PasswordTextField(
-    password: MutableState<TextFieldValue>,
+    password: TextFieldValue,
     passwordExceptionMessage: String,
+    clearIconOnClick: () -> Unit,
     onValueChange: (TextFieldValue) -> Unit) {
 
     val hasError = passwordExceptionMessage.isNotEmpty()
@@ -154,10 +104,8 @@ fun PasswordTextField(
                     tint = MaterialTheme.colors.error)
             }
 
-            if(password.value.text.isNotEmpty()){
-                IconButton(onClick = {
-                    password.value = TextFieldValue("")
-                }) {
+            if(password.text.isNotEmpty()){
+                IconButton(onClick = clearIconOnClick) {
                     Icon(
                         imageVector = Icons.Default.Cancel,
                         contentDescription = "",
@@ -175,7 +123,7 @@ fun PasswordTextField(
 
 @Composable
 private fun SetupPasswordTextField(
-    password: MutableState<TextFieldValue>,
+    password: TextFieldValue,
     passwordExceptionMessage: String,
     onValueChange: (TextFieldValue) -> Unit,
     placeholder: @Composable (() -> Unit)? = null,
@@ -196,7 +144,7 @@ private fun SetupPasswordTextField(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .shadow(15.dp, shape = RoundedCornerShape(12.dp), clip = true),
-            value = password.value,
+            value = password,
             onValueChange = onValueChange,
             singleLine = true,
             maxLines = 1,
@@ -225,8 +173,9 @@ private fun SetupPasswordTextField(
 
 @Composable
 fun NameTextField(
-    name: MutableState<TextFieldValue>,
+    name: TextFieldValue,
     nameExceptionMessage:String,
+    clearIconOnClick: () -> Unit,
     onValueChange: (TextFieldValue) -> Unit) {
 
 
@@ -242,7 +191,7 @@ fun NameTextField(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .shadow(15.dp, shape = RoundedCornerShape(12.dp), clip = true),
-            value = name.value,
+            value = name,
             singleLine = true,
             maxLines = 1,
             shape = RoundedCornerShape(12.dp),
@@ -267,10 +216,8 @@ fun NameTextField(
                     )
                 }
 
-                if (name.value.text.isNotEmpty()) {
-                    IconButton(onClick = {
-                        name.value = TextFieldValue("")
-                    }) {
+                if (name.text.isNotEmpty()) {
+                    IconButton(onClick = clearIconOnClick) {
                         Icon(
                             imageVector = Icons.Default.Cancel,
                             contentDescription = "",
@@ -317,7 +264,8 @@ fun NameTextField(
 @Composable
 fun EmailTextField(
     emailExceptionMessage: String,
-    email: MutableState<TextFieldValue>,
+    email: TextFieldValue,
+    clearIconOnClick: ()-> Unit,
     onValueChange: (TextFieldValue) -> Unit) {
 
     val hasError = emailExceptionMessage.isNotEmpty()
@@ -332,7 +280,7 @@ fun EmailTextField(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .shadow(15.dp, shape = RoundedCornerShape(12.dp), clip = true),
-            value = email.value,
+            value = email,
             singleLine = true,
             maxLines = 1,
             shape = RoundedCornerShape(12.dp),
@@ -357,10 +305,8 @@ fun EmailTextField(
                     )
                 }
 
-                if(email.value.text.isNotEmpty()){
-                    IconButton(onClick = {
-                        email.value = TextFieldValue("")
-                    }) {
+                if(email.text.isNotEmpty()){
+                    IconButton(onClick = clearIconOnClick) {
                         Icon(
                             imageVector = Icons.Default.Cancel,
                             contentDescription = "",

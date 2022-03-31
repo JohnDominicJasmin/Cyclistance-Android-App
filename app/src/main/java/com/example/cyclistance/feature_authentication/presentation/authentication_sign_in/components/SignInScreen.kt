@@ -5,25 +5,25 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.common.AlertDialogData
 import com.example.cyclistance.common.SetupAlertDialog
 
-import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInEventResult
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInViewModel
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.theme.*
+import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
@@ -34,27 +34,60 @@ fun SignInScreen(
 
 
 
-    val email = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
-    val password = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
-    val signInState by remember { signInViewModel.signInWithEmailAndPasswordState }
+
+    val email = signInViewModel.email
+    val password = signInViewModel.password
+    var isLoading by remember { mutableStateOf(false) }
+    var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
+    var emailExceptionMessage by remember { mutableStateOf("") }
+    var passwordExceptionMessage by remember { mutableStateOf("") }
+
     val emailReloadState by remember { emailAuthViewModel.reloadEmailState }
     val emailVerifyState by remember { emailAuthViewModel.verifyEmailState }
 
-    val signInAccount = {
-        signInViewModel.signInWithEmailAndPassword(
-            authModel = AuthModel(
-                email = email.value.text,
-                password = password.value.text))
-    }
 
 
-    LaunchedEffect(key1 = signInState.result) {
-        signInState.result?.let { signInIsSuccessful ->
-            if (signInIsSuccessful) {
-                emailAuthViewModel.refreshEmail()
+
+    LaunchedEffect(key1 = true) {
+        signInViewModel.eventFlow.collectLatest { event ->
+
+
+            when (event){
+                is SignInEventResult.RefreshEmail -> {
+                    emailAuthViewModel.refreshEmail()
+                }
+                is SignInEventResult.ShowInternetScreen -> {
+                    navController?.navigate(Screens.NoInternetScreen.route) {
+                        launchSingleTop = true
+                    }
+                }
+                is SignInEventResult.ShowProgressBar -> {
+                    isLoading = true
+                }
+                is SignInEventResult.HideProgressBar -> {
+                    isLoading = false
+                }
+                is SignInEventResult.ShowAlertDialog -> {
+                    alertDialogState = AlertDialogData(
+                        title = event.title,
+                        description = event.description,
+                        resId = event.imageResId)
+                }
+                is SignInEventResult.ShowEmailTextFieldError -> {
+                    emailExceptionMessage = event.errorMessage
+                }
+                is SignInEventResult.ShowPasswordTextFieldError -> {
+                    passwordExceptionMessage = event.errorMessage
+                }
+
+
+
+
+
             }
         }
     }
+
 
     LaunchedEffect(key1 = emailReloadState.result) {
         emailReloadState.result?.let { reloadEmailIsSuccessful ->
@@ -81,15 +114,6 @@ fun SignInScreen(
         }
     }
 
-    LaunchedEffect(key1 = signInState.internetExceptionMessage) {
-        signInState.internetExceptionMessage.let { message ->
-            if (message.isNotEmpty()) {
-                navController?.navigate(Screens.NoInternetScreen.route) {
-                    launchSingleTop = true
-                }
-            }
-        }
-    }
 
 
 
@@ -97,31 +121,6 @@ fun SignInScreen(
 
 
 
-
-
-
-
-
-
-    signInState.invalidUserExceptionMessage.let{ message ->
-        if(message.isNotEmpty()){
-            SetupAlertDialog(
-                alertDialog = AlertDialogData(
-                title = "Error",
-                description = message,
-                resId = io.github.farhanroy.composeawesomedialog.R.raw.error))
-        }
-    }
-
-    signInState.userCollisionExceptionMessage.let { message ->
-        if(message.isNotEmpty()){
-            SetupAlertDialog(
-                alertDialog = AlertDialogData(
-                title = "Error",
-                description = message,
-                resId = io.github.farhanroy.composeawesomedialog.R.raw.error))
-        }
-    }
 
 
     Column(
@@ -141,31 +140,29 @@ fun SignInScreen(
 
             AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
             SignUpTextArea()
+
+            if(alertDialogState.title.isNotEmpty()) {
+                SetupAlertDialog(alertDialog = alertDialogState)
+            }
+
             Waves(
                 topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
                 bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId
             )
 
-            SignInTextFieldsSection(
-                email = email,
-                password = password,
-                passwordOnValueChange = {
-                    password.value = it
-                    if (signInState.passwordExceptionMessage.isNotEmpty()) {
-                        signInViewModel.clearState()
-                    }
-                },
-                emailOnValueChange = {
-                    email.value = it
-                    if (signInState.emailExceptionMessage.isNotEmpty()) {
-                        signInViewModel.clearState()
-                    }
-                },
-                inputResultState = signInState,
-                keyboardActionOnDone = {
-                    signInAccount()
-                }
-            )
+
+
+
+
+            SignInTextFieldsArea(
+                email = email.value,
+                emailOnValueChange = { signInViewModel.onEvent(SignInEvent.EnteredEmail(email = it)) },
+                emailExceptionMessage = emailExceptionMessage,
+                emailClearIconOnClick = { signInViewModel.onEvent(SignInEvent.ClearEmailErrorMessage) },
+                password = password.value,
+                passwordOnValueChange = { signInViewModel.onEvent(SignInEvent.EnteredPassword(password = it)) },
+                passwordExceptionMessage = passwordExceptionMessage,
+                keyboardActionOnDone = { signInViewModel.onEvent(SignInEvent.SignInDefault) })
 
             SignInGoogleAndFacebookSection(
                 facebookButtonOnClick = {
@@ -177,7 +174,7 @@ fun SignInScreen(
             )
 
             SignInButton(onClickButton = {
-                signInAccount()
+                signInViewModel.onEvent(SignInEvent.SignInDefault)
             })
 
 
@@ -185,7 +182,7 @@ fun SignInScreen(
                 navController?.navigate(Screens.SignUpScreen.route)
             })
 
-            if (signInState.isLoading || emailReloadState.isLoading) {
+            if (isLoading || emailReloadState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
                 )
@@ -196,4 +193,6 @@ fun SignInScreen(
 
     }
 }
+
+
 

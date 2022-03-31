@@ -22,7 +22,6 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpViewModel
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
-import com.example.cyclistance.feature_authentication.presentation.common.SignUpTextFieldsSection
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
 import com.example.cyclistance.feature_mapping.presentation.MappingViewModel
 import timber.log.Timber
@@ -127,27 +126,27 @@ fun SignUpScreen(
                 bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId
             )
 
-            SignUpTextFieldsSection(
-                email = email,
+            SignUpTextFieldsArea(
+                email = email.value,
                 emailOnValueChange = {
                     email.value = it
                     if (signUpState.emailExceptionMessage.isNotEmpty()) {
                         signUpViewModel.clearState()
                     }
                 },
-                name = name,
+                name = name.value,
                 nameOnValueChange = {
                     name.value = it
 
                 },
-                password = password,
+                password = password.value,
                 passwordOnValueChange = {
                     password.value = it
                     if (signUpState.passwordExceptionMessage.isNotEmpty()) {
                         signUpViewModel.clearState()
                     }
                 },
-                confirmPassword = confirmPassword,
+                confirmPassword = confirmPassword.value,
                 confirmPasswordOnValueChange = {
                     confirmPassword.value = it
                     if (signUpState.confirmPasswordExceptionMessage.isNotEmpty()) {
@@ -157,9 +156,15 @@ fun SignUpScreen(
                 inputResultState = signUpState,
                 keyboardActionOnDone = {
                     signUpAccount()
+                },
+                emailClearIconOnClick = {
+                    /*TODO*/
+                }, nameClearIconOnClick = {
+                    /*Todo*/
+                }, passwordClearIconOnClick = {
+                    /*TODO*/
                 }
             )
-
 
             SignUpButton(onClickButton = {
                 signUpAccount()

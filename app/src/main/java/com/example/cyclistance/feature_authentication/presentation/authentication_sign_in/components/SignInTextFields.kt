@@ -15,17 +15,16 @@ import com.example.cyclistance.feature_authentication.presentation.common.EmailT
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 
 @Composable
-fun SignInTextFieldsSection(
-    email: MutableState<TextFieldValue>,
+fun SignInTextFieldsArea(
+    email: TextFieldValue,
     emailOnValueChange: (TextFieldValue) -> Unit,
-    password: MutableState<TextFieldValue>,
+    emailExceptionMessage: String,
+    emailClearIconOnClick: () -> Unit,
+    password: TextFieldValue,
     passwordOnValueChange: (TextFieldValue) -> Unit,
-    inputResultState: AuthState<Boolean>,
-    keyboardActionOnDone: (KeyboardActionScope.() -> Unit)
-    ) {
+    passwordExceptionMessage: String,
+    keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
 
-    val emailExceptionMessage = inputResultState.emailExceptionMessage
-    val passwordExceptionMessage = inputResultState.passwordExceptionMessage
 
 
     Column(
@@ -40,7 +39,8 @@ fun SignInTextFieldsSection(
         EmailTextField(
             email = email,
             emailExceptionMessage = emailExceptionMessage,
-            onValueChange = emailOnValueChange)
+            onValueChange = emailOnValueChange,
+            clearIconOnClick = emailClearIconOnClick)
 
         ConfirmPasswordTextField(
             confirmPassword = password,
