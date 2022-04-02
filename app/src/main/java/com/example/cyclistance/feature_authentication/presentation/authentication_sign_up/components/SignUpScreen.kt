@@ -96,7 +96,9 @@ fun SignUpScreen(
                 title = "Error",
                 description = message,
                 resId = error
-            ))
+            )){
+
+            }
 
         }
     }
@@ -163,7 +165,12 @@ fun SignUpScreen(
                     /*Todo*/
                 }, passwordClearIconOnClick = {
                     /*TODO*/
+                },
+                confirmPasswordVisibility = false,
+                confirmPasswordIconOnClick = {
+                    /*TODO*/
                 }
+
             )
 
             SignUpButton(onClickButton = {

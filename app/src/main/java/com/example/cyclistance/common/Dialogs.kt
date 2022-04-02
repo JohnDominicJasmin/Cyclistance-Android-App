@@ -35,80 +35,94 @@ import io.github.farhanroy.composeawesomedialog.R
 import io.github.farhanroy.composeawesomedialog.themes.Shapes
 
 
-
-
 data class AlertDialogData(
-    var title:String = "",
-    var description:String = "",
+    var title: String = "",
+    var description: String = "",
     @RawRes var resId: Int = 0
 )
+
 @Composable
 fun SetupAlertDialog(
-    alertDialog:AlertDialogData) {
+    alertDialog: AlertDialogData,
+    onDismissRequest: () -> Unit) {
     val openDialog = remember { mutableStateOf(true) }
 
 
     if (openDialog.value) {
-    Dialog(onDismissRequest = { openDialog.value = false  }, properties = DialogProperties()) {
-        Box(
-            Modifier
-                .width(300.dp)
-                .wrapContentHeight()) {
-            Column(
+        Dialog(onDismissRequest = {
+            onDismissRequest()
+            openDialog.value = false
+
+
+        }, properties = DialogProperties()) {
+            Box(
                 Modifier
                     .width(300.dp)
-                    .wrapContentHeight()
-            ) {
-                Spacer(Modifier.height(36.dp))
-                Box(
+                    .wrapContentHeight()) {
+                Column(
                     Modifier
                         .width(300.dp)
                         .wrapContentHeight()
-                        .background(
-                            color = BackgroundColor,
-                            shape = Shapes.large)) {
-                    Column(
-                        modifier = Modifier.padding(16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Text(
-                            alertDialog.title.uppercase(),
-                            style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
-                            color = Color.White)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text(alertDialog.description, style = TextStyle(fontSize = 14.sp), color = Color.White)
-                        Spacer(modifier = Modifier.height(24.dp))
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically) {
-                            Button(
-                                modifier = Modifier.width(100.dp),
-                                onClick = { openDialog.value = false  },
-                                shape = RoundedCornerShape(12.dp),
-                                colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = ThemeColor,
-                                    contentColor = Color.White)) {
+                ) {
+                    Spacer(Modifier.height(36.dp))
+                    Box(
+                        Modifier
+                            .width(300.dp)
+                            .wrapContentHeight()
+                            .background(
+                                color = BackgroundColor,
+                                shape = Shapes.large)) {
+                        Column(
+                            modifier = Modifier.padding(16.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Text(
+                                alertDialog.title.uppercase(),
+                                style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
+                                color = Color.White)
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(
+                                alertDialog.description,
+                                style = TextStyle(fontSize = 14.sp),
+                                color = Color.White)
+                            Spacer(modifier = Modifier.height(24.dp))
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically) {
+                                Button(
+                                    modifier = Modifier.width(100.dp),
+                                    onClick = {
+                                        openDialog.value = false
+                                              onDismissRequest()
+                                              },
+                                    shape = RoundedCornerShape(12.dp),
+                                    colors = ButtonDefaults.buttonColors(
+                                        backgroundColor = ThemeColor,
+                                        contentColor = Color.White)) {
 
-                                Text(text = "Ok", color = Color.Black,style = MaterialTheme.typography.button)
+                                    Text(
+                                        text = "Ok",
+                                        color = Color.Black,
+                                        style = MaterialTheme.typography.button)
 
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            DialogHeader(
-                modifier = Modifier
-                    .size(72.dp)
-                    .align(Alignment.TopCenter)
-                    .border(
-                        border = BorderStroke(width = 5.dp, color = Color.White),
-                        shape = CircleShape
-                    ), alertDialog.resId)
+                DialogHeader(
+                    modifier = Modifier
+                        .size(72.dp)
+                        .align(Alignment.TopCenter)
+                        .border(
+                            border = BorderStroke(width = 5.dp, color = Color.White),
+                            shape = CircleShape
+                        ), alertDialog.resId)
+            }
         }
-    }
     }
 }
 

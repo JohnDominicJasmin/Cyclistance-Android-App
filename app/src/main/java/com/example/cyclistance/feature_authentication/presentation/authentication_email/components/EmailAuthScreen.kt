@@ -117,7 +117,9 @@ fun EmailAuthScreen(
                             title = "New email sent.",
                             description = "New verification email has been sent to your email address.",
                             resId = R.raw.success
-                        ))
+                        )){
+
+                    }
                 }
 
                 if(sendEmailVerificationState.sendEmailExceptionMessage.isNotEmpty()) {
@@ -126,7 +128,9 @@ fun EmailAuthScreen(
                             title = "Error",
                             description = "There was an error trying to send the verification email. Please try again.",
                             resId = R.raw.error
-                        ))
+                        )){
+
+                    }
                 }
 
             }
