@@ -1,9 +1,9 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
-
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +26,7 @@ import com.example.cyclistance.feature_authentication.presentation.theme.*
 import kotlinx.coroutines.flow.collectLatest
 
 
+
 @Composable
 fun SignInScreen(
     navController: NavController?,
@@ -35,24 +36,25 @@ fun SignInScreen(
 
 
 
-    val email = signInViewModel.email
-    val password = signInViewModel.password
-    var isLoading by remember { mutableStateOf(false) }
+    val email = signInViewModel.state.value.email
+    val password = signInViewModel.state.value.password
+    val emailException = signInViewModel.state.value.emailExceptionMessage
+    val passwordException = signInViewModel.state.value.passwordExceptionMessage
+    val isLoading = signInViewModel.state.value.isLoading
+    val passwordVisibility = signInViewModel.state.value.passwordVisibility
     var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
-    var emailExceptionMessage by remember { mutableStateOf("") }
-    var passwordExceptionMessage by remember { mutableStateOf("") }
+
 
     val emailReloadState by remember { emailAuthViewModel.reloadEmailState }
     val emailVerifyState by remember { emailAuthViewModel.verifyEmailState }
 
 
 
-
     LaunchedEffect(key1 = true) {
         signInViewModel.eventFlow.collectLatest { event ->
 
-
             when (event){
+
                 is SignInEventResult.RefreshEmail -> {
                     emailAuthViewModel.refreshEmail()
                 }
@@ -61,27 +63,12 @@ fun SignInScreen(
                         launchSingleTop = true
                     }
                 }
-                is SignInEventResult.ShowProgressBar -> {
-                    isLoading = true
-                }
-                is SignInEventResult.HideProgressBar -> {
-                    isLoading = false
-                }
                 is SignInEventResult.ShowAlertDialog -> {
                     alertDialogState = AlertDialogData(
                         title = event.title,
                         description = event.description,
                         resId = event.imageResId)
                 }
-                is SignInEventResult.ShowEmailTextFieldError -> {
-                    emailExceptionMessage = event.errorMessage
-                }
-                is SignInEventResult.ShowPasswordTextFieldError -> {
-                    passwordExceptionMessage = event.errorMessage
-                }
-
-
-
 
 
             }
@@ -141,8 +128,12 @@ fun SignInScreen(
             AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
             SignUpTextArea()
 
-            if(alertDialogState.title.isNotEmpty()) {
-                SetupAlertDialog(alertDialog = alertDialogState)
+            if(alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
+                SetupAlertDialog(
+                    alertDialog = alertDialogState,
+                    onDismissRequest = {
+                        alertDialogState = AlertDialogData()
+                    })
             }
 
             Waves(
@@ -155,14 +146,20 @@ fun SignInScreen(
 
 
             SignInTextFieldsArea(
-                email = email.value,
+                email = email,
                 emailOnValueChange = { signInViewModel.onEvent(SignInEvent.EnteredEmail(email = it)) },
-                emailExceptionMessage = emailExceptionMessage,
-                emailClearIconOnClick = { signInViewModel.onEvent(SignInEvent.ClearEmailErrorMessage) },
-                password = password.value,
-                passwordOnValueChange = { signInViewModel.onEvent(SignInEvent.EnteredPassword(password = it)) },
-                passwordExceptionMessage = passwordExceptionMessage,
-                keyboardActionOnDone = { signInViewModel.onEvent(SignInEvent.SignInDefault) })
+                emailExceptionMessage = emailException,
+                emailClearIconOnClick = { signInViewModel.onEvent(SignInEvent.ClearEmail) },
+                password = password,
+                passwordOnValueChange = {
+                    signInViewModel.onEvent(
+                        SignInEvent.EnteredPassword(
+                            password = it))
+                },
+                passwordExceptionMessage = passwordException,
+                keyboardActionOnDone = { signInViewModel.onEvent(SignInEvent.SignInDefault) },
+                passwordVisibility = passwordVisibility,
+                passwordIconOnClick = { signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility) })
 
             SignInGoogleAndFacebookSection(
                 facebookButtonOnClick = {

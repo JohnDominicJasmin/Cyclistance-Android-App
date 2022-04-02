@@ -13,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,18 +23,19 @@ import com.example.cyclistance.feature_authentication.presentation.theme.TextFie
 
 @Composable
 fun ConfirmPasswordTextField(
-    confirmPassword: TextFieldValue,
-    confirmPasswordExceptionMessage: String,
+    passwordValue: TextFieldValue,
+    passwordExceptionMessage: String,
+    passwordVisibility: Boolean,
+    passwordVisibilityIconOnClick: () -> Unit,
     onValueChange: (TextFieldValue) -> Unit,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
 
-    var confirmPasswordVisibility by remember { mutableStateOf(false) }
-    val hasError = confirmPasswordExceptionMessage.isNotEmpty()
+    val hasError = passwordExceptionMessage.isNotEmpty()
 
 
     SetupPasswordTextField(
-        password = confirmPassword,
-        passwordExceptionMessage = confirmPasswordExceptionMessage,
+        password = passwordValue,
+        passwordExceptionMessage = passwordExceptionMessage,
         onValueChange = onValueChange,
         placeholder = {
             Text(
@@ -54,12 +54,12 @@ fun ConfirmPasswordTextField(
             )
         },trailingIcon = {
             val image =
-                if (confirmPasswordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
-            IconButton(onClick = { confirmPasswordVisibility = !confirmPasswordVisibility }) {
+                if (passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+            IconButton(onClick = passwordVisibilityIconOnClick) {
                 Icon(imageVector = image, "", tint = TextFieldTextColor)
             }
         },
-        visualTransformation = if (confirmPasswordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+        visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrect = false, imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = keyboardActionOnDone)
 

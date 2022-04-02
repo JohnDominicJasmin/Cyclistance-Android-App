@@ -8,5 +8,6 @@ sealed class SignInEvent{
     object SignInDefault: SignInEvent()
     data class EnteredEmail(val email: TextFieldValue) : SignInEvent()
     data class EnteredPassword(val password: TextFieldValue) : SignInEvent()
-    object ClearEmailErrorMessage: SignInEvent()
+    object ClearEmail: SignInEvent()
+    object TogglePasswordVisibility: SignInEvent()
 }

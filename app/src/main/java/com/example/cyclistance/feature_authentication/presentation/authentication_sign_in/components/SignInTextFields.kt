@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.feature_authentication.presentation.common.AuthState
 import com.example.cyclistance.feature_authentication.presentation.common.ConfirmPasswordTextField
 import com.example.cyclistance.feature_authentication.presentation.common.EmailTextField
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
@@ -23,6 +22,8 @@ fun SignInTextFieldsArea(
     password: TextFieldValue,
     passwordOnValueChange: (TextFieldValue) -> Unit,
     passwordExceptionMessage: String,
+    passwordVisibility: Boolean,
+    passwordIconOnClick: () -> Unit,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
 
 
@@ -43,10 +44,13 @@ fun SignInTextFieldsArea(
             clearIconOnClick = emailClearIconOnClick)
 
         ConfirmPasswordTextField(
-            confirmPassword = password,
-            confirmPasswordExceptionMessage = passwordExceptionMessage,
+            passwordValue = password,
+            passwordExceptionMessage = passwordExceptionMessage,
             onValueChange = passwordOnValueChange,
-            keyboardActionOnDone = keyboardActionOnDone)
+            keyboardActionOnDone = keyboardActionOnDone,
+            passwordVisibility = passwordVisibility,
+            passwordVisibilityIconOnClick = passwordIconOnClick
+            )
 
 
 

@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
@@ -29,92 +28,101 @@ class SignInViewModel @Inject constructor(
     val eventFlow: SharedFlow<SignInEventResult> = _eventFlow.asSharedFlow()
 
 
-    private val _signInWithCredentialState: MutableSharedFlow<AuthState<Boolean>> = MutableSharedFlow()
-    val signInWithCredentialState: SharedFlow<AuthState<Boolean>> = _signInWithCredentialState.asSharedFlow()
+    private val _signInWithCredentialState: MutableSharedFlow<AuthState<Boolean>> =
+        MutableSharedFlow()
+    val signInWithCredentialState: SharedFlow<AuthState<Boolean>> =
+        _signInWithCredentialState.asSharedFlow()
 
-    private val _email: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue(""))
-    val email: State<TextFieldValue> = _email
-
-    private val _password: MutableState<TextFieldValue> = mutableStateOf(TextFieldValue(""))
-    val password: State<TextFieldValue> = _password
-
+    private val _state: MutableState<SignInState> = mutableStateOf(SignInState())
+    val state: State<SignInState> = _state
 
 
-    fun onEvent(event: SignInEvent){
-        when(event){
+    fun onEvent(event: SignInEvent) {
+
+
+        when (event) {
             is SignInEvent.SignInFacebook -> { /*TODO*/ }
 
             is SignInEvent.SignInGoogle -> { /*TODO*/ }
 
             is SignInEvent.SignInDefault -> {
-                viewModelScope.launch {
-                    signInWithEmailAndPassword(authModel = AuthModel(
-                        email = email.value.text,
-                        password = password.value.text))
+
+                with(state.value) {
+                    viewModelScope.launch {
+                        signInWithEmailAndPassword(
+                            authModel = AuthModel(
+                                email = email.text,
+                                password = password.text))
+                    }
                 }
             }
             is SignInEvent.EnteredEmail -> {
-                _email.value = event.email
+                _state.value = state.value.copy(email = event.email, emailExceptionMessage = "")
 
             }
             is SignInEvent.EnteredPassword -> {
-                _password.value = event.password
+                _state.value = state.value.copy(password = event.password, passwordExceptionMessage = "")
 
             }
-            is SignInEvent.ClearEmailErrorMessage -> {
-                _email.value = TextFieldValue("")
+            is SignInEvent.ClearEmail -> {
+                _state.value = state.value.copy(email = TextFieldValue(""))
             }
+            is SignInEvent.TogglePasswordVisibility -> {
+                _state.value =
+                    state.value.copy(
+                        passwordVisibility = !state.value.passwordVisibility)
+            }
+
         }
     }
 
 
-
-
-
     private suspend fun signInWithEmailAndPassword(authModel: AuthModel) {
-            kotlin.runCatching {
-                _eventFlow.emit(SignInEventResult.ShowProgressBar)
-                authUseCase.signInWithEmailAndPasswordUseCase(authModel)
 
-            }.onSuccess { isSignedIn ->
-                _eventFlow.emit(SignInEventResult.HideProgressBar)
-                if(isSignedIn){
-                    _eventFlow.emit(SignInEventResult.RefreshEmail)
+        kotlin.runCatching {
+            _state.value = state.value.copy(isLoading = true)
+            authUseCase.signInWithEmailAndPasswordUseCase(authModel)
+
+        }.onSuccess { isSignedIn ->
+            _state.value = state.value.copy(isLoading = false)
+            if (isSignedIn) {
+                _eventFlow.emit(SignInEventResult.RefreshEmail)
+            }
+        }.onFailure { exception ->
+            _state.value = state.value.copy(isLoading = false)
+            when (exception) {
+                is AuthExceptions.EmailException -> {
+                    _state.value = state.value.copy(
+                        emailExceptionMessage = exception.message ?: "Invalid Email.")
                 }
-            }.onFailure { exception ->
-
-                when (exception) {
-                    is AuthExceptions.EmailException -> {
-                        _eventFlow.emit(
-                            SignInEventResult.ShowEmailTextFieldError(errorMessage = exception.message ?: "Invalid Email."))
-                    }
-                    is AuthExceptions.PasswordException -> {
-                        _eventFlow.emit(
-                            SignInEventResult.ShowPasswordTextFieldError(errorMessage = exception.message ?: "Invalid Password."))
-                    }
-                    is AuthExceptions.InternetException -> {
-                        _eventFlow.emit(SignInEventResult.ShowInternetScreen)
-                    }
-                    is AuthExceptions.InvalidUserException -> {
-                        _eventFlow.emit(SignInEventResult.ShowAlertDialog(
+                is AuthExceptions.PasswordException -> {
+                    _state.value = state.value.copy(passwordExceptionMessage = exception.message ?: "Invalid Password.")
+                }
+                is AuthExceptions.InternetException -> {
+                    _eventFlow.emit(SignInEventResult.ShowInternetScreen)
+                }
+                is AuthExceptions.InvalidUserException -> {
+                    _eventFlow.emit(
+                        SignInEventResult.ShowAlertDialog(
                             title = "Error",
                             description = exception.message ?: "Invalid User",
-                            imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error
+                            imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error,
                         ))
-                    }
-                    is FirebaseAuthUserCollisionException -> {
-                        _eventFlow.emit(SignInEventResult.ShowAlertDialog(
+                }
+                is FirebaseAuthUserCollisionException -> {
+                    _eventFlow.emit(
+                        SignInEventResult.ShowAlertDialog(
                             title = "Error",
                             description = exception.message ?: "User already exist.",
-                            imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error
+                            imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error,
                         ))
-                    }
-                    else -> {
-                        Timber.e("${this@SignInViewModel.javaClass.name}: ${exception.message}")
-                    }
-
                 }
+                else -> {
+                    Timber.e("${this@SignInViewModel.javaClass.name}: ${exception.message}")
+                }
+
             }
+        }
     }
 
 
@@ -128,7 +136,7 @@ class SignInViewModel @Inject constructor(
             }.onFailure { exception ->
 
                 when (exception) {
-                //TODO: Change this later
+                    //TODO: Change this later
                     is AuthExceptions.InternetException -> {
                         _signInWithCredentialState.emit(
                             AuthState(

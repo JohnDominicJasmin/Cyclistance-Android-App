@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
@@ -29,6 +28,8 @@ fun SignUpTextFieldsArea(
 
     confirmPassword: TextFieldValue,
     confirmPasswordOnValueChange: (TextFieldValue) -> Unit,
+    confirmPasswordVisibility: Boolean,
+    confirmPasswordIconOnClick: () -> Unit,
 
     inputResultState: AuthState<Boolean>,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
@@ -65,10 +66,12 @@ fun SignUpTextFieldsArea(
             onValueChange = passwordOnValueChange)
 
         ConfirmPasswordTextField(
-            confirmPassword = confirmPassword,
-            confirmPasswordExceptionMessage = confirmPasswordExceptionMessage,
+            passwordValue = confirmPassword,
+            passwordExceptionMessage = confirmPasswordExceptionMessage,
             onValueChange = confirmPasswordOnValueChange,
-            keyboardActionOnDone = keyboardActionOnDone)
+            keyboardActionOnDone = keyboardActionOnDone,
+            passwordVisibility = confirmPasswordVisibility,
+            passwordVisibilityIconOnClick = confirmPasswordIconOnClick)
 
     }
 }
