@@ -1,30 +1,28 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.common.AlertDialogData
 import com.example.cyclistance.common.SetupAlertDialog
-import io.github.farhanroy.composeawesomedialog.R.raw.error
-import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.AppImageIcon
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEventResult
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpViewModel
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
 import com.example.cyclistance.feature_mapping.presentation.MappingViewModel
-import timber.log.Timber
 
 @Composable
 fun SignUpScreen(
@@ -32,176 +30,139 @@ fun SignUpScreen(
     signUpViewModel: SignUpViewModel = hiltViewModel(),
     mappingViewModel: MappingViewModel = hiltViewModel()) {
 
+    val stateValue = signUpViewModel.state.value
 
-    val email = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
-    val name = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
-    val password = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
-    val confirmPassword = rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue("")) }
+    with(stateValue) {
 
-    val signUpState by remember { signUpViewModel.createAccountState }
-    val hasAccountSignedIn = remember { signUpViewModel.hasAccountSignedIn() }
-    val isUserCreatedNewAccount =  remember { email.value.text != mappingViewModel.getEmail() }
+        val hasAccountSignedIn = remember { signUpViewModel.hasAccountSignedIn() }
+        val isUserCreatedNewAccount = remember { email.text != mappingViewModel.getEmail() }
+        var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
+        val context = LocalContext.current
 
-    val signUpAccount = {
-        if(hasAccountSignedIn && isUserCreatedNewAccount){
-            mappingViewModel.signOutAccount()
-        }
-
-        signUpViewModel.createUserWithEmailAndPassword(
-            authModel = AuthModel(
-                email = email.value.text,
-                password = password.value.text,
-                confirmPassword = confirmPassword.value.text
-            ))
-    }
-
-    LaunchedEffect(key1 = signUpState.result) {
-        signUpState.result?.let { signUpIsSuccessful ->
-
-            if (signUpIsSuccessful) {
-                navController?.popBackStack()
-                navController?.navigate(Screens.EmailAuthScreen.route) {
-                    popUpTo(Screens.SignUpScreen.route) { inclusive = true }
-                    launchSingleTop = true
-                }
-            } else {
-                Timber.e("Sign up not success.")
+        val signUpAccount = {
+            if (hasAccountSignedIn && isUserCreatedNewAccount) {
+                mappingViewModel.signOutAccount()
             }
+            signUpViewModel.onEvent(SignUpEvent.SignUp)
         }
-    }
 
-    LaunchedEffect(key1 = signUpState.internetExceptionMessage) {
-        signUpState.internetExceptionMessage.let { message ->
-            if (message.isNotEmpty()) {
-                navController?.navigate(Screens.NoInternetScreen.route) {
-                    launchSingleTop = true
+
+        LaunchedEffect(key1 = true){
+            signUpViewModel.eventFlow.collect{ event ->
+
+                when(event){
+                    is SignUpEventResult.ShowInternetScreen -> {
+                        navController?.navigate(Screens.NoInternetScreen.route) {
+                            launchSingleTop = true
+                        }
+                    }
+                    is SignUpEventResult.ShowAlertDialog -> {
+                        alertDialogState = AlertDialogData(
+                            title = event.title,
+                            description = event.description,
+                            resId = event.imageResId)
+                    }
+                    is SignUpEventResult.ShowEmailAuthScreen -> {
+                        navController?.navigate(Screens.EmailAuthScreen.route) {
+                            popUpTo(Screens.SignUpScreen.route) { inclusive = true }
+                            launchSingleTop = true
+                        }
+                    }
+                    is SignUpEventResult.ShowToastMessage -> {
+                        Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
-    }
 
 
 
 
+        Column(
 
-
-
-
-
-    signUpState.userCollisionExceptionMessage.let{ message->
-        if(message.isNotEmpty()){
-
-            SetupAlertDialog(
-                alertDialog = AlertDialogData(
-                title = "Error",
-                description = message,
-                resId = error
-            )){
-
-            }
-
-        }
-    }
-
-
-
-
-    Column(
-
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundColor)) {
-
-        ConstraintLayout(
-            constraintSet = signUpConstraints,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
                 .background(BackgroundColor)) {
 
-            AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
-            SignUpTextArea()
+            ConstraintLayout(
+                constraintSet = signUpConstraints,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(BackgroundColor)) {
 
-            Waves(
-                topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
-                bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId
-            )
+                AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
+                SignUpTextArea()
 
-            SignUpTextFieldsArea(
-                email = email.value,
-                emailOnValueChange = {
-                    email.value = it
-                    if (signUpState.emailExceptionMessage.isNotEmpty()) {
-                        signUpViewModel.clearState()
-                    }
-                },
-                name = name.value,
-                nameOnValueChange = {
-                    name.value = it
-
-                },
-                password = password.value,
-                passwordOnValueChange = {
-                    password.value = it
-                    if (signUpState.passwordExceptionMessage.isNotEmpty()) {
-                        signUpViewModel.clearState()
-                    }
-                },
-                confirmPassword = confirmPassword.value,
-                confirmPasswordOnValueChange = {
-                    confirmPassword.value = it
-                    if (signUpState.confirmPasswordExceptionMessage.isNotEmpty()) {
-                        signUpViewModel.clearState()
-                    }
-                },
-                inputResultState = signUpState,
-                keyboardActionOnDone = {
-                    signUpAccount()
-                },
-                emailClearIconOnClick = {
-                    /*TODO*/
-                }, nameClearIconOnClick = {
-                    /*Todo*/
-                }, passwordClearIconOnClick = {
-                    /*TODO*/
-                },
-                confirmPasswordVisibility = false,
-                confirmPasswordIconOnClick = {
-                    /*TODO*/
-                }
-
-            )
-
-            SignUpButton(onClickButton = {
-                signUpAccount()
-            })
-
-            SignUpClickableText() {
-                navController?.navigate(Screens.SignInScreen.route) {
-                    popUpTo(Screens.SignUpScreen.route) { inclusive = true }
-                    launchSingleTop = true
-                }
-            }
-            if (signUpState.isLoading ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
+                Waves(
+                    topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
+                    bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId
                 )
+
+                if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
+                    SetupAlertDialog(
+                        alertDialog = alertDialogState,
+                        onDismissRequest = {
+                            alertDialogState = AlertDialogData()
+                        })
+                }
+
+                SignUpTextFieldsArea(
+                    email = email,
+                    emailOnValueChange = { signUpViewModel.onEvent(SignUpEvent.EnteredEmail(email = it)) },
+                    emailExceptionMessage = emailExceptionMessage,
+                    emailClearIconOnClick = {
+                      signUpViewModel.onEvent(SignUpEvent.ClearEmail)
+                    },
+
+
+
+                    name = name,
+                    nameOnValueChange = { signUpViewModel.onEvent(SignUpEvent.EnteredName(name = it)) },
+                    nameExceptionMessage = nameExceptionMessage,
+                    nameClearIconOnClick = {
+                        signUpViewModel.onEvent(SignUpEvent.ClearName)
+                    },
+
+
+
+                    password = password,
+                    passwordOnValueChange = { signUpViewModel.onEvent(SignUpEvent.EnteredPassword(password = it)) },
+                    passwordExceptionMessage = passwordExceptionMessage,
+                    passwordClearIconOnClick = {
+                        signUpViewModel.onEvent(SignUpEvent.ClearPassword)
+                    },
+
+                    confirmPassword = confirmPassword,
+                    confirmPasswordOnValueChange = { signUpViewModel.onEvent(SignUpEvent.EnteredConfirmPassword(confirmPassword = it)) },
+                    confirmPasswordExceptionMessage = confirmPasswordExceptionMessage,
+                    confirmPasswordVisibility = passwordVisibility,
+                    confirmPasswordIconOnClick = { signUpViewModel.onEvent(SignUpEvent.TogglePasswordVisibility) },
+                    keyboardActionOnDone = { signUpAccount() }
+                )
+
+
+
+                SignUpButton(onClickButton = {
+                    signUpAccount()
+                })
+
+                SignUpClickableText() {
+                    navController?.navigate(Screens.SignInScreen.route) {
+                        popUpTo(Screens.SignUpScreen.route) { inclusive = true }
+                        launchSingleTop = true
+                    }
+                }
+
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
+                    )
+                }
             }
-
         }
-
-
     }
 
-
-
-
-
 }
 
-@Preview
-@Composable
-fun SignUpScreenPreview() {
-    SignUpScreen(navController = null)
-}

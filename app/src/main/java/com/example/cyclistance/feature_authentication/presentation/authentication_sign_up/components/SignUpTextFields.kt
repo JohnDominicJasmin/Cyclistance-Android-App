@@ -16,27 +16,27 @@ import com.example.cyclistance.feature_authentication.presentation.common.*
 fun SignUpTextFieldsArea(
     email: TextFieldValue,
     emailOnValueChange: (TextFieldValue) -> Unit,
+    emailExceptionMessage: String,
     emailClearIconOnClick: () -> Unit,
 
     name: TextFieldValue,
     nameOnValueChange: (TextFieldValue) -> Unit,
+    nameExceptionMessage: String,
     nameClearIconOnClick: () -> Unit,
 
     password: TextFieldValue,
     passwordOnValueChange: (TextFieldValue) -> Unit,
+    passwordExceptionMessage: String,
     passwordClearIconOnClick: () -> Unit,
 
     confirmPassword: TextFieldValue,
     confirmPasswordOnValueChange: (TextFieldValue) -> Unit,
+    confirmPasswordExceptionMessage: String,
     confirmPasswordVisibility: Boolean,
     confirmPasswordIconOnClick: () -> Unit,
 
-    inputResultState: AuthState<Boolean>,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
 
-    val emailExceptionMessage = inputResultState.emailExceptionMessage
-    val passwordExceptionMessage = inputResultState.passwordExceptionMessage
-    val confirmPasswordExceptionMessage = inputResultState.confirmPasswordExceptionMessage
 
     Column(
         modifier = Modifier
@@ -54,7 +54,7 @@ fun SignUpTextFieldsArea(
 
         NameTextField(
             name = name,
-            nameExceptionMessage = "",
+            nameExceptionMessage = nameExceptionMessage,
             clearIconOnClick = nameClearIconOnClick,
             onValueChange = nameOnValueChange
         )

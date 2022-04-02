@@ -27,12 +27,6 @@ class SignInViewModel @Inject constructor(
     private val _eventFlow: MutableSharedFlow<SignInEventResult> = MutableSharedFlow()
     val eventFlow: SharedFlow<SignInEventResult> = _eventFlow.asSharedFlow()
 
-
-    private val _signInWithCredentialState: MutableSharedFlow<AuthState<Boolean>> =
-        MutableSharedFlow()
-    val signInWithCredentialState: SharedFlow<AuthState<Boolean>> =
-        _signInWithCredentialState.asSharedFlow()
-
     private val _state: MutableState<SignInState> = mutableStateOf(SignInState())
     val state: State<SignInState> = _state
 
@@ -87,6 +81,8 @@ class SignInViewModel @Inject constructor(
             _state.value = state.value.copy(isLoading = false)
             if (isSignedIn) {
                 _eventFlow.emit(SignInEventResult.RefreshEmail)
+            }else{
+                _eventFlow.emit(SignInEventResult.ShowToastMessage("Sorry, something went wrong. Please try again."))
             }
         }.onFailure { exception ->
             _state.value = state.value.copy(isLoading = false)
@@ -129,26 +125,20 @@ class SignInViewModel @Inject constructor(
     fun signInWithCredential(authCredential: AuthCredential) {
         viewModelScope.launch {
             kotlin.runCatching {
-                _signInWithCredentialState.emit(AuthState(isLoading = true))
+                _state.value = state.value.copy(isLoading = true)
                 authUseCase.signInWithCredentialUseCase(authCredential)
-            }.onSuccess { result ->
-                _signInWithCredentialState.emit(AuthState(isLoading = false, result = result))
+            }.onSuccess { isSuccess ->
+                if (isSuccess) {
+                    _eventFlow.emit(SignInEventResult.ShowMappingScreen)
+                }
             }.onFailure { exception ->
-
                 when (exception) {
-                    //TODO: Change this later
+
                     is AuthExceptions.InternetException -> {
-                        _signInWithCredentialState.emit(
-                            AuthState(
-                                internetExceptionMessage = exception.message
-                                                           ?: "No Internet Connection."))
+                        _eventFlow.emit(SignInEventResult.ShowInternetScreen)
                     }
                     is AuthExceptions.ConflictFBTokenException -> {
-                        _signInWithCredentialState.emit(
-                            AuthState(
-                                conflictFBTokenExceptionMessage = exception.message
-                                                                  ?: "Login Failed."))
-
+                     /*TODO: LOGOUT PREVIOUS ACCOUNT TOKEN */
                     }
                 }
             }

@@ -10,6 +10,8 @@ sealed class SignInEventResult {
         val title: String = "",
         val description: String = "",
         @RawRes val imageResId: Int = -1) : SignInEventResult()
+    object ShowMappingScreen: SignInEventResult()
+    data class ShowToastMessage(val message: String) : SignInEventResult()
 
 
 }
