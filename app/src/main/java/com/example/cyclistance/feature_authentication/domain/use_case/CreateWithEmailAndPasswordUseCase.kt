@@ -3,8 +3,9 @@ package com.example.cyclistance.feature_authentication.domain.use_case
 import android.content.Context
 import com.example.cyclistance.R
 import com.example.cyclistance.common.ConnectionStatus
-import com.example.cyclistance.common.InputValidate.strongPassword
-import com.example.cyclistance.common.InputValidate.validEmail
+import com.example.cyclistance.common.InputValidate
+import com.example.cyclistance.common.InputValidate.isPasswordStrong
+import com.example.cyclistance.common.InputValidate.isEmailValid
 
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
@@ -22,7 +23,7 @@ class CreateWithEmailAndPasswordUseCase(
             authModel.email.isEmpty() ->
                 throw AuthExceptions.EmailException(message = context.getString(R.string.fieldLeftBlankMessage))
 
-            !validEmail(authModel.email) ->
+            !isEmailValid(authModel.email) ->
                 throw AuthExceptions.EmailException(message = context.getString(R.string.emailIsInvalidMessage))
 
             authModel.password.isEmpty() ->
@@ -35,7 +36,7 @@ class CreateWithEmailAndPasswordUseCase(
                     authModel.confirmPassword ->
                 throw AuthExceptions.ConfirmPasswordException(message = context.getString(R.string.passwordIsNotMatchMessage))
 
-            !strongPassword(authModel.confirmPassword) ->
+            !isPasswordStrong(authModel.confirmPassword) ->
                 throw AuthExceptions.ConfirmPasswordException(message = context.getString(R.string.passwordIsWeakMessage))
 
             !ConnectionStatus.hasInternetConnection(context) ->

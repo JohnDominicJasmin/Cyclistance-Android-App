@@ -6,7 +6,9 @@
     <string name="incorrectEmailOrPasswordMessage">Email or Password is Incorrect.</string>
     <string name="fieldLeftBlankMessage">Field cannot be left blank.</string>
     <string name="emailIsInvalidMessage">Email is Invalid.</string>
+    <string name="nameIsTooShortMessage">Name is too short.</string>
     <string name="passwordIsNotMatchMessage">The specified password do not match.</string>
     <string name="passwordIsWeakMessage">Password must contain at least 8 characters, including numbers or special characters.</string>
     <string name="sendingEmailErrorMessage">There was an error trying to send the verification email. Please try again.</string>
+    <string name="shouldNotContainSpecialCharacters">Should not contain special characters.</string>
 </resources>

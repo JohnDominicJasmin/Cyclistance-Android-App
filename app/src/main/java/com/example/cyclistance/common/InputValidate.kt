@@ -14,8 +14,9 @@ object InputValidate {
     private fun containSpecialCharacters(input: String): Boolean {
         return Pattern.compile(REGEX_SPECIAL_CHARACTERS_VALUE).matcher(input).find()
     }
-     fun validEmail(email: String) = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-     fun strongPassword(password:String): Boolean {
+
+    fun isEmailValid(email: String) = Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    fun isPasswordStrong(password: String): Boolean {
         return isNumberOfCharactersLongEnough(password) &&
                (containsNumeric(password) ||
                 containSpecialCharacters(password))

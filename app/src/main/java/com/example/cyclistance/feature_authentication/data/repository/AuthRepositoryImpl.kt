@@ -120,13 +120,6 @@ class AuthRepositoryImpl @Inject constructor(
 
     }
 
-    override fun setName(name: String): Boolean {
-        UserProfileChangeRequest.Builder()
-            .setDisplayName(name)
-            .build()
-
-        return false
-    }
 
     override fun isEmailVerified(): Boolean? {
         return FirebaseAuth.getInstance().currentUser?.isEmailVerified
