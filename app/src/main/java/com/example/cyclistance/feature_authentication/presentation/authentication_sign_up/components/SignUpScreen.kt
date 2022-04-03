@@ -117,17 +117,6 @@ fun SignUpScreen(
                       signUpViewModel.onEvent(SignUpEvent.ClearEmail)
                     },
 
-
-
-                    name = name,
-                    nameOnValueChange = { signUpViewModel.onEvent(SignUpEvent.EnteredName(name = it)) },
-                    nameExceptionMessage = nameExceptionMessage,
-                    nameClearIconOnClick = {
-                        signUpViewModel.onEvent(SignUpEvent.ClearName)
-                    },
-
-
-
                     password = password,
                     passwordOnValueChange = { signUpViewModel.onEvent(SignUpEvent.EnteredPassword(password = it)) },
                     passwordExceptionMessage = passwordExceptionMessage,

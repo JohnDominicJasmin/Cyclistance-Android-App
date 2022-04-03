@@ -19,10 +19,6 @@ fun SignUpTextFieldsArea(
     emailExceptionMessage: String,
     emailClearIconOnClick: () -> Unit,
 
-    name: TextFieldValue,
-    nameOnValueChange: (TextFieldValue) -> Unit,
-    nameExceptionMessage: String,
-    nameClearIconOnClick: () -> Unit,
 
     password: TextFieldValue,
     passwordOnValueChange: (TextFieldValue) -> Unit,
@@ -52,12 +48,6 @@ fun SignUpTextFieldsArea(
             clearIconOnClick = emailClearIconOnClick,
             onValueChange = emailOnValueChange)
 
-        NameTextField(
-            name = name,
-            nameExceptionMessage = nameExceptionMessage,
-            clearIconOnClick = nameClearIconOnClick,
-            onValueChange = nameOnValueChange
-        )
 
         PasswordTextField(
             password = password,

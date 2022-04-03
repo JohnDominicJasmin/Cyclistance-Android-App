@@ -48,9 +48,7 @@ class SignUpViewModel @Inject constructor(
             is SignUpEvent.EnteredEmail -> {
                 _state.value = state.value.copy(email = event.email, emailExceptionMessage = "")
             }
-            is SignUpEvent.EnteredName -> {
-                _state.value = state.value.copy(name = event.name, nameExceptionMessage = "")
-            }
+
             is SignUpEvent.EnteredPassword -> {
                 _state.value = state.value.copy(password = event.password, passwordExceptionMessage = "")
             }
@@ -59,9 +57,6 @@ class SignUpViewModel @Inject constructor(
             }
             is SignUpEvent.ClearEmail -> {
                 _state.value = state.value.copy(email = TextFieldValue(""))
-            }
-            is SignUpEvent.ClearName -> {
-                _state.value = state.value.copy(name = TextFieldValue(""))
             }
             is SignUpEvent.ClearPassword -> {
                 _state.value = state.value.copy(password = TextFieldValue(""))

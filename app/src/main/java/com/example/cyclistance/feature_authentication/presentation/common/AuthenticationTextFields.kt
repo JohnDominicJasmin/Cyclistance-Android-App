@@ -104,7 +104,7 @@ fun PasswordTextField(
                     tint = MaterialTheme.colors.error)
             }
 
-            if(password.text.isNotEmpty()){
+            if(password.text.isNotEmpty()  && !hasError){
                 IconButton(onClick = clearIconOnClick) {
                     Icon(
                         imageVector = Icons.Default.Cancel,
@@ -171,95 +171,6 @@ private fun SetupPasswordTextField(
 
 
 
-@Composable
-fun NameTextField(
-    name: TextFieldValue,
-    nameExceptionMessage:String,
-    clearIconOnClick: () -> Unit,
-    onValueChange: (TextFieldValue) -> Unit) {
-
-
-    val hasError = nameExceptionMessage.isNotEmpty()
-
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(3.dp)) {
-
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .shadow(15.dp, shape = RoundedCornerShape(12.dp), clip = true),
-            value = name,
-            singleLine = true,
-            maxLines = 1,
-            shape = RoundedCornerShape(12.dp),
-            onValueChange = onValueChange,
-            placeholder = {
-                Text(
-                    text = "Name",
-                    color = if (hasError) MaterialTheme.colors.error else TextFieldTextColor,
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Center
-                )
-            },
-            trailingIcon = {
-
-
-                if (hasError) {
-                    Icon(
-                        imageVector = Icons.Filled.Error,
-                        contentDescription = "",
-                        tint = MaterialTheme.colors.error,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                if (name.text.isNotEmpty()) {
-                    IconButton(onClick = clearIconOnClick) {
-                        Icon(
-                            imageVector = Icons.Default.Cancel,
-                            contentDescription = "",
-                            tint = TextFieldTextColor,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-
-
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = "Person Icon",
-                    tint = TextFieldTextColor,
-                    modifier = Modifier.size(18.dp)
-                )
-            },
-            isError = hasError,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Next),
-            colors = TextFieldColors(),
-        )
-
-        if (hasError) {
-
-            Text(
-                text = nameExceptionMessage,
-                color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.caption,
-                modifier = Modifier.padding(start = 16.dp)
-            )
-
-
-        }
-    }
-
-
-
-}
 
 @Composable
 fun EmailTextField(
@@ -305,7 +216,7 @@ fun EmailTextField(
                     )
                 }
 
-                if(email.text.isNotEmpty()){
+                if(email.text.isNotEmpty() && !hasError){
                     IconButton(onClick = clearIconOnClick) {
                         Icon(
                             imageVector = Icons.Default.Cancel,
