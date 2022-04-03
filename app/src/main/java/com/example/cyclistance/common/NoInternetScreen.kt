@@ -15,7 +15,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -23,11 +22,11 @@ import androidx.navigation.NavHostController
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
 import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
-import com.example.cyclistance.navigation.Screens
 
 @Composable
 fun NoInternetScreen(navController: NavHostController) {
 
+    val context = LocalContext.current
     Column(
 
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -43,7 +42,7 @@ fun NoInternetScreen(navController: NavHostController) {
                 .padding(start = 25.dp, end = 25.dp)
                 .background(BackgroundColor)) {
 
-            val(image,title,description,retryButton,goToSettingsButton) = createRefs()
+            val (image, title, description, retryButton, goToSettingsButton) = createRefs()
 
 
             Image(
@@ -70,7 +69,7 @@ fun NoInternetScreen(navController: NavHostController) {
                     width = Dimension.wrapContent
                     height = Dimension.wrapContent
                 }
-                )
+            )
 
 
             Text(
@@ -78,7 +77,7 @@ fun NoInternetScreen(navController: NavHostController) {
                        "or mobile data is turned on, then try again.",
                 style = MaterialTheme.typography.subtitle1,
                 color = Color.White,
-                modifier = Modifier.constrainAs(description){
+                modifier = Modifier.constrainAs(description) {
                     top.linkTo(title.bottom, margin = 15.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
@@ -89,7 +88,11 @@ fun NoInternetScreen(navController: NavHostController) {
 
             OutlinedButton(
                 shape = RoundedCornerShape(12.dp),
-                onClick = {  navController.popBackStack() },
+                onClick = {
+                    if (ConnectionStatus.hasInternetConnection(context)) {
+                        navController.popBackStack()
+                    }
+                },
                 modifier = Modifier
                     .padding(4.dp)
                     .shadow(elevation = 10.dp, shape = RoundedCornerShape(12.dp), clip = true)
@@ -111,15 +114,18 @@ fun NoInternetScreen(navController: NavHostController) {
                     modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
                     style = MaterialTheme.typography.button,
                     color = Color.White
-                    )
+                )
 
             }
 
-            val context = LocalContext.current
+
             TextButton(
                 onClick = {
                     context.startActivity(Intent(Settings.ACTION_SETTINGS))
-                }, colors = ButtonDefaults.textButtonColors(backgroundColor = Color.Transparent, contentColor = ThemeColor),
+                },
+                colors = ButtonDefaults.textButtonColors(
+                    backgroundColor = Color.Transparent,
+                    contentColor = ThemeColor),
                 modifier = Modifier
                     .padding(1.dp)
                     .wrapContentWidth()
@@ -131,7 +137,10 @@ fun NoInternetScreen(navController: NavHostController) {
                         height = Dimension.wrapContent
                     }
             ) {
-                Text(text = "Go to Settings", style = MaterialTheme.typography.button, color = ThemeColor)
+                Text(
+                    text = "Go to Settings",
+                    style = MaterialTheme.typography.button,
+                    color = ThemeColor)
 
 
             }
