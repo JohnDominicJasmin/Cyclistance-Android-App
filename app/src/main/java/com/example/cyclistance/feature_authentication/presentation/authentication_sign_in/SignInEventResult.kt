@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 
 sealed class SignInEventResult {
     object RefreshEmail: SignInEventResult()
-    object ShowInternetScreen : SignInEventResult()
+    object ShowNoInternetScreen : SignInEventResult()
     data class ShowAlertDialog(
         val title: String = "",
         val description: String = "",

@@ -9,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_authentication.presentation.common.AuthState
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -95,7 +94,7 @@ class SignInViewModel @Inject constructor(
                     _state.value = state.value.copy(passwordExceptionMessage = exception.message ?: "Invalid Password.")
                 }
                 is AuthExceptions.InternetException -> {
-                    _eventFlow.emit(SignInEventResult.ShowInternetScreen)
+                    _eventFlow.emit(SignInEventResult.ShowNoInternetScreen)
                 }
                 is AuthExceptions.InvalidUserException -> {
                     _eventFlow.emit(
@@ -135,7 +134,7 @@ class SignInViewModel @Inject constructor(
                 when (exception) {
 
                     is AuthExceptions.InternetException -> {
-                        _eventFlow.emit(SignInEventResult.ShowInternetScreen)
+                        _eventFlow.emit(SignInEventResult.ShowNoInternetScreen)
                     }
                     is AuthExceptions.ConflictFBTokenException -> {
                      /*TODO: LOGOUT PREVIOUS ACCOUNT TOKEN */

@@ -4,12 +4,13 @@ import androidx.annotation.RawRes
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInEventResult
 
 sealed class SignUpEventResult{
-    object ShowInternetScreen: SignUpEventResult()
+    object ShowNoInternetScreen: SignUpEventResult()
+    object ShowEmailAuthScreen: SignUpEventResult()
+    data class ShowToastMessage(val message: String) : SignUpEventResult()
     data class ShowAlertDialog(
         val title: String = "",
         val description: String = "",
         @RawRes val imageResId: Int = -1
     ): SignUpEventResult()
-    object ShowEmailAuthScreen: SignUpEventResult()
-    data class ShowToastMessage(val message: String) : SignUpEventResult()
+
 }

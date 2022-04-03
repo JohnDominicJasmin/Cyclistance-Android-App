@@ -31,11 +31,12 @@ fun EmailAuthResendButton(text: String, isEnabled: Boolean, onClick: () -> Unit)
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = Color.Transparent,
                 contentColor = ThemeColor,
-                disabledContentColor = DisabledColor)) {
+                disabledContentColor = DisabledColor,
+                disabledBackgroundColor = Color.Transparent)) {
             Text(
                 text,
                 textAlign = TextAlign.Center,
-                fontSize = 22.sp,
+                fontSize = 20.sp,
                 fontWeight = FontWeight.Bold)
 
         }

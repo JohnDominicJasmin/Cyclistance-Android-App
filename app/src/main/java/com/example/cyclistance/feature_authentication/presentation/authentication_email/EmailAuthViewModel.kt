@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_email
 
 import android.os.CountDownTimer
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.lifecycle.viewModelScope
 import androidx.compose.runtime.mutableStateOf
@@ -10,9 +11,11 @@ import com.example.cyclistance.common.AuthConstants.REFRESH_EMAIL_INTERVAL
 import com.example.cyclistance.common.AuthConstants.TIMER_COUNTS
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_authentication.presentation.common.AuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -24,29 +27,37 @@ class EmailAuthViewModel @Inject constructor(
     private var job: Job? = null
 
 
-
-
-    private val _state = mutableStateOf(EmailAuthState())
+    private val _state: MutableState<EmailAuthState> = mutableStateOf(EmailAuthState())
     val state: State<EmailAuthState> = _state
 
-    private val _sendEmailVerificationState = mutableStateOf(AuthState<Boolean>())
-    val sendEmailVerificationState = _sendEmailVerificationState
-
-    private val _verifyEmailState = mutableStateOf(AuthState<Boolean>())
-    val verifyEmailState = _verifyEmailState
-
-    private val _reloadEmailState = mutableStateOf(AuthState<Boolean>())
-    val reloadEmailState = _reloadEmailState
+    private val _eventFlow: MutableSharedFlow<EmailAuthEventResult> = MutableSharedFlow()
+    val eventFlow: SharedFlow<EmailAuthEventResult> = _eventFlow.asSharedFlow()
 
 
-    fun verifyEmail() {
-
-        viewModelScope.launch {
-            kotlin.runCatching {
-                _verifyEmailState.value = AuthState(isLoading = true)
-                authUseCase.isEmailVerifiedUseCase() == true
-            }.onSuccess { result ->
-                _verifyEmailState.value = AuthState(result = result, isLoading = false)
+    fun onEvent(event: EmailAuthEvent) {
+        when(event){
+            is EmailAuthEvent.RefreshEmail -> {
+                viewModelScope.launch {
+                    reloadEmail()
+                }
+            }
+            is EmailAuthEvent.SendEmailVerification -> {
+                viewModelScope.launch {
+                    sendEmailVerification()
+                }
+            }
+            is EmailAuthEvent.StartTimer -> {
+                viewModelScope.launch {
+                    startTimer()
+                }
+            }
+            is EmailAuthEvent.SubscribeEmailVerification -> {
+                job = viewModelScope.launch {
+                    refreshEmailAsync()
+                }
+            }
+            is EmailAuthEvent.ResendButtonClick -> {
+                _state.value = state.value.copy(isEmailResendClicked =  true)
             }
         }
     }
@@ -54,9 +65,30 @@ class EmailAuthViewModel @Inject constructor(
 
 
 
-     fun refreshEmailAsync() {
-        job = viewModelScope.launch {
-            while (isActive) {
+
+    private suspend fun verifyEmail() {
+        kotlin.runCatching {
+            _state.value = state.value.copy(isLoading = true)
+            authUseCase.isEmailVerifiedUseCase() == true
+        }.onSuccess { isVerificationSuccess ->
+            _state.value = state.value.copy(isLoading = false)
+
+            if(isVerificationSuccess){
+                _eventFlow.emit(EmailAuthEventResult.ShowMappingScreen)
+                delay(300)
+                job?.let{
+                    if(it.isActive){
+                        it.cancel()
+                    }
+                }
+            }else{
+                _eventFlow.emit(EmailAuthEventResult.UserEmailIsNotVerified)
+            }
+        }
+    }
+    private suspend fun refreshEmailAsync() {
+        coroutineScope {
+            while (this.isActive) {
                 delay(REFRESH_EMAIL_INTERVAL)
                 reloadEmail()
             }
@@ -65,14 +97,20 @@ class EmailAuthViewModel @Inject constructor(
 
     private suspend fun reloadEmail(){
         kotlin.runCatching {
-            _reloadEmailState.value = AuthState(isLoading = true)
+            _state.value = state.value.copy(isLoading = true)
             authUseCase.reloadEmailUseCase()
-        }.onSuccess { result ->
-            _reloadEmailState.value = AuthState(isLoading = false, result = result)
+        }.onSuccess { isEmailReloaded ->
+            _state.value = state.value.copy(isLoading = false)
+            if(isEmailReloaded) {
+                verifyEmail()
+            }else{
+                _eventFlow.emit(EmailAuthEventResult.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
+            }
         }.onFailure { exception ->
+            _state.value = state.value.copy(isLoading = false)
             when (exception) {
                 is AuthExceptions.InternetException -> {
-                    _reloadEmailState.value = AuthState( isLoading = false, result = false, internetExceptionMessage = exception.message ?: "No Internet Connection.")
+                    _eventFlow.emit(EmailAuthEventResult.ShowNoInternetScreen)
                 }
                 else -> {
                     Timber.e("${this.javaClass.name}: ${exception.message}")
@@ -82,31 +120,25 @@ class EmailAuthViewModel @Inject constructor(
 
         }
     }
-    fun refreshEmail() {
-        viewModelScope.launch {
-            reloadEmail()
-        }
-    }
 
 
-    fun startTimer() {
-        viewModelScope.launch() {
-            _state.value = EmailAuthState(isTimerRunning = true)
+    private fun startTimer() {
+            _state.value = state.value.copy(isTimerRunning = true)
             verificationTimer = object : CountDownTimer(TIMER_COUNTS, ONE_SECOND_TO_MILLIS) {
                 override fun onTick(millisUntilFinished: Long) {
                     val timeLeft = millisUntilFinished / ONE_SECOND_TO_MILLIS
-                    _state.value = EmailAuthState(secondsLeft = timeLeft.toInt())
+                    _state.value = state.value.copy(secondsLeft = timeLeft.toInt())
+                    Timber.d("TimeLeft is $timeLeft")
                 }
 
                 override fun onFinish() {
                     stopTimer()
-                    _state.value = EmailAuthState(isTimerRunning = false)
+                    _state.value = state.value.copy(isTimerRunning = false)
 
                 }
             }.start()
 
         }
-    }
 
     private fun stopTimer() {
         if (::verificationTimer.isInitialized) {
@@ -114,17 +146,39 @@ class EmailAuthViewModel @Inject constructor(
         }
     }
 
-     fun sendEmailVerification() {
-        viewModelScope.launch {
+     private suspend fun sendEmailVerification() {
             kotlin.runCatching {
-                _sendEmailVerificationState.value = AuthState(isLoading = true)
+                _state.value = state.value.copy(isLoading = true)
                 authUseCase.sendEmailVerificationUseCase()
-            }.onSuccess { result ->
-                _sendEmailVerificationState.value = AuthState(isLoading = false, result = result)
+            }.onSuccess { isEmailVerificationSent ->
+                _state.value = state.value.copy(isLoading = false)
+                Timber.d("Sending email verification status: $isEmailVerificationSent")
+                if (state.value.isEmailResendClicked) {
+                    if (isEmailVerificationSent) {
+                        _eventFlow.emit(
+                            EmailAuthEventResult.ShowAlertDialog(
+                                title = "New Email Sent.",
+                                description = "New verification email has been sent to your email address.",
+                                imageResId = io.github.farhanroy.composeawesomedialog.R.raw.success
+                            ))
+                    } else {
+                        _eventFlow.emit(EmailAuthEventResult.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
+                    }
+                }
+
+
+
             }.onFailure {
-                _sendEmailVerificationState.value =  AuthState(isLoading = false, result = false, sendEmailExceptionMessage = it.message ?: "An unexpected error occurred.")
+                _state.value = state.value.copy(isLoading = false)
+                if(state.value.isEmailResendClicked) {
+                    _eventFlow.emit(
+                        EmailAuthEventResult.ShowAlertDialog(
+                            title = "Error",
+                            description = "There was an error trying to send the verification email. Please try again.",
+                            imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error
+                        ))
+                }
             }
-        }
     }
 
     override fun onCleared() {

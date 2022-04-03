@@ -23,6 +23,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
 import com.example.cyclistance.feature_mapping.presentation.MappingViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SignUpScreen(
@@ -48,10 +49,10 @@ fun SignUpScreen(
 
 
         LaunchedEffect(key1 = true){
-            signUpViewModel.eventFlow.collect{ event ->
+            signUpViewModel.eventFlow.collectLatest{ event ->
 
                 when(event){
-                    is SignUpEventResult.ShowInternetScreen -> {
+                    is SignUpEventResult.ShowNoInternetScreen -> {
                         navController?.navigate(Screens.NoInternetScreen.route) {
                             launchSingleTop = true
                         }

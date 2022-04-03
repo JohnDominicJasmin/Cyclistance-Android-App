@@ -82,9 +82,9 @@ class SignUpViewModel @Inject constructor(
             kotlin.runCatching {
                 _state.value = state.value.copy(isLoading = true)
                 authUseCase.createWithEmailAndPasswordUseCase(authModel)
-            }.onSuccess { isSuccess ->
+            }.onSuccess { isAccountCreated ->
                 _state.value = state.value.copy(isLoading = false)
-                if(isSuccess) {
+                if(isAccountCreated) {
                     _eventFlow.emit(SignUpEventResult.ShowEmailAuthScreen)
                 }else{
                     _eventFlow.emit(SignUpEventResult.ShowToastMessage("Sorry, something went wrong. Please try again."))
@@ -102,7 +102,7 @@ class SignUpViewModel @Inject constructor(
                         _state.value = state.value.copy(confirmPasswordExceptionMessage = exception.message ?: "Invalid Password.")
                     }
                     is AuthExceptions.InternetException -> {
-                        _eventFlow.emit(SignUpEventResult.ShowInternetScreen)
+                        _eventFlow.emit(SignUpEventResult.ShowNoInternetScreen)
                     }
                     is FirebaseAuthUserCollisionException -> {
                         _eventFlow.emit(

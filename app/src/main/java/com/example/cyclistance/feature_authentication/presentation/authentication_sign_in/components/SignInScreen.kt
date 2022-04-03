@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components
 
-import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,11 +15,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.common.AlertDialogData
 import com.example.cyclistance.common.SetupAlertDialog
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEventResult
 
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInEventResult
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInViewModel
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEventResult
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
@@ -35,159 +37,172 @@ fun SignInScreen(
     signInViewModel: SignInViewModel = hiltViewModel(),
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel()) {
 
-    val stateValue = signInViewModel.state.value
+    val signInStateValue = signInViewModel.state.value
+    val emailAuthStateValue = emailAuthViewModel.state.value
 
-    with(stateValue) {
+    signInStateValue.also{ signInState ->
+        emailAuthStateValue.also{ emailAuthState ->
 
-        var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
-        val context = LocalContext.current
-        val emailReloadState by remember { emailAuthViewModel.reloadEmailState }
-        val emailVerifyState by remember { emailAuthViewModel.verifyEmailState }
-
+            var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
+            val context = LocalContext.current
 
 
-        LaunchedEffect(key1 = true) {
-            signInViewModel.eventFlow.collectLatest { event ->
 
-                when (event) {
 
-                    is SignInEventResult.RefreshEmail -> {
-                        emailAuthViewModel.refreshEmail()
-                    }
-                    is SignInEventResult.ShowInternetScreen -> {
-                        navController?.navigate(Screens.NoInternetScreen.route) {
-                            launchSingleTop = true
+            LaunchedEffect(key1 = true) {
+
+                signInViewModel.eventFlow.collectLatest { signInEvent ->
+
+                    when (signInEvent) {
+
+                        is SignInEventResult.RefreshEmail -> {
+                            emailAuthViewModel.onEvent(EmailAuthEvent.RefreshEmail)
                         }
-                    }
-                    is SignInEventResult.ShowAlertDialog -> {
-                        alertDialogState = AlertDialogData(
-                            title = event.title,
-                            description = event.description,
-                            resId = event.imageResId)
-                    }
-                    is SignInEventResult.ShowMappingScreen -> {
-                        navController?.navigate(Screens.MappingScreen.route) {
-                            popUpTo(Screens.SignInScreen.route) {
-                                inclusive = true
+                        is SignInEventResult.ShowNoInternetScreen -> {
+                            navController?.navigate(Screens.NoInternetScreen.route) {
+                                launchSingleTop = true
                             }
-                            launchSingleTop = true
+                        }
+                        is SignInEventResult.ShowAlertDialog -> {
+                            alertDialogState = AlertDialogData(
+                                title = signInEvent.title,
+                                description = signInEvent.description,
+                                resId = signInEvent.imageResId)
+                        }
+                        is SignInEventResult.ShowMappingScreen -> {
+                            navController?.navigate(Screens.MappingScreen.route) {
+                                popUpTo(Screens.SignInScreen.route) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                        is SignInEventResult.ShowToastMessage -> {
+                            Toast.makeText(context, signInEvent.message, Toast.LENGTH_SHORT).show()
+                        }
+
+
+                    }
+                }
+            }
+
+
+            LaunchedEffect(key1 = true) {
+                emailAuthViewModel.eventFlow.collectLatest { emailAuthEvent ->
+                    when (emailAuthEvent) {
+                        is EmailAuthEventResult.ShowNoInternetScreen -> {
+                            navController?.navigate(Screens.NoInternetScreen.route) {
+                                launchSingleTop = true
+                            }
+                        }
+                        is EmailAuthEventResult.ShowAlertDialog -> {
+                            alertDialogState = AlertDialogData(
+                                title = emailAuthEvent.title,
+                                description = emailAuthEvent.description,
+                                resId = emailAuthEvent.imageResId)
+                        }
+                        is EmailAuthEventResult.ShowMappingScreen -> {
+                            navController?.navigate(Screens.MappingScreen.route) {
+                                popUpTo(Screens.SignInScreen.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
+                        }
+                        is EmailAuthEventResult.ShowToastMessage -> {
+                            Toast.makeText(context, emailAuthEvent.message, Toast.LENGTH_SHORT).show()
+                        }
+                        is EmailAuthEventResult.UserEmailIsNotVerified -> {
+                            navController?.navigate(Screens.EmailAuthScreen.route) {
+                                popUpTo(Screens.SignInScreen.route) { inclusive = true }
+                                launchSingleTop = true
+                            }
                         }
                     }
-                    is SignInEventResult.ShowToastMessage -> {
-                        Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                    }
-
-
                 }
             }
-        }
 
+            Column(
 
-        LaunchedEffect(key1 = emailReloadState.result) {
-            emailReloadState.result?.let { reloadEmailIsSuccessful ->
-                if (reloadEmailIsSuccessful) {
-                    emailAuthViewModel.verifyEmail()
-                }
-            }
-        }
-
-
-        LaunchedEffect(key1 = emailVerifyState.result) {
-            emailVerifyState.result?.let { isSuccessful ->
-                if (isSuccessful) {
-                    navController?.navigate(Screens.MappingScreen.route) {
-                        popUpTo(Screens.SignInScreen.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                } else {
-                    navController?.navigate(Screens.EmailAuthScreen.route) {
-                        popUpTo(Screens.SignInScreen.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
-                }
-            }
-        }
-
-
-
-        Column(
-
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(BackgroundColor)) {
-
-            ConstraintLayout(
-                constraintSet = signInConstraints,
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxSize()
                     .background(BackgroundColor)) {
 
-
-                AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
-                SignUpTextArea()
-
-                if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
-                    SetupAlertDialog(
-                        alertDialog = alertDialogState,
-                        onDismissRequest = {
-                            alertDialogState = AlertDialogData()
-                        })
-                }
-
-                Waves(
-                    topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
-                    bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId
-                )
+                ConstraintLayout(
+                    constraintSet = signInConstraints,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(BackgroundColor)) {
 
 
+                    AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
+                    SignUpTextArea()
 
-
-
-                SignInTextFieldsArea(
-                    email = email,
-                    emailOnValueChange = { signInViewModel.onEvent(SignInEvent.EnteredEmail(email = it)) },
-                    emailExceptionMessage = emailExceptionMessage,
-                    emailClearIconOnClick = { signInViewModel.onEvent(SignInEvent.ClearEmail) },
-                    password = password,
-                    passwordOnValueChange = {
-                        signInViewModel.onEvent(
-                            SignInEvent.EnteredPassword(
-                                password = it))
-                    },
-                    passwordExceptionMessage = passwordExceptionMessage,
-                    keyboardActionOnDone = { signInViewModel.onEvent(SignInEvent.SignInDefault) },
-                    passwordVisibility = passwordVisibility,
-                    passwordIconOnClick = { signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility) })
-
-                SignInGoogleAndFacebookSection(
-                    facebookButtonOnClick = {
-
-                    },
-                    googleSignInButtonOnClick = {
-
+                    if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
+                        SetupAlertDialog(
+                            alertDialog = alertDialogState,
+                            onDismissRequest = {
+                                alertDialogState = AlertDialogData()
+                            })
                     }
-                )
 
-                SignInButton(onClickButton = {
-                    signInViewModel.onEvent(SignInEvent.SignInDefault)
-                })
-
-
-                SignInClickableText(onClick = {
-                    navController?.navigate(Screens.SignUpScreen.route)
-                })
-
-                if (isLoading || emailReloadState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
+                    Waves(
+                        topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
+                        bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId
                     )
+
+
+
+
+
+                    SignInTextFieldsArea(
+                        email = signInState.email,
+                        emailOnValueChange = {
+                            signInViewModel.onEvent(
+                                SignInEvent.EnteredEmail(
+                                    email = it))
+                        },
+                        emailExceptionMessage = signInState.emailExceptionMessage,
+                        emailClearIconOnClick = { signInViewModel.onEvent(SignInEvent.ClearEmail) },
+                        password = signInState.password,
+                        passwordOnValueChange = {
+                            signInViewModel.onEvent(
+                                SignInEvent.EnteredPassword(
+                                    password = it))
+                        },
+                        passwordExceptionMessage = signInState.passwordExceptionMessage,
+                        keyboardActionOnDone = { signInViewModel.onEvent(SignInEvent.SignInDefault) },
+                        passwordVisibility = signInState.passwordVisibility,
+                        passwordIconOnClick = { signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility) })
+
+                    SignInGoogleAndFacebookSection(
+                        facebookButtonOnClick = {
+
+                        },
+                        googleSignInButtonOnClick = {
+
+                        }
+                    )
+
+                    SignInButton(onClickButton = {
+                        signInViewModel.onEvent(SignInEvent.SignInDefault)
+                    })
+
+
+                    SignInClickableText(onClick = {
+                        navController?.navigate(Screens.SignUpScreen.route)
+                    })
+
+                    if (signInState.isLoading || emailAuthState.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
+                        )
+                    }
+
                 }
+
 
             }
-
-
         }
     }
 }

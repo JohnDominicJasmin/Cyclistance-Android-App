@@ -4,4 +4,6 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 data class EmailAuthState(
     var secondsLeft: Int = 0,
     var isTimerRunning: Boolean = false,
+    var isEmailResendClicked: Boolean = false,
+    var isLoading: Boolean = false
     )

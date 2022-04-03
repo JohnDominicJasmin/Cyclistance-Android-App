@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_email.components
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
@@ -13,11 +14,15 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
 import com.example.cyclistance.feature_mapping.presentation.MappingViewModel
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalContext
 import com.example.cyclistance.common.AlertDialogData
 import com.example.cyclistance.common.SetupAlertDialog
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEventResult
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.navigation.Screens
-import io.github.farhanroy.composeawesomedialog.R
+import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @Composable
 fun EmailAuthScreen(
@@ -26,129 +31,110 @@ fun EmailAuthScreen(
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel()) {
 
 
-    LaunchedEffect(key1 = Unit) {
-
-        emailAuthViewModel.sendEmailVerification()
-        emailAuthViewModel.refreshEmailAsync()
-    }
-
-
+    var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
+    val context = LocalContext.current
     val email = remember { mappingViewModel.getEmail() }
 
-    val emailAuthState by remember{ emailAuthViewModel.state }
-    val secondsRemainingText by derivedStateOf { if (emailAuthState.isTimerRunning) "Resend E-mail in ${emailAuthState.secondsLeft}" + if (emailAuthState.secondsLeft < 2) "" else "s" else "Resend E-mail" }
+    with(emailAuthViewModel.state.value) {
 
-    var isEmailResendClicked by remember { mutableStateOf(false) }
+        LaunchedEffect(key1 = true) {
 
-    val emailVerifyState by remember {emailAuthViewModel.verifyEmailState}
-    val emailReloadState by remember {emailAuthViewModel.reloadEmailState}
-    val sendEmailVerificationState by remember {emailAuthViewModel.sendEmailVerificationState}
+            with(emailAuthViewModel) {
+                onEvent(EmailAuthEvent.StartTimer)
+                onEvent(EmailAuthEvent.SendEmailVerification)
+                onEvent(EmailAuthEvent.SubscribeEmailVerification)
+
+                eventFlow.collectLatest { event ->
+
+                    when (event) {
+                        is EmailAuthEventResult.ShowNoInternetScreen -> {
+                            navController?.navigate(Screens.NoInternetScreen.route) {
+                                launchSingleTop = true
+                            }
+                        }
+                        is EmailAuthEventResult.ShowAlertDialog -> {
+                            alertDialogState = AlertDialogData(
+                                title = event.title,
+                                description = event.description,
+                                resId = event.imageResId)
+                        }
+                        is EmailAuthEventResult.ShowMappingScreen -> {
+                            navController?.navigate(Screens.MappingScreen.route) {
+                                popUpTo(Screens.EmailAuthScreen.route) {
+                                    inclusive = true
+                                }
+                                launchSingleTop = true
+                            }
+                        }
+                        is EmailAuthEventResult.ShowToastMessage -> {
+                            Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                        }
+
+                        else -> {
+                            Timber.d("User email is not verified yet. Verification is not success.")
+                        }
+                    }
+                }
+            }
+
+        }
 
 
 
 
 
+        Column(
 
-
-
-    Column(
-
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(BackgroundColor)) {
-
-
-        ConstraintLayout(
-            constraintSet = emailAuthConstraints,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .fillMaxHeight(0.9f)
+                .fillMaxSize()
                 .background(BackgroundColor)) {
 
-        LaunchedEffect(key1 = emailVerifyState.result) {
-            emailVerifyState.result?.let { isSuccessful ->
-                if (isSuccessful) {
-                    navController?.navigate(Screens.MappingScreen.route) {
-                        popUpTo(Screens.EmailAuthScreen.route) {
-                            inclusive = true
-                        }
-                        launchSingleTop = true
-                    }
-                }
-            }
-        }
+
+            ConstraintLayout(
+                constraintSet = emailAuthConstraints,
+                modifier = Modifier
+                    .fillMaxHeight(0.9f)
+                    .background(BackgroundColor)) {
 
 
-            LaunchedEffect(key1 = emailReloadState.internetExceptionMessage) {
-                emailReloadState.internetExceptionMessage.let { message ->
-                    if (message.isNotEmpty()) {
+                EmailIcon()
+                EmailAuthTextStatus(email = email)
 
-                        navController?.navigate(Screens.NoInternetScreen.route) {
-                            launchSingleTop = true
-                        }
-                    }
-                }
-            }
-
-            LaunchedEffect(key1 = emailReloadState.result) {
-                if (emailReloadState.result == true) {
-                    emailAuthViewModel.verifyEmail()
-                }
-            }
-
-
-            EmailIcon()
-            EmailAuthTextStatus(email = email)
-
-            if (sendEmailVerificationState.isLoading || emailVerifyState.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.layoutId(
-                        AuthenticationConstraintsItem.ProgressBar.layoutId))
-            }
-
-
-
-            if (isEmailResendClicked) {
-
-                if (sendEmailVerificationState.result == true) {
+                if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
                     SetupAlertDialog(
-                        alertDialog = AlertDialogData(
-                            title = "New email sent.",
-                            description = "New verification email has been sent to your email address.",
-                            resId = R.raw.success
-                        )){
-
-                    }
+                        alertDialog = alertDialogState,
+                        onDismissRequest = {
+                            alertDialogState = AlertDialogData()
+                        })
+                }
+                if (isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.layoutId(
+                            AuthenticationConstraintsItem.ProgressBar.layoutId))
                 }
 
-                if(sendEmailVerificationState.sendEmailExceptionMessage.isNotEmpty()) {
-                    SetupAlertDialog(
-                        alertDialog = AlertDialogData(
-                            title = "Error",
-                            description = "There was an error trying to send the verification email. Please try again.",
-                            resId = R.raw.error
-                        )){
+                val secondsRemaining  = if (secondsLeft < 2) "$secondsLeft" else "$secondsLeft s"
+                val secondsRemainingText by derivedStateOf { if (isTimerRunning) "Resend E-mail in $secondsRemaining" else "Resend E-mail" }
 
-                    }
-                }
+
+                EmailAuthResendButton(
+                    text = secondsRemainingText,
+                    isEnabled = !isTimerRunning,
+                    onClick = {
+                        emailAuthViewModel.apply{
+                            onEvent(EmailAuthEvent.StartTimer)
+                            onEvent(EmailAuthEvent.ResendButtonClick)
+                            onEvent(EmailAuthEvent.SendEmailVerification)
+                        }
+                    })
+
 
             }
-
-
-            EmailAuthResendButton(
-                text = secondsRemainingText,
-                isEnabled = true,
-                onClick = {
-                    //emailAuthViewModel.startTimer()
-                    emailAuthViewModel.sendEmailVerification()
-                    isEmailResendClicked = true
-                })
-
 
         }
-
     }
+
+
 }
-
-
