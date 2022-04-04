@@ -123,49 +123,15 @@ fun AlertDialogContent(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-
-            Row(
-                modifier = Modifier.wrapContentWidth(),
-                verticalAlignment = Alignment.Bottom,
-                horizontalArrangement = Arrangement.spacedBy(3.dp)) {
-
-                Button(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .padding(all = 7.dp)
-                        .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFF696969)),
-                    shape = RoundedCornerShape(6.dp),
-                    onClick = onDismiss) {
-                    Text(
-                        text = "Dismiss",
-                        style = MaterialTheme.typography.button,
-                        color = Color.Black,
-                        textAlign = TextAlign.Center
-                    )
-                }
+            ButtonDialogArea(
+                modifier = Modifier.wrapContentHeight().fillMaxWidth(0.8f),
+                onClickCancelButton = onDismiss,
+                onClickConfirmButton = onConfirm
+            )
 
 
-                Button(
-                    modifier = Modifier
-                        .wrapContentSize()
-                        .padding(all = 7.dp)
-                        .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = ThemeColor),
-                    shape = RoundedCornerShape(6.dp),
-                    onClick = onConfirm) {
 
 
-                    Text(
-                        text = "Confirm",
-                        style = MaterialTheme.typography.button,
-                        color = Color.Black,
-                        textAlign = TextAlign.Center
-                    )
-                }
-
-
-            }
 
 
         }

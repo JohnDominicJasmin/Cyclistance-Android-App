@@ -96,10 +96,10 @@ fun MappingDetailsDialogScreen() {
                 }
         )
 
-        ButtonDialogSection(
+        ButtonDialogArea(
             modifier = Modifier
                 .constrainAs(buttonNavButtonSection) {
-                    top.linkTo(additionalMessageSection.bottom, margin = 15.dp)
+                    top.linkTo(additionalMessageSection.bottom, margin = 50.dp)
                     bottom.linkTo(parent.bottom, margin = 2.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)

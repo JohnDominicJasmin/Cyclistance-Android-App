@@ -55,7 +55,7 @@ fun MappingCancellationReasonScreen() {
         )
 
 
-        ButtonDialogSection(
+        ButtonDialogArea(
             modifier = Modifier
                 .constrainAs(buttonNavButtonSection) {
                     top.linkTo(additionalMessageSection.bottom, margin = 50.dp)
