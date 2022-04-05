@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,11 +23,15 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun IntroSliderScreen(
+    onBackPressed: () -> Unit,
     navController: NavController,
     introSliderViewModel: IntroSliderViewModel = hiltViewModel()) {
 
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
+
+    BackHandler(enabled = true, onBack = onBackPressed)
+
 
     Column(
         verticalArrangement = Arrangement.Center,

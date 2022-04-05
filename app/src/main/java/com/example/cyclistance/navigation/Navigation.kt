@@ -1,5 +1,6 @@
 package com.example.cyclistance.navigation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -16,7 +17,10 @@ import com.example.cyclistance.feature_readable_displays.presentation.splash_scr
 
 
 @Composable
-fun Navigation(navController:NavHostController) {
+fun Navigation(navController:NavHostController, onBackPressed:() -> Unit) {
+
+
+
 
     NavHost(navController = navController, startDestination = Screens.SplashScreen.route){
 
@@ -25,11 +29,11 @@ fun Navigation(navController:NavHostController) {
         }
 
         composable(Screens.IntroSliderScreen.route){
-            IntroSliderScreen(navController = navController)
+            IntroSliderScreen(navController = navController, onBackPressed = onBackPressed)
         }
 
         composable(Screens.SignInScreen.route){
-            SignInScreen(navController)
+            SignInScreen(navController = navController, onBackPressed = onBackPressed)
         }
 
         composable(Screens.SignUpScreen.route){
@@ -37,14 +41,14 @@ fun Navigation(navController:NavHostController) {
         }
 
         composable(Screens.EmailAuthScreen.route){
-            EmailAuthScreen(navController = navController)
+            EmailAuthScreen(navController = navController, onBackPressed = onBackPressed)
         }
 
         composable(Screens.MappingScreen.route){
-            MappingScreen(navController = navController)
+            MappingScreen(navController = navController, onBackPressed = onBackPressed)
         }
         composable(Screens.NoInternetScreen.route){
-            NoInternetScreen(navController = navController)
+            NoInternetScreen(navController = navController, onBackPressed = onBackPressed)
         }
 
     }

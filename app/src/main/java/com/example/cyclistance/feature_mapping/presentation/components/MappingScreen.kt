@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping.presentation.components
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,10 +20,12 @@ import com.mapbox.maps.MapView
 
 
 @Composable
-fun MappingScreen(navController: NavController?) {
+fun MappingScreen(navController: NavController?, onBackPressed: () -> Unit) {
     val scaffoldState =
         rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
 
+
+    BackHandler(enabled = true, onBack = onBackPressed)
 
 
     Scaffold(
@@ -67,7 +70,9 @@ fun SetupMapScreen() {
 @Preview
 @Composable
 fun PrevDeleteLater() {
-    MappingScreen(null)
+    MappingScreen(null){
+
+    }
 }
 
 

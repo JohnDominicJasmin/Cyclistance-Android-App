@@ -2,6 +2,7 @@ package com.example.cyclistance.common
 
 import android.content.Intent
 import android.provider.Settings
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -24,9 +25,13 @@ import com.example.cyclistance.feature_authentication.presentation.theme.Backgro
 import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
 
 @Composable
-fun NoInternetScreen(navController: NavHostController) {
+fun NoInternetScreen(navController: NavHostController, onBackPressed: () -> Unit) {
 
     val context = LocalContext.current
+
+    BackHandler(enabled = true, onBack = onBackPressed)
+
+
     Column(
 
         horizontalAlignment = Alignment.CenterHorizontally,

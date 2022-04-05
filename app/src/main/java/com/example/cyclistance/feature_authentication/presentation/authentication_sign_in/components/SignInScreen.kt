@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -22,7 +23,6 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInEventResult
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInViewModel
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEventResult
 import com.example.cyclistance.feature_authentication.presentation.common.AppImageIcon
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
@@ -34,18 +34,24 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SignInScreen(
+    onBackPressed:() -> Unit,
     navController: NavController?,
     signInViewModel: SignInViewModel = hiltViewModel(),
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel()) {
 
     val signInStateValue = signInViewModel.state.value
     val emailAuthStateValue = emailAuthViewModel.state.value
+    val context = LocalContext.current
+
+
+    BackHandler(enabled = true, onBack = onBackPressed)
+
+
 
     signInStateValue.also{ signInState ->
         emailAuthStateValue.also{ emailAuthState ->
 
             var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
-            val context = LocalContext.current
 
 
 
@@ -207,6 +213,7 @@ fun SignInScreen(
         }
     }
 }
+
 
 
 

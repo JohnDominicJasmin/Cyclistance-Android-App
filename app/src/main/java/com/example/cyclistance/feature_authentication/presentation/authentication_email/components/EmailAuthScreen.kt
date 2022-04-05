@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_email.components
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
@@ -26,6 +27,7 @@ import timber.log.Timber
 
 @Composable
 fun EmailAuthScreen(
+    onBackPressed:() -> Unit,
     navController: NavController?,
     mappingViewModel: MappingViewModel = hiltViewModel(),
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel()) {
@@ -34,6 +36,8 @@ fun EmailAuthScreen(
     var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
     val context = LocalContext.current
     val email = remember { mappingViewModel.getEmail() }
+
+    BackHandler(enabled = true, onBack = onBackPressed)
 
     with(emailAuthViewModel.state.value) {
 
