@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components
+package com.example.cyclistance.feature_authentication.presentation.common
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -19,8 +19,8 @@ import com.example.cyclistance.feature_authentication.presentation.common.Custom
         contentDescription = "App Icon",
         imageId = R.drawable.ic_cyclistance_app_icon,
         modifier = Modifier
-            .height(80.dp)
-            .width(70.dp)
+            .height(100.dp)
+            .width(90.dp)
             .shadow(elevation = 10.dp, clip = true, shape = RoundedCornerShape(12.dp))
     )
 }

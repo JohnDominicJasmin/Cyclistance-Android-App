@@ -10,7 +10,7 @@ val Teal200 = Color(0xFF03DAC5)
 
 
 val BackgroundColor = Color(0xFF303234)
-val TextFieldBackgroundColor = Color(0xFF494E52)
+val TextFieldBackgroundColor = Color(0xFF545454)
 val ThemeColor = Color(0xFFEBAD52)
 val GoogleButtonTextColor = Color(0xFF8C8C8C)
 val TextFieldTextColor = Color(0xFFC4C4C4)
