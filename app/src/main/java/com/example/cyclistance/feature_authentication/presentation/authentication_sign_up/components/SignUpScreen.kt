@@ -15,10 +15,10 @@ import androidx.navigation.NavController
 import com.example.cyclistance.common.AlertDialogData
 import com.example.cyclistance.common.SetupAlertDialog
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.AppImageIcon
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEventResult
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpViewModel
+import com.example.cyclistance.feature_authentication.presentation.common.AppImageIcon
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor

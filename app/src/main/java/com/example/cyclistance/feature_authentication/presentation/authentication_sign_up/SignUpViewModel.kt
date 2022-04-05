@@ -38,9 +38,9 @@ class SignUpViewModel @Inject constructor(
                 with(state.value){
                     viewModelScope.launch{
                         createUserWithEmailAndPassword(authModel = AuthModel(
-                            email = email.text,
-                            password = password.text,
-                            confirmPassword = confirmPassword.text
+                            email = email.text.trim(),
+                            password = password.text.trim(),
+                            confirmPassword = confirmPassword.text.trim()
                         ))
                     }
                 }

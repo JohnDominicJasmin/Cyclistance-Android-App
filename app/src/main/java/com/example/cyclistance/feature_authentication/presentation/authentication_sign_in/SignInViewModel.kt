@@ -44,8 +44,8 @@ class SignInViewModel @Inject constructor(
                     viewModelScope.launch {
                         signInWithEmailAndPassword(
                             authModel = AuthModel(
-                                email = email.text,
-                                password = password.text))
+                                email = email.text.trim(),
+                                password = password.text.trim()))
                     }
                 }
             }

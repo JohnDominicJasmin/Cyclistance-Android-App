@@ -20,31 +20,31 @@ class CreateWithEmailAndPasswordUseCase(
 
         return when {
 
-            authModel.email.isEmpty() ->
+            authModel.email.trim().isEmpty() ->
                 throw AuthExceptions.EmailException(message = context.getString(R.string.fieldLeftBlankMessage))
 
-            !isEmailValid(authModel.email) ->
+            !isEmailValid(authModel.email.trim()) ->
                 throw AuthExceptions.EmailException(message = context.getString(R.string.emailIsInvalidMessage))
 
-            authModel.password.isEmpty() ->
+            authModel.password.trim().isEmpty() ->
                 throw AuthExceptions.PasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
 
-            authModel.confirmPassword.isEmpty() ->
+            authModel.confirmPassword.trim().isEmpty() ->
                 throw AuthExceptions.ConfirmPasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
 
-            authModel.password !=
-                    authModel.confirmPassword ->
+            authModel.password.trim() !=
+                    authModel.confirmPassword.trim() ->
                 throw AuthExceptions.ConfirmPasswordException(message = context.getString(R.string.passwordIsNotMatchMessage))
 
-            !isPasswordStrong(authModel.confirmPassword) ->
+            !isPasswordStrong(authModel.confirmPassword.trim()) ->
                 throw AuthExceptions.ConfirmPasswordException(message = context.getString(R.string.passwordIsWeakMessage))
 
             !ConnectionStatus.hasInternetConnection(context) ->
                 throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
 
             else -> repository.createUserWithEmailAndPassword(
-                authModel.email,
-                authModel.password)
+                authModel.email.trim(),
+                authModel.password.trim())
         }
     }
 
