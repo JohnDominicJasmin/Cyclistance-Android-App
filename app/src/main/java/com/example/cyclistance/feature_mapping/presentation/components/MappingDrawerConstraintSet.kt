@@ -17,16 +17,16 @@ val drawerMappingConstraintSet = ConstraintSet {
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         width = Dimension.matchParent
-        height = Dimension.percent(0.25f)
+        height = Dimension.percent(0.32f)
     }
 
 
 
     constrain(bottomSection){
-        top.linkTo(upperSection.bottom, margin = 30.dp)
+        top.linkTo(upperSection.bottom, margin = 10.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         width = Dimension.matchParent
-        height = Dimension.percent(0.7f)
+        height = Dimension.percent(0.68f)
     }
 }

@@ -12,12 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
-
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -61,7 +58,7 @@ private fun MappingBottomSheet(sheetContent: @Composable ColumnScope.() -> Unit)
 @Composable
 fun BottomSheetSearchingAssistance(onClickButton: () -> Unit) {
 
-    MappingBottomSheet() {
+    MappingBottomSheet {
 
 
         Card(
@@ -131,7 +128,7 @@ fun BottomSheetSearchingAssistance(onClickButton: () -> Unit) {
 
 @Composable
 private fun BottomSheetRescue(displayedText: String) {
-    MappingBottomSheet() {
+    MappingBottomSheet {
 
         Card(
             modifier = Modifier.fillMaxWidth(),
@@ -188,7 +185,7 @@ fun DestinationReachedBottomSheet() {
 
 
 @Composable
-fun BottomSheetRoundedButton(imageId: Int, buttonSubtitle: String, onClick: () -> Unit) {
+private fun BottomSheetRoundedButton(imageId: Int, buttonSubtitle: String, onClick: () -> Unit) {
 
     Column(
         modifier = Modifier
