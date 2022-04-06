@@ -14,17 +14,20 @@ import androidx.navigation.NavController
 
 import com.example.cyclistance.R
 import com.mapbox.maps.MapView
+import kotlinx.coroutines.launch
+import timber.log.Timber
 
 
 @Composable
 fun MappingScreen(navController: NavController?, onBackPressed: () -> Unit) {
-    val scaffoldState =
-        rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
-
+    val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
+    val coroutineScope = rememberCoroutineScope()
 
     BackHandler(enabled = true, onBack = onBackPressed)
 
-
+    LaunchedEffect(key1 = navController?.currentDestination) {
+        Timber.e("Current destination is ${navController?.currentDestination}")
+    }
     Scaffold(
         drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
         scaffoldState = scaffoldState,
@@ -33,15 +36,20 @@ fun MappingScreen(navController: NavController?, onBackPressed: () -> Unit) {
 
             TopAppBarCreator(
                 icon = Icons.Filled.Menu,
-                scaffoldState = scaffoldState) {
+                onClickIcon = {
+                    coroutineScope.launch {
+                        scaffoldState.drawerState.open()
+                    }
+                }) {
 
                 DefaultTitleTopAppBar()
             }
 
 
+
         },
-        drawerContent = { MappingDrawerContent() },
-    ) {
+        drawerContent = { MappingDrawerContent() }) {
+
         SetupMapScreen()
     }
 }
@@ -62,14 +70,6 @@ fun SetupMapScreen() {
         }
     )
 
-}
-
-@Preview
-@Composable
-fun PrevDeleteLater() {
-    MappingScreen(null){
-
-    }
 }
 
 

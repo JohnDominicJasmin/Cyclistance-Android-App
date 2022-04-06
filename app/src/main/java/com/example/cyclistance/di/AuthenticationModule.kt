@@ -29,17 +29,17 @@ import dagger.hilt.android.scopes.ViewModelScoped
     @ViewModelScoped
     fun provideAuthenticationUseCase(repository: AuthRepository<AuthCredential>, @ApplicationContext context: Context):AuthenticationUseCase =
         AuthenticationUseCase(
-            reloadEmailUseCase = ReloadEmailUseCase(repository = repository),// EmailScreen & SignInScreen(EmailAuthViewModel)
-            signOutUseCase = SignOutUseCase(repository = repository),//Mapping Screen
-            createWithEmailAndPasswordUseCase = CreateWithEmailAndPasswordUseCase(repository = repository, context = context), // Sign Up Screen
-            getEmailUseCase = GetEmailUseCase(repository = repository), // Main screen
-            getNameUseCase = GetNameUseCase(repository = repository),// Main screen
-            hasAccountSignedInUseCase = HasAccountSignedInUseCase(repository = repository),//SplashScreen & Sign Up Screen
-            isEmailVerifiedUseCase = IsEmailVerifiedUseCase(repository = repository),// Email, IntroSlider, Sign In(EmailAuthViewModel)
-            isSignedInWithProviderUseCase = IsSignedInWithProviderUseCase(repository = repository),//SplashScreen for choosing what screen to show (IntroSlider, Mapping Screen, Sign In Screen)//
-            sendEmailVerificationUseCase = SendEmailVerificationUseCase(repository = repository),// Email Screen
-            signInWithEmailAndPasswordUseCase = SignInWithEmailAndPasswordUseCase(repository = repository, context = context),// Sign in Screen
-            signInWithCredentialUseCase = SignInWithCredentialUseCase(repository = repository),//Sign In Screen
+            reloadEmailUseCase = ReloadEmailUseCase(repository = repository),
+            signOutUseCase = SignOutUseCase(repository = repository),
+            createWithEmailAndPasswordUseCase = CreateWithEmailAndPasswordUseCase(repository = repository, context = context),
+            getEmailUseCase = GetEmailUseCase(repository = repository),
+            getNameUseCase = GetNameUseCase(repository = repository),
+            hasAccountSignedInUseCase = HasAccountSignedInUseCase(repository = repository),
+            isEmailVerifiedUseCase = IsEmailVerifiedUseCase(repository = repository),
+            isSignedInWithProviderUseCase = IsSignedInWithProviderUseCase(repository = repository),
+            sendEmailVerificationUseCase = SendEmailVerificationUseCase(repository = repository),
+            signInWithEmailAndPasswordUseCase = SignInWithEmailAndPasswordUseCase(repository = repository, context = context),
+            signInWithCredentialUseCase = SignInWithCredentialUseCase(repository = repository),
         )
 
 }

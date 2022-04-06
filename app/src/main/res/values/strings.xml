@@ -3,7 +3,7 @@
     <string name="request_help">Request Help</string>
     <string name="no_internet_message">Please Check your Internet Connection.</string>
     <string name="failed_email_verification">Failed to Send Email Verification, Please try again.</string>
-    <string name="incorrectEmailOrPasswordMessage">Email or Password is Incorrect.</string>
+    <string name="incorrectPasswordMessage">The password you entered is Incorrect.</string>
     <string name="fieldLeftBlankMessage">Field cannot be left blank.</string>
     <string name="emailIsInvalidMessage">Email is Invalid.</string>
     <string name="nameIsTooShortMessage">Name is too short.</string>
@@ -11,4 +11,9 @@
     <string name="passwordIsWeakMessage">Password must contain at least 8 characters, including numbers or special characters.</string>
     <string name="sendingEmailErrorMessage">There was an error trying to send the verification email. Please try again.</string>
     <string name="shouldNotContainSpecialCharacters">Should not contain special characters.</string>
+    <string name="couldntFindAccount">Couldn\'t find your Cyclistance Account.</string>
+    <string name="manyFailedAttempts">Access to this account has been temporarily disabled due to many failed login attempts. </string>
+    <string name="tooManyFailedAttempts">Too many failed attempts.</string>
+    <string name="userAlreadyExists">User already exist.</string>
+    <string name="accountAlreadyInUse">This account is Already in Use.</string>
 </resources>

@@ -69,7 +69,7 @@ fun MappingDrawerContent() {
                 Spacer(modifier = Modifier.height(7.dp))
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = {  },
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = ThemeColor,
                         contentColor = Color(0xFF424242)),
@@ -154,7 +154,7 @@ fun MappingDrawerContent() {
 @Composable
 fun EditProfileButtonPreview() {
     Button(
-        onClick = { /*TODO*/ },
+        onClick = {  },
         colors = ButtonDefaults.buttonColors(
             backgroundColor = ThemeColor,
             contentColor = Color(0xFF424242)),

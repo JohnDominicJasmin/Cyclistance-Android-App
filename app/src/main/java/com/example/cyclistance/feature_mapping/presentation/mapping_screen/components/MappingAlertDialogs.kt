@@ -34,16 +34,6 @@ fun Preview() {
 
     }) { dismiss, confirm ->
 
-        /*
-        RescueRequestDialogContent(
-            mappingDialogData = MappingDialogData(
-                icon = R.drawable.ic_rescue_request,
-                title = "Rescue request!",
-                description = "John Doe is requesting a rescue."),
-            onDismiss = dismiss,
-            onConfirm = confirm)
-
-         */
 
         AlertDialogContent(
             mappingDialogData = MappingDialogModel(

@@ -265,38 +265,3 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerModel>) {
     }
 }
 
-
-@Preview
-@Composable
-fun MappingExpandableBannerPreview() {
-
-
-    val model = remember {
-        mutableStateOf(
-            MappingBannerModel(
-                userProfileImage = R.drawable.mike_tyson,
-                name = "John Doe",
-                issue = "Flat tire",
-                distanceRemaining = "6.9km",
-                address = "392 Stanton Green Suite 126",
-                timeRemaining = "8 min",
-                message = "Lorem ipsum dolor sit amet consectetur \n" +
-                          "adipisicing elit. "))
-    }
-
-
-    MappingExpandableBanner(bannerModel = model)
-}
-
-
-@OptIn(ExperimentalAnimationApi::class)
-@Preview
-@Composable
-fun PrevBanner() {
-    val isVisible = remember { mutableStateOf(true) }
-
-    MappingDefaultBanner(isVisible)
-
-}
-
-

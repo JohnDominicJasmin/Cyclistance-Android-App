@@ -20,18 +20,17 @@ import kotlinx.coroutines.launch
 @Composable
 fun TopAppBarCreator(
     icon: ImageVector,
-    scaffoldState: ScaffoldState,
+    onClickIcon: () -> Unit,
     topAppBarTitle: @Composable () -> Unit) {
-    val coroutineScope = rememberCoroutineScope()
+
 
     TopAppBar(
         elevation = 10.dp,
         title = { topAppBarTitle() },
         backgroundColor = TopAppBarBackgroundColor,
         navigationIcon = {
-            IconButton(onClick = { coroutineScope.launch { scaffoldState.drawerState.open() } }
-            ) {
-                Icon(icon, contentDescription = "Menu Icon", tint = Color.White)
+            IconButton(onClick = onClickIcon) {
+                Icon(icon, contentDescription = "", tint = Color.White)
             }
         })
 
@@ -65,14 +64,14 @@ fun DefaultTitleTopAppBar() {
 }
 
 @Composable
-fun DetailsTitleTopAppBar() {
+fun DetailsTitleTopAppBar(text: String) {
     Row(
         modifier = Modifier.wrapContentSize(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(5.dp)) {
 
         Text(
-            "Confirm your details",
+            text = text,
             color = Color.White,
             fontWeight = FontWeight.Medium,
             fontSize = 20.sp)
