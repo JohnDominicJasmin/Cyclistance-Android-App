@@ -99,11 +99,11 @@ class SignUpViewModel @Inject constructor(
                     is AuthExceptions.InternetException -> {
                         _eventFlow.emit(SignUpEventResult.ShowNoInternetScreen)
                     }
-                    is FirebaseAuthUserCollisionException -> {
+                    is AuthExceptions.UserAlreadyExistsException -> {
                         _eventFlow.emit(
                             SignUpEventResult.ShowAlertDialog(
-                                title = "Error",
-                                description = exception.message ?: "User already exist.",
+                                title = exception.title,
+                                description = exception.message ?: "This account is Already in Use.",
                                 imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error,
                             ))
                     }

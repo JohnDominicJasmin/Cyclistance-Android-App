@@ -5,11 +5,14 @@ import com.example.cyclistance.R
 import com.example.cyclistance.common.AuthConstants.FB_CONNECTION_FAILURE
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
+import com.google.firebase.FirebaseError.ERROR_USER_NOT_FOUND
 import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -17,8 +20,6 @@ import javax.inject.Inject
 class AuthRepositoryImpl @Inject constructor(
     private val context: Context
 ) : AuthRepository<AuthCredential> {
-
-
 
 
     override suspend fun reloadEmail(): Boolean {
@@ -52,9 +53,14 @@ class AuthRepositoryImpl @Inject constructor(
                     createAccount.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
                             this.completeExceptionally(AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message)))
-                        } else {
-                            this.completeExceptionally(exception)
+                            return@addOnCompleteListener
                         }
+                        if(exception is FirebaseAuthUserCollisionException){
+                            this.completeExceptionally(AuthExceptions.UserAlreadyExistsException(title = context.getString(R.string.userAlreadyExists) ,message = context.getString(R.string.accountAlreadyInUse)))
+                            return@addOnCompleteListener
+                        }
+                        this.completeExceptionally(exception)
+
                     }
                     this.complete(createAccount.isSuccessful)
                 }
@@ -67,12 +73,26 @@ class AuthRepositoryImpl @Inject constructor(
             FirebaseAuth.getInstance().signInWithEmailAndPassword(email.trim(), password.trim())
                 .addOnCompleteListener { signInWithEmailAndPassword ->
                     signInWithEmailAndPassword.exception?.let { exception ->
+
                         if (exception is FirebaseNetworkException) {
                             this.completeExceptionally(AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message)))
+                            return@addOnCompleteListener
                         }
-                        if (exception is FirebaseAuthInvalidUserException) {
-                            this.completeExceptionally(AuthExceptions.InvalidUserException(message = context.getString(R.string.incorrectEmailOrPasswordMessage)))
+                        if (exception is FirebaseAuthInvalidCredentialsException) {
+                            this.completeExceptionally(AuthExceptions.PasswordException(message = context.getString(R.string.incorrectPasswordMessage)))
+                            return@addOnCompleteListener
                         }
+                        if(exception is FirebaseAuthInvalidUserException) {
+                            if (exception.errorCode == "ERROR_USER_NOT_FOUND") {
+                                this.completeExceptionally(AuthExceptions.EmailException(message = context.getString(R.string.couldntFindAccount)))
+                                return@addOnCompleteListener
+                            }
+                        }
+                        if(exception is FirebaseTooManyRequestsException ){
+                            this.completeExceptionally(AuthExceptions.TooManyRequestsException(title = context.getString(R.string.tooManyFailedAttempts), message = context.getString(R.string.manyFailedAttempts)))//show dialog
+                            return@addOnCompleteListener
+                        }
+
                         this.completeExceptionally(exception)
                     }
                     this.complete(signInWithEmailAndPassword.isSuccessful)
@@ -88,9 +108,10 @@ class AuthRepositoryImpl @Inject constructor(
                 signInWithCredential.exception?.let { exception ->
                     if (exception.message == FB_CONNECTION_FAILURE) {
                         this.completeExceptionally(AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message)))
-                    } else {
-                        this.completeExceptionally(AuthExceptions.ConflictFBTokenException("// todo Remove existing fb token to refresh"))
+                        return@addOnCompleteListener
                     }
+                    this.completeExceptionally(AuthExceptions.ConflictFBTokenException("// todo Remove existing fb token to refresh"))
+
                 }
                 this.complete(signInWithCredential.isSuccessful)
             }

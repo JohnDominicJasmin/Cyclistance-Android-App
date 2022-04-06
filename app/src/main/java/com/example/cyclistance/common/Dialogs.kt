@@ -76,9 +76,9 @@ fun SetupAlertDialog(
                             modifier = Modifier.padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
-                            Spacer(modifier = Modifier.height(24.dp))
+                            Spacer(modifier = Modifier.height(28.dp))
                             Text(
-                                alertDialog.title.uppercase(),
+                                alertDialog.title,
                                 style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
                                 color = Color.White)
                             Spacer(modifier = Modifier.height(8.dp))

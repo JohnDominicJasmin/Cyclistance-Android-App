@@ -10,7 +10,6 @@ import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExce
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -34,9 +33,9 @@ class SignInViewModel @Inject constructor(
 
 
         when (event) {
-            is SignInEvent.SignInFacebook -> { /*TODO*/ }
+            is SignInEvent.SignInFacebook -> {  }
 
-            is SignInEvent.SignInGoogle -> { /*TODO*/ }
+            is SignInEvent.SignInGoogle -> {  }
 
             is SignInEvent.SignInDefault -> {
 
@@ -50,11 +49,11 @@ class SignInViewModel @Inject constructor(
                 }
             }
             is SignInEvent.EnteredEmail -> {
-                _state.value = state.value.copy(email = event.email, emailExceptionMessage = "")
+                _state.value = state.value.copy(email = event.email, emailErrorMessage = "")
 
             }
             is SignInEvent.EnteredPassword -> {
-                _state.value = state.value.copy(password = event.password, passwordExceptionMessage = "")
+                _state.value = state.value.copy(password = event.password, passwordErrorMessage = "")
 
             }
             is SignInEvent.ClearEmail -> {
@@ -87,35 +86,25 @@ class SignInViewModel @Inject constructor(
             _state.value = state.value.copy(isLoading = false)
             when (exception) {
                 is AuthExceptions.EmailException -> {
-                    _state.value = state.value.copy(
-                        emailExceptionMessage = exception.message ?: "Invalid Email.")
+                    _state.value = state.value.copy(emailErrorMessage = exception.message ?: "Email is Invalid.")
                 }
                 is AuthExceptions.PasswordException -> {
-                    _state.value = state.value.copy(passwordExceptionMessage = exception.message ?: "Invalid Password.")
+                    _state.value = state.value.copy(passwordErrorMessage = exception.message ?: "Password is Invalid.")
                 }
                 is AuthExceptions.InternetException -> {
                     _eventFlow.emit(SignInEventResult.ShowNoInternetScreen)
                 }
-                is AuthExceptions.InvalidUserException -> {
+                is AuthExceptions.TooManyRequestsException -> {
                     _eventFlow.emit(
                         SignInEventResult.ShowAlertDialog(
-                            title = "Error",
-                            description = exception.message ?: "Invalid User",
-                            imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error,
-                        ))
-                }
-                is FirebaseAuthUserCollisionException -> {
-                    _eventFlow.emit(
-                        SignInEventResult.ShowAlertDialog(
-                            title = "Error",
-                            description = exception.message ?: "User already exist.",
+                            title = exception.title,
+                            description = exception.message ?: "You have been blocked for too many failed attempts. Please try again later.",
                             imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error,
                         ))
                 }
                 else -> {
                     Timber.e("${this@SignInViewModel.javaClass.name}: ${exception.message}")
                 }
-
             }
         }
     }

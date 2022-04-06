@@ -169,7 +169,7 @@ fun SignInScreen(
                                 SignInEvent.EnteredEmail(
                                     email = it))
                         },
-                        emailExceptionMessage = signInState.emailExceptionMessage,
+                        emailExceptionMessage = signInState.emailErrorMessage,
                         emailClearIconOnClick = { signInViewModel.onEvent(SignInEvent.ClearEmail) },
                         password = signInState.password,
                         passwordOnValueChange = {
@@ -177,7 +177,7 @@ fun SignInScreen(
                                 SignInEvent.EnteredPassword(
                                     password = it))
                         },
-                        passwordExceptionMessage = signInState.passwordExceptionMessage,
+                        passwordExceptionMessage = signInState.passwordErrorMessage,
                         keyboardActionOnDone = { signInViewModel.onEvent(SignInEvent.SignInDefault) },
                         passwordVisibility = signInState.passwordVisibility,
                         passwordIconOnClick = { signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility) })
