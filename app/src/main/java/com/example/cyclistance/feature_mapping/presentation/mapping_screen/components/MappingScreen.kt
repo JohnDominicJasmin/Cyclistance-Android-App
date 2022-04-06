@@ -1,12 +1,9 @@
-package com.example.cyclistance.feature_mapping.presentation.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_screen.components
 
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*

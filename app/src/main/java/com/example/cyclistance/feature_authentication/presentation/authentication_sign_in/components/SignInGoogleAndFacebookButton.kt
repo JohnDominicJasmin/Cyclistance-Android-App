@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
-import com.example.cyclistance.feature_authentication.presentation.theme.FacebookColor
-import com.example.cyclistance.feature_authentication.presentation.theme.GoogleButtonTextColor
+import com.example.cyclistance.theme.FacebookColor
+import com.example.cyclistance.theme.GoogleButtonTextColor
 
 @Composable
 fun SignInGoogleAndFacebookSection(facebookButtonOnClick: ()-> Unit, googleSignInButtonOnClick: ()-> Unit) {

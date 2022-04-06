@@ -9,7 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -21,8 +21,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavHostController
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
-import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
+import com.example.cyclistance.theme.BackgroundColor
+import com.example.cyclistance.theme.ThemeColor
+
 
 @Composable
 fun NoInternetScreen(navController: NavHostController, onBackPressed: () -> Unit) {

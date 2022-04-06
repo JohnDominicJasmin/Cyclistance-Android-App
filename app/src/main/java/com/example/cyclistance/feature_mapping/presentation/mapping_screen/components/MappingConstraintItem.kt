@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_screen.components
 
 sealed class MappingConstraintItem(val layoutId: String){
 

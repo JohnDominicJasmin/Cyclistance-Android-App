@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_screen
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -24,7 +24,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.common.TextFieldColors
-import com.example.cyclistance.feature_authentication.presentation.theme.*
+import com.example.cyclistance.feature_mapping.presentation.mapping_screen.components.MappingAdditionalMessage
+import com.example.cyclistance.feature_mapping.presentation.mapping_screen.components.MappingButtonDialog
+
+import com.example.cyclistance.theme.*
 
 
 private val bikeList = listOf(
@@ -84,7 +87,7 @@ fun MappingDetailsDialogScreen() {
                     width = Dimension.percent(0.9f)
                 })
 
-        SetupAdditionalMessageSection(
+        MappingAdditionalMessage(
             modifier = Modifier
                 .constrainAs(additionalMessageSection) {
                     top.linkTo(buttonDescriptionSection.bottom, margin = 15.dp)
@@ -96,7 +99,7 @@ fun MappingDetailsDialogScreen() {
                 }
         )
 
-        ButtonDialogArea(
+        MappingButtonDialog(
             modifier = Modifier
                 .constrainAs(buttonNavButtonSection) {
                     top.linkTo(additionalMessageSection.bottom, margin = 50.dp)

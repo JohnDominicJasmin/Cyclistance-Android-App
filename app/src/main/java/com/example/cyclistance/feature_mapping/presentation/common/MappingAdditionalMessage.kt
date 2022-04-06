@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_screen.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -11,11 +11,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.cyclistance.feature_authentication.presentation.theme.DisabledColor
+import com.example.cyclistance.theme.DisabledColor
 
 
 @Composable
-fun SetupAdditionalMessageSection(modifier: Modifier) {
+fun MappingAdditionalMessage(modifier: Modifier) {
 
     Column(modifier = modifier) {
 

@@ -29,8 +29,8 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
-import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
+import com.example.cyclistance.theme.BackgroundColor
+import com.example.cyclistance.theme.ThemeColor
 import io.github.farhanroy.composeawesomedialog.R
 import io.github.farhanroy.composeawesomedialog.themes.Shapes
 

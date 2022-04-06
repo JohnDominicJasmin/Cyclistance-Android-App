@@ -21,8 +21,8 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.common.AppImageIcon
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
-import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
-import com.example.cyclistance.feature_mapping.presentation.MappingViewModel
+import com.example.cyclistance.theme.BackgroundColor
+import com.example.cyclistance.feature_mapping.presentation.mapping_screen.MappingViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable

@@ -163,4 +163,7 @@ dependencies {
 
     //lottie animation
     implementation "com.airbnb.android:lottie-compose:5.0.3"
+
+    //Swipe to refresh
+    implementation "com.google.accompanist:accompanist-swiperefresh:0.24.5-alpha"
 }

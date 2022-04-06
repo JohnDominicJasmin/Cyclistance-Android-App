@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
+import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.IntroSliderViewModel
 import com.example.cyclistance.navigation.Screens
 import com.google.accompanist.pager.ExperimentalPagerApi

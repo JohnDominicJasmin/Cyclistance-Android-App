@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_screen.components
 
  val clientCancellationReasons = listOf(
     "Change of mind",

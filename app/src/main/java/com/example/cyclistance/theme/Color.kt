@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.presentation.theme
+package com.example.cyclistance.theme
 
 import androidx.compose.ui.graphics.Color
 

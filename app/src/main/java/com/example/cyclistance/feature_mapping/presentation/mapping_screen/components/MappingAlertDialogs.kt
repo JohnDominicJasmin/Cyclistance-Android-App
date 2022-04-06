@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_screen.components
 
 
 import androidx.compose.foundation.layout.*
@@ -7,7 +7,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -18,8 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
-import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
+import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.feature_mapping.domain.model.MappingDialogModel
 
 
@@ -123,7 +121,7 @@ fun AlertDialogContent(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            ButtonDialogArea(
+            MappingButtonDialog(
                 modifier = Modifier.wrapContentHeight().fillMaxWidth(0.8f),
                 onClickCancelButton = onDismiss,
                 onClickConfirmButton = onConfirm

@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_screen.components
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
@@ -12,9 +12,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import com.example.cyclistance.feature_authentication.presentation.theme.ShowableDisplaysBackgroundColor
-import com.example.cyclistance.feature_authentication.presentation.theme.Shapes
-import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
+import com.example.cyclistance.theme.ShowableDisplaysBackgroundColor
+import com.example.cyclistance.theme.Shapes
+import com.example.cyclistance.theme.ThemeColor
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -32,19 +32,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_authentication.presentation.theme.DisabledColor
+import com.example.cyclistance.theme.DisabledColor
 import com.example.cyclistance.feature_mapping.domain.model.MappingBannerModel
 
-
-@OptIn(ExperimentalAnimationApi::class)
-@Preview
-@Composable
-fun PrevBanner() {
-    val isVisible = remember { mutableStateOf(false) }
-
-    MappingDefaultBanner(isVisible)
-
-}
 
 @ExperimentalAnimationApi
 @Composable
@@ -296,6 +286,17 @@ fun MappingExpandableBannerPreview() {
 
 
     MappingExpandableBanner(bannerModel = model)
+}
+
+
+@OptIn(ExperimentalAnimationApi::class)
+@Preview
+@Composable
+fun PrevBanner() {
+    val isVisible = remember { mutableStateOf(true) }
+
+    MappingDefaultBanner(isVisible)
+
 }
 
 

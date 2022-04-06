@@ -12,8 +12,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
-import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
-import com.example.cyclistance.feature_mapping.presentation.MappingViewModel
+import com.example.cyclistance.theme.BackgroundColor
+import com.example.cyclistance.feature_mapping.presentation.mapping_screen.MappingViewModel
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import com.example.cyclistance.common.AlertDialogData

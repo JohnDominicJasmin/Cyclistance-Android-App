@@ -14,8 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cyclistance.feature_authentication.presentation.theme.DisabledColor
-import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
+import com.example.cyclistance.theme.DisabledColor
+import com.example.cyclistance.theme.ThemeColor
 import com.google.accompanist.pager.*
 
 

@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_screen.components
 
 
 import androidx.compose.foundation.BorderStroke
@@ -20,7 +20,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.common.AnimatedImage
-import com.example.cyclistance.feature_authentication.presentation.theme.*
+
+import com.example.cyclistance.theme.*
 
 
 @OptIn(ExperimentalMaterialApi::class)

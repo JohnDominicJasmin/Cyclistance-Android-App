@@ -19,7 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
+import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.SplashScreenViewModel
 import kotlinx.coroutines.delay
 

@@ -17,7 +17,7 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cyclistance.feature_authentication.presentation.theme.TextFieldTextColor
+import com.example.cyclistance.theme.TextFieldTextColor
 
 
 

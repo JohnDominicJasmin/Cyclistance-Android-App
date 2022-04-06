@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_screen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -16,8 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.cyclistance.feature_authentication.presentation.theme.BackgroundColor
-import com.example.cyclistance.feature_authentication.presentation.theme.ThemeColor
+import com.example.cyclistance.theme.BackgroundColor
+import com.example.cyclistance.theme.ThemeColor
 
 
 
@@ -42,7 +42,7 @@ fun MappingCancellationReasonScreen() {
             height = Dimension.wrapContent
         })
 
-        SetupAdditionalMessageSection(
+        MappingAdditionalMessage(
             modifier = Modifier
                 .constrainAs(additionalMessageSection) {
                     top.linkTo(radioButtonsSection.bottom, margin = 15.dp)
@@ -55,7 +55,7 @@ fun MappingCancellationReasonScreen() {
         )
 
 
-        ButtonDialogArea(
+        MappingButtonDialog(
             modifier = Modifier
                 .constrainAs(buttonNavButtonSection) {
                     top.linkTo(additionalMessageSection.bottom, margin = 50.dp)

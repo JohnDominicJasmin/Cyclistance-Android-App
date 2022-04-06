@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation
+package com.example.cyclistance.feature_mapping.presentation.mapping_screen
 
 import androidx.lifecycle.ViewModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
