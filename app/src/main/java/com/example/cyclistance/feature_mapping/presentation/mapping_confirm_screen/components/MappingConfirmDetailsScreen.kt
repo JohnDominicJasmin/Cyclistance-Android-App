@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_screen
+package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_screen.components
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*

@@ -69,7 +69,7 @@ fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
                     onClick = { isVisible.value = false }) {
 
                     Text(
-                        text = "MESSAGE",
+                        text = "DISMISS",
                         color = ThemeColor,
                         style = MaterialTheme.typography.subtitle2)
                 }
@@ -78,7 +78,7 @@ fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
                     modifier = Modifier.padding(end = 8.dp),
                     onClick = { isVisible.value = false }) {
                     Text(
-                        text = "DISMISS",
+                        text = "MESSAGE",
                         color = ThemeColor,
                         style = MaterialTheme.typography.subtitle2)
                 }
