@@ -9,6 +9,7 @@ import com.example.cyclistance.common.NoInternetScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpScreen
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_mapping.presentation.mapping_screen.components.MappingScreen
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderScreen
 
@@ -16,39 +17,105 @@ import com.example.cyclistance.feature_readable_displays.presentation.splash_scr
 
 
 @Composable
-fun Navigation(navController:NavHostController, onBackPressed:() -> Unit) {
+fun Navigation(navController: NavHostController, onBackPressed: () -> Unit) {
 
 
+    NavHost(navController = navController, startDestination = Screens.SplashScreen.route) {
 
+        composable(Screens.SplashScreen.route) {
+            SplashScreen { destination, popUpToDestination ->
 
-    NavHost(navController = navController, startDestination = Screens.SplashScreen.route){
+                navController.navigate(destination) {
+                    popUpToDestination?.let {
+                        popUpTo(it) {
+                            inclusive = true
+                        }
+                    }
+                    launchSingleTop = true
+                }
 
-        composable(Screens.SplashScreen.route){
-            SplashScreen(navController = navController)
+            }
         }
 
-        composable(Screens.IntroSliderScreen.route){
-            IntroSliderScreen(navController = navController, onBackPressed = onBackPressed)
+
+        composable(Screens.IntroSliderScreen.route) {
+            IntroSliderScreen(onBackPressed = onBackPressed) { destination, popUpToDestination ->
+                navController.navigate(destination) {
+                    popUpToDestination?.let {
+                        popUpTo(it) {
+                            inclusive = true
+                        }
+                    }
+                    launchSingleTop = true
+                }
+            }
         }
 
-        composable(Screens.SignInScreen.route){
-            SignInScreen(navController = navController, onBackPressed = onBackPressed)
+        composable(Screens.SignInScreen.route) {
+            SignInScreen(onBackPressed = onBackPressed) { destination, popUpToDestination ->
+                navController.navigate(destination) {
+                    popUpToDestination?.let {
+                        popUpTo(it) {
+                            inclusive = true
+                        }
+                    }
+                    launchSingleTop = true
+                }
+            }
         }
 
-        composable(Screens.SignUpScreen.route){
-            SignUpScreen(navController = navController)
+        composable(Screens.SignUpScreen.route) {
+            SignUpScreen { destination, popUpToDestination ->
+                navController.navigate(destination) {
+                    popUpToDestination?.let {
+                        popUpTo(it) {
+                            inclusive = true
+                        }
+                    }
+                    launchSingleTop = true
+                }
+            }
         }
 
-        composable(Screens.EmailAuthScreen.route){
-            EmailAuthScreen(navController = navController, onBackPressed = onBackPressed)
+        composable(Screens.EmailAuthScreen.route) {
+            EmailAuthScreen(onBackPressed = onBackPressed) { destination, popUpToDestination ->
+                navController.navigate(destination) {
+                    popUpToDestination?.let {
+                        popUpTo(it) {
+                            inclusive = true
+                        }
+                    }
+                    launchSingleTop = true
+                }
+            }
         }
 
-        composable(Screens.MappingScreen.route){
-            MappingScreen(navController = navController, onBackPressed = onBackPressed)
+        composable(Screens.MappingScreen.route) {
+            MappingScreen(onBackPressed = onBackPressed) {
+
+            }
         }
-        composable(Screens.NoInternetScreen.route){
-            NoInternetScreen(navController = navController, onBackPressed = onBackPressed)
+        composable(Screens.NoInternetScreen.route) {
+            NoInternetScreen(onBackPressed = onBackPressed) {
+                navController.popBackStack()
+            }
         }
 
+    }
+}
+
+private fun navigateScreen(
+    navController: NavHostController,
+    destination: String,
+    popUpToDestination: String? = null) {
+
+
+    navController.navigate(destination) {
+        popUpToDestination?.let {
+            popUpTo(it) {
+                inclusive = true
+            }
+        }
+        launchSingleTop = true
     }
 }

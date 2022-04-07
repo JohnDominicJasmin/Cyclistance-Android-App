@@ -19,15 +19,13 @@ import timber.log.Timber
 
 
 @Composable
-fun MappingScreen(navController: NavController?, onBackPressed: () -> Unit) {
+fun MappingScreen(onBackPressed: () -> Unit, navigateTo: (destination: String) -> Unit) {
     val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
 
     BackHandler(enabled = true, onBack = onBackPressed)
 
-    LaunchedEffect(key1 = navController?.currentDestination) {
-        Timber.e("Current destination is ${navController?.currentDestination}")
-    }
+
     Scaffold(
         drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
         scaffoldState = scaffoldState,

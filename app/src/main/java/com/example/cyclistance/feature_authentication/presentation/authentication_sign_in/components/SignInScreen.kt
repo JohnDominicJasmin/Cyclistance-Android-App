@@ -13,7 +13,6 @@ import androidx.compose.ui.platform.LocalContext
 
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.cyclistance.common.AlertDialogData
 import com.example.cyclistance.common.SetupAlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
@@ -35,9 +34,9 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun SignInScreen(
     onBackPressed:() -> Unit,
-    navController: NavController?,
     signInViewModel: SignInViewModel = hiltViewModel(),
-    emailAuthViewModel: EmailAuthViewModel = hiltViewModel()) {
+    emailAuthViewModel: EmailAuthViewModel = hiltViewModel(),
+    navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
     val signInStateValue = signInViewModel.state.value
     val emailAuthStateValue = emailAuthViewModel.state.value
@@ -66,9 +65,7 @@ fun SignInScreen(
                             emailAuthViewModel.onEvent(EmailAuthEvent.RefreshEmail)
                         }
                         is SignInEventResult.ShowNoInternetScreen -> {
-                            navController?.navigate(Screens.NoInternetScreen.route) {
-                                launchSingleTop = true
-                            }
+                            navigateTo(Screens.NoInternetScreen.route, null)
                         }
                         is SignInEventResult.ShowAlertDialog -> {
                             alertDialogState = AlertDialogData(
@@ -77,12 +74,7 @@ fun SignInScreen(
                                 resId = signInEvent.imageResId)
                         }
                         is SignInEventResult.ShowMappingScreen -> {
-                            navController?.navigate(Screens.MappingScreen.route) {
-                                popUpTo(Screens.SignInScreen.route) {
-                                    inclusive = true
-                                }
-                                launchSingleTop = true
-                            }
+                            navigateTo(Screens.MappingScreen.route, Screens.SignInScreen.route)
                         }
                         is SignInEventResult.ShowToastMessage -> {
                             Toast.makeText(context, signInEvent.message, Toast.LENGTH_SHORT).show()
@@ -98,9 +90,7 @@ fun SignInScreen(
                 emailAuthViewModel.eventFlow.collectLatest { emailAuthEvent ->
                     when (emailAuthEvent) {
                         is EmailAuthEventResult.ShowNoInternetScreen -> {
-                            navController?.navigate(Screens.NoInternetScreen.route) {
-                                launchSingleTop = true
-                            }
+                            navigateTo(Screens.NoInternetScreen.route, null)
                         }
                         is EmailAuthEventResult.ShowAlertDialog -> {
                             alertDialogState = AlertDialogData(
@@ -109,19 +99,13 @@ fun SignInScreen(
                                 resId = emailAuthEvent.imageResId)
                         }
                         is EmailAuthEventResult.ShowMappingScreen -> {
-                            navController?.navigate(Screens.MappingScreen.route) {
-                                popUpTo(Screens.SignInScreen.route) { inclusive = true }
-                                launchSingleTop = true
-                            }
+                            navigateTo(Screens.MappingScreen.route, Screens.SignInScreen.route)
                         }
                         is EmailAuthEventResult.ShowToastMessage -> {
                             Toast.makeText(context, emailAuthEvent.message, Toast.LENGTH_SHORT).show()
                         }
                         is EmailAuthEventResult.UserEmailIsNotVerified -> {
-                            navController?.navigate(Screens.EmailAuthScreen.route) {
-                                popUpTo(Screens.SignInScreen.route) { inclusive = true }
-                                launchSingleTop = true
-                            }
+                            navigateTo(Screens.EmailAuthScreen.route, Screens.SignInScreen.route)
                         }
                     }
                 }
@@ -197,7 +181,7 @@ fun SignInScreen(
 
 
                     SignInClickableText(onClick = {
-                        navController?.navigate(Screens.SignUpScreen.route)
+                        navigateTo(Screens.SignUpScreen.route, null)
                     })
 
                     if (signInState.isLoading || emailAuthState.isLoading) {

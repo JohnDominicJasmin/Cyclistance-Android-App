@@ -16,17 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.cyclistance.R
-import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.SplashScreenViewModel
+import com.example.cyclistance.navigation.Screens
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
-    navController: NavController,
-    splashScreenViewModel: SplashScreenViewModel = hiltViewModel()) {
+    splashScreenViewModel: SplashScreenViewModel = hiltViewModel(),
+    navigateTo: (destination: String, popUpToDestination: String?) -> Unit,) {
 
     val screen by remember{ splashScreenViewModel.splashScreenState}
 
@@ -38,12 +37,9 @@ fun SplashScreen(
                 easing = { OvershootInterpolator(1.2f).getInterpolation(it) }
             ))
         delay(1200L)
-
-            navController.navigate(screen.navigationStartingDestination) {
-            popUpTo(Screens.SplashScreen.route) { inclusive = true }
-            launchSingleTop = true
+            navigateTo(screen.navigationStartingDestination, Screens.SplashScreen.route)
         }
-    }
+
 
     Box(
         contentAlignment = Alignment.Center,

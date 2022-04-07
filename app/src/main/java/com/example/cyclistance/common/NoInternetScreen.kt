@@ -26,7 +26,7 @@ import com.example.cyclistance.theme.ThemeColor
 
 
 @Composable
-fun NoInternetScreen(navController: NavHostController, onBackPressed: () -> Unit) {
+fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
 
     val context = LocalContext.current
 
@@ -96,7 +96,7 @@ fun NoInternetScreen(navController: NavHostController, onBackPressed: () -> Unit
                 shape = RoundedCornerShape(12.dp),
                 onClick = {
                     if (ConnectionStatus.hasInternetConnection(context)) {
-                        navController.popBackStack()
+                        navigate()
                     }
                 },
                 modifier = Modifier

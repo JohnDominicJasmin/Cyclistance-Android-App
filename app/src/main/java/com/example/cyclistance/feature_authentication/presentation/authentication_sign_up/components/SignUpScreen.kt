@@ -27,9 +27,9 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SignUpScreen(
-    navController: NavController?,
     signUpViewModel: SignUpViewModel = hiltViewModel(),
-    mappingViewModel: MappingViewModel = hiltViewModel()) {
+    mappingViewModel: MappingViewModel = hiltViewModel(),
+    navigateTo : (destination: String, popUpToDestination: String?) -> Unit) {
 
     val stateValue = signUpViewModel.state.value
 
@@ -53,9 +53,7 @@ fun SignUpScreen(
 
                 when(event){
                     is SignUpEventResult.ShowNoInternetScreen -> {
-                        navController?.navigate(Screens.NoInternetScreen.route) {
-                            launchSingleTop = true
-                        }
+                        navigateTo(Screens.NoInternetScreen.route, null)
                     }
                     is SignUpEventResult.ShowAlertDialog -> {
                         alertDialogState = AlertDialogData(
@@ -64,10 +62,7 @@ fun SignUpScreen(
                             resId = event.imageResId)
                     }
                     is SignUpEventResult.ShowEmailAuthScreen -> {
-                        navController?.navigate(Screens.EmailAuthScreen.route) {
-                            popUpTo(Screens.SignUpScreen.route) { inclusive = true }
-                            launchSingleTop = true
-                        }
+                        navigateTo(Screens.EmailAuthScreen.route, Screens.SignUpScreen.route)
                     }
                     is SignUpEventResult.ShowToastMessage -> {
                         Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
@@ -139,10 +134,7 @@ fun SignUpScreen(
                 })
 
                 SignUpClickableText() {
-                    navController?.navigate(Screens.SignInScreen.route) {
-                        popUpTo(Screens.SignUpScreen.route) { inclusive = true }
-                        launchSingleTop = true
-                    }
+                    navigateTo(Screens.SignInScreen.route, Screens.SignUpScreen.route)
                 }
 
                 if (isLoading) {

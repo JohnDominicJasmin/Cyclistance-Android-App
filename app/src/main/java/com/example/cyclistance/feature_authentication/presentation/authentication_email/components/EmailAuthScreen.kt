@@ -28,9 +28,9 @@ import timber.log.Timber
 @Composable
 fun EmailAuthScreen(
     onBackPressed:() -> Unit,
-    navController: NavController?,
     mappingViewModel: MappingViewModel = hiltViewModel(),
-    emailAuthViewModel: EmailAuthViewModel = hiltViewModel()) {
+    emailAuthViewModel: EmailAuthViewModel = hiltViewModel(),
+    navigateTo : (destination: String, popUpToDestination: String?) -> Unit) {
 
 
     var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
@@ -52,9 +52,7 @@ fun EmailAuthScreen(
 
                     when (event) {
                         is EmailAuthEventResult.ShowNoInternetScreen -> {
-                            navController?.navigate(Screens.NoInternetScreen.route) {
-                                launchSingleTop = true
-                            }
+                            navigateTo(Screens.NoInternetScreen.route, null)
                         }
                         is EmailAuthEventResult.ShowAlertDialog -> {
                             alertDialogState = AlertDialogData(
@@ -63,12 +61,7 @@ fun EmailAuthScreen(
                                 resId = event.imageResId)
                         }
                         is EmailAuthEventResult.ShowMappingScreen -> {
-                            navController?.navigate(Screens.MappingScreen.route) {
-                                popUpTo(Screens.EmailAuthScreen.route) {
-                                    inclusive = true
-                                }
-                                launchSingleTop = true
-                            }
+                            navigateTo(Screens.MappingScreen.route, Screens.EmailAuthScreen.route)
                         }
                         is EmailAuthEventResult.ShowToastMessage -> {
                             Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
