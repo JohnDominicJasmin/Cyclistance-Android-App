@@ -9,52 +9,57 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInState
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInViewModel
 import com.example.cyclistance.feature_authentication.presentation.common.ConfirmPasswordTextField
 import com.example.cyclistance.feature_authentication.presentation.common.EmailTextField
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 
+
 @Composable
 fun SignInTextFieldsArea(
-    email: TextFieldValue,
-    emailOnValueChange: (TextFieldValue) -> Unit,
-    emailExceptionMessage: String,
-    emailClearIconOnClick: () -> Unit,
-    password: TextFieldValue,
-    passwordOnValueChange: (TextFieldValue) -> Unit,
-    passwordExceptionMessage: String,
-    passwordVisibility: Boolean,
-    passwordIconOnClick: () -> Unit,
-    keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
+    state: SignInState,
+    signInViewModel: SignInViewModel,
+    keyboardActionOnDone: () -> Unit) {
+
+    with(state) {
+
+        Column(
+            modifier = Modifier
+                .layoutId(AuthenticationConstraintsItem.TextFields.layoutId)
+                .fillMaxWidth(fraction = 0.9f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(13.dp)) {
 
 
+            EmailTextField(
+                email = email,
+                emailExceptionMessage = emailErrorMessage,
+                onValueChange = {
+                    signInViewModel.onEvent(SignInEvent.EnteredEmail(email = it))
+                },
+                clearIconOnClick = {
+                    signInViewModel.onEvent(SignInEvent.ClearEmail)
+                })
 
-    Column(
-        modifier = Modifier
-            .layoutId(AuthenticationConstraintsItem.TextFields.layoutId)
-            .fillMaxWidth(fraction = 0.9f),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(13.dp)) {
-
-
-
-        EmailTextField(
-            email = email,
-            emailExceptionMessage = emailExceptionMessage,
-            onValueChange = emailOnValueChange,
-            clearIconOnClick = emailClearIconOnClick)
-
-        ConfirmPasswordTextField(
-            passwordValue = password,
-            passwordExceptionMessage = passwordExceptionMessage,
-            onValueChange = passwordOnValueChange,
-            keyboardActionOnDone = keyboardActionOnDone,
-            passwordVisibility = passwordVisibility,
-            passwordVisibilityIconOnClick = passwordIconOnClick
+            ConfirmPasswordTextField(
+                passwordValue = password,
+                passwordExceptionMessage = passwordErrorMessage,
+                onValueChange = {
+                    signInViewModel.onEvent(SignInEvent.EnteredPassword(password = it))
+                },
+                keyboardActionOnDone = {
+                    keyboardActionOnDone()
+                },
+                passwordVisibility = passwordVisibility,
+                passwordVisibilityIconOnClick = {
+                    signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility)
+                }
             )
 
 
-
+        }
     }
 
 }
-

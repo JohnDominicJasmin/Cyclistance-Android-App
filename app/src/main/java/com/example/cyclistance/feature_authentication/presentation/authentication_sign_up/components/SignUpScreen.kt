@@ -105,28 +105,10 @@ fun SignUpScreen(
                 }
 
                 SignUpTextFieldsArea(
-                    email = email,
-                    emailOnValueChange = { signUpViewModel.onEvent(SignUpEvent.EnteredEmail(email = it)) },
-                    emailExceptionMessage = emailExceptionMessage,
-                    emailClearIconOnClick = {
-                      signUpViewModel.onEvent(SignUpEvent.ClearEmail)
-                    },
-
-                    password = password,
-                    passwordOnValueChange = { signUpViewModel.onEvent(SignUpEvent.EnteredPassword(password = it)) },
-                    passwordExceptionMessage = passwordExceptionMessage,
-                    passwordClearIconOnClick = {
-                        signUpViewModel.onEvent(SignUpEvent.ClearPassword)
-                    },
-
-                    confirmPassword = confirmPassword,
-                    confirmPasswordOnValueChange = { signUpViewModel.onEvent(SignUpEvent.EnteredConfirmPassword(confirmPassword = it)) },
-                    confirmPasswordExceptionMessage = confirmPasswordExceptionMessage,
-                    confirmPasswordVisibility = passwordVisibility,
-                    confirmPasswordIconOnClick = { signUpViewModel.onEvent(SignUpEvent.TogglePasswordVisibility) },
+                    state = this@with,
+                    signUpViewModel = signUpViewModel,
                     keyboardActionOnDone = { signUpAccount() }
                 )
-
 
 
                 SignUpButton(onClickButton = {

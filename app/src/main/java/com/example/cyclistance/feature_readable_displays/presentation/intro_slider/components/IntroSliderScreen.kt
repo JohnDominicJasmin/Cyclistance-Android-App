@@ -45,8 +45,10 @@ fun IntroSliderScreen(
 
             IntroSliderItem(pagerState = pagerState)
 
+            val isOnLastPage = pagerState.currentPage == 2
+
             IntroSliderButtons(
-                text = if (pagerState.currentPage == 2) "Let's get Started!" else "Next",
+                text = if (isOnLastPage) "Let's get Started!" else "Next",
 
                 onClickSkipButton = {
                     introSliderViewModel.userCompletedWalkThrough()

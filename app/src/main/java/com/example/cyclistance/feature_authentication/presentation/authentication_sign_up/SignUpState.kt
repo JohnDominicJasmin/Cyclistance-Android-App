@@ -6,9 +6,9 @@ data class SignUpState(
     var email: TextFieldValue = TextFieldValue(""),
     var password: TextFieldValue = TextFieldValue(""),
     var confirmPassword: TextFieldValue = TextFieldValue(""),
-    var emailExceptionMessage: String = "",
-    var passwordExceptionMessage: String = "",
-    var confirmPasswordExceptionMessage: String = "",
+    var emailErrorMessage: String = "",
+    var passwordErrorMessage: String = "",
+    var confirmPasswordErrorMessage: String = "",
     var passwordVisibility: Boolean = false,
     var isLoading: Boolean = false,
 )

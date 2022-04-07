@@ -48,12 +48,8 @@ fun SignInScreen(
 
 
     signInStateValue.also{ signInState ->
-        emailAuthStateValue.also{ emailAuthState ->
 
             var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
-
-
-
 
             LaunchedEffect(key1 = true) {
 
@@ -143,28 +139,10 @@ fun SignInScreen(
                     )
 
 
-
-
-
                     SignInTextFieldsArea(
-                        email = signInState.email,
-                        emailOnValueChange = {
-                            signInViewModel.onEvent(
-                                SignInEvent.EnteredEmail(
-                                    email = it))
-                        },
-                        emailExceptionMessage = signInState.emailErrorMessage,
-                        emailClearIconOnClick = { signInViewModel.onEvent(SignInEvent.ClearEmail) },
-                        password = signInState.password,
-                        passwordOnValueChange = {
-                            signInViewModel.onEvent(
-                                SignInEvent.EnteredPassword(
-                                    password = it))
-                        },
-                        passwordExceptionMessage = signInState.passwordErrorMessage,
-                        keyboardActionOnDone = { signInViewModel.onEvent(SignInEvent.SignInDefault) },
-                        passwordVisibility = signInState.passwordVisibility,
-                        passwordIconOnClick = { signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility) })
+                        state = signInState,
+                        signInViewModel = signInViewModel,
+                        keyboardActionOnDone = { signInViewModel.onEvent(SignInEvent.SignInDefault) })
 
                     SignInGoogleAndFacebookSection(
                         facebookButtonOnClick = {
@@ -184,7 +162,7 @@ fun SignInScreen(
                         navigateTo(Screens.SignUpScreen.route, null)
                     })
 
-                    if (signInState.isLoading || emailAuthState.isLoading) {
+                    if (signInState.isLoading || emailAuthStateValue.isLoading) {
                         CircularProgressIndicator(
                             modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
                         )
@@ -196,7 +174,7 @@ fun SignInScreen(
             }
         }
     }
-}
+
 
 
 
