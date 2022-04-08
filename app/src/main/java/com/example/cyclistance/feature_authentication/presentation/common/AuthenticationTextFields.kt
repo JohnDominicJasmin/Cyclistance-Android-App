@@ -159,7 +159,7 @@ private fun SetupPasswordTextField(
 
         )
         if (hasError) {
-            ErrorMessage(passwordExceptionMessage)
+            ErrorMessage(passwordExceptionMessage, modifier = Modifier)
         }
     }
 }
@@ -239,18 +239,18 @@ fun EmailTextField(
         )
 
         if (hasError) {
-            ErrorMessage(emailExceptionMessage)
+            ErrorMessage(emailExceptionMessage, modifier = Modifier.padding(start = 16.dp))
         }
     }
 
 }
 @Composable
-private fun ErrorMessage(errorMessage: String){
+ fun ErrorMessage(errorMessage: String, modifier: Modifier){
     Text(
         text = errorMessage,
         color = errorColor,
         style = MaterialTheme.typography.caption,
-        modifier = Modifier.padding(start = 16.dp)
+        modifier = modifier
     )
 
 }
