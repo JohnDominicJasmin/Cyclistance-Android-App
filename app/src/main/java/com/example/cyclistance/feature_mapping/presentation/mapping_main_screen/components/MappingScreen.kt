@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
 
 import android.content.Context
 import android.view.LayoutInflater
@@ -8,18 +8,18 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.navigation.NavController
 
 import com.example.cyclistance.R
 import com.mapbox.maps.MapView
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 
 @Composable
-fun MappingScreen(onBackPressed: () -> Unit, navigateTo: (destination: String) -> Unit) {
+fun MappingScreen(
+    onBackPressed: () -> Unit,
+    navigateTo: (destination: String) -> Unit) {
+
     val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
 

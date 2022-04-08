@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_cancellation.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable

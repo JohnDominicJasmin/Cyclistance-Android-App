@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
 
 
 import androidx.compose.foundation.layout.*

@@ -1,31 +1,19 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
-import androidx.compose.material.ButtonDefaults.buttonColors
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.LocationCity
-import androidx.compose.material.icons.filled.PedalBike
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.cyclistance.R
-import com.example.cyclistance.feature_authentication.presentation.common.TextFieldColors
-import com.example.cyclistance.feature_mapping.presentation.mapping_screen.components.MappingAdditionalMessage
+import com.example.cyclistance.feature_mapping.presentation.common.MappingAdditionalMessage
 import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonDialog
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_screen.components.ButtonDescriptionDetails
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_screen.components.DropDownBikeList
 
 import com.example.cyclistance.theme.*
 

@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_edit_profile.components
+package com.example.cyclistance.feature_settings.presentation.setting_edit_profile_screen.components
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*

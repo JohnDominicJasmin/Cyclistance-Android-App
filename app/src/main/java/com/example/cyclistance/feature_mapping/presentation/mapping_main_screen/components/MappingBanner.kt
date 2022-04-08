@@ -1,11 +1,10 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material.*
 import androidx.compose.runtime.*

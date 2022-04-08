@@ -11,7 +11,6 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.cyclistance.common.AlertDialogData
 import com.example.cyclistance.common.SetupAlertDialog
 import com.example.cyclistance.navigation.Screens
@@ -22,7 +21,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.AppIma
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.theme.BackgroundColor
-import com.example.cyclistance.feature_mapping.presentation.mapping_screen.MappingViewModel
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable

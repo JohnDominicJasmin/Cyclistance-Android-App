@@ -10,10 +10,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
 import com.example.cyclistance.theme.BackgroundColor
-import com.example.cyclistance.feature_mapping.presentation.mapping_screen.MappingViewModel
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import com.example.cyclistance.common.AlertDialogData

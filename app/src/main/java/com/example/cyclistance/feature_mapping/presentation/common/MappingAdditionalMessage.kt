@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_screen.components
+package com.example.cyclistance.feature_mapping.presentation.common
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
