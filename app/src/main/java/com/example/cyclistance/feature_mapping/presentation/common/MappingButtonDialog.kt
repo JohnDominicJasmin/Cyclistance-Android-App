@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_screen.components
+package com.example.cyclistance.feature_mapping.presentation.common
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
@@ -18,6 +18,8 @@ import com.example.cyclistance.theme.ThemeColor
 @Composable
 fun MappingButtonDialog(
     modifier: Modifier,
+    negativeButtonText: String = "Cancel",
+    positiveButtonText: String = "Confirm",
     onClickCancelButton: () -> Unit,
     onClickConfirmButton: () -> Unit) {
     Column(modifier = modifier) {
@@ -37,7 +39,7 @@ fun MappingButtonDialog(
                 colors = ButtonDefaults.buttonColors(backgroundColor = BackgroundColor),
                 shape = RoundedCornerShape(12.dp)) {
                 Text(
-                    text = "Cancel",
+                    text = negativeButtonText,
                     color = Color.White,
                     style = MaterialTheme.typography.button,
                     textAlign = TextAlign.Center)
@@ -54,7 +56,7 @@ fun MappingButtonDialog(
                 colors = ButtonDefaults.buttonColors(backgroundColor = ThemeColor),
                 shape = RoundedCornerShape(12.dp)) {
                 Text(
-                    text = "Confirm",
+                    text = positiveButtonText,
                     color = Color.Black,
                     style = MaterialTheme.typography.button,
                     textAlign = TextAlign.Center)
