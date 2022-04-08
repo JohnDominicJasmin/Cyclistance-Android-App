@@ -17,8 +17,8 @@ import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cyclistance.theme.TextFieldTextColor
-
+import com.example.cyclistance.theme.TextFieldTextHintColor
+import com.example.cyclistance.theme.errorColor
 
 
 @Composable
@@ -40,7 +40,7 @@ fun ConfirmPasswordTextField(
         placeholder = {
             Text(
                 text = "Confirm Password",
-                color = if (hasError) MaterialTheme.colors.error else TextFieldTextColor,
+                color = if (hasError) errorColor else TextFieldTextHintColor,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center
             )
@@ -48,7 +48,7 @@ fun ConfirmPasswordTextField(
             Icon(
                 imageVector = Icons.Default.Lock,
                 contentDescription = "Password Icon",
-                tint = TextFieldTextColor,
+                tint = if(hasError) errorColor else TextFieldTextHintColor,
                 modifier = Modifier.size(18.dp)
 
             )
@@ -56,7 +56,7 @@ fun ConfirmPasswordTextField(
             val image =
                 if (passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
             IconButton(onClick = passwordVisibilityIconOnClick) {
-                Icon(imageVector = image, "", tint = TextFieldTextColor)
+                Icon(imageVector = image, "", tint = TextFieldTextHintColor)
             }
         },
         visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
@@ -83,7 +83,7 @@ fun PasswordTextField(
         placeholder = {
             Text(
                 text = "Password",
-                color = if (hasError) MaterialTheme.colors.error else TextFieldTextColor,
+                color = if (hasError) errorColor else TextFieldTextHintColor,
                 fontSize = 14.sp,
                 textAlign = TextAlign.Center
             )
@@ -92,7 +92,7 @@ fun PasswordTextField(
             Icon(
                 imageVector = Icons.Default.Lock,
                 contentDescription = "Password Icon",
-                tint = TextFieldTextColor,
+                tint = if(hasError) errorColor else TextFieldTextHintColor,
                 modifier = Modifier.size(18.dp)
             )
         },
@@ -101,7 +101,7 @@ fun PasswordTextField(
                 Icon(
                     imageVector = Icons.Filled.Error,
                     contentDescription = "error",
-                    tint = MaterialTheme.colors.error)
+                    tint = errorColor)
             }
 
             if(password.text.isNotEmpty()  && !hasError){
@@ -109,7 +109,7 @@ fun PasswordTextField(
                     Icon(
                         imageVector = Icons.Default.Cancel,
                         contentDescription = "",
-                        tint = TextFieldTextColor,
+                        tint = TextFieldTextHintColor,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -159,12 +159,7 @@ private fun SetupPasswordTextField(
 
         )
         if (hasError) {
-            Text(
-                text = passwordExceptionMessage,
-                color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.caption,
-                modifier = Modifier.padding(start = 16.dp)
-            )
+            ErrorMessage(passwordExceptionMessage)
         }
     }
 }
@@ -199,7 +194,7 @@ fun EmailTextField(
             placeholder = {
                 Text(
                     text = "Email",
-                    color = if (hasError) MaterialTheme.colors.error else TextFieldTextColor,
+                    color = if (hasError) errorColor else TextFieldTextHintColor,
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center
                 )
@@ -211,7 +206,7 @@ fun EmailTextField(
                     Icon(
                         imageVector = Icons.Filled.Error,
                         contentDescription = "",
-                        tint = MaterialTheme.colors.error,
+                        tint = errorColor,
                         modifier = Modifier.size(20.dp)
                     )
                 }
@@ -221,7 +216,7 @@ fun EmailTextField(
                         Icon(
                             imageVector = Icons.Default.Cancel,
                             contentDescription = "",
-                            tint = TextFieldTextColor,
+                            tint = TextFieldTextHintColor,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -234,7 +229,7 @@ fun EmailTextField(
                 Icon(
                     imageVector = Icons.Default.Email,
                     contentDescription = "Email Icon",
-                    tint = TextFieldTextColor,
+                    tint = if(hasError) errorColor else TextFieldTextHintColor,
                     modifier = Modifier.size(18.dp)
                 )
             },
@@ -244,17 +239,19 @@ fun EmailTextField(
         )
 
         if (hasError) {
-
-            Text(
-                text = emailExceptionMessage,
-                color = MaterialTheme.colors.error,
-                style = MaterialTheme.typography.caption,
-                modifier = Modifier.padding(start = 16.dp)
-            )
-
-
+            ErrorMessage(emailExceptionMessage)
         }
     }
+
+}
+@Composable
+private fun ErrorMessage(errorMessage: String){
+    Text(
+        text = errorMessage,
+        color = errorColor,
+        style = MaterialTheme.typography.caption,
+        modifier = Modifier.padding(start = 16.dp)
+    )
 
 }
 

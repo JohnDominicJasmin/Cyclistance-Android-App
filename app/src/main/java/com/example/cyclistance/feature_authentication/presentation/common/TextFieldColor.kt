@@ -6,6 +6,7 @@ import androidx.compose.ui.graphics.Color
 import com.example.cyclistance.theme.DisabledColor
 import com.example.cyclistance.theme.TextFieldBackgroundColor
 import com.example.cyclistance.theme.ThemeColor
+import com.example.cyclistance.theme.errorColor
 
 @Composable
 fun TextFieldColors() = TextFieldDefaults.textFieldColors(
@@ -15,6 +16,10 @@ fun TextFieldColors() = TextFieldDefaults.textFieldColors(
     unfocusedIndicatorColor = TextFieldBackgroundColor,
     disabledTextColor = DisabledColor,
     cursorColor = Color.White,
-
+    errorIndicatorColor = errorColor,
+    errorCursorColor = errorColor,
+    errorLabelColor = errorColor,
+    errorLeadingIconColor = errorColor,
+    errorTrailingIconColor = errorColor
 
 )
