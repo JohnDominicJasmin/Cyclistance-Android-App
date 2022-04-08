@@ -3,21 +3,16 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_screen.comp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import  androidx.compose.material.RadioButton
-import androidx.compose.material.RadioButtonDefaults
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonDialog
+import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_screen.components.RadioButtonsSection
 import com.example.cyclistance.theme.BackgroundColor
-import com.example.cyclistance.theme.ThemeColor
 
 
 
@@ -77,41 +72,5 @@ fun MappingCancellationReasonScreen() {
     }
 }
 
-@Composable
-fun RadioButtonsSection(modifier : Modifier) {
-
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(rescuerCancellationReasons[0]) }
-
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally) {
-
-        rescuerCancellationReasons.forEach { text ->
-                Row(
-                    Modifier
-                        .wrapContentHeight()
-                        .fillMaxWidth()
-                        .selectable(
-                            selected = (text == selectedOption),
-                            onClick = { onOptionSelected(text) })
-                        , horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
-
-
-                        RadioButton(
-                            selected = (text == selectedOption),
-                            onClick = { onOptionSelected(text) },
-                        colors = RadioButtonDefaults.colors(selectedColor = ThemeColor, unselectedColor = Color(0xFFAEAEAE))
-                        )
-                        Text(
-                            text = text,
-                            modifier = Modifier.padding(start = 8.dp),
-                            color = Color.White
-                        )
-                }
-            }
-        }
-
-}
 
 

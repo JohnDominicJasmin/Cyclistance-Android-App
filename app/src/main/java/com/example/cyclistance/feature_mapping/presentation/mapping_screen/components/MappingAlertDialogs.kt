@@ -19,6 +19,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.cyclistance.R
 import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.feature_mapping.domain.model.MappingDialogModel
+import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonDialog
 
 
 @Preview
