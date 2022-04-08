@@ -14,7 +14,7 @@ android {
     compileSdk 31
 
     defaultConfig {
-        applicationId "com.example.jetpack_testing"
+        applicationId "com.example.cyclistance"
         //minSdk 24
 
         minSdkVersion 21
