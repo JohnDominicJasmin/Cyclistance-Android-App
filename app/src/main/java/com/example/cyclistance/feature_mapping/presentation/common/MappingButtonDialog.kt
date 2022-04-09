@@ -16,7 +16,7 @@ import com.example.cyclistance.theme.ThemeColor
 
 
 @Composable
-fun MappingButtonDialog(
+fun MappingButtonNavigation(
     modifier: Modifier,
     negativeButtonText: String = "Cancel",
     positiveButtonText: String = "Confirm",

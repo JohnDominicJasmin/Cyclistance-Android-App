@@ -19,7 +19,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.cyclistance.R
 import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.feature_mapping.domain.model.MappingDialogModel
-import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonDialog
+import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 
 
 @Preview
@@ -112,7 +112,7 @@ fun AlertDialogContent(
 
             Spacer(modifier = Modifier.height(18.dp))
 
-            MappingButtonDialog(
+            MappingButtonNavigation(
                 modifier = Modifier.wrapContentHeight().fillMaxWidth(0.8f),
                 onClickCancelButton = onDismiss,
                 onClickConfirmButton = onConfirm

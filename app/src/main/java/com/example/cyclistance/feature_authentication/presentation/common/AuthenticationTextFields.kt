@@ -25,7 +25,7 @@ import com.example.cyclistance.theme.errorColor
 fun ConfirmPasswordTextField(
     passwordValue: TextFieldValue,
     passwordExceptionMessage: String,
-    passwordVisibility: Boolean,
+    isPasswordVisible: Boolean,
     passwordVisibilityIconOnClick: () -> Unit,
     onValueChange: (TextFieldValue) -> Unit,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
@@ -54,12 +54,12 @@ fun ConfirmPasswordTextField(
             )
         },trailingIcon = {
             val image =
-                if (passwordVisibility) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
+                if (isPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
             IconButton(onClick = passwordVisibilityIconOnClick) {
                 Icon(imageVector = image, "", tint = TextFieldTextHintColor)
             }
         },
-        visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrect = false, imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = keyboardActionOnDone)
 

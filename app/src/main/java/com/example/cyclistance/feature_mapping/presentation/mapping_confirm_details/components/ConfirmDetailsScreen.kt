@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_mapping.presentation.common.MappingAdditionalMessage
-import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonDialog
+import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_screen.components.ButtonDescriptionDetails
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_screen.components.DropDownBikeList
 
@@ -80,7 +80,7 @@ fun ConfirmDetailsScreen() {
                 }
         )
 
-        MappingButtonDialog(
+        MappingButtonNavigation(
             modifier = Modifier
                 .constrainAs(buttonNavButtonSection) {
                     top.linkTo(additionalMessageSection.bottom, margin = 50.dp)

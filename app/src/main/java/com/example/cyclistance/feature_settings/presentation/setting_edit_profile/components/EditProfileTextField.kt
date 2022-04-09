@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_edit_profile_screen.components
+package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
@@ -34,7 +34,7 @@ fun TextFieldInputArea(modifier: Modifier) {
         var value by remember { mutableStateOf(TextFieldValue("")) }
 
 
-        TextFieldInputItem(
+        TextFieldItem(
             label = "Full Name",
             errorMessage = "",
             value = value,
@@ -46,7 +46,7 @@ fun TextFieldInputArea(modifier: Modifier) {
             value = it
         }
 
-        TextFieldInputItem(
+        TextFieldItem(
             label = "E-mail",
             errorMessage = "",
             value = value,
@@ -58,7 +58,7 @@ fun TextFieldInputArea(modifier: Modifier) {
             value = it
         }
 
-        TextFieldInputItem(
+        TextFieldItem(
             label = "Address",
             errorMessage = "",
             value = value,
@@ -70,7 +70,7 @@ fun TextFieldInputArea(modifier: Modifier) {
             value = it
         }
 
-        TextFieldInputItem(label = "Phone Number",
+        TextFieldItem(label = "Phone Number",
             errorMessage = "Error messsage fix this later.",
             value = value,
             keyboardOptions = KeyboardOptions(
@@ -87,7 +87,7 @@ fun TextFieldInputArea(modifier: Modifier) {
 }
 
 @Composable
-fun TextFieldInputItem(
+fun TextFieldItem(
     label: String,
     errorMessage: String,
     value: TextFieldValue,
@@ -107,6 +107,8 @@ fun TextFieldInputItem(
         BasicTextField(
             modifier = Modifier.fillMaxWidth(),
             value = value,
+            singleLine = true,
+            maxLines = 1,
             onValueChange = onValueChange,
             textStyle = TextStyle(
                 color = Color.White

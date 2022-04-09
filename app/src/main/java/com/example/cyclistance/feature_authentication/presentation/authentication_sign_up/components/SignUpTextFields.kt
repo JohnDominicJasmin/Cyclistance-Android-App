@@ -59,7 +59,7 @@ fun SignUpTextFieldsArea(
                 keyboardActionOnDone = {
                     keyboardActionOnDone()
                 },
-                passwordVisibility = passwordVisibility,
+                isPasswordVisible = passwordVisibility,
                 passwordVisibilityIconOnClick = {
                     signUpViewModel.onEvent(SignUpEvent.TogglePasswordVisibility)
                 })

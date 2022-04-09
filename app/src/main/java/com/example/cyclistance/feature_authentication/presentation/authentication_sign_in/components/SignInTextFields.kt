@@ -1,13 +1,11 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.KeyboardActionScope
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInState
@@ -52,7 +50,7 @@ fun SignInTextFieldsArea(
                 keyboardActionOnDone = {
                     keyboardActionOnDone()
                 },
-                passwordVisibility = passwordVisibility,
+                isPasswordVisible = passwordVisibility,
                 passwordVisibilityIconOnClick = {
                     signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility)
                 }

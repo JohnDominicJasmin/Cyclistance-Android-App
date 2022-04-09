@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_cancellation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,8 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_mapping.presentation.common.MappingAdditionalMessage
-import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonDialog
-import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_screen.`/mapping_cancellation`.RadioButtonsSection
+import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.theme.BackgroundColor
 
 
@@ -51,7 +50,7 @@ fun MappingCancellationReasonScreen() {
         )
 
 
-        MappingButtonDialog(
+        MappingButtonNavigation(
             modifier = Modifier
                 .constrainAs(buttonNavButtonSection) {
                     top.linkTo(additionalMessageSection.bottom, margin = 50.dp)

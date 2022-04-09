@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_edit_profile_screen.components
+package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -9,7 +9,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonDialog
+import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.theme.*
 
 @Composable
@@ -44,7 +44,7 @@ fun EditProfileScreen(navigateTo: (destination: String, popUpToDestination: Stri
             })
 
 
-        MappingButtonDialog(modifier = Modifier
+        MappingButtonNavigation(modifier = Modifier
             .constrainAs(buttonNavigationArea) {
                 top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
                 start.linkTo(parent.start)
