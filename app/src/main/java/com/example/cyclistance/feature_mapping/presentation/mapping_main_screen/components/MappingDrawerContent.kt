@@ -40,10 +40,10 @@ fun MappingDrawerContent() {
 
             Column(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Bottom,
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally) {
 
-
+                Spacer(modifier = Modifier.height(10.dp))
                 Image(
                     painter = painterResource(R.drawable.mike_tyson),
                     contentDescription = "User Picture",
@@ -66,7 +66,7 @@ fun MappingDrawerContent() {
                     color = Color(0xFFA5A5A5),
                     style = MaterialTheme.typography.subtitle2)
 
-                Spacer(modifier = Modifier.height(7.dp))
+                Spacer(modifier = Modifier.height(15.dp))
 
                 Button(
                     onClick = {  },
@@ -74,29 +74,21 @@ fun MappingDrawerContent() {
                         backgroundColor = ThemeColor,
                         contentColor = Color(0xFF424242)),
                     shape = RoundedCornerShape(17.dp),
-                    modifier = Modifier.wrapContentSize()) {
+                    modifier = Modifier.height(30.dp).width(125.dp),) {
 
-                    Row(
-                        modifier = Modifier
-                            .wrapContentWidth()
-                            .height(20.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(
-                            space = 10.dp, alignment = Alignment.CenterHorizontally)) {
-                        Text(
-                            text = "Edit Profile",
-                            color = Color(0xFF424242),
-                            style = MaterialTheme.typography.button,
-                            textAlign = TextAlign.Center)
+                    Text(
+                        text = "Edit Profile",
+                        color = Color(0xFF424242),
+                        style = MaterialTheme.typography.caption,
+                        textAlign = TextAlign.Center, modifier = Modifier.weight(0.88f))
 
-                        Icon(
-                            modifier = Modifier.size(12.dp),
-                            painter = painterResource(id = R.drawable.ic_right_arrow),
-                            contentDescription = "Edit Profile",
-                            tint = Color(0xFF424242))
-                    }
+                    Icon(
+                        modifier = Modifier.size(10.dp),
+                        painter = painterResource(id = R.drawable.ic_right_arrow),
+                        contentDescription = "Edit Profile",
+                        tint = Color(0xFF424242))
                 }
-                Spacer(modifier = Modifier.height(7.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
 
             }
@@ -159,24 +151,19 @@ fun EditProfileButtonPreview() {
             backgroundColor = ThemeColor,
             contentColor = Color(0xFF424242)),
         shape = RoundedCornerShape(17.dp),
-        modifier = Modifier.wrapContentSize()) {
-        Row(
-            modifier = Modifier.wrapContentSize(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(
-                space = 10.dp, alignment = Alignment.CenterHorizontally)) {
+        modifier = Modifier.height(30.dp).width(125.dp),) {
+
             Text(
                 text = "Edit Profile",
                 color = Color(0xFF424242),
                 style = MaterialTheme.typography.caption,
-                textAlign = TextAlign.Center)
+                textAlign = TextAlign.Center, modifier = Modifier.weight(0.88f))
 
             Icon(
                 modifier = Modifier.size(10.dp),
                 painter = painterResource(id = R.drawable.ic_right_arrow),
                 contentDescription = "Edit Profile",
                 tint = Color(0xFF424242))
-        }
     }
 }
 
