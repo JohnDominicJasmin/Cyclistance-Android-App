@@ -23,8 +23,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
 import com.example.cyclistance.theme.TextFieldTextHintColor
-import com.example.cyclistance.theme.editProfileTextFieldIndicatorColor
-import com.example.cyclistance.theme.errorColor
+import com.example.cyclistance.theme.EditProfileTextFieldIndicatorColor
+import com.example.cyclistance.theme.ErrorColor
 
 
 @Composable
@@ -121,7 +121,7 @@ fun TextFieldItem(
         )
         Divider(
             modifier = Modifier
-                .fillMaxWidth(), color = editProfileTextFieldIndicatorColor)
+                .fillMaxWidth(), color = EditProfileTextFieldIndicatorColor)
 
         if (hasError) {
 
@@ -130,7 +130,7 @@ fun TextFieldItem(
                 verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Error,
-                    tint = errorColor,
+                    tint = ErrorColor,
                     modifier = Modifier.size(12.dp),
                     contentDescription = "Icon error")
                 ErrorMessage(errorMessage = errorMessage, modifier = Modifier.padding(1.2.dp))

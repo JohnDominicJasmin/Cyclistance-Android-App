@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_settings.presentation.setting_change_password.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
@@ -18,13 +17,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.*
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
-import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.theme.TextFieldTextHintColor
-import com.example.cyclistance.theme.editProfileTextFieldIndicatorColor
-import com.example.cyclistance.theme.errorColor
+import com.example.cyclistance.theme.EditProfileTextFieldIndicatorColor
+import com.example.cyclistance.theme.ErrorColor
 
 @Composable
 fun PasswordTextFieldArea(modifier: Modifier) {
@@ -145,7 +142,7 @@ fun PasswordTextFieldItem(
 
         Divider(
             modifier = Modifier
-                .fillMaxWidth(), color = editProfileTextFieldIndicatorColor)
+                .fillMaxWidth(), color = EditProfileTextFieldIndicatorColor)
 
         if (hasError) {
 
@@ -154,7 +151,7 @@ fun PasswordTextFieldItem(
                 verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Error,
-                    tint = errorColor,
+                    tint = ErrorColor,
                     modifier = Modifier.size(12.dp),
                     contentDescription = "Icon error")
                 ErrorMessage(errorMessage = errorMessage, modifier = Modifier.padding(1.2.dp))

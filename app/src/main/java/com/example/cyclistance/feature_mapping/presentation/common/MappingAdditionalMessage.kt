@@ -12,6 +12,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.theme.DisabledColor
+import com.example.cyclistance.theme.MessageTextFieldBackground
 
 
 @Composable
@@ -62,7 +63,7 @@ fun MappingAdditionalMessage(modifier: Modifier) {
                     shape = RoundedCornerShape(12.dp),
                     colors = TextFieldDefaults.textFieldColors(
                         textColor = Color.White,
-                        backgroundColor = Color(0xFF404040),
+                        backgroundColor = MessageTextFieldBackground,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
                         cursorColor = Color.White,
