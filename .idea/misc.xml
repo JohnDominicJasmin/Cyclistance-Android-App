@@ -341,13 +341,24 @@
         <entry key="app/src/main/res/drawable/ic_about.xml" value="0.258" />
         <entry key="app/src/main/res/drawable/ic_accident.xml" value="0.278" />
         <entry key="app/src/main/res/drawable/ic_arrow.xml" value="0.217" />
+        <entry key="app/src/main/res/drawable/ic_astronaut.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_brush_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_chat_bubble_outline_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_logout_24.xml" value="0.213" />
+        <entry key="app/src/main/res/drawable/ic_baseline_my_location_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_notifications_none_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_pedal_bike_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_person_outline_24.xml" value="0.2415" />
         <entry key="app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.129" />
         <entry key="app/src/main/res/drawable/ic_baseline_settings_suggest_24.xml" value="0.129" />
         <entry key="app/src/main/res/drawable/ic_bottom_wave.xml" value="0.2" />
+        <entry key="app/src/main/res/drawable/ic_broken_frame.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_call.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_cancel.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_chat.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_check.xml" value="0.2405" />
+        <entry key="app/src/main/res/drawable/ic_check_icon.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_cyclistance_app_icon.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_email.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_facebook.xml" value="0.195" />
@@ -358,9 +369,13 @@
         <entry key="app/src/main/res/drawable/ic_group_35.xml" value="0.173" />
         <entry key="app/src/main/res/drawable/ic_help_and_rescue.xml" value="0.24" />
         <entry key="app/src/main/res/drawable/ic_injury.xml" value="0.1315" />
+        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_live_location.xml" value="0.1195" />
         <entry key="app/src/main/res/drawable/ic_location.xml" value="0.1335" />
         <entry key="app/src/main/res/drawable/ic_magnify_1_4s_200px.xml" value="0.1345" />
+        <entry key="app/src/main/res/drawable/ic_mechanic.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_picture_frame.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_question.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_real_time_messaging.xml" value="0.1195" />
         <entry key="app/src/main/res/drawable/ic_rescue_request.xml" value="0.204" />
         <entry key="app/src/main/res/drawable/ic_right_arrow.xml" value="0.217" />

@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "297531421452-je1s63qvqb60neb5si46boorgk7mcapi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.cyclistance",
+            "certificate_hash": "7239184e5f13f736b14b170d046d139407ee715c"
+          }
+        },
+        {
           "client_id": "297531421452-7kefpj7sm6rta6crg3u8k81uij5mg2ti.apps.googleusercontent.com",
           "client_type": 3
         }

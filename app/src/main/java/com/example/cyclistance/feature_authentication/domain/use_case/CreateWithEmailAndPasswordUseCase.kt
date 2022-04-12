@@ -2,10 +2,9 @@ package com.example.cyclistance.feature_authentication.domain.use_case
 
 import android.content.Context
 import com.example.cyclistance.R
-import com.example.cyclistance.common.ConnectionStatus
-import com.example.cyclistance.common.InputValidate
-import com.example.cyclistance.common.InputValidate.isPasswordStrong
-import com.example.cyclistance.common.InputValidate.isEmailValid
+import com.example.cyclistance.utils.ConnectionStatus
+import com.example.cyclistance.utils.InputValidate.isPasswordStrong
+import com.example.cyclistance.utils.InputValidate.isEmailValid
 
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel

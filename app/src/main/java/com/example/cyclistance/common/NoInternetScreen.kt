@@ -19,10 +19,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.navigation.NavHostController
 import com.example.cyclistance.R
 import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.theme.ThemeColor
+import com.example.cyclistance.utils.ConnectionStatus
 
 
 @Composable

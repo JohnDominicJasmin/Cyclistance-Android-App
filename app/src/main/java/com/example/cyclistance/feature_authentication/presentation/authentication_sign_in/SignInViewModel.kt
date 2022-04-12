@@ -35,7 +35,9 @@ class SignInViewModel @Inject constructor(
         when (event) {
             is SignInEvent.SignInFacebook -> {  }
 
-            is SignInEvent.SignInGoogle -> {  }
+            is SignInEvent.SignInGoogle -> {
+                signInWithCredential(event.authCredential)
+            }
 
             is SignInEvent.SignInDefault -> {
 
@@ -110,18 +112,19 @@ class SignInViewModel @Inject constructor(
     }
 
 
-    fun signInWithCredential(authCredential: AuthCredential) {
+    private fun signInWithCredential(authCredential: AuthCredential) {
         viewModelScope.launch {
             kotlin.runCatching {
                 _state.value = state.value.copy(isLoading = true)
                 authUseCase.signInWithCredentialUseCase(authCredential)
             }.onSuccess { isSuccess ->
+                _state.value = state.value.copy(isLoading = false)
                 if (isSuccess) {
                     _eventFlow.emit(SignInEventResult.ShowMappingScreen)
                 }
             }.onFailure { exception ->
+                _state.value = state.value.copy(isLoading = false)
                 when (exception) {
-
                     is AuthExceptions.InternetException -> {
                         _eventFlow.emit(SignInEventResult.ShowNoInternetScreen)
                     }

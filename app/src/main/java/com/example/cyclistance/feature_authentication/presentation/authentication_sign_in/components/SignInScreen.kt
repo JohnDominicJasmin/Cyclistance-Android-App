@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -14,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyclistance.common.AlertDialogData
+import com.example.cyclistance.common.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
 import com.example.cyclistance.common.SetupAlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEventResult
@@ -26,9 +28,13 @@ import com.example.cyclistance.feature_authentication.presentation.common.AppIma
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
+import com.example.cyclistance.feature_authentication.presentation.util.AuthResult
 import com.example.cyclistance.theme.BackgroundColor
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.common.api.ApiException
+import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.flow.collectLatest
-
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -38,12 +44,31 @@ fun SignInScreen(
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel(),
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
+    val scope = rememberCoroutineScope()
     val signInStateValue = signInViewModel.state.value
     val emailAuthStateValue = emailAuthViewModel.state.value
     val context = LocalContext.current
 
 
     BackHandler(enabled = true, onBack = onBackPressed)
+
+    val authResultLauncher = rememberLauncherForActivityResult(contract = AuthResult()) { task ->
+        try {
+            val account: GoogleSignInAccount? = task?.getResult(ApiException::class.java)
+
+            if (account == null) {
+                Toast.makeText(context, "Google Sign In Failed", Toast.LENGTH_SHORT).show()
+            } else {
+                scope.launch {
+                    Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
+                    signInViewModel.onEvent(event = SignInEvent.SignInGoogle(authCredential = GoogleAuthProvider.getCredential(account.idToken, null)))
+                }
+            }
+        } catch (e: ApiException) {
+            Toast.makeText(context,e.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
 
 
 
@@ -149,7 +174,9 @@ fun SignInScreen(
 
                         },
                         googleSignInButtonOnClick = {
-
+                            scope.launch {
+                                authResultLauncher.launch(GOOGLE_SIGN_IN_REQUEST_CODE)
+                            }
                         }
                     )
 
@@ -174,6 +201,8 @@ fun SignInScreen(
             }
         }
     }
+
+
 
 
 

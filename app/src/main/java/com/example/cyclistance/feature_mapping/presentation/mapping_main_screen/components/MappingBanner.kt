@@ -28,12 +28,21 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
 import com.example.cyclistance.theme.DisabledColor
 import com.example.cyclistance.feature_mapping.domain.model.MappingBannerModel
 
+
+@OptIn(ExperimentalAnimationApi::class)
+@Preview
+@Composable
+fun PreviewDeleteLater() {
+    val visibility = remember{ mutableStateOf(true) }
+    MappingDefaultBanner(isVisible = visibility)
+}
 
 @ExperimentalAnimationApi
 @Composable
@@ -55,7 +64,7 @@ fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
                     start = 16.dp,
                     end = 16.dp,
                     bottom = 12.dp),
-                text = "John Doe cancelled the rescue request. The reason is “Problem already fixed.",
+                text = "John Doe cancelled the rescue request. The reason is “Problem already fixed.\"",
                 color = Color.White, style = MaterialTheme.typography.body2)
 
             Row(

@@ -33,8 +33,9 @@ android {
 
         debug {
             resValue("string", "MapsToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
-          //  resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
-          //  resValue("string", "MapsApiKey", localProperties.getProperty("MAPS_API_KEY"))
+            resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
+            resValue("string", "FacebookLoginProtocolScheme", localProperties.getProperty("FACEBOOK_LOGIN_PROTOCOL_SCHEME"))
+            resValue("string", "FacebookClientToken", localProperties.getProperty("FACEBOOK_CLIENT_TOKEN"))
         }
         release {
             minifyEnabled true
@@ -42,8 +43,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             resValue("string", "MapsToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
-           // resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
-           // resValue("string", "MapsApiKey", localProperties.getProperty("MAPS_API_KEY"))
+            resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
+            resValue("string", "FacebookLoginProtocolScheme", localProperties.getProperty("FACEBOOK_LOGIN_PROTOCOL_SCHEME"))
+            resValue("string", "FacebookClientToken", localProperties.getProperty("FACEBOOK_CLIENT_TOKEN"))
         }
     }
 
@@ -82,9 +84,8 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'com.google.android.material:material:1.5.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
+    implementation 'com.google.android.gms:play-services-auth:20.1.0'
     implementation 'com.google.firebase:firebase-auth-ktx:21.0.3'
-    //implementation 'com.google.android.gms:play-services-maps:18.0.2'
-    //implementation 'com.google.android.libraries.maps:maps:3.1.0-beta'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
@@ -167,4 +168,8 @@ dependencies {
 
     //Swipe to refresh
     implementation "com.google.accompanist:accompanist-swiperefresh:0.24.5-alpha"
+    //Facebook Login
+    implementation 'com.facebook.android:facebook-android-sdk:latest.release'
 }
+
+apply plugin: 'com.google.gms.google-services'

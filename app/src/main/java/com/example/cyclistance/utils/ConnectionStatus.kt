@@ -1,4 +1,4 @@
-package com.example.cyclistance.common
+package com.example.cyclistance.utils
 
 import android.annotation.SuppressLint
 import android.content.Context

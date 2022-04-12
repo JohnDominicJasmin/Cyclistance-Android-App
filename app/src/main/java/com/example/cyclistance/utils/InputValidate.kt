@@ -1,9 +1,9 @@
-package com.example.cyclistance.common
+package com.example.cyclistance.utils
 
 import android.util.Patterns
+import com.example.cyclistance.common.AuthConstants
 import com.example.cyclistance.common.AuthConstants.REGEX_NUMBER_VALUE
 import com.example.cyclistance.common.AuthConstants.REGEX_SPECIAL_CHARACTERS_VALUE
-import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import java.util.regex.Pattern
 
 object InputValidate {
