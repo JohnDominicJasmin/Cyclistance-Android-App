@@ -29,6 +29,7 @@ import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.util.AuthResult
+import com.example.cyclistance.feature_authentication.presentation.util.LocalActivityResultCallbackManager
 import com.example.cyclistance.theme.BackgroundColor
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
@@ -55,7 +56,6 @@ fun SignInScreen(
     val authResultLauncher = rememberLauncherForActivityResult(contract = AuthResult()) { task ->
         try {
             val account: GoogleSignInAccount? = task?.getResult(ApiException::class.java)
-
             if (account == null) {
                 Toast.makeText(context, "Google Sign In Failed", Toast.LENGTH_SHORT).show()
             } else {
@@ -66,6 +66,14 @@ fun SignInScreen(
             }
         } catch (e: ApiException) {
             Toast.makeText(context,e.message, Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    val callbackManager = LocalActivityResultCallbackManager.current
+    DisposableEffect(Unit) {
+        callbackManager.addListener(signInViewModel)
+        onDispose {
+            callbackManager.removeListener(signInViewModel)
         }
     }
 
@@ -171,7 +179,7 @@ fun SignInScreen(
 
                     SignInGoogleAndFacebookSection(
                         facebookButtonOnClick = {
-
+                            signInViewModel.onEvent(SignInEvent.SignInFacebook(context = context))
                         },
                         googleSignInButtonOnClick = {
                             scope.launch {

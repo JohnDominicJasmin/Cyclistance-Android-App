@@ -9,4 +9,6 @@ object AuthConstants {
     const val ONE_SECOND_TO_MILLIS: Long = 1000
     const val REFRESH_EMAIL_INTERVAL: Long = 1800
     const val GOOGLE_SIGN_IN_REQUEST_CODE: Int = 1
+    const val FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE"
+
 }
