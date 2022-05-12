@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.theme.BackgroundColor
@@ -31,8 +32,6 @@ private val bikeList = listOf(
 @Composable
 fun DropDownBikeList(modifier: Modifier) {
     var expanded by remember { mutableStateOf(false) }
-
-
     var selectedOptionText by remember { mutableStateOf("") }
 
 
@@ -104,4 +103,11 @@ fun DropDownBikeList(modifier: Modifier) {
             }
         }
     }
+}
+
+@Preview
+@Composable
+fun PreviewDropDown() {
+    DropDownBikeList(modifier = Modifier
+        .shadow(2.dp, shape = RoundedCornerShape(12.dp), clip = true))
 }

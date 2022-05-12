@@ -8,8 +8,8 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.navigation.compose.rememberNavController
-import com.example.cyclistance.feature_authentication.presentation.util.ActivityResultCallbackManager
-import com.example.cyclistance.feature_authentication.presentation.util.LocalActivityResultCallbackManager
+import com.example.cyclistance.feature_authentication.domain.util.ActivityResultCallbackManager
+import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
 import com.example.cyclistance.navigation.Navigation
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.facebook.FacebookSdk.sdkInitialize

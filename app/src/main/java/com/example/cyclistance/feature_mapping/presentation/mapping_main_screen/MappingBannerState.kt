@@ -1,8 +1,8 @@
-package com.example.cyclistance.feature_mapping.domain.model
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
 import androidx.annotation.DrawableRes
 
-data class MappingBannerModel(
+data class MappingBannerState(
     @DrawableRes val userProfileImage:Int,
     val name:String,
     val issue:String,

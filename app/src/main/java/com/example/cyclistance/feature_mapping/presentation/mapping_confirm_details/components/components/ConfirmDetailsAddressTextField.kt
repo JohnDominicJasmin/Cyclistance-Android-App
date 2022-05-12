@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.components
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions

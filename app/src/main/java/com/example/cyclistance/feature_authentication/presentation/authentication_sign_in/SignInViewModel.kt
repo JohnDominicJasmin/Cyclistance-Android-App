@@ -11,8 +11,8 @@ import com.example.cyclistance.common.AuthConstants.FACEBOOK_CONNECTION_FAILURE
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_authentication.presentation.util.ActivityResultCallbackI
-import com.example.cyclistance.feature_authentication.presentation.util.findActivity
+import com.example.cyclistance.feature_authentication.domain.util.ActivityResultCallbackI
+import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback

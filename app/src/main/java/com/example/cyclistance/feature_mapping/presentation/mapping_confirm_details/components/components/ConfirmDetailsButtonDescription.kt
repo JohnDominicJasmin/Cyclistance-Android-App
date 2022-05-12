@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

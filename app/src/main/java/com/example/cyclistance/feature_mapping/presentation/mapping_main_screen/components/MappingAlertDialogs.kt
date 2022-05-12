@@ -18,8 +18,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.cyclistance.R
 import com.example.cyclistance.theme.BackgroundColor
-import com.example.cyclistance.feature_mapping.domain.model.MappingDialogModel
 import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingDialogState
 
 
 @Preview
@@ -37,7 +37,7 @@ fun Preview() {
 
 
         AlertDialogContent(
-            mappingDialogData = MappingDialogModel(
+            mappingDialogData = MappingDialogState(
                 icon = R.drawable.ic_question,
                 title = "Are you sure?",
                 description = "You want to cancel rescue request?"),
@@ -69,7 +69,7 @@ fun AlertDialogCreator(
 
 @Composable
 fun AlertDialogContent(
-    mappingDialogData: MappingDialogModel,
+    mappingDialogData: MappingDialogState,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit) {
     Card(

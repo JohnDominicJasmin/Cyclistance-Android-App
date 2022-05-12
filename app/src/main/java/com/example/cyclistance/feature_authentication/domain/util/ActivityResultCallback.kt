@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.presentation.util
+package com.example.cyclistance.feature_authentication.domain.util
 
 import android.content.Intent
 import androidx.compose.runtime.staticCompositionLocalOf

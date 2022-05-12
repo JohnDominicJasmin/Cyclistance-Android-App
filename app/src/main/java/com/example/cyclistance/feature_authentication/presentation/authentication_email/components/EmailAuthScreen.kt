@@ -15,8 +15,8 @@ import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
-import com.example.cyclistance.common.AlertDialogData
-import com.example.cyclistance.common.SetupAlertDialog
+import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
+import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEventResult
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem

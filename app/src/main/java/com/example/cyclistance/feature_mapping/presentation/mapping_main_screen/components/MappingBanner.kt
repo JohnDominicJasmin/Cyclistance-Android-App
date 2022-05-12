@@ -11,7 +11,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import com.example.cyclistance.theme.ShowableDisplaysBackgroundColor
 import com.example.cyclistance.theme.Shapes
 import com.example.cyclistance.theme.ThemeColor
 import androidx.compose.animation.core.LinearOutSlowInEasing
@@ -33,7 +32,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
 import com.example.cyclistance.theme.DisabledColor
-import com.example.cyclistance.feature_mapping.domain.model.MappingBannerModel
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingBannerState
+import com.example.cyclistance.theme.ShowableDisplaysBackgroundColor
 
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -98,7 +98,7 @@ fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerModel>) {
+fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerState>) {
 
 
     var expandedState by remember { mutableStateOf(false) }

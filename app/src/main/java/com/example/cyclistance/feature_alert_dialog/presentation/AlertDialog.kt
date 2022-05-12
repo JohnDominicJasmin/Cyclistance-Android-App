@@ -1,4 +1,4 @@
-package com.example.cyclistance.common
+package com.example.cyclistance.feature_alert_dialog.presentation
 
 import androidx.annotation.RawRes
 import androidx.compose.foundation.BorderStroke
@@ -45,6 +45,7 @@ data class AlertDialogData(
 fun SetupAlertDialog(
     alertDialog: AlertDialogData,
     onDismissRequest: () -> Unit) {
+
     val openDialog = remember { mutableStateOf(true) }
 
 

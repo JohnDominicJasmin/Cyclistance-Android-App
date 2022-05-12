@@ -11,8 +11,8 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.cyclistance.common.AlertDialogData
-import com.example.cyclistance.common.SetupAlertDialog
+import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
+import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEventResult

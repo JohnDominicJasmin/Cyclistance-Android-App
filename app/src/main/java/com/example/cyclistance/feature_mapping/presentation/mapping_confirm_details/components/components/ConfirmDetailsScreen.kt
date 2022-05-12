@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.components
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -12,8 +12,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_mapping.presentation.common.MappingAdditionalMessage
 import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
-import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_screen.components.ButtonDescriptionDetails
-import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_screen.components.DropDownBikeList
 
 import com.example.cyclistance.theme.*
 
