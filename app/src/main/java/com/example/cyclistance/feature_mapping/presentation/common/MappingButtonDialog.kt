@@ -36,7 +36,7 @@ fun MappingButtonNavigation(
                     .weight(0.5f)
                     .align(Alignment.CenterVertically)
                     .padding(all = 7.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = BackgroundColor),
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
                 shape = RoundedCornerShape(12.dp)) {
                 Text(
                     text = negativeButtonText,

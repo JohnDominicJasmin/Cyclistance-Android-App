@@ -14,9 +14,10 @@ import androidx.compose.ui.platform.LocalContext
 
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.cyclistance.common.AlertDialogData
+import coil.compose.rememberImagePainter
 import com.example.cyclistance.common.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
-import com.example.cyclistance.common.SetupAlertDialog
+import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
+import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEventResult
 
@@ -28,8 +29,8 @@ import com.example.cyclistance.feature_authentication.presentation.common.AppIma
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
-import com.example.cyclistance.feature_authentication.presentation.util.AuthResult
-import com.example.cyclistance.feature_authentication.presentation.util.LocalActivityResultCallbackManager
+import com.example.cyclistance.feature_authentication.domain.util.AuthResult
+import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
 import com.example.cyclistance.theme.BackgroundColor
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
@@ -50,9 +51,7 @@ fun SignInScreen(
     val emailAuthStateValue = emailAuthViewModel.state.value
     val context = LocalContext.current
 
-
     BackHandler(enabled = true, onBack = onBackPressed)
-
     val authResultLauncher = rememberLauncherForActivityResult(contract = AuthResult()) { task ->
         try {
             val account: GoogleSignInAccount? = task?.getResult(ApiException::class.java)

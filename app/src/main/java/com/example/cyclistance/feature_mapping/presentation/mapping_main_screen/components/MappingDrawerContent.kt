@@ -45,7 +45,7 @@ fun MappingDrawerContent() {
 
                 Spacer(modifier = Modifier.height(10.dp))
                 Image(
-                    painter = painterResource(R.drawable.mike_tyson),
+                    painter = painterResource(R.drawable.person_image),
                     contentDescription = "User Picture",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -142,7 +142,6 @@ fun MappingDrawerContent() {
 
 }
 
-@Preview
 @Composable
 fun EditProfileButtonPreview() {
     Button(

@@ -8,7 +8,7 @@ val Purple700 = Color(0xFF3700B3)
 val Teal200 = Color(0xFF03DAC5)
 
 
-
+//TODO FIX THIS COLORS
 val BackgroundColor = Color(0xFF303234)
 val TextFieldBackgroundColor = Color(0xFF545454)
 val ThemeColor = Color(0xFFEBAD52)
