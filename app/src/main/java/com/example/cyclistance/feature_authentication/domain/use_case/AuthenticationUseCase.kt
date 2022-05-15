@@ -1,5 +1,13 @@
 package com.example.cyclistance.feature_authentication.domain.use_case
 
+import com.example.cyclistance.feature_authentication.domain.use_case.create_account.CreateWithEmailAndPasswordUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.create_account.SignInWithCredentialUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.create_account.SignInWithEmailAndPasswordUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.get_account_info.GetEmailUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.get_account_info.GetNameUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.*
+
 data class AuthenticationUseCase(
     val reloadEmailUseCase: ReloadEmailUseCase,
     val signOutUseCase: SignOutUseCase,

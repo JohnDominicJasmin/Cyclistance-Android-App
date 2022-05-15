@@ -1,13 +1,16 @@
 package com.example.cyclistance.di
 
-import com.example.cyclistance.R
 import android.content.Context
 import com.example.cyclistance.feature_authentication.data.repository.AuthRepositoryImpl
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_authentication.domain.use_case.*
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInClient
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.example.cyclistance.feature_authentication.domain.use_case.get_account_info.GetEmailUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.get_account_info.GetNameUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.create_account.CreateWithEmailAndPasswordUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.create_account.SignInWithCredentialUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.create_account.SignInWithEmailAndPasswordUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.*
 import com.google.firebase.auth.AuthCredential
 import dagger.Module
 import dagger.Provides

@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.domain.use_case
+package com.example.cyclistance.feature_authentication.domain.use_case.create_account
 
 import android.content.Context
 import com.example.cyclistance.R

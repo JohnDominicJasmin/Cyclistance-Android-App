@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.domain.use_case
+package com.example.cyclistance.feature_authentication.domain.use_case.get_account_info
 
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
