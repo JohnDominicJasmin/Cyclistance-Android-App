@@ -9,7 +9,7 @@ import com.example.cyclistance.common.NoInternetScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpScreen
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.MappingScreen
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingScreen
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderScreen
 
 import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.components.SplashScreen
