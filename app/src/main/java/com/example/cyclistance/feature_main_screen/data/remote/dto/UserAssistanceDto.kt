@@ -1,7 +1,15 @@
 package com.example.cyclistance.feature_main_screen.data.remote.dto
 
+
+import com.google.gson.annotations.SerializedName
+
 data class UserAssistanceDto(
-    val id:String = "",
-    val confirmationDetail: ConfirmationDetail,
-    val status: Status? = null
+    @SerializedName("confirmationDetails")
+    val confirmationDetails: ConfirmationDetails,
+    @SerializedName("id")
+    val id: String,
+    @SerializedName("rescueRequest")
+    val rescueRequest: RescueRequest,
+    @SerializedName("status")
+    val status: Status
 )

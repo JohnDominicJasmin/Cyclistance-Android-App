@@ -1,9 +1,15 @@
 package com.example.cyclistance.feature_main_screen.data.remote.dto
 
 
+import com.google.gson.annotations.SerializedName
+
 data class UserDto(
-    val id:String = "",
-    val name:String = "",
-    val address:String = "",
-    val location: Location? = null
+    @SerializedName("address")
+    val address: String,
+    @SerializedName("id")
+    val id: String,
+    @SerializedName("location")
+    val location: Location,
+    @SerializedName("name")
+    val name: String
 )
