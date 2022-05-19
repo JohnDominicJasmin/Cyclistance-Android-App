@@ -4,7 +4,7 @@ import com.example.cyclistance.feature_main_screen.data.remote.dto.CancellationR
 import com.google.gson.annotations.SerializedName
 
 data class CancellationEvent(
-    val cancellationReason: List<CancellationReason>,
+    val cancellationReasons: List<CancellationReason>,
     val clientId: String,
     val id: String
 )

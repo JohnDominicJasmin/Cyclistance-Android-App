@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class CancellationEventDto(
     @SerializedName("cancellation_reason")
-    val cancellationReason: List<CancellationReason>,
+    val cancellationReasons: List<CancellationReason>,
     @SerializedName("client_id")
     val clientId: String,
     @SerializedName("id")
