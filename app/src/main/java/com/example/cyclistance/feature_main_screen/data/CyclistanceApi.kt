@@ -1,7 +1,9 @@
 package com.example.cyclistance.feature_main_screen.data
 
 import com.example.cyclistance.feature_main_screen.data.remote.dto.*
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface CyclistanceApi {
@@ -14,6 +16,13 @@ interface CyclistanceApi {
     @GET("/api/v1/get-users")
     suspend fun getUsers():List<UserDto>
 
+    @POST("/api/v1/create-user")
+    suspend fun createUser(@Body userDto: UserDto)
+
+
+
+
+
 
 
 
@@ -24,6 +33,12 @@ interface CyclistanceApi {
     @GET("/api/v1/get-users-assistance")
     suspend fun getUsersAssistance():List<UserAssistanceDto>
 
+    @POST("/api/v1/create-user-assistance")
+    suspend fun createUserAssistance(@Body userAssistanceDto: UserAssistanceDto)
+
+
+
+
 
 
     @GET("/api/v1/get-help-request-by-id/{id},{client_id}")
@@ -31,6 +46,11 @@ interface CyclistanceApi {
         @Path("id") id: String,
         @Path("client_id") clientId: String
     ): HelpRequestDto
+
+    @POST("/api/v1/create-help-request")
+    suspend fun createHelpRequest(@Body helpRequestDto:HelpRequestDto)
+
+
 
 
 
@@ -40,6 +60,8 @@ interface CyclistanceApi {
         @Path("client_id") clientId: String
     ):CancellationEventDto
 
+    @POST("/api/v1/create-cancellation-event")
+    suspend fun createCancellationEvent(@Body cancellationEventDto: CancellationEventDto)
 }
 
 
