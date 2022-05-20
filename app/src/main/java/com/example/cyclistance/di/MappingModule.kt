@@ -6,7 +6,7 @@ import com.example.cyclistance.feature_main_screen.data.repository.MappingReposi
 import com.example.cyclistance.feature_main_screen.domain.repository.MappingRepository
 import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.cancellation.GetCancellationByIdUseCase
-import com.example.cyclistance.feature_main_screen.domain.use_case.help_request.GetHelpRequestByIdUseCase
+import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.GetRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.user.GetUserByIdUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.user.GetUsersUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.user_assistance.GetUserAssistanceByIdUseCase
@@ -49,7 +49,7 @@ object MappingModule {
             getUserByIdUseCase = GetUserByIdUseCase(repository),
             getUsersAssistanceUseCase = GetUsersAssistanceUseCase(repository),
             getUserAssistanceByIdUseCase = GetUserAssistanceByIdUseCase(repository),
-            getHelpRequestByIdUseCase = GetHelpRequestByIdUseCase(repository),
+            getRescueRequestUseCase = GetRescueRequestUseCase(repository),
             getCancellationByIdUseCase = GetCancellationByIdUseCase(repository)
         )
     }

@@ -5,5 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class Respondent(
     @SerializedName("client_id")
-    val clientId: String
+    val clientId: String,
+    @SerializedName("request_accepted")
+    val requestAccepted: Boolean
 )

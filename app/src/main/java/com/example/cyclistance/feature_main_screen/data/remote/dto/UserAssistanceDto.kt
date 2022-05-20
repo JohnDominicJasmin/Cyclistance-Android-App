@@ -8,8 +8,6 @@ data class UserAssistanceDto(
     val confirmationDetails: ConfirmationDetails,
     @SerializedName("id")
     val id: String,
-    @SerializedName("rescueRequest")
-    val rescueRequest: RescueRequest,
     @SerializedName("status")
     val status: Status
 )
