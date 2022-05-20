@@ -2,11 +2,11 @@ package com.example.cyclistance.feature_main_screen.data.repository
 
 import com.example.cyclistance.feature_main_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toCancellationEvent
-import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toHelpRequest
+import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toRescueRequest
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toUser
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toUserAssistance
 import com.example.cyclistance.feature_main_screen.data.remote.dto.CancellationEventDto
-import com.example.cyclistance.feature_main_screen.data.remote.dto.HelpRequestDto
+import com.example.cyclistance.feature_main_screen.data.remote.dto.RescueRequestDto
 import com.example.cyclistance.feature_main_screen.data.remote.dto.UserAssistanceDto
 import com.example.cyclistance.feature_main_screen.data.remote.dto.UserDto
 import com.example.cyclistance.feature_main_screen.domain.exceptions.CustomExceptions
@@ -55,6 +55,34 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         }
     }
 
+    override suspend fun updateUser(itemId:String, user: User) {
+        return try{
+            with(user) {
+              api.updateUser(
+                  itemId = itemId,
+                  userDto = UserDto(
+                      address = this.address,
+                      id = this.id,
+                      location = this.location,
+                      name = this.name
+                  )
+              )
+            }
+        }catch (e:HttpException){
+            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+        }catch (e:IOException){
+            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+        }
+    }
+
+
+
+
+
+
+
+
+
     override suspend fun getUserAssistanceById(userId: String): UserAssistance {
         return try{
             api.getUserAssistanceById(userId).toUserAssistance()
@@ -75,14 +103,12 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         }
     }
 
-
     override suspend fun createUserAssistance(userAssistance: UserAssistance) {
         return try{
             with(userAssistance) {
                api.createUserAssistance(userAssistanceDto = UserAssistanceDto(
                    confirmationDetails = this.confirmationDetails,
                    id = this.id,
-                   rescueRequest = this.rescueRequest,
                    status = this.status
                ))
             }
@@ -93,24 +119,16 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         }
     }
 
-    override suspend fun getHelpRequestById(userId: String, clientId: String): HelpRequest {
+    override suspend fun updateUserAssistance(itemId: String, userAssistance: UserAssistance) {
         return try{
-            api.getHelpRequestById(userId, clientId).toHelpRequest()
-        }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
-        }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
-        }
-    }
-
-    override suspend fun createHelpRequest(helpRequest: HelpRequest) {
-        return try{
-            with(helpRequest) {
-                api.createHelpRequest(helpRequestDto = HelpRequestDto(
-                    accepted = this.accepted,
-                    clientId = this.clientId,
-                    id = this.id
-                ))
+            with(userAssistance) {
+                api.updateUserAssistance(
+                    itemId = itemId,
+                    userAssistanceDto = UserAssistanceDto(
+                        confirmationDetails = this.confirmationDetails,
+                        id = this.id,
+                        status = this.status
+                    ))
             }
         }catch (e:HttpException){
             throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
@@ -118,6 +136,63 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
             throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
+
+
+
+
+
+
+
+    override suspend fun getRescueRequest(eventId: String): RescueRequest {
+        return try{
+            api.getRescueRequest(eventId).toRescueRequest()
+        }catch (e:HttpException){
+            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+        }catch (e:IOException){
+            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+        }
+    }
+
+    override suspend fun createRescueRequest(rescueRequest: RescueRequest) {
+        return try{
+            with(rescueRequest) {
+                api.createRescueRequest(
+                    rescueRequestDto = RescueRequestDto(
+                        rescueEventId = this.rescueEventId,
+                        respondents = this.respondents
+                    )
+                )
+            }
+        }catch (e:HttpException){
+            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+        }catch (e:IOException){
+            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+        }
+    }
+
+    override suspend fun updateRescueRequest(eventId: String, rescueRequest: RescueRequest) {
+        return try{
+            with(rescueRequest) {
+                api.updateRescueRequest(
+                    eventId = eventId,
+                    rescueRequestDto = RescueRequestDto(
+                        rescueEventId = this.rescueEventId,
+                        respondents = this.respondents
+                    )
+                )
+            }
+        }catch (e:HttpException){
+            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+        }catch (e:IOException){
+            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+        }
+    }
+
+
+
+
+
+
 
     override suspend fun getCancellationById(userId: String, clientId: String): CancellationEvent {
         return try{
@@ -133,6 +208,24 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         return try{
             with(cancellationEvent) {
                 api.createCancellationEvent(cancellationEventDto = CancellationEventDto(
+                    cancellationReasons = this.cancellationReasons,
+                    clientId = this.clientId,
+                    id = this.id
+                ))
+            }
+        }catch (e:HttpException){
+            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+        }catch (e:IOException){
+            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+        }
+    }
+
+    override suspend fun updateCancellationEvent(itemId: String, cancellationEvent: CancellationEvent) {
+        return try{
+            with(cancellationEvent) {
+                api.updateCancellationEvent(
+                    itemId = itemId,
+                    cancellationEventDto = CancellationEventDto(
                     cancellationReasons = this.cancellationReasons,
                     clientId = this.clientId,
                     id = this.id
