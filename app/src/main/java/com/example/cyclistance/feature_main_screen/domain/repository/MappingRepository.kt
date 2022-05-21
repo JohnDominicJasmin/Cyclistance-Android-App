@@ -8,18 +8,23 @@ interface MappingRepository {
     suspend fun getUsers(): List<User>
     suspend fun createUser(user: User)
     suspend fun updateUser(itemId: String, user: User)
-
+    suspend fun deleteUser(id: String)
 
     suspend fun getUserAssistanceById(userId: String): UserAssistance
     suspend fun getUsersAssistance(): List<UserAssistance>
     suspend fun createUserAssistance(userAssistance: UserAssistance)
     suspend fun updateUserAssistance(itemId: String, userAssistance: UserAssistance)
+    suspend fun deleteUserAssistance(id: String)
 
     suspend fun getRescueRequest(eventId: String): RescueRequest
     suspend fun createRescueRequest(rescueRequest: RescueRequest)
     suspend fun updateRescueRequest(eventId: String, rescueRequest: RescueRequest)
+    suspend fun deleteRescueRequest(id: String)
+
 
     suspend fun getCancellationById(userId: String, clientId: String): CancellationEvent
     suspend fun createCancellationEvent(cancellationEvent: CancellationEvent)
     suspend fun updateCancellationEvent(itemId: String, cancellationEvent: CancellationEvent)
+    suspend fun deleteCancellationEvent(id: String)
+
 }

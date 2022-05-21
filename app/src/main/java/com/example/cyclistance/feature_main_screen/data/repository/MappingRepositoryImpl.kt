@@ -75,6 +75,19 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         }
     }
 
+    override suspend fun deleteUser(id: String) {
+        return try{
+            api.deleteUser(id)
+        }catch (e:HttpException){
+            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+        }catch (e:IOException){
+            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+        }
+    }
+
+
+
+
 
 
 
@@ -137,11 +150,15 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         }
     }
 
-
-
-
-
-
+    override suspend fun deleteUserAssistance(id: String) {
+        return try{
+            api.deleteUserAssistance(id)
+        }catch (e:HttpException){
+            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+        }catch (e:IOException){
+            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+        }
+    }
 
     override suspend fun getRescueRequest(eventId: String): RescueRequest {
         return try{
@@ -188,11 +205,15 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         }
     }
 
-
-
-
-
-
+    override suspend fun deleteRescueRequest(id: String) {
+        return try{
+            api.deleteRescueRequest(id)
+        }catch (e:HttpException){
+            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+        }catch (e:IOException){
+            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+        }
+    }
 
     override suspend fun getCancellationById(userId: String, clientId: String): CancellationEvent {
         return try{
@@ -231,6 +252,16 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                     id = this.id
                 ))
             }
+        }catch (e:HttpException){
+            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+        }catch (e:IOException){
+            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+        }
+    }
+
+    override suspend fun deleteCancellationEvent(id: String) {
+        return try{
+            api.deleteCancellationEvent(id)
         }catch (e:HttpException){
             throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
         }catch (e:IOException){
