@@ -5,12 +5,16 @@ import com.example.cyclistance.feature_main_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_main_screen.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_main_screen.domain.repository.MappingRepository
 import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_main_screen.domain.use_case.cancellation.CreateCancellationEventUseCase
+import com.example.cyclistance.feature_main_screen.domain.use_case.cancellation.DeleteCancellationEventUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.cancellation.GetCancellationByIdUseCase
+import com.example.cyclistance.feature_main_screen.domain.use_case.cancellation.UpdateCancellationEventUseCase
+import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.CreateRescueRequestUseCase
+import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.DeleteRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.GetRescueRequestUseCase
-import com.example.cyclistance.feature_main_screen.domain.use_case.user.GetUserByIdUseCase
-import com.example.cyclistance.feature_main_screen.domain.use_case.user.GetUsersUseCase
-import com.example.cyclistance.feature_main_screen.domain.use_case.user_assistance.GetUserAssistanceByIdUseCase
-import com.example.cyclistance.feature_main_screen.domain.use_case.user_assistance.GetUsersAssistanceUseCase
+import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.UpdateRescueRequestUseCase
+import com.example.cyclistance.feature_main_screen.domain.use_case.user.*
+import com.example.cyclistance.feature_main_screen.domain.use_case.user_assistance.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,10 +51,26 @@ object MappingModule {
         return MappingUseCase(
             getUsersUseCase = GetUsersUseCase(repository),
             getUserByIdUseCase = GetUserByIdUseCase(repository),
+            createUserUseCase = CreateUserUseCase(repository),
+            deleteUserUseCase = DeleteUserUseCase(repository),
+            updateUserUseCase = UpdateUserUseCase(repository),
+
             getUsersAssistanceUseCase = GetUsersAssistanceUseCase(repository),
             getUserAssistanceByIdUseCase = GetUserAssistanceByIdUseCase(repository),
+            createUserAssistanceUseCase = CreateUserAssistanceUseCase(repository),
+            deleteUserAssistanceUseCase = DeleteUserAssistanceUseCase(repository),
+            updateUserAssistanceUseCase = UpdateUserAssistanceUseCase(repository),
+
             getRescueRequestUseCase = GetRescueRequestUseCase(repository),
-            getCancellationByIdUseCase = GetCancellationByIdUseCase(repository)
+            createRescueRequestUseCase = CreateRescueRequestUseCase(repository),
+            deleteRescueRequestUseCase = DeleteRescueRequestUseCase(repository),
+            updateRescueRequestUseCase = UpdateRescueRequestUseCase(repository),
+
+            getCancellationByIdUseCase = GetCancellationByIdUseCase(repository),
+            createCancellationEventUseCase = CreateCancellationEventUseCase(repository),
+            deleteCancellationEventUseCase = DeleteCancellationEventUseCase(repository),
+            updateCancellationEventUseCase = UpdateCancellationEventUseCase(repository),
+
         )
     }
 
