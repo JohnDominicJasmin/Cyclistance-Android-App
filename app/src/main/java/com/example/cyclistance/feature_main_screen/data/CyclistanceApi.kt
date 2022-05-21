@@ -18,7 +18,8 @@ interface CyclistanceApi {
     @PATCH("/api/v1/update-user/{item_id}")
     suspend fun updateUser(@Path("item_id") itemId: String, @Body userDto: UserDto)
 
-
+    @DELETE("/api/v1/delete-user/{item_id}")
+    suspend fun deleteUser(@Path("item_id") itemId: String)
 
 
 
@@ -36,7 +37,8 @@ interface CyclistanceApi {
         @Path("item_id") itemId: String,
         @Body userAssistanceDto: UserAssistanceDto)
 
-
+    @DELETE("/api/v1/delete-user-assistance/{item_id}")
+    suspend fun deleteUserAssistance(@Path("item_id") itemId: String)
 
 
 
@@ -52,7 +54,8 @@ interface CyclistanceApi {
         @Path("event_id") eventId: String,
         @Body rescueRequestDto: RescueRequestDto)
 
-
+    @DELETE("/api/v1/delete-rescue-request/{event_id}")
+    suspend fun deleteRescueRequest(@Path("event_id") eventId: String)
 
 
 
@@ -69,6 +72,9 @@ interface CyclistanceApi {
     suspend fun updateCancellationEvent(
         @Path("item_id") itemId: String,
         @Body cancellationEventDto: CancellationEventDto)
+
+    @DELETE("/api/v1/delete-cancellation-event/{item_id}")
+    suspend fun deleteCancellationEvent(@Path("item_id") itemId: String)
 
 }
 
