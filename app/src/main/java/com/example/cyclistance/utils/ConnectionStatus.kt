@@ -2,8 +2,16 @@ package com.example.cyclistance.utils
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.IntentSender
 import android.location.LocationManager
 import android.net.ConnectivityManager
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.IntentSenderRequest
+import com.google.android.gms.common.api.ResolvableApiException
+import com.google.android.gms.location.*
+import com.google.android.gms.tasks.Task
+import timber.log.Timber
 
 object ConnectionStatus {
 
@@ -23,4 +31,49 @@ object ConnectionStatus {
         }
 
 
+    fun askGps(context: Context, onDisabled: (IntentSenderRequest) -> Unit, onEnabled: () -> Unit){
+        if (!ConnectionStatus.hasGPSConnection(context)) {
+            ConnectionStatus.checkLocationSetting(
+                context = context,
+                onDisabled = onDisabled,
+                onEnabled = {
+                    Timber.d("GPS IS TURNED ON!")
+                })
+        }
+    }
+    private fun checkLocationSetting(
+        context: Context,
+        onDisabled: (IntentSenderRequest) -> Unit,
+        onEnabled: () -> Unit
+    ) {
+
+        val locationRequest = LocationRequest.create().apply {
+            interval = 1000
+            fastestInterval = 1000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
+        val client: SettingsClient = LocationServices.getSettingsClient(context)
+        val builder: LocationSettingsRequest.Builder = LocationSettingsRequest
+            .Builder()
+            .addLocationRequest(locationRequest)
+
+        val gpsSettingTask: Task<LocationSettingsResponse> =
+            client.checkLocationSettings(builder.build())
+
+        gpsSettingTask.addOnSuccessListener { onEnabled() }
+        gpsSettingTask.addOnFailureListener { exception ->
+            if (exception is ResolvableApiException) {
+                try {
+                    val intentSenderRequest = IntentSenderRequest
+                        .Builder(exception.resolution)
+                        .build()
+                    onDisabled(intentSenderRequest)
+                } catch (sendEx: IntentSender.SendIntentException) {
+                    // ignore here
+                }
+            }
+        }
+
+    }
 }
