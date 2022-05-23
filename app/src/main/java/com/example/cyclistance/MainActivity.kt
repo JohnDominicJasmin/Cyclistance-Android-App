@@ -1,6 +1,7 @@
 package com.example.cyclistance
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
@@ -15,10 +16,14 @@ import com.example.cyclistance.theme.CyclistanceTheme
 import com.facebook.FacebookSdk.sdkInitialize
 import com.facebook.appevents.AppEventsLogger
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.mapbox.mapboxsdk.Mapbox
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 const val CLICK_TIME_INTERVAL = 1800
 
+@ExperimentalPermissionsApi
 @ExperimentalAnimationApi
 @ExperimentalPagerApi
 @AndroidEntryPoint
@@ -32,6 +37,11 @@ class MainActivity : ComponentActivity() {
         sdkInitialize(applicationContext);
         AppEventsLogger.activateApp(application);
 
+
+        Mapbox.getInstance(
+            this,
+            getString(R.string.MapsToken)
+        )
 
         var backPressedTime = 0L
 
