@@ -59,7 +59,6 @@ fun SignInScreen(
                 Toast.makeText(context, "Google Sign In Failed", Toast.LENGTH_SHORT).show()
             } else {
                 scope.launch {
-                    Toast.makeText(context, "Success", Toast.LENGTH_SHORT).show()
                     signInViewModel.onEvent(event = SignInEvent.SignInGoogle(authCredential = GoogleAuthProvider.getCredential(account.idToken, null)))
                 }
             }

@@ -13,8 +13,8 @@ import com.example.cyclistance.feature_main_screen.presentation.mapping_main_scr
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderScreen
 
 import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.components.SplashScreen
-
-
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+@ExperimentalPermissionsApi
 @Composable
 fun Navigation(navController: NavHostController, onBackPressed: () -> Unit) {
 
@@ -51,7 +51,6 @@ fun Navigation(navController: NavHostController, onBackPressed: () -> Unit) {
                 navigateScreen(navController, destination, popUpToDestination)
             }
         }
-
         composable(Screens.MappingScreen.route) {
             MappingScreen(onBackPressed = onBackPressed) {
 
