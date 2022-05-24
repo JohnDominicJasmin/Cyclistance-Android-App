@@ -31,17 +31,8 @@ object ConnectionStatus {
         }
 
 
-    fun askGps(context: Context, onDisabled: (IntentSenderRequest) -> Unit, onEnabled: () -> Unit){
-        if (!ConnectionStatus.hasGPSConnection(context)) {
-            ConnectionStatus.checkLocationSetting(
-                context = context,
-                onDisabled = onDisabled,
-                onEnabled = {
-                    Timber.d("GPS IS TURNED ON!")
-                })
-        }
-    }
-    private fun checkLocationSetting(
+
+     fun checkLocationSetting(
         context: Context,
         onDisabled: (IntentSenderRequest) -> Unit,
         onEnabled: () -> Unit

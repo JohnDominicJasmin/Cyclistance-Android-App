@@ -28,7 +28,9 @@ import com.example.cyclistance.common.MappingConstants.MAX_ZOOM_LEVEL_MAPS
 import com.example.cyclistance.common.MappingConstants.MIN_ZOOM_LEVEL_MAPS
 import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.theme.ThemeColor
-import com.example.cyclistance.utils.ConnectionStatus.askGps
+import com.example.cyclistance.utils.ConnectionStatus
+import com.example.cyclistance.utils.ConnectionStatus.checkLocationSetting
+import com.example.cyclistance.utils.LastLocation
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.mapbox.mapboxsdk.camera.CameraPosition
@@ -54,9 +56,10 @@ fun MappingScreen(
     val settingResultRequest = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
-        if (activityResult.resultCode == RESULT_OK)
+        if (activityResult.resultCode == RESULT_OK) {
             Timber.d("appDebug", "Accepted")
-        else {
+
+        }else {
             Timber.d("appDebug", "Denied")
         }
     }
@@ -91,9 +94,17 @@ fun MappingScreen(
         content = {
 
             RequestMultiplePermissions(multiplePermissionsState = multiplePermissionsState, onPermissionGranted = {
-                askGps(context = context, onDisabled = settingResultRequest::launch, onEnabled = {
+                if (!ConnectionStatus.hasGPSConnection(context)) {
+                    checkLocationSetting(
+                        context = context,
+                        onDisabled = settingResultRequest::launch,
+                        onEnabled = {
+                            Timber.d("GPS IS TURNED ON!")
 
-                })
+                        })
+                }else{
+                    LastLocation.getUserLocation(context)
+                }
             })
 
 
@@ -113,10 +124,20 @@ fun MappingScreen(
                 Button(
                     onClick = {
                         multiplePermissionsState.launchMultiplePermissionRequest()
-                        if(multiplePermissionsState.allPermissionsGranted){
-                            askGps(context = context, onDisabled = settingResultRequest::launch, onEnabled = {
 
-                            })
+                        if (multiplePermissionsState.allPermissionsGranted) {
+                            if (!ConnectionStatus.hasGPSConnection(context)) {
+                                checkLocationSetting(
+                                    context = context,
+                                    onDisabled = settingResultRequest::launch,
+                                    onEnabled = {
+                                        Timber.d("GPS IS TURNED ON!")
+
+                                    })
+                            }else{
+                                LastLocation.getUserLocation(context)
+                            }
+
                         }
                     },
                     shape = RoundedCornerShape(12.dp),
