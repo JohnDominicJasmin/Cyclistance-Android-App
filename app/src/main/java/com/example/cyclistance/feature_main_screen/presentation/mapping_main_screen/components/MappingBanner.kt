@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.*
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -32,7 +33,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
 import com.example.cyclistance.theme.DisabledColor
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingBannerState
 import com.example.cyclistance.theme.ShowableDisplaysBackgroundColor
 
 
@@ -95,6 +95,18 @@ fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
         }
     }
 }
+
+
+data class MappingBannerState(
+    @DrawableRes val userProfileImage:Int,
+    val name:String,
+    val issue:String,
+    val distanceRemaining:String,
+    val timeRemaining:String,
+    val address:String,
+    val message:String
+)
+
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

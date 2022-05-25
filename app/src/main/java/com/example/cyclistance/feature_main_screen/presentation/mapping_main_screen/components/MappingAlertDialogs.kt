@@ -19,7 +19,13 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.cyclistance.R
 import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingDialogState
+
+
+data class MappingDialogState(
+    var icon: Int = 0,
+    var title: String = "",
+    var description: String = "")
+
 
 
 @Preview
