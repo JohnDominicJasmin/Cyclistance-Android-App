@@ -14,16 +14,15 @@ import androidx.compose.ui.platform.LocalContext
 
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.compose.rememberImagePainter
 import com.example.cyclistance.common.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEventResult
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
 
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInEventResult
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInViewModel
 import com.example.cyclistance.feature_authentication.presentation.common.AppImageIcon
 import com.example.cyclistance.navigation.Screens
@@ -88,22 +87,22 @@ fun SignInScreen(
 
                     when (signInEvent) {
 
-                        is SignInEventResult.RefreshEmail -> {
+                        is SignInUiEvent.RefreshEmail -> {
                             emailAuthViewModel.onEvent(EmailAuthEvent.RefreshEmail)
                         }
-                        is SignInEventResult.ShowNoInternetScreen -> {
+                        is SignInUiEvent.ShowNoInternetScreen -> {
                             navigateTo(Screens.NoInternetScreen.route, null)
                         }
-                        is SignInEventResult.ShowAlertDialog -> {
+                        is SignInUiEvent.ShowAlertDialog -> {
                             alertDialogState = AlertDialogData(
                                 title = signInEvent.title,
                                 description = signInEvent.description,
                                 resId = signInEvent.imageResId)
                         }
-                        is SignInEventResult.ShowMappingScreen -> {
+                        is SignInUiEvent.ShowMappingScreen -> {
                             navigateTo(Screens.MappingScreen.route, Screens.SignInScreen.route)
                         }
-                        is SignInEventResult.ShowToastMessage -> {
+                        is SignInUiEvent.ShowToastMessage -> {
                             Toast.makeText(context, signInEvent.message, Toast.LENGTH_SHORT).show()
                         }
 
@@ -116,22 +115,22 @@ fun SignInScreen(
             LaunchedEffect(key1 = true) {
                 emailAuthViewModel.eventFlow.collectLatest { emailAuthEvent ->
                     when (emailAuthEvent) {
-                        is EmailAuthEventResult.ShowNoInternetScreen -> {
+                        is EmailAuthUiEvent.ShowNoInternetScreen -> {
                             navigateTo(Screens.NoInternetScreen.route, null)
                         }
-                        is EmailAuthEventResult.ShowAlertDialog -> {
+                        is EmailAuthUiEvent.ShowAlertDialog -> {
                             alertDialogState = AlertDialogData(
                                 title = emailAuthEvent.title,
                                 description = emailAuthEvent.description,
                                 resId = emailAuthEvent.imageResId)
                         }
-                        is EmailAuthEventResult.ShowMappingScreen -> {
+                        is EmailAuthUiEvent.ShowMappingScreen -> {
                             navigateTo(Screens.MappingScreen.route, Screens.SignInScreen.route)
                         }
-                        is EmailAuthEventResult.ShowToastMessage -> {
+                        is EmailAuthUiEvent.ShowToastMessage -> {
                             Toast.makeText(context, emailAuthEvent.message, Toast.LENGTH_SHORT).show()
                         }
-                        is EmailAuthEventResult.UserEmailIsNotVerified -> {
+                        is EmailAuthUiEvent.UserEmailIsNotVerifiedUi -> {
                             navigateTo(Screens.EmailAuthScreen.route, Screens.SignInScreen.route)
                         }
                     }

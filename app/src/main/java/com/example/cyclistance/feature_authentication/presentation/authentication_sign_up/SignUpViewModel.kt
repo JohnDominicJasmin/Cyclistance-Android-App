@@ -22,8 +22,8 @@ class SignUpViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
 
-    private val _eventFlow: MutableSharedFlow<SignUpEventResult> = MutableSharedFlow()
-    val eventFlow: SharedFlow<SignUpEventResult> = _eventFlow.asSharedFlow()
+    private val _eventFlow: MutableSharedFlow<SignUpUiEvent> = MutableSharedFlow()
+    val eventFlow: SharedFlow<SignUpUiEvent> = _eventFlow.asSharedFlow()
 
     private val _state: MutableState<SignUpState> = mutableStateOf(SignUpState())
     val state: State<SignUpState> = _state
@@ -79,9 +79,9 @@ class SignUpViewModel @Inject constructor(
             }.onSuccess { isAccountCreated ->
                 _state.value = state.value.copy(isLoading = false)
                 if(isAccountCreated) {
-                    _eventFlow.emit(SignUpEventResult.ShowEmailAuthScreen)
+                    _eventFlow.emit(SignUpUiEvent.ShowEmailAuthScreen)
                 }else{
-                    _eventFlow.emit(SignUpEventResult.ShowToastMessage("Sorry, something went wrong. Please try again."))
+                    _eventFlow.emit(SignUpUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
                 }
             }.onFailure {exception ->
                 _state.value = state.value.copy(isLoading = false)
@@ -96,11 +96,11 @@ class SignUpViewModel @Inject constructor(
                         _state.value = state.value.copy(confirmPasswordErrorMessage = exception.message ?: "Invalid Password.")
                     }
                     is AuthExceptions.InternetException -> {
-                        _eventFlow.emit(SignUpEventResult.ShowNoInternetScreen)
+                        _eventFlow.emit(SignUpUiEvent.ShowNoInternetScreen)
                     }
                     is AuthExceptions.UserAlreadyExistsException -> {
                         _eventFlow.emit(
-                            SignUpEventResult.ShowAlertDialog(
+                            SignUpUiEvent.ShowAlertDialog(
                                 title = exception.title,
                                 description = exception.message ?: "This account is Already in Use.",
                                 imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error,

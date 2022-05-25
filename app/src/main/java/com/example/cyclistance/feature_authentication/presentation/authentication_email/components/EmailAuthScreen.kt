@@ -18,7 +18,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEventResult
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.navigation.Screens
 import kotlinx.coroutines.flow.collectLatest
@@ -50,19 +50,19 @@ fun EmailAuthScreen(
                 eventFlow.collectLatest { event ->
 
                     when (event) {
-                        is EmailAuthEventResult.ShowNoInternetScreen -> {
+                        is EmailAuthUiEvent.ShowNoInternetScreen -> {
                             navigateTo(Screens.NoInternetScreen.route, null)
                         }
-                        is EmailAuthEventResult.ShowAlertDialog -> {
+                        is EmailAuthUiEvent.ShowAlertDialog -> {
                             alertDialogState = AlertDialogData(
                                 title = event.title,
                                 description = event.description,
                                 resId = event.imageResId)
                         }
-                        is EmailAuthEventResult.ShowMappingScreen -> {
+                        is EmailAuthUiEvent.ShowMappingScreen -> {
                             navigateTo(Screens.MappingScreen.route, Screens.EmailAuthScreen.route)
                         }
-                        is EmailAuthEventResult.ShowToastMessage -> {
+                        is EmailAuthUiEvent.ShowToastMessage -> {
                             Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                         }
 

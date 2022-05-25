@@ -37,8 +37,8 @@ class SignInViewModel @Inject constructor(
     private var callbackManager = CallbackManager.Factory.create()
 
 
-    private val _eventFlow: MutableSharedFlow<SignInEventResult> = MutableSharedFlow()
-    val eventFlow: SharedFlow<SignInEventResult> = _eventFlow.asSharedFlow()
+    private val _eventFlow: MutableSharedFlow<SignInUiEvent> = MutableSharedFlow()
+    val eventFlow: SharedFlow<SignInUiEvent> = _eventFlow.asSharedFlow()
 
     private val _state: MutableState<SignInState> = mutableStateOf(SignInState())
     val state: State<SignInState> = _state
@@ -108,9 +108,9 @@ class SignInViewModel @Inject constructor(
         }.onSuccess { isSignedIn ->
             _state.value = state.value.copy(isLoading = false)
             if (isSignedIn) {
-                _eventFlow.emit(SignInEventResult.RefreshEmail)
+                _eventFlow.emit(SignInUiEvent.RefreshEmail)
             }else{
-                _eventFlow.emit(SignInEventResult.ShowToastMessage("Sorry, something went wrong. Please try again."))
+                _eventFlow.emit(SignInUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
             }
         }.onFailure { exception ->
             _state.value = state.value.copy(isLoading = false)
@@ -122,11 +122,11 @@ class SignInViewModel @Inject constructor(
                     _state.value = state.value.copy(passwordErrorMessage = exception.message ?: "Password is Invalid.")
                 }
                 is AuthExceptions.InternetException -> {
-                    _eventFlow.emit(SignInEventResult.ShowNoInternetScreen)
+                    _eventFlow.emit(SignInUiEvent.ShowNoInternetScreen)
                 }
                 is AuthExceptions.TooManyRequestsException -> {
                     _eventFlow.emit(
-                        SignInEventResult.ShowAlertDialog(
+                        SignInUiEvent.ShowAlertDialog(
                             title = exception.title,
                             description = exception.message ?: "You have been blocked for too many failed attempts. Please try again later.",
                             imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error,
@@ -148,13 +148,13 @@ class SignInViewModel @Inject constructor(
             }.onSuccess { isSuccess ->
                 _state.value = state.value.copy(isLoading = false)
                 if (isSuccess) {
-                    _eventFlow.emit(SignInEventResult.ShowMappingScreen)
+                    _eventFlow.emit(SignInUiEvent.ShowMappingScreen)
                 }
             }.onFailure { exception ->
                 _state.value = state.value.copy(isLoading = false)
                 when (exception) {
                     is AuthExceptions.InternetException -> {
-                        _eventFlow.emit(SignInEventResult.ShowNoInternetScreen)
+                        _eventFlow.emit(SignInUiEvent.ShowNoInternetScreen)
                     }
                     is AuthExceptions.ConflictFBTokenException -> {
                         removeFacebookUserAccountPreviousToken()
@@ -191,11 +191,11 @@ class SignInViewModel @Inject constructor(
 
    private suspend fun handleFacebookSignInException(error: Exception) {
         if (error.message == FACEBOOK_CONNECTION_FAILURE) {
-            _eventFlow.emit(SignInEventResult.ShowNoInternetScreen)
+            _eventFlow.emit(SignInUiEvent.ShowNoInternetScreen)
             return
         }
         error.message?.let { errorMessage ->
-            _eventFlow.emit(SignInEventResult.ShowAlertDialog(
+            _eventFlow.emit(SignInUiEvent.ShowAlertDialog(
                     title = "Error",
                     description = errorMessage,
                     imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error))

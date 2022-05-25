@@ -15,7 +15,7 @@ import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEventResult
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpViewModel
 import com.example.cyclistance.feature_authentication.presentation.common.AppImageIcon
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
@@ -51,19 +51,19 @@ fun SignUpScreen(
             signUpViewModel.eventFlow.collectLatest{ event ->
 
                 when(event){
-                    is SignUpEventResult.ShowNoInternetScreen -> {
+                    is SignUpUiEvent.ShowNoInternetScreen -> {
                         navigateTo(Screens.NoInternetScreen.route, null)
                     }
-                    is SignUpEventResult.ShowAlertDialog -> {
+                    is SignUpUiEvent.ShowAlertDialog -> {
                         alertDialogState = AlertDialogData(
                             title = event.title,
                             description = event.description,
                             resId = event.imageResId)
                     }
-                    is SignUpEventResult.ShowEmailAuthScreen -> {
+                    is SignUpUiEvent.ShowEmailAuthScreen -> {
                         navigateTo(Screens.EmailAuthScreen.route, Screens.SignUpScreen.route)
                     }
-                    is SignUpEventResult.ShowToastMessage -> {
+                    is SignUpUiEvent.ShowToastMessage -> {
                         Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                     }
                 }

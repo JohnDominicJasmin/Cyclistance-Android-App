@@ -30,8 +30,8 @@ class EmailAuthViewModel @Inject constructor(
     private val _state: MutableState<EmailAuthState> = mutableStateOf(EmailAuthState())
     val state: State<EmailAuthState> = _state
 
-    private val _eventFlow: MutableSharedFlow<EmailAuthEventResult> = MutableSharedFlow()
-    val eventFlow: SharedFlow<EmailAuthEventResult> = _eventFlow.asSharedFlow()
+    private val _eventFlow: MutableSharedFlow<EmailAuthUiEvent> = MutableSharedFlow()
+    val eventFlow: SharedFlow<EmailAuthUiEvent> = _eventFlow.asSharedFlow()
 
 
     fun onEvent(event: EmailAuthEvent) {
@@ -74,7 +74,7 @@ class EmailAuthViewModel @Inject constructor(
             _state.value = state.value.copy(isLoading = false)
 
             if(isVerificationSuccess){
-                _eventFlow.emit(EmailAuthEventResult.ShowMappingScreen)
+                _eventFlow.emit(EmailAuthUiEvent.ShowMappingScreen)
                 delay(300)
                 job?.let{
                     if(it.isActive){
@@ -82,7 +82,7 @@ class EmailAuthViewModel @Inject constructor(
                     }
                 }
             }else{
-                _eventFlow.emit(EmailAuthEventResult.UserEmailIsNotVerified)
+                _eventFlow.emit(EmailAuthUiEvent.UserEmailIsNotVerifiedUi)
             }
         }
     }
@@ -104,13 +104,13 @@ class EmailAuthViewModel @Inject constructor(
             if(isEmailReloaded) {
                 verifyEmail()
             }else{
-                _eventFlow.emit(EmailAuthEventResult.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
+                _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
             }
         }.onFailure { exception ->
             _state.value = state.value.copy(isLoading = false)
             when (exception) {
                 is AuthExceptions.InternetException -> {
-                    _eventFlow.emit(EmailAuthEventResult.ShowNoInternetScreen)
+                    _eventFlow.emit(EmailAuthUiEvent.ShowNoInternetScreen)
                 }
                 else -> {
                     Timber.e("${this.javaClass.name}: ${exception.message}")
@@ -156,13 +156,13 @@ class EmailAuthViewModel @Inject constructor(
                 if (state.value.isEmailResendClicked) {
                     if (isEmailVerificationSent) {
                         _eventFlow.emit(
-                            EmailAuthEventResult.ShowAlertDialog(
+                            EmailAuthUiEvent.ShowAlertDialog(
                                 title = "New Email Sent.",
                                 description = "New verification email has been sent to your email address.",
                                 imageResId = io.github.farhanroy.composeawesomedialog.R.raw.success
                             ))
                     } else {
-                        _eventFlow.emit(EmailAuthEventResult.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
+                        _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
                     }
                 }
 
@@ -172,7 +172,7 @@ class EmailAuthViewModel @Inject constructor(
                 _state.value = state.value.copy(isLoading = false)
                 if(state.value.isEmailResendClicked) {
                     _eventFlow.emit(
-                        EmailAuthEventResult.ShowAlertDialog(
+                        EmailAuthUiEvent.ShowAlertDialog(
                             title = "Error",
                             description = "There was an error trying to send the verification email. Please try again.",
                             imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error
