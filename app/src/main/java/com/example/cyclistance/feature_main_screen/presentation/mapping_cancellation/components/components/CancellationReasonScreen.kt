@@ -18,7 +18,7 @@ import com.example.cyclistance.theme.BackgroundColor
 
 @Preview
 @Composable
-fun MappingCancellationReasonScreen() {
+fun CancellationReasonScreen() {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()

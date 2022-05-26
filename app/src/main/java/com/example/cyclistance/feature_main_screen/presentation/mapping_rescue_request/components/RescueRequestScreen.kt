@@ -15,45 +15,44 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.cyclistance.feature_main_screen.presentation.mapping_rescue_request.CardState
 import com.example.cyclistance.theme.BackgroundColor
 
  val sampleCardState = listOf(
 
-     CardState(name = "John Doe",
+     CardData(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6.9km away"),
 
-     CardState(name = "John Doe",
+     CardData(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6.9km away"),
 
-     CardState(name = "John Doe",
+     CardData(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6.9km away"),
 
-     CardState(name = "John Doe",
+     CardData(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6.9km away"),
-     CardState(name = "John Doe",
+     CardData(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6.9km away"),
-     CardState(name = "John Doe",
+     CardData(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6.9km away"),
-     CardState(name = "John Doe",
+     CardData(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",

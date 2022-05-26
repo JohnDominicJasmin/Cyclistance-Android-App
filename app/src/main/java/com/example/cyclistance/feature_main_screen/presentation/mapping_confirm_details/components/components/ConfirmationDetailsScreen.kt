@@ -21,7 +21,7 @@ import com.example.cyclistance.theme.*
 
 @Preview
 @Composable
-fun ConfirmDetailsScreen() {
+fun ConfirmationDetailsScreen() {
 
     ConstraintLayout(
         modifier = Modifier
