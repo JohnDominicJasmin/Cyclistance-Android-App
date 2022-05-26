@@ -9,4 +9,7 @@ sealed class Screens(val route:String){
     object IntroSliderScreen: Screens(route="intro_slider_screen")
     object MappingScreen: Screens(route="mapping_screen")
     object NoInternetScreen: Screens(route="no_internet_screen")
+    object CancellationScreen: Screens(route="cancellation_screen")
+    object ConfirmDetailsScreen: Screens(route="confirm_details_screen")
+    object RescueRequestScreen: Screens(route="rescue_request_screen")
 }

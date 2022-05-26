@@ -9,7 +9,10 @@ import com.example.cyclistance.common.NoInternetScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpScreen
+import com.example.cyclistance.feature_main_screen.presentation.mapping_cancellation.components.CancellationReasonScreen
+import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.components.ConfirmationDetailsScreen
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingScreen
+import com.example.cyclistance.feature_main_screen.presentation.mapping_rescue_request.components.RescueRequestScreen
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderScreen
 
 import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.components.SplashScreen
@@ -52,14 +55,26 @@ fun Navigation(navController: NavHostController, onBackPressed: () -> Unit) {
             }
         }
         composable(Screens.MappingScreen.route) {
-            MappingScreen(onBackPressed = onBackPressed) {
-
+            MappingScreen(onBackPressed = onBackPressed) { destination, popUpToDestination ->
+                navigateScreen(navController,destination,popUpToDestination)
             }
         }
         composable(Screens.NoInternetScreen.route) {
             NoInternetScreen(onBackPressed = onBackPressed) {
                 navController.popBackStack()
             }
+        }
+
+        composable(Screens.CancellationScreen.route){
+            CancellationReasonScreen()
+        }
+
+        composable(Screens.ConfirmDetailsScreen.route){
+            ConfirmationDetailsScreen()
+        }
+
+        composable(Screens.RescueRequestScreen.route){
+            RescueRequestScreen()
         }
 
     }
