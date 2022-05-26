@@ -9,9 +9,18 @@ import java.util.*
 class LastLocation(private val context: Context) {
 
     private val location = SimpleLocation(context, false, false, 3000)
+    private var isUpdateBegan: Boolean = false
+
+
+    fun beginLocationUpdates(){
+        if(!isUpdateBegan){
+            location.beginUpdates()
+            isUpdateBegan = true
+        }
+
+    }
 
     fun getUserLocation():List<Address>{
-        location.beginUpdates()
         val geocoder = Geocoder(context, Locale.ENGLISH)
         return geocoder.getFromLocation(location.latitude, location.longitude, 1)
     }
