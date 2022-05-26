@@ -9,6 +9,7 @@ import com.example.cyclistance.feature_authentication.domain.use_case.get_accoun
 import com.example.cyclistance.feature_authentication.domain.use_case.create_account.CreateWithEmailAndPasswordUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.create_account.SignInWithCredentialUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.create_account.SignInWithEmailAndPasswordUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.get_account_info.GetIdUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.*
 import com.google.firebase.auth.AuthCredential
@@ -41,6 +42,7 @@ import dagger.hilt.android.scopes.ViewModelScoped
             createWithEmailAndPasswordUseCase = CreateWithEmailAndPasswordUseCase(repository = repository, context = context),
             getEmailUseCase = GetEmailUseCase(repository = repository),
             getNameUseCase = GetNameUseCase(repository = repository),
+            getIdUseCase = GetIdUseCase(repository = repository),
             hasAccountSignedInUseCase = HasAccountSignedInUseCase(repository = repository),
             isEmailVerifiedUseCase = IsEmailVerifiedUseCase(repository = repository),
             isSignedInWithProviderUseCase = IsSignedInWithProviderUseCase(repository = repository),
