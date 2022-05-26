@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_main_screen.presentation.mapping_main_sc
 import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -18,6 +19,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.hilt.navigation.compose.hiltViewModel
 
 import com.example.cyclistance.common.MappingConstants.CAMERA_TILT_DEGREES
 import com.example.cyclistance.common.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
@@ -26,7 +28,13 @@ import com.example.cyclistance.common.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.common.MappingConstants.MAP_ZOOM
 import com.example.cyclistance.common.MappingConstants.MAX_ZOOM_LEVEL_MAPS
 import com.example.cyclistance.common.MappingConstants.MIN_ZOOM_LEVEL_MAPS
+import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
+import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingEvent
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingUiEvent
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingViewModel
+import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.ThemeColor
 import com.example.cyclistance.utils.ConnectionStatus
 import com.example.cyclistance.utils.ConnectionStatus.checkLocationSetting
@@ -38,42 +46,92 @@ import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.maps.Style
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @ExperimentalPermissionsApi
 @Composable
 fun MappingScreen(
+    mappingViewModel: MappingViewModel = hiltViewModel(),
     onBackPressed: () -> Unit,
-    navigateTo: (destination: String) -> Unit) {
+    navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
 
-    val scaffoldState =
-        rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
+    val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
+    val coroutineScope = rememberCoroutineScope()
 
+    BackHandler(enabled = true, onBack = onBackPressed)
+
+    val multiplePermissionsState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        rememberMultiplePermissionsState(permissions = listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+    } else {
+        rememberMultiplePermissionsState(permissions = listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+    }
     val context = LocalContext.current
-
+    val lastLocation = remember { LastLocation(context) }
+    var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
     val settingResultRequest = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
         if (activityResult.resultCode == RESULT_OK) {
-            Timber.d("appDebug", "Accepted")
+            Timber.d("GPS Setting Request Accepted")
+            lastLocation.beginLocationUpdates()
+            return@rememberLauncherForActivityResult
+        }
+        Timber.d( "GPS Setting Request Denied")
 
-        }else {
-            Timber.d("appDebug", "Denied")
+    }
+
+    val postProfile = {
+        if (!ConnectionStatus.hasGPSConnection(context)) {
+            checkLocationSetting(
+                context = context,
+                onDisabled = settingResultRequest::launch,
+                onEnabled = {
+                    mappingViewModel.onEvent(
+                        event = MappingEvent.UploadProfile(
+                            addresses = lastLocation.getUserLocation()
+                        ))
+
+                })
+        } else {
+            mappingViewModel.onEvent(
+                event = MappingEvent.UploadProfile(
+                    addresses = lastLocation.getUserLocation()
+                ))
+
         }
     }
 
 
-    val coroutineScope = rememberCoroutineScope()
 
-    BackHandler(enabled = true, onBack = onBackPressed)
-   
-    val multiplePermissionsState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        rememberMultiplePermissionsState(permissions = listOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
-    } else {
-        rememberMultiplePermissionsState(permissions = listOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION))
+
+    LaunchedEffect(key1 = true){
+        mappingViewModel.eventFlow.collectLatest { event ->
+            when(event){
+                is MappingUiEvent.ShowToastMessage -> {
+                    Toast.makeText(context,event.message, Toast.LENGTH_SHORT).show()
+                }
+                is MappingUiEvent.ShowAlertDialog -> {
+                    alertDialogState = AlertDialogData(
+                        title = event.title,
+                        description = event.description,
+                        resId = event.imageResId
+                    )
+                }
+                is MappingUiEvent.ShowNoInternetScreen -> {
+                    navigateTo(Screens.NoInternetScreen.route, null)
+                }
+                is MappingUiEvent.ShowConfirmDetailsScreen -> {
+                    navigateTo(Screens.ConfirmDetailsScreen.route, null)
+                }
+            }
+        }
     }
+
+
+
 
     Scaffold(
         drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
@@ -93,20 +151,25 @@ fun MappingScreen(
         drawerContent = { MappingDrawerContent() },
         content = {
 
-            RequestMultiplePermissions(multiplePermissionsState = multiplePermissionsState, onPermissionGranted = {
-                if (!ConnectionStatus.hasGPSConnection(context)) {
-                    checkLocationSetting(
-                        context = context,
-                        onDisabled = settingResultRequest::launch,
-                        onEnabled = {
-                            Timber.d("GPS IS TURNED ON!")
+            RequestMultiplePermissions(
+                multiplePermissionsState = multiplePermissionsState, onPermissionGranted = {
+                    if (!ConnectionStatus.hasGPSConnection(context)) {
+                        checkLocationSetting(
+                            context = context,
+                            onDisabled = settingResultRequest::launch,
+                            onEnabled = {
+                                lastLocation.beginLocationUpdates()
+                            })
+                    }
+                })
 
-                        })
-                }else{
-                    LastLocation.getUserLocation(context)
-                }
-            })
-
+            if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
+                SetupAlertDialog(
+                    alertDialog = alertDialogState,
+                    onDismissRequest = {
+                        alertDialogState = AlertDialogData()
+                    })
+            }
 
 
             ConstraintLayout() {
@@ -120,51 +183,42 @@ fun MappingScreen(
                     bottom.linkTo(parent.bottom)
                 })
 
-
-                Button(
-                    onClick = {
-                        multiplePermissionsState.launchMultiplePermissionRequest()
-
-                        if (multiplePermissionsState.allPermissionsGranted) {
-                            if (!ConnectionStatus.hasGPSConnection(context)) {
-                                checkLocationSetting(
-                                    context = context,
-                                    onDisabled = settingResultRequest::launch,
-                                    onEnabled = {
-                                        Timber.d("GPS IS TURNED ON!")
-
-                                    })
-                            }else{
-                                LastLocation.getUserLocation(context)
-                            }
-
-                        }
-                    },
-                    shape = RoundedCornerShape(12.dp),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = ThemeColor),
-                    modifier = Modifier.constrainAs(searchButton) {
-                        bottom.linkTo(parent.bottom, margin = 18.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                    }) {
-                    Text(
-                        text = "Search for Assistance",
-                        color = Color.Black,
-                        style = MaterialTheme.typography.button,
-                        modifier = Modifier.padding(
-                            top = 4.dp,
-                            bottom = 4.dp,
-                            start = 12.dp,
-                            end = 12.dp)
-                    )
-                }
+                SearchAssistanceButton(modifier =  Modifier.constrainAs(searchButton) {
+                    bottom.linkTo(parent.bottom, margin = 18.dp)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                }, onClick = {
+                    if (multiplePermissionsState.allPermissionsGranted) {
+                        postProfile()
+                        return@SearchAssistanceButton
+                    }
+                    multiplePermissionsState.launchMultiplePermissionRequest()
+                })
 
             }
         })
 
 }
 
-
+@Composable
+fun SearchAssistanceButton(onClick: () -> Unit, modifier: Modifier) {
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(12.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = ThemeColor),
+        modifier = modifier) {
+        Text(
+            text = "Search for Assistance",
+            color = Color.Black,
+            style = MaterialTheme.typography.button,
+            modifier = Modifier.padding(
+                top = 4.dp,
+                bottom = 4.dp,
+                start = 12.dp,
+                end = 12.dp)
+        )
+    }
+}
 
 @Composable
 fun MapScreen(modifier: Modifier) {
