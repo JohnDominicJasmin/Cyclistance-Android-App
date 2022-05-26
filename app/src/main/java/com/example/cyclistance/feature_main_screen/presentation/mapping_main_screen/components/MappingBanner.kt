@@ -97,7 +97,7 @@ fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
 }
 
 
-data class MappingBannerState(
+data class MappingBannerData(
     @DrawableRes val userProfileImage:Int,
     val name:String,
     val issue:String,
@@ -110,7 +110,7 @@ data class MappingBannerState(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerState>) {
+fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
 
 
     var expandedState by remember { mutableStateOf(false) }

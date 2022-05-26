@@ -9,7 +9,7 @@ import com.example.cyclistance.feature_main_screen.data.remote.dto.CancellationE
 import com.example.cyclistance.feature_main_screen.data.remote.dto.RescueRequestDto
 import com.example.cyclistance.feature_main_screen.data.remote.dto.UserAssistanceDto
 import com.example.cyclistance.feature_main_screen.data.remote.dto.UserDto
-import com.example.cyclistance.feature_main_screen.domain.exceptions.CustomExceptions
+import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_main_screen.domain.model.*
 import com.example.cyclistance.feature_main_screen.domain.repository.MappingRepository
 import retrofit2.HttpException
@@ -21,9 +21,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
        return try{
             api.getUserById(userId).toUser()
        }catch (e:HttpException){
-           throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+           throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
        }catch (e:IOException){
-           throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+           throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
        }
     }
 
@@ -31,9 +31,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         return try{
             api.getUsers().map { it.toUser() }
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -49,9 +49,13 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                     ))
             }
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            if(e.message?.contains("409") == true){
+                return
+            }
+            throw MappingExceptions.UnexpectedErrorException("Unexpected error occurred.")
+
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -69,9 +73,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
               )
             }
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -79,9 +83,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         return try{
             api.deleteUser(id)
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -100,9 +104,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         return try{
             api.getUserAssistanceById(userId).toUserAssistance()
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -110,9 +114,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         return try{
             api.getUsersAssistance().map{ it.toUserAssistance() }
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -126,9 +130,12 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                ))
             }
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            if(e.message?.contains("409") == true){
+                return
+            }
+            throw MappingExceptions.UnexpectedErrorException("Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -144,9 +151,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                     ))
             }
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -154,9 +161,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         return try{
             api.deleteUserAssistance(id)
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -164,9 +171,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         return try{
             api.getRescueRequest(eventId).toRescueRequest()
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -181,9 +188,12 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                 )
             }
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            if(e.message?.contains("409") == true){
+                return
+            }
+            throw MappingExceptions.UnexpectedErrorException("Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -199,9 +209,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                 )
             }
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -209,9 +219,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         return try{
             api.deleteRescueRequest(id)
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -219,9 +229,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         return try{
             api.getCancellationById(userId, clientId).toCancellationEvent()
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -235,9 +245,12 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                 ))
             }
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            if(e.message?.contains("409") == true){
+                return
+            }
+            throw MappingExceptions.UnexpectedErrorException("Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -253,9 +266,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                 ))
             }
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 
@@ -263,9 +276,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
         return try{
             api.deleteCancellationEvent(id)
         }catch (e:HttpException){
-            throw CustomExceptions.UnexpectedErrorException(e.localizedMessage ?: "Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
-            throw CustomExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
     }
 }

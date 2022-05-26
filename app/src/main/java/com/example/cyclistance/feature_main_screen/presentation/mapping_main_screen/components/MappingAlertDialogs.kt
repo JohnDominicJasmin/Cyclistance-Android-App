@@ -21,7 +21,7 @@ import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
 
 
-data class MappingDialogState(
+data class MappingDialogData(
     var icon: Int = 0,
     var title: String = "",
     var description: String = "")
@@ -43,7 +43,7 @@ fun Preview() {
 
 
         AlertDialogContent(
-            mappingDialogData = MappingDialogState(
+            mappingDialogData = MappingDialogData(
                 icon = R.drawable.ic_question,
                 title = "Are you sure?",
                 description = "You want to cancel rescue request?"),
@@ -75,7 +75,7 @@ fun AlertDialogCreator(
 
 @Composable
 fun AlertDialogContent(
-    mappingDialogData: MappingDialogState,
+    mappingDialogData: MappingDialogData,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit) {
     Card(
