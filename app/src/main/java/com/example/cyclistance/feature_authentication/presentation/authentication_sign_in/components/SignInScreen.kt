@@ -46,7 +46,7 @@ fun SignInScreen(
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
     val scope = rememberCoroutineScope()
-    val signInStateValue = signInViewModel.state.value
+    val signInState = signInViewModel.state.value
     val emailAuthStateValue = emailAuthViewModel.state.value
     val context = LocalContext.current
 
@@ -77,7 +77,7 @@ fun SignInScreen(
 
 
 
-    signInStateValue.also{ signInState ->
+
 
             var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
 
@@ -204,7 +204,6 @@ fun SignInScreen(
 
 
             }
-        }
     }
 
 

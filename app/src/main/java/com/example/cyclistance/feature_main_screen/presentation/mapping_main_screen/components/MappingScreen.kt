@@ -60,6 +60,7 @@ fun MappingScreen(
 
     val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
+    val state = mappingViewModel.state.value
 
     BackHandler(enabled = true, onBack = onBackPressed)
 
@@ -172,9 +173,9 @@ fun MappingScreen(
             }
 
 
-            ConstraintLayout() {
+            ConstraintLayout {
 
-                val (mapScreen, searchButton) = createRefs()
+                val (mapScreen, searchButton, circularProgressbar) = createRefs()
 
                 MapScreen(modifier = Modifier.constrainAs(mapScreen) {
                     top.linkTo(parent.top)
@@ -183,17 +184,29 @@ fun MappingScreen(
                     bottom.linkTo(parent.bottom)
                 })
 
-                SearchAssistanceButton(modifier =  Modifier.constrainAs(searchButton) {
-                    bottom.linkTo(parent.bottom, margin = 18.dp)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                }, onClick = {
-                    if (multiplePermissionsState.allPermissionsGranted) {
-                        postProfile()
-                        return@SearchAssistanceButton
-                    }
-                    multiplePermissionsState.launchMultiplePermissionRequest()
-                })
+                if(state.findAssistanceButtonVisible) {
+                    SearchAssistanceButton(modifier = Modifier.constrainAs(searchButton) {
+                        bottom.linkTo(parent.bottom, margin = 18.dp)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                    }, onClick = {
+                        if (multiplePermissionsState.allPermissionsGranted) {
+                            postProfile()
+                            return@SearchAssistanceButton
+                        }
+                        multiplePermissionsState.launchMultiplePermissionRequest()
+                    })
+                }
+
+                if(state.isLoading){
+                    CircularProgressIndicator(modifier = Modifier.constrainAs(circularProgressbar){
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                        bottom.linkTo(parent.bottom)
+                        this.centerTo(parent)
+                    })
+                }
 
             }
         })
