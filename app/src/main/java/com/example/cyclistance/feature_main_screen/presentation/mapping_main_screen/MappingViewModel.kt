@@ -37,57 +37,59 @@ class MappingViewModel @Inject constructor(
 
     fun onEvent(event: MappingEvent){
         when(event){
+
             is MappingEvent.UploadProfile -> {
                 viewModelScope.launch {
-                    event.addresses.also{ addresses ->
-                        if(addresses.isNotEmpty()){
-                            addresses.forEach { postUser(it) }
-                            return@also
-                        }
-                        _eventFlow.emit(MappingUiEvent.ShowToastMessage(
-                            message = "Searching for GPS"
-                        ))
+                    postUser(event.addresses)
+                }
+            }
 
+
+
+
+        }
+    }
+    
+    private suspend fun postUser(addresses: List<Address>) {
+
+
+        if (addresses.isNotEmpty()) {
+            addresses.forEach { address ->
+                kotlin.runCatching {
+                    with(address) {
+                        mappingUseCase.createUserUseCase(
+                            user = User(
+                                address = "$subThoroughfare $thoroughfare., $locality, $subAdminArea",
+                                id = getId(),
+                                location = Location(
+                                    lat = latitude.toString(),
+                                    lng = longitude.toString()),
+                                name = getName(),
+                                userAssistance = null
+                            ))
+                    }
+                }.onSuccess {
+                    _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
+                }.onFailure { exception ->
+                    when (exception) {
+                        is MappingExceptions.NoInternetException -> {
+                            _eventFlow.emit(MappingUiEvent.ShowNoInternetScreen)
+                        }
+                        is MappingExceptions.UnexpectedErrorException -> {
+                            _eventFlow.emit(
+                                MappingUiEvent.ShowToastMessage(
+                                    message = exception.message ?: "",
+                                ))
+                        }
 
                     }
                 }
             }
+        } else {
+            _eventFlow.emit(
+                MappingUiEvent.ShowToastMessage(
+                    message = "Searching for GPS"
+                ))
         }
     }
-    
-    private suspend fun postUser(address: Address){
-
-        kotlin.runCatching {
-            with(address) {
-                    mappingUseCase.createUserUseCase(
-                    user = User(
-                        address = "$subThoroughfare $thoroughfare., $locality, $subAdminArea",
-                        id = getId(),
-                        location = Location(
-                            lat = latitude.toString(),
-                            lng = longitude.toString()),
-                        name = getName(),
-                        userAssistance = null
-                    ))
-            }
-        }.onSuccess {
-            Timber.d("Successfully created user.")
-            _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
-        }.onFailure { exception ->
-            when(exception) {
-                is MappingExceptions.NoInternetException -> {
-                    _eventFlow.emit(MappingUiEvent.ShowNoInternetScreen)
-                }
-                is MappingExceptions.UnexpectedErrorException -> {
-                    _eventFlow.emit(MappingUiEvent.ShowToastMessage(
-                        message = exception.message ?: "",
-                    ))
-                }
-
-
-            }
-
-        }
-    }
-
 }
