@@ -9,7 +9,6 @@ import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_reques
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.GetRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.UpdateRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.user.*
-import com.example.cyclistance.feature_main_screen.domain.use_case.user_assistance.*
 
 data class MappingUseCase(
     val getCancellationByIdUseCase: GetCancellationByIdUseCase,
@@ -31,9 +30,4 @@ data class MappingUseCase(
     val updateUserUseCase: UpdateUserUseCase,
 
 
-    val getUserAssistanceByIdUseCase: GetUserAssistanceByIdUseCase,
-    val getUsersAssistanceUseCase: GetUsersAssistanceUseCase,
-    val createUserAssistanceUseCase: CreateUserAssistanceUseCase,
-    val deleteUserAssistanceUseCase: DeleteUserAssistanceUseCase,
-    val updateUserAssistanceUseCase: UpdateUserAssistanceUseCase,
 )

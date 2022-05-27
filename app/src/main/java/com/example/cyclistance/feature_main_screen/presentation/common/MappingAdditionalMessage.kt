@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.example.cyclistance.common.MappingConstants.MAX_CHARACTERS
 import com.example.cyclistance.theme.DisabledColor
 import com.example.cyclistance.theme.MessageTextFieldBackground
 
@@ -21,7 +22,7 @@ fun MappingAdditionalMessage(modifier: Modifier) {
     Column(modifier = modifier) {
 
 
-        val maxCharacter = 256
+
 
         Text(
             text = "Message",
@@ -55,7 +56,7 @@ fun MappingAdditionalMessage(modifier: Modifier) {
                         },
                     value = text,
                     onValueChange = { newText ->
-                        if (newText.text.length <= maxCharacter) {
+                        if (newText.text.length <= MAX_CHARACTERS) {
                             numberOfCharacters.value = newText.text.length
                             text = newText
                         }
@@ -78,7 +79,7 @@ fun MappingAdditionalMessage(modifier: Modifier) {
                 )
 
                 Text(
-                    text = "${numberOfCharacters.value}/$maxCharacter",
+                    text = "${numberOfCharacters.value}/$MAX_CHARACTERS",
                     color = DisabledColor,
                     modifier = Modifier
                         .padding(top = 5.dp, bottom = 5.dp)

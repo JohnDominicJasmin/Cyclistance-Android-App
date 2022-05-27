@@ -4,10 +4,8 @@ import com.example.cyclistance.feature_main_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toCancellationEvent
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toRescueRequest
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toUser
-import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toUserAssistance
 import com.example.cyclistance.feature_main_screen.data.remote.dto.CancellationEventDto
 import com.example.cyclistance.feature_main_screen.data.remote.dto.RescueRequestDto
-import com.example.cyclistance.feature_main_screen.data.remote.dto.UserAssistanceDto
 import com.example.cyclistance.feature_main_screen.data.remote.dto.UserDto
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_main_screen.domain.model.*
@@ -45,7 +43,8 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                         address = this.address,
                         id = this.id,
                         location = this.location,
-                        name = this.name
+                        name = this.name,
+                        userAssistance = user.userAssistance
                     ))
             }
         }catch (e:HttpException){
@@ -68,7 +67,8 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                       address = this.address,
                       id = this.id,
                       location = this.location,
-                      name = this.name
+                      name = this.name,
+                      userAssistance = this.userAssistance
                   )
               )
             }
@@ -95,77 +95,6 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
 
 
 
-
-
-
-
-
-    override suspend fun getUserAssistanceById(userId: String): UserAssistance {
-        return try{
-            api.getUserAssistanceById(userId).toUserAssistance()
-        }catch (e:HttpException){
-            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
-        }catch (e:IOException){
-            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
-        }
-    }
-
-    override suspend fun getUsersAssistance(): List<UserAssistance> {
-        return try{
-            api.getUsersAssistance().map{ it.toUserAssistance() }
-        }catch (e:HttpException){
-            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
-        }catch (e:IOException){
-            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
-        }
-    }
-
-    override suspend fun createUserAssistance(userAssistance: UserAssistance) {
-        return try{
-            with(userAssistance) {
-               api.createUserAssistance(userAssistanceDto = UserAssistanceDto(
-                   confirmationDetails = this.confirmationDetails,
-                   id = this.id,
-                   status = this.status
-               ))
-            }
-        }catch (e:HttpException){
-            if(e.message?.contains("409") == true){
-                return
-            }
-            throw MappingExceptions.UnexpectedErrorException("Unexpected error occurred.")
-        }catch (e:IOException){
-            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
-        }
-    }
-
-    override suspend fun updateUserAssistance(itemId: String, userAssistance: UserAssistance) {
-        return try{
-            with(userAssistance) {
-                api.updateUserAssistance(
-                    itemId = itemId,
-                    userAssistanceDto = UserAssistanceDto(
-                        confirmationDetails = this.confirmationDetails,
-                        id = this.id,
-                        status = this.status
-                    ))
-            }
-        }catch (e:HttpException){
-            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
-        }catch (e:IOException){
-            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
-        }
-    }
-
-    override suspend fun deleteUserAssistance(id: String) {
-        return try{
-            api.deleteUserAssistance(id)
-        }catch (e:HttpException){
-            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
-        }catch (e:IOException){
-            throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
-        }
-    }
 
     override suspend fun getRescueRequest(eventId: String): RescueRequest {
         return try{

@@ -11,19 +11,10 @@ fun UserDto.toUser():User{
         address = this.address,
         id = this.id,
         location = this.location,
-        name = this.name
+        name = this.name,
+        userAssistance = this.userAssistance
     )
 }
-
-
-fun UserAssistanceDto.toUserAssistance():UserAssistance{
-    return UserAssistance(
-        confirmationDetails = this.confirmationDetails,
-        id = this.id,
-        status = this.status
-    )
-}
-
 
 
 fun RescueRequestDto.toRescueRequest():RescueRequest{

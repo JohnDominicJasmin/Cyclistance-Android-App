@@ -22,27 +22,6 @@ interface CyclistanceApi {
     suspend fun deleteUser(@Path("item_id") itemId: String)
 
 
-
-    @GET("/api/v1/get-user-assistance-by-id/{user_id}")
-    suspend fun getUserAssistanceById(@Path("user_id") userId: String): UserAssistanceDto
-
-    @GET("/api/v1/get-users-assistance")
-    suspend fun getUsersAssistance(): List<UserAssistanceDto>
-
-    @POST("/api/v1/create-user-assistance")
-    suspend fun createUserAssistance(@Body userAssistanceDto: UserAssistanceDto)
-
-    @PATCH("/api/v1/update-user-assistance/{item_id}")
-    suspend fun updateUserAssistance(
-        @Path("item_id") itemId: String,
-        @Body userAssistanceDto: UserAssistanceDto)
-
-    @DELETE("/api/v1/delete-user-assistance/{item_id}")
-    suspend fun deleteUserAssistance(@Path("item_id") itemId: String)
-
-
-
-
     @GET("/api/v1/get-rescue-request/{event_id}")
     suspend fun getRescueRequest(@Path("event_id") eventId: String): RescueRequestDto
 
@@ -56,7 +35,6 @@ interface CyclistanceApi {
 
     @DELETE("/api/v1/delete-rescue-request/{event_id}")
     suspend fun deleteRescueRequest(@Path("event_id") eventId: String)
-
 
 
     @GET("/api/v1/get-cancellation-event/{id},{client_id}")

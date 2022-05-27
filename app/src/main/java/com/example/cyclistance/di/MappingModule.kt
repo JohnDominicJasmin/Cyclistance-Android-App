@@ -14,7 +14,7 @@ import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_reques
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.GetRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.UpdateRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.user.*
-import com.example.cyclistance.feature_main_screen.domain.use_case.user_assistance.*
+import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,9 +31,11 @@ object MappingModule {
     @Singleton
     fun provideCyclistanceApi():CyclistanceApi{
 
+        val gson = GsonBuilder().serializeNulls().create()
+
         return Retrofit.Builder()
             .baseUrl(CYCLISTANCE_API_BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(CyclistanceApi::class.java)
 
@@ -54,12 +56,6 @@ object MappingModule {
             createUserUseCase = CreateUserUseCase(repository),
             deleteUserUseCase = DeleteUserUseCase(repository),
             updateUserUseCase = UpdateUserUseCase(repository),
-
-            getUsersAssistanceUseCase = GetUsersAssistanceUseCase(repository),
-            getUserAssistanceByIdUseCase = GetUserAssistanceByIdUseCase(repository),
-            createUserAssistanceUseCase = CreateUserAssistanceUseCase(repository),
-            deleteUserAssistanceUseCase = DeleteUserAssistanceUseCase(repository),
-            updateUserAssistanceUseCase = UpdateUserAssistanceUseCase(repository),
 
             getRescueRequestUseCase = GetRescueRequestUseCase(repository),
             createRescueRequestUseCase = CreateRescueRequestUseCase(repository),

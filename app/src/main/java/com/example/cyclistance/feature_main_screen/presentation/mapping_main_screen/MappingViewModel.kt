@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_main_screen.data.remote.dto.Location
+import com.example.cyclistance.feature_main_screen.data.remote.dto.UserAssistance
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_main_screen.domain.model.User
 import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCase
@@ -65,7 +66,8 @@ class MappingViewModel @Inject constructor(
                         location = Location(
                             lat = latitude.toString(),
                             lng = longitude.toString()),
-                        name = getName()
+                        name = getName(),
+                        userAssistance = null
                     ))
             }
         }.onSuccess {
