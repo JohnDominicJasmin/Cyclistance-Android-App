@@ -49,11 +49,7 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                     ))
             }
         }catch (e:HttpException){
-            if(e.message?.contains("409") == true){
-                return
-            }
-            throw MappingExceptions.UnexpectedErrorException("Unexpected error occurred.")
-
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
             throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
@@ -119,10 +115,7 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                 )
             }
         }catch (e:HttpException){
-            if(e.message?.contains("409") == true){
-                return
-            }
-            throw MappingExceptions.UnexpectedErrorException("Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
             throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
@@ -176,10 +169,7 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                 ))
             }
         }catch (e:HttpException){
-            if(e.message?.contains("409") == true){
-                return
-            }
-            throw MappingExceptions.UnexpectedErrorException("Unexpected error occurred.")
+            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
         }catch (e:IOException){
             throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
         }
