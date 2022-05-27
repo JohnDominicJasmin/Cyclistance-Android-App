@@ -12,6 +12,8 @@ data class UserDto(
     val location: Location,
     @SerializedName("name")
     val name: String,
+    @SerializedName("user_needed_help")
+    val userNeededHelp: Boolean = false,
     @SerializedName("user_assistance")
-    val userAssistance: UserAssistance? = null
+    val userAssistance: UserAssistance = UserAssistance()
 )

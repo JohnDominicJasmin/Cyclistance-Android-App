@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class UserAssistance(
     @SerializedName("confirmationDetails")
-    val confirmationDetails: ConfirmationDetails,
+    val confirmationDetails: ConfirmationDetails = ConfirmationDetails(),
     @SerializedName("status")
-    val status: Status
+    val status: Status = Status()
 )

@@ -9,5 +9,6 @@ data class User(
     val id: String,
     val location: Location,
     val name: String,
-    val userAssistance: UserAssistance? = null
+    val userNeededHelp: Boolean = false,
+    val userAssistance: UserAssistance = UserAssistance()
 )

@@ -5,11 +5,11 @@ import com.google.gson.annotations.SerializedName
 
 data class ConfirmationDetails(
     @SerializedName("address")
-    val address: String,
+    val address: String = "",
     @SerializedName("bike_type")
-    val bikeType: String,
+    val bikeType: String = "",
     @SerializedName("description")
-    val description: String,
+    val description: String = "",
     @SerializedName("message")
-    val message: String
+    val message: String = ""
 )

@@ -5,11 +5,11 @@ import com.google.gson.annotations.SerializedName
 
 data class Status(
     @SerializedName("finished")
-    val finished: Boolean,
+    val finished: Boolean = false,
     @SerializedName("ongoing")
-    val ongoing: Boolean,
+    val ongoing: Boolean = false,
     @SerializedName("searching")
-    val searching: Boolean,
+    val searching: Boolean = false,
     @SerializedName("started")
-    val started: Boolean
+    val started: Boolean = false
 )

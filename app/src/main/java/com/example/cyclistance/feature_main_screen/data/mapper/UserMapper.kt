@@ -12,6 +12,7 @@ fun UserDto.toUser():User{
         id = this.id,
         location = this.location,
         name = this.name,
+        userNeededHelp = this.userNeededHelp,
         userAssistance = this.userAssistance
     )
 }
