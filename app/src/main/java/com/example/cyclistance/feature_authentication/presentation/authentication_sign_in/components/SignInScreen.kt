@@ -54,9 +54,7 @@ fun SignInScreen(
     val authResultLauncher = rememberLauncherForActivityResult(contract = AuthResult()) { task ->
         try {
             val account: GoogleSignInAccount? = task?.getResult(ApiException::class.java)
-            if (account == null) {
-                Toast.makeText(context, "Google Sign In Failed", Toast.LENGTH_SHORT).show()
-            } else {
+            account?.let{
                 scope.launch {
                     signInViewModel.onEvent(event = SignInEvent.SignInGoogle(authCredential = GoogleAuthProvider.getCredential(account.idToken, null)))
                 }
