@@ -82,14 +82,6 @@ fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
                         style = MaterialTheme.typography.subtitle2)
                 }
 
-                TextButton(
-                    modifier = Modifier.padding(end = 8.dp),
-                    onClick = { isVisible.value = false }) {
-                    Text(
-                        text = "MESSAGE",
-                        color = ThemeColor,
-                        style = MaterialTheme.typography.subtitle2)
-                }
             }
             Divider()
         }

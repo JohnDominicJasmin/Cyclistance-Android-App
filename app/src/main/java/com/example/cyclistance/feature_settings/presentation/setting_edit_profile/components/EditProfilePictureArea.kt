@@ -1,10 +1,7 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -22,20 +19,18 @@ import com.example.cyclistance.theme.ChangeProfileTextColor
 
 @Composable
 fun ProfilePictureArea(modifier: Modifier) {
+
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(6.5.dp, alignment = Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally) {
 
-        val imageSize = 90.dp
-
         Box {
 
             Image(
-                painter = painterResource(id = R.drawable.mike_tyson),
+                painter = painterResource(R.drawable.person_image),
                 contentDescription = "Profile_Screen",
                 modifier = Modifier
-                    .size(imageSize)
                     .clip(CircleShape),
                 contentScale = ContentScale.Crop,
             )
@@ -44,12 +39,9 @@ fun ProfilePictureArea(modifier: Modifier) {
                 painter = painterResource(id = R.drawable.ic_picture_frame),
                 contentDescription = "Profile Picture Frame",
                 modifier = Modifier
-                    .size(imageSize),
+                    .fillMaxSize(),
                 contentScale = ContentScale.Crop)
         }
-        Text(
-            text = "Change Profile Photo",
-            color = ChangeProfileTextColor,
-            style = MaterialTheme.typography.caption, fontWeight = FontWeight.SemiBold)
+
     }
 }

@@ -16,12 +16,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
 import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.theme.ThemeColor
-
+@Preview(showSystemUi = true)
 @Composable
 fun MappingDrawerContent() {
 
@@ -39,19 +41,11 @@ fun MappingDrawerContent() {
 
             Column(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Bottom,
                 horizontalAlignment = Alignment.CenterHorizontally) {
 
-                Spacer(modifier = Modifier.height(10.dp))
-                Image(
-                    painter = painterResource(R.drawable.person_image),
-                    contentDescription = "User Picture",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .size(68.dp)
-                        .clip(CircleShape)
-                        .border(2.dp, ThemeColor, CircleShape)
-                )
+
+                ProfilePictureArea(modifier = Modifier.size(105.dp))
 
                 Text(
                     text = "John Doe",
@@ -67,27 +61,6 @@ fun MappingDrawerContent() {
 
                 Spacer(modifier = Modifier.height(15.dp))
 
-                Button(
-                    onClick = {  },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = ThemeColor,
-                        contentColor = Color(0xFF424242)),
-                    shape = RoundedCornerShape(17.dp),
-                    modifier = Modifier.height(30.dp).width(125.dp),) {
-
-                    Text(
-                        text = "Edit Profile",
-                        color = Color(0xFF424242),
-                        style = MaterialTheme.typography.caption,
-                        textAlign = TextAlign.Center, modifier = Modifier.weight(0.88f))
-
-                    Icon(
-                        modifier = Modifier.size(10.dp),
-                        painter = painterResource(id = R.drawable.ic_right_arrow),
-                        contentDescription = "Edit Profile",
-                        tint = Color(0xFF424242))
-                }
-                Spacer(modifier = Modifier.height(10.dp))
 
 
             }
@@ -141,29 +114,6 @@ fun MappingDrawerContent() {
 
 }
 
-@Composable
-fun EditProfileButtonPreview() {
-    Button(
-        onClick = {  },
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = ThemeColor,
-            contentColor = Color(0xFF424242)),
-        shape = RoundedCornerShape(17.dp),
-        modifier = Modifier.height(30.dp).width(125.dp),) {
-
-            Text(
-                text = "Edit Profile",
-                color = Color(0xFF424242),
-                style = MaterialTheme.typography.caption,
-                textAlign = TextAlign.Center, modifier = Modifier.weight(0.88f))
-
-            Icon(
-                modifier = Modifier.size(10.dp),
-                painter = painterResource(id = R.drawable.ic_right_arrow),
-                contentDescription = "Edit Profile",
-                tint = Color(0xFF424242))
-    }
-}
 
 @Composable
 fun DrawerContentButtonItem(

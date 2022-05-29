@@ -2,9 +2,12 @@ package com.example.cyclistance.feature_settings.presentation.setting_edit_profi
 
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -22,16 +25,29 @@ fun EditProfileScreen(navigateTo: (destination: String, popUpToDestination: Stri
             .background(BackgroundColor)) {
 
 
-        val (profilePictureArea, textFieldInputArea, buttonNavigationArea) = createRefs()
+        val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText) = createRefs()
 
         ProfilePictureArea(modifier = Modifier
-            .wrapContentSize()
+            .size(105.dp)
             .constrainAs(profilePictureArea) {
                 top.linkTo(parent.top, margin = 18.dp)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-                height = Dimension.percent(0.2f)
+
             })
+
+
+        Text(
+            text = "Change Profile Photo",
+            color = ChangeProfileTextColor,
+            style = MaterialTheme.typography.caption, fontWeight = FontWeight.SemiBold,
+        modifier = Modifier.constrainAs(changePhotoText){
+            top.linkTo(profilePictureArea.bottom, margin = 4.dp)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+
+        })
+
 
         TextFieldInputArea(modifier = Modifier
             .constrainAs(textFieldInputArea) {
