@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in
 
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.TextFieldValue
 
 data class SignInState(
@@ -9,4 +10,6 @@ data class SignInState(
     var passwordErrorMessage: String = "",
     var passwordVisibility: Boolean = false,
     var isLoading: Boolean = false,
-)
+    val focusRequester: FocusRequester = FocusRequester(),
+
+    )

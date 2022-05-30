@@ -7,6 +7,7 @@ import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEvent
@@ -17,6 +18,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.*
 @Composable
 fun SignUpTextFieldsArea(
     state: SignUpState,
+    focusRequester: FocusRequester,
     signUpViewModel: SignUpViewModel? = null,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
 
@@ -31,6 +33,7 @@ fun SignUpTextFieldsArea(
 
 
             EmailTextField(
+                focusRequester = focusRequester,
                 textFieldValue = email,
                 emailExceptionMessage = emailErrorMessage,
                 clearIconOnClick = {

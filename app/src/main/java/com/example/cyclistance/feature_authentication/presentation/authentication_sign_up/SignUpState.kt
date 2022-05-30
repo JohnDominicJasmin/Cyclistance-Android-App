@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up
 
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.TextFieldValue
 
 data class SignUpState(
@@ -10,5 +11,6 @@ data class SignUpState(
     var passwordErrorMessage: String = "",
     var confirmPasswordErrorMessage: String = "",
     var passwordVisibility: Boolean = false,
+    var focusRequester: FocusRequester = FocusRequester(),
     var isLoading: Boolean = false,
 )

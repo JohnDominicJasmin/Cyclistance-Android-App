@@ -13,13 +13,14 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.theme.Black500
-import timber.log.Timber
 
 
 @Composable
@@ -98,6 +99,7 @@ fun PasswordTextField(
 
 @Composable
 private fun SetupTextField(
+    focusRequester: FocusRequester = FocusRequester(),
     textFieldValue: TextFieldValue,
     exceptionMessage: String,
     onValueChange: (TextFieldValue) -> Unit,
@@ -119,7 +121,8 @@ private fun SetupTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .shadow(10.dp, shape = RoundedCornerShape(12.dp), clip = true),
+                .shadow(10.dp, shape = RoundedCornerShape(12.dp), clip = true)
+                .focusRequester(focusRequester),
             value = textFieldValue,
             onValueChange = onValueChange,
             singleLine = true,
@@ -158,6 +161,7 @@ private fun SetupTextField(
 
 @Composable
 fun EmailTextField(
+    focusRequester: FocusRequester,
     textFieldValue: TextFieldValue,
     emailExceptionMessage: String,
     clearIconOnClick: ()-> Unit,
@@ -166,6 +170,7 @@ fun EmailTextField(
     val hasError = emailExceptionMessage.isNotEmpty()
 
     SetupTextField(
+        focusRequester = focusRequester,
         textFieldValue = textFieldValue,
         exceptionMessage = emailExceptionMessage,
         onValueChange = onValueChange,

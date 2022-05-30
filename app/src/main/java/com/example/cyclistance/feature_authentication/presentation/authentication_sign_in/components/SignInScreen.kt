@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -88,7 +89,7 @@ fun SignInScreen(
             var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
 
             LaunchedEffect(key1 = true) {
-
+                signInStateValue.focusRequester.requestFocus()
                 signInViewModel.eventFlow.collectLatest { signInEvent ->
 
                     when (signInEvent) {
@@ -180,6 +181,7 @@ fun SignInScreen(
 
 
                     SignInTextFieldsArea(
+                        focusRequester = signInStateValue.focusRequester,
                         state = signInStateValue,
                         signInViewModel = signInViewModel,
                         keyboardActionOnDone = {
@@ -272,7 +274,7 @@ fun SignInScreenPreview() {
                 SignInTextFieldsArea(
                     state = SignInState(),
                     keyboardActionOnDone = { },
-                    signInViewModel = null)
+                    signInViewModel = null, focusRequester = FocusRequester())
 
                 SignInGoogleAndFacebookSection(
                     facebookButtonOnClick = {

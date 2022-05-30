@@ -4,12 +4,12 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -30,7 +30,6 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpViewModel
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -41,9 +40,9 @@ fun SignUpScreen(
     mappingViewModel: MappingViewModel = hiltViewModel(),
     navigateTo : (destination: String, popUpToDestination: String?) -> Unit) {
 
-    val stateValue = signUpViewModel.state.value
+    val signUpStateValue by signUpViewModel.state
     val focusManager = LocalFocusManager.current
-    with(stateValue) {
+    with(signUpStateValue) {
 
         val hasAccountSignedIn = remember { signUpViewModel.hasAccountSignedIn() }
         val isUserCreatedNewAccount = remember { email.text != mappingViewModel.getEmail() }
@@ -59,6 +58,7 @@ fun SignUpScreen(
 
 
         LaunchedEffect(key1 = true){
+            signUpStateValue.focusRequester.requestFocus()
             signUpViewModel.eventFlow.collectLatest{ event ->
 
                 when(event){
@@ -123,6 +123,7 @@ fun SignUpScreen(
                 }
 
                 SignUpTextFieldsArea(
+                    focusRequester = signUpStateValue.focusRequester,
                     state = this@with,
                     signUpViewModel = signUpViewModel,
                     keyboardActionOnDone = {
@@ -189,7 +190,7 @@ fun SignUpScreenPreview() {
 
 
 
-                SignUpTextFieldsArea(
+                SignUpTextFieldsArea(focusRequester = FocusRequester(),
                     state = SignUpState(email = TextFieldValue("Testing@gmail,com")),
                     signUpViewModel = null,
                     keyboardActionOnDone = { }
