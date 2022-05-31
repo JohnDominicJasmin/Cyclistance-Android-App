@@ -82,7 +82,7 @@ fun ConfirmationDetailsScreen() {
             modifier = Modifier
                 .constrainAs(buttonNavButtonSection) {
                     top.linkTo(additionalMessageSection.bottom, margin = 50.dp)
-                    bottom.linkTo(parent.bottom, margin = 2.dp)
+                    bottom.linkTo(parent.bottom, margin = 12.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
                     height = Dimension.wrapContent

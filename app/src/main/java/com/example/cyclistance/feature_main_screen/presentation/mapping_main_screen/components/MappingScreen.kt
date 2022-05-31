@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.os.Build
 import android.widget.Toast
@@ -50,6 +51,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
+@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @ExperimentalPermissionsApi
 @Composable
 fun MappingScreen(
@@ -150,66 +152,65 @@ fun MappingScreen(
             }
         },
         drawerContent = { MappingDrawerContent() },
-        content = {
+    content = {
+        RequestMultiplePermissions(
+            multiplePermissionsState = multiplePermissionsState, onPermissionGranted = {
+                if (!ConnectionStatus.hasGPSConnection(context)) {
+                    checkLocationSetting(
+                        context = context,
+                        onDisabled = settingResultRequest::launch,
+                        onEnabled = {
+                            lastLocation.beginLocationUpdates()
+                        })
+                }
+            })
 
-            RequestMultiplePermissions(
-                multiplePermissionsState = multiplePermissionsState, onPermissionGranted = {
-                    if (!ConnectionStatus.hasGPSConnection(context)) {
-                        checkLocationSetting(
-                            context = context,
-                            onDisabled = settingResultRequest::launch,
-                            onEnabled = {
-                                lastLocation.beginLocationUpdates()
-                            })
-                    }
+        if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
+            SetupAlertDialog(
+                alertDialog = alertDialogState,
+                onDismissRequest = {
+                    alertDialogState = AlertDialogData()
                 })
+        }
 
-            if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
-                SetupAlertDialog(
-                    alertDialog = alertDialogState,
-                    onDismissRequest = {
-                        alertDialogState = AlertDialogData()
-                    })
+
+        ConstraintLayout {
+
+            val (mapScreen, searchButton, circularProgressbar) = createRefs()
+
+            MapScreen(modifier = Modifier.constrainAs(mapScreen) {
+                top.linkTo(parent.top)
+                end.linkTo(parent.end)
+                start.linkTo(parent.start)
+                bottom.linkTo(parent.bottom)
+            })
+
+            if(state.findAssistanceButtonVisible) {
+                SearchAssistanceButton(modifier = Modifier.constrainAs(searchButton) {
+                    bottom.linkTo(parent.bottom, margin = 18.dp)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                }, onClick = {
+                    if (multiplePermissionsState.allPermissionsGranted) {
+                        postProfile()
+                        return@SearchAssistanceButton
+                    }
+                    multiplePermissionsState.launchMultiplePermissionRequest()
+                })
             }
 
-
-            ConstraintLayout {
-
-                val (mapScreen, searchButton, circularProgressbar) = createRefs()
-
-                MapScreen(modifier = Modifier.constrainAs(mapScreen) {
+            if(state.isLoading){
+                CircularProgressIndicator(modifier = Modifier.constrainAs(circularProgressbar){
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom)
+                    this.centerTo(parent)
                 })
-
-                if(state.findAssistanceButtonVisible) {
-                    SearchAssistanceButton(modifier = Modifier.constrainAs(searchButton) {
-                        bottom.linkTo(parent.bottom, margin = 18.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                    }, onClick = {
-                        if (multiplePermissionsState.allPermissionsGranted) {
-                            postProfile()
-                            return@SearchAssistanceButton
-                        }
-                        multiplePermissionsState.launchMultiplePermissionRequest()
-                    })
-                }
-
-                if(state.isLoading){
-                    CircularProgressIndicator(modifier = Modifier.constrainAs(circularProgressbar){
-                        top.linkTo(parent.top)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                        this.centerTo(parent)
-                    })
-                }
-
             }
-        })
+
+        }
+    })
 
 }
 
