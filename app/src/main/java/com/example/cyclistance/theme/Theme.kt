@@ -10,31 +10,26 @@ import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorPalette = darkColors(
-    primary = ThemeColor,
-    secondary = Color.White,
-    background = BackgroundColor,// background color
-    surface =  TextFieldBackgroundColor, //TextFieldBackgroundColor
-
+    primary = Orange300,
+    primaryVariant = Orange30,
+    secondary = Black850,
+    background = Black900,
+    surface = Black800,
+    error = Red600,
+    onPrimary = Color.Black,
+    onSecondary = Color.White,
+    onBackground = Color.White,
+    onSurface = Color.White,
+    onError = Color.White,
 )
 
 private val LightColorPalette = lightColors(
-    primary = Purple500,
-    primaryVariant = Purple700,
-    secondary = Teal200
-    /* Other default colors to override
-    background = Color.White,
-    surface = Color.White,
-    onPrimary = Color.White,
-    onSecondary = Color.Black,
-    onBackground = Color.Black,
-    onSurface = Color.Black,
-    */
+
 )
 
 @Composable
 fun CyclistanceTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {
     val systemUiController = rememberSystemUiController()
-
 
 
     val colors = if (darkTheme) {
