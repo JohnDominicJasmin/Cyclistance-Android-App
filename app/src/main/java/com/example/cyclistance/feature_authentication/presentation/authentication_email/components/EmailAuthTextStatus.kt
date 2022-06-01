@@ -21,6 +21,8 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 
 @Composable
 fun EmailAuthTextStatus(email:String) {
+
+
     Column(
         modifier = Modifier.layoutId(AuthenticationConstraintsItem.WelcomeTextArea.layoutId),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -29,26 +31,26 @@ fun EmailAuthTextStatus(email:String) {
 
         Text(
             text = "Confirm your email address",
-            color = Color.White,
+            color = MaterialTheme.colors.onBackground,
             fontSize = 16.sp,
             fontWeight = FontWeight.SemiBold,
             textAlign = TextAlign.Center)
         
         Text(text = "We sent confirmation email to:",
-            color = Color.White,
+            color = MaterialTheme.colors.onBackground,
             fontSize = 16.sp,
             fontWeight = FontWeight.Thin,
             textAlign = TextAlign.Center)
 
         Text(text = email,
-            color = Color.White,
+            color = MaterialTheme.colors.onBackground,
             fontSize = 16.sp,
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center)
 
         Text(text = "Check your email and click on the \n" +
                 " confirmation link to continue.",
-            color = Color.White,
+            color = MaterialTheme.colors.onBackground,
             fontSize = 16.sp,
             fontWeight = FontWeight.Thin,
             textAlign = TextAlign.Center)

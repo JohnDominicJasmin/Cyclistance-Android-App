@@ -14,6 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.theme.Blue500
+import com.example.cyclistance.theme.Blue600
 
 @Composable
 fun SignInClickableText(onClick:()->Unit) {
@@ -26,7 +28,7 @@ fun SignInClickableText(onClick:()->Unit) {
             withStyle(style = SpanStyle(color = MaterialTheme.colors.onBackground, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)){
                 append(text = "Don't have an account?" )
             }
-            withStyle(style = SpanStyle(color = Color(0xFF5786FF),fontWeight = FontWeight.SemiBold,fontSize = 14.sp)){
+            withStyle(style = SpanStyle(color = Blue600, fontWeight = FontWeight.SemiBold,fontSize = 14.sp)){
                 append(" ")
                 append(text = "Sign up")
             }

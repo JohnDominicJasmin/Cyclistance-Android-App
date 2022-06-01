@@ -42,7 +42,7 @@ fun SignUpButton(onClickButton: ()-> Unit) {
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "Sign Up", color = Color.Black, fontSize = 16.sp)
+            Text(text = "Sign Up", color = MaterialTheme.colors.onPrimary, fontSize = 16.sp)
         }
     }
 

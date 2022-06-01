@@ -35,7 +35,7 @@ fun SignInButton(onClickButton: ()-> Unit) {
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "Sign In", color = Color.Black, fontSize = 16.sp)
+            Text(text = "Sign In", color = MaterialTheme.colors.onPrimary, fontSize = 16.sp)
         }
     }
 
