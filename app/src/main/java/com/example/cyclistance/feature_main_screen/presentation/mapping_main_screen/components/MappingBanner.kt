@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import com.example.cyclistance.theme.Shapes
-import com.example.cyclistance.theme.ThemeColor
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -32,8 +31,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
-import com.example.cyclistance.theme.DisabledColor
-import com.example.cyclistance.theme.ShowableDisplaysBackgroundColor
+import com.example.cyclistance.theme.Black440
+import com.example.cyclistance.theme.Black450
 
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -56,7 +55,7 @@ fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(ShowableDisplaysBackgroundColor)) {
+                .background(MaterialTheme.colors.surface)) {
 
             Text(
                 modifier = Modifier.padding(
@@ -78,7 +77,7 @@ fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
 
                     Text(
                         text = "DISMISS",
-                        color = ThemeColor,
+                        color = MaterialTheme.colors.primary,
                         style = MaterialTheme.typography.subtitle2)
                 }
 
@@ -123,7 +122,7 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
                     )
                 ),
             shape = Shapes.medium,
-            onClick = { expandedState = !expandedState }, backgroundColor = ShowableDisplaysBackgroundColor) {
+            onClick = { expandedState = !expandedState }, backgroundColor = MaterialTheme.colors.surface) {
 
             Column(modifier = Modifier.fillMaxWidth()) {
 
@@ -181,7 +180,7 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
                         fontWeight = FontWeight.SemiBold,
                         fontSize = MaterialTheme.typography.subtitle1.fontSize,
                         text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(color = DisabledColor)) {
+                            withStyle(style = SpanStyle(color = Black440)) {
                                 append("Issue:")
                             }
 
@@ -204,7 +203,7 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
                                 append(distanceRemaining)
                             }
 
-                            withStyle(style = SpanStyle(color = DisabledColor)) {
+                            withStyle(style = SpanStyle(color = Black440)) {
                                 append("\n" + timeRemaining)
                             }
 
@@ -222,7 +221,7 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
                         }) {
 
                             Divider(
-                                color = DisabledColor,
+                                color = Black450,
                                 modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
 
                             Row(
@@ -248,7 +247,7 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
                             }
 
                             Divider(
-                                color = DisabledColor,
+                                color = Black450,
                                 modifier = Modifier.padding(top = 10.dp, bottom = 10.dp))
 
 
@@ -256,7 +255,7 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
                                 text = "Message",
                                 fontSize = MaterialTheme.typography.subtitle1.fontSize,
                                 fontWeight = FontWeight.Normal,
-                                color = DisabledColor
+                                color = Black440
                             )
                             Text(
                                 text = message,

@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.cyclistance.R
-import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
 
 
@@ -83,7 +82,7 @@ fun AlertDialogContent(
             .fillMaxWidth()
             .wrapContentHeight(),
         shape = RoundedCornerShape(12.dp),
-        backgroundColor = BackgroundColor ) {
+        backgroundColor = MaterialTheme.colors.background ) {
 
         Column(
             modifier = Modifier

@@ -20,8 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
-import com.example.cyclistance.theme.BackgroundColor
-import com.example.cyclistance.theme.ThemeColor
 import com.example.cyclistance.utils.ConnectionStatus
 
 
@@ -39,14 +37,14 @@ fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)) {
+            .background(MaterialTheme.colors.background)) {
 
 
         ConstraintLayout(
             modifier = Modifier
                 .wrapContentSize()
                 .padding(start = 25.dp, end = 25.dp)
-                .background(BackgroundColor)) {
+                .background(MaterialTheme.colors.background)) {
 
             val (image, title, description, retryButton, goToSettingsButton) = createRefs()
 
@@ -112,7 +110,7 @@ fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
                     },
                 border = BorderStroke(width = 2.dp, color = Color(0xFFDDDDDD)),
                 colors = ButtonDefaults.outlinedButtonColors(
-                    backgroundColor = BackgroundColor,
+                    backgroundColor = MaterialTheme.colors.background,
                     contentColor = Color.White)) {
 
                 Text(
@@ -131,7 +129,7 @@ fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
                 },
                 colors = ButtonDefaults.textButtonColors(
                     backgroundColor = Color.Transparent,
-                    contentColor = ThemeColor),
+                    contentColor = MaterialTheme.colors.primary),
                 modifier = Modifier
                     .padding(1.dp)
                     .wrapContentWidth()
@@ -146,7 +144,7 @@ fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
                 Text(
                     text = "Go to Settings",
                     style = MaterialTheme.typography.button,
-                    color = ThemeColor)
+                    color = MaterialTheme.colors.primary)
 
 
             }

@@ -13,7 +13,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.R
-import com.example.cyclistance.theme.TopAppBarBackgroundColor
 
 @Composable
 fun TopAppBarCreator(
@@ -25,7 +24,7 @@ fun TopAppBarCreator(
     TopAppBar(
         elevation = 10.dp,
         title = { topAppBarTitle() },
-        backgroundColor = TopAppBarBackgroundColor,
+        backgroundColor = MaterialTheme.colors.background,
         navigationIcon = {
             IconButton(onClick = onClickIcon) {
                 Icon(icon, contentDescription = "", tint = Color.White)

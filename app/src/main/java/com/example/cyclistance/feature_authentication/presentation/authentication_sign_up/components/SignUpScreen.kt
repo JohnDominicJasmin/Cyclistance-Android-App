@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,7 +21,6 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.common.AppImageIcon
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
-import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -79,13 +79,13 @@ fun SignUpScreen(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .background(BackgroundColor)) {
+                .background(MaterialTheme.colors.background)) {
 
             ConstraintLayout(
                 constraintSet = signUpConstraints,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(BackgroundColor)) {
+                    .background(MaterialTheme.colors.background)) {
 
                 AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
                 SignUpTextArea()

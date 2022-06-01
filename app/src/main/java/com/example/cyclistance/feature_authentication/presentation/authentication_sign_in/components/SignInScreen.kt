@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -30,7 +31,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.domain.util.AuthResult
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
-import com.example.cyclistance.theme.BackgroundColor
+import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
@@ -141,13 +142,13 @@ fun SignInScreen(
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(BackgroundColor)) {
+                    .background(MaterialTheme.colors.background)) {
 
                 ConstraintLayout(
                     constraintSet = signInConstraints,
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(BackgroundColor)) {
+                        .background(MaterialTheme.colors.background)) {
 
 
                     AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)

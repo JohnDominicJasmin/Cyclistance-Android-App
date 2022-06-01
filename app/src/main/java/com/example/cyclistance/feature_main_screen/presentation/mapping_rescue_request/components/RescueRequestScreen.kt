@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -15,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.cyclistance.theme.BackgroundColor
 
  val sampleCardState = listOf(
 
@@ -63,7 +63,7 @@ import com.example.cyclistance.theme.BackgroundColor
 fun RescueRequestScreen() {
     ConstraintLayout(modifier = Modifier
         .fillMaxSize()
-        .background(BackgroundColor)) {
+        .background(MaterialTheme.colors.background)) {
 
         val (items, titleText ) = createRefs()
 

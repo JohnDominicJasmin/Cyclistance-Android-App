@@ -2,11 +2,12 @@ package com.example.cyclistance.theme
 
 import androidx.compose.ui.graphics.Color
 
+/*
 val BackgroundColor = Color(0xFF303234)
 val TextFieldBackgroundColor = Color(0xFF545454)
 val ThemeColor = Color(0xFFEBAD52)
 val GoogleButtonTextColor = Color(0xFF8C8C8C)
-val TextFieldTextHintColor = Color(0xFFC4C4C4)
+//val TextFieldTextHintColor = Color(0xFFC4C4C4)
 val FacebookColor = Color(0xFF3B5998)
 val DisabledColor = Color(0xFF9F9E9D)
 val TopAppBarBackgroundColor = Color(0xFF3B3B3B)
@@ -20,15 +21,21 @@ val EditProfileTextFieldIndicatorColor = Color(0xFF959595)
 val ErrorColor = Color(0xFFFF746B)
 val MessageTextFieldBackground = Color(0xFF404040)
 
+*/
 
 
-
+//919191
 
 val Black900 = Color(0xFF303234)//background color
-val Black850 = Color(0xFF494949)//textfield color secondary
-val Black800 = Color(0xFF4F4F4F)
+val Black850 = Color(0xFF5A5A5A)//textfield color secondary
+val Black800 = Color(0xFF484848)
+val Black500 = Color(0xFFA5A5A5)
+val Black450 = Color(0xFF8C8C8C)
+val Black440 = Color(0xFF979797)
 
 val Orange300 = Color(0xFFEBAD52)
 val Orange30 = Color(0x4DD6B27B)
 
-val Red600 = Color(0xFFFF746B)
+val _Red600 = Color(0xFFFF746B)
+
+val Blue500 = Color(0xFF3B5998)

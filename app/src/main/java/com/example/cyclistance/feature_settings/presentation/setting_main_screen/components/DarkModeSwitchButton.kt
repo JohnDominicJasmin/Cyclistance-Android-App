@@ -10,8 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.theme.BackgroundColor
-import com.example.cyclistance.theme.ThemeColor
 
 
 @Composable
@@ -22,7 +20,7 @@ fun DarkModeSwitchButton(checkedState: Boolean,onCheckedChange: ((Boolean) -> Un
 
         modifier = Modifier
             .fillMaxWidth()
-            .background(BackgroundColor)
+            .background(MaterialTheme.colors.background)
             .padding(start = 3.dp)
             .wrapContentSize()
             .clickable {
@@ -35,7 +33,7 @@ fun DarkModeSwitchButton(checkedState: Boolean,onCheckedChange: ((Boolean) -> Un
                 .weight(0.9f)
                 .padding(top = 7.dp, bottom = 7.dp))
 
-        Switch(colors = SwitchDefaults.colors(checkedThumbColor = ThemeColor, uncheckedThumbColor = ThemeColor,    ),
+        Switch(colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colors.primary, uncheckedThumbColor = MaterialTheme.colors.primary,    ),
             checked = checkedState,
             onCheckedChange = onCheckedChange
         )

@@ -22,9 +22,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
-import com.example.cyclistance.theme.TextFieldTextHintColor
-import com.example.cyclistance.theme.EditProfileTextFieldIndicatorColor
-import com.example.cyclistance.theme.ErrorColor
+import com.example.cyclistance.theme.*
 
 
 @Composable
@@ -101,7 +99,7 @@ fun TextFieldItem(
         Text(
             text = label,
             style = MaterialTheme.typography.caption,
-            color = TextFieldTextHintColor,
+            color = Black500,
             modifier = Modifier.padding(bottom = 5.dp))
 
         BasicTextField(
@@ -121,7 +119,7 @@ fun TextFieldItem(
         )
         Divider(
             modifier = Modifier
-                .fillMaxWidth(), color = EditProfileTextFieldIndicatorColor)
+                .fillMaxWidth(), color = Black450)
 
         if (hasError) {
 
@@ -130,7 +128,7 @@ fun TextFieldItem(
                 verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Error,
-                    tint = ErrorColor,
+                    tint = MaterialTheme.colors.error,
                     modifier = Modifier.size(12.dp),
                     contentDescription = "Icon error")
                 ErrorMessage(errorMessage = errorMessage, modifier = Modifier.padding(1.2.dp))

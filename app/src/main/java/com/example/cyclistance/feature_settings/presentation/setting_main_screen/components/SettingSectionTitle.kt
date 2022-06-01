@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.theme.EditProfileTextFieldIndicatorColor
+import com.example.cyclistance.theme.Black450
 
 @Composable
 fun SectionTitle(@DrawableRes iconId: Int, title: String) {
@@ -46,6 +46,6 @@ fun SectionTitle(@DrawableRes iconId: Int, title: String) {
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 3.dp, end = 3.dp, top = 2.dp),
-            color = EditProfileTextFieldIndicatorColor)
+            color = Black450)
     }
 }

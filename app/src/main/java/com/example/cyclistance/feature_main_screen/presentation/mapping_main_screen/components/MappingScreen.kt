@@ -36,7 +36,6 @@ import com.example.cyclistance.feature_main_screen.presentation.mapping_main_scr
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingUiEvent
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.theme.ThemeColor
 import com.example.cyclistance.utils.ConnectionStatus
 import com.example.cyclistance.utils.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.utils.LastLocation
@@ -219,7 +218,7 @@ fun SearchAssistanceButton(onClick: () -> Unit, modifier: Modifier) {
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(backgroundColor = ThemeColor),
+        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
         modifier = modifier) {
         Text(
             text = "Search for Assistance",

@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_main_screen.presentation.mapping_cancell
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
@@ -13,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-import com.example.cyclistance.theme.ThemeColor
 
 val clientCancellationReasons = listOf(
     "Change of mind",
@@ -58,7 +58,7 @@ fun RadioButtonsSection(modifier : Modifier) {
                 RadioButton(
                     selected = (text == selectedOption),
                     onClick = { onOptionSelected(text) },
-                    colors = RadioButtonDefaults.colors(selectedColor = ThemeColor, unselectedColor = Color(0xFFAEAEAE))
+                    colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colors.primary, unselectedColor = Color(0xFFAEAEAE))
                 )
                 Text(
                     text = text,

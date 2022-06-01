@@ -13,8 +13,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cyclistance.feature_authentication.presentation.common.TextFieldColors
-import com.example.cyclistance.theme.TextFieldTextHintColor
+import com.example.cyclistance.feature_authentication.presentation.common.textFieldColors
+import com.example.cyclistance.theme.Black500
 
 @Composable
 fun AddressTextField(modifier: Modifier) {
@@ -29,7 +29,7 @@ fun AddressTextField(modifier: Modifier) {
         label = {
             Text(
                 text = "Address",
-                color = TextFieldTextHintColor,
+                color = Black500,
                 fontSize = 12.sp,
                 textAlign = TextAlign.Center
             )
@@ -38,10 +38,10 @@ fun AddressTextField(modifier: Modifier) {
             Icon(
                 imageVector = Icons.Default.LocationCity,
                 contentDescription = "Email Icon",
-                tint = TextFieldTextHintColor
+                tint = Black500
             )
         },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
-        colors = TextFieldColors(),
+        colors = textFieldColors(),
     )
 }

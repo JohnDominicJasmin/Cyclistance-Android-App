@@ -22,7 +22,7 @@ fun EditProfileScreen(navigateTo: (destination: String, popUpToDestination: Stri
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .background(BackgroundColor)) {
+            .background(MaterialTheme.colors.background)) {
 
 
         val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText) = createRefs()
@@ -39,7 +39,7 @@ fun EditProfileScreen(navigateTo: (destination: String, popUpToDestination: Stri
 
         Text(
             text = "Change Profile Photo",
-            color = ChangeProfileTextColor,
+            color = MaterialTheme.colors.primary,
             style = MaterialTheme.typography.caption, fontWeight = FontWeight.SemiBold,
         modifier = Modifier.constrainAs(changePhotoText){
             top.linkTo(profilePictureArea.bottom, margin = 4.dp)

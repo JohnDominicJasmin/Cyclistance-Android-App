@@ -19,9 +19,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
-import com.example.cyclistance.theme.TextFieldTextHintColor
-import com.example.cyclistance.theme.EditProfileTextFieldIndicatorColor
-import com.example.cyclistance.theme.ErrorColor
+import com.example.cyclistance.theme.Black450
+import com.example.cyclistance.theme.Black500
+
 
 @Composable
 fun PasswordTextFieldArea(modifier: Modifier) {
@@ -100,7 +100,7 @@ fun PasswordTextFieldItem(
         Text(
             text = label,
             style = MaterialTheme.typography.caption,
-            color = TextFieldTextHintColor,
+            color = Black500,
             modifier = Modifier.padding(bottom = 5.dp))
 
 
@@ -133,7 +133,7 @@ fun PasswordTextFieldItem(
                 Icon(
                     imageVector = image,
                     "",
-                    tint = TextFieldTextHintColor,
+                    tint = Black500,
                     modifier = Modifier.size(19.dp).clickable { togglePasswordVisibilityOnClick() }
                 )
 
@@ -142,7 +142,7 @@ fun PasswordTextFieldItem(
 
         Divider(
             modifier = Modifier
-                .fillMaxWidth(), color = EditProfileTextFieldIndicatorColor)
+                .fillMaxWidth(), color = Black450)
 
         if (hasError) {
 
@@ -151,7 +151,7 @@ fun PasswordTextFieldItem(
                 verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Error,
-                    tint = ErrorColor,
+                    tint = MaterialTheme.colors.error,
                     modifier = Modifier.size(12.dp),
                     contentDescription = "Icon error")
                 ErrorMessage(errorMessage = errorMessage, modifier = Modifier.padding(1.2.dp))

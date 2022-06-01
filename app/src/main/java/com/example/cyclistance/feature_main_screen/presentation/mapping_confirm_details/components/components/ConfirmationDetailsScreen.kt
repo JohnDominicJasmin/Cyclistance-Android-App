@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_main_screen.presentation.mapping_confirm
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -27,7 +28,7 @@ fun ConfirmationDetailsScreen() {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .background(BackgroundColor)) {
+            .background(MaterialTheme.colors.background)) {
 
         val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection) = createRefs()
 

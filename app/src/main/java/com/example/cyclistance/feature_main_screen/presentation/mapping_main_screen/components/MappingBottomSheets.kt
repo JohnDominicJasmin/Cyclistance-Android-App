@@ -70,7 +70,7 @@ fun BottomSheetSearchingAssistance(onClickButton: () -> Unit) {
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = ShowableDisplaysBackgroundColor)) {
+                    .background(color = MaterialTheme.colors.surface)) {
 
                 val (searchAnimatedIcon, searchingText, cancelButton) = createRefs()
 
@@ -104,7 +104,7 @@ fun BottomSheetSearchingAssistance(onClickButton: () -> Unit) {
                 OutlinedButton(
                     onClick = onClickButton,
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                    border = BorderStroke(width = 1.dp, color = ShowableDisplaysBorderColor),
+                    border = BorderStroke(width = 1.dp, color = MaterialTheme.colors.surface),
                     modifier = Modifier
                         .padding(8.dp)
                         .constrainAs(cancelButton) {
@@ -139,7 +139,7 @@ private fun BottomSheetRescue(displayedText: String) {
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = ShowableDisplaysBackgroundColor)) {
+                    .background(color = MaterialTheme.colors.surface)) {
 
                 val (animatedIcon, arrivedText) = createRefs()
 
@@ -200,8 +200,8 @@ private fun BottomSheetRoundedButton(imageId: Int, buttonSubtitle: String, onCli
             shape = CircleShape,
 
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = RoundedButtonBackgroundColor,
-                contentColor = RoundedButtonContentColor)) {
+                backgroundColor = MaterialTheme.colors.secondary,
+                contentColor = MaterialTheme.colors.onSurface)) {
 
             Icon(
                 painter = painterResource(id = imageId),
@@ -212,7 +212,7 @@ private fun BottomSheetRoundedButton(imageId: Int, buttonSubtitle: String, onCli
 
         Text(
             text = buttonSubtitle,
-            color = RoundedButtonSubtitleColor,
+            color = Black450,
             style = MaterialTheme.typography.caption,
             textAlign = TextAlign.Center)
     }
@@ -230,7 +230,7 @@ fun OnGoingRescueBottomSheet(estimatedTimeRemaining: String) {
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(color = ShowableDisplaysBackgroundColor)) {
+                    .background(color = MaterialTheme.colors.surface)) {
 
                 val (timeRemaining, roundedButtonSection) = createRefs()
 

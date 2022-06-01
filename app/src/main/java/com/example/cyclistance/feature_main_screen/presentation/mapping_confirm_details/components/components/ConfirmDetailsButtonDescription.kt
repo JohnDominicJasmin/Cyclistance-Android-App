@@ -17,9 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
-import com.example.cyclistance.theme.BackgroundColor
-import com.example.cyclistance.theme.DisabledColor
-import com.example.cyclistance.theme.ThemeColor
+import com.example.cyclistance.theme.Black440
 
 
 @Composable
@@ -165,13 +163,13 @@ fun SetupButtonDescriptionItem(
 
 
         val (checkIcon, buttonItem) = createRefs()
-        val borderColor = if (selectedState) ThemeColor else DisabledColor
+        val borderColor = if (selectedState) MaterialTheme.colors.primary else Black440
 
         OutlinedButton(
             contentPadding = PaddingValues(start = 13.dp, end = 13.dp),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = BackgroundColor,
-                disabledBackgroundColor = BackgroundColor),
+                backgroundColor = MaterialTheme.colors.background,
+                disabledBackgroundColor = MaterialTheme.colors.background),
             onClick = onClick,
             border = BorderStroke(width = 2.dp, color = borderColor),
             modifier = Modifier

@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
-import com.example.cyclistance.theme.BackgroundColor
-import com.example.cyclistance.theme.ThemeColor
+
+
 @Preview(showSystemUi = true)
 @Composable
 fun MappingDrawerContent() {
@@ -30,7 +30,7 @@ fun MappingDrawerContent() {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor),
+            .background(MaterialTheme.colors.background),
         constraintSet = drawerMappingConstraintSet) {
 
         Box(

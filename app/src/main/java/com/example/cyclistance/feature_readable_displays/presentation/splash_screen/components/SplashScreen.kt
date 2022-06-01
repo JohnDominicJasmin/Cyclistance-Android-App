@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,7 +18,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyclistance.R
-import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.SplashScreenViewModel
 import com.example.cyclistance.navigation.Screens
 import kotlinx.coroutines.delay
@@ -45,7 +45,7 @@ fun SplashScreen(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor)) {
+            .background(MaterialTheme.colors.background)) {
         Image(
             painter = painterResource(id = R.drawable.ic_cyclistance_app_icon),
             contentDescription = "App Icon", modifier = Modifier.scale(scale.value))

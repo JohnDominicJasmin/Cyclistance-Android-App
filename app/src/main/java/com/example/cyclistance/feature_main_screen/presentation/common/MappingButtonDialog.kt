@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.theme.ThemeColor
+
 
 
 @Composable
@@ -52,7 +52,7 @@ fun MappingButtonNavigation(
                     .weight(0.5f)
                     .align(Alignment.CenterVertically)
                     .padding(all = 5.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = ThemeColor),
+                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
                 shape = RoundedCornerShape(12.dp)) {
                 Text(
                     text = positiveButtonText,

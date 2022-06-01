@@ -28,8 +28,6 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.example.cyclistance.theme.BackgroundColor
-import com.example.cyclistance.theme.ThemeColor
 import io.github.farhanroy.composeawesomedialog.themes.Shapes
 
 
@@ -69,7 +67,7 @@ fun SetupAlertDialog(
                             .width(300.dp)
                             .wrapContentHeight()
                             .background(
-                                color = BackgroundColor,
+                                color = MaterialTheme.colors.background,
                                 shape = Shapes.large)) {
                         Column(
                             modifier = Modifier.padding(16.dp),
@@ -98,7 +96,7 @@ fun SetupAlertDialog(
                                               },
                                     shape = RoundedCornerShape(12.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        backgroundColor = ThemeColor,
+                                        backgroundColor = MaterialTheme.colors.primary,
                                         contentColor = Color.White)) {
 
                                     Text(

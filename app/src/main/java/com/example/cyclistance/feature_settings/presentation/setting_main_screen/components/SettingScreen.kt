@@ -2,13 +2,13 @@ package com.example.cyclistance.feature_settings.presentation.setting_main_scree
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
-import com.example.cyclistance.theme.BackgroundColor
 
 @Preview
 @Composable
@@ -19,7 +19,7 @@ fun SettingScreen() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundColor),
+            .background(MaterialTheme.colors.background),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally) {
 

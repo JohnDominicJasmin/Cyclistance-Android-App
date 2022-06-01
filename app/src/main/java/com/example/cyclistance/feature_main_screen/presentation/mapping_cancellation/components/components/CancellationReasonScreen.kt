@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.*
 import androidx.compose.ui.tooling.preview.Preview
@@ -12,7 +13,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingAdditionalMessage
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
-import com.example.cyclistance.theme.BackgroundColor
 
 
 
@@ -23,7 +23,7 @@ fun CancellationReasonScreen() {
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .background(BackgroundColor)) {
+            .background(MaterialTheme.colors.background)) {
 
         val (radioButtonsSection, additionalMessageSection,buttonNavButtonSection) = createRefs()
 

@@ -42,7 +42,7 @@ fun RequestItem(modifier: Modifier, cardState: CardData) {
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(15.dp),
-        backgroundColor = ShowableDisplaysBackgroundColor) {
+        backgroundColor = MaterialTheme.colors.surface) {
         Column(
             modifier = Modifier.padding(top = 12.dp, bottom = 5.dp)) {
 
@@ -73,7 +73,7 @@ fun RequestItem(modifier: Modifier, cardState: CardData) {
 
                         withStyle(
                             style = SpanStyle(
-                                color = RoundedButtonSubtitleColor,
+                                color = Black450,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium)) {
                             append(cardState.distance)
@@ -94,7 +94,7 @@ fun RequestItem(modifier: Modifier, cardState: CardData) {
 
                         withStyle(
                             style = SpanStyle(
-                                color = RoundedButtonSubtitleColor,
+                                color = Black450,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium)) {
                             append(cardState.estimatedTimeTravel)
@@ -107,7 +107,7 @@ fun RequestItem(modifier: Modifier, cardState: CardData) {
 
 
             Divider(
-                color = RoundedButtonSubtitleColor,
+                color = Black450,
                 modifier = Modifier
                     .fillMaxWidth(fraction = 0.92f)
                     .padding(top = 12.dp)

@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -19,10 +20,10 @@ fun SignUpTextArea() {
     Column(modifier = Modifier.layoutId(AuthenticationConstraintsItem.WelcomeTextArea.layoutId)) {
 
         Text(
-            text = "Welcome  to  Cyclistance",
+            text = "Welcome to Cyclistance",
             textAlign = TextAlign.Center,
             fontSize = 16.sp,
-            color = Color.White,
+            color = MaterialTheme.colors.onBackground,
             fontWeight = FontWeight.Bold
         )
 
@@ -32,7 +33,7 @@ fun SignUpTextArea() {
             text = "   Login to your account",
             textAlign = TextAlign.Center,
             fontSize = 16.sp,
-            color = Color.White,
+            color = MaterialTheme.colors.onBackground,
             fontWeight = FontWeight.Bold
         )
     }

@@ -18,8 +18,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
-import com.example.cyclistance.theme.FacebookColor
-import com.example.cyclistance.theme.GoogleButtonTextColor
+import com.example.cyclistance.theme.Black450
+import com.example.cyclistance.theme.Blue500
 
 @Composable
 fun SignInGoogleAndFacebookSection(facebookButtonOnClick: ()-> Unit, googleSignInButtonOnClick: ()-> Unit) {
@@ -52,7 +52,7 @@ fun SignInGoogleAndFacebookSection(facebookButtonOnClick: ()-> Unit, googleSignI
 
                 Text(
                     text = "Google",
-                    color = GoogleButtonTextColor,
+                    color = Black450,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                     fontSize = 14.sp)
@@ -65,7 +65,7 @@ fun SignInGoogleAndFacebookSection(facebookButtonOnClick: ()-> Unit, googleSignI
 
         Button(
             onClick = facebookButtonOnClick,
-            colors = ButtonDefaults.buttonColors(backgroundColor = FacebookColor),
+            colors = ButtonDefaults.buttonColors(backgroundColor = Blue500),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
                 .padding(top = 15.dp, bottom = 15.dp)

@@ -3,19 +3,18 @@ package com.example.cyclistance.feature_readable_displays.presentation.intro_sli
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cyclistance.theme.DisabledColor
-import com.example.cyclistance.theme.ThemeColor
+import com.example.cyclistance.theme.Black440
 import com.google.accompanist.pager.*
 
 
@@ -67,7 +66,7 @@ fun IntroSliderItem(
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
-                        color = Color.White)
+                        color = MaterialTheme.colors.onBackground)
 
                     Spacer(modifier = Modifier.height(15.dp))
 
@@ -76,7 +75,7 @@ fun IntroSliderItem(
                         fontSize = 12.sp,
                         fontWeight = FontWeight.Normal,
                         textAlign = TextAlign.Center,
-                        color = Color.White,
+                        color = MaterialTheme.colors.onBackground,
                     modifier = Modifier.fillMaxWidth(0.76f))
 
 
@@ -99,8 +98,8 @@ fun PagerIndicator(pagerState: PagerState,modifier: Modifier) {
     HorizontalPagerIndicator(
         pagerState = pagerState,
         modifier = modifier,
-        activeColor = ThemeColor,
-        inactiveColor = DisabledColor,
+        activeColor = MaterialTheme.colors.primary,
+        inactiveColor = Black440,
         indicatorWidth = 16.dp,
         indicatorHeight = 7.dp,
         spacing = 7.dp,

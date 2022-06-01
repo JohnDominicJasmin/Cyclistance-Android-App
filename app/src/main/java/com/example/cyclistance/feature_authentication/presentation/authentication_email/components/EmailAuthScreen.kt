@@ -5,13 +5,13 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
-import com.example.cyclistance.theme.BackgroundColor
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingViewModel
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
@@ -85,14 +85,14 @@ fun EmailAuthScreen(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
-                .background(BackgroundColor)) {
+                .background(MaterialTheme.colors.background)) {
 
 
             ConstraintLayout(
                 constraintSet = emailAuthConstraints,
                 modifier = Modifier
                     .fillMaxHeight(0.9f)
-                    .background(BackgroundColor)) {
+                    .background(MaterialTheme.colors.background)) {
 
 
                 EmailIcon()

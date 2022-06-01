@@ -15,9 +15,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cyclistance.theme.BackgroundColor
-import com.example.cyclistance.theme.TextFieldBackgroundColor
-import com.example.cyclistance.theme.TextFieldTextHintColor
+import com.example.cyclistance.theme.Black500
+
 
 private val bikeList = listOf(
     "Road Bike",
@@ -53,7 +52,7 @@ fun DropDownBikeList(modifier: Modifier) {
             placeholder = {
                 Text(
                     "Bike Type",
-                    color = TextFieldTextHintColor,
+                    color = Black500,
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center)
             },
@@ -64,23 +63,23 @@ fun DropDownBikeList(modifier: Modifier) {
                 Icon(
                     imageVector = Icons.Default.PedalBike,
                     contentDescription = "Bike Icon",
-                    tint = TextFieldTextHintColor,
+                    tint = Black500,
                 )
             },
             colors = TextFieldDefaults.textFieldColors(
                 textColor = Color.White,
-                backgroundColor = TextFieldBackgroundColor,
-                focusedIndicatorColor = TextFieldBackgroundColor,
-                unfocusedIndicatorColor = TextFieldBackgroundColor,
+                backgroundColor = MaterialTheme.colors.secondary,
+                focusedIndicatorColor = MaterialTheme.colors.secondary,
+                unfocusedIndicatorColor = MaterialTheme.colors.secondary,
                 cursorColor = Color.White,
-                trailingIconColor = TextFieldTextHintColor
+                trailingIconColor = Black500
 
             ),
         )
 
 
         ExposedDropdownMenu(modifier = Modifier
-            .background(BackgroundColor)
+            .background(MaterialTheme.colors.background)
             .fillMaxWidth()
             .wrapContentHeight(),
             expanded = expanded,
