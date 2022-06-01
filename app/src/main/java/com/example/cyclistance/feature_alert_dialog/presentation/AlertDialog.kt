@@ -17,9 +17,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -28,6 +28,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.example.cyclistance.theme.CyclistanceTheme
 import io.github.farhanroy.composeawesomedialog.themes.Shapes
 
 
@@ -67,7 +68,7 @@ fun SetupAlertDialog(
                             .width(300.dp)
                             .wrapContentHeight()
                             .background(
-                                color = MaterialTheme.colors.background,
+                                color = MaterialTheme.colors.surface,
                                 shape = Shapes.large)) {
                         Column(
                             modifier = Modifier.padding(16.dp),
@@ -77,12 +78,12 @@ fun SetupAlertDialog(
                             Text(
                                 alertDialog.title,
                                 style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
-                                color = Color.White)
+                                color = MaterialTheme.colors.onSurface)
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 alertDialog.description,
                                 style = TextStyle(fontSize = 14.sp),
-                                color = Color.White)
+                                color = MaterialTheme.colors.onSurface)
                             Spacer(modifier = Modifier.height(24.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
@@ -96,12 +97,11 @@ fun SetupAlertDialog(
                                               },
                                     shape = RoundedCornerShape(12.dp),
                                     colors = ButtonDefaults.buttonColors(
-                                        backgroundColor = MaterialTheme.colors.primary,
-                                        contentColor = Color.White)) {
+                                        backgroundColor = MaterialTheme.colors.primary)) {
 
                                     Text(
                                         text = "Ok",
-                                        color = Color.Black,
+                                        color = MaterialTheme.colors.onPrimary,
                                         style = MaterialTheme.typography.button)
 
                                 }
@@ -115,10 +115,26 @@ fun SetupAlertDialog(
                         .size(72.dp)
                         .align(Alignment.TopCenter)
                         .border(
-                            border = BorderStroke(width = 5.dp, color = Color.White),
+                            border = BorderStroke(width = 5.dp, color = MaterialTheme.colors.onSurface),
                             shape = CircleShape
                         ), alertDialog.resId)
             }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun AlertDialogPreview() {
+    CyclistanceTheme(darkTheme = true) {
+
+
+        SetupAlertDialog(
+            alertDialog = AlertDialogData(
+                title = "Success",
+                description = "Sample this is description",
+                resId = io.github.farhanroy.composeawesomedialog.R.raw.error)) {
+
         }
     }
 }
