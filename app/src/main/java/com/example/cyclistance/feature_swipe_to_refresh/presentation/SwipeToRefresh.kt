@@ -1,4 +1,4 @@
-package com.example.cyclistance.common
+package com.example.cyclistance.feature_swipe_to_refresh.presentation
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.foundation.layout.Box

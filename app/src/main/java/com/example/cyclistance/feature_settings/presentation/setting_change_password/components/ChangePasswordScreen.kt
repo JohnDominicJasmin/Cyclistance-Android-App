@@ -12,8 +12,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.theme.CyclistanceTheme
 
-@Preview
 @Composable
 fun ChangePasswordScreen() {
     ConstraintLayout(
@@ -48,5 +48,13 @@ fun ChangePasswordScreen() {
         })
 
 
+    }
+}
+
+@Preview
+@Composable
+fun ChangePasswordPreview() {
+    CyclistanceTheme(true) {
+        ChangePasswordScreen()
     }
 }

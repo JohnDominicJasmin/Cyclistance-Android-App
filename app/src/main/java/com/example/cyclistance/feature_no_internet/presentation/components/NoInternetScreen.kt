@@ -16,11 +16,14 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
+import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.Black300
+import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.utils.ConnectionStatus
 
 

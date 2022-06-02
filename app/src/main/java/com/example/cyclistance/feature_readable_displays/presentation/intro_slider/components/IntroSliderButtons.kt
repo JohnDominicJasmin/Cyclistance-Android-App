@@ -45,7 +45,7 @@ fun IntroSliderButtons(text:String,
             shape = RoundedCornerShape(12.dp)) {
             Text(
                 text = text,
-                color = Color.Black,
+                color = MaterialTheme.colors.onPrimary,
                 fontSize = 16.sp,
                 textAlign = TextAlign.Center
 

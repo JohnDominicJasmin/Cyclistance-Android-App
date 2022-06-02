@@ -116,14 +116,15 @@ fun PasswordTextFieldItem(
                 maxLines = 1,
                 onValueChange = onValueChange,
                 textStyle = TextStyle(
-                    color = Color.White
+                    color = MaterialTheme.colors.onBackground,
                 ),
                 cursorBrush = Brush.verticalGradient(
-                    0.00f to Color.White,
-                    1.00f to Color.White),
+                    0.00f to MaterialTheme.colors.onBackground,
+                    1.00f to MaterialTheme.colors.onBackground),
                 keyboardOptions = keyboardOptions,
                 keyboardActions = keyboardActions,
-                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation()
+                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+
 
             )
 

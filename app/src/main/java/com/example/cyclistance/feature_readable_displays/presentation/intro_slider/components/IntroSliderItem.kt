@@ -35,21 +35,14 @@ fun IntroSliderItem(
     pagerState: PagerState) {
 
 
-
-
-
             Column(
             modifier = Modifier.layoutId(IntroSliderConstraintsItem.HorizontalPager.layoutId)) {
-
-
 
             HorizontalPager(
                 count = introSliderItems.size,
                 state = pagerState) { page ->
 
-
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
 
                     Image(
                         painter = painterResource(id = introSliderItems[page].image),
