@@ -21,9 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
+import com.example.cyclistance.theme.Black440
+import com.example.cyclistance.theme.CyclistanceTheme
 
 
-@Preview(showSystemUi = true)
 @Composable
 fun MappingDrawerContent() {
 
@@ -36,7 +37,7 @@ fun MappingDrawerContent() {
         Box(
             modifier = Modifier
                 .layoutId(MappingConstraintItem.UpperSection.layoutId)
-                .background(Color(0xFF3F3F3F))) {
+                .background(MaterialTheme.colors.surface)) {
 
 
             Column(
@@ -49,14 +50,14 @@ fun MappingDrawerContent() {
 
                 Text(
                     text = "John Doe",
-                    color = Color.White,
+                    color = MaterialTheme.colors.onSurface,
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(top = 7.dp, bottom = 0.5.dp))
 
 
                 Text(
                     text = "johndoe@gmail.com",
-                    color = Color(0xFFA5A5A5),
+                    color = Black440,
                     style = MaterialTheme.typography.subtitle2)
 
                 Spacer(modifier = Modifier.height(15.dp))
@@ -99,7 +100,6 @@ fun MappingDrawerContent() {
                 iconId = R.drawable.ic_baseline_notifications_none_24,
                 buttonText = "Notifications") {   }
 
-
             DrawerContentButtonItem(
                 modifier = Modifier
                     .background(Color.Transparent)
@@ -116,7 +116,7 @@ fun MappingDrawerContent() {
 
 
 @Composable
-fun DrawerContentButtonItem(
+private fun DrawerContentButtonItem(
     modifier: Modifier,
     iconId: Int,
     buttonText: String,
@@ -133,7 +133,7 @@ fun DrawerContentButtonItem(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .weight(1f)
-                .size(26.dp), tint = Color(0xFFA6A6A6))
+                .size(26.dp), tint = Black440)
 
 
         Text(
@@ -142,12 +142,22 @@ fun DrawerContentButtonItem(
                 .weight(10f)
                 .padding(start = 20.dp),
             style = MaterialTheme.typography.subtitle1,
-            color = Color.White
+            color = MaterialTheme.colors.onBackground
 
         )
 
 
     }
 
+
+}
+
+
+@Preview
+@Composable
+fun DrawerPreview() {
+    CyclistanceTheme(true) {
+        MappingDrawerContent()
+    }
 
 }

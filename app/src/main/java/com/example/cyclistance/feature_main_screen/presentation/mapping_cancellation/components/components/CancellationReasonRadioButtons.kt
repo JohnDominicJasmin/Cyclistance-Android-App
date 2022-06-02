@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.theme.Black450
 
 
 val clientCancellationReasons = listOf(
@@ -58,12 +59,12 @@ fun RadioButtonsSection(modifier : Modifier) {
                 RadioButton(
                     selected = (text == selectedOption),
                     onClick = { onOptionSelected(text) },
-                    colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colors.primary, unselectedColor = Color(0xFFAEAEAE))
+                    colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colors.primary, unselectedColor = Black450)
                 )
                 Text(
                     text = text,
                     modifier = Modifier.padding(start = 8.dp),
-                    color = Color.White
+                    color = MaterialTheme.colors.onBackground
                 )
             }
         }

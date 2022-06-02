@@ -27,7 +27,7 @@ fun TopAppBarCreator(
         backgroundColor = MaterialTheme.colors.background,
         navigationIcon = {
             IconButton(onClick = onClickIcon) {
-                Icon(icon, contentDescription = "", tint = Color.White)
+                Icon(icon, contentDescription = "", tint = MaterialTheme.colors.onBackground)
             }
         })
 
@@ -53,7 +53,7 @@ fun DefaultTitleTopAppBar() {
         )
         Text(
             "Cyclistance",
-            color = Color.White,
+            color = MaterialTheme.colors.onBackground,
             fontWeight = FontWeight.Medium,
             fontSize = 20.sp)
     }
@@ -69,7 +69,7 @@ fun DetailsTitleTopAppBar(text: String) {
 
         Text(
             text = text,
-            color = Color.White,
+            color = MaterialTheme.colors.onBackground,
             fontWeight = FontWeight.Medium,
             fontSize = 20.sp)
     }

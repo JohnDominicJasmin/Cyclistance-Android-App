@@ -67,11 +67,11 @@ fun DropDownBikeList(modifier: Modifier) {
                 )
             },
             colors = TextFieldDefaults.textFieldColors(
-                textColor = Color.White,
+                textColor = MaterialTheme.colors.onSecondary,
                 backgroundColor = MaterialTheme.colors.secondary,
                 focusedIndicatorColor = MaterialTheme.colors.secondary,
                 unfocusedIndicatorColor = MaterialTheme.colors.secondary,
-                cursorColor = Color.White,
+                cursorColor = MaterialTheme.colors.primary,
                 trailingIconColor = Black500
 
             ),
@@ -79,7 +79,7 @@ fun DropDownBikeList(modifier: Modifier) {
 
 
         ExposedDropdownMenu(modifier = Modifier
-            .background(MaterialTheme.colors.background)
+            .background(MaterialTheme.colors.secondary)
             .fillMaxWidth()
             .wrapContentHeight(),
             expanded = expanded,
@@ -96,7 +96,7 @@ fun DropDownBikeList(modifier: Modifier) {
                     }, modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = selectionOption,
-                        color = Color.White,
+                        color = MaterialTheme.colors.onSecondary,
                         style = MaterialTheme.typography.subtitle2)
                 }
             }

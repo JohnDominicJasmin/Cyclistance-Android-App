@@ -20,7 +20,6 @@ import com.example.cyclistance.theme.*
 
 
 
-@Preview
 @Composable
 fun ConfirmationDetailsScreen() {
 
@@ -102,6 +101,13 @@ fun ConfirmationDetailsScreen() {
 
 }
 
+@Preview
+@Composable
+fun ConfirmationDetailsPreview() {
+    CyclistanceTheme(true){
+        ConfirmationDetailsScreen()
+    }
+}
 
 
 

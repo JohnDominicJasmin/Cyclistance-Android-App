@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_main_screen.presentation.mapping_cancellation.components
+package com.example.cyclistance.feature_main_screen.presentation.mapping_cancellation.components.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,10 +13,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingAdditionalMessage
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.feature_main_screen.presentation.mapping_cancellation.components.RadioButtonsSection
+import com.example.cyclistance.theme.CyclistanceTheme
 
 
-
-@Preview
 @Composable
 fun CancellationReasonScreen() {
     ConstraintLayout(
@@ -69,6 +69,14 @@ fun CancellationReasonScreen() {
 
 
 
+    }
+}
+
+@Preview
+@Composable
+fun CancellationReasonPreview() {
+    CyclistanceTheme(true) {
+        CancellationReasonScreen()
     }
 }
 

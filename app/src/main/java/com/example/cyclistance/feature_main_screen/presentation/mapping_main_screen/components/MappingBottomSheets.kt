@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -15,11 +16,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.common.AnimatedImage
+import com.example.cyclistance.feature_main_screen.data.repository.MappingRepositoryImpl
 
 import com.example.cyclistance.theme.*
 
@@ -92,7 +95,7 @@ fun BottomSheetSearchingAssistance(onClickButton: () -> Unit) {
 
                 Text(
                     text = "Searching for nearby assistance...",
-                    color = Color.White,
+                    color = MaterialTheme.colors.onSurface,
                     style = MaterialTheme.typography.subtitle1,
                     modifier = Modifier
                         .constrainAs(searchingText) {
@@ -116,7 +119,7 @@ fun BottomSheetSearchingAssistance(onClickButton: () -> Unit) {
                     Text(
                         text = "CANCEL",
                         style = MaterialTheme.typography.button,
-                        color = Color.White
+                        color = MaterialTheme.colors.onSurface
                     )
 
 
@@ -145,7 +148,7 @@ private fun BottomSheetRescue(displayedText: String) {
 
                 Text(
                     text = displayedText,
-                    color = Color.White,
+                    color = MaterialTheme.colors.onSurface,
                     style = MaterialTheme.typography.subtitle2,
                     modifier = Modifier
                         .constrainAs(arrivedText) {
@@ -186,12 +189,11 @@ fun DestinationReachedBottomSheet() {
 
 
 @Composable
-private fun BottomSheetRoundedButton(imageId: Int, buttonSubtitle: String, onClick: () -> Unit) {
-
+private fun RoundedButtonItem(imageId: Int, buttonSubtitle: String, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .wrapContentSize(),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(space = 4.dp, alignment = Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally) {
 
         Button(
@@ -206,9 +208,9 @@ private fun BottomSheetRoundedButton(imageId: Int, buttonSubtitle: String, onCli
             Icon(
                 painter = painterResource(id = imageId),
                 contentDescription = null,
-                tint = Color.Unspecified,
                 modifier = Modifier.size(45.dp))
         }
+
 
         Text(
             text = buttonSubtitle,
@@ -236,7 +238,7 @@ fun OnGoingRescueBottomSheet(estimatedTimeRemaining: String) {
 
                 Text(
                     text = "Estimated time of arrival: $estimatedTimeRemaining",
-                    color = Color.White,
+                    color = MaterialTheme.colors.onSurface,
                     style = MaterialTheme.typography.subtitle2,
                     modifier = Modifier.constrainAs(timeRemaining) {
                         top.linkTo(parent.top, margin = 20.dp)
@@ -258,21 +260,21 @@ fun OnGoingRescueBottomSheet(estimatedTimeRemaining: String) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly) {
 
-                    BottomSheetRoundedButton(
+                    RoundedButtonItem(
                         imageId = R.drawable.ic_call,
                         buttonSubtitle = "Call") {
 
                     }
 
 
-                    BottomSheetRoundedButton(
+                    RoundedButtonItem(
                         imageId = R.drawable.ic_chat,
                         buttonSubtitle = "Chat") {
 
                     }
 
 
-                    BottomSheetRoundedButton(
+                    RoundedButtonItem(
                         imageId = R.drawable.ic_cancel,
                         buttonSubtitle = "Cancel") {
 
@@ -283,5 +285,12 @@ fun OnGoingRescueBottomSheet(estimatedTimeRemaining: String) {
     }
 }
 
+@Preview
+@Composable
+fun MappingBottomSheetPreview() {
+    CyclistanceTheme(true){
+        OnGoingRescueBottomSheet(estimatedTimeRemaining = "2mins")
+    }
+}
 
 

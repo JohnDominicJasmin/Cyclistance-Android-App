@@ -145,13 +145,11 @@ fun MappingScreen(
                     coroutineScope.launch {
                         scaffoldState.drawerState.open()
                     }
-                }) {
-
-                DefaultTitleTopAppBar()
-            }
+                }) { DefaultTitleTopAppBar() }
         },
         drawerContent = { MappingDrawerContent() },
     content = {
+
         RequestMultiplePermissions(
             multiplePermissionsState = multiplePermissionsState, onPermissionGranted = {
                 if (!ConnectionStatus.hasGPSConnection(context)) {
@@ -222,7 +220,7 @@ fun SearchAssistanceButton(onClick: () -> Unit, modifier: Modifier) {
         modifier = modifier) {
         Text(
             text = "Search for Assistance",
-            color = Color.Black,
+            color = MaterialTheme.colors.onPrimary,
             style = MaterialTheme.typography.button,
             modifier = Modifier.padding(
                 top = 4.dp,

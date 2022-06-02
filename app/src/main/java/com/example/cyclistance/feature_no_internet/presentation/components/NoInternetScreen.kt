@@ -1,4 +1,4 @@
-package com.example.cyclistance.common
+package com.example.cyclistance.feature_no_internet.presentation.components
 
 import android.content.Intent
 import android.provider.Settings
@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
+import com.example.cyclistance.theme.Black300
 import com.example.cyclistance.utils.ConnectionStatus
 
 
@@ -65,7 +66,7 @@ fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
             Text(
                 text = "No Internet Connection.",
                 style = MaterialTheme.typography.h6,
-                color = Color.White,
+                color = MaterialTheme.colors.onBackground,
                 modifier = Modifier.constrainAs(title) {
                     top.linkTo(image.bottom, margin = 20.dp)
                     start.linkTo(parent.start)
@@ -80,7 +81,7 @@ fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
                 text = "No Internet connection. Make sure Wi-Fi \n" +
                        "or mobile data is turned on, then try again.",
                 style = MaterialTheme.typography.subtitle1,
-                color = Color.White,
+                color = MaterialTheme.colors.onBackground,
                 modifier = Modifier.constrainAs(description) {
                     top.linkTo(title.bottom, margin = 15.dp)
                     start.linkTo(parent.start)
@@ -108,16 +109,15 @@ fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
                         width = Dimension.wrapContent
                         height = Dimension.wrapContent
                     },
-                border = BorderStroke(width = 2.dp, color = Color(0xFFDDDDDD)),
+                border = BorderStroke(width = 2.dp, color = Black300),
                 colors = ButtonDefaults.outlinedButtonColors(
                     backgroundColor = MaterialTheme.colors.background,
-                    contentColor = Color.White)) {
+                    contentColor = MaterialTheme.colors.onBackground)) {
 
                 Text(
                     text = "Try again",
                     modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
                     style = MaterialTheme.typography.button,
-                    color = Color.White
                 )
 
             }

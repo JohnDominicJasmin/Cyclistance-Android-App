@@ -64,7 +64,7 @@ fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
                     end = 16.dp,
                     bottom = 12.dp),
                 text = "John Doe cancelled the rescue request. The reason is “Problem already fixed.\"",
-                color = Color.White, style = MaterialTheme.typography.body2)
+                color = MaterialTheme.colors.onSurface, style = MaterialTheme.typography.body2)
 
             Row(
                 modifier = Modifier
@@ -135,7 +135,7 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
 
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
-                        tint = Color.White,
+                        tint = MaterialTheme.colors.onSurface   ,
                         contentDescription = "Drop down icon",
                         modifier = Modifier.size(30.dp))
 
@@ -167,7 +167,7 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
                         text =  name,
                         fontSize = MaterialTheme.typography.subtitle1.fontSize,
                         fontWeight = FontWeight.SemiBold,
-                        color = Color.White,
+                        color = MaterialTheme.colors.onSurface,
                         modifier = Modifier.constrainAs(nameText) {
                             start.linkTo(roundedImage.end, margin = 15.dp)
                             top.linkTo(parent.top, margin = 13.dp)
@@ -184,7 +184,7 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
                                 append("Issue:")
                             }
 
-                            withStyle(style = SpanStyle(color = Color.White)) {
+                            withStyle(style = SpanStyle(color = MaterialTheme.colors.onSurface)) {
                                 append(" ")
                                 append(issue)
                             }
@@ -199,7 +199,7 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
                         fontWeight = FontWeight.SemiBold,
                         fontSize = MaterialTheme.typography.subtitle1.fontSize,
                         text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(color = Color.White)) {
+                            withStyle(style = SpanStyle(color = MaterialTheme.colors.onSurface)) {
                                 append(distanceRemaining)
                             }
 
@@ -242,7 +242,7 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
                                     text = address,
                                     fontSize = MaterialTheme.typography.subtitle1.fontSize,
                                     fontWeight = FontWeight.SemiBold,
-                                    color = Color.White,
+                                    color = MaterialTheme.colors.onSurface,
                                 )
                             }
 
@@ -261,7 +261,7 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
                                 text = message,
                                 fontSize = MaterialTheme.typography.subtitle1.fontSize,
                                 fontWeight = FontWeight.SemiBold,
-                                color = Color.White,
+                                color = MaterialTheme.colors.onSurface,
                             )
 
 

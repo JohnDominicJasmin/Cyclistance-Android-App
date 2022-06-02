@@ -419,6 +419,40 @@
         <entry key="../../../../layout/compose-model-1654096896989.xml" value="0.3405909797822706" />
         <entry key="../../../../layout/compose-model-1654101015308.xml" value="0.33" />
         <entry key="../../../../layout/compose-model-1654101133197.xml" value="0.5" />
+        <entry key="../../../../layout/compose-model-1654101439318.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1654103666000.xml" value="0.1935185185185185" />
+        <entry key="../../../../layout/compose-model-1654103696321.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1654103864690.xml" value="0.18" />
+        <entry key="../../../../layout/compose-model-1654105033258.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1654105062551.xml" value="0.12777777777777777" />
+        <entry key="../../../../layout/compose-model-1654105805562.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1654106239436.xml" value="0.1935185185185185" />
+        <entry key="../../../../layout/compose-model-1654106348081.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1654106884517.xml" value="0.19151515151515153" />
+        <entry key="../../../../layout/compose-model-1654107100818.xml" value="0.22" />
+        <entry key="../../../../layout/compose-model-1654107175104.xml" value="0.3055555555555556" />
+        <entry key="../../../../layout/compose-model-1654175169477.xml" value="0.22" />
+        <entry key="../../../../layout/compose-model-1654175515482.xml" value="0.3055555555555556" />
+        <entry key="../../../../layout/compose-model-1654175810111.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1654175937772.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1654176044382.xml" value="0.5132192846034215" />
+        <entry key="../../../../layout/compose-model-1654176361785.xml" value="0.28451882845188287" />
+        <entry key="../../../../layout/compose-model-1654176523832.xml" value="0.2" />
+        <entry key="../../../../layout/compose-model-1654176574500.xml" value="0.15454545454545454" />
+        <entry key="../../../../layout/compose-model-1654176600536.xml" value="0.1259259259259259" />
+        <entry key="../../../../layout/compose-model-1654176842871.xml" value="0.22303030303030302" />
+        <entry key="../../../../layout/compose-model-1654176885762.xml" value="0.28615863141524106" />
+        <entry key="../../../../layout/compose-model-1654176923312.xml" value="0.38493723849372385" />
+        <entry key="../../../../layout/compose-model-1654177075758.xml" value="0.17037037037037037" />
+        <entry key="../../../../layout/compose-model-1654177101885.xml" value="0.17037037037037037" />
+        <entry key="../../../../layout/compose-model-1654177172770.xml" value="0.1" />
+        <entry key="../../../../layout/compose-model-1654177203516.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1654180228892.xml" value="0.67" />
+        <entry key="../../../../layout/compose-model-1654180414806.xml" value="0.31798986486486486" />
+        <entry key="../../../../layout/compose-model-1654180705546.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1654182269184.xml" value="0.31798986486486486" />
+        <entry key="../../../../layout/compose-model-1654182540661.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1654182996383.xml" value="0.7656903765690377" />
         <entry key="../../.gradle/caches/transforms-3/dfd8fd68048be80345bd978b987de6ce/transformed/material-1.5.0/res/drawable/mtrl_ic_error.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-v24/ic_facebook_.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.187" />
@@ -438,6 +472,7 @@
         <entry key="app/src/main/res/drawable/ic_baseline_settings_24.xml" value="0.129" />
         <entry key="app/src/main/res/drawable/ic_baseline_settings_suggest_24.xml" value="0.129" />
         <entry key="app/src/main/res/drawable/ic_bottom_wave.xml" value="0.2" />
+        <entry key="app/src/main/res/drawable/ic_broken_brakes.xml" value="0.1045" />
         <entry key="app/src/main/res/drawable/ic_broken_frame.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_call.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_cancel.xml" value="0.1" />

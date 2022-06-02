@@ -59,6 +59,7 @@ import androidx.constraintlayout.compose.Dimension
          distance = "6.9km away")
 
  )
+
 @Composable
 fun RescueRequestScreen() {
     ConstraintLayout(modifier = Modifier
@@ -68,7 +69,7 @@ fun RescueRequestScreen() {
         val (items, titleText ) = createRefs()
 
         Text(text = "3 NEW REQUEST",
-            color = Color.White,
+            color = MaterialTheme.colors.onBackground,
             style = TextStyle(
                 letterSpacing = 4.sp,
             ),

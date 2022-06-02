@@ -4,12 +4,11 @@ import androidx.compose.runtime.*
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.cyclistance.common.NoInternetScreen
-
+import com.example.cyclistance.feature_no_internet.presentation.components.NoInternetScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpScreen
-import com.example.cyclistance.feature_main_screen.presentation.mapping_cancellation.components.CancellationReasonScreen
+import com.example.cyclistance.feature_main_screen.presentation.mapping_cancellation.components.components.CancellationReasonScreen
 import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.components.ConfirmationDetailsScreen
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingScreen
 import com.example.cyclistance.feature_main_screen.presentation.mapping_rescue_request.components.RescueRequestScreen

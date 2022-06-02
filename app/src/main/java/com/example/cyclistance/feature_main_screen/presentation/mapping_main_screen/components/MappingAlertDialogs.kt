@@ -18,6 +18,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.theme.Black450
 
 
 data class MappingDialogData(
@@ -82,7 +83,7 @@ fun AlertDialogContent(
             .fillMaxWidth()
             .wrapContentHeight(),
         shape = RoundedCornerShape(12.dp),
-        backgroundColor = MaterialTheme.colors.background ) {
+        backgroundColor = MaterialTheme.colors.surface) {
 
         Column(
             modifier = Modifier
@@ -102,7 +103,7 @@ fun AlertDialogContent(
             Text(
                 text = mappingDialogData.title,
                 style = MaterialTheme.typography.h6,
-                color = Color.White,
+                color = MaterialTheme.colors.onSurface,
                 textAlign = TextAlign.Center)
 
             Spacer(modifier = Modifier.height(3.dp))
@@ -110,7 +111,7 @@ fun AlertDialogContent(
             Text(
                 text = mappingDialogData.description,
                 style = MaterialTheme.typography.subtitle1,
-                color = Color(0xFF979797),
+                color = Black450,
                 textAlign = TextAlign.Center,
                 fontWeight = FontWeight.Normal)
 

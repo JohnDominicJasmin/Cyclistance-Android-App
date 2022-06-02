@@ -65,7 +65,7 @@ fun RequestItem(modifier: Modifier, cardState: CardData) {
 
                         withStyle(
                             style = SpanStyle(
-                                color = Color.White,
+                                color = MaterialTheme.colors.onSurface,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold)) {
                             append("${cardState.name}\n")
@@ -86,7 +86,7 @@ fun RequestItem(modifier: Modifier, cardState: CardData) {
                     text = buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(
-                                color = Color.White,
+                                color = MaterialTheme.colors.onSurface,
                                 fontSize = 14.sp,
                                 fontWeight = FontWeight.SemiBold)) {
                             append("ETA\n")
@@ -125,7 +125,7 @@ fun RequestItem(modifier: Modifier, cardState: CardData) {
                     contentDescription = "Address Icon",
                     tint = Color.Unspecified,
                 )
-                Text(text = cardState.address, color = Color.White)
+                Text(text = cardState.address, color = MaterialTheme.colors.onSurface)
             }
 
             MappingButtonNavigation(
@@ -150,14 +150,13 @@ fun RequestItem(modifier: Modifier, cardState: CardData) {
 @Preview
 @Composable
 fun RequestItemPreview() {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White)) {
-        RequestItem(
-            modifier = Modifier
-                .fillMaxWidth(fraction = 0.9f)
-                .wrapContentHeight(),
-            cardState = sampleCardState[0])
-    }
+
+    CyclistanceTheme(true) {
+
+            RequestItem(
+                modifier = Modifier
+                    .fillMaxWidth(fraction = 0.9f)
+                    .wrapContentHeight(),
+                cardState = sampleCardState[0])
+        }
 }

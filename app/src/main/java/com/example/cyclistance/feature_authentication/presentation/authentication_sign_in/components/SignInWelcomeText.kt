@@ -24,7 +24,7 @@ fun SignUpTextArea() {
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle()){
-                    append("Welcome to Cyclistance\n  Login to your Account")
+                    append("Welcome to Cyclistance\n Login to your Account")
                 }
             },
             textAlign = TextAlign.Center,

@@ -26,7 +26,7 @@ fun MappingAdditionalMessage(modifier: Modifier) {
 
         Text(
             text = "Message",
-            color = Color.White,
+            color = MaterialTheme.colors.onBackground,
             style = MaterialTheme.typography.h6,
             modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))
 
@@ -63,17 +63,17 @@ fun MappingAdditionalMessage(modifier: Modifier) {
                     },
                     shape = RoundedCornerShape(12.dp),
                     colors = TextFieldDefaults.textFieldColors(
-                        textColor = Color.White,
+                        textColor = MaterialTheme.colors.onSecondary,
                         backgroundColor = MaterialTheme.colors.secondary,
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
-                        cursorColor = Color.White,
+                        cursorColor = MaterialTheme.colors.primary,
                         disabledIndicatorColor = Color.Transparent
                     ),
                     placeholder = {
                         Text(
                             text = "(Optional) Leave a message",
-                            color = Color(0xFFB7B7B7),
+                            color = Black450,
                             style = MaterialTheme.typography.body2)
                     },
                 )

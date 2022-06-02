@@ -30,6 +30,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.cyclistance.theme.CyclistanceTheme
 import io.github.farhanroy.composeawesomedialog.themes.Shapes
+import timber.log.Timber
 
 
 data class AlertDialogData(
@@ -134,7 +135,7 @@ fun AlertDialogPreview() {
                 title = "Success",
                 description = "Sample this is description",
                 resId = io.github.farhanroy.composeawesomedialog.R.raw.error)) {
-
+            Timber.e("tangina")
         }
     }
 }

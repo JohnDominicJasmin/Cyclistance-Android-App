@@ -34,7 +34,7 @@ fun ButtonDescriptionDetails(modifier: Modifier) {
 
         Text(
             text = "Description",
-            color = Color.White,
+            color = MaterialTheme.colors.onBackground,
             style = MaterialTheme.typography.h6,
             modifier = Modifier.padding(top = 5.dp, bottom = 2.dp))
 
@@ -168,14 +168,14 @@ fun SetupButtonDescriptionItem(
         OutlinedButton(
             contentPadding = PaddingValues(start = 13.dp, end = 13.dp),
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = MaterialTheme.colors.background,
-                disabledBackgroundColor = MaterialTheme.colors.background),
+                backgroundColor = MaterialTheme.colors.surface,
+                disabledBackgroundColor = MaterialTheme.colors.surface),
             onClick = onClick,
             border = BorderStroke(width = 2.dp, color = borderColor),
             modifier = Modifier
                 .wrapContentWidth()
                 .height(130.dp)
-                .shadow(7.dp, shape = RoundedCornerShape(15.dp), clip = true)
+                .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)
                 .constrainAs(buttonItem) {
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
@@ -191,18 +191,18 @@ fun SetupButtonDescriptionItem(
                 verticalArrangement = Arrangement.Center) {
 
 
-                Image(
+                Icon(
                     painter = painterResource(id = image),
                     contentDescription = null,
-                    alignment = Alignment.Center,
                     modifier = Modifier
                         .size(75.dp)
                         .padding(top = 5.dp, bottom = 9.dp),
+                    tint = MaterialTheme.colors.onSurface
                 )
 
                 Text(
                     text = description,
-                    color = Color.White,
+                    color = Black440,
                     style = MaterialTheme.typography.subtitle2,
                     textAlign = TextAlign.Center)
 
