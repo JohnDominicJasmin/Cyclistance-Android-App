@@ -37,7 +37,7 @@ fun MappingDrawerContent() {
         Box(
             modifier = Modifier
                 .layoutId(MappingConstraintItem.UpperSection.layoutId)
-                .background(MaterialTheme.colors.surface)) {
+                .background(MaterialTheme.colors.secondaryVariant)) {
 
 
             Column(
@@ -50,7 +50,7 @@ fun MappingDrawerContent() {
 
                 Text(
                     text = "John Doe",
-                    color = MaterialTheme.colors.onSurface,
+                    color = MaterialTheme.colors.onSecondary,
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(top = 7.dp, bottom = 0.5.dp))
 
