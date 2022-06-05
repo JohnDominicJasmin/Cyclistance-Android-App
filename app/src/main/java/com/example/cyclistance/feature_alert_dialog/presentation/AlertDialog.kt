@@ -17,9 +17,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -30,7 +31,6 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.cyclistance.theme.CyclistanceTheme
 import io.github.farhanroy.composeawesomedialog.themes.Shapes
-import timber.log.Timber
 
 
 data class AlertDialogData(
@@ -115,27 +115,13 @@ fun SetupAlertDialog(
                     modifier = Modifier
                         .size(72.dp)
                         .align(Alignment.TopCenter)
+                        .shadow(elevation = 20.dp, shape = CircleShape, clip = true)
                         .border(
-                            border = BorderStroke(width = 5.dp, color = MaterialTheme.colors.onSurface),
+                            border = BorderStroke(width = 2.dp, color = Transparent),
                             shape = CircleShape
-                        ), alertDialog.resId)
+                        ),
+                       alertDialog.resId)
             }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun AlertDialogPreview() {
-    CyclistanceTheme(darkTheme = true) {
-
-
-        SetupAlertDialog(
-            alertDialog = AlertDialogData(
-                title = "Success",
-                description = "Sample this is description",
-                resId = io.github.farhanroy.composeawesomedialog.R.raw.error)) {
-            Timber.e("tangina")
         }
     }
 }
@@ -150,3 +136,18 @@ private fun DialogHeader(modifier: Modifier, @RawRes resId: Int) {
         modifier = modifier,
     )
 }
+
+@Composable
+fun AlertDialogPreview() {
+
+    CyclistanceTheme(false) {
+        SetupAlertDialog(
+            alertDialog = AlertDialogData(
+                title = "Success",
+                description = "Sample this is description",
+                resId = io.github.farhanroy.composeawesomedialog.R.raw.error)) {
+        }
+    }
+
+}
+
