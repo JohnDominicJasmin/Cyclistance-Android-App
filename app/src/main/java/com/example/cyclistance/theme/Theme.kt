@@ -1,5 +1,6 @@
 package com.example.cyclistance.theme
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
@@ -13,6 +14,7 @@ private val DarkColorPalette = darkColors(
     primary = Orange300,
     primaryVariant = Orange30,
     secondary = Black850,
+    secondaryVariant = Black445,
     background = Black900,
     surface = Black800,
     error = Red600,
@@ -24,6 +26,18 @@ private val DarkColorPalette = darkColors(
 )
 
 private val LightColorPalette = lightColors(
+    primary = Orange300,
+    primaryVariant = Orange30,
+    secondary = White100,
+    secondaryVariant = White200,
+    background = White50,
+    surface = White50,
+    error = Red600,
+    onPrimary = Black910,
+    onSecondary = Black910,
+    onBackground = Black910,
+    onSurface = Black910,
+    onError = Color.White
 
 )
 
