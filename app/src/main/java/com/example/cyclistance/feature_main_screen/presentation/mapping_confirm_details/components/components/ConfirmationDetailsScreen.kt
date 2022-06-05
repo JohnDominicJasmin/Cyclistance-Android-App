@@ -4,6 +4,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -29,7 +30,7 @@ fun ConfirmationDetailsScreen() {
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colors.background)) {
 
-        val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection) = createRefs()
+        val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText) = createRefs()
 
 
 
@@ -76,6 +77,17 @@ fun ConfirmationDetailsScreen() {
                     width = Dimension.percent(0.9f)
 
                 }
+        )
+
+        Text(
+            text = "This will send a request to nearby bikers.",
+            color = Black440,
+            style = MaterialTheme.typography.caption,
+            modifier = Modifier.constrainAs(noteText){
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+                bottom.linkTo(buttonNavButtonSection.top)
+            }
         )
 
         MappingButtonNavigation(
