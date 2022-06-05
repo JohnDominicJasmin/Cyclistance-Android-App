@@ -163,7 +163,7 @@ fun SetupButtonDescriptionItem(
 
 
         val (checkIcon, buttonItem) = createRefs()
-        val borderColor = if (selectedState) MaterialTheme.colors.primary else Black440
+        val borderColor = if (selectedState) MaterialTheme.colors.primary else Color.Transparent
 
         OutlinedButton(
             contentPadding = PaddingValues(start = 13.dp, end = 13.dp),
