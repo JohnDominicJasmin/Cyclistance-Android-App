@@ -33,26 +33,26 @@ fun EmailAuthTextStatus(email:String) {
             text = "Confirm your email address",
             color = MaterialTheme.colors.onBackground,
             fontSize = 16.sp,
-            fontWeight = FontWeight.SemiBold,
+            fontWeight = FontWeight.ExtraBold,
             textAlign = TextAlign.Center)
         
         Text(text = "We sent confirmation email to:",
             color = MaterialTheme.colors.onBackground,
             fontSize = 16.sp,
-            fontWeight = FontWeight.Thin,
+            fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center)
 
         Text(text = email,
             color = MaterialTheme.colors.onBackground,
             fontSize = 16.sp,
-            fontWeight = FontWeight.Bold,
+            fontWeight = FontWeight.ExtraBold,
             textAlign = TextAlign.Center)
 
         Text(text = "Check your email and click on the \n" +
                 " confirmation link to continue.",
             color = MaterialTheme.colors.onBackground,
             fontSize = 16.sp,
-            fontWeight = FontWeight.Thin,
+            fontWeight = FontWeight.Normal,
             textAlign = TextAlign.Center)
 
 
