@@ -34,6 +34,7 @@ import timber.log.Timber
 
 @Composable
 fun EmailAuthScreen(
+    isDarkTheme: Boolean = false,
     onBackPressed:() -> Unit,
     mappingViewModel: MappingViewModel = viewModel(),
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel(),
@@ -104,7 +105,7 @@ fun EmailAuthScreen(
 
                 Image(
                     contentDescription = "App Icon",
-                    painter = painterResource(id = R.drawable.ic_dark_email),
+                    painter = painterResource(id = if(isDarkTheme) R.drawable.ic_dark_email else R.drawable.ic_light_email),
                     modifier = Modifier
                         .height(165.dp)
                         .width(155.dp)

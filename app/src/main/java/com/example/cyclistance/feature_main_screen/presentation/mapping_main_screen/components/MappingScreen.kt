@@ -54,6 +54,7 @@ import timber.log.Timber
 @ExperimentalPermissionsApi
 @Composable
 fun MappingScreen(
+    isDarkTheme:Boolean = false,
     mappingViewModel: MappingViewModel = hiltViewModel(),
     onBackPressed: () -> Unit,
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {

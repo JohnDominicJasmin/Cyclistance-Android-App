@@ -15,10 +15,9 @@ import kotlinx.coroutines.flow.map
 import okio.IOException
 
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "intro_slider_ref")
 
 class IntroSliderRepositoryImpl(context: Context): IntroSliderRepository {
-
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "intro_slider_ref")
     private var dataStore = context.dataStore
 
     override fun readIntroSliderState(): Flow<Boolean> {

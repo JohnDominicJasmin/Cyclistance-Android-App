@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun DarkModeSwitchButton(checkedState: Boolean,onCheckedChange: ((Boolean) -> Unit)?) {
+fun SettingSwitchButton(checkedState: Boolean, onCheckedChange: ((Boolean) -> Unit)?) {
 
 
     Row(

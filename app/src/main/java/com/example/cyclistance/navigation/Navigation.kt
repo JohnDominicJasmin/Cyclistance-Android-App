@@ -16,11 +16,16 @@ import com.example.cyclistance.feature_readable_displays.presentation.intro_slid
 
 import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.components.SplashScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+
 @ExperimentalPermissionsApi
 @Composable
-fun Navigation(navController: NavHostController, onBackPressed: () -> Unit) {
+fun Navigation(
+    navController: NavHostController,
+    onToggleTheme: () -> Unit,
+    isDarkTheme: Boolean,
+    onBackPressed: () -> Unit) {
 
-
+//todo add composable screen for setting
     NavHost(navController = navController, startDestination = Screens.SplashScreen.route) {
 
         composable(Screens.SplashScreen.route) {
@@ -49,13 +54,13 @@ fun Navigation(navController: NavHostController, onBackPressed: () -> Unit) {
         }
 
         composable(Screens.EmailAuthScreen.route) {
-            EmailAuthScreen(onBackPressed = onBackPressed) { destination, popUpToDestination ->
+            EmailAuthScreen(onBackPressed = onBackPressed, isDarkTheme = isDarkTheme) { destination, popUpToDestination ->
                 navigateScreen(navController, destination, popUpToDestination)
             }
         }
         composable(Screens.MappingScreen.route) {
             MappingScreen(onBackPressed = onBackPressed) { destination, popUpToDestination ->
-                navigateScreen(navController,destination,popUpToDestination)
+                navigateScreen(navController, destination, popUpToDestination)
             }
         }
         composable(Screens.NoInternetScreen.route) {
@@ -64,17 +69,18 @@ fun Navigation(navController: NavHostController, onBackPressed: () -> Unit) {
             }
         }
 
-        composable(Screens.CancellationScreen.route){
+        composable(Screens.CancellationScreen.route) {
             CancellationReasonScreen()
         }
 
-        composable(Screens.ConfirmDetailsScreen.route){
+        composable(Screens.ConfirmDetailsScreen.route) {
             ConfirmationDetailsScreen()
         }
 
-        composable(Screens.RescueRequestScreen.route){
+        composable(Screens.RescueRequestScreen.route) {
             RescueRequestScreen()
         }
+
 
     }
 }

@@ -28,7 +28,11 @@ import com.example.cyclistance.utils.ConnectionStatus
 
 
 @Composable
-fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
+fun NoInternetScreen(
+    isDarkTheme: Boolean = false,
+    onBackPressed: () -> Unit,
+    navigate: () -> Unit,
+) {
 
     val context = LocalContext.current
 
@@ -54,7 +58,7 @@ fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
 
 
             Image(
-                painter = painterResource(id = R.drawable.ic_dark_astronaut),
+                painter = painterResource(id = if(isDarkTheme) R.drawable.ic_dark_astronaut else R.drawable.ic_light_astronaut),
                 contentDescription = "Astronaut",
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
@@ -163,7 +167,7 @@ fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
 fun NoInternetScreenPreview() {
     CyclistanceTheme(true) {
         NoInternetScreen(onBackPressed = { /*TODO*/ }) {
-            
+
         }
     }
 }
