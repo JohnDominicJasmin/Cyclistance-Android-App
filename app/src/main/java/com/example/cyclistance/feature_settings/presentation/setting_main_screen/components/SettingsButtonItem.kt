@@ -33,7 +33,7 @@ fun ButtonItem(buttonText: String) {
         verticalAlignment = Alignment.CenterVertically) {
 
         Text(text = buttonText,
-            color = Color.White,
+            color = MaterialTheme.colors.onBackground,
             modifier = Modifier
                 .weight(0.88f)
                 .padding(top = 7.dp, bottom = 7.dp))

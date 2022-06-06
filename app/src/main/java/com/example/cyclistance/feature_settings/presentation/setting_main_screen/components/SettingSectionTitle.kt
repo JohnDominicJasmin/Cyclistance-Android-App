@@ -34,7 +34,7 @@ fun SectionTitle(@DrawableRes iconId: Int, title: String) {
 
             Text(
                 text = title,
-                color = Color.White,
+                color = MaterialTheme.colors.onBackground,
                 style = MaterialTheme.typography.body2,
                 modifier = Modifier.weight(0.9f))
         }

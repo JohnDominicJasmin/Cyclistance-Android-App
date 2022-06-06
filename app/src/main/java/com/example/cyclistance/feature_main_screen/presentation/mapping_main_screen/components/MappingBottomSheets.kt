@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterialApi::class)
+
 package com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components
 
 
@@ -9,10 +11,12 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -27,7 +31,6 @@ import com.example.cyclistance.feature_main_screen.data.repository.MappingReposi
 import com.example.cyclistance.theme.*
 
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun MappingBottomSheet(sheetContent: @Composable ColumnScope.() -> Unit) {
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
@@ -75,15 +78,23 @@ fun BottomSheetSearchingAssistance(onClickButton: () -> Unit) {
                     .fillMaxWidth()
                     .background(color = MaterialTheme.colors.surface)) {
 
-                val (searchAnimatedIcon, searchingText, cancelButton) = createRefs()
+                val (gripLine, searchAnimatedIcon, searchingText, cancelButton) = createRefs()
 
+                Divider(modifier = Modifier.constrainAs(gripLine){
+                    top.linkTo(parent.top, margin = 8.5.dp)
+                    width = Dimension.percent(0.08f)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
 
+                },
+                color = Black440,
+                thickness = 1.5.dp)
 
                 AnimatedImage(
-                    imageId = R.drawable.ic_magnifying_search,
+                    imageId = R.drawable.ic_dark_magnifying_glass,
                     modifier = Modifier
                         .constrainAs(searchAnimatedIcon) {
-                            top.linkTo(parent.top, margin = 12.dp)
+                            top.linkTo(gripLine.top, margin = 12.dp)
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
                             height = Dimension.value(50.dp)
@@ -107,7 +118,7 @@ fun BottomSheetSearchingAssistance(onClickButton: () -> Unit) {
                 OutlinedButton(
                     onClick = onClickButton,
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                    border = BorderStroke(width = 1.dp, color = MaterialTheme.colors.surface),
+                    border = BorderStroke(width = 1.dp, color = Black300),
                     modifier = Modifier
                         .padding(8.dp)
                         .constrainAs(cancelButton) {
@@ -119,7 +130,7 @@ fun BottomSheetSearchingAssistance(onClickButton: () -> Unit) {
                     Text(
                         text = "CANCEL",
                         style = MaterialTheme.typography.button,
-                        color = MaterialTheme.colors.onSurface
+                        color = MaterialTheme.colors.onSurface,
                     )
 
 
@@ -128,7 +139,6 @@ fun BottomSheetSearchingAssistance(onClickButton: () -> Unit) {
         }
     }
 }
-
 
 @Composable
 private fun BottomSheetRescue(displayedText: String) {
@@ -144,7 +154,18 @@ private fun BottomSheetRescue(displayedText: String) {
                     .fillMaxWidth()
                     .background(color = MaterialTheme.colors.surface)) {
 
-                val (animatedIcon, arrivedText) = createRefs()
+                val (gripLine, animatedIcon, arrivedText) = createRefs()
+
+                Divider(modifier = Modifier.constrainAs(gripLine){
+                    top.linkTo(parent.top, margin = 8.5.dp)
+                    width = Dimension.percent(0.08f)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+
+                },
+                    color = Black440,
+                    thickness = 1.5.dp)
+
 
                 Text(
                     text = displayedText,
@@ -152,14 +173,14 @@ private fun BottomSheetRescue(displayedText: String) {
                     style = MaterialTheme.typography.subtitle2,
                     modifier = Modifier
                         .constrainAs(arrivedText) {
-                            top.linkTo(parent.top, margin = 25.dp)
+                            top.linkTo(gripLine.top, margin = 25.dp)
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
                         })
 
 
                 AnimatedImage(
-                    imageId = R.drawable.ic_ellipsis,
+                    imageId = R.drawable.ic_dark_ellipsis,
                     modifier = Modifier
                         .constrainAs(animatedIcon) {
                             top.linkTo(arrivedText.bottom, margin = 10.dp)
@@ -177,33 +198,29 @@ private fun BottomSheetRescue(displayedText: String) {
     }
 }
 
-@Composable
-fun BottomSheetRescuerArrived() {
-    BottomSheetRescue(displayedText = "Your rescuer has arrived.")
-}
 
 @Composable
-fun DestinationReachedBottomSheet() {
-    BottomSheetRescue(displayedText = "You have reached your destination.")
-}
-
-
-@Composable
-private fun RoundedButtonItem(imageId: Int, buttonSubtitle: String, onClick: () -> Unit) {
+private fun RoundedButtonItem(
+    backgroundColor: Color,
+    contentColor: Color,
+    imageId: Int,
+    buttonSubtitle: String,
+    onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .wrapContentSize(),
-        verticalArrangement = Arrangement.spacedBy(space = 4.dp, alignment = Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(
+            space = 7.dp,
+            alignment = Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally) {
 
         Button(
-            modifier = Modifier.size(56.dp),
+            modifier = Modifier.size(56.dp).shadow(elevation = 8.dp,shape = CircleShape, ),
             onClick = onClick,
             shape = CircleShape,
-
             colors = ButtonDefaults.buttonColors(
-                backgroundColor = MaterialTheme.colors.secondary,
-                contentColor = MaterialTheme.colors.onSurface)) {
+                backgroundColor = backgroundColor,
+                contentColor = contentColor)) {
 
             Icon(
                 painter = painterResource(id = imageId),
@@ -214,7 +231,7 @@ private fun RoundedButtonItem(imageId: Int, buttonSubtitle: String, onClick: () 
 
         Text(
             text = buttonSubtitle,
-            color = Black450,
+            color = Black440,
             style = MaterialTheme.typography.caption,
             textAlign = TextAlign.Center)
     }
@@ -234,14 +251,26 @@ fun OnGoingRescueBottomSheet(estimatedTimeRemaining: String) {
                     .fillMaxWidth()
                     .background(color = MaterialTheme.colors.surface)) {
 
-                val (timeRemaining, roundedButtonSection) = createRefs()
+                val (gripLine, timeRemaining, roundedButtonSection) = createRefs()
+
+
+                Divider(modifier = Modifier.constrainAs(gripLine){
+                    top.linkTo(parent.top, margin = 8.5.dp)
+                    width = Dimension.percent(0.08f)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+
+                },
+                    color = Black440,
+                    thickness = 1.5.dp)
+
 
                 Text(
                     text = "Estimated time of arrival: $estimatedTimeRemaining",
                     color = MaterialTheme.colors.onSurface,
                     style = MaterialTheme.typography.subtitle2,
                     modifier = Modifier.constrainAs(timeRemaining) {
-                        top.linkTo(parent.top, margin = 20.dp)
+                        top.linkTo(gripLine.top, margin = 20.dp)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     })
@@ -261,29 +290,53 @@ fun OnGoingRescueBottomSheet(estimatedTimeRemaining: String) {
                     horizontalArrangement = Arrangement.SpaceEvenly) {
 
                     RoundedButtonItem(
+                        backgroundColor = MaterialTheme.colors.secondary,
+                        contentColor = MaterialTheme.colors.onSurface,
                         imageId = R.drawable.ic_call,
-                        buttonSubtitle = "Call") {
-
-                    }
+                        buttonSubtitle = "Call", onClick = {})
 
 
                     RoundedButtonItem(
+                        backgroundColor = MaterialTheme.colors.secondary,
+                        contentColor = MaterialTheme.colors.onSurface,
                         imageId = R.drawable.ic_chat,
-                        buttonSubtitle = "Chat") {
-
-                    }
+                        buttonSubtitle = "Chat", onClick = {})
 
 
                     RoundedButtonItem(
+                        backgroundColor = Red900,
+                        contentColor = Color.White,
                         imageId = R.drawable.ic_cancel,
-                        buttonSubtitle = "Cancel") {
-
-                    }
+                        buttonSubtitle = "Cancel",onClick = {})
                 }
             }
         }
     }
 }
+
+
+
+@Preview
+@Composable
+fun BottomSheetRescuerArrived() {
+    BottomSheetRescue(displayedText = "Your rescuer has arrived.")
+}
+
+@Preview
+@Composable
+fun DestinationReachedBottomSheet() {
+    BottomSheetRescue(displayedText = "You have reached your destination.")
+}
+
+@Preview
+@Composable
+fun SearchingAssistance() {
+    CyclistanceTheme(true){
+        BottomSheetSearchingAssistance(onClickButton = {})
+    }
+}
+
+
 
 @Preview
 @Composable

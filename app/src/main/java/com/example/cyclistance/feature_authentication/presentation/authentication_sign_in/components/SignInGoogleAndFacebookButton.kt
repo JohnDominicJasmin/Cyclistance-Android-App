@@ -35,7 +35,7 @@ fun SignInGoogleAndFacebookSection(facebookButtonOnClick: ()-> Unit, googleSignI
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
                 .padding(top = 15.dp, bottom = 15.dp)
-                .shadow(12.dp,shape = RoundedCornerShape(15.dp), clip = true)
+                .shadow(10.dp,shape = RoundedCornerShape(15.dp), clip = true)
                 .width(150.dp)
                 .height(45.dp)) {
 
@@ -69,7 +69,7 @@ fun SignInGoogleAndFacebookSection(facebookButtonOnClick: ()-> Unit, googleSignI
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
                 .padding(top = 15.dp, bottom = 15.dp)
-                .shadow(12.dp,shape = RoundedCornerShape(15.dp), clip = true)
+                .shadow(10.dp,shape = RoundedCornerShape(15.dp), clip = true)
                 .width(150.dp)
                 .height(45.dp)
         ) {

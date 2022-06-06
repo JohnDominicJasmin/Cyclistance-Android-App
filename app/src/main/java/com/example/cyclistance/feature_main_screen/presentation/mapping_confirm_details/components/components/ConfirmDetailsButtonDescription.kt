@@ -112,7 +112,7 @@ fun ButtonDescriptionDetails(modifier: Modifier) {
                 SetupButtonDescriptionItem(
                     selectedState = selectedButtonState[3],
                     image = R.drawable.ic__670665_200,
-                    description = "Snapped \nChain") {
+                    description = "Snapped Chain") {
                     selectedButtonState[3] = !selectedButtonState[3]
                     selectedButtonState[0] = false
                     selectedButtonState[1] = false
@@ -135,8 +135,8 @@ fun ButtonDescriptionDetails(modifier: Modifier) {
 
                 SetupButtonDescriptionItem(
                     selectedState = selectedButtonState[5],
-                    image = R.drawable.ic_broken_brakes,
-                    description = "Broken \nBrakes") {
+                    image = R.drawable.ic_faulty_brakes,
+                    description = "Faulty Brakes") {
                     selectedButtonState[5] = !selectedButtonState[5]
                     selectedButtonState[0] = false
                     selectedButtonState[1] = false

@@ -28,7 +28,7 @@ fun DarkModeSwitchButton(checkedState: Boolean,onCheckedChange: ((Boolean) -> Un
         verticalAlignment = Alignment.CenterVertically) {
 
         Text(text = "Dark Mode",
-            color = Color.White,
+            color = MaterialTheme.colors.onBackground,
             modifier = Modifier
                 .weight(0.9f)
                 .padding(top = 7.dp, bottom = 7.dp))

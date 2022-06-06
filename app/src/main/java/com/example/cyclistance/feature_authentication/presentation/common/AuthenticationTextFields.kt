@@ -142,7 +142,7 @@ private fun SetupPasswordTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .shadow(15.dp, shape = RoundedCornerShape(12.dp), clip = true),
+                .shadow(10.dp, shape = RoundedCornerShape(12.dp), clip = true),
             value = password,
             onValueChange = onValueChange,
             singleLine = true,
@@ -184,7 +184,7 @@ fun EmailTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .shadow(15.dp, shape = RoundedCornerShape(12.dp), clip = true),
+                .shadow(10.dp, shape = RoundedCornerShape(12.dp), clip = true),
             value = email,
             singleLine = true,
             maxLines = 1,

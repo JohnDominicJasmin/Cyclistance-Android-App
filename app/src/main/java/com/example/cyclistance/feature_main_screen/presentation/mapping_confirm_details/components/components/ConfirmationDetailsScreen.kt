@@ -116,7 +116,7 @@ fun ConfirmationDetailsScreen() {
 @Preview
 @Composable
 fun ConfirmationDetailsPreview() {
-    CyclistanceTheme(true){
+    CyclistanceTheme(false){
         ConfirmationDetailsScreen()
     }
 }

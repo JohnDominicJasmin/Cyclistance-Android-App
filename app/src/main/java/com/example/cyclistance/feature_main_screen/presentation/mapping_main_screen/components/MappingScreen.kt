@@ -139,13 +139,19 @@ fun MappingScreen(
         drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
         scaffoldState = scaffoldState,
         topBar = {
-            TopAppBarCreator(
-                icon = Icons.Filled.Menu,
-                onClickIcon = {
-                    coroutineScope.launch {
-                        scaffoldState.drawerState.open()
+            TopAppBar(
+                elevation = 10.dp,
+                title = { DefaultTitleTopAppBar() },
+                backgroundColor = MaterialTheme.colors.background,
+                navigationIcon = {
+                    IconButton(onClick = {
+                        coroutineScope.launch {
+                            scaffoldState.drawerState.open()
+                        }
+                    }) {
+                        Icon(Icons.Filled.Menu, contentDescription = "", tint = MaterialTheme.colors.onBackground)
                     }
-                }) { DefaultTitleTopAppBar() }
+                })
         },
         drawerContent = { MappingDrawerContent() },
     content = {
@@ -235,33 +241,34 @@ fun SearchAssistanceButton(onClick: () -> Unit, modifier: Modifier) {
 fun MapScreen(modifier: Modifier) {
 
 
-    AndroidView(
-        modifier = modifier,
-        factory = { context ->
+    var x = remember{ mutableStateOf(false) }
+        AndroidView(
+            modifier = modifier,
+            factory = { context ->
 
-            MapView(context).apply {
+                MapView(context).apply {
 
-                this.getMapAsync { mapboxMap ->
-                    with(mapboxMap) {
-                        setStyle(Style.TRAFFIC_NIGHT)
+                    this.getMapAsync { mapboxMap ->
+                        with(mapboxMap) {
+                            setStyle(Style.TRAFFIC_NIGHT)
 
-                        uiSettings.isAttributionEnabled = false
-                        uiSettings.isLogoEnabled = false
-                        setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
-                        setMinZoomPreference(MIN_ZOOM_LEVEL_MAPS)
-                        animateCamera(
-                            CameraUpdateFactory.newCameraPosition(
-                                CameraPosition.Builder()
-                                    .target(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE))
-                                    .zoom(MAP_ZOOM)
-                                    .tilt(CAMERA_TILT_DEGREES)
-                                    .build()), DEFAULT_CAMERA_ANIMATION_DURATION)
+                            uiSettings.isAttributionEnabled = false
+                            uiSettings.isLogoEnabled = false
+                            setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
+                            setMinZoomPreference(MIN_ZOOM_LEVEL_MAPS)
+                            animateCamera(
+                                CameraUpdateFactory.newCameraPosition(
+                                    CameraPosition.Builder()
+                                        .target(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE))
+                                        .zoom(MAP_ZOOM)
+                                        .tilt(CAMERA_TILT_DEGREES)
+                                        .build()), DEFAULT_CAMERA_ANIMATION_DURATION)
+                        }
+
                     }
-
                 }
             }
-        }
-    )
+        )
 }
 
 

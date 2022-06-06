@@ -16,10 +16,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.SplashScreenViewModel
 import com.example.cyclistance.navigation.Screens
+import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.delay
 
 @Composable
@@ -53,3 +55,4 @@ fun SplashScreen(
     }
 
 }
+

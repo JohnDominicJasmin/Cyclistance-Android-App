@@ -3,18 +3,26 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.cyclistance.R
 import com.example.cyclistance.common.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
@@ -25,12 +33,12 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInViewModel
-import com.example.cyclistance.feature_authentication.presentation.common.AppImageIcon
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.domain.util.AuthResult
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInState
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
@@ -151,7 +159,16 @@ fun SignInScreen(
                         .background(MaterialTheme.colors.background)) {
 
 
-                    AppImageIcon(layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId)
+                    Image(
+                        contentDescription = "App Icon",
+                        painter = painterResource(R.drawable.ic_cyclistance_app_icon),
+                        modifier = Modifier
+                            .height(100.dp)
+                            .width(90.dp)
+                            .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
+                    )
+
+
                     SignUpTextArea()
 
                     if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
@@ -205,7 +222,87 @@ fun SignInScreen(
             }
     }
 
+@Preview(device = Devices.NEXUS_5)
+@Composable
+fun SignInScreenPreview() {
 
+    CyclistanceTheme(false) {
+
+        val scope = rememberCoroutineScope()
+        var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
+
+
+        Column(
+
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)) {
+
+            ConstraintLayout(
+                constraintSet = signInConstraints,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.background)) {
+
+
+                Image(
+                    contentDescription = "App Icon",
+                    painter = painterResource(R.drawable.ic_cyclistance_app_icon),
+                    modifier = Modifier
+                        .height(100.dp)
+                        .width(90.dp)
+                            .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId))
+
+                SignUpTextArea()
+
+                if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
+                    SetupAlertDialog(
+                        alertDialog = alertDialogState,
+                        onDismissRequest = {
+                            alertDialogState = AlertDialogData()
+                        })
+                }
+
+                Waves(
+                    topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
+                    bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId
+                )
+
+
+                SignInTextFieldsArea(
+                    state = SignInState(),
+                    keyboardActionOnDone = { },
+                    signInViewModel = null)
+
+                SignInGoogleAndFacebookSection(
+                    facebookButtonOnClick = {
+                    },
+                    googleSignInButtonOnClick = {
+                        scope.launch {
+                        }
+                    }
+                )
+
+                SignInButton(onClickButton = {
+                })
+
+
+                SignInClickableText(onClick = {
+                })
+
+                if (true) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
+                    )
+                }
+
+            }
+
+        }
+    }
+}
 
 
 

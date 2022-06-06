@@ -19,6 +19,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.theme.Black450
+import com.example.cyclistance.theme.CyclistanceTheme
 
 
 data class MappingDialogData(
@@ -32,27 +33,28 @@ data class MappingDialogData(
 @Composable
 fun Preview() {
 
-    val dialogState = remember{ mutableStateOf(true) }
+    val dialogState = remember { mutableStateOf(true) }
 
-    AlertDialogCreator(dialogState,
-        onClickDismissButton = {
-         dialogState.value = false
-    }, onClickConfirmButton = {
+    CyclistanceTheme(false) {
+        AlertDialogCreator(dialogState,
+            onClickDismissButton = {
+                dialogState.value = false
+            }, onClickConfirmButton = {
 
-    }) { dismiss, confirm ->
+            }) { dismiss, confirm ->
 
 
-        AlertDialogContent(
-            mappingDialogData = MappingDialogData(
-                icon = R.drawable.ic_question,
-                title = "Are you sure?",
-                description = "You want to cancel rescue request?"),
-            onDismiss = dismiss,
-            onConfirm = confirm)
+            AlertDialogContent(
+                mappingDialogData = MappingDialogData(
+                    icon = R.drawable.ic_question,
+                    title = "Are you sure?",
+                    description = "You want to cancel rescue request?"),
+                onDismiss = dismiss,
+                onConfirm = confirm)
 
+        }
     }
 }
-
 
 @Composable
 fun AlertDialogCreator(

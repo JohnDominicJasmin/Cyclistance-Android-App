@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalPagerApi::class)
+
 package com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
@@ -73,14 +75,7 @@ fun IntroSliderScreen(
     }
 }
 
-@Preview(uiMode = UI_MODE_NIGHT_YES, showSystemUi = true)
-@Composable
-fun IntroSliderPreview() {
-    CyclistanceTheme(darkTheme = true) {
-        IntroSliderScreen(onBackPressed = {}) { _, _ ->
-        }
-    }
-}
+
 
 
 

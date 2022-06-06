@@ -75,7 +75,7 @@ fun CancellationReasonScreen() {
 @Preview
 @Composable
 fun CancellationReasonPreview() {
-    CyclistanceTheme(true) {
+    CyclistanceTheme(false) {
         CancellationReasonScreen()
     }
 }

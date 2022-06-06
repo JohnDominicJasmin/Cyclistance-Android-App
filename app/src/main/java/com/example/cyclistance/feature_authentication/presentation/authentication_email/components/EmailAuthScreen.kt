@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
@@ -15,6 +16,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingViewModel
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,7 +27,6 @@ import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialo
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
-import com.example.cyclistance.feature_authentication.presentation.common.CustomImage
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -101,13 +102,13 @@ fun EmailAuthScreen(
                     .fillMaxHeight(0.9f)
                     .background(MaterialTheme.colors.background)) {
 
-                CustomImage(
-                    layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId,
+                Image(
                     contentDescription = "App Icon",
-                    imageId = R.drawable.ic_dark_email,
+                    painter = painterResource(id = R.drawable.ic_dark_email),
                     modifier = Modifier
                         .height(165.dp)
                         .width(155.dp)
+                        .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
 
                 )
 
@@ -174,13 +175,13 @@ fun EmailAuthScreenPreview() {
                         .background(androidx.compose.material.MaterialTheme.colors.background)) {
 
 
-                    CustomImage(
-                        layoutId = AuthenticationConstraintsItem.IconDisplay.layoutId,
-                        contentDescription = "App Icon",
-                        imageId = if(state) R.drawable.ic_dark_email else R.drawable.ic_light_email,
+                    Image(
+                        contentDescription = null,
+                        painter = painterResource(if(state) R.drawable.ic_dark_email else R.drawable.ic_light_email),
                         modifier = Modifier
                             .height(165.dp)
                             .width(155.dp)
+                            .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
 
                     )
 

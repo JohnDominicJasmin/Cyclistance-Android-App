@@ -156,7 +156,7 @@ private fun DrawerContentButtonItem(
 @Preview
 @Composable
 fun DrawerPreview() {
-    CyclistanceTheme(true) {
+    CyclistanceTheme(false) {
         MappingDrawerContent()
     }
 

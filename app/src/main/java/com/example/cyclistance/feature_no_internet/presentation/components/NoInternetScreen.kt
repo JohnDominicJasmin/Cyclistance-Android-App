@@ -16,12 +16,12 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
-import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.Black300
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.utils.ConnectionStatus
@@ -54,16 +54,16 @@ fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
 
 
             Image(
-                painter = painterResource(id = R.drawable.ic_astronaut),
+                painter = painterResource(id = R.drawable.ic_dark_astronaut),
                 contentDescription = "Astronaut",
                 modifier = Modifier
-                    .wrapContentSize()
+                    .fillMaxWidth(0.5f)
+                    .fillMaxHeight(0.2f)
                     .constrainAs(image) {
                         top.linkTo(parent.top, margin = 12.dp)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                        width = Dimension.wrapContent
-                        height = Dimension.wrapContent
+
                     })
 
             Text(
@@ -103,7 +103,7 @@ fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
                 },
                 modifier = Modifier
                     .padding(4.dp)
-                    .shadow(elevation = 10.dp, shape = RoundedCornerShape(12.dp), clip = true)
+                    .shadow(elevation = 15.dp, shape = RoundedCornerShape(12.dp), clip = true)
                     .width(150.dp)
                     .constrainAs(retryButton) {
                         top.linkTo(description.bottom, margin = 40.dp)
@@ -156,4 +156,14 @@ fun NoInternetScreen( onBackPressed: () -> Unit, navigate: ()-> Unit,) {
 
     }
 
+}
+
+@Preview(device = Devices.NEXUS_5)
+@Composable
+fun NoInternetScreenPreview() {
+    CyclistanceTheme(true) {
+        NoInternetScreen(onBackPressed = { /*TODO*/ }) {
+            
+        }
+    }
 }

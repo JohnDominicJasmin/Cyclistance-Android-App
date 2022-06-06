@@ -54,7 +54,7 @@ fun ChangePasswordScreen() {
 @Preview
 @Composable
 fun ChangePasswordPreview() {
-    CyclistanceTheme(true) {
+    CyclistanceTheme(false) {
         ChangePasswordScreen()
     }
 }

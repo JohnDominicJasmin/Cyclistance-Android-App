@@ -33,15 +33,10 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black450
+import com.example.cyclistance.theme.CyclistanceTheme
 
 
-@OptIn(ExperimentalAnimationApi::class)
-@Preview
-@Composable
-fun PreviewDeleteLater() {
-    val visibility = remember{ mutableStateOf(true) }
-    MappingDefaultBanner(isVisible = visibility)
-}
+
 
 @ExperimentalAnimationApi
 @Composable
@@ -89,7 +84,7 @@ fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
 
 
 data class MappingBannerData(
-    @DrawableRes val userProfileImage:Int,
+    val userProfileImage:Int,
     val name:String,
     val issue:String,
     val distanceRemaining:String,
@@ -101,15 +96,16 @@ data class MappingBannerData(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
+fun MappingExpandableBanner( bannerModel: MappingBannerData) {
 
 
     var expandedState by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(
         targetValue = if (expandedState) 180f else 0f
     )
+    val bannerModelState = remember{bannerModel}
 
-    with(bannerModel.value) {
+    with(bannerModelState) {
 
 
         Card(
@@ -218,6 +214,7 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
                         Column(modifier = Modifier.constrainAs(expandedSection) {
                             top.linkTo(issueText.bottom, margin = 10.dp)
                             width = Dimension.matchParent
+                            bottom.linkTo(parent.bottom, margin = 15.dp)
                         }) {
 
                             Divider(
@@ -276,3 +273,18 @@ fun MappingExpandableBanner( bannerModel: MutableState<MappingBannerData>) {
     }
 }
 
+@Preview
+@Composable
+fun MappingExpandableBannerPreview() {
+    CyclistanceTheme(true) {
+        MappingExpandableBanner(
+            bannerModel = MappingBannerData(
+                userProfileImage = R.drawable.person_image,
+                name = "John Doe",
+                issue = "Faulty Brakes",
+                distanceRemaining = "7.0km",
+                timeRemaining = "2mins",
+                address = "Taal Batangas", message = "Lorem ipsum dolor sit amet, consectetur adipis"))
+    }
+
+}

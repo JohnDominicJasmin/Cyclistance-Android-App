@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.common.MappingConstants.MAX_CHARACTERS
 import com.example.cyclistance.theme.Black440
-import com.example.cyclistance.theme.Black450
+import com.example.cyclistance.theme.Black500
 
 
 @Composable
@@ -73,14 +73,14 @@ fun MappingAdditionalMessage(modifier: Modifier) {
                     placeholder = {
                         Text(
                             text = "(Optional) Leave a message",
-                            color = Black450,
+                            color = Black500,
                             style = MaterialTheme.typography.body2)
                     },
                 )
 
                 Text(
                     text = "${numberOfCharacters.value}/$MAX_CHARACTERS",
-                    color = Black450,
+                    color = Black440,
                     modifier = Modifier
                         .padding(top = 5.dp, bottom = 5.dp)
                         .constrainAs(numberOfCharactersText) {

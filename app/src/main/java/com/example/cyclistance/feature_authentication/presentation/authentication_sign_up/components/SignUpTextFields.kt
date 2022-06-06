@@ -16,7 +16,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.*
 @Composable
 fun SignUpTextFieldsArea(
     state: SignUpState,
-    signUpViewModel: SignUpViewModel,
+    signUpViewModel: SignUpViewModel? = null,
     keyboardActionOnDone: () -> Unit) {
 
 
@@ -33,10 +33,10 @@ fun SignUpTextFieldsArea(
                 email = email,
                 emailExceptionMessage = emailErrorMessage,
                 clearIconOnClick = {
-                    signUpViewModel.onEvent(SignUpEvent.ClearEmail)
+                    signUpViewModel?.onEvent(SignUpEvent.ClearEmail)
                 },
                 onValueChange = {
-                    signUpViewModel.onEvent(SignUpEvent.EnteredEmail(email = it))
+                    signUpViewModel?.onEvent(SignUpEvent.EnteredEmail(email = it))
                 })
 
 
@@ -44,24 +44,24 @@ fun SignUpTextFieldsArea(
                 password = password,
                 passwordExceptionMessage = passwordErrorMessage,
                 clearIconOnClick = {
-                    signUpViewModel.onEvent(SignUpEvent.ClearPassword)
+                    signUpViewModel?.onEvent(SignUpEvent.ClearPassword)
                 },
                 onValueChange = {
-                    signUpViewModel.onEvent(SignUpEvent.EnteredPassword(password = it))
+                    signUpViewModel?.onEvent(SignUpEvent.EnteredPassword(password = it))
                 })
 
             ConfirmPasswordTextField(
                 passwordValue = confirmPassword,
                 passwordExceptionMessage = confirmPasswordErrorMessage,
                 onValueChange = {
-                    signUpViewModel.onEvent(SignUpEvent.EnteredConfirmPassword(confirmPassword = it))
+                    signUpViewModel?.onEvent(SignUpEvent.EnteredConfirmPassword(confirmPassword = it))
                 },
                 keyboardActionOnDone = {
                     keyboardActionOnDone()
                 },
                 isPasswordVisible = passwordVisibility,
                 passwordVisibilityIconOnClick = {
-                    signUpViewModel.onEvent(SignUpEvent.TogglePasswordVisibility)
+                    signUpViewModel?.onEvent(SignUpEvent.TogglePasswordVisibility)
                 })
 
         }

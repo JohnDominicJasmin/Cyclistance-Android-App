@@ -476,6 +476,41 @@
         <entry key="../../../../layout/compose-model-1654423043075.xml" value="0.1" />
         <entry key="../../../../layout/compose-model-1654430690775.xml" value="0.5" />
         <entry key="../../../../layout/compose-model-1654430714468.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1654435029254.xml" value="0.5" />
+        <entry key="../../../../layout/compose-model-1654436386345.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1654443580551.xml" value="0.31798986486486486" />
+        <entry key="../../../../layout/compose-model-1654444088590.xml" value="0.22741273100616016" />
+        <entry key="../../../../layout/compose-model-1654444932421.xml" value="1.0" />
+        <entry key="../../../../layout/compose-model-1654446436822.xml" value="0.22" />
+        <entry key="../../../../layout/compose-model-1654446752008.xml" value="0.1" />
+        <entry key="../../../../layout/compose-model-1654448384202.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1654450913918.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1654451002596.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1654452225064.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1654452895420.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1654452904090.xml" value="0.6738636363636363" />
+        <entry key="../../../../layout/compose-model-1654453093877.xml" value="0.5" />
+        <entry key="../../../../layout/compose-model-1654453211823.xml" value="0.18" />
+        <entry key="../../../../layout/compose-model-1654453479512.xml" value="0.22" />
+        <entry key="../../../../layout/compose-model-1654499454821.xml" value="0.23055555555555557" />
+        <entry key="../../../../layout/compose-model-1654499539176.xml" value="0.15760869565217392" />
+        <entry key="../../../../layout/compose-model-1654499559887.xml" value="0.23055555555555557" />
+        <entry key="../../../../layout/compose-model-1654499570999.xml" value="0.23055555555555557" />
+        <entry key="../../../../layout/compose-model-1654499590152.xml" value="0.23055555555555557" />
+        <entry key="../../../../layout/compose-model-1654499597283.xml" value="0.28295454545454546" />
+        <entry key="../../../../layout/compose-model-1654499598925.xml" value="0.23055555555555557" />
+        <entry key="../../../../layout/compose-model-1654499600811.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1654501493642.xml" value="0.2" />
+        <entry key="../../../../layout/compose-model-1654501532030.xml" value="0.18" />
+        <entry key="../../../../layout/compose-model-1654505760903.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1654506442176.xml" value="0.33" />
+        <entry key="../../../../layout/compose-model-1654514423020.xml" value="0.3188344594594595" />
+        <entry key="../../../../layout/compose-model-1654520443960.xml" value="0.2" />
+        <entry key="../../../../layout/compose-model-1654520904071.xml" value="0.18" />
+        <entry key="../../../../layout/compose-model-1654520974723.xml" value="0.22" />
+        <entry key="../../../../layout/compose-model-1654521149700.xml" value="0.2" />
+        <entry key="../../../../layout/compose-model-1654521218186.xml" value="0.25" />
+        <entry key="../../../../layout/compose-model-1654521323599.xml" value="0.33" />
         <entry key="../../.gradle/caches/transforms-3/dfd8fd68048be80345bd978b987de6ce/transformed/material-1.5.0/res/drawable/mtrl_ic_error.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-v24/ic_facebook_.xml" value="0.1" />
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.187" />
@@ -508,12 +543,15 @@
         <entry key="app/src/main/res/drawable/ic_facebook.xml" value="0.195" />
         <entry key="app/src/main/res/drawable/ic_facebook_svgrepo_com.xml" value="0.195" />
         <entry key="app/src/main/res/drawable/ic_facebook_svgrepo_com__1_.xml" value="0.195" />
+        <entry key="app/src/main/res/drawable/ic_faulty_brakes.xml" value="0.227" />
         <entry key="app/src/main/res/drawable/ic_flat_tire.xml" value="0.2305" />
         <entry key="app/src/main/res/drawable/ic_google.xml" value="0.183" />
         <entry key="app/src/main/res/drawable/ic_group_35.xml" value="0.173" />
         <entry key="app/src/main/res/drawable/ic_help_and_rescue.xml" value="0.24" />
         <entry key="app/src/main/res/drawable/ic_injury.xml" value="0.1315" />
+        <entry key="app/src/main/res/drawable/ic_intro_top_wave.xml" value="0.175" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_light_astronaut.xml" value="0.1395" />
         <entry key="app/src/main/res/drawable/ic_light_email.xml" value="0.1205" />
         <entry key="app/src/main/res/drawable/ic_live_location.xml" value="0.1195" />
         <entry key="app/src/main/res/drawable/ic_location.xml" value="0.1335" />
@@ -527,10 +565,12 @@
         <entry key="app/src/main/res/drawable/ic_sign_out.xml" value="0.213" />
         <entry key="app/src/main/res/drawable/ic_snapped_chain.xml" value="0.2305" />
         <entry key="app/src/main/res/drawable/ic_success.xml" value="0.1" />
-        <entry key="app/src/main/res/drawable/ic_top_wave.xml" value="0.18" />
+        <entry key="app/src/main/res/drawable/ic_top_wave.xml" value="0.5" />
         <entry key="app/src/main/res/drawable/magnify_1_4s_200px.xml" value="0.1345" />
         <entry key="app/src/main/res/layout/activity_hilt_preview.xml" value="0.365625" />
         <entry key="app/src/main/res/layout/activity_mapping.xml" value="0.33" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />
+        <entry key="app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1" />
       </map>
     </option>
   </component>
