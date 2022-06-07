@@ -99,7 +99,7 @@ fun SignUpScreen(
 
                 Image(
                     contentDescription = "App Icon",
-                    painter = painterResource(R.drawable.ic_cyclistance_app_icon),
+                    painter = painterResource(R.drawable.ic_app_icon_cyclistance),
                     modifier = Modifier
                         .height(100.dp)
                         .width(90.dp)
@@ -169,7 +169,7 @@ fun SignUpScreenPreview() {
 
                 Image(
                     contentDescription = "App Icon",
-                    painter = painterResource(com.example.cyclistance.R.drawable.ic_cyclistance_app_icon),
+                    painter = painterResource(com.example.cyclistance.R.drawable.ic_app_icon_cyclistance),
                     modifier = androidx.compose.ui.Modifier
                         .height(100.dp)
                         .width(90.dp)

@@ -43,7 +43,7 @@ fun DefaultTitleTopAppBar() {
         horizontalArrangement = Arrangement.spacedBy(5.dp)) {
 
         Image(
-            painter = painterResource(id = R.drawable.ic_cyclistance_app_icon),
+            painter = painterResource(id = R.drawable.ic_app_icon_cyclistance),
             contentDescription = "Image Icon",
             alignment = Alignment.Center,
             modifier = Modifier

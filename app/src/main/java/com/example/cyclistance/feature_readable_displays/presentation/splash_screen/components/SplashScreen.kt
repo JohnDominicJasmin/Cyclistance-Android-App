@@ -49,7 +49,7 @@ fun SplashScreen(
             .fillMaxSize()
             .background(MaterialTheme.colors.background)) {
         Image(
-            painter = painterResource(id = R.drawable.ic_cyclistance_app_icon),
+            painter = painterResource(id = R.drawable.ic_app_icon_cyclistance),
             contentDescription = "App Icon", modifier = Modifier.scale(scale.value))
 
     }
