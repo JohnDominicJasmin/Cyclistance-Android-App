@@ -16,7 +16,9 @@ import com.example.cyclistance.theme.Shapes
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.ui.draw.alpha
@@ -36,13 +38,11 @@ import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
-
-
 @ExperimentalAnimationApi
 @Composable
-fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
+fun MappingDefaultBanner(isVisible: Boolean) {
     AnimatedVisibility(
-        visible = isVisible.value,
+        visible = isVisible,
         enter = expandVertically(),
         exit = shrinkVertically()) {
 
@@ -68,7 +68,7 @@ fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
 
                 TextButton(
                     modifier = Modifier.padding(end = 8.dp),
-                    onClick = { isVisible.value = false }) {
+                    onClick = { }) {
 
                     Text(
                         text = "DISMISS",
@@ -84,26 +84,26 @@ fun MappingDefaultBanner(isVisible: MutableState<Boolean>) {
 
 
 data class MappingBannerData(
-    val userProfileImage:Int,
-    val name:String,
-    val issue:String,
-    val distanceRemaining:String,
-    val timeRemaining:String,
-    val address:String,
-    val message:String
+    val userProfileImage: Int,
+    val name: String,
+    val issue: String,
+    val distanceRemaining: String,
+    val timeRemaining: String,
+    val address: String,
+    val message: String
 )
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MappingExpandableBanner( bannerModel: MappingBannerData) {
+fun MappingExpandableBanner(bannerModel: MappingBannerData) {
 
 
     var expandedState by remember { mutableStateOf(false) }
     val rotationState by animateFloatAsState(
         targetValue = if (expandedState) 180f else 0f
     )
-    val bannerModelState = remember{bannerModel}
+    val bannerModelState = remember { bannerModel }
 
     with(bannerModelState) {
 
@@ -131,7 +131,7 @@ fun MappingExpandableBanner( bannerModel: MappingBannerData) {
 
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
-                        tint = MaterialTheme.colors.onSurface   ,
+                        tint = MaterialTheme.colors.onSurface,
                         contentDescription = "Drop down icon",
                         modifier = Modifier.size(30.dp))
 
@@ -142,7 +142,7 @@ fun MappingExpandableBanner( bannerModel: MappingBannerData) {
                         .fillMaxWidth()
                         .padding(start = 12.dp, bottom = 12.dp, end = 12.dp)) {
 
-                    val (roundedImage, nameText, issueText, distanceAndTime, expandedSection) = createRefs()
+                    val (roundedImage, nameText, issueText, distanceAndTime, expandedSection, dismissButton) = createRefs()
 
 
 
@@ -160,7 +160,7 @@ fun MappingExpandableBanner( bannerModel: MappingBannerData) {
                     )
 
                     Text(
-                        text =  name,
+                        text = name,
                         fontSize = MaterialTheme.typography.subtitle1.fontSize,
                         fontWeight = FontWeight.SemiBold,
                         color = MaterialTheme.colors.onSurface,
@@ -249,7 +249,7 @@ fun MappingExpandableBanner( bannerModel: MappingBannerData) {
 
 
                             Text(
-                                text = "Message",
+                                text = "Message:",
                                 fontSize = MaterialTheme.typography.subtitle1.fontSize,
                                 fontWeight = FontWeight.Normal,
                                 color = Black440
@@ -260,13 +260,20 @@ fun MappingExpandableBanner( bannerModel: MappingBannerData) {
                                 fontWeight = FontWeight.SemiBold,
                                 color = MaterialTheme.colors.onSurface,
                             )
-
-
                         }
-
-
                     }
 
+
+                }
+
+                TextButton(
+                    modifier = Modifier.padding(end = 8.dp)
+                        .align(Alignment.End),
+                    onClick = { }) {
+                    Text(
+                        text = "DISMISS",
+                        color = MaterialTheme.colors.primary,
+                        style = MaterialTheme.typography.subtitle2)
                 }
             }
         }
@@ -284,7 +291,19 @@ fun MappingExpandableBannerPreview() {
                 issue = "Faulty Brakes",
                 distanceRemaining = "7.0km",
                 timeRemaining = "2mins",
-                address = "Taal Batangas", message = "Lorem ipsum dolor sit amet, consectetur adipis"))
+                address = "Taal Batangas",
+                message = "Lorem ipsum dolor sit amet, consectetur adipis consectetur adipis adipis consectetur adipis adipis adipis adip"))
     }
 
 }
+
+/*
+@OptIn(ExperimentalAnimationApi::class)
+@Preview
+@Composable
+fun DefaultBannerPreview() {
+    CyclistanceTheme(true) {
+        MappingDefaultBanner(isVisible = true)
+    }
+}
+*/
