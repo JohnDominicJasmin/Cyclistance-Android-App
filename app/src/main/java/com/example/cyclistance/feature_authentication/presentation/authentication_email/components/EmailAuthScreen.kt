@@ -36,7 +36,7 @@ import timber.log.Timber
 fun EmailAuthScreen(
     isDarkTheme: Boolean = false,
     onBackPressed:() -> Unit,
-    mappingViewModel: MappingViewModel = viewModel(),
+    mappingViewModel: MappingViewModel = hiltViewModel(),
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel(),
     navigateTo : (destination: String, popUpToDestination: String?) -> Unit) {
 
@@ -197,8 +197,7 @@ fun EmailAuthScreenPreview() {
                     }
                     if (true) {
                         CircularProgressIndicator(
-                            modifier = androidx.compose.ui.Modifier.layoutId(
-                                com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem.ProgressBar.layoutId))
+                            modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId))
                     }
 
 

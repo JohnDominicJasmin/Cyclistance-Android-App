@@ -68,7 +68,6 @@ class EmailAuthViewModel @Inject constructor(
 
     private suspend fun verifyEmail() {
         kotlin.runCatching {
-            _state.value = state.value.copy(isLoading = true)
             authUseCase.isEmailVerifiedUseCase() == true
         }.onSuccess { isVerificationSuccess ->
             _state.value = state.value.copy(isLoading = false)
@@ -82,7 +81,7 @@ class EmailAuthViewModel @Inject constructor(
                     }
                 }
             }else{
-                _eventFlow.emit(EmailAuthUiEvent.UserEmailIsNotVerifiedUi)
+                _eventFlow.emit(EmailAuthUiEvent.ShowSignInScreen)
             }
         }
     }
@@ -97,7 +96,6 @@ class EmailAuthViewModel @Inject constructor(
 
     private suspend fun reloadEmail(){
         kotlin.runCatching {
-            _state.value = state.value.copy(isLoading = true)
             authUseCase.reloadEmailUseCase()
         }.onSuccess { isEmailReloaded ->
             _state.value = state.value.copy(isLoading = false)
