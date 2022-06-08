@@ -10,5 +10,5 @@ object MappingConstants {
     const val DEFAULT_LONGITUDE = 121.7740
     const val DEFAULT_CAMERA_ANIMATION_DURATION = 700
     const val MAP_ZOOM = 6.00
-    const val MAX_CHARACTERS = 50
+    const val MAX_CHARACTERS = 110
 }
