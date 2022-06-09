@@ -21,6 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.findViewTreeLifecycleOwner
 
 import com.example.cyclistance.common.MappingConstants.CAMERA_TILT_DEGREES
 import com.example.cyclistance.common.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
@@ -31,6 +33,7 @@ import com.example.cyclistance.common.MappingConstants.MAX_ZOOM_LEVEL_MAPS
 import com.example.cyclistance.common.MappingConstants.MIN_ZOOM_LEVEL_MAPS
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
+import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingUiEvent
@@ -54,7 +57,7 @@ import timber.log.Timber
 @ExperimentalPermissionsApi
 @Composable
 fun MappingScreen(
-    isDarkTheme:Boolean = false,
+    isDarkTheme: LiveData<Boolean>,
     mappingViewModel: MappingViewModel = hiltViewModel(),
     onBackPressed: () -> Unit,
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
@@ -182,7 +185,9 @@ fun MappingScreen(
 
             val (mapScreen, searchButton, circularProgressbar) = createRefs()
 
-            MapScreen(modifier = Modifier.constrainAs(mapScreen) {
+            MapScreen(
+                isDarkTheme = isDarkTheme,
+                modifier = Modifier.constrainAs(mapScreen) {
                 top.linkTo(parent.top)
                 end.linkTo(parent.end)
                 start.linkTo(parent.start)
@@ -239,10 +244,8 @@ fun SearchAssistanceButton(onClick: () -> Unit, modifier: Modifier) {
 }
 
 @Composable
-fun MapScreen(modifier: Modifier) {
+fun MapScreen(isDarkTheme: LiveData<Boolean>, modifier: Modifier) {
 
-
-    var x = remember{ mutableStateOf(false) }
         AndroidView(
             modifier = modifier,
             factory = { context ->
@@ -251,8 +254,11 @@ fun MapScreen(modifier: Modifier) {
 
                     this.getMapAsync { mapboxMap ->
                         with(mapboxMap) {
-                            setStyle(Style.TRAFFIC_NIGHT)
-
+                            this@apply.findViewTreeLifecycleOwner()?.let { lifeCycleOwner ->
+                                isDarkTheme.observe(lifeCycleOwner){ darkTheme ->
+                                    setStyle(if(darkTheme) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY)
+                                }
+                            }
                             uiSettings.isAttributionEnabled = false
                             uiSettings.isLogoEnabled = false
                             setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
@@ -267,6 +273,7 @@ fun MapScreen(modifier: Modifier) {
                         }
 
                     }
+
                 }
             }
         )

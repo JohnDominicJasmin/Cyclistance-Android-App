@@ -8,10 +8,10 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.LiveData
 import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.feature_authentication.domain.util.ActivityResultCallbackManager
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
@@ -66,16 +66,18 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val settingViewModel: SettingViewModel = hiltViewModel()
-            val isDarkTheme by settingViewModel.isDarkTheme().collectAsState(initial = false)
+            val isDarkThemeLiveData:LiveData<Boolean> = settingViewModel.isDarkTheme()
+            val isDarkThemeState by isDarkThemeLiveData.observeAsState(initial = false)
 
-            CyclistanceTheme(darkTheme = isDarkTheme) {
+            CyclistanceTheme(darkTheme = isDarkThemeState) {
 
                 CompositionLocalProvider(LocalActivityResultCallbackManager provides callbackManager) {
                     Navigation(
                         navController = rememberNavController(),
-                        onToggleTheme = {settingViewModel.toggleTheme()},
-                        isDarkTheme = isDarkTheme,
-                        onBackPressed = onBackPressed)
+                        onToggleTheme = { settingViewModel.toggleTheme() },
+                        isDarkTheme = isDarkThemeState,
+                        isDarkThemeLiveData = isDarkThemeLiveData,
+                        onBackPressed = { settingViewModel.toggleTheme() })
 
                 }
             }
