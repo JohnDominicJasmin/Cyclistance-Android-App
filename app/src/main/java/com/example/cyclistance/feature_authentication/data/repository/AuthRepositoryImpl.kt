@@ -5,7 +5,6 @@ import com.example.cyclistance.R
 import com.example.cyclistance.common.AuthConstants.FB_CONNECTION_FAILURE
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
-import com.google.firebase.FirebaseError.ERROR_USER_NOT_FOUND
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
@@ -132,6 +131,14 @@ class AuthRepositoryImpl @Inject constructor(
 
     override  fun getName(): String? {
         return FirebaseAuth.getInstance().currentUser?.displayName
+    }
+
+    override fun getPhoneNumber(): String?{
+        return FirebaseAuth.getInstance().currentUser?.phoneNumber
+    }
+
+    override fun getPhotoUrl(): String {
+        return FirebaseAuth.getInstance().currentUser?.photoUrl.toString()
     }
 
     override fun isSignedInWithProvider(): Flow<Boolean> = flow {
