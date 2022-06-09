@@ -2,7 +2,7 @@
 <resources>
 
     <style name="Theme.Cyclistance" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/ThemeColor</item>
+        <item name="android:statusBarColor">#80000000</item>
     </style>
 
 </resources>
