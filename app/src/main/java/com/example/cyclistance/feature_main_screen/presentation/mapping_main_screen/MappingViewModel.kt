@@ -6,6 +6,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.common.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_main_screen.data.remote.dto.Location
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
@@ -39,7 +40,7 @@ class MappingViewModel @Inject constructor(
     private fun getPhoneNumber(): String? = authUseCase.getPhoneNumberUseCase()
     private fun getPhotoUrl(): String{
         return authUseCase.getPhotoUrlUseCase()?.toString()
-               ?: "https://www.pngitem.com/pimgs/m/30-307416_profile-icon-png-image-free-download-searchpng-employee.png"
+               ?: IMAGE_PLACEHOLDER_URL
     }
 
 
