@@ -32,13 +32,13 @@ class MappingViewModel @Inject constructor(
 
     fun getEmail():String = authUseCase.getEmailUseCase() ?: ""
 
-    private fun getName():String = authUseCase.getNameUseCase() ?: ""
+    private fun getName():String = authUseCase.getNameUseCase() ?: getEmail().apply{
+        val index = this.indexOf('@')
+        return this.substring(0, index)
+    }
 
     private fun getId():String = authUseCase.getIdUseCase() ?: ""
-
-
     fun signOutAccount() = authUseCase.signOutUseCase()
-
 
     fun onEvent(event: MappingEvent){
         when(event){
@@ -48,9 +48,6 @@ class MappingViewModel @Inject constructor(
                     postUser(event.addresses)
                 }
             }
-
-
-
 
         }
     }
@@ -99,4 +96,7 @@ class MappingViewModel @Inject constructor(
                 ))
         }
     }
+
+
+
 }
