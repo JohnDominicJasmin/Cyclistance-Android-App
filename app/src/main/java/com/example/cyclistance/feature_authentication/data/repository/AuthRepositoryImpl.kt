@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_authentication.data.repository
 
 import android.content.Context
+import android.net.Uri
 import com.example.cyclistance.R
 import com.example.cyclistance.common.AuthConstants.FB_CONNECTION_FAILURE
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
@@ -137,8 +138,8 @@ class AuthRepositoryImpl @Inject constructor(
         return FirebaseAuth.getInstance().currentUser?.phoneNumber
     }
 
-    override fun getPhotoUrl(): String {
-        return FirebaseAuth.getInstance().currentUser?.photoUrl.toString()
+    override fun getPhotoUrl(): Uri? {
+        return FirebaseAuth.getInstance().currentUser?.photoUrl
     }
 
     override fun isSignedInWithProvider(): Flow<Boolean> = flow {

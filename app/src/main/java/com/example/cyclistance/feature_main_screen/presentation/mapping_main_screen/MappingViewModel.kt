@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_main_screen.data.remote.dto.Location
-import com.example.cyclistance.feature_main_screen.data.remote.dto.UserAssistance
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_main_screen.domain.model.User
 import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCase
@@ -36,6 +35,13 @@ class MappingViewModel @Inject constructor(
         val index = this.indexOf('@')
         return this.substring(0, index)
     }
+
+    private fun getPhoneNumber(): String? = authUseCase.getPhoneNumberUseCase()
+    private fun getPhotoUrl(): String{
+        return authUseCase.getPhotoUrlUseCase()?.toString()
+               ?: "https://www.pngitem.com/pimgs/m/30-307416_profile-icon-png-image-free-download-searchpng-employee.png"
+    }
+
 
     private fun getId():String = authUseCase.getIdUseCase() ?: ""
     fun signOutAccount() = authUseCase.signOutUseCase()

@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_authentication.domain.repository
 
+import android.net.Uri
 import com.google.firebase.auth.UserInfo
 import kotlinx.coroutines.flow.Flow
 
@@ -11,7 +12,7 @@ interface AuthRepository< T> {
     fun getName(): String?
     fun getId(): String?
     fun getPhoneNumber(): String?
-    fun getPhotoUrl(): String
+    fun getPhotoUrl(): Uri?
     fun isSignedInWithProvider(): Flow<Boolean>
     fun isEmailVerified(): Boolean?
     fun hasAccountSignedIn(): Boolean

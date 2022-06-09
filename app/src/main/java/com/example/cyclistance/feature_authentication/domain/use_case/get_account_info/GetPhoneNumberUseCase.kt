@@ -3,8 +3,8 @@ package com.example.cyclistance.feature_authentication.domain.use_case.get_accou
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.google.firebase.auth.AuthCredential
 
-class GetIdUseCase(private val repository: AuthRepository<AuthCredential>) {
-    operator fun invoke():String? {
-        return repository.getId()
+class GetPhoneNumberUseCase(private val repository: AuthRepository<AuthCredential>) {
+    operator fun invoke():String?{
+        return repository.getPhoneNumber()
     }
 }

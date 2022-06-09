@@ -7,8 +7,6 @@ import com.google.firebase.auth.AuthCredential
 class GetNameUseCase(private val repository: AuthRepository<AuthCredential>) {
 
      operator fun invoke():String?{
-
       return repository.getName()
-
     }
 }
