@@ -1,6 +1,7 @@
 package com.example.cyclistance.navigation
 
 import androidx.compose.runtime.*
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -13,8 +14,10 @@ import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingScreen
 import com.example.cyclistance.feature_main_screen.presentation.mapping_rescue_request.components.RescueRequestScreen
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderScreen
-
 import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.components.SplashScreen
+import com.example.cyclistance.feature_settings.presentation.setting_change_password.components.ChangePasswordScreen
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.EditProfileScreen
+import com.example.cyclistance.feature_settings.presentation.setting_main_screen.components.SettingScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 @ExperimentalPermissionsApi
@@ -23,11 +26,10 @@ fun Navigation(
     navController: NavHostController,
     onToggleTheme: () -> Unit,
     isDarkTheme: Boolean,
+    isDarkThemeLiveData: LiveData<Boolean>,
     onBackPressed: () -> Unit) {
 
-//todo add composable screen for setting
     NavHost(navController = navController, startDestination = Screens.SplashScreen.route) {
-
         composable(Screens.SplashScreen.route) {
             SplashScreen { destination, popUpToDestination ->
                 navigateScreen(navController, destination, popUpToDestination)
@@ -59,7 +61,7 @@ fun Navigation(
             }
         }
         composable(Screens.MappingScreen.route) {
-            MappingScreen(onBackPressed = onBackPressed) { destination, popUpToDestination ->
+            MappingScreen(isDarkTheme = isDarkThemeLiveData,onBackPressed = onBackPressed) { destination, popUpToDestination ->
                 navigateScreen(navController, destination, popUpToDestination)
             }
         }
@@ -81,6 +83,19 @@ fun Navigation(
             RescueRequestScreen()
         }
 
+        composable(Screens.ChangePasswordScreen.route){
+            ChangePasswordScreen()
+        }
+
+        composable(Screens.EditProfileScreen.route){
+            EditProfileScreen {destination , popUpToDestination ->
+                navigateScreen(navController, destination, popUpToDestination)
+            }
+        }
+
+        composable(Screens.SettingScreen.route){
+            SettingScreen()
+        }
 
     }
 }
