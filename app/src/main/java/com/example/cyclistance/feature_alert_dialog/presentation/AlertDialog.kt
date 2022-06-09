@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -78,12 +79,14 @@ fun SetupAlertDialog(
                             Spacer(modifier = Modifier.height(28.dp))
                             Text(
                                 alertDialog.title,
+                                textAlign = TextAlign.Center,
                                 style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight.Bold),
                                 color = MaterialTheme.colors.onSurface)
                             Spacer(modifier = Modifier.height(8.dp))
                             Text(
                                 alertDialog.description,
                                 style = TextStyle(fontSize = 14.sp),
+                                textAlign = TextAlign.Center,
                                 color = MaterialTheme.colors.onSurface)
                             Spacer(modifier = Modifier.height(24.dp))
                             Row(
