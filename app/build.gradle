@@ -173,11 +173,16 @@ dependencies {
     implementation "com.google.accompanist:accompanist-permissions:0.24.9-beta"
     //Simple Location
     implementation 'com.github.delight-im:Android-SimpleLocation:v1.1.0'
+    //Firebase
     implementation 'com.google.gms:google-services:4.3.10'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth-ktx'
 
+    //livedata
+    implementation 'androidx.compose.runtime:runtime-livedata:1.2.0-beta03'
+
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.1"
 }
 
 apply plugin: 'com.google.gms.google-services'
