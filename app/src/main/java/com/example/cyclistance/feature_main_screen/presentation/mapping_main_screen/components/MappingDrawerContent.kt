@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -15,12 +14,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -46,7 +43,15 @@ fun MappingDrawerContent() {
                 horizontalAlignment = Alignment.CenterHorizontally) {
 
 
-                ProfilePictureArea(modifier = Modifier.size(105.dp))
+                Image(
+                    painter = painterResource(R.drawable.person_image),
+                    contentDescription = "Profile_Screen",
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .size(105.dp)
+                        .border(width = 3.6.dp, color = MaterialTheme.colors.primary, shape = CircleShape),
+                    contentScale = ContentScale.Crop,
+                )
 
                 Text(
                     text = "John Doe",
@@ -61,8 +66,6 @@ fun MappingDrawerContent() {
                     style = MaterialTheme.typography.subtitle2)
 
                 Spacer(modifier = Modifier.height(15.dp))
-
-
 
             }
         }

@@ -8,6 +8,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -51,7 +52,7 @@ fun EditProfileScreen(navigateTo: (destination: String, popUpToDestination: Stri
 
         TextFieldInputArea(modifier = Modifier
             .constrainAs(textFieldInputArea) {
-                top.linkTo(profilePictureArea.bottom, margin = 25.dp)
+                top.linkTo(changePhotoText.bottom, margin = 30.dp)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 height = Dimension.percent(0.5f)
@@ -82,10 +83,13 @@ fun EditProfileScreen(navigateTo: (destination: String, popUpToDestination: Stri
 }
 
 
-@Preview
+@Preview(device = Devices.NEXUS_5)
 @Composable
 fun EditProfileScreenPreview() {
-    EditProfileScreen { destination, popUpToDestination ->
 
+    CyclistanceTheme(true) {
+        EditProfileScreen { destination, popUpToDestination ->
+
+        }
     }
 }

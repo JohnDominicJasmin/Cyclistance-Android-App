@@ -23,7 +23,7 @@ fun SettingScreen() {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally) {
 
-       /* Column(
+        Column(
             modifier = Modifier
                 .fillMaxWidth(0.9f)
                 .padding(top = 30.dp),
@@ -32,8 +32,8 @@ fun SettingScreen() {
             SectionTitle(iconId = R.drawable.ic_baseline_person_24, title = "Account")
             Spacer(modifier = Modifier.height(7.dp))
             ButtonItem(buttonText = "Edit Profile")
-            ButtonItem(buttonText = "Change Password")
-        }*/
+//            ButtonItem(buttonText = "Change Password")
+        }
 
         Column(modifier = Modifier
             .fillMaxWidth(0.9f)

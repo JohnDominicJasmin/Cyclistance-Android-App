@@ -44,7 +44,7 @@ fun TextFieldInputArea(modifier: Modifier) {
             value = it
         }
 
-        TextFieldItem(
+     /*   TextFieldItem(
             label = "E-mail",
             errorMessage = "",
             value = value,
@@ -54,7 +54,7 @@ fun TextFieldInputArea(modifier: Modifier) {
                 keyboardType = KeyboardType.Email,
                 imeAction = ImeAction.Next)) {
             value = it
-        }
+        }*/
 
         TextFieldItem(
             label = "Address",
