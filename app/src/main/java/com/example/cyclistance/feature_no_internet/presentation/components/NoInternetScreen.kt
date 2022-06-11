@@ -166,7 +166,7 @@ fun NoInternetScreen(
 @Composable
 fun NoInternetScreenPreview() {
     CyclistanceTheme(true) {
-        NoInternetScreen(onBackPressed = { /*TODO*/ }) {
+        NoInternetScreen(onBackPressed = {  }) {
 
         }
     }

@@ -32,20 +32,22 @@ android {
         localProperties.load(new FileInputStream(rootProject.file("local.properties")))
 
         debug {
-            resValue("string", "MapsToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
+            resValue("string", "MapsDownloadToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
             resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
             resValue("string", "FacebookLoginProtocolScheme", localProperties.getProperty("FACEBOOK_LOGIN_PROTOCOL_SCHEME"))
             resValue("string", "FacebookClientToken", localProperties.getProperty("FACEBOOK_CLIENT_TOKEN"))
+            resValue("string", "DefaultWebClientId", localProperties.getProperty("DEFAULT_WEB_CLIENT_ID"))
         }
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
-            resValue("string", "MapsToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
+            resValue("string", "MapsDownloadToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
             resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
             resValue("string", "FacebookLoginProtocolScheme", localProperties.getProperty("FACEBOOK_LOGIN_PROTOCOL_SCHEME"))
             resValue("string", "FacebookClientToken", localProperties.getProperty("FACEBOOK_CLIENT_TOKEN"))
+            resValue("string", "DefaultWebClientId", localProperties.getProperty("DEFAULT_WEB_CLIENT_ID"))
         }
     }
 
@@ -174,7 +176,7 @@ dependencies {
     //Simple Location
     implementation 'com.github.delight-im:Android-SimpleLocation:v1.1.0'
     //Firebase
-    implementation 'com.google.gms:google-services:4.3.10'
+    implementation 'com.google.gms:google-services:4.3.5'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
     implementation 'com.google.firebase:firebase-auth-ktx'

@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,7 +18,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.*
 fun SignUpTextFieldsArea(
     state: SignUpState,
     signUpViewModel: SignUpViewModel? = null,
-    keyboardActionOnDone: () -> Unit) {
+    keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
 
 
     with(state) {
@@ -30,7 +31,7 @@ fun SignUpTextFieldsArea(
 
 
             EmailTextField(
-                email = email,
+                textFieldValue = email,
                 emailExceptionMessage = emailErrorMessage,
                 clearIconOnClick = {
                     signUpViewModel?.onEvent(SignUpEvent.ClearEmail)
@@ -56,9 +57,7 @@ fun SignUpTextFieldsArea(
                 onValueChange = {
                     signUpViewModel?.onEvent(SignUpEvent.EnteredConfirmPassword(confirmPassword = it))
                 },
-                keyboardActionOnDone = {
-                    keyboardActionOnDone()
-                },
+                keyboardActionOnDone = keyboardActionOnDone,
                 isPasswordVisible = passwordVisibility,
                 passwordVisibilityIconOnClick = {
                     signUpViewModel?.onEvent(SignUpEvent.TogglePasswordVisibility)

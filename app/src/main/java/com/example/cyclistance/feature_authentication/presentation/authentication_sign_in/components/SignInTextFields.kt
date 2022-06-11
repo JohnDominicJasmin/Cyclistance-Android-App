@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardActionScope
 
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -19,7 +20,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 fun SignInTextFieldsArea(
     state: SignInState,
     signInViewModel: SignInViewModel? = null,
-    keyboardActionOnDone: () -> Unit) {
+    keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
 
     with(state) {
 
@@ -32,7 +33,7 @@ fun SignInTextFieldsArea(
 
 
             EmailTextField(
-                email = email,
+                textFieldValue = email,
                 emailExceptionMessage = emailErrorMessage,
                 onValueChange = {
                     signInViewModel?.onEvent(SignInEvent.EnteredEmail(email = it))

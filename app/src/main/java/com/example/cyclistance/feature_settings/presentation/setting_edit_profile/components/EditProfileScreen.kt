@@ -40,7 +40,7 @@ fun EditProfileScreen(navigateTo: (destination: String, popUpToDestination: Stri
 
         Text(
             text = "Change Profile Photo",
-            color = MaterialTheme.colors.primary,
+            color = Blue600,
             style = MaterialTheme.typography.caption, fontWeight = FontWeight.SemiBold,
         modifier = Modifier.constrainAs(changePhotoText){
             top.linkTo(profilePictureArea.bottom, margin = 4.dp)
@@ -87,7 +87,7 @@ fun EditProfileScreen(navigateTo: (destination: String, popUpToDestination: Stri
 @Composable
 fun EditProfileScreenPreview() {
 
-    CyclistanceTheme(true) {
+    CyclistanceTheme(false) {
         EditProfileScreen { destination, popUpToDestination ->
 
         }

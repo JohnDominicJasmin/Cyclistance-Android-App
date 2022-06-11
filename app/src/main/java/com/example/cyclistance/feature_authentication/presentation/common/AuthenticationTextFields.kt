@@ -13,11 +13,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.input.*
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.theme.Black500
+import timber.log.Timber
 
 
 @Composable
@@ -29,29 +31,14 @@ fun ConfirmPasswordTextField(
     onValueChange: (TextFieldValue) -> Unit,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
 
-    val hasError = passwordExceptionMessage.isNotEmpty()
 
 
-    SetupPasswordTextField(
-        password = passwordValue,
-        passwordExceptionMessage = passwordExceptionMessage,
+    SetupTextField(
+        textFieldValue = passwordValue,
+        exceptionMessage = passwordExceptionMessage,
         onValueChange = onValueChange,
-        placeholder = {
-            Text(
-                text = "Confirm Password",
-                color = if (hasError) MaterialTheme.colors.error else Black500,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center
-            )
-            }, leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Lock,
-                contentDescription = "Password Icon",
-                tint = if(hasError) MaterialTheme.colors.error else Black500,
-                modifier = Modifier.size(18.dp)
-
-            )
-        },trailingIcon = {
+        placeholderText = "Confirm Password",
+        trailingIcon = {
             val image =
                 if (isPasswordVisible) Icons.Filled.Visibility else Icons.Filled.VisibilityOff
             IconButton(onClick = passwordVisibilityIconOnClick) {
@@ -75,26 +62,11 @@ fun PasswordTextField(
     val hasError = passwordExceptionMessage.isNotEmpty()
 
 
-    SetupPasswordTextField(
-        password = password,
-        passwordExceptionMessage = passwordExceptionMessage,
+    SetupTextField(
+        textFieldValue = password,
+        exceptionMessage = passwordExceptionMessage,
         onValueChange = onValueChange,
-        placeholder = {
-            Text(
-                text = "Password",
-                color = if (hasError) MaterialTheme.colors.error else Black500,
-                fontSize = 14.sp,
-                textAlign = TextAlign.Center
-            )
-        },
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Default.Lock,
-                contentDescription = "Password Icon",
-                tint = if(hasError) MaterialTheme.colors.error else Black500,
-                modifier = Modifier.size(18.dp)
-            )
-        },
+        placeholderText = "Password",
         trailingIcon = {
             if (hasError) {
                 Icon(
@@ -120,19 +92,24 @@ fun PasswordTextField(
 }
 
 
+
+
+
+
 @Composable
-private fun SetupPasswordTextField(
-    password: TextFieldValue,
-    passwordExceptionMessage: String,
+private fun SetupTextField(
+    textFieldValue: TextFieldValue,
+    exceptionMessage: String,
     onValueChange: (TextFieldValue) -> Unit,
-    placeholder: @Composable (() -> Unit)? = null,
-    leadingIcon: @Composable (() -> Unit)? = null,
+    placeholderText: String,
+    leadingIcon: ImageVector = Icons.Default.Lock,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
     keyboardOptions:KeyboardOptions,
     keyboardActions: KeyboardActions = KeyboardActions()
 ) {
-    val hasError = passwordExceptionMessage.isNotEmpty()
+
+    val hasError = exceptionMessage.isNotEmpty()
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
@@ -143,106 +120,83 @@ private fun SetupPasswordTextField(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .shadow(10.dp, shape = RoundedCornerShape(12.dp), clip = true),
-            value = password,
+            value = textFieldValue,
             onValueChange = onValueChange,
             singleLine = true,
             maxLines = 1,
             shape = RoundedCornerShape(12.dp),
-            placeholder = placeholder,
-            trailingIcon = trailingIcon,
-            leadingIcon = leadingIcon,
-            isError = hasError,
-            keyboardOptions = keyboardOptions,
-            colors = textFieldColors(),
-            visualTransformation = visualTransformation,
-
-        )
-        if (hasError) {
-            ErrorMessage(passwordExceptionMessage, modifier = Modifier)
-        }
-    }
-}
-
-
-
-
-@Composable
-fun EmailTextField(
-    emailExceptionMessage: String,
-    email: TextFieldValue,
-    clearIconOnClick: ()-> Unit,
-    onValueChange: (TextFieldValue) -> Unit) {
-
-    val hasError = emailExceptionMessage.isNotEmpty()
-
-    Column(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.spacedBy(3.dp)) {
-
-        TextField(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .shadow(10.dp, shape = RoundedCornerShape(12.dp), clip = true),
-            value = email,
-            singleLine = true,
-            maxLines = 1,
-            shape = RoundedCornerShape(12.dp),
-            onValueChange = onValueChange,
             placeholder = {
                 Text(
-                    text = "Email",
+                    text = placeholderText,
                     color = if (hasError) MaterialTheme.colors.error else Black500,
                     fontSize = 14.sp,
                     textAlign = TextAlign.Center
                 )
             },
-            trailingIcon = {
-
-
-                if(hasError){
-                    Icon(
-                        imageVector = Icons.Filled.Error,
-                        contentDescription = "",
-                        tint = MaterialTheme.colors.error,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-
-                if(email.text.isNotEmpty() && !hasError){
-                    IconButton(onClick = clearIconOnClick) {
-                        Icon(
-                            imageVector = Icons.Default.Cancel,
-                            contentDescription = "",
-                            tint = Black500,
-                            modifier = Modifier.size(20.dp)
-                        )
-                    }
-                }
-
-
-
-            },
+            trailingIcon = trailingIcon,
             leadingIcon = {
                 Icon(
-                    imageVector = Icons.Default.Email,
-                    contentDescription = "Email Icon",
+                    imageVector = leadingIcon,
+                    contentDescription = "Password Icon",
                     tint = if(hasError) MaterialTheme.colors.error else Black500,
                     modifier = Modifier.size(18.dp)
                 )
             },
             isError = hasError,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+            keyboardOptions = keyboardOptions,
             colors = textFieldColors(),
-        )
+            visualTransformation = visualTransformation,
+            keyboardActions = keyboardActions
 
+        )
         if (hasError) {
-            ErrorMessage(emailExceptionMessage, modifier = Modifier.padding(start = 16.dp))
+            ErrorMessage(exceptionMessage, modifier = Modifier)
         }
     }
-
 }
+
+
+@Composable
+fun EmailTextField(
+    textFieldValue: TextFieldValue,
+    emailExceptionMessage: String,
+    clearIconOnClick: ()-> Unit,
+    onValueChange: (TextFieldValue) -> Unit) {
+
+    val hasError = emailExceptionMessage.isNotEmpty()
+
+    SetupTextField(
+        textFieldValue = textFieldValue,
+        exceptionMessage = emailExceptionMessage,
+        onValueChange = onValueChange,
+        placeholderText = "Email",
+        leadingIcon = Icons.Default.Email,
+        trailingIcon = {
+            if(hasError){
+                Icon(
+                    imageVector = Icons.Filled.Error,
+                    contentDescription = "",
+                    tint = MaterialTheme.colors.error,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+
+            if(textFieldValue.text.isNotEmpty() && !hasError){
+                IconButton(onClick = clearIconOnClick) {
+                    Icon(
+                        imageVector = Icons.Default.Cancel,
+                        contentDescription = "",
+                        tint = Black500,
+                        modifier = Modifier.size(20.dp)
+                    )
+                }
+            }
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+    )
+}
+
+
 @Composable
  fun ErrorMessage(errorMessage: String, modifier: Modifier){
     Text(

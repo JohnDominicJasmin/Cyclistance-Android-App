@@ -45,7 +45,7 @@ class MainActivity : ComponentActivity() {
 
         Mapbox.getInstance(
             this,
-            getString(R.string.MapsToken))
+            getString(R.string.MapsDownloadToken))
 
         var backPressedTime = 0L
         val onBackPressed = {

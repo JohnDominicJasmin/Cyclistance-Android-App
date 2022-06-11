@@ -19,7 +19,7 @@ class AuthResult :
 
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestEmail()
-            .requestIdToken(context.getString(R.string.default_web_client_id))
+            .requestIdToken(context.getString(R.string.DefaultWebClientId))
             .build()
 
         val signInClient =  GoogleSignIn.getClient(context, googleSignInOptions)
