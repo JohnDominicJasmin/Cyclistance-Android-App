@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -55,7 +56,7 @@ fun SignInScreen(
     val signInState = signInViewModel.state.value
     val emailAuthStateValue = emailAuthViewModel.state.value
     val context = LocalContext.current
-
+    val focusManager = LocalFocusManager.current
     BackHandler(enabled = true, onBack = onBackPressed)
     val authResultLauncher = rememberLauncherForActivityResult(contract = AuthResult()) { task ->
         try {
@@ -185,7 +186,11 @@ fun SignInScreen(
                     SignInTextFieldsArea(
                         state = signInState,
                         signInViewModel = signInViewModel,
-                        keyboardActionOnDone = { signInViewModel.onEvent(SignInEvent.SignInDefault) })
+                        keyboardActionOnDone = {
+                            signInViewModel.onEvent(SignInEvent.SignInDefault)
+                            focusManager.clearFocus()
+
+                        })
 
                     SignInGoogleAndFacebookSection(
                         facebookButtonOnClick = {

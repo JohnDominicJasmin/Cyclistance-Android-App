@@ -10,9 +10,9 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Devices
@@ -41,7 +41,7 @@ fun SignUpScreen(
     navigateTo : (destination: String, popUpToDestination: String?) -> Unit) {
 
     val stateValue = signUpViewModel.state.value
-
+    val focusManager = LocalFocusManager.current
     with(stateValue) {
 
         val hasAccountSignedIn = remember { signUpViewModel.hasAccountSignedIn() }
@@ -124,7 +124,10 @@ fun SignUpScreen(
                 SignUpTextFieldsArea(
                     state = this@with,
                     signUpViewModel = signUpViewModel,
-                    keyboardActionOnDone = { signUpAccount() }
+                    keyboardActionOnDone = {
+                        signUpAccount()
+                        focusManager.clearFocus()
+                    }
                 )
 
 
