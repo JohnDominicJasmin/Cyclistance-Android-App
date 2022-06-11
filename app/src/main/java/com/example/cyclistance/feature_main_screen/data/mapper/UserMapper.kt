@@ -13,7 +13,9 @@ fun UserDto.toUser():User{
         location = this.location,
         name = this.name,
         userNeededHelp = this.userNeededHelp,
-        userAssistance = this.userAssistance
+        userAssistance = this.userAssistance,
+        profilePictureUrl = this.profilePictureUrl,
+        contactNumber = this.contactNumber
     )
 }
 

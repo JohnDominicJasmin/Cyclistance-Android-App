@@ -31,20 +31,20 @@ class MappingViewModel @Inject constructor(
     val state: State<MappingState> = _state
 
     fun getEmail():String = authUseCase.getEmailUseCase() ?: ""
+    private fun getId():String = authUseCase.getIdUseCase() ?: ""
 
     private fun getName():String = authUseCase.getNameUseCase() ?: getEmail().apply{
         val index = this.indexOf('@')
         return this.substring(0, index)
     }
 
-    private fun getPhoneNumber(): String? = authUseCase.getPhoneNumberUseCase()
+    private fun getPhoneNumber(): String = authUseCase.getPhoneNumberUseCase()
     private fun getPhotoUrl(): String{
         return authUseCase.getPhotoUrlUseCase()?.toString()
                ?: IMAGE_PLACEHOLDER_URL
     }
 
 
-    private fun getId():String = authUseCase.getIdUseCase() ?: ""
     fun signOutAccount() = authUseCase.signOutUseCase()
 
     fun onEvent(event: MappingEvent){
@@ -66,6 +66,7 @@ class MappingViewModel @Inject constructor(
                 kotlin.runCatching {
                     with(address) {
                         _state.value = state.value.copy(isLoading = true)
+
                         mappingUseCase.createUserUseCase(
                             user = User(
                                 address = "$subThoroughfare $thoroughfare., $locality, $subAdminArea",
@@ -74,7 +75,8 @@ class MappingViewModel @Inject constructor(
                                     lat = latitude.toString(),
                                     lng = longitude.toString()),
                                 name = getName(),
-
+                                profilePictureUrl = getPhotoUrl(),
+                                contactNumber = getPhoneNumber()
                             ))
                     }
                 }.onSuccess {
@@ -92,7 +94,9 @@ class MappingViewModel @Inject constructor(
                                     message = exception.message ?: "",
                                 ))
                         }
-
+                        is NullPointerException -> {
+//                            TODO: ADD UI TO PROVIDE CONTACT NUMBER
+                        }
                     }
                 }
             }

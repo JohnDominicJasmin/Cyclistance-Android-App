@@ -10,5 +10,7 @@ data class User(
     val location: Location,
     val name: String,
     val userNeededHelp: Boolean = false,
-    val userAssistance: UserAssistance = UserAssistance()
+    val userAssistance: UserAssistance = UserAssistance(),
+    val profilePictureUrl: String,
+    val contactNumber: String
 )

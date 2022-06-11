@@ -15,5 +15,9 @@ data class UserDto(
     @SerializedName("user_needed_help")
     val userNeededHelp: Boolean = false,
     @SerializedName("user_assistance")
-    val userAssistance: UserAssistance = UserAssistance()
+    val userAssistance: UserAssistance = UserAssistance(),
+    @SerializedName("profile_picture_url")
+    val profilePictureUrl: String,
+    @SerializedName("contact_number")
+    val contactNumber: String
 )

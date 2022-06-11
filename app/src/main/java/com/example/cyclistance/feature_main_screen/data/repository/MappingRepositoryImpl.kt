@@ -45,7 +45,10 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                         location = this.location,
                         name = this.name,
                         userNeededHelp = this.userNeededHelp,
-                        userAssistance = this.userAssistance
+                        userAssistance = this.userAssistance,
+                        profilePictureUrl = this.profilePictureUrl,
+                        contactNumber = this.contactNumber
+
                     ))
             }
         }catch (e:HttpException){
@@ -66,7 +69,9 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
                       location = this.location,
                       name = this.name,
                       userNeededHelp = this.userNeededHelp,
-                      userAssistance = this.userAssistance
+                      userAssistance = this.userAssistance,
+                      profilePictureUrl = this.profilePictureUrl,
+                      contactNumber = this.contactNumber
                   )
               )
             }
