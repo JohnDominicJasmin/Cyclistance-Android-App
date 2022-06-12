@@ -47,9 +47,11 @@ fun EmailAuthScreen(
     val context = LocalContext.current
     val email = remember { mappingViewModel.getEmail() }
 
-    val intent = Intent(Intent.ACTION_MAIN)
-    intent.addCategory(Intent.CATEGORY_APP_EMAIL)
-    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    val intent = Intent(Intent.ACTION_MAIN).apply {
+        addCategory(Intent.CATEGORY_APP_EMAIL)
+        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    }
+
 
 
     BackHandler(enabled = true, onBack = onBackPressed)
@@ -140,7 +142,7 @@ fun EmailAuthScreen(
 
                 EmailAuthVerifyEmailButton(onClick = {
                     kotlin.runCatching {
-                        startActivity(context,intent, null)
+                        startActivity(context, intent, null)
                     }.onFailure {
                         Toast.makeText(context, "No email app detected.", Toast.LENGTH_LONG).show()
                     }
