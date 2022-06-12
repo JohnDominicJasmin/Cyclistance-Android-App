@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_email.components
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
@@ -44,6 +46,11 @@ fun EmailAuthScreen(
     var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
     val context = LocalContext.current
     val email = remember { mappingViewModel.getEmail() }
+
+    val intent = Intent(Intent.ACTION_MAIN)
+    intent.addCategory(Intent.CATEGORY_APP_EMAIL)
+    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
 
     BackHandler(enabled = true, onBack = onBackPressed)
 
@@ -131,6 +138,13 @@ fun EmailAuthScreen(
                 val secondsRemaining  = if (secondsLeft < 2) "$secondsLeft" else "$secondsLeft s"
                 val secondsRemainingText by derivedStateOf { if (isTimerRunning) "Resend Email in $secondsRemaining" else "Resend Email" }
 
+                EmailAuthVerifyEmailButton(onClick = {
+                    kotlin.runCatching {
+                        startActivity(context,intent, null)
+                    }.onFailure {
+                        Toast.makeText(context, "No email app detected.", Toast.LENGTH_LONG).show()
+                    }
+                })
 
                 EmailAuthResendButton(
                     text = secondsRemainingText,
@@ -159,7 +173,10 @@ fun EmailAuthScreenPreview() {
     CyclistanceTheme(state){
         var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
         val email = remember { "Mikocabal27@gmail.com" }
-
+        val context = LocalContext.current
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_APP_EMAIL)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             Column(
 
                 horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
@@ -201,7 +218,9 @@ fun EmailAuthScreenPreview() {
                     }
 
 
-
+                    EmailAuthVerifyEmailButton(onClick = {
+                        startActivity(context, intent, null)
+                    })
 
                     EmailAuthResendButton(
                         text = "Resend Email in 20s",

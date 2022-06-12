@@ -9,6 +9,7 @@ val emailAuthConstraints = ConstraintSet {
     val emailIcon =  createRefFor(id = AuthenticationConstraintsItem.IconDisplay.layoutId)
     val textDisplay = createRefFor(id = AuthenticationConstraintsItem.WelcomeTextArea.layoutId)
     val resendEmail = createRefFor(id = AuthenticationConstraintsItem.ResendButton.layoutId)
+    val verifyEmail = createRefFor(id = AuthenticationConstraintsItem.VerifyEmailButton.layoutId)
     val progressBar = createRefFor(id = AuthenticationConstraintsItem.ProgressBar.layoutId)
 
 
@@ -39,6 +40,13 @@ val emailAuthConstraints = ConstraintSet {
         height = Dimension.wrapContent
     }
 
+    constrain(verifyEmail){
+        bottom.linkTo(resendEmail.top, margin = 5.dp)
+        end.linkTo(parent.end)
+        start.linkTo(parent.start)
+        width = Dimension.wrapContent
+        height = Dimension.wrapContent
+    }
 
     constrain(resendEmail){
         bottom.linkTo(parent.bottom,margin = 10.dp)

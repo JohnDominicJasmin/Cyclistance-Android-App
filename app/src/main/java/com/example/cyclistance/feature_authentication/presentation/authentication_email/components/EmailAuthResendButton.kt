@@ -38,7 +38,7 @@ fun EmailAuthResendButton(text: String, isEnabled: Boolean, onClick: () -> Unit)
             Text(
                 text,
                 textAlign = TextAlign.Center,
-                fontSize = 20.sp,
+                fontSize = 16.sp,
                 fontWeight = FontWeight.Bold)
 
         }
