@@ -40,7 +40,7 @@ fun IntroSliderButtons(text:String,
             modifier = Modifier
                 .height(50.dp)
                 .width(220.dp)
-                .shadow(1.dp, shape = RoundedCornerShape(12.dp), clip = true),
+                .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
             shape = RoundedCornerShape(12.dp)) {
             Text(
@@ -51,7 +51,6 @@ fun IntroSliderButtons(text:String,
 
             )
         }
-
 
 
         TextButton(

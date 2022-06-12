@@ -20,6 +20,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.findViewTreeLifecycleOwner
@@ -199,6 +200,7 @@ fun MappingScreen(
                     bottom.linkTo(parent.bottom, margin = 18.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
+                    height = Dimension.value(45.dp)
                 }, onClick = {
                     if (multiplePermissionsState.allPermissionsGranted) {
                         postProfile()

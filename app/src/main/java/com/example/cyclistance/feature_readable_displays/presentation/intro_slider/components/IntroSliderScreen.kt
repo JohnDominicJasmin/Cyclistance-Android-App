@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun IntroSliderScreen(
-    introSliderViewModel: IntroSliderViewModel = hiltViewModel(),
+//    introSliderViewModel: IntroSliderViewModel = hiltViewModel(),
     onBackPressed: () -> Unit,
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit,) {
 
@@ -56,7 +56,7 @@ fun IntroSliderScreen(
                 text = if (isOnLastPage) "Let's get Started!" else "Next",
 
                 onClickSkipButton = {
-                    introSliderViewModel.userCompletedWalkThrough()
+//                    introSliderViewModel.userCompletedWalkThrough()
                     navigateTo(Screens.SignInScreen.route, Screens.IntroSliderScreen.route)
                 },
                 onClickNextButton = {
@@ -67,12 +67,21 @@ fun IntroSliderScreen(
                             )
                         }
                     } else {
-                        introSliderViewModel.userCompletedWalkThrough()
+//                        introSliderViewModel.userCompletedWalkThrough()
                         navigateTo(Screens.SignInScreen.route, Screens.IntroSliderScreen.route)
                     }
                 })
         }
     }
+}
+
+@Preview
+@Composable
+fun IntroSliderScreenPreview() {
+    CyclistanceTheme(false) {
+        IntroSliderScreen(onBackPressed = { /*TODO*/ }, navigateTo = {_,_->})
+    }
+
 }
 
 
