@@ -2,16 +2,25 @@ package com.example.cyclistance.feature_authentication.data.repository
 
 import android.content.Context
 import android.net.Uri
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.R
+import com.example.cyclistance.common.AuthConstants.DATA_STORE_PHONE_NUMBER_KEY
 import com.example.cyclistance.common.AuthConstants.FACEBOOK_CONNECTION_FAILURE
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
+import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import java.io.IOException
 import javax.inject.Inject
 
 
@@ -20,6 +29,8 @@ class AuthRepositoryImpl @Inject constructor(
     private val context: Context
 ) : AuthRepository<AuthCredential> {
 
+    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "phone_number_ref")
+    private var dataStore = context.dataStore
 
     override suspend fun reloadEmail(): Boolean {
         return CompletableDeferred<Boolean>().run {
@@ -133,8 +144,16 @@ class AuthRepositoryImpl @Inject constructor(
         return FirebaseAuth.getInstance().currentUser?.displayName
     }
 
-    override fun getPhoneNumber(): String? {
-        return FirebaseAuth.getInstance().currentUser?.phoneNumber
+    override fun getPhoneNumber(): Flow<String> {
+        return dataStore.data.catch { exception ->
+            if (exception is IOException){
+                emit(emptyPreferences())
+            }else{
+                throw AuthExceptions.UnexpectedErrorException(message = exception.localizedMessage ?: "Unexpected error occurred.")
+            }
+        }.map { preference ->
+            preference[DATA_STORE_PHONE_NUMBER_KEY]?:throw MappingExceptions.UnavailablePhoneNumber("Phone Number is not available.")
+        }
     }
 
     override fun getPhotoUrl(): Uri? {

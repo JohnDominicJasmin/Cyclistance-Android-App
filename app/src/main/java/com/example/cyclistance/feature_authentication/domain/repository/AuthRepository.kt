@@ -11,7 +11,7 @@ interface AuthRepository< T> {
     suspend fun sendEmailVerification(): Boolean
     fun getName(): String?
     fun getId(): String?
-    fun getPhoneNumber(): String?
+    fun getPhoneNumber(): Flow<String>
     fun getPhotoUrl(): Uri?
     fun isSignedInWithProvider(): Flow<Boolean>
     fun isEmailVerified(): Boolean?

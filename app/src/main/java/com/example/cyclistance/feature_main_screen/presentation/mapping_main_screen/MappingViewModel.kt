@@ -42,7 +42,7 @@ class MappingViewModel @Inject constructor(
         return this.substring(0, index)
     }
 
-    private fun getPhoneNumber(): String = authUseCase.getPhoneNumberUseCase()!!
+    private suspend fun getPhoneNumber(): String = authUseCase.getPhoneNumberUseCase()
     private fun getPhotoUrl(): String{
         return authUseCase.getPhotoUrlUseCase()?.toString()
                ?: IMAGE_PLACEHOLDER_URL

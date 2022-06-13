@@ -1,5 +1,7 @@
 package com.example.cyclistance.common
 
+import androidx.datastore.preferences.core.stringPreferencesKey
+
 object AuthConstants {
     const val REGEX_NUMBER_VALUE="[0-9]"
     const val REGEX_SPECIAL_CHARACTERS_VALUE = "[!#$%&*()_+=|<>?{}\\[\\]~]"
@@ -9,5 +11,6 @@ object AuthConstants {
     const val REFRESH_EMAIL_INTERVAL: Long = 1800
     const val GOOGLE_SIGN_IN_REQUEST_CODE: Int = 1
     const val FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE"
+    val DATA_STORE_PHONE_NUMBER_KEY = stringPreferencesKey("phone_number_key")
 
 }
