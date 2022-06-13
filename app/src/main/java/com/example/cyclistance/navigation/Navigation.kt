@@ -19,7 +19,6 @@ import com.example.cyclistance.feature_settings.presentation.setting_change_pass
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.EditProfileScreen
 import com.example.cyclistance.feature_settings.presentation.setting_main_screen.components.SettingScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import timber.log.Timber
 
 @ExperimentalPermissionsApi
 @Composable
