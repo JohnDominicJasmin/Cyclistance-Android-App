@@ -96,14 +96,10 @@ fun Navigation(
             ChangePasswordScreen()
         }
 
-        composable(
-            route = Screens.EditProfileScreen.route + "/{${MISSING_PHONE_NUMBER}}",
-            arguments = listOf(navArgument(MISSING_PHONE_NUMBER){ type = NavType.BoolType })) { backStackEntry ->
-
-            EditProfileScreen(hasMissingPhoneNumber = backStackEntry.arguments?.getBoolean(MISSING_PHONE_NUMBER)) { destination, popUpToDestination ->
+        composable(Screens.EditProfileScreen.route){
+            EditProfileScreen {destination , popUpToDestination ->
                 navigateScreen(navController, destination, popUpToDestination)
             }
-
         }
 
         composable(Screens.SettingScreen.route){
