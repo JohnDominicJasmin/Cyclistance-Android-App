@@ -30,10 +30,14 @@ class MappingViewModel @Inject constructor(
     private val _state: MutableState<MappingState> = mutableStateOf(MappingState())
     val state: State<MappingState> = _state
 
+
+
+
+
     fun getEmail():String = authUseCase.getEmailUseCase() ?: ""
     private fun getId():String = authUseCase.getIdUseCase() ?: ""
 
-    private fun getName():String = authUseCase.getNameUseCase() ?: getEmail().apply{
+    fun getName():String = authUseCase.getNameUseCase() ?: getEmail().apply{
         val index = this.indexOf('@')
         return this.substring(0, index)
     }
@@ -43,6 +47,9 @@ class MappingViewModel @Inject constructor(
         return authUseCase.getPhotoUrlUseCase()?.toString()
                ?: IMAGE_PLACEHOLDER_URL
     }
+
+
+
 
 
     fun signOutAccount() = authUseCase.signOutUseCase()
@@ -94,7 +101,7 @@ class MappingViewModel @Inject constructor(
                                     message = exception.message ?: "",
                                 ))
                         }
-                        is NullPointerException -> {
+                        is MappingExceptions.UnavailablePhoneNumber -> {
                             _eventFlow.emit(MappingUiEvent.ShowSettingScreen)
                         }
                     }

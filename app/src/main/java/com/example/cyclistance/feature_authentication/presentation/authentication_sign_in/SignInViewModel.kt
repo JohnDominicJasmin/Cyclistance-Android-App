@@ -158,6 +158,9 @@ class SignInViewModel @Inject constructor(
                     }
                     is AuthExceptions.ConflictFBTokenException -> {
                         removeFacebookUserAccountPreviousToken()
+                        _eventFlow.emit(SignInUiEvent.ShowAlertDialog(title = "Error", description = exception.message?:"Sorry, something went wrong. Please try again.", imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error ))
+
+
                     }
                 }
             }
