@@ -56,17 +56,6 @@ fun TextFieldInputArea(modifier: Modifier) {
             value = it
         }*/
 
-        TextFieldItem(
-            label = "Address",
-            errorMessage = "",
-            value = value,
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Words,
-                autoCorrect = false,
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next)) {
-            value = it
-        }
 
         TextFieldItem(label = "Phone Number",
             errorMessage = "Error messsage fix this later.",

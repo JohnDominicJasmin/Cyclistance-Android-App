@@ -30,26 +30,16 @@ fun ConfirmationDetailsScreen() {
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colors.background)) {
 
-        val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText) = createRefs()
+        val (bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText) = createRefs()
 
 
 
-        AddressTextField(
-            modifier = Modifier
-                .shadow(2.dp, shape = RoundedCornerShape(12.dp), clip = true)
-                .constrainAs(addressTextField) {
-                    top.linkTo(parent.top, margin = 15.dp)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    width = Dimension.percent(0.9f)
-                    height = Dimension.wrapContent
-                })
 
 
         DropDownBikeList(modifier = Modifier
             .shadow(2.dp, shape = RoundedCornerShape(12.dp), clip = true)
             .constrainAs(bikeTypeDropDownList) {
-                top.linkTo(addressTextField.bottom, margin = 10.dp)
+                top.linkTo(parent.top, margin = 25.dp)
                 end.linkTo(parent.end)
                 start.linkTo(parent.start)
                 width = Dimension.percent(0.9f)
