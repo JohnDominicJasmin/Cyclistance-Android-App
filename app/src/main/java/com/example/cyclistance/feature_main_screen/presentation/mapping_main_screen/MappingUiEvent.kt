@@ -7,6 +7,7 @@ import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCas
 sealed class MappingUiEvent{
     object ShowNoInternetScreen: MappingUiEvent()
     object ShowConfirmDetailsScreen: MappingUiEvent()
+    object ShowSettingScreen: MappingUiEvent()
     data class ShowToastMessage(val message: String): MappingUiEvent()
 
     data class ShowAlertDialog(

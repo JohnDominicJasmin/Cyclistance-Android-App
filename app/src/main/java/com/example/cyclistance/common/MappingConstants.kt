@@ -12,4 +12,6 @@ object MappingConstants {
     const val MAP_ZOOM = 6.00
     const val MAX_CHARACTERS = 110
     const val IMAGE_PLACEHOLDER_URL = "https://www.pngitem.com/pimgs/m/30-307416_profile-icon-png-image-free-download-searchpng-employee.png"
+    const val MISSING_PHONE_NUMBER = "noPhoneNumber"
+    const val NO_SIM_CARD_RESULT_CODE = 1002
 }

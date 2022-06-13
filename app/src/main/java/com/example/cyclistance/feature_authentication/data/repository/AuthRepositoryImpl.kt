@@ -3,7 +3,7 @@ package com.example.cyclistance.feature_authentication.data.repository
 import android.content.Context
 import android.net.Uri
 import com.example.cyclistance.R
-import com.example.cyclistance.common.AuthConstants.FB_CONNECTION_FAILURE
+import com.example.cyclistance.common.AuthConstants.FACEBOOK_CONNECTION_FAILURE
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.google.firebase.FirebaseNetworkException
@@ -105,11 +105,11 @@ class AuthRepositoryImpl @Inject constructor(
         return CompletableDeferred<Boolean>().run {
             FirebaseAuth.getInstance().signInWithCredential(v).addOnCompleteListener { signInWithCredential ->
                 signInWithCredential.exception?.let { exception ->
-                    if (exception.message == FB_CONNECTION_FAILURE) {
+                    if (exception.message == FACEBOOK_CONNECTION_FAILURE) {
                         this.completeExceptionally(AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message)))
                         return@addOnCompleteListener
                     }
-                    this.completeExceptionally(AuthExceptions.ConflictFBTokenException("// todo Remove existing fb token to refresh"))
+                    this.completeExceptionally(AuthExceptions.ConflictFBTokenException(exception.message?:"Sorry, something went wrong. Please try again."))
 
                 }
                 this.complete(signInWithCredential.isSuccessful)
@@ -125,15 +125,15 @@ class AuthRepositoryImpl @Inject constructor(
        return FirebaseAuth.getInstance().currentUser?.uid
     }
 
-    override  fun getEmail(): String? {
+    override fun getEmail(): String? {
         return FirebaseAuth.getInstance().currentUser?.email
     }
 
-    override  fun getName(): String? {
+    override fun getName(): String? {
         return FirebaseAuth.getInstance().currentUser?.displayName
     }
 
-    override fun getPhoneNumber(): String?{
+    override fun getPhoneNumber(): String? {
         return FirebaseAuth.getInstance().currentUser?.phoneNumber
     }
 

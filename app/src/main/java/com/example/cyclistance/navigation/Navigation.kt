@@ -3,8 +3,12 @@ package com.example.cyclistance.navigation
 import androidx.compose.runtime.*
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
+import com.example.cyclistance.common.MappingConstants
+import com.example.cyclistance.common.MappingConstants.MISSING_PHONE_NUMBER
 import com.example.cyclistance.feature_no_internet.presentation.components.NoInternetScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInScreen
@@ -19,6 +23,7 @@ import com.example.cyclistance.feature_settings.presentation.setting_change_pass
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.EditProfileScreen
 import com.example.cyclistance.feature_settings.presentation.setting_main_screen.components.SettingScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import timber.log.Timber
 
 @ExperimentalPermissionsApi
 @Composable
@@ -56,12 +61,16 @@ fun Navigation(
         }
 
         composable(Screens.EmailAuthScreen.route) {
-            EmailAuthScreen(onBackPressed = onBackPressed, isDarkTheme = isDarkTheme) { destination, popUpToDestination ->
+            EmailAuthScreen(
+                onBackPressed = onBackPressed,
+                isDarkTheme = isDarkTheme) { destination, popUpToDestination ->
                 navigateScreen(navController, destination, popUpToDestination)
             }
         }
         composable(Screens.MappingScreen.route) {
-            MappingScreen(isDarkTheme = isDarkThemeLiveData,onBackPressed = onBackPressed) { destination, popUpToDestination ->
+            MappingScreen(
+                isDarkTheme = isDarkThemeLiveData,
+                onBackPressed = onBackPressed) { destination, popUpToDestination ->
                 navigateScreen(navController, destination, popUpToDestination)
             }
         }
@@ -83,14 +92,18 @@ fun Navigation(
             RescueRequestScreen()
         }
 
-        composable(Screens.ChangePasswordScreen.route){
+        composable(Screens.ChangePasswordScreen.route) {
             ChangePasswordScreen()
         }
 
-        composable(Screens.EditProfileScreen.route){
-            EditProfileScreen {destination , popUpToDestination ->
+        composable(
+            route = Screens.EditProfileScreen.route + "/{${MISSING_PHONE_NUMBER}}",
+            arguments = listOf(navArgument(MISSING_PHONE_NUMBER){ type = NavType.BoolType })) { backStackEntry ->
+
+            EditProfileScreen(hasMissingPhoneNumber = backStackEntry.arguments?.getBoolean(MISSING_PHONE_NUMBER)) { destination, popUpToDestination ->
                 navigateScreen(navController, destination, popUpToDestination)
             }
+
         }
 
         composable(Screens.SettingScreen.route){

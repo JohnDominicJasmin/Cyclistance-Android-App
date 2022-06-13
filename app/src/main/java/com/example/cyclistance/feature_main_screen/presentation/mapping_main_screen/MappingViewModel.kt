@@ -38,7 +38,7 @@ class MappingViewModel @Inject constructor(
         return this.substring(0, index)
     }
 
-    private fun getPhoneNumber(): String = authUseCase.getPhoneNumberUseCase()
+    private fun getPhoneNumber(): String = authUseCase.getPhoneNumberUseCase()!!
     private fun getPhotoUrl(): String{
         return authUseCase.getPhotoUrlUseCase()?.toString()
                ?: IMAGE_PLACEHOLDER_URL
@@ -95,7 +95,7 @@ class MappingViewModel @Inject constructor(
                                 ))
                         }
                         is NullPointerException -> {
-//                            TODO: ADD UI TO PROVIDE CONTACT NUMBER
+                            _eventFlow.emit(MappingUiEvent.ShowSettingScreen)
                         }
                     }
                 }

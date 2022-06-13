@@ -133,6 +133,9 @@ fun MappingScreen(
                 is MappingUiEvent.ShowConfirmDetailsScreen -> {
                     navigateTo(Screens.ConfirmDetailsScreen.route, null)
                 }
+                is MappingUiEvent.ShowSettingScreen -> {
+                    navigateTo(Screens.EditProfileScreen.route+"/true", null)
+                }
             }
         }
     }
