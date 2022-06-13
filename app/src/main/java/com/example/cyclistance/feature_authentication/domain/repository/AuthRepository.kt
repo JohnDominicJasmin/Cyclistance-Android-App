@@ -19,4 +19,5 @@ interface AuthRepository< T> {
     suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean
     suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean
     suspend fun signInWithCredentials(v: T): Boolean
+    suspend fun updatePhoneNumber(phoneNumber: String)
 }

@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.R
@@ -169,7 +170,6 @@ class AuthRepositoryImpl @Inject constructor(
 
     }
 
-
     override fun isEmailVerified(): Boolean? {
         return FirebaseAuth.getInstance().currentUser?.isEmailVerified
     }
@@ -178,5 +178,9 @@ class AuthRepositoryImpl @Inject constructor(
         return FirebaseAuth.getInstance().currentUser != null
     }
 
-
+    override suspend fun updatePhoneNumber(phoneNumber: String) {
+        dataStore.edit{ preferences ->
+            preferences[DATA_STORE_PHONE_NUMBER_KEY] = phoneNumber
+        }
+    }
 }
