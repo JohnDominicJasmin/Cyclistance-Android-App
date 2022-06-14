@@ -13,16 +13,21 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     private val settingUseCase: SettingUseCase): ViewModel() {
 
+    val isDarkTheme = settingUseCase.isDarkThemeUseCase().asLiveData()
 
 
 
-    fun toggleTheme() {
-        viewModelScope.launch {
-            settingUseCase.toggleThemeUseCase()
+    fun onEvent(event: SettingEvent){
+        when(event){
+            is SettingEvent.ToggleTheme -> {
+                viewModelScope.launch {
+                    settingUseCase.toggleThemeUseCase()
+                }
+            }
         }
+
     }
 
-    fun isDarkTheme(): LiveData<Boolean> = settingUseCase.isDarkThemeUseCase().asLiveData()
 
 
 }

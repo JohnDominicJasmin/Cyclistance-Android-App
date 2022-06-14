@@ -15,6 +15,7 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.feature_authentication.domain.util.ActivityResultCallbackManager
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
+import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingEvent
 import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingViewModel
 import com.example.cyclistance.navigation.Navigation
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -62,7 +63,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             val settingViewModel: SettingViewModel = hiltViewModel()
-            val isDarkThemeLiveData:LiveData<Boolean> = settingViewModel.isDarkTheme()
+            val isDarkThemeLiveData:LiveData<Boolean> = settingViewModel.isDarkTheme
             val isDarkThemeState by isDarkThemeLiveData.observeAsState(initial = false)
 
             CyclistanceTheme(darkTheme = isDarkThemeState) {
@@ -70,7 +71,7 @@ class MainActivity : ComponentActivity() {
                 CompositionLocalProvider(LocalActivityResultCallbackManager provides callbackManager) {
                     Navigation(
                         navController = rememberNavController(),
-                        onToggleTheme = { settingViewModel.toggleTheme() },
+                        onToggleTheme = { settingViewModel.onEvent(event = SettingEvent.ToggleTheme) },
                         isDarkTheme = isDarkThemeState,
                         isDarkThemeLiveData = isDarkThemeLiveData,
                         onBackPressed = onBackPressed)
@@ -80,6 +81,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,

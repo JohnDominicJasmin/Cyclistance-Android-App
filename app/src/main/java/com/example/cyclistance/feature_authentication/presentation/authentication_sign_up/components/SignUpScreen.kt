@@ -30,6 +30,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpViewModel
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -51,7 +52,7 @@ fun SignUpScreen(
 
         val signUpAccount = {
             if (hasAccountSignedIn && isUserCreatedNewAccount) {
-                mappingViewModel.signOutAccount()
+                mappingViewModel.onEvent(MappingEvent.SignOut)
             }
             signUpViewModel.onEvent(SignUpEvent.SignUp)
         }

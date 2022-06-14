@@ -37,7 +37,7 @@ class MappingViewModel @Inject constructor(
     fun getEmail():String = authUseCase.getEmailUseCase() ?: ""
     private fun getId():String = authUseCase.getIdUseCase() ?: ""
 
-    fun getName():String = authUseCase.getNameUseCase() ?: getEmail().apply{
+    private fun getName():String = authUseCase.getNameUseCase() ?: getEmail().apply{
         val index = this.indexOf('@')
         return this.substring(0, index)
     }
@@ -52,7 +52,6 @@ class MappingViewModel @Inject constructor(
 
 
 
-    fun signOutAccount() = authUseCase.signOutUseCase()
 
     fun onEvent(event: MappingEvent){
         when(event){
@@ -61,6 +60,10 @@ class MappingViewModel @Inject constructor(
                 viewModelScope.launch {
                     postUser(event.addresses)
                 }
+            }
+
+            is MappingEvent.SignOut -> {
+                authUseCase.signOutUseCase()
             }
 
         }

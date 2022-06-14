@@ -12,10 +12,16 @@ class IntroSliderViewModel @Inject
 constructor(private val introSliderUseCase: IntroSliderUseCase): ViewModel() {
 
 
-    fun userCompletedWalkThrough() {
-        viewModelScope.launch {
-            introSliderUseCase.completedIntroSliderUseCase()
+
+
+    fun onEvent(event: IntroSliderEvent){
+        when(event){
+            is IntroSliderEvent.UserCompletedWalkThrough -> {
+                viewModelScope.launch {
+                    introSliderUseCase.completedIntroSliderUseCase()
+                }
+            }
+
         }
     }
-
 }

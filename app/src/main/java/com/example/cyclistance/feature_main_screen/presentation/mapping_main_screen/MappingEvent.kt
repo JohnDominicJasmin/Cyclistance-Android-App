@@ -4,4 +4,5 @@ import android.location.Address
 
 sealed class MappingEvent {
     data class UploadProfile(val addresses: List<Address>) : MappingEvent()
+    object SignOut: MappingEvent()
 }

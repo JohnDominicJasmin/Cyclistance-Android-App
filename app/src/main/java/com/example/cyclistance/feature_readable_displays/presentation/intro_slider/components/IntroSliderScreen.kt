@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.IntroSliderEvent
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.IntroSliderViewModel
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -56,7 +57,7 @@ fun IntroSliderScreen(
                 text = if (isOnLastPage) "Let's get Started!" else "Next",
 
                 onClickSkipButton = {
-                    introSliderViewModel.userCompletedWalkThrough()
+                    introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
                     navigateTo(Screens.SignInScreen.route, Screens.IntroSliderScreen.route)
                 },
                 onClickNextButton = {
@@ -67,7 +68,7 @@ fun IntroSliderScreen(
                             )
                         }
                     } else {
-                        introSliderViewModel.userCompletedWalkThrough()
+                        introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
                         navigateTo(Screens.SignInScreen.route, Screens.IntroSliderScreen.route)
                     }
                 })
