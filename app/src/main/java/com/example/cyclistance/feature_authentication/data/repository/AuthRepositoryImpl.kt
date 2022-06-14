@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
+import timber.log.Timber
 import java.io.IOException
 import javax.inject.Inject
 
@@ -155,7 +156,7 @@ class AuthRepositoryImpl @Inject constructor(
             if (exception is IOException){
                 emit(emptyPreferences())
             }else{
-                throw AuthExceptions.UnexpectedErrorException(message = exception.localizedMessage ?: "Unexpected error occurred.")
+                Timber.e(message = exception.localizedMessage ?: "Unexpected error occurred.")
             }
         }.map { preference ->
             preference[DATA_STORE_PHONE_NUMBER_KEY]?:throw MappingExceptions.UnavailablePhoneNumber("Phone Number is not available.")

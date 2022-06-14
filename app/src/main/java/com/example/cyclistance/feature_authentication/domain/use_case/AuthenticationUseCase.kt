@@ -22,9 +22,5 @@ data class AuthenticationUseCase(
     val signInWithCredentialUseCase: SignInWithCredentialUseCase,
     val updatePhoneNumberUseCase : UpdatePhoneNumberUseCase,
     val updateProfileUseCase : UpdateProfileUseCase
-/*
-* updatePhoneNumberUseCase,
-* updateProfileUseCase
-*
-* */
+
     )

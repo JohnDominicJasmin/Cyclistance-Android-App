@@ -7,9 +7,9 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.common.SettingConstants.DATA_STORE_THEME_KEY
-import com.example.cyclistance.feature_settings.domain.exceptions.SettingExceptions
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 import java.io.IOException
 
 class SettingRepositoryImpl(context: Context): SettingRepository {
@@ -23,7 +23,7 @@ class SettingRepositoryImpl(context: Context): SettingRepository {
             if(exception is IOException){
                 emit(emptyPreferences())
             }else{
-                throw SettingExceptions.UnexpectedErrorException(message = exception.message ?: "Unexpected error occurred.")
+                Timber.e(message = exception.localizedMessage ?: "Unexpected error occurred.")
             }
         }.map { preference ->
             preference[DATA_STORE_THEME_KEY] ?: false

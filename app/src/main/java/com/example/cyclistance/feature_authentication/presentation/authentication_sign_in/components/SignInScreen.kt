@@ -53,8 +53,9 @@ fun SignInScreen(
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
     val scope = rememberCoroutineScope()
-    val signInState = signInViewModel.state.value
+    val signInStateValue = signInViewModel.state.value
     val emailAuthStateValue = emailAuthViewModel.state.value
+
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     BackHandler(enabled = true, onBack = onBackPressed)
@@ -184,7 +185,7 @@ fun SignInScreen(
 
 
                     SignInTextFieldsArea(
-                        state = signInState,
+                        state = signInStateValue,
                         signInViewModel = signInViewModel,
                         keyboardActionOnDone = {
                             signInViewModel.onEvent(SignInEvent.SignInDefault)
@@ -212,7 +213,7 @@ fun SignInScreen(
                         navigateTo(Screens.SignUpScreen.route, null)
                     })
 
-                    if (signInState.isLoading || emailAuthStateValue.isLoading) {
+                    if (signInStateValue.isLoading || emailAuthStateValue.isLoading) {
                         CircularProgressIndicator(
                             modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
                         )

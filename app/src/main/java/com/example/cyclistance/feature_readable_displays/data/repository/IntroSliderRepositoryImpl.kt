@@ -7,13 +7,12 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.common.ReadableDisplaysConstants.DATA_STORE_INTRO_SLIDER_KEY
-import com.example.cyclistance.feature_readable_displays.domain.exceptions.ReadableDisplaysExceptions
 import com.example.cyclistance.feature_readable_displays.domain.repository.IntroSliderRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import okio.IOException
-
+import timber.log.Timber
 
 
 class IntroSliderRepositoryImpl(context: Context): IntroSliderRepository {
@@ -26,7 +25,7 @@ class IntroSliderRepositoryImpl(context: Context): IntroSliderRepository {
             if(exception is IOException){
                 emit(emptyPreferences())
             }else{
-                throw ReadableDisplaysExceptions.UnexpectedErrorException(message = exception.localizedMessage ?: "Unexpected error occurred.")
+                Timber.e(message = exception.localizedMessage ?: "Unexpected error occurred.")
             }
 
         }.map { preference->
