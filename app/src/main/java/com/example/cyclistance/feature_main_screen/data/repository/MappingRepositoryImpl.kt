@@ -21,7 +21,7 @@ class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository 
        }catch (e:HttpException){
            throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")
        }catch (e:IOException){
-           throw MappingExceptions.NoInternetException("Couldn't reach server. Check your internet connection")
+           throw MappingExceptions.NoInternetException()
        }
     }
 

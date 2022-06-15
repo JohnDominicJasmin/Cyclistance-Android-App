@@ -68,7 +68,7 @@ class MappingViewModel @Inject constructor(
 
         }
     }
-    
+
     private suspend fun postUser(addresses: List<Address>) {
 
         if (addresses.isNotEmpty()) {
@@ -84,7 +84,7 @@ class MappingViewModel @Inject constructor(
                                 location = Location(
                                     lat = latitude.toString(),
                                     lng = longitude.toString()),
-                                name = getName(),
+                                name = getName().ifEmpty { throw MappingExceptions.UnavailableName() },
                                 profilePictureUrl = getPhotoUrl(),
                                 contactNumber = getPhoneNumber()
                             ))
@@ -104,9 +104,10 @@ class MappingViewModel @Inject constructor(
                                     message = exception.message ?: "",
                                 ))
                         }
-                        is MappingExceptions.UnavailablePhoneNumber -> {
+                        is MappingExceptions.UnavailablePhoneNumber, is MappingExceptions.UnavailableName -> {
                             _eventFlow.emit(MappingUiEvent.ShowSettingScreen)
                         }
+
                     }
                 }
             }
