@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -22,41 +23,60 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileEvent
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.theme.*
 
 
 @Composable
-fun TextFieldInputArea(modifier: Modifier) {
+fun TextFieldInputArea(
+    modifier: Modifier,
+    editProfileViewModel: EditProfileViewModel,
+    onPhoneTextFieldClick: () -> Unit) {
+
+    val state by editProfileViewModel.state
+
     Column(
         modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        var value by remember { mutableStateOf(TextFieldValue("")) }
 
 
-        TextFieldItem(
-            label = "Full Name",
-            errorMessage = "",
-            value = value,
+        TextFieldItem(label = "Full Name",
+            errorMessage = state.nameErrorMessage,
+            value = state.name,
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Words,
                 autoCorrect = false,
                 keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Next)) {
-            value = it
-        }
+                imeAction = ImeAction.Next),
+            onClick = {},
+            onValueChange = { name ->
+                editProfileViewModel.onEvent(
+                    event = EditProfileEvent.EnteredName(
+                        name = name
+                    ))
+            })
+
+
 
         TextFieldItem(label = "Phone Number",
-            errorMessage = "Error messsage fix this later.",
-            value = value,
+            errorMessage = state.phoneNumberErrorMessage,
+            value = state.phoneNumber,
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,
                 autoCorrect = false,
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
-
-            })) {
-            value = it
-        }
+                //todo: add keyboard actions
+            }),
+            onClick = onPhoneTextFieldClick,
+            onValueChange = { phoneNumber ->
+                editProfileViewModel.onEvent(event =
+                    EditProfileEvent.EnteredPhoneNumber(
+                    phoneNumber = phoneNumber
+                ))
+            },
+            enabled = false)
     }
 }
 
@@ -67,7 +87,9 @@ fun TextFieldItem(
     value: TextFieldValue,
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions = KeyboardActions(),
-    onValueChange: (TextFieldValue) -> Unit) {
+    onValueChange: (TextFieldValue) -> Unit,
+    enabled: Boolean = true,
+    onClick: () -> Unit) {
 
     val hasError = errorMessage.isNotEmpty()
 
@@ -79,7 +101,10 @@ fun TextFieldItem(
             modifier = Modifier.padding(bottom = 5.dp))
 
         BasicTextField(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onClick() },
+            enabled = enabled,
             value = value,
             singleLine = true,
             maxLines = 1,

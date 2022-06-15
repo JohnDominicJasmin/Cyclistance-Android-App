@@ -4,11 +4,10 @@ import androidx.compose.ui.text.input.TextFieldValue
 
 data class EditProfileState(
     val name: TextFieldValue = TextFieldValue(""),
-    val address: TextFieldValue = TextFieldValue(""),
-    val phoneNumber: TextFieldValue = TextFieldValue(""),
+    var phoneNumber: TextFieldValue = TextFieldValue(""),
     val nameErrorMessage: String = "",
-    val addressErrorMessage: String = "",
     val phoneNumberErrorMessage: String = "",
+    val photoUrl: String = "",
     val isLoading: Boolean = false,
 
-)
+    )

@@ -11,6 +11,7 @@ object MappingConstants {
     const val DEFAULT_CAMERA_ANIMATION_DURATION = 700
     const val MAP_ZOOM = 6.00
     const val MAX_CHARACTERS = 110
-    const val IMAGE_PLACEHOLDER_URL = "https://www.pngitem.com/pimgs/m/30-307416_profile-icon-png-image-free-download-searchpng-employee.png"
+    const val IMAGE_PLACEHOLDER_URL = "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
     const val NO_SIM_CARD_RESULT_CODE = 1002
+    const val NONE_OF_THE_ABOVE_RESULT_CODE = 1001
 }
