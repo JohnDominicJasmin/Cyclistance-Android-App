@@ -12,11 +12,10 @@ import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.io.IOException
 
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "theme_ref")
+
 class SettingRepositoryImpl(context: Context): SettingRepository {
-
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "theme_ref")
     private var dataStore = context.dataStore
-
 
     override fun isDarkTheme(): Flow<Boolean> {
         return dataStore.data.catch { exception ->

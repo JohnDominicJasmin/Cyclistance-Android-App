@@ -27,6 +27,7 @@ import java.io.IOException
 import javax.inject.Inject
 
 
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "phone_number_ref")
 
 class AuthRepositoryImpl @Inject constructor(
     private val context: Context,
@@ -34,7 +35,6 @@ class AuthRepositoryImpl @Inject constructor(
     private var firebaseUser:FirebaseUser? = firebaseAuth.currentUser
 ) : AuthRepository<AuthCredential> {
 
-    private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "phone_number_ref")
     private var dataStore = context.dataStore
 
 
@@ -159,12 +159,12 @@ class AuthRepositoryImpl @Inject constructor(
                 Timber.e(message = exception.localizedMessage ?: "Unexpected error occurred.")
             }
         }.map { preference ->
-            preference[DATA_STORE_PHONE_NUMBER_KEY]?:throw MappingExceptions.UnavailablePhoneNumber("Phone Number is not available.")
+            preference[DATA_STORE_PHONE_NUMBER_KEY] ?: throw MappingExceptions.UnavailablePhoneNumber("Field cannot be blank.")
         }
     }
 
-    override fun getPhotoUrl(): Uri? {
-        return firebaseUser?.photoUrl
+    override fun getPhotoUrl(): String {
+        return firebaseUser?.photoUrl.toString().replace(oldValue = "=s96-c", newValue = "=s400-c");
     }
 
     override fun isSignedInWithProvider(): Flow<Boolean> = flow {
