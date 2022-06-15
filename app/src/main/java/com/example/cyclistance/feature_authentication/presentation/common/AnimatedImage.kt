@@ -15,11 +15,11 @@ import coil.size.OriginalSize
 fun AnimatedImage(imageId:Int, modifier : Modifier) {
     val context = LocalContext.current
     val imageLoader = ImageLoader.Builder(context)
-        .componentRegistry {
+        .components {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                add(ImageDecoderDecoder(context))
+                add(ImageDecoderDecoder.Factory())
             } else {
-                add(GifDecoder())
+                add(GifDecoder.Factory())
             }
         }.build()
 

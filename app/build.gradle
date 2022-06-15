@@ -128,8 +128,8 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:5.0.1'
 
     //Coil
-    implementation("io.coil-kt:coil-compose:1.4.0")
-    implementation "io.coil-kt:coil-gif:1.4.0"
+    implementation("io.coil-kt:coil-compose:2.1.0")
+    implementation("io.coil-kt:coil-gif:2.1.0")
 
     //for notification color
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.2-alpha"
