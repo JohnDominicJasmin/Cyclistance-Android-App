@@ -10,11 +10,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.cyclistance.R
 
 
 @Composable
-fun ProfilePictureArea(modifier: Modifier) {
+fun ProfilePictureArea(photoUrl: String, modifier: Modifier) {
 
     Column(
         modifier = modifier,
@@ -23,13 +24,15 @@ fun ProfilePictureArea(modifier: Modifier) {
 
         Box {
 
-            Image(
-                painter = painterResource(R.drawable.person_image),
-                contentDescription = "Profile_Screen",
-                modifier = Modifier
-                    .clip(CircleShape),
+            AsyncImage(
+                model =  photoUrl,
+                alignment = Alignment.Center,
+                contentDescription = "User Profile Image",
+                modifier = Modifier.clip(CircleShape).align(Alignment.Center),
                 contentScale = ContentScale.Crop,
-            )
+                placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder),
+                error = painterResource(id = R.drawable.ic_empty_profile_placeholder),
+                fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder))
 
             Image(
                 painter = painterResource(id = R.drawable.ic_picture_frame),

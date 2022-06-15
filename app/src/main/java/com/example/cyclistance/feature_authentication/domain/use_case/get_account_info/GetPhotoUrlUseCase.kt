@@ -5,7 +5,7 @@ import com.example.cyclistance.feature_authentication.domain.repository.AuthRepo
 import com.google.firebase.auth.AuthCredential
 
 class GetPhotoUrlUseCase(private val repository: AuthRepository<AuthCredential>) {
-    operator fun invoke(): Uri?{
+    operator fun invoke(): String?{
         return repository.getPhotoUrl()
     }
 }

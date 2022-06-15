@@ -38,6 +38,7 @@ fun EditProfileScreen(
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
 
+    val state by editProfileViewModel.state
     val context = LocalContext.current
     val hintRequest = HintRequest.Builder()
         .setPhoneNumberIdentifierSupported(true)
@@ -69,6 +70,9 @@ fun EditProfileScreen(
     }
 
 
+//todo: load image
+//todo: select image using gallery
+//
 
 
     ConstraintLayout(
@@ -80,7 +84,9 @@ fun EditProfileScreen(
 
         val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText) = createRefs()
 
-        ProfilePictureArea(modifier = Modifier
+        ProfilePictureArea(
+            photoUrl = state.photoUrl,
+            modifier = Modifier
             .size(105.dp)
             .constrainAs(profilePictureArea) {
                 top.linkTo(parent.top, margin = 18.dp)
