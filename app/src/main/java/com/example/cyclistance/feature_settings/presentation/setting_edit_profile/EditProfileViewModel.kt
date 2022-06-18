@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
 
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -55,7 +54,6 @@ class EditProfileViewModel @Inject constructor(
             is EditProfileEvent.SaveProfile -> {
                 viewModelScope.launch {
 //             todo: update photo url, name and phone number using authUseCase, add validation
-
                 }
             }
             is EditProfileEvent.EnteredPhoneNumber -> {
@@ -64,6 +62,12 @@ class EditProfileViewModel @Inject constructor(
             }
             is EditProfileEvent.EnteredName -> {
                 _state.value = state.value.copy(name = event.name, nameErrorMessage = "")
+            }
+            is EditProfileEvent.NewImageUri -> {
+                _state.value = state.value.copy(imageUri = event.uri)
+            }
+            is EditProfileEvent.NewBitmapPicture -> {
+                _state.value = state.value.copy(bitmap = event.bitmap)
             }
             is EditProfileEvent.LoadPhoto -> {
                 viewModelScope.launch {

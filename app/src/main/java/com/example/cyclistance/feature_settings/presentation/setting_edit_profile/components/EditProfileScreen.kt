@@ -1,6 +1,11 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components
 
+import android.Manifest
 import android.app.Activity
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
@@ -9,14 +14,12 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -27,53 +30,85 @@ import com.example.cyclistance.feature_main_screen.presentation.common.MappingBu
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.theme.*
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberPermissionState
+import com.google.accompanist.permissions.shouldShowRationale
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
-import timber.log.Timber
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun EditProfileScreen(
     editProfileViewModel: EditProfileViewModel = hiltViewModel(),
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
-
     val state by editProfileViewModel.state
+
     val context = LocalContext.current
     val hintRequest = HintRequest.Builder()
         .setPhoneNumberIdentifierSupported(true)
         .build()
 
-    val intent = Credentials.getClient(context).getHintPickerIntent(hintRequest)
-    val intentSender = IntentSenderRequest.Builder(intent.intentSender).build()
+    val simCardIntent = Credentials.getClient(context).getHintPickerIntent(hintRequest)
+    val intentSender = IntentSenderRequest.Builder(simCardIntent.intentSender).build()
 
-    val resultLauncher = rememberLauncherForActivityResult(
+    val simCardResultLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
 
-        when(result.resultCode){
-            Activity.RESULT_OK ->{
+        when (result.resultCode) {
+            Activity.RESULT_OK -> {
                 val credential: Credential? = result.data?.getParcelableExtra(Credential.EXTRA_KEY)
-                editProfileViewModel.onEvent(event = EditProfileEvent.EnteredPhoneNumber(phoneNumber = TextFieldValue(text = credential!!.id)))
+                editProfileViewModel.onEvent(
+                    event = EditProfileEvent.EnteredPhoneNumber(
+                        phoneNumber = TextFieldValue(
+                            text = credential!!.id)))
             }
-            NO_SIM_CARD_RESULT_CODE ->{
+            NO_SIM_CARD_RESULT_CODE -> {
                 Toast.makeText(context, "No SIM Card Detected", Toast.LENGTH_LONG).show()
             }
-            NONE_OF_THE_ABOVE_RESULT_CODE ->{
-                editProfileViewModel.onEvent(event = EditProfileEvent.EnteredPhoneNumber(phoneNumber = TextFieldValue(text = "")))
-
+            NONE_OF_THE_ABOVE_RESULT_CODE -> {
+                editProfileViewModel.onEvent(
+                    event = EditProfileEvent.EnteredPhoneNumber(
+                        phoneNumber = TextFieldValue(
+                            text = "")))
             }
-
-
         }
-
     }
 
 
-//todo: load image
-//todo: select image using gallery
-//
+    val openGalleryResultLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            editProfileViewModel.onEvent(event = EditProfileEvent.NewImageUri(uri = uri))
+        }
 
+
+    val permissionState =
+        rememberPermissionState(permission = Manifest.permission.READ_EXTERNAL_STORAGE) { permissionGranted ->
+            if (permissionGranted) {
+                openGalleryResultLauncher.launch("image/*")
+            }
+        }
+
+    state.imageUri?.let { selectedUri ->
+
+
+        editProfileViewModel.onEvent(
+            event = EditProfileEvent.NewBitmapPicture(
+                when {
+                    Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> {
+                        MediaStore.Images.Media.getBitmap(context.contentResolver, selectedUri)
+                    }
+                    else -> {
+                        val source = ImageDecoder.createSource(context.contentResolver, selectedUri)
+                        ImageDecoder.decodeBitmap(source)
+                    }
+                }
+            ))
+
+    }
 
     ConstraintLayout(
         modifier = Modifier
@@ -85,14 +120,27 @@ fun EditProfileScreen(
         val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText) = createRefs()
 
         ProfilePictureArea(
-            photoUrl = state.photoUrl,
+            photoUrl = state.bitmap?.asImageBitmap() ?: state.photoUrl,
             modifier = Modifier
-            .size(105.dp)
-            .constrainAs(profilePictureArea) {
-                top.linkTo(parent.top, margin = 18.dp)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
+                .size(105.dp)
+                .constrainAs(profilePictureArea) {
 
+                    top.linkTo(parent.top, margin = 30.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+
+                },
+            onClick = {
+                if (permissionState.status.isGranted) {
+                    openGalleryResultLauncher.launch("image/*")
+                    return@ProfilePictureArea
+                }
+                if (!permissionState.status.shouldShowRationale) {
+                    Toast.makeText(context, "Permission is denied.", Toast.LENGTH_SHORT).show()
+                    return@ProfilePictureArea
+                }
+
+                permissionState.launchPermissionRequest()
             })
 
 
@@ -119,10 +167,10 @@ fun EditProfileScreen(
                 width = Dimension.percent(0.9f)
 
             },
-        editProfileViewModel = editProfileViewModel,
-        onPhoneTextFieldClick = {
-            resultLauncher.launch(intentSender)
-        })
+            editProfileViewModel = editProfileViewModel,
+            onPhoneTextFieldClick = {
+                simCardResultLauncher.launch(intentSender)
+            })
 
 
         MappingButtonNavigation(modifier = Modifier
@@ -136,7 +184,7 @@ fun EditProfileScreen(
             },
             positiveButtonText = "Save",
             onClickCancelButton = {
-               /*todo*/
+                /*todo*/
             },
             onClickConfirmButton = {
                 /*todo*/
@@ -146,14 +194,3 @@ fun EditProfileScreen(
     }
 }
 
-
-@Preview(device = Devices.NEXUS_5)
-@Composable
-fun EditProfileScreenPreview() {
-
-    CyclistanceTheme(false) {
-        EditProfileScreen { destination, popUpToDestination ->
-
-        }
-    }
-}
