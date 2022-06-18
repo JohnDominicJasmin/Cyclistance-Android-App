@@ -206,7 +206,9 @@ fun MappingScreen(
                     height = Dimension.value(45.dp)
                 }, onClick = {
                     if (multiplePermissionsState.allPermissionsGranted) {
-                        postProfile()
+                        lastLocation.beginLocationUpdates().also{
+                            postProfile()
+                        }
                         return@SearchAssistanceButton
                     }
                     multiplePermissionsState.launchMultiplePermissionRequest()
