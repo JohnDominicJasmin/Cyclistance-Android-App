@@ -12,6 +12,7 @@ import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -131,7 +132,7 @@ fun EditProfileScreen(
             .background(MaterialTheme.colors.background)) {
 
 
-        val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText) = createRefs()
+        val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText, progressBar) = createRefs()
 
         ProfilePictureArea(
             photoUrl = state.bitmap?.asImageBitmap() ?: state.photoUrl,
@@ -205,7 +206,15 @@ fun EditProfileScreen(
                 editProfileViewModel.onEvent(event = EditProfileEvent.SaveProfile)
             })
 
-
+            if(state.isLoading){
+                CircularProgressIndicator(modifier = Modifier.constrainAs(progressBar){
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom)
+                    this.centerTo(parent)
+                })
+            }
     }
 }
 

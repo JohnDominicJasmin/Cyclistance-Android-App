@@ -124,6 +124,7 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             with(state.value) {
                 runCatching {
+                    _state.value = this.copy(isLoading = true)
                     authUseCase.updateProfileUseCase(
                         photoUri = run { imageUri?.let { localImageUri ->
                             authUseCase.uploadImageUseCase(localImageUri)
@@ -132,8 +133,10 @@ class EditProfileViewModel @Inject constructor(
 
                     authUseCase.updatePhoneNumberUseCase(phoneNumber.text)
                 }.onSuccess {
+                    _state.value = this.copy(isLoading = false)
                     _eventFlow.emit(EditProfileUiEvent.ShowMappingScreen)
                 }.onFailure { exception ->
+                    _state.value = this.copy(isLoading = false)
                     when(exception){
                         is MappingExceptions.PhoneNumberException -> {
                             _state.value =
