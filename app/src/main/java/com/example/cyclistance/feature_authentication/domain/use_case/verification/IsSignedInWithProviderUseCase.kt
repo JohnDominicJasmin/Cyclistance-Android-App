@@ -1,9 +1,8 @@
-package com.example.cyclistance.feature_authentication.domain.use_case.verify_account
+package com.example.cyclistance.feature_authentication.domain.use_case.verification
 
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.google.firebase.auth.AuthCredential
 import kotlinx.coroutines.flow.*
-import timber.log.Timber
 
 class IsSignedInWithProviderUseCase(private val repository: AuthRepository<AuthCredential>) {
 
