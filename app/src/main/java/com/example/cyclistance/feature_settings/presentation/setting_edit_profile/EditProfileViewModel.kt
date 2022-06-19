@@ -11,6 +11,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -31,7 +32,7 @@ class EditProfileViewModel @Inject constructor(
         return authUseCase.getNameUseCase() ?: email?.run {
             val index = this.indexOf('@')
             this.substring(0, index)
-        } ?: throw MappingExceptions.UnavailableName()
+        } ?: throw MappingExceptions.NameException()
     }
 
     private fun getPhotoUrl(): String {
@@ -52,9 +53,7 @@ class EditProfileViewModel @Inject constructor(
     fun onEvent(event: EditProfileEvent) {
         when (event) {
             is EditProfileEvent.SaveProfile -> {
-                viewModelScope.launch {
-//             todo: update photo url, name and phone number using authUseCase, add validation
-                }
+                updateUserProfile()
             }
             is EditProfileEvent.EnteredPhoneNumber -> {
                 _state.value =
@@ -71,7 +70,7 @@ class EditProfileViewModel @Inject constructor(
             }
             is EditProfileEvent.LoadPhoto -> {
                 viewModelScope.launch {
-                    kotlin.runCatching {
+                    runCatching {
                         _state.value = state.value.copy(
                             photoUrl = getPhotoUrl(),
                             isLoading = true
@@ -83,7 +82,7 @@ class EditProfileViewModel @Inject constructor(
             }
             is EditProfileEvent.LoadPhoneNumber -> {
                 viewModelScope.launch {
-                    kotlin.runCatching {
+                    runCatching {
                         _state.value = state.value.copy(
                             phoneNumber = TextFieldValue(text = getPhoneNumber()),
                             isLoading = true
@@ -100,7 +99,7 @@ class EditProfileViewModel @Inject constructor(
             }
             is EditProfileEvent.LoadName -> {
                 viewModelScope.launch {
-                    kotlin.runCatching {
+                    runCatching {
                         _state.value = state.value.copy(
                             name = TextFieldValue(text = getName()),
                             isLoading = true
@@ -120,4 +119,37 @@ class EditProfileViewModel @Inject constructor(
     }
 
 
+
+    private fun updateUserProfile() {
+        viewModelScope.launch {
+            with(state.value) {
+                runCatching {
+                    authUseCase.updateProfileUseCase(
+                        photoUri = run { imageUri?.let { localImageUri ->
+                            authUseCase.uploadImageUseCase(localImageUri)
+                        }  },
+                        name = this.name.text)
+
+                    authUseCase.updatePhoneNumberUseCase(phoneNumber.text)
+                }.onSuccess {
+                    _eventFlow.emit(EditProfileUiEvent.ShowMappingScreen)
+                }.onFailure { exception ->
+                    when(exception){
+                        is MappingExceptions.PhoneNumberException -> {
+                            _state.value =
+                                state.value.copy(phoneNumberErrorMessage = exception.message!!)
+                        }
+                        is MappingExceptions.NameException -> {
+                            _state.value =
+                                state.value.copy(nameErrorMessage = exception.message!!)
+                        }
+                        else -> {
+                            Timber.e("Update Profile: ${exception.message}")
+                        }
+                    }
+                }
+
+            }
+        }
+    }
 }

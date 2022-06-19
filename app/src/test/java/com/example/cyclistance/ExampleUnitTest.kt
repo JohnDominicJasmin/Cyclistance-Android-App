@@ -1,5 +1,6 @@
 package com.example.cyclistance
 
+import android.net.Uri
 import org.junit.Test
 
 /**
@@ -15,6 +16,10 @@ class ExampleUnitTest {
         print("$res \n \n")
     }
 
+    @Test
+    fun getLastSegment(){
+        val  uri = Uri.parse("/home/miko/AndroidStudioProjects/Cyclistance/app/src/main/res/drawable/ic_cancel.xml");
+    }
     @Test
     fun filterName(){
         assert(value = getName()=="johndoe394").also{

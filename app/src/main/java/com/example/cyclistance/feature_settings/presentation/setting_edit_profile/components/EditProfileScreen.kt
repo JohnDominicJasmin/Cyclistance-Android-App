@@ -28,6 +28,7 @@ import com.example.cyclistance.common.MappingConstants.NONE_OF_THE_ABOVE_RESULT_
 import com.example.cyclistance.common.MappingConstants.NO_SIM_CARD_RESULT_CODE
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileEvent
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileUiEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.theme.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -37,11 +38,14 @@ import com.google.accompanist.permissions.shouldShowRationale
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
+import kotlinx.coroutines.flow.collectLatest
+import timber.log.Timber
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun EditProfileScreen(
     editProfileViewModel: EditProfileViewModel = hiltViewModel(),
+    onPopBackStack: () -> Unit,
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
     val state by editProfileViewModel.state
@@ -77,8 +81,18 @@ fun EditProfileScreen(
             }
         }
     }
+    LaunchedEffect(true){
+        editProfileViewModel.eventFlow.collectLatest { event ->
+            when(event){
+                is EditProfileUiEvent.ShowMappingScreen -> {
+                    onPopBackStack()
+                }
 
+            }
+        }
+    }
 
+//todo: out of memory when opening gallery( change implementation of this)
     val openGalleryResultLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             editProfileViewModel.onEvent(event = EditProfileEvent.NewImageUri(uri = uri))
@@ -92,37 +106,38 @@ fun EditProfileScreen(
             }
         }
 
-    state.imageUri?.let { selectedUri ->
+//    todo: FIX THIS MEMORY LEAK
 
 
-        editProfileViewModel.onEvent(
-            event = EditProfileEvent.NewBitmapPicture(
-                when {
-                    Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> {
-                        MediaStore.Images.Media.getBitmap(context.contentResolver, selectedUri)
-                    }
-                    else -> {
-                        val source = ImageDecoder.createSource(context.contentResolver, selectedUri)
-                        ImageDecoder.decodeBitmap(source)
-                    }
-                }
-            ))
-
-    }
 
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colors.background)) {
 
 
         val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText) = createRefs()
+        state.imageUri?.let { selectedUri ->
 
+            Timber.d("RUNNING")
+            editProfileViewModel.onEvent(
+                event = EditProfileEvent.NewBitmapPicture(
+                    when {
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> {
+                            MediaStore.Images.Media.getBitmap(context.contentResolver, selectedUri)
+                        }
+                        else -> {
+                            val source = ImageDecoder.createSource(context.contentResolver, selectedUri)
+                            ImageDecoder.decodeBitmap(source)
+                        }
+                    }
+                ))
+
+        }
         ProfilePictureArea(
             photoUrl = state.bitmap?.asImageBitmap() ?: state.photoUrl,
             modifier = Modifier
-                .size(105.dp)
+                .size(125.dp)
                 .constrainAs(profilePictureArea) {
 
                     top.linkTo(parent.top, margin = 30.dp)
@@ -151,7 +166,7 @@ fun EditProfileScreen(
             color = Blue600,
             style = MaterialTheme.typography.caption, fontWeight = FontWeight.SemiBold,
             modifier = Modifier.constrainAs(changePhotoText) {
-                top.linkTo(profilePictureArea.bottom, margin = 4.dp)
+                top.linkTo(profilePictureArea.bottom, margin = 12.dp)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
 
@@ -172,22 +187,23 @@ fun EditProfileScreen(
                 simCardResultLauncher.launch(intentSender)
             })
 
-
+//todo: add dialog when document changed and user is exiting without saving
+        //todo: add navigation for settings 
         MappingButtonNavigation(modifier = Modifier
             .constrainAs(buttonNavigationArea) {
                 top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-                bottom.linkTo(parent.bottom)
+                bottom.linkTo(parent.bottom, margin = 50.dp)
                 height = Dimension.percent(0.1f)
                 width = Dimension.percent(0.8f)
             },
             positiveButtonText = "Save",
             onClickCancelButton = {
-                /*todo*/
+                onPopBackStack()
             },
             onClickConfirmButton = {
-                /*todo*/
+                editProfileViewModel.onEvent(event = EditProfileEvent.SaveProfile)
             })
 
 

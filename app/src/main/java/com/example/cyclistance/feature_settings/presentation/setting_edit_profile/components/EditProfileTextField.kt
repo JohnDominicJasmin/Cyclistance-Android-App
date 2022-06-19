@@ -67,7 +67,7 @@ fun TextFieldInputArea(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
-                //todo: add keyboard actions
+                editProfileViewModel.onEvent(event = EditProfileEvent.SaveProfile)
             }),
             onClick = onPhoneTextFieldClick,
             onValueChange = { phoneNumber ->

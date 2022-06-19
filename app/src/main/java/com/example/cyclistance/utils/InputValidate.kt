@@ -2,26 +2,30 @@ package com.example.cyclistance.utils
 
 import android.util.Patterns
 import com.example.cyclistance.common.AuthConstants
+import com.example.cyclistance.common.AuthConstants.MINIMUM_NUMBER_OF_CHARACTERS
 import com.example.cyclistance.common.AuthConstants.REGEX_NUMBER_VALUE
 import com.example.cyclistance.common.AuthConstants.REGEX_SPECIAL_CHARACTERS_VALUE
 import java.util.regex.Pattern
 
 object InputValidate {
 
-    private fun containsNumeric(input: String): Boolean {
+    fun containsNumeric(input: String): Boolean {
         return Pattern.compile(REGEX_NUMBER_VALUE).matcher(input).find()
     }
-    private fun containSpecialCharacters(input: String): Boolean {
+     fun containsSpecialCharacters(input: String): Boolean {
         return Pattern.compile(REGEX_SPECIAL_CHARACTERS_VALUE).matcher(input).find()
+    }
+    fun numberOfCharactersEnough(input: String): Boolean {
+        return input.toCharArray().size >= MINIMUM_NUMBER_OF_CHARACTERS
     }
 
     fun isEmailValid(email: String) = Patterns.EMAIL_ADDRESS.matcher(email).matches()
     fun isPasswordStrong(password: String): Boolean {
         return isNumberOfCharactersLongEnough(password) &&
                (containsNumeric(password) ||
-                containSpecialCharacters(password))
+                containsSpecialCharacters(password))
     }
 
      private fun isNumberOfCharactersLongEnough(password:String) =
-         password.toCharArray().size >= AuthConstants.USER_INPUT_MINIMUM_NUMBER_OF_CHARACTERS
+         password.toCharArray().size >= AuthConstants.PASSWORD_MINIMUM_NUMBER_OF_CHARACTERS
 }

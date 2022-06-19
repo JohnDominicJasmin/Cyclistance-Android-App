@@ -92,7 +92,9 @@ fun Navigation(
         }
 
         composable(Screens.EditProfileScreen.route){
-            EditProfileScreen {destination , popUpToDestination ->
+            EditProfileScreen(onPopBackStack = {
+                navController.popBackStack()
+            }) {destination , popUpToDestination ->
                 navigateScreen(navController, destination, popUpToDestination)
             }
         }

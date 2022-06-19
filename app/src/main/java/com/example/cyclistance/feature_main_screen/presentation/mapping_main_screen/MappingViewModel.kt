@@ -15,7 +15,6 @@ import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCas
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 import javax.inject.Inject
 
@@ -84,7 +83,7 @@ class MappingViewModel @Inject constructor(
                                 location = Location(
                                     lat = latitude.toString(),
                                     lng = longitude.toString()),
-                                name = getName().ifEmpty { throw MappingExceptions.UnavailableName() },
+                                name = getName().ifEmpty { throw MappingExceptions.NameException() },
                                 profilePictureUrl = getPhotoUrl(),
                                 contactNumber = getPhoneNumber()
                             ))
@@ -104,7 +103,7 @@ class MappingViewModel @Inject constructor(
                                     message = exception.message ?: "",
                                 ))
                         }
-                        is MappingExceptions.UnavailablePhoneNumber, is MappingExceptions.UnavailableName -> {
+                        is MappingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
                             _eventFlow.emit(MappingUiEvent.ShowSettingScreen)
                         }
 
