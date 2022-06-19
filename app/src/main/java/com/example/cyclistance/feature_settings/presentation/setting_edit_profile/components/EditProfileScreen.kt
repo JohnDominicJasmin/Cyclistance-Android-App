@@ -92,10 +92,26 @@ fun EditProfileScreen(
         }
     }
 
-//todo: out of memory when opening gallery( change implementation of this)
     val openGalleryResultLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             editProfileViewModel.onEvent(event = EditProfileEvent.NewImageUri(uri = uri))
+            uri?.let { selectedUri ->
+                editProfileViewModel.onEvent(
+                    event = EditProfileEvent.NewBitmapPicture(
+                        when {
+                            Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> {
+                                MediaStore.Images.Media.getBitmap(
+                                    context.contentResolver,
+                                    selectedUri)
+                            }
+                            else -> {
+                                val source =
+                                    ImageDecoder.createSource(context.contentResolver, selectedUri)
+                                ImageDecoder.decodeBitmap(source)
+                            }
+                        }
+                    ))
+            }
         }
 
 
@@ -106,8 +122,7 @@ fun EditProfileScreen(
             }
         }
 
-//    todo: FIX THIS MEMORY LEAK
-
+//todo: add progress bar
 
 
     ConstraintLayout(
@@ -117,23 +132,7 @@ fun EditProfileScreen(
 
 
         val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText) = createRefs()
-        state.imageUri?.let { selectedUri ->
 
-            Timber.d("RUNNING")
-            editProfileViewModel.onEvent(
-                event = EditProfileEvent.NewBitmapPicture(
-                    when {
-                        Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> {
-                            MediaStore.Images.Media.getBitmap(context.contentResolver, selectedUri)
-                        }
-                        else -> {
-                            val source = ImageDecoder.createSource(context.contentResolver, selectedUri)
-                            ImageDecoder.decodeBitmap(source)
-                        }
-                    }
-                ))
-
-        }
         ProfilePictureArea(
             photoUrl = state.bitmap?.asImageBitmap() ?: state.photoUrl,
             modifier = Modifier
