@@ -123,7 +123,6 @@ fun EditProfileScreen(
             }
         }
 
-//todo: add progress bar
 
 
     ConstraintLayout(
@@ -187,8 +186,8 @@ fun EditProfileScreen(
                 simCardResultLauncher.launch(intentSender)
             })
 
-//todo: add dialog when document changed and user is exiting without saving
-        //todo: add navigation for settings 
+
+        //todo: add navigation for settings
         MappingButtonNavigation(modifier = Modifier
             .constrainAs(buttonNavigationArea) {
                 top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
@@ -203,7 +202,7 @@ fun EditProfileScreen(
                 onPopBackStack()
             },
             onClickConfirmButton = {
-                editProfileViewModel.onEvent(event = EditProfileEvent.SaveProfile)
+                editProfileViewModel.onEvent(event = EditProfileEvent.Save)
             })
 
             if(state.isLoading){

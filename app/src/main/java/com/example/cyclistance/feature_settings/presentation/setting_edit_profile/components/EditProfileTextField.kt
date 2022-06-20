@@ -15,7 +15,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -67,7 +66,7 @@ fun TextFieldInputArea(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(onDone = {
-                editProfileViewModel.onEvent(event = EditProfileEvent.SaveProfile)
+                editProfileViewModel.onEvent(event = EditProfileEvent.Save)
             }),
             onClick = onPhoneTextFieldClick,
             onValueChange = { phoneNumber ->

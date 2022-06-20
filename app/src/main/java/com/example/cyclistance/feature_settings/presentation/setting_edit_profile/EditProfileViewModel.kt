@@ -52,7 +52,7 @@ class EditProfileViewModel @Inject constructor(
 
     fun onEvent(event: EditProfileEvent) {
         when (event) {
-            is EditProfileEvent.SaveProfile -> {
+            is EditProfileEvent.Save -> {
                 updateUserProfile()
             }
             is EditProfileEvent.EnteredPhoneNumber -> {

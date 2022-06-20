@@ -6,7 +6,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 
 sealed class EditProfileEvent {
 
-    object SaveProfile: EditProfileEvent()
+    object Save: EditProfileEvent()
     data class EnteredPhoneNumber(val phoneNumber: TextFieldValue): EditProfileEvent()
     data class EnteredName(val name: TextFieldValue): EditProfileEvent()
     object LoadPhoto: EditProfileEvent()
