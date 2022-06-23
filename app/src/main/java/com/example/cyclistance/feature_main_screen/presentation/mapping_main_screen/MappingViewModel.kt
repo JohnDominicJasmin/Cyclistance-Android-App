@@ -15,6 +15,7 @@ import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCas
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 import javax.inject.Inject
 
@@ -51,7 +52,6 @@ class MappingViewModel @Inject constructor(
 
 
 
-
     fun onEvent(event: MappingEvent){
         when(event){
 
@@ -62,17 +62,29 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.SignOut -> {
-                authUseCase.signOutUseCase()
+                viewModelScope.launch {
+                    signOutAccount()
+                }
             }
+        }
+    }
 
+    private suspend fun signOutAccount(){
+        runCatching {
+            authUseCase.signOutUseCase()
+        }.onSuccess {
+            _eventFlow.emit(value = MappingUiEvent.ShowSignInScreen)
+        }.onFailure {
+            Timber.e("Error Sign out account: ${it.message}")
         }
     }
 
     private suspend fun postUser(addresses: List<Address>) {
+//todo: fix posting user info too slow
 
         if (addresses.isNotEmpty()) {
             addresses.forEach { address ->
-                kotlin.runCatching {
+                runCatching {
                     with(address) {
                         _state.value = state.value.copy(isLoading = true)
 
