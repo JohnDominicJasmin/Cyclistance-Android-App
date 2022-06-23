@@ -64,16 +64,24 @@ fun MappingScreen(
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
 
-    val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
+    val scaffoldState =
+        rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
     val state = mappingViewModel.state.value
 
     BackHandler(enabled = true, onBack = onBackPressed)
 
     val multiplePermissionsState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        rememberMultiplePermissionsState(permissions = listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION))
+        rememberMultiplePermissionsState(
+            permissions = listOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.ACCESS_BACKGROUND_LOCATION))
     } else {
-        rememberMultiplePermissionsState(permissions = listOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION))
+        rememberMultiplePermissionsState(
+            permissions = listOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION))
     }
     val context = LocalContext.current
     val lastLocation = remember { LastLocation(context) }
@@ -86,7 +94,7 @@ fun MappingScreen(
             lastLocation.beginLocationUpdates()
             return@rememberLauncherForActivityResult
         }
-        Timber.d( "GPS Setting Request Denied")
+        Timber.d("GPS Setting Request Denied")
 
     }
 
@@ -114,11 +122,11 @@ fun MappingScreen(
 
 
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         mappingViewModel.eventFlow.collectLatest { event ->
-            when(event){
+            when (event) {
                 is MappingUiEvent.ShowToastMessage -> {
-                    Toast.makeText(context,event.message, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
                 is MappingUiEvent.ShowAlertDialog -> {
                     alertDialogState = AlertDialogData(
@@ -135,6 +143,9 @@ fun MappingScreen(
                 }
                 is MappingUiEvent.ShowSettingScreen -> {
                     navigateTo(Screens.EditProfileScreen.route, null)
+                }
+                is MappingUiEvent.ShowSignInScreen -> {
+                    navigateTo(Screens.SignInScreen.route, Screens.MappingScreen.route)
                 }
             }
         }
@@ -157,76 +168,91 @@ fun MappingScreen(
                             scaffoldState.drawerState.open()
                         }
                     }) {
-                        Icon(Icons.Filled.Menu, contentDescription = "", tint = MaterialTheme.colors.onBackground)
+                        Icon(
+                            Icons.Filled.Menu,
+                            contentDescription = "",
+                            tint = MaterialTheme.colors.onBackground)
                     }
                 })
         },
-        drawerContent = { MappingDrawerContent() },
-    content = {
-
-        RequestMultiplePermissions(
-            multiplePermissionsState = multiplePermissionsState, onPermissionGranted = {
-                if (!ConnectionStatus.hasGPSConnection(context)) {
-                    checkLocationSetting(
-                        context = context,
-                        onDisabled = settingResultRequest::launch,
-                        onEnabled = {
-                            lastLocation.beginLocationUpdates()
-                        })
+        drawerContent = {
+            MappingDrawerContent(
+                onSettingsItemClick = {
+                    navigateTo(Screens.SettingScreen.route, null)
+                },
+                onChatItemClick = {
+                    /*  todo: open chat screen here   */
+                },
+                onSignOutItemClick = {
+                    mappingViewModel.onEvent(event = MappingEvent.SignOut)
                 }
-            })
+            )
+        },
+        content = {
 
-        if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
-            SetupAlertDialog(
-                alertDialog = alertDialogState,
-                onDismissRequest = {
-                    alertDialogState = AlertDialogData()
-                })
-        }
-
-
-        ConstraintLayout {
-
-            val (mapScreen, searchButton, circularProgressbar) = createRefs()
-
-            MapScreen(
-                isDarkTheme = isDarkTheme,
-                modifier = Modifier.constrainAs(mapScreen) {
-                top.linkTo(parent.top)
-                end.linkTo(parent.end)
-                start.linkTo(parent.start)
-                bottom.linkTo(parent.bottom)
-            })
-
-            if(state.findAssistanceButtonVisible) {
-                SearchAssistanceButton(modifier = Modifier.constrainAs(searchButton) {
-                    bottom.linkTo(parent.bottom, margin = 15.dp)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    height = Dimension.value(45.dp)
-                }, onClick = {
-                    if (multiplePermissionsState.allPermissionsGranted) {
-                        lastLocation.beginLocationUpdates().also{
-                            postProfile()
-                        }
-                        return@SearchAssistanceButton
+            RequestMultiplePermissions(
+                multiplePermissionsState = multiplePermissionsState, onPermissionGranted = {
+                    if (!ConnectionStatus.hasGPSConnection(context)) {
+                        checkLocationSetting(
+                            context = context,
+                            onDisabled = settingResultRequest::launch,
+                            onEnabled = {
+                                lastLocation.beginLocationUpdates()
+                            })
                     }
-                    multiplePermissionsState.launchMultiplePermissionRequest()
                 })
+
+            if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
+                SetupAlertDialog(
+                    alertDialog = alertDialogState,
+                    onDismissRequest = {
+                        alertDialogState = AlertDialogData()
+                    })
             }
 
-            if(state.isLoading){
-                CircularProgressIndicator(modifier = Modifier.constrainAs(circularProgressbar){
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    bottom.linkTo(parent.bottom)
-                    this.centerTo(parent)
-                })
-            }
 
-        }
-    })
+            ConstraintLayout {
+
+                val (mapScreen, searchButton, circularProgressbar) = createRefs()
+
+                MapScreen(
+                    isDarkTheme = isDarkTheme,
+                    modifier = Modifier.constrainAs(mapScreen) {
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                        bottom.linkTo(parent.bottom)
+                    })
+
+                if (state.findAssistanceButtonVisible) {
+                    SearchAssistanceButton(modifier = Modifier.constrainAs(searchButton) {
+                        bottom.linkTo(parent.bottom, margin = 15.dp)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                        height = Dimension.value(45.dp)
+                    }, onClick = {
+                        if (multiplePermissionsState.allPermissionsGranted) {
+                            lastLocation.beginLocationUpdates().also {
+                                postProfile()
+                            }
+                            return@SearchAssistanceButton
+                        }
+                        multiplePermissionsState.launchMultiplePermissionRequest()
+                    })
+                }
+
+                if (state.isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.constrainAs(circularProgressbar) {
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                        bottom.linkTo(parent.bottom)
+                        this.centerTo(parent)
+                    })
+                }
+
+            }
+        })
 
 }
 
@@ -253,37 +279,37 @@ fun SearchAssistanceButton(onClick: () -> Unit, modifier: Modifier) {
 @Composable
 fun MapScreen(isDarkTheme: LiveData<Boolean>, modifier: Modifier) {
 
-        AndroidView(
-            modifier = modifier,
-            factory = { context ->
+    AndroidView(
+        modifier = modifier,
+        factory = { context ->
 
-                MapView(context).apply {
+            MapView(context).apply {
 
-                    this.getMapAsync { mapboxMap ->
-                        with(mapboxMap) {
-                            this@apply.findViewTreeLifecycleOwner()?.let { lifeCycleOwner ->
-                                isDarkTheme.observe(lifeCycleOwner){ darkTheme ->
-                                    setStyle(if(darkTheme) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY)
-                                }
+                this.getMapAsync { mapboxMap ->
+                    with(mapboxMap) {
+                        this@apply.findViewTreeLifecycleOwner()?.let { lifeCycleOwner ->
+                            isDarkTheme.observe(lifeCycleOwner) { darkTheme ->
+                                setStyle(if (darkTheme) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY)
                             }
-                            uiSettings.isAttributionEnabled = false
-                            uiSettings.isLogoEnabled = false
-                            setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
-                            setMinZoomPreference(MIN_ZOOM_LEVEL_MAPS)
-                            animateCamera(
-                                CameraUpdateFactory.newCameraPosition(
-                                    CameraPosition.Builder()
-                                        .target(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE))
-                                        .zoom(MAP_ZOOM)
-                                        .tilt(CAMERA_TILT_DEGREES)
-                                        .build()), DEFAULT_CAMERA_ANIMATION_DURATION)
                         }
-
+                        uiSettings.isAttributionEnabled = false
+                        uiSettings.isLogoEnabled = false
+                        setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
+                        setMinZoomPreference(MIN_ZOOM_LEVEL_MAPS)
+                        animateCamera(
+                            CameraUpdateFactory.newCameraPosition(
+                                CameraPosition.Builder()
+                                    .target(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE))
+                                    .zoom(MAP_ZOOM)
+                                    .tilt(CAMERA_TILT_DEGREES)
+                                    .build()), DEFAULT_CAMERA_ANIMATION_DURATION)
                     }
 
                 }
+
             }
-        )
+        }
+    )
 }
 
 
