@@ -34,13 +34,17 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "ph
 class AuthRepositoryImpl @Inject constructor(
     private val context: Context,
     private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance(),
-    private var firebaseUser: FirebaseUser? = firebaseAuth.currentUser,
     private var firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance(),
-    private var firebaseStorageReference: StorageReference? = firebaseStorage.reference
+    private var firebaseUser: FirebaseUser? = null,
+    private var firebaseStorageReference: StorageReference? = null
 ) : AuthRepository<AuthCredential> {
 
     private var dataStore = context.dataStore
 
+    init{
+        firebaseUser = firebaseAuth.currentUser
+        firebaseStorageReference = firebaseStorage.reference
+    }
     override suspend fun uploadImage(uri: Uri): Uri  {
         val reference = firebaseStorageReference?.child("images/${getId()}")
         val uploadTask = reference?.putFile(uri)
@@ -62,7 +66,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun reloadEmail(): Boolean {
         return CompletableDeferred<Boolean>().run {
-            firebaseUser?.reload()?.addOnCompleteListener { reload ->
+            FirebaseAuth.getInstance().currentUser?.reload()?.addOnCompleteListener { reload ->
                 reload.exception?.let { exception ->
                     if (exception is FirebaseNetworkException) {
                         this.completeExceptionally(
