@@ -44,6 +44,9 @@ class SignUpViewModel @Inject constructor(
                     }
                 }
             }
+            is SignUpEvent.SignOut -> {
+                authUseCase.signOutUseCase()
+            }
             is SignUpEvent.EnteredEmail -> {
                 _state.value = state.value.copy(email = event.email, emailErrorMessage = "")
             }

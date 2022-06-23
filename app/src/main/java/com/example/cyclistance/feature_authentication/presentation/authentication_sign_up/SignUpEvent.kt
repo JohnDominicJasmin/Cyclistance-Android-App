@@ -5,6 +5,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 
 sealed class SignUpEvent{
     object SignUp: SignUpEvent()
+    object SignOut: SignUpEvent()
     data class EnteredEmail(val email: TextFieldValue) : SignUpEvent()
     data class EnteredPassword(val password: TextFieldValue) : SignUpEvent()
     data class EnteredConfirmPassword(val confirmPassword: TextFieldValue) : SignUpEvent()

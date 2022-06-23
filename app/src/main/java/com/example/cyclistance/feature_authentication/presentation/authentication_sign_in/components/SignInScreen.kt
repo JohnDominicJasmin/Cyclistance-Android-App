@@ -124,20 +124,15 @@ fun SignInScreen(
                         is EmailAuthUiEvent.ShowNoInternetScreen -> {
                             navigateTo(Screens.NoInternetScreen.route, null)
                         }
-                        is EmailAuthUiEvent.ShowAlertDialog -> {
-                            alertDialogState = AlertDialogData(
-                                title = emailAuthEvent.title,
-                                description = emailAuthEvent.description,
-                                resId = emailAuthEvent.imageResId)
-                        }
+
                         is EmailAuthUiEvent.ShowMappingScreen -> {
                             navigateTo(Screens.MappingScreen.route, Screens.SignInScreen.route)
                         }
                         is EmailAuthUiEvent.ShowToastMessage -> {
                             Toast.makeText(context, emailAuthEvent.message, Toast.LENGTH_SHORT).show()
                         }
-                        is EmailAuthUiEvent.ShowSignInScreen -> {
-                            navigateTo(Screens.EmailAuthScreen.route, Screens.SignInScreen.route)
+                        is EmailAuthUiEvent.ShowEmailAuthScreen -> {
+                              navigateTo(Screens.EmailAuthScreen.route, Screens.SignInScreen.route)
                         }
                     }
                 }

@@ -67,12 +67,12 @@ class EmailAuthViewModel @Inject constructor(
 
 
     private suspend fun verifyEmail() {
-        kotlin.runCatching {
+        runCatching {
             authUseCase.isEmailVerifiedUseCase() == true
-        }.onSuccess { isVerificationSuccess ->
+        }.onSuccess { emailIsVerified ->
             _state.value = state.value.copy(isLoading = false)
 
-            if(isVerificationSuccess){
+            if(emailIsVerified){
                 _eventFlow.emit(EmailAuthUiEvent.ShowMappingScreen)
                 delay(300)
                 job?.let{
@@ -81,8 +81,10 @@ class EmailAuthViewModel @Inject constructor(
                     }
                 }
             }else{
-                _eventFlow.emit(EmailAuthUiEvent.ShowSignInScreen)
+                _eventFlow.emit(EmailAuthUiEvent.ShowEmailAuthScreen)
             }
+        }.onFailure {
+            _state.value = state.value.copy(isLoading = false)
         }
     }
     private suspend fun refreshEmailAsync() {
@@ -95,7 +97,7 @@ class EmailAuthViewModel @Inject constructor(
     }
 
     private suspend fun reloadEmail(){
-        kotlin.runCatching {
+        runCatching {
             authUseCase.reloadEmailUseCase()
         }.onSuccess { isEmailReloaded ->
             _state.value = state.value.copy(isLoading = false)
@@ -145,12 +147,11 @@ class EmailAuthViewModel @Inject constructor(
     }
 
      private suspend fun sendEmailVerification() {
-            kotlin.runCatching {
+            runCatching {
                 _state.value = state.value.copy(isLoading = true)
                 authUseCase.sendEmailVerificationUseCase()
             }.onSuccess { isEmailVerificationSent ->
                 _state.value = state.value.copy(isLoading = false)
-                Timber.d("Sending email verification status: $isEmailVerificationSent")
                 if (state.value.isEmailResendClicked) {
                     if (isEmailVerificationSent) {
                         _eventFlow.emit(

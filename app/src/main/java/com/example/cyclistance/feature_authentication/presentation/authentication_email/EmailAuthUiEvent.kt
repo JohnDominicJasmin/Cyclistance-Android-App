@@ -4,7 +4,7 @@ import androidx.annotation.RawRes
 
 sealed class EmailAuthUiEvent{
     object ShowMappingScreen: EmailAuthUiEvent()
-    object ShowSignInScreen: EmailAuthUiEvent()
+    object ShowEmailAuthScreen: EmailAuthUiEvent()
     object ShowNoInternetScreen: EmailAuthUiEvent()
     data class ShowAlertDialog(
         val title: String = "",

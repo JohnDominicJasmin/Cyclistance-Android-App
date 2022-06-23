@@ -52,7 +52,7 @@ fun SignUpScreen(
 
         val signUpAccount = {
             if (hasAccountSignedIn && isUserCreatedNewAccount) {
-                mappingViewModel.onEvent(MappingEvent.SignOut)
+                signUpViewModel.onEvent(SignUpEvent.SignOut)
             }
             signUpViewModel.onEvent(SignUpEvent.SignUp)
         }
