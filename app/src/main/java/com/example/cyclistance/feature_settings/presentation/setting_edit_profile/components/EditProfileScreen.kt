@@ -187,7 +187,6 @@ fun EditProfileScreen(
             })
 
 
-        //todo: add navigation for settings
         MappingButtonNavigation(modifier = Modifier
             .constrainAs(buttonNavigationArea) {
                 top.linkTo(textFieldInputArea.bottom, margin = 20.dp)

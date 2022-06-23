@@ -23,7 +23,11 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 
 @Composable
-fun MappingDrawerContent() {
+fun MappingDrawerContent(
+    onSettingsItemClick: () -> Unit,
+    onChatItemClick: () -> Unit,
+    onSignOutItemClick: () -> Unit,
+) {
 
     ConstraintLayout(
         modifier = Modifier
@@ -49,7 +53,10 @@ fun MappingDrawerContent() {
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(105.dp)
-                        .border(width = 3.6.dp, color = MaterialTheme.colors.primary, shape = CircleShape),
+                        .border(
+                            width = 3.6.dp,
+                            color = MaterialTheme.colors.primary,
+                            shape = CircleShape),
                     contentScale = ContentScale.Crop,
                 )
 
@@ -57,15 +64,8 @@ fun MappingDrawerContent() {
                     text = "John Doe",
                     color = MaterialTheme.colors.onSecondary,
                     style = MaterialTheme.typography.h6,
-                    modifier = Modifier.padding(top = 7.dp, bottom = 0.5.dp))
+                    modifier = Modifier.padding(top = 7.dp, bottom = 10.dp))
 
-
-                Text(
-                    text = "johndoe@gmail.com",
-                    color = Black440,
-                    style = MaterialTheme.typography.subtitle2)
-
-                Spacer(modifier = Modifier.height(15.dp))
 
             }
         }
@@ -85,7 +85,8 @@ fun MappingDrawerContent() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_baseline_settings_24,
-                buttonText = "Settings") {  }
+                buttonText = "Settings",
+                onClick = onSettingsItemClick)
 
             DrawerContentButtonItem(
                 modifier = Modifier
@@ -93,15 +94,9 @@ fun MappingDrawerContent() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_baseline_chat_bubble_outline_24,
-                buttonText = "Chat") {  }
+                buttonText = "Chat",
+                onClick = onChatItemClick)
 
-            DrawerContentButtonItem(
-                modifier = Modifier
-                    .background(Color.Transparent)
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                iconId = R.drawable.ic_baseline_notifications_none_24,
-                buttonText = "Notifications") {   }
 
             DrawerContentButtonItem(
                 modifier = Modifier
@@ -109,7 +104,8 @@ fun MappingDrawerContent() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_group_35,
-                buttonText = "Sign out") {   }
+                buttonText = "Sign out",
+                onClick = onSignOutItemClick)
         }
 
 
@@ -148,19 +144,7 @@ private fun DrawerContentButtonItem(
             color = MaterialTheme.colors.onBackground
 
         )
-
-
     }
-
-
 }
 
 
-@Preview
-@Composable
-fun DrawerPreview() {
-    CyclistanceTheme(false) {
-        MappingDrawerContent()
-    }
-
-}

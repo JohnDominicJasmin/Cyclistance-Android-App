@@ -8,6 +8,7 @@ sealed class MappingUiEvent{
     object ShowNoInternetScreen: MappingUiEvent()
     object ShowConfirmDetailsScreen: MappingUiEvent()
     object ShowSettingScreen: MappingUiEvent()
+    object ShowSignInScreen: MappingUiEvent()
     data class ShowToastMessage(val message: String): MappingUiEvent()
 
     data class ShowAlertDialog(
