@@ -91,16 +91,18 @@ fun Navigation(
             ChangePasswordScreen()
         }
 
-        composable(Screens.EditProfileScreen.route){
+        composable(Screens.EditProfileScreen.route) {
             EditProfileScreen(onPopBackStack = {
                 navController.popBackStack()
-            }) {destination , popUpToDestination ->
+            }) { destination, popUpToDestination ->
                 navigateScreen(navController, destination, popUpToDestination)
             }
         }
 
-        composable(Screens.SettingScreen.route){
-            SettingScreen()
+        composable(Screens.SettingScreen.route) {
+            SettingScreen(isDarkTheme = isDarkTheme, onToggleTheme = onToggleTheme) { destination, popUpToDestination ->
+                navigateScreen(navController, destination, popUpToDestination)
+            }
         }
 
     }

@@ -9,12 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
+import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun SettingScreen() {
-
-    var checkedState by remember{ mutableStateOf(false) }
+fun SettingScreen(
+    isDarkTheme: Boolean,
+    onToggleTheme: () -> Unit,
+    navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
     Column(
         modifier = Modifier
@@ -29,37 +31,48 @@ fun SettingScreen() {
                 .padding(top = 30.dp),
             verticalArrangement = Arrangement.spacedBy(3.dp)) {
 
-            SectionTitle(iconId = R.drawable.ic_baseline_person_24, title = "Account")
-            Spacer(modifier = Modifier.height(7.dp))
-            ButtonItem(buttonText = "Edit Profile")
-//            ButtonItem(buttonText = "Change Password")
+            SectionTitle(iconId = R.drawable.ic_baseline_brush_24, title = "Preference")
+            SettingSwitchButton(
+                checkedState = isDarkTheme,
+                onCheckedChange = {
+                    onToggleTheme()
+                }, onClick = {
+                    onToggleTheme()
+                })
         }
 
-        Column(modifier = Modifier
-            .fillMaxWidth(0.9f)
-            .padding(top = 30.dp),
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .padding(top = 30.dp),
             verticalArrangement = Arrangement.spacedBy(3.dp)) {
 
 
-            SectionTitle(iconId = R.drawable.ic_baseline_brush_24, title = "Preference")
-            SettingSwitchButton(
-                checkedState = checkedState,
-                onCheckedChange = {
-                checkedState = it
+
+
+            SectionTitle(iconId = R.drawable.ic_baseline_person_24, title = "Account")
+            SettingsButtonItem(buttonText = "Edit Profile", onClick = {
+                navigateTo(Screens.EditProfileScreen.route, null)
             })
 
         }
 
-        Column(modifier = Modifier
-            .fillMaxWidth(0.9f)
-            .padding(top = 30.dp),
+        Column(
+            modifier = Modifier
+                .fillMaxWidth(0.9f)
+                .padding(top = 30.dp),
             verticalArrangement = Arrangement.spacedBy(3.dp)) {
 
             SectionTitle(iconId = R.drawable.ic_baseline_settings_suggest_24, title = "Other Settings")
-            Spacer(modifier = Modifier.height(7.dp))
-            ButtonItem(buttonText = "Privacy Policy")
-            ButtonItem(buttonText = "Terms and Condition")
-            ButtonItem(buttonText = "Rate this app")
+            SettingsButtonItem(buttonText = "Privacy Policy", onClick = {
+
+            })
+            SettingsButtonItem(buttonText = "Terms and Condition", onClick = {
+
+            })
+            SettingsButtonItem(buttonText = "Rate this app", onClick = {
+
+            })
 
 
         }
@@ -72,7 +85,9 @@ fun SettingScreen() {
 @Composable
 fun SettingScreenPreview() {
     CyclistanceTheme(true) {
-        SettingScreen()
+        SettingScreen(true,onToggleTheme = {}) { _, _ ->
+
+        }
     }
 }
 

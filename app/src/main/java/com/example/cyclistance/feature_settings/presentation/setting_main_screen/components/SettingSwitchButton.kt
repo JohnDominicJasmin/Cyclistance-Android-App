@@ -13,27 +13,24 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun SettingSwitchButton(checkedState: Boolean, onCheckedChange: ((Boolean) -> Unit)?) {
+fun SettingSwitchButton(checkedState: Boolean, onCheckedChange: ((Boolean) -> Unit)?, onClick: () -> Unit) {
 
+    SettingsButtonCreator(onClick = onClick) {
 
-    Row(
-
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colors.background)
-            .padding(start = 3.dp)
-            .wrapContentSize()
-            .clickable {
-            },
-        verticalAlignment = Alignment.CenterVertically) {
-
-        Text(text = "Dark Mode",
+        Text(
+            text = "Dark Mode",
             color = MaterialTheme.colors.onBackground,
             modifier = Modifier
                 .weight(0.9f)
-                .padding(top = 7.dp, bottom = 7.dp))
+                .padding(top = 7.dp, bottom = 7.dp, start = 5.dp))
 
-        Switch(colors = SwitchDefaults.colors(checkedThumbColor = MaterialTheme.colors.primary, uncheckedThumbColor = MaterialTheme.colors.primary,    ),
+        Spacer(modifier = Modifier.width(10.dp))
+
+
+        Switch(
+            colors = SwitchDefaults.colors(
+                checkedThumbColor = MaterialTheme.colors.primary,
+                uncheckedThumbColor = MaterialTheme.colors.primary),
             checked = checkedState,
             onCheckedChange = onCheckedChange
         )
