@@ -33,23 +33,18 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "ph
 
 class AuthRepositoryImpl @Inject constructor(
     private val context: Context,
-    private var firebaseAuth: FirebaseAuth = FirebaseAuth.getInstance(),
-    private var firebaseStorage: FirebaseStorage = FirebaseStorage.getInstance(),
-    private var firebaseUser: FirebaseUser? = null,
-    private var firebaseStorageReference: StorageReference? = null
 ) : AuthRepository<AuthCredential> {
 
     private var dataStore = context.dataStore
 
-    init{
-        firebaseUser = firebaseAuth.currentUser
-        firebaseStorageReference = firebaseStorage.reference
-    }
+
+
     override suspend fun uploadImage(uri: Uri): Uri  {
-        val reference = firebaseStorageReference?.child("images/${getId()}")
-        val uploadTask = reference?.putFile(uri)
+        val firebaseStorageReference: StorageReference = FirebaseStorage.getInstance().reference
+        val reference = firebaseStorageReference.child("images/${getId()}")
+        val uploadTask = reference.putFile(uri)
         return CompletableDeferred<Uri>().run {
-            uploadTask?.addOnCompleteListener { task ->
+            uploadTask.addOnCompleteListener { task ->
                 task.exception?.let { exception ->
                     this.completeExceptionally(exception)
                 }
@@ -83,7 +78,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun sendEmailVerification(): Boolean {
         return CompletableDeferred<Boolean>().run {
-            firebaseUser?.sendEmailVerification()?.addOnCompleteListener { sendEmail ->
+            FirebaseAuth.getInstance().currentUser?.sendEmailVerification()?.addOnCompleteListener { sendEmail ->
                 sendEmail.exception?.let {
                     this.completeExceptionally(
                         AuthExceptions.EmailVerificationException(
@@ -98,7 +93,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean {
         return CompletableDeferred<Boolean>().run {
-            firebaseAuth.createUserWithEmailAndPassword(email.trim(), password.trim())
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.trim(), password.trim())
                 .addOnCompleteListener { createAccount ->
                     createAccount.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
@@ -127,7 +122,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean {
         return CompletableDeferred<Boolean>().run {
 
-            firebaseAuth.signInWithEmailAndPassword(email.trim(), password.trim())
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(email.trim(), password.trim())
                 .addOnCompleteListener { signInWithEmailAndPassword ->
                     signInWithEmailAndPassword.exception?.let { exception ->
 
@@ -174,7 +169,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun signInWithCredentials(v: AuthCredential): Boolean {
         return CompletableDeferred<Boolean>().run {
-            firebaseAuth.signInWithCredential(v).addOnCompleteListener { signInWithCredential ->
+            FirebaseAuth.getInstance().signInWithCredential(v).addOnCompleteListener { signInWithCredential ->
                 signInWithCredential.exception?.let { exception ->
                     if (exception.message == FACEBOOK_CONNECTION_FAILURE) {
                         this.completeExceptionally(
@@ -195,19 +190,19 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun signOut() {
-        firebaseAuth.signOut()
+        FirebaseAuth.getInstance().signOut()
     }
 
     override fun getId(): String? {
-        return firebaseUser?.uid
+        return FirebaseAuth.getInstance().currentUser?.uid
     }
 
     override fun getEmail(): String? {
-        return firebaseUser?.email
+        return FirebaseAuth.getInstance().currentUser?.email
     }
 
     override fun getName(): String? {
-        return firebaseUser?.displayName
+        return FirebaseAuth.getInstance().currentUser?.displayName
     }
 
     override fun getPhoneNumber(): Flow<String> {
@@ -224,11 +219,11 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun getPhotoUrl(): String {
-        return firebaseUser?.photoUrl.toString().replace(oldValue = "=s96-c", newValue = "=s400-c");
+        return FirebaseAuth.getInstance().currentUser?.photoUrl.toString().replace(oldValue = "=s96-c", newValue = "=s400-c");
     }
 
     override fun isSignedInWithProvider(): Flow<Boolean> = flow {
-        firebaseUser?.providerData?.forEach {
+        FirebaseAuth.getInstance().currentUser?.providerData?.forEach {
             emit(
                 value = (it.providerId == FacebookAuthProvider.PROVIDER_ID ||
                          it.providerId == GoogleAuthProvider.PROVIDER_ID))
@@ -237,11 +232,11 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun isEmailVerified(): Boolean? {
-        return firebaseUser?.isEmailVerified
+        return FirebaseAuth.getInstance().currentUser?.isEmailVerified
     }
 
     override fun hasAccountSignedIn(): Boolean {
-        return firebaseUser != null
+        return FirebaseAuth.getInstance().currentUser != null
     }
 
     override suspend fun updatePhoneNumber(phoneNumber: String) {
@@ -256,7 +251,7 @@ class AuthRepositoryImpl @Inject constructor(
             photoUri?.let { this.photoUri = photoUri }
         }
         return CompletableDeferred<Boolean>().run {
-            firebaseUser?.updateProfile(profileUpdates)
+            FirebaseAuth.getInstance().currentUser?.updateProfile(profileUpdates)
                 ?.addOnCompleteListener { updateProfile ->
                     updateProfile.exception?.let(this::completeExceptionally)
                     this.complete(updateProfile.isSuccessful)
