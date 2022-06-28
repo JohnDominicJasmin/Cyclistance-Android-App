@@ -23,7 +23,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyclistance.R
 import com.example.cyclistance.common.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
-import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
+import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
@@ -86,7 +86,7 @@ fun SignInScreen(
 
 
 
-            var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
+            var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
 
             LaunchedEffect(key1 = true) {
                 signInStateValue.focusRequester.requestFocus()
@@ -101,7 +101,7 @@ fun SignInScreen(
                             navigateTo(Screens.NoInternetScreen.route, null)
                         }
                         is SignInUiEvent.ShowAlertDialog -> {
-                            alertDialogState = AlertDialogData(
+                            alertDialogState = AlertDialogModel(
                                 title = signInEvent.title,
                                 description = signInEvent.description,
                                 resId = signInEvent.imageResId)
@@ -170,7 +170,7 @@ fun SignInScreen(
                         SetupAlertDialog(
                             alertDialog = alertDialogState,
                             onDismissRequest = {
-                                alertDialogState = AlertDialogData()
+                                alertDialogState = AlertDialogModel()
                             })
                     }
 
@@ -229,7 +229,7 @@ fun SignInScreenPreview() {
     CyclistanceTheme(false) {
 
         val scope = rememberCoroutineScope()
-        var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
+        var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
 
 
         Column(
@@ -261,7 +261,7 @@ fun SignInScreenPreview() {
                     SetupAlertDialog(
                         alertDialog = alertDialogState,
                         onDismissRequest = {
-                            alertDialogState = AlertDialogData()
+                            alertDialogState = AlertDialogModel()
                         })
                 }
 

@@ -22,9 +22,8 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
+import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
@@ -43,7 +42,7 @@ fun EmailAuthScreen(
     navigateTo : (destination: String, popUpToDestination: String?) -> Unit) {
 
 
-    var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
+    var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
     val context = LocalContext.current
     val email = remember { mappingViewModel.getEmail() }
 
@@ -72,7 +71,7 @@ fun EmailAuthScreen(
                             navigateTo(Screens.NoInternetScreen.route, null)
                         }
                         is EmailAuthUiEvent.ShowAlertDialog -> {
-                            alertDialogState = AlertDialogData(
+                            alertDialogState = AlertDialogModel(
                                 title = event.title,
                                 description = event.description,
                                 resId = event.imageResId)
@@ -128,7 +127,7 @@ fun EmailAuthScreen(
                     SetupAlertDialog(
                         alertDialog = alertDialogState,
                         onDismissRequest = {
-                            alertDialogState = AlertDialogData()
+                            alertDialogState = AlertDialogModel()
                         })
                 }
                 if (isLoading) {
@@ -173,7 +172,7 @@ fun EmailAuthScreen(
 fun EmailAuthScreenPreview() {
     val state  = false
     CyclistanceTheme(state){
-        var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
+        var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
         val email = remember { "Mikocabal27@gmail.com" }
         val context = LocalContext.current
         val intent = Intent(Intent.ACTION_MAIN)
@@ -211,7 +210,7 @@ fun EmailAuthScreenPreview() {
                         SetupAlertDialog(
                             alertDialog = alertDialogState,
                             onDismissRequest = {
-                                alertDialogState = AlertDialogData()
+                                alertDialogState = AlertDialogModel()
                             })
                     }
                     if (true) {

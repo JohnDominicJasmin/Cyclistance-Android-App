@@ -34,7 +34,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 import io.github.farhanroy.composeawesomedialog.themes.Shapes
 
 
-data class AlertDialogData(
+data class AlertDialogModel(
     var title: String = "",
     var description: String = "",
     @RawRes var resId: Int = 0
@@ -42,7 +42,7 @@ data class AlertDialogData(
 
 @Composable
 fun SetupAlertDialog(
-    alertDialog: AlertDialogData,
+    alertDialog: AlertDialogModel,
     onDismissRequest: () -> Unit) {
 
     val openDialog = remember { mutableStateOf(true) }
@@ -145,7 +145,7 @@ fun AlertDialogPreview() {
 
     CyclistanceTheme(false) {
         SetupAlertDialog(
-            alertDialog = AlertDialogData(
+            alertDialog = AlertDialogModel(
                 title = "Success",
                 description = "Sample this is description",
                 resId = io.github.farhanroy.composeawesomedialog.R.raw.error)) {

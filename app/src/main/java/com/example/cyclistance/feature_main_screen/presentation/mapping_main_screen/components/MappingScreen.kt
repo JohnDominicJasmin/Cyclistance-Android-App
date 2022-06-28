@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -32,9 +31,8 @@ import com.example.cyclistance.common.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.common.MappingConstants.MAP_ZOOM
 import com.example.cyclistance.common.MappingConstants.MAX_ZOOM_LEVEL_MAPS
 import com.example.cyclistance.common.MappingConstants.MIN_ZOOM_LEVEL_MAPS
-import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
+import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
-import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingUiEvent
@@ -49,7 +47,7 @@ import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
-import com.mapbox.maps.Style
+import com.mapbox.mapboxsdk.maps.Style
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -85,7 +83,7 @@ fun MappingScreen(
     }
     val context = LocalContext.current
     val lastLocation = remember { LastLocation(context) }
-    var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
+    var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
     val settingResultRequest = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
@@ -129,7 +127,7 @@ fun MappingScreen(
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
                 is MappingUiEvent.ShowAlertDialog -> {
-                    alertDialogState = AlertDialogData(
+                    alertDialogState = AlertDialogModel(
                         title = event.title,
                         description = event.description,
                         resId = event.imageResId
@@ -153,7 +151,8 @@ fun MappingScreen(
 
 
 
-
+//todo: change this to BottomSheetScaffold copy values from edit profile bottom sheet
+//todo: add snackbarHost, fab button values, topbar, just use all the parameter values.
     Scaffold(
         drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
         scaffoldState = scaffoldState,
@@ -206,7 +205,7 @@ fun MappingScreen(
                 SetupAlertDialog(
                     alertDialog = alertDialogState,
                     onDismissRequest = {
-                        alertDialogState = AlertDialogData()
+                        alertDialogState = AlertDialogModel()
                     })
             }
 

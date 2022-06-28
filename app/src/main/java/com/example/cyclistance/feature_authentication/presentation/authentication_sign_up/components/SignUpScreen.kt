@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogData
+import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEvent
@@ -46,7 +46,7 @@ fun SignUpScreen(
 
         val hasAccountSignedIn = remember { signUpViewModel.hasAccountSignedIn() }
         val isUserCreatedNewAccount = remember { email.text != mappingViewModel.getEmail() }
-        var alertDialogState by remember { mutableStateOf(AlertDialogData()) }
+        var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
         val context = LocalContext.current
 
         val signUpAccount = {
@@ -66,7 +66,7 @@ fun SignUpScreen(
                         navigateTo(Screens.NoInternetScreen.route, null)
                     }
                     is SignUpUiEvent.ShowAlertDialog -> {
-                        alertDialogState = AlertDialogData(
+                        alertDialogState = AlertDialogModel(
                             title = event.title,
                             description = event.description,
                             resId = event.imageResId)
@@ -118,7 +118,7 @@ fun SignUpScreen(
                     SetupAlertDialog(
                         alertDialog = alertDialogState,
                         onDismissRequest = {
-                            alertDialogState = AlertDialogData()
+                            alertDialogState = AlertDialogModel()
                         })
                 }
 
