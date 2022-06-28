@@ -11,6 +11,7 @@ object AuthConstants {
     const val REFRESH_EMAIL_INTERVAL: Long = 1800
     const val GOOGLE_SIGN_IN_REQUEST_CODE: Int = 1
     const val FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE"
+    const val USER_NOT_FOUND = "ERROR_USER_NOT_FOUND"
     val DATA_STORE_PHONE_NUMBER_KEY = stringPreferencesKey("phone_number_key")
     const val MINIMUM_NUMBER_OF_CHARACTERS = 3
 
