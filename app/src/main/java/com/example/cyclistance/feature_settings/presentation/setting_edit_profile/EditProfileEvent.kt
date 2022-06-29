@@ -14,5 +14,6 @@ sealed class EditProfileEvent {
     object LoadPhoneNumber: EditProfileEvent()
     data class NewImageUri(val uri: Uri?): EditProfileEvent()
     data class NewBitmapPicture(val bitmap: Bitmap?): EditProfileEvent()
+    object SaveImageToGallery: EditProfileEvent()
 
 }
