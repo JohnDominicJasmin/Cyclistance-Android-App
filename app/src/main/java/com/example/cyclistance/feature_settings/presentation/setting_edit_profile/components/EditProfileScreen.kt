@@ -37,9 +37,6 @@ import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import timber.log.Timber
-import java.io.ByteArrayOutputStream
-import java.io.File
 
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
@@ -54,14 +51,14 @@ fun EditProfileScreen(
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val scope = rememberCoroutineScope()
 
+    var isGalleryButtonClick by remember{ mutableStateOf(false)}
     val toggleBottomSheet = {
         scope.launch {
             with(bottomSheetState) {
-               if(isVisible) hide() else show()
+                if(isVisible) hide() else show()
             }
         }
     }
-
 
     val context = LocalContext.current
     val hintRequest = HintRequest.Builder()
@@ -94,16 +91,6 @@ fun EditProfileScreen(
         }
     }
 
-    LaunchedEffect(true) {
-        editProfileViewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                is EditProfileUiEvent.ShowMappingScreen -> {
-                    onPopBackStack()
-                }
-
-            }
-        }
-    }
     val openGalleryResultLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             editProfileViewModel.onEvent(event = EditProfileEvent.NewImageUri(uri = uri))
@@ -137,49 +124,83 @@ fun EditProfileScreen(
         }
 
 
-    val openGalleryPermissionState =
-        rememberPermissionState(permission = Manifest.permission.READ_EXTERNAL_STORAGE) { permissionGranted ->
-            if (permissionGranted) {
+
+
+
+
+
+
+    val accessStoragePermissionState =
+        rememberMultiplePermissionsState(permissions = listOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)) { permissionGranted ->
+            if (isGalleryButtonClick && permissionGranted.values.all { it }) {
                 openGalleryResultLauncher.launch("image/*")
             }
         }
 
 
     val openCameraPermissionState =
-        rememberMultiplePermissionsState(permissions = listOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)) { permissionGranted ->
+        rememberPermissionState(permission = Manifest.permission.CAMERA) { permissionGranted ->
 
-        if (permissionGranted.values.all { it }) {
-            openCameraResultLauncher.launch()
+            if (permissionGranted) {
+                openCameraResultLauncher.launch()
+            }
         }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+    LaunchedEffect(true) {
+        if(!accessStoragePermissionState.allPermissionsGranted){
+            accessStoragePermissionState.launchMultiplePermissionRequest()
+        }
+        editProfileViewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is EditProfileUiEvent.ShowMappingScreen -> {
+                    onPopBackStack()
+                }
+
+            }
+        }
     }
+
 
 
     SelectImageBottomSheet(
         galleryButtonOnClick = {
+            isGalleryButtonClick =!isGalleryButtonClick
             toggleBottomSheet()
-            if (openGalleryPermissionState.status.isGranted) {
+            if (accessStoragePermissionState.allPermissionsGranted) {
                 openGalleryResultLauncher.launch("image/*")
                 return@SelectImageBottomSheet
             }
-            if (!openGalleryPermissionState.status.shouldShowRationale) {
-                Toast.makeText(context, "Permission to open Gallery is denied.", Toast.LENGTH_LONG).show()
+            if (accessStoragePermissionState.shouldShowRationale) {
+                Toast.makeText(context, "Storage permission is not yet granted.", Toast.LENGTH_SHORT).show()
                 return@SelectImageBottomSheet
             }
-            openGalleryPermissionState.launchPermissionRequest()
+            accessStoragePermissionState.launchMultiplePermissionRequest()
         },
         cameraButtonOnClick = {
             toggleBottomSheet()
-            if(openCameraPermissionState.allPermissionsGranted){
+            if(openCameraPermissionState.status.isGranted){
                 openCameraResultLauncher.launch()
                 return@SelectImageBottomSheet
             }
-            if(!openCameraPermissionState.shouldShowRationale){
-                Toast.makeText(context, "Permissions to open Camera is denied.",Toast.LENGTH_LONG).show()
+            if(openCameraPermissionState.status.shouldShowRationale){
+                Toast.makeText(context, "Camera permission is not yet granted.",Toast.LENGTH_SHORT).show()
                 return@SelectImageBottomSheet
             }
-            openCameraPermissionState.launchMultiplePermissionRequest()
+            openCameraPermissionState.launchPermissionRequest()
         },
         bottomSheetScaffoldState = bottomSheetState) {
 
