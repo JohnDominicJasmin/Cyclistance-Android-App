@@ -46,8 +46,8 @@ private fun MappingBottomSheet(
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = sheetContent,
         sheetPeekHeight = 0.dp,
-        content = content
-        /* Button(onClick = {
+        content = {
+             Button(onClick = {
              scope.launch {
 
                  if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
@@ -58,7 +58,8 @@ private fun MappingBottomSheet(
              }
          }) {
              Text(text = "Expand/Collapse Bottom Sheet")
-         }*/
+         }
+        }
     )
 
 
@@ -331,7 +332,7 @@ fun OnGoingRescueBottomSheet(
 }
 
 
-@Preview
+@Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun BottomSheetRescuerArrivedPreview() {
     val isDarkTheme = false
@@ -343,7 +344,7 @@ fun BottomSheetRescuerArrivedPreview() {
     }
 }
 
-@Preview
+@Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun DestinationReachedBottomSheetPreview() {
     val isDarkTheme = true
@@ -355,7 +356,7 @@ fun DestinationReachedBottomSheetPreview() {
     }
 
 }
-@Preview
+@Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun SearchingAssistancePreview() {
     val isDarkTheme = false
@@ -365,7 +366,7 @@ fun SearchingAssistancePreview() {
 }
 
 
-@Preview
+@Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun MappingBottomSheetPreview() {
     CyclistanceTheme(true) {
