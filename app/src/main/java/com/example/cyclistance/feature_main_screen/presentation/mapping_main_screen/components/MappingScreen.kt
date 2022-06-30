@@ -235,6 +235,12 @@ fun MappingScreen(
                             }
                             return@SearchAssistanceButton
                         }
+
+                        if(!locationPermissionsState.shouldShowRationale){
+                            Toast.makeText(context, "Location permission is not yet granted.", Toast.LENGTH_SHORT).show()
+                            return@SearchAssistanceButton
+                        }
+
                         locationPermissionsState.launchMultiplePermissionRequest()
                     })
                 }
