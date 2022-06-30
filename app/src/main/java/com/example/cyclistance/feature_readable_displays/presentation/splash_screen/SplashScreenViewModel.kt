@@ -9,7 +9,9 @@ import com.example.cyclistance.feature_authentication.domain.use_case.Authentica
 import com.example.cyclistance.feature_readable_displays.domain.use_case.IntroSliderUseCase
 import com.example.cyclistance.navigation.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -28,30 +30,28 @@ class SplashScreenViewModel @Inject constructor(
 
 
     private fun isUserCompletedWalkThrough() {
-        viewModelScope.launch {
             kotlin.runCatching {
 
                 introSliderUseCase.readIntroSliderUseCase()
 
-            }.onSuccess { result ->
-                result.collect { userCompletedWalkThrough ->
+            }.onSuccess { result:Flow<Boolean> ->
+                result.onEach { userCompletedWalkThrough ->
                     if (userCompletedWalkThrough) {
 
                         if (isUserSignedIn()) {
                             _splashScreenState.value = SplashScreenState(navigationStartingDestination = Screens.MappingScreen.route)
-                            return@collect
+                            return@onEach
                         }
                         _splashScreenState.value = SplashScreenState(navigationStartingDestination = Screens.SignInScreen.route)
 
                     } else {
                         _splashScreenState.value = SplashScreenState(navigationStartingDestination = Screens.IntroSliderScreen.route)
                     }
-                }
+                }.launchIn(viewModelScope)
             }.onFailure {
                 Timber.e("IntroSlider DataStore Reading Failed: ${it.localizedMessage}")
             }
 
-        }
     }
     private suspend fun isUserSignedIn():Boolean{
         return (authUseCase.isSignedInWithProviderUseCase() == true || authUseCase.isEmailVerifiedUseCase() == true) &&
