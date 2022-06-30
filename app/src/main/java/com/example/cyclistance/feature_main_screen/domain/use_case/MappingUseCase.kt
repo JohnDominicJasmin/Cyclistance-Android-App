@@ -4,6 +4,7 @@ import com.example.cyclistance.feature_main_screen.domain.use_case.cancellation.
 import com.example.cyclistance.feature_main_screen.domain.use_case.cancellation.DeleteCancellationEventUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.cancellation.GetCancellationByIdUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.cancellation.UpdateCancellationEventUseCase
+import com.example.cyclistance.feature_main_screen.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.CreateRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.DeleteRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.GetRescueRequestUseCase
@@ -28,6 +29,9 @@ data class MappingUseCase(
     val createUserUseCase: CreateUserUseCase,
     val deleteUserUseCase: DeleteUserUseCase,
     val updateUserUseCase: UpdateUserUseCase,
+
+
+    val getUserLocationUseCase: GetUserLocationUseCase,
 
 
 )

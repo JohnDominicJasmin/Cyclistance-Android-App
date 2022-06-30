@@ -1,7 +1,11 @@
 package com.example.cyclistance.feature_main_screen.domain.repository
 
+import android.location.Address
 import com.example.cyclistance.feature_main_screen.data.remote.dto.RescueRequestDto
 import com.example.cyclistance.feature_main_screen.domain.model.*
+import com.example.cyclistance.utils.SharedLocationModel
+import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.flow.Flow
 
 interface MappingRepository {
     suspend fun getUserById(userId: String): User
@@ -21,5 +25,8 @@ interface MappingRepository {
     suspend fun createCancellationEvent(cancellationEvent: CancellationEvent)
     suspend fun updateCancellationEvent(itemId: String, cancellationEvent: CancellationEvent)
     suspend fun deleteCancellationEvent(id: String)
+
+
+    fun getUserLocation(): Flow<SharedLocationModel>
 
 }

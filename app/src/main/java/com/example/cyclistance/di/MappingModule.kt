@@ -1,5 +1,7 @@
 package com.example.cyclistance.di
 
+import android.content.Context
+import com.example.cyclistance.BaseApplication
 import com.example.cyclistance.common.MappingConstants.CYCLISTANCE_API_BASE_URL
 import com.example.cyclistance.feature_main_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_main_screen.data.repository.MappingRepositoryImpl
@@ -9,15 +11,18 @@ import com.example.cyclistance.feature_main_screen.domain.use_case.cancellation.
 import com.example.cyclistance.feature_main_screen.domain.use_case.cancellation.DeleteCancellationEventUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.cancellation.GetCancellationByIdUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.cancellation.UpdateCancellationEventUseCase
+import com.example.cyclistance.feature_main_screen.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.CreateRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.DeleteRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.GetRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.UpdateRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.user.*
+import com.example.cyclistance.utils.SharedLocationManager
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -43,8 +48,8 @@ object MappingModule {
 
     @Provides
     @Singleton
-    fun provideCyclistanceRepository(api: CyclistanceApi):MappingRepository{
-        return MappingRepositoryImpl(api)
+    fun provideCyclistanceRepository(sharedLocationManager: SharedLocationManager,api: CyclistanceApi):MappingRepository{
+        return MappingRepositoryImpl(sharedLocationManager,api)
     }
 
     @Provides
@@ -67,9 +72,18 @@ object MappingModule {
             deleteCancellationEventUseCase = DeleteCancellationEventUseCase(repository),
             updateCancellationEventUseCase = UpdateCancellationEventUseCase(repository),
 
+            getUserLocationUseCase = GetUserLocationUseCase(repository)
         )
     }
 
+
+
+    @Provides
+    @Singleton
+    fun provideSharedLocationManager(
+        @ApplicationContext context: Context
+    ): SharedLocationManager =
+        SharedLocationManager(context, (context.applicationContext as BaseApplication).applicationScope)
 
 
 

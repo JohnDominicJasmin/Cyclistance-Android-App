@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_main_screen.data.repository
 
+import android.location.Address
 import com.example.cyclistance.feature_main_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toCancellationEvent
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toRescueRequest
@@ -10,10 +11,21 @@ import com.example.cyclistance.feature_main_screen.data.remote.dto.UserDto
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_main_screen.domain.model.*
 import com.example.cyclistance.feature_main_screen.domain.repository.MappingRepository
+import com.example.cyclistance.utils.SharedLocationManager
+import com.example.cyclistance.utils.SharedLocationModel
+import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
 import java.io.IOException
 
-class MappingRepositoryImpl(private val api: CyclistanceApi): MappingRepository {
+class MappingRepositoryImpl(
+    private val sharedLocationManager: SharedLocationManager,
+    private val api: CyclistanceApi): MappingRepository {
+
+
+    override fun getUserLocation(): Flow<SharedLocationModel> {
+        return sharedLocationManager.locationFlow()
+    }
 
     override suspend fun getUserById(userId: String): User {
        return try{
