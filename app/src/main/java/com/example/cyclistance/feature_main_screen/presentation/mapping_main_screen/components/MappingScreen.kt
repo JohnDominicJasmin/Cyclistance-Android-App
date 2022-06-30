@@ -40,7 +40,6 @@ import com.example.cyclistance.feature_main_screen.presentation.mapping_main_scr
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.utils.ConnectionStatus
 import com.example.cyclistance.utils.ConnectionStatus.checkLocationSetting
-import com.example.cyclistance.utils.LastLocation
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.mapbox.mapboxsdk.camera.CameraPosition
@@ -61,7 +60,7 @@ fun MappingScreen(
     onBackPressed: () -> Unit,
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
-
+//todo: wait for user to click the search button before starting permission
     val scaffoldState =
         rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
@@ -69,7 +68,7 @@ fun MappingScreen(
 
     BackHandler(enabled = true, onBack = onBackPressed)
 
-    val multiplePermissionsState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    val locationPermissionsState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         rememberMultiplePermissionsState(
             permissions = listOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -82,14 +81,13 @@ fun MappingScreen(
                 Manifest.permission.ACCESS_COARSE_LOCATION))
     }
     val context = LocalContext.current
-    val lastLocation = remember { LastLocation(context) }
     var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
     val settingResultRequest = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
         if (activityResult.resultCode == RESULT_OK) {
             Timber.d("GPS Setting Request Accepted")
-            lastLocation.beginLocationUpdates()
+            mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
             return@rememberLauncherForActivityResult
         }
         Timber.d("GPS Setting Request Denied")
@@ -103,16 +101,12 @@ fun MappingScreen(
                 onDisabled = settingResultRequest::launch,
                 onEnabled = {
                     mappingViewModel.onEvent(
-                        event = MappingEvent.UploadProfile(
-                            addresses = lastLocation.getUserLocation()
-                        ))
+                        event = MappingEvent.UploadProfile)
 
                 })
         } else {
             mappingViewModel.onEvent(
-                event = MappingEvent.UploadProfile(
-                    addresses = lastLocation.getUserLocation()
-                ))
+                event = MappingEvent.UploadProfile)
 
         }
     }
@@ -121,6 +115,11 @@ fun MappingScreen(
 
 
     LaunchedEffect(key1 = true) {
+
+        if (locationPermissionsState.allPermissionsGranted) {
+            mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
+        }
+
         mappingViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is MappingUiEvent.ShowToastMessage -> {
@@ -190,13 +189,13 @@ fun MappingScreen(
         content = {
 
             RequestMultiplePermissions(
-                multiplePermissionsState = multiplePermissionsState, onPermissionGranted = {
+                multiplePermissionsState = locationPermissionsState, onPermissionGranted = {
                     if (!ConnectionStatus.hasGPSConnection(context)) {
                         checkLocationSetting(
                             context = context,
                             onDisabled = settingResultRequest::launch,
                             onEnabled = {
-                                lastLocation.beginLocationUpdates()
+                                mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
                             })
                     }
                 })
@@ -230,13 +229,13 @@ fun MappingScreen(
                         start.linkTo(parent.start)
                         height = Dimension.value(45.dp)
                     }, onClick = {
-                        if (multiplePermissionsState.allPermissionsGranted) {
-                            lastLocation.beginLocationUpdates().also {
+                        if (locationPermissionsState.allPermissionsGranted) {
+                            mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates).also {
                                 postProfile()
                             }
                             return@SearchAssistanceButton
                         }
-                        multiplePermissionsState.launchMultiplePermissionRequest()
+                        locationPermissionsState.launchMultiplePermissionRequest()
                     })
                 }
 

@@ -12,7 +12,10 @@ import com.example.cyclistance.feature_main_screen.data.remote.dto.Location
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_main_screen.domain.model.User
 import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCase
+import com.example.cyclistance.utils.SharedLocationModel
+import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -33,6 +36,7 @@ class MappingViewModel @Inject constructor(
 
 
 
+    //todo: add service for this
 
     fun getEmail():String = authUseCase.getEmailUseCase() ?: ""
     private fun getId():String = authUseCase.getIdUseCase() ?: ""
@@ -41,6 +45,8 @@ class MappingViewModel @Inject constructor(
         val index = this.indexOf('@')
         return this.substring(0, index)
     }
+
+    private var locationUpdatesFlow: Job? = null
 
     private suspend fun getPhoneNumber(): String = authUseCase.getPhoneNumberUseCase()
     private fun getPhotoUrl(): String{
@@ -57,7 +63,7 @@ class MappingViewModel @Inject constructor(
 
             is MappingEvent.UploadProfile -> {
                 viewModelScope.launch {
-                    postUser(event.addresses)
+                    postUser()
                 }
             }
 
@@ -66,7 +72,29 @@ class MappingViewModel @Inject constructor(
                     signOutAccount()
                 }
             }
+
+            is MappingEvent.SubscribeToLocationUpdates -> {
+                subscribeToLocationUpdates()
+            }
+
+            is MappingEvent.UnsubscribeToLocationUpdates -> {
+                unSubscribeToLocationUpdates()
+            }
         }
+    }
+
+    private fun subscribeToLocationUpdates(){
+        locationUpdatesFlow?.cancel()
+        locationUpdatesFlow = mappingUseCase.getUserLocationUseCase().onEach { userLocation:SharedLocationModel ->
+            _state.value = state.value.copy(addresses = userLocation.addresses, currentLatLng = userLocation.latLng)
+
+            Timber.d("USER LOCATION UPDATES: ${userLocation.addresses.isNotEmpty()} | ${userLocation.latLng.latitude}:${userLocation.latLng.longitude}")
+
+        }.launchIn(viewModelScope)
+    }
+
+    private fun unSubscribeToLocationUpdates(){
+        locationUpdatesFlow?.cancel()
     }
 
     private suspend fun signOutAccount(){
@@ -79,57 +107,60 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun postUser(addresses: List<Address>) {
-//todo: fix posting user info too slow
+    private suspend fun postUser() {
 
-        if (addresses.isNotEmpty()) {
-            addresses.forEach { address ->
-                runCatching {
-                    with(address) {
-                        _state.value = state.value.copy(isLoading = true)
+        with(state.value) {
+            if (addresses.isNotEmpty()) {
+                addresses.forEach { address ->
+                    runCatching {
+                         _state.value = copy(isLoading = true)
+                         createUser(address)
+                    }.onSuccess {
+                        _state.value = copy(isLoading = false, findAssistanceButtonVisible = false)
+                        _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
+                    }.onFailure { exception ->
+                        _state.value = copy(isLoading = false)
+                        when (exception) {
+                            is MappingExceptions.NoInternetException -> {
+                                _eventFlow.emit(MappingUiEvent.ShowNoInternetScreen)
+                            }
+                            is MappingExceptions.UnexpectedErrorException -> {
+                                _eventFlow.emit(
+                                    MappingUiEvent.ShowToastMessage(
+                                        message = exception.message ?: "",
+                                    ))
+                            }
+                            is MappingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
+                                _eventFlow.emit(MappingUiEvent.ShowSettingScreen)
+                            }
 
-                        mappingUseCase.createUserUseCase(
-                            user = User(
-                                address = "$subThoroughfare $thoroughfare., $locality, $subAdminArea",
-                                id = getId(),
-                                location = Location(
-                                    lat = latitude.toString(),
-                                    lng = longitude.toString()),
-                                name = getName().ifEmpty { throw MappingExceptions.NameException() },
-                                profilePictureUrl = getPhotoUrl(),
-                                contactNumber = getPhoneNumber()
-                            ))
-                    }
-                }.onSuccess {
-                    _state.value = state.value.copy(isLoading = false, findAssistanceButtonVisible = false)
-                    _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
-                }.onFailure { exception ->
-                    _state.value = state.value.copy(isLoading = false)
-                    when (exception) {
-                        is MappingExceptions.NoInternetException -> {
-                            _eventFlow.emit(MappingUiEvent.ShowNoInternetScreen)
                         }
-                        is MappingExceptions.UnexpectedErrorException -> {
-                            _eventFlow.emit(
-                                MappingUiEvent.ShowToastMessage(
-                                    message = exception.message ?: "",
-                                ))
-                        }
-                        is MappingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
-                            _eventFlow.emit(MappingUiEvent.ShowSettingScreen)
-                        }
-
                     }
                 }
+            } else {
+                _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
             }
-        } else {
-            _eventFlow.emit(
-                MappingUiEvent.ShowToastMessage(
-                    message = "Searching for GPS"
+        }
+    }
+
+    private suspend fun createUser(address: Address){
+        with(address) {
+            mappingUseCase.createUserUseCase(
+                user = User(
+                    address = "$subThoroughfare $thoroughfare., $locality, $subAdminArea",
+                    id = getId(),
+                    location = Location(
+                        lat = latitude.toString(),
+                        lng = longitude.toString()),
+                    name = getName().ifEmpty { throw MappingExceptions.NameException() },
+                    profilePictureUrl = getPhotoUrl(),
+                    contactNumber = getPhoneNumber()
                 ))
         }
     }
 
-
-
+    override fun onCleared() {
+        unSubscribeToLocationUpdates()
+        super.onCleared()
+    }
 }
