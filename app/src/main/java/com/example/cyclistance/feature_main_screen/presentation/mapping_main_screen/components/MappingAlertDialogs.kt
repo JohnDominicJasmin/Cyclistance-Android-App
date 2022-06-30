@@ -22,7 +22,7 @@ import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
-data class MappingDialogData(
+data class MappingDialogModel(
     var icon: Int = 0,
     var title: String = "",
     var description: String = "")
@@ -45,7 +45,7 @@ fun Preview() {
 
 
             AlertDialogContent(
-                mappingDialogData = MappingDialogData(
+                mappingDialogModel = MappingDialogModel(
                     icon = R.drawable.ic_question,
                     title = "Are you sure?",
                     description = "You want to cancel rescue request?"),
@@ -77,7 +77,7 @@ fun AlertDialogCreator(
 
 @Composable
 fun AlertDialogContent(
-    mappingDialogData: MappingDialogData,
+    mappingDialogModel: MappingDialogModel,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit) {
     Card(
@@ -96,14 +96,14 @@ fun AlertDialogContent(
 
 
             Icon(
-                painter = painterResource(id = mappingDialogData.icon),
+                painter = painterResource(id = mappingDialogModel.icon),
                 contentDescription = null,
                 tint = Color.Unspecified)
 
             Spacer(modifier = Modifier.height(17.dp))
 
             Text(
-                text = mappingDialogData.title,
+                text = mappingDialogModel.title,
                 style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.onSurface,
                 textAlign = TextAlign.Center)
@@ -111,7 +111,7 @@ fun AlertDialogContent(
             Spacer(modifier = Modifier.height(3.dp))
 
             Text(
-                text = mappingDialogData.description,
+                text = mappingDialogModel.description,
                 style = MaterialTheme.typography.subtitle1,
                 color = Black450,
                 textAlign = TextAlign.Center,
