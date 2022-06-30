@@ -8,6 +8,7 @@ import com.example.cyclistance.common.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -88,10 +89,14 @@ class EditProfileViewModel @Inject constructor(
                 is EditProfileEvent.SaveImageToGallery -> {
                     viewModelScope.launch(context = Dispatchers.IO) {
                        bitmap?.let { bitmap ->
-                            settingUseCase.saveImageToGalleryUseCase(bitmap).also { uri ->
-                                _state.value = copy(imageUri = uri)
-                            }
-                        }
+                           runCatching {
+                               settingUseCase.saveImageToGalleryUseCase(bitmap)
+                           }.onSuccess { uri ->
+                               _state.value = copy(imageUri = uri)
+                           }.onFailure{
+                               Timber.e("Saving Image to Gallery: ${it.message}")
+                           }
+                       }
                     }
                 }
                 is EditProfileEvent.LoadPhoneNumber -> {

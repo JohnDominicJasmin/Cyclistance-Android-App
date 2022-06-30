@@ -15,6 +15,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.common.SettingConstants.DATA_STORE_THEME_KEY
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
 import kotlinx.coroutines.flow.*
@@ -83,7 +84,7 @@ class SettingRepositoryImpl(val context: Context, private val contentValues: Con
 
         saveImageToStream(bitmap, outStream)
         MediaScannerConnection.scanFile(context, arrayOf(file.absolutePath), null, null)
-        return FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
+        return FileProvider.getUriForFile(context, "${BuildConfig.APPLICATION_ID}.provider", file)
     }
 
 
