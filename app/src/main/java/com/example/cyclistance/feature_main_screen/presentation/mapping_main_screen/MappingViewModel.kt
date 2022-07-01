@@ -36,7 +36,6 @@ class MappingViewModel @Inject constructor(
 
 
 
-    //todo: add service for this
 
     fun getEmail():String = authUseCase.getEmailUseCase() ?: ""
     private fun getId():String = authUseCase.getIdUseCase() ?: ""
@@ -84,13 +83,18 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun subscribeToLocationUpdates(){
-        locationUpdatesFlow?.cancel()
-        locationUpdatesFlow = mappingUseCase.getUserLocationUseCase().onEach { userLocation:SharedLocationModel ->
-            _state.value = state.value.copy(addresses = userLocation.addresses, currentLatLng = userLocation.latLng)
 
-            Timber.d("USER LOCATION UPDATES: ${userLocation.addresses.isNotEmpty()} | ${userLocation.latLng.latitude}:${userLocation.latLng.longitude}")
+        runCatching {
+            locationUpdatesFlow?.cancel()
+            mappingUseCase.getUserLocationUseCase()
+        }.onSuccess { locationFlow ->
+            locationUpdatesFlow = locationFlow.onEach { userLocation ->
+                _state.value = state.value.copy(addresses = userLocation.addresses, currentLatLng = userLocation.latLng)
+            }.launchIn(viewModelScope)
 
-        }.launchIn(viewModelScope)
+        }.onFailure {
+            Timber.e("Error Location Updates: ${it.message}")
+        }
     }
 
     private fun unSubscribeToLocationUpdates(){

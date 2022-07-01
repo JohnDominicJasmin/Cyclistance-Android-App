@@ -150,7 +150,7 @@ fun MappingScreen(
 
 
 
-//todo: change this to BottomSheetScaffold copy values from edit profile bottom sheet
+
 //todo: add snackbarHost, fab button values, topbar, just use all the parameter values.
     Scaffold(
         drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
