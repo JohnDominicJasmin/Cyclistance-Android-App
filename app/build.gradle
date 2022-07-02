@@ -32,6 +32,7 @@ android {
         localProperties.load(new FileInputStream(rootProject.file("local.properties")))
 
         debug {
+            crunchPngs true
             resValue("string", "MapsDownloadToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
             resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
             resValue("string", "FacebookLoginProtocolScheme", localProperties.getProperty("FACEBOOK_LOGIN_PROTOCOL_SCHEME"))
@@ -41,6 +42,7 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
+            crunchPngs false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             resValue("string", "MapsDownloadToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
