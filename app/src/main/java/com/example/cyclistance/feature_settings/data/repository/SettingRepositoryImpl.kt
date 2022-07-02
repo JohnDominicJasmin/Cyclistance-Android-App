@@ -27,11 +27,11 @@ import java.io.IOException
 import java.io.OutputStream
 
 
-class SettingRepositoryImpl(val context: Context, private val contentValues: ContentValues) :
-    SettingRepository {
+class SettingRepositoryImpl(val context: Context, private val contentValues: ContentValues) : SettingRepository {
     private var dataStore = context.dataStore
 
-    override fun isDarkTheme(): Flow<Boolean> {
+
+    override fun getPreference(): Flow<Boolean> {
         return dataStore.data.catch { exception ->
             if (exception is IOException) {
                 emit(emptyPreferences())
@@ -43,12 +43,12 @@ class SettingRepositoryImpl(val context: Context, private val contentValues: Con
         }
     }
 
-    override suspend fun toggleTheme() {
-
+    override suspend fun updatePreference(value: Boolean) {
         dataStore.edit { preferences ->
-            preferences[DATA_STORE_THEME_KEY] = !isDarkTheme().first()
+            preferences[DATA_STORE_THEME_KEY] = value
         }
     }
+
 
 
     override suspend fun saveImageToGallery(bitmap: Bitmap): Uri? {

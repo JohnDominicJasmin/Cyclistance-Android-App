@@ -7,7 +7,7 @@ class IsDarkThemeUseCase(
     private val settingRepository: SettingRepository){
 
     operator fun invoke(): Flow<Boolean> {
-        return settingRepository.isDarkTheme()
+        return settingRepository.getPreference()
     }
 
 }

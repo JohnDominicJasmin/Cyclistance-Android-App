@@ -5,6 +5,6 @@ class CompletedIntroSliderUseCase(
     private val repository: IntroSliderRepository) {
 
     suspend operator fun invoke(){
-        repository.completedIntroSlider()
+        repository.updatePreference(true)
     }
 }

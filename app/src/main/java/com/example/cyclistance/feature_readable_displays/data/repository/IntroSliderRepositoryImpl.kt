@@ -1,11 +1,8 @@
 package com.example.cyclistance.feature_readable_displays.data.repository
 
 import android.content.Context
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.common.ReadableDisplaysConstants.DATA_STORE_INTRO_SLIDER_KEY
 import com.example.cyclistance.feature_readable_displays.domain.repository.IntroSliderRepository
 import com.example.cyclistance.utils.dataStore
@@ -19,7 +16,8 @@ import timber.log.Timber
 class IntroSliderRepositoryImpl(context: Context): IntroSliderRepository {
     private var dataStore = context.dataStore
 
-    override fun readIntroSliderState(): Flow<Boolean> {
+
+    override fun getPreference(): Flow<Boolean> {
         return dataStore.data.catch{ exception->
 
             if(exception is IOException){
@@ -31,12 +29,11 @@ class IntroSliderRepositoryImpl(context: Context): IntroSliderRepository {
         }.map { preference->
             preference[DATA_STORE_INTRO_SLIDER_KEY]?:false
         }
-
     }
 
-    override suspend fun completedIntroSlider() {
+    override suspend fun updatePreference(value: Boolean) {
         dataStore.edit { preferences->
-            preferences[DATA_STORE_INTRO_SLIDER_KEY] = true
+            preferences[DATA_STORE_INTRO_SLIDER_KEY] = value
         }
     }
 

@@ -9,6 +9,6 @@ class UpdatePhoneNumberUseCase(private val repository: AuthRepository<AuthCreden
         if(phoneNumber.isEmpty()){
             throw MappingExceptions.PhoneNumberException()
         }
-        repository.updatePhoneNumber(phoneNumber)
+        repository.updatePreference(phoneNumber)
     }
 }

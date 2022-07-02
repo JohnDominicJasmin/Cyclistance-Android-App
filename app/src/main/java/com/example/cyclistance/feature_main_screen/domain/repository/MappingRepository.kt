@@ -1,13 +1,11 @@
 package com.example.cyclistance.feature_main_screen.domain.repository
 
-import android.location.Address
-import com.example.cyclistance.feature_main_screen.data.remote.dto.RescueRequestDto
 import com.example.cyclistance.feature_main_screen.domain.model.*
+import com.example.cyclistance.utils.SavePreferences
 import com.example.cyclistance.utils.SharedLocationModel
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.Flow
 
-interface MappingRepository {
+interface MappingRepository:SavePreferences<String> {
     suspend fun getUserById(userId: String): User
     suspend fun getUsers(): List<User>
     suspend fun createUser(user: User)

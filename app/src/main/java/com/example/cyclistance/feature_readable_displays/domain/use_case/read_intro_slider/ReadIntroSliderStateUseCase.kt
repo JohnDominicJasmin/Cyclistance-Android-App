@@ -7,7 +7,7 @@ class ReadIntroSliderStateUseCase(
     private val repository: IntroSliderRepository) {
 
     operator fun invoke():Flow<Boolean> =
-        repository.readIntroSliderState()
+        repository.getPreference()
 
 
 }

@@ -193,7 +193,7 @@ class AuthRepositoryImpl @Inject constructor(
         return FirebaseAuth.getInstance().currentUser?.displayName
     }
 
-    override fun getPhoneNumber(): Flow<String> {
+    override fun getPreference(): Flow<String> {
         return dataStore.data.catch { exception ->
             if (exception is IOException) {
                 emit(emptyPreferences())
@@ -205,6 +205,7 @@ class AuthRepositoryImpl @Inject constructor(
             ?: throw MappingExceptions.PhoneNumberException()
         }
     }
+
 
     override fun getPhotoUrl(): String {
         return FirebaseAuth.getInstance().currentUser?.photoUrl.toString()
@@ -228,11 +229,12 @@ class AuthRepositoryImpl @Inject constructor(
         return FirebaseAuth.getInstance().currentUser != null
     }
 
-    override suspend fun updatePhoneNumber(phoneNumber: String) {
+    override suspend fun updatePreference(value: String) {
         dataStore.edit { preferences ->
-            preferences[DATA_STORE_PHONE_NUMBER_KEY] = phoneNumber
+            preferences[DATA_STORE_PHONE_NUMBER_KEY] = value
         }
     }
+
 
     override suspend fun updateProfilePicture(photoUri: Uri?, name: String?): Boolean {
         val profileUpdates = userProfileChangeRequest {

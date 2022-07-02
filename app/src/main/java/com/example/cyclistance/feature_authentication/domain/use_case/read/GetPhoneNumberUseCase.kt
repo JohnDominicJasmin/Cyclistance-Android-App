@@ -6,6 +6,6 @@ import kotlinx.coroutines.flow.first
 
 class GetPhoneNumberUseCase(private val repository: AuthRepository<AuthCredential>) {
     suspend operator fun invoke(): String {
-        return repository.getPhoneNumber().first()
+        return repository.getPreference().first()
     }
 }
