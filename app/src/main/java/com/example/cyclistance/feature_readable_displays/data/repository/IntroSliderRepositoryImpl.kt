@@ -8,13 +8,13 @@ import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.common.ReadableDisplaysConstants.DATA_STORE_INTRO_SLIDER_KEY
 import com.example.cyclistance.feature_readable_displays.domain.repository.IntroSliderRepository
+import com.example.cyclistance.utils.dataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import okio.IOException
 import timber.log.Timber
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "intro_slider_ref")
 
 class IntroSliderRepositoryImpl(context: Context): IntroSliderRepository {
     private var dataStore = context.dataStore

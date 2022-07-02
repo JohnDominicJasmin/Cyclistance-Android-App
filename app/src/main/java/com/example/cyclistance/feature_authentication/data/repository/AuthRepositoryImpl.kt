@@ -14,6 +14,7 @@ import com.example.cyclistance.common.AuthConstants.USER_NOT_FOUND
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
+import com.example.cyclistance.utils.dataStore
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
@@ -33,7 +34,6 @@ import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "phone_number_ref")
 
 class AuthRepositoryImpl @Inject constructor(
     private val context: Context,

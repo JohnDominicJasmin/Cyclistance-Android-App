@@ -18,6 +18,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.common.SettingConstants.DATA_STORE_THEME_KEY
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
+import com.example.cyclistance.utils.dataStore
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.io.File
@@ -25,7 +26,6 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.io.OutputStream
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "theme_ref")
 
 class SettingRepositoryImpl(val context: Context, private val contentValues: ContentValues) :
     SettingRepository {
