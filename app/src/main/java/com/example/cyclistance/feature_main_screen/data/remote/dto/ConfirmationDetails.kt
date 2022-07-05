@@ -4,8 +4,6 @@ package com.example.cyclistance.feature_main_screen.data.remote.dto
 import com.google.gson.annotations.SerializedName
 
 data class ConfirmationDetails(
-    @SerializedName("address")
-    val address: String = "",
     @SerializedName("bike_type")
     val bikeType: String = "",
     @SerializedName("description")

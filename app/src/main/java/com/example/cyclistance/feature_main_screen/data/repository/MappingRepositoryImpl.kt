@@ -1,6 +1,9 @@
 package com.example.cyclistance.feature_main_screen.data.repository
 
-import android.location.Address
+import android.content.Context
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
+import com.example.cyclistance.core.utils.MappingConstants.BIKE_TYPE_KEY
 import com.example.cyclistance.feature_main_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toCancellationEvent
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toRescueRequest
@@ -11,17 +14,42 @@ import com.example.cyclistance.feature_main_screen.data.remote.dto.UserDto
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_main_screen.domain.model.*
 import com.example.cyclistance.feature_main_screen.domain.repository.MappingRepository
-import com.example.cyclistance.utils.SharedLocationManager
-import com.example.cyclistance.utils.SharedLocationModel
-import com.google.android.gms.maps.model.LatLng
+import com.example.cyclistance.core.utils.SharedLocationManager
+import com.example.cyclistance.core.utils.SharedLocationModel
+import com.example.cyclistance.core.utils.dataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
+import timber.log.Timber
 import java.io.IOException
+
 
 class MappingRepositoryImpl(
     private val sharedLocationManager: SharedLocationManager,
-    private val api: CyclistanceApi): MappingRepository {
+    private val api: CyclistanceApi,
+    context: Context): MappingRepository {
 
+    private var dataStore = context.dataStore
+
+
+    override fun getPreference(): Flow<String?> {
+        return dataStore.data.catch { exception ->
+            if(exception is IOException){
+                emit(emptyPreferences())
+            }else{
+                Timber.e(message = exception.localizedMessage ?: "Unexpected error occurred.")
+            }
+        }.map { preference ->
+            preference[BIKE_TYPE_KEY]
+        }
+    }
+
+    override suspend fun updatePreference(value: String?) {
+        dataStore.edit{preferences ->
+            preferences[BIKE_TYPE_KEY] = value!!
+        }
+    }
 
     override fun getUserLocation(): Flow<SharedLocationModel> {
         return sharedLocationManager.locationFlow()
@@ -37,6 +65,7 @@ class MappingRepositoryImpl(
        }
     }
 
+    //todo: add cold flows here
     override suspend fun getUsers(): List<User> {
         return try{
             api.getUsers().map { it.toUser() }
@@ -52,14 +81,14 @@ class MappingRepositoryImpl(
             with(user) {
                 api.createUser(
                     userDto = UserDto(
-                        address = this.address,
-                        id = this.id,
-                        location = this.location,
-                        name = this.name,
+                        address = this.address?:return,
+                        id = this.id?:return,
+                        location = this.location?:return,
+                        name = this.name?:return,
                         userNeededHelp = this.userNeededHelp,
                         userAssistance = this.userAssistance,
-                        profilePictureUrl = this.profilePictureUrl,
-                        contactNumber = this.contactNumber
+                        profilePictureUrl = this.profilePictureUrl?:return,
+                        contactNumber = this.contactNumber?:return
 
                     ))
             }
@@ -76,14 +105,14 @@ class MappingRepositoryImpl(
               api.updateUser(
                   itemId = itemId,
                   userDto = UserDto(
-                      address = this.address,
-                      id = this.id,
-                      location = this.location,
-                      name = this.name,
+                      address = this.address?:return,
+                      id = this.id?:return,
+                      location = this.location?:return,
+                      name = this.name?:return,
                       userNeededHelp = this.userNeededHelp,
                       userAssistance = this.userAssistance,
-                      profilePictureUrl = this.profilePictureUrl,
-                      contactNumber = this.contactNumber
+                      profilePictureUrl = this.profilePictureUrl?:return,
+                      contactNumber = this.contactNumber?:return
                   )
               )
             }
