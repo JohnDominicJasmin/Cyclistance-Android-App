@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -62,7 +63,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             val settingViewModel: SettingViewModel = hiltViewModel()
             val isDarkThemeLiveData:LiveData<Boolean> = settingViewModel.isDarkTheme
-            val isDarkThemeState by isDarkThemeLiveData.observeAsState(initial = false)
+            val isDarkThemeState by isDarkThemeLiveData.observeAsState(initial = isSystemInDarkTheme())
 
             CyclistanceTheme(darkTheme = isDarkThemeState) {
 

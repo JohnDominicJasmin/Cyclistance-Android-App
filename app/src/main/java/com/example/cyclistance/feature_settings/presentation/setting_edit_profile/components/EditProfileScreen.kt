@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.cyclistance.common.MappingConstants.NONE_OF_THE_ABOVE_RESULT_CODE
-import com.example.cyclistance.common.MappingConstants.NO_SIM_CARD_RESULT_CODE
+import com.example.cyclistance.core.utils.MappingConstants.NONE_OF_THE_ABOVE_RESULT_CODE
+import com.example.cyclistance.core.utils.MappingConstants.NO_SIM_CARD_RESULT_CODE
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileUiEvent
@@ -46,7 +46,7 @@ fun EditProfileScreen(
     onPopBackStack: () -> Unit,
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
-    val state by editProfileViewModel.state
+    val state = editProfileViewModel.state
 
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val scope = rememberCoroutineScope()
@@ -93,10 +93,10 @@ fun EditProfileScreen(
 
     val openGalleryResultLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            editProfileViewModel.onEvent(event = EditProfileEvent.NewImageUri(uri = uri))
+            editProfileViewModel.onEvent(event = EditProfileEvent.SelectImageUri(uri = uri))
             uri?.let { selectedUri ->
                 editProfileViewModel.onEvent(
-                    event = EditProfileEvent.NewBitmapPicture(
+                    event = EditProfileEvent.SelectBitmapPicture(
                         when {
                             Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> {
                                 MediaStore.Images.Media.getBitmap(
@@ -118,7 +118,7 @@ fun EditProfileScreen(
     val openCameraResultLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
 
-            editProfileViewModel.onEvent(event = EditProfileEvent.NewBitmapPicture(bitmap = bitmap))
+            editProfileViewModel.onEvent(event = EditProfileEvent.SelectBitmapPicture(bitmap = bitmap))
             editProfileViewModel.onEvent(event = EditProfileEvent.SaveImageToGallery)
 
         }
@@ -168,6 +168,9 @@ fun EditProfileScreen(
             when (event) {
                 is EditProfileUiEvent.ShowMappingScreen -> {
                     onPopBackStack()
+                }
+                is EditProfileUiEvent.ShowToastMessage -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
 
             }
@@ -254,7 +257,8 @@ fun EditProfileScreen(
                 editProfileViewModel = editProfileViewModel,
                 onPhoneTextFieldClick = {
                     simCardResultLauncher.launch(intentSender)
-                })
+                },
+            state = state)
 
 
             MappingButtonNavigation(modifier = Modifier

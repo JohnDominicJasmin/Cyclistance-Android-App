@@ -1,9 +1,8 @@
-package com.example.cyclistance.utils
+package com.example.cyclistance.core.utils
 
 import android.content.Context
-import android.location.Address
 import android.location.Geocoder
-import com.example.cyclistance.common.MappingConstants.LOCATION_UPDATES_INTERVAL
+import com.example.cyclistance.core.utils.MappingConstants.LOCATION_UPDATES_INTERVAL
 import com.google.android.gms.maps.model.LatLng
 import im.delight.android.location.SimpleLocation
 import kotlinx.coroutines.CoroutineScope

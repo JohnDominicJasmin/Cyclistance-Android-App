@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyclistance.R
-import com.example.cyclistance.common.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
+import com.example.cyclistance.core.utils.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
@@ -54,8 +54,8 @@ fun SignInScreen(
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
     val scope = rememberCoroutineScope()
-    val signInStateValue = signInViewModel.state.value
-    val emailAuthStateValue = emailAuthViewModel.state.value
+    val signInStateValue = signInViewModel.state
+    val emailAuthStateValue = emailAuthViewModel.state
 
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current

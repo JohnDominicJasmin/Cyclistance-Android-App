@@ -3,7 +3,7 @@ package com.example.cyclistance.di
 import android.content.ContentValues
 import android.content.Context
 import android.provider.MediaStore.MediaColumns.*
-import com.example.cyclistance.common.SettingConstants
+import com.example.cyclistance.core.utils.SettingConstants
 import com.example.cyclistance.feature_settings.data.repository.SettingRepositoryImpl
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
 import com.example.cyclistance.feature_settings.domain.use_case.IsDarkThemeUseCase

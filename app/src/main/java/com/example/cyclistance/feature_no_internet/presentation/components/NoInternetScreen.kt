@@ -24,7 +24,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
 import com.example.cyclistance.theme.Black300
 import com.example.cyclistance.theme.CyclistanceTheme
-import com.example.cyclistance.utils.ConnectionStatus
+import com.example.cyclistance.core.utils.ConnectionStatus
 
 
 @Composable
@@ -107,7 +107,6 @@ fun NoInternetScreen(
                 },
                 modifier = Modifier
                     .padding(4.dp)
-                    .shadow(elevation = 15.dp, shape = RoundedCornerShape(12.dp), clip = true)
                     .width(150.dp)
                     .constrainAs(retryButton) {
                         top.linkTo(description.bottom, margin = 40.dp)
@@ -165,8 +164,9 @@ fun NoInternetScreen(
 @Preview(device = Devices.NEXUS_5)
 @Composable
 fun NoInternetScreenPreview() {
-    CyclistanceTheme(true) {
-        NoInternetScreen(onBackPressed = {  }) {
+    val isDarkTheme = true
+    CyclistanceTheme(isDarkTheme) {
+        NoInternetScreen(onBackPressed = {  }, isDarkTheme = isDarkTheme) {
 
         }
     }

@@ -1,8 +1,7 @@
 package com.example.cyclistance.feature_authentication.domain.repository
 
 import android.net.Uri
-import com.example.cyclistance.utils.SavePreferences
-import com.google.firebase.auth.UserInfo
+import com.example.cyclistance.core.utils.SavePreferences
 import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository<T>:SavePreferences<String> {

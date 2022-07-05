@@ -1,4 +1,4 @@
-package com.example.cyclistance.common
+package com.example.cyclistance.core.utils
 
 import androidx.datastore.preferences.core.stringPreferencesKey
 

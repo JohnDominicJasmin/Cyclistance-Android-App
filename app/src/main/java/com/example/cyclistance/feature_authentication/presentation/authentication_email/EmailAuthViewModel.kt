@@ -3,12 +3,13 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import android.os.CountDownTimer
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewModelScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
-import com.example.cyclistance.common.AuthConstants.ONE_SECOND_TO_MILLIS
-import com.example.cyclistance.common.AuthConstants.REFRESH_EMAIL_INTERVAL
-import com.example.cyclistance.common.AuthConstants.TIMER_COUNTS
+import com.example.cyclistance.core.utils.AuthConstants.ONE_SECOND_TO_MILLIS
+import com.example.cyclistance.core.utils.AuthConstants.REFRESH_EMAIL_INTERVAL
+import com.example.cyclistance.core.utils.AuthConstants.TIMER_COUNTS
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,7 +29,7 @@ class EmailAuthViewModel @Inject constructor(
 
 
     private val _state: MutableState<EmailAuthState> = mutableStateOf(EmailAuthState())
-    val state: State<EmailAuthState> = _state
+    val state by  _state
 
     private val _eventFlow: MutableSharedFlow<EmailAuthUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<EmailAuthUiEvent> = _eventFlow.asSharedFlow()
@@ -57,7 +58,7 @@ class EmailAuthViewModel @Inject constructor(
                 }
             }
             is EmailAuthEvent.ResendButtonClick -> {
-                _state.value = state.value.copy(isEmailResendClicked =  true)
+                _state.value = state.copy(isEmailResendClicked =  true)
             }
         }
     }
@@ -70,7 +71,7 @@ class EmailAuthViewModel @Inject constructor(
         runCatching {
             authUseCase.isEmailVerifiedUseCase() == true
         }.onSuccess { emailIsVerified ->
-            _state.value = state.value.copy(isLoading = false)
+            _state.value = state.copy(isLoading = false)
 
             if(emailIsVerified){
                 _eventFlow.emit(EmailAuthUiEvent.ShowMappingScreen)
@@ -84,7 +85,7 @@ class EmailAuthViewModel @Inject constructor(
                 _eventFlow.emit(EmailAuthUiEvent.ShowEmailAuthScreen)
             }
         }.onFailure {
-            _state.value = state.value.copy(isLoading = false)
+            _state.value = state.copy(isLoading = false)
         }
     }
     private suspend fun refreshEmailAsync() {
@@ -100,14 +101,14 @@ class EmailAuthViewModel @Inject constructor(
         runCatching {
             authUseCase.reloadEmailUseCase()
         }.onSuccess { isEmailReloaded ->
-            _state.value = state.value.copy(isLoading = false)
+            _state.value = state.copy(isLoading = false)
             if(isEmailReloaded) {
                 verifyEmail()
             }else{
                 _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
             }
         }.onFailure { exception ->
-            _state.value = state.value.copy(isLoading = false)
+            _state.value = state.copy(isLoading = false)
             when (exception) {
                 is AuthExceptions.InternetException -> {
                     _eventFlow.emit(EmailAuthUiEvent.ShowNoInternetScreen)
@@ -123,17 +124,17 @@ class EmailAuthViewModel @Inject constructor(
 
 
     private fun startTimer() {
-            _state.value = state.value.copy(isTimerRunning = true)
+            _state.value = state.copy(isTimerRunning = true)
             verificationTimer = object : CountDownTimer(TIMER_COUNTS, ONE_SECOND_TO_MILLIS) {
                 override fun onTick(millisUntilFinished: Long) {
                     val timeLeft = millisUntilFinished / ONE_SECOND_TO_MILLIS
-                    _state.value = state.value.copy(secondsLeft = timeLeft.toInt())
+                    _state.value = state.copy(secondsLeft = timeLeft.toInt())
                     Timber.d("TimeLeft is $timeLeft")
                 }
 
                 override fun onFinish() {
                     stopTimer()
-                    _state.value = state.value.copy(isTimerRunning = false)
+                    _state.value = state.copy(isTimerRunning = false)
 
                 }
             }.start()
@@ -148,11 +149,11 @@ class EmailAuthViewModel @Inject constructor(
 
      private suspend fun sendEmailVerification() {
             runCatching {
-                _state.value = state.value.copy(isLoading = true)
+                _state.value = state.copy(isLoading = true)
                 authUseCase.sendEmailVerificationUseCase()
             }.onSuccess { isEmailVerificationSent ->
-                _state.value = state.value.copy(isLoading = false)
-                if (state.value.isEmailResendClicked) {
+                _state.value = state.copy(isLoading = false)
+                if (state.isEmailResendClicked) {
                     if (isEmailVerificationSent) {
                         _eventFlow.emit(
                             EmailAuthUiEvent.ShowAlertDialog(
@@ -168,8 +169,8 @@ class EmailAuthViewModel @Inject constructor(
 
 
             }.onFailure {
-                _state.value = state.value.copy(isLoading = false)
-                if(state.value.isEmailResendClicked) {
+                _state.value = state.copy(isLoading = false)
+                if(state.isEmailResendClicked) {
                     _eventFlow.emit(
                         EmailAuthUiEvent.ShowAlertDialog(
                             title = "Error",

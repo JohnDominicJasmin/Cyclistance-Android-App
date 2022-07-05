@@ -1,10 +1,9 @@
-package com.example.cyclistance.utils
+package com.example.cyclistance.core.utils
 
 import android.util.Patterns
-import com.example.cyclistance.common.AuthConstants
-import com.example.cyclistance.common.AuthConstants.MINIMUM_NUMBER_OF_CHARACTERS
-import com.example.cyclistance.common.AuthConstants.REGEX_NUMBER_VALUE
-import com.example.cyclistance.common.AuthConstants.REGEX_SPECIAL_CHARACTERS_VALUE
+import com.example.cyclistance.core.utils.AuthConstants.MINIMUM_NUMBER_OF_CHARACTERS
+import com.example.cyclistance.core.utils.AuthConstants.REGEX_NUMBER_VALUE
+import com.example.cyclistance.core.utils.AuthConstants.REGEX_SPECIAL_CHARACTERS_VALUE
 import java.util.regex.Pattern
 
 object InputValidate {

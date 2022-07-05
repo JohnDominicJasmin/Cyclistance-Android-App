@@ -1,4 +1,4 @@
-package com.example.cyclistance.utils
+package com.example.cyclistance.core.utils
 
 import android.content.Context
 import androidx.datastore.core.DataStore

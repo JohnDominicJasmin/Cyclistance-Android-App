@@ -10,15 +10,12 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.BuildConfig
-import com.example.cyclistance.common.SettingConstants.DATA_STORE_THEME_KEY
+import com.example.cyclistance.core.utils.SettingConstants.DATA_STORE_THEME_KEY
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
-import com.example.cyclistance.utils.dataStore
+import com.example.cyclistance.core.utils.dataStore
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.io.File
