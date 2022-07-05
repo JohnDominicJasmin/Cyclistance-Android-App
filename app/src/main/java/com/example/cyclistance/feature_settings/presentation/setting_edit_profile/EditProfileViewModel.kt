@@ -1,14 +1,14 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
 
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.common.MappingConstants.IMAGE_PLACEHOLDER_URL
+import com.example.cyclistance.core.utils.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
-import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,13 +24,13 @@ class EditProfileViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
     private val _state = mutableStateOf(EditProfileState())
-    val state = _state
+    val state by _state
 
     private val _eventFlow = MutableSharedFlow<EditProfileUiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
 
-    private fun getName(): String {
+    private  fun getName(): String {
         val email = authUseCase.getEmailUseCase()
         return authUseCase.getNameUseCase() ?: email?.run {
             val index = this.indexOf('@')
@@ -38,7 +38,7 @@ class EditProfileViewModel @Inject constructor(
         } ?: throw MappingExceptions.NameException()
     }
 
-    private fun getPhotoUrl(): String {
+    private  fun getPhotoUrl(): String {
         return authUseCase.getPhotoUrlUseCase()?.toString()
                ?: IMAGE_PLACEHOLDER_URL
     }
@@ -55,64 +55,50 @@ class EditProfileViewModel @Inject constructor(
 
     fun onEvent(event: EditProfileEvent) {
 
-        with(state.value) {
             when (event) {
                 is EditProfileEvent.Save -> {
                     updateUserProfile()
                 }
                 is EditProfileEvent.EnteredPhoneNumber -> {
-                    _state.value = copy(
+                    _state.value = state.copy(
                         phoneNumber = event.phoneNumber,
                         phoneNumberErrorMessage = "")
                 }
                 is EditProfileEvent.EnteredName -> {
-                    _state.value = copy(name = event.name, nameErrorMessage = "")
+                    _state.value = state.copy(name = event.name, nameErrorMessage = "")
                 }
-                is EditProfileEvent.NewImageUri -> {
-                    _state.value = copy(imageUri = event.uri)
+                is EditProfileEvent.SelectImageUri -> {
+                    _state.value = state.copy(imageUri = event.uri)
                 }
-                is EditProfileEvent.NewBitmapPicture -> {
-                    _state.value = copy(bitmap = event.bitmap)
+                is EditProfileEvent.SelectBitmapPicture -> {
+                    _state.value = state.copy(bitmap = event.bitmap)
                 }
                 is EditProfileEvent.LoadPhoto -> {
                     viewModelScope.launch {
                         runCatching {
-                            _state.value = copy(
+                            _state.value = state.copy(
                                 photoUrl = getPhotoUrl(),
                                 isLoading = true
                             )
                         }.onSuccess {
-                            _state.value = copy(isLoading = false)
+                            _state.value = state.copy(isLoading = false)
                         }
                     }
                 }
-                is EditProfileEvent.SaveImageToGallery -> {
-                    viewModelScope.launch(context = Dispatchers.IO) {
-                       bitmap?.let { bitmap ->
-                           runCatching {
-                               settingUseCase.saveImageToGalleryUseCase(bitmap)
-                           }.onSuccess { uri ->
-                               _state.value = copy(imageUri = uri)
-                           }.onFailure{
-                               Timber.e("Saving Image to Gallery: ${it.message}")
-                           }
-                       }
-                    }
-                }
+
                 is EditProfileEvent.LoadPhoneNumber -> {
                     viewModelScope.launch {
                         runCatching {
-                            _state.value = copy(
+                            _state.value = state.copy(
                                 phoneNumber = TextFieldValue(text = getPhoneNumber()),
                                 isLoading = true
                             )
                         }.onSuccess {
-                            _state.value = copy(isLoading = false)
-                        }.onFailure { exception ->
-                            _state.value = copy(
+                            _state.value = state.copy(isLoading = false)
+                        }.onFailure {
+                            _state.value = state.copy(
                                 isLoading = false,
-                                phoneNumberErrorMessage = exception.message
-                                                          ?: "Field cannot be blank."
+                                phoneNumberErrorMessage = "Field cannot be blank."
                             )
                         }
                     }
@@ -120,57 +106,68 @@ class EditProfileViewModel @Inject constructor(
                 is EditProfileEvent.LoadName -> {
                     viewModelScope.launch {
                         runCatching {
-                            _state.value = copy(
+                            _state.value = state.copy(
                                 name = TextFieldValue(text = getName()),
                                 isLoading = true
                             )
                         }.onSuccess {
-                            _state.value = copy(isLoading = false)
+                            _state.value = state.copy(isLoading = false)
                         }.onFailure { exception ->
-                            _state.value = copy(
+                            _state.value = state.copy(
                                 isLoading = false,
-                                nameErrorMessage = exception.message ?: "Field cannot be blank."
+                                nameErrorMessage = "Field cannot be blank."
                             )
                         }
                     }
                 }
+                is EditProfileEvent.SaveImageToGallery -> {
+                    viewModelScope.launch(context = Dispatchers.IO) {
+                        state.bitmap?.let { bitmap ->
+                            runCatching {
+                                settingUseCase.saveImageToGalleryUseCase(bitmap)
+                            }.onSuccess { uri ->
+                                _state.value = state.copy(imageUri = uri)
+                            }.onFailure{
+                                Timber.e("Saving Image to Gallery: ${it.message}")
+                            }
+                        }
+                    }
+                }
 
-            }
         }
     }
 
 
     private fun updateUserProfile() {
         viewModelScope.launch {
-            with(state.value) {
                 runCatching {
-                    _state.value = copy(isLoading = true)
+                    _state.value = state.copy(isLoading = true)
                     authUseCase.updateProfileUseCase(
                         photoUri = run {
-                            imageUri?.let { localImageUri ->
+                            state.imageUri?.let { localImageUri ->
                                 authUseCase.uploadImageUseCase(localImageUri)
                             }
                         },
-                        name = this.name.text)
+                        name = state.name.text)
 
-                    authUseCase.updatePhoneNumberUseCase(phoneNumber.text)
+                    authUseCase.updatePhoneNumberUseCase(state.phoneNumber.text)
                 }.onSuccess {
-                    _state.value = copy(isLoading = false)
+                    _state.value = state.copy(isLoading = false)
+                    _eventFlow.emit(EditProfileUiEvent.ShowToastMessage(message = "Successfully Updated!"))
                     _eventFlow.emit(EditProfileUiEvent.ShowMappingScreen)
                 }.onFailure { exception ->
-                    _state.value = copy(isLoading = false)
+                    _state.value = state.copy(isLoading = false)
                     when (exception) {
                         is MappingExceptions.PhoneNumberException -> {
-                            _state.value = copy(phoneNumberErrorMessage = exception.message!!)
+                            _state.value = state.copy(phoneNumberErrorMessage = exception.message!!)
                         }
                         is MappingExceptions.NameException -> {
-                            _state.value = copy(nameErrorMessage = exception.message!!)
+                            _state.value = state.copy(nameErrorMessage = exception.message!!)
                         }
                         else -> {
                             Timber.e("Update Profile: ${exception.message}")
                         }
                     }
-                }
 
             }
         }

@@ -3,17 +3,16 @@ package com.example.cyclistance.feature_main_screen.presentation.mapping_main_sc
 import android.location.Address
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.common.MappingConstants.IMAGE_PLACEHOLDER_URL
+import com.example.cyclistance.core.utils.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_main_screen.data.remote.dto.Location
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_main_screen.domain.model.User
 import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCase
-import com.example.cyclistance.utils.SharedLocationModel
-import com.google.android.gms.maps.model.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
@@ -31,14 +30,14 @@ class MappingViewModel @Inject constructor(
     val eventFlow: SharedFlow<MappingUiEvent> = _eventFlow.asSharedFlow()
 
     private val _state: MutableState<MappingState> = mutableStateOf(MappingState())
-    val state: State<MappingState> = _state
+    val state by _state
 
 
 
 
 
     fun getEmail():String = authUseCase.getEmailUseCase() ?: ""
-    private fun getId():String = authUseCase.getIdUseCase() ?: ""
+    private fun getId():String? = authUseCase.getIdUseCase()
 
     private fun getName():String = authUseCase.getNameUseCase() ?: getEmail().apply{
         val index = this.indexOf('@')
@@ -89,7 +88,7 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.getUserLocationUseCase()
         }.onSuccess { locationFlow ->
             locationUpdatesFlow = locationFlow.onEach { userLocation ->
-                _state.value = state.value.copy(addresses = userLocation.addresses, currentLatLng = userLocation.latLng)
+                _state.value = state.copy(addresses = userLocation.addresses, currentLatLng = userLocation.latLng)
             }.launchIn(viewModelScope)
 
         }.onFailure {
@@ -113,17 +112,16 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun postUser() {
 
-        with(state.value) {
-            if (addresses.isNotEmpty()) {
-                addresses.forEach { address ->
+            if (state.addresses.isNotEmpty()) {
+                state.addresses.forEach { address ->
                     runCatching {
-                         _state.value = copy(isLoading = true)
+                         _state.value = state.copy(isLoading = true)
                          createUser(address)
                     }.onSuccess {
-                        _state.value = copy(isLoading = false, findAssistanceButtonVisible = false)
+                        _state.value = state.copy(isLoading = false, findAssistanceButtonVisible = false)
                         _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
                     }.onFailure { exception ->
-                        _state.value = copy(isLoading = false)
+                        _state.value = state.copy(isLoading = false)
                         when (exception) {
                             is MappingExceptions.NoInternetException -> {
                                 _eventFlow.emit(MappingUiEvent.ShowNoInternetScreen)
@@ -144,7 +142,7 @@ class MappingViewModel @Inject constructor(
             } else {
                 _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
             }
-        }
+
     }
 
     private suspend fun createUser(address: Address){
@@ -152,7 +150,7 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.createUserUseCase(
                 user = User(
                     address = "$subThoroughfare $thoroughfare., $locality, $subAdminArea",
-                    id = getId(),
+                    id = getId() ?: return,
                     location = Location(
                         lat = latitude.toString(),
                         lng = longitude.toString()),

@@ -29,8 +29,7 @@ fun SplashScreen(
     splashScreenViewModel: SplashScreenViewModel = hiltViewModel(),
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit,) {
 
-    val screen by remember{ splashScreenViewModel.splashScreenState}
-
+    val state = splashScreenViewModel.splashScreenState
     val scale = remember { Animatable(initialValue = 0f) }
     LaunchedEffect(key1 = true) {
         scale.animateTo(0.9f,
@@ -38,8 +37,9 @@ fun SplashScreen(
                 durationMillis = 500,
                 easing = { OvershootInterpolator(1.2f).getInterpolation(it) }
             ))
+
         delay(1200L)
-            navigateTo(screen.navigationStartingDestination, Screens.SplashScreen.route)
+            navigateTo(state.navigationStartingDestination, Screens.SplashScreen.route)
         }
 
 

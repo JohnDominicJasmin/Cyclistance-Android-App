@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_readable_displays.presentation.splash_sc
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,7 +22,7 @@ class SplashScreenViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
     private val _splashScreenState: MutableState<SplashScreenState> = mutableStateOf(SplashScreenState())
-    val splashScreenState: State<SplashScreenState> = _splashScreenState
+    val splashScreenState by _splashScreenState
 
 
     init {
@@ -39,13 +40,13 @@ class SplashScreenViewModel @Inject constructor(
                     if (userCompletedWalkThrough) {
 
                         if (isUserSignedIn()) {
-                            _splashScreenState.value = SplashScreenState(navigationStartingDestination = Screens.MappingScreen.route)
+                            _splashScreenState.value = splashScreenState.copy(navigationStartingDestination = Screens.MappingScreen.route)
                             return@onEach
                         }
-                        _splashScreenState.value = SplashScreenState(navigationStartingDestination = Screens.SignInScreen.route)
+                        _splashScreenState.value = splashScreenState.copy(navigationStartingDestination = Screens.SignInScreen.route)
 
                     } else {
-                        _splashScreenState.value = SplashScreenState(navigationStartingDestination = Screens.IntroSliderScreen.route)
+                        _splashScreenState.value = splashScreenState.copy(navigationStartingDestination = Screens.IntroSliderScreen.route)
                     }
                 }.launchIn(viewModelScope)
             }.onFailure {

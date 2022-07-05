@@ -55,7 +55,7 @@ fun EmailAuthScreen(
 
     BackHandler(enabled = true, onBack = onBackPressed)
 
-    with(emailAuthViewModel.state.value) {
+    with(emailAuthViewModel.state) {
 
         LaunchedEffect(key1 = true) {
 

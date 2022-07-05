@@ -40,7 +40,7 @@ fun SignUpScreen(
     mappingViewModel: MappingViewModel = hiltViewModel(),
     navigateTo : (destination: String, popUpToDestination: String?) -> Unit) {
 
-    val signUpStateValue by signUpViewModel.state
+    val signUpStateValue = signUpViewModel.state
     val focusManager = LocalFocusManager.current
     with(signUpStateValue) {
 
