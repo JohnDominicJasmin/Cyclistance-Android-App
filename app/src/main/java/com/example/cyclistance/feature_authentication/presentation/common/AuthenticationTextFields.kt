@@ -153,7 +153,12 @@ private fun SetupTextField(
 
         )
         if (hasError) {
-            ErrorMessage(exceptionMessage, modifier = Modifier)
+
+            Text(
+                text = exceptionMessage,
+                color = MaterialTheme.colors.error,
+                style = MaterialTheme.typography.caption,
+                )
         }
     }
 }
@@ -203,14 +208,24 @@ fun EmailTextField(
 
 
 @Composable
- fun ErrorMessage(errorMessage: String, modifier: Modifier){
-    Text(
-        text = errorMessage,
-        color = MaterialTheme.colors.error,
-        style = MaterialTheme.typography.caption,
-        modifier = modifier
-    )
+ fun ErrorMessage(errorMessage: String, modifier: Modifier = Modifier){
 
+    Row(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(3.dp),
+        verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            imageVector = Icons.Default.Error,
+            tint = MaterialTheme.colors.error,
+            modifier = Modifier.size(12.dp),
+            contentDescription = "Icon error")
+        Text(
+            text = errorMessage,
+            color = MaterialTheme.colors.error,
+            style = MaterialTheme.typography.caption,
+
+        )
+    }
 }
 
 

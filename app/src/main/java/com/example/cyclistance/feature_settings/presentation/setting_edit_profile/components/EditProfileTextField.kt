@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileEvent
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileState
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.theme.*
 
@@ -31,12 +32,12 @@ import com.example.cyclistance.theme.*
 fun TextFieldInputArea(
     modifier: Modifier,
     editProfileViewModel: EditProfileViewModel,
+    state: EditProfileState,
     onPhoneTextFieldClick: () -> Unit) {
 
-    val state by editProfileViewModel.state
 
     Column(
-        modifier = modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        modifier = modifier, verticalArrangement = Arrangement.spacedBy(15.dp)) {
 
 
         TextFieldItem(label = "Full Name",
@@ -54,7 +55,6 @@ fun TextFieldInputArea(
                         name = name
                     ))
             })
-
 
 
         TextFieldItem(label = "Phone Number",
@@ -122,17 +122,7 @@ fun TextFieldItem(
                 .fillMaxWidth(), color = Black450)
 
         if (hasError) {
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(3.dp),
-                verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Error,
-                    tint = MaterialTheme.colors.error,
-                    modifier = Modifier.size(12.dp),
-                    contentDescription = "Icon error")
-                ErrorMessage(errorMessage = errorMessage, modifier = Modifier.padding(1.2.dp))
-            }
+             ErrorMessage(errorMessage = errorMessage, modifier = Modifier.padding(1.2.dp))
         }
 
     }

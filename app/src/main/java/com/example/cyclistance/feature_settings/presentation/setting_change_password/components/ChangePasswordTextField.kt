@@ -146,17 +146,7 @@ fun PasswordTextFieldItem(
                 .fillMaxWidth(), color = Black450)
 
         if (hasError) {
-
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(3.dp),
-                verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.Error,
-                    tint = MaterialTheme.colors.error,
-                    modifier = Modifier.size(12.dp),
-                    contentDescription = "Icon error")
-                ErrorMessage(errorMessage = errorMessage, modifier = Modifier.padding(1.2.dp))
-            }
+           ErrorMessage(errorMessage = errorMessage, modifier = Modifier.padding(1.2.dp))
         }
 
     }

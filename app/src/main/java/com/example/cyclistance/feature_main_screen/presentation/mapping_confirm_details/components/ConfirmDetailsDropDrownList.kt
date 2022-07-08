@@ -1,7 +1,9 @@
-package com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.components
+package com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -10,12 +12,13 @@ import androidx.compose.material.icons.filled.PedalBike
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
 import com.example.cyclistance.theme.Black500
+import com.example.cyclistance.theme.CyclistanceTheme
 
 
 private val bikeList = listOf(
@@ -29,39 +32,45 @@ private val bikeList = listOf(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun DropDownBikeList(modifier: Modifier) {
+fun DropDownBikeList(
+    modifier: Modifier,
+    errorMessage: String,
+    selectedItem: String,
+    onClickItem: (String) -> Unit) {
+
+    val hasError = errorMessage.isNotEmpty()
     var expanded by remember { mutableStateOf(false) }
-    var selectedOptionText by remember { mutableStateOf("") }
 
 
-    ExposedDropdownMenuBox(
-        modifier = modifier,
-        expanded = expanded,
-        onExpandedChange = {
-            expanded = !expanded
-        }) {
+    Column(modifier = modifier) {
 
-        TextField(
-            modifier = Modifier
-                .shadow(15.dp, shape = RoundedCornerShape(12.dp), clip = true)
-                .fillMaxWidth()
-                .wrapContentHeight(),
-            readOnly = true,
-            value = selectedOptionText,
-            onValueChange = { },
-            placeholder = {
-                Text(
-                    "Bike Type",
-                    color = Black500,
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Center)
-            },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-            },
-            leadingIcon = {
-                Icon(
-                    imageVector = Icons.Default.PedalBike,
+        ExposedDropdownMenuBox(modifier = Modifier
+            .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
+            expanded = expanded,
+            onExpandedChange = {
+                expanded = !expanded
+            }) {
+
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                readOnly = true,
+                value = selectedItem,
+                onValueChange = { },
+                placeholder = {
+                    Text(
+                        "Bike Type",
+                        color = Black500,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center)
+                },
+                trailingIcon = {
+                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.PedalBike,
                     contentDescription = "Bike Icon",
                     tint = Black500,
                 )
@@ -91,7 +100,7 @@ fun DropDownBikeList(modifier: Modifier) {
             bikeList.forEach { selectionOption ->
                 DropdownMenuItem(
                     onClick = {
-                        selectedOptionText = selectionOption
+                        onClickItem(selectionOption)
                         expanded = false
                     }, modifier = Modifier.fillMaxWidth()) {
                     Text(
@@ -102,11 +111,23 @@ fun DropDownBikeList(modifier: Modifier) {
             }
         }
     }
+        if(hasError){
+            ErrorMessage(errorMessage = errorMessage, modifier = Modifier.padding(top = 7.dp))
+        }
+    }
+
 }
 
 @Preview
 @Composable
-fun PreviewDropDown() {
-    DropDownBikeList(modifier = Modifier
-        .shadow(2.dp, shape = RoundedCornerShape(12.dp), clip = true))
+fun DropDownListPreview() {
+    CyclistanceTheme(false){
+        DropDownBikeList(modifier = Modifier
+            .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
+            selectedItem = "Mountain Bike",
+            errorMessage = "Field cannot be left blank",
+            onClickItem = {
+
+            })
+    }
 }
