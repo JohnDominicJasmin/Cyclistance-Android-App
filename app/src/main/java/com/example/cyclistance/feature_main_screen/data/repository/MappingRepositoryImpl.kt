@@ -105,16 +105,16 @@ class MappingRepositoryImpl(
               api.updateUser(
                   itemId = itemId,
                   userDto = UserDto(
-                      address = this.address?:return,
-                      id = this.id?:return,
-                      location = this.location?:return,
-                      name = this.name?:return,
+                      address = this.address,
+                      id = this.id,
+                      location = this.location,
+                      name = this.name,
                       userNeededHelp = this.userNeededHelp,
                       userAssistance = this.userAssistance,
-                      profilePictureUrl = this.profilePictureUrl?:return,
-                      contactNumber = this.contactNumber?:return
-                  )
-              )
+                      profilePictureUrl = this.profilePictureUrl,
+                      contactNumber = this.contactNumber
+                  ))
+
             }
         }catch (e:HttpException){
             throw MappingExceptions.UnexpectedErrorException(e.message ?: "Unexpected error occurred.")

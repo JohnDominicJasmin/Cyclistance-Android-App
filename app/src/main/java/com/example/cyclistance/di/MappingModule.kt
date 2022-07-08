@@ -2,7 +2,7 @@ package com.example.cyclistance.di
 
 import android.content.Context
 import com.example.cyclistance.BaseApplication
-import com.example.cyclistance.common.MappingConstants.CYCLISTANCE_API_BASE_URL
+import com.example.cyclistance.core.utils.MappingConstants.CYCLISTANCE_API_BASE_URL
 import com.example.cyclistance.feature_main_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_main_screen.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_main_screen.domain.repository.MappingRepository
@@ -17,7 +17,7 @@ import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_reques
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.GetRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.rescue_request.UpdateRescueRequestUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.user.*
-import com.example.cyclistance.utils.SharedLocationManager
+import com.example.cyclistance.core.utils.SharedLocationManager
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -48,8 +48,8 @@ object MappingModule {
 
     @Provides
     @Singleton
-    fun provideCyclistanceRepository(sharedLocationManager: SharedLocationManager,api: CyclistanceApi):MappingRepository{
-        return MappingRepositoryImpl(sharedLocationManager,api)
+    fun provideCyclistanceRepository(@ApplicationContext context: Context,sharedLocationManager: SharedLocationManager,api: CyclistanceApi):MappingRepository{
+        return MappingRepositoryImpl(sharedLocationManager,api, context)
     }
 
     @Provides
