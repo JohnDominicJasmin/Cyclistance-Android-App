@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.runtime.*
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -46,7 +47,11 @@ fun CancellationReasonScreen() {
                     height = Dimension.percent(0.30f)
                     width = Dimension.percent(0.9f)
 
-                }
+                },
+            message = TextFieldValue("TEST"),
+            onValueChange = {
+                //todo: implement later
+            }
         )
 
 

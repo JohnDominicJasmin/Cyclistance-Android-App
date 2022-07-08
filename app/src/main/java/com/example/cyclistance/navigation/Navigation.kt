@@ -10,7 +10,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpScreen
 import com.example.cyclistance.feature_main_screen.presentation.mapping_cancellation.components.components.CancellationReasonScreen
-import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.components.ConfirmationDetailsScreen
+import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.ConfirmDetailsScreen
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingScreen
 import com.example.cyclistance.feature_main_screen.presentation.mapping_rescue_request.components.RescueRequestScreen
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderScreen
@@ -19,6 +19,7 @@ import com.example.cyclistance.feature_settings.presentation.setting_change_pass
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.EditProfileScreen
 import com.example.cyclistance.feature_settings.presentation.setting_main_screen.components.SettingScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+
 
 @ExperimentalPermissionsApi
 @Composable
@@ -62,6 +63,13 @@ fun Navigation(
                 navigateScreen(navController, destination, popUpToDestination)
             }
         }
+
+        composable(Screens.NoInternetScreen.route) {
+            NoInternetScreen(onBackPressed = onBackPressed) {
+                navController.popBackStack()
+            }
+        }
+
         composable(Screens.MappingScreen.route) {
             MappingScreen(
                 isDarkTheme = isDarkThemeLiveData,
@@ -69,18 +77,19 @@ fun Navigation(
                 navigateScreen(navController, destination, popUpToDestination)
             }
         }
-        composable(Screens.NoInternetScreen.route) {
-            NoInternetScreen(onBackPressed = onBackPressed) {
-                navController.popBackStack()
-            }
-        }
+
 
         composable(Screens.CancellationScreen.route) {
             CancellationReasonScreen()
         }
 
+
         composable(Screens.ConfirmDetailsScreen.route) {
-            ConfirmationDetailsScreen()
+            ConfirmDetailsScreen(onPopBackStack = {
+                navController.popBackStack()
+            }, navigateTo =  { destination, popUpToDestination ->
+                navigateScreen(navController, destination, popUpToDestination)
+            })
         }
 
         composable(Screens.RescueRequestScreen.route) {
@@ -100,7 +109,9 @@ fun Navigation(
         }
 
         composable(Screens.SettingScreen.route) {
-            SettingScreen(isDarkTheme = isDarkTheme, onToggleTheme = onToggleTheme) { destination, popUpToDestination ->
+            SettingScreen(
+                isDarkTheme = isDarkTheme,
+                onToggleTheme = onToggleTheme) { destination, popUpToDestination ->
                 navigateScreen(navController, destination, popUpToDestination)
             }
         }

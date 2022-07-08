@@ -1,4 +1,6 @@
-package com.example.cyclistance.common
+package com.example.cyclistance.core.utils
+
+import androidx.datastore.preferences.core.stringPreferencesKey
 
 object MappingConstants {
     const val CYCLISTANCE_API_BASE_URL = "https://cyclistance-app.herokuapp.com/"
@@ -15,4 +17,5 @@ object MappingConstants {
     const val NO_SIM_CARD_RESULT_CODE = 1002
     const val NONE_OF_THE_ABOVE_RESULT_CODE = 1001
     const val LOCATION_UPDATES_INTERVAL: Long = 5000
+    val BIKE_TYPE_KEY = stringPreferencesKey("bike_type")
 }

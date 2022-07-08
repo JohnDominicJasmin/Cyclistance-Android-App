@@ -32,6 +32,8 @@ class MappingViewModel @Inject constructor(
     private val _state: MutableState<MappingState> = mutableStateOf(MappingState())
     val state by _state
 
+    private lateinit var locationUpdatesFlow: Job
+
 
 
 
@@ -44,7 +46,6 @@ class MappingViewModel @Inject constructor(
         return this.substring(0, index)
     }
 
-    private var locationUpdatesFlow: Job? = null
 
     private suspend fun getPhoneNumber(): String = authUseCase.getPhoneNumberUseCase()
     private fun getPhotoUrl(): String{
@@ -84,7 +85,6 @@ class MappingViewModel @Inject constructor(
     private fun subscribeToLocationUpdates(){
 
         runCatching {
-            locationUpdatesFlow?.cancel()
             mappingUseCase.getUserLocationUseCase()
         }.onSuccess { locationFlow ->
             locationUpdatesFlow = locationFlow.onEach { userLocation ->
@@ -97,7 +97,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun unSubscribeToLocationUpdates(){
-        locationUpdatesFlow?.cancel()
+        locationUpdatesFlow.cancel()
     }
 
     private suspend fun signOutAccount(){

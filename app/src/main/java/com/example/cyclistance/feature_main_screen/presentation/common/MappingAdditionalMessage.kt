@@ -8,16 +8,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.cyclistance.common.MappingConstants.MAX_CHARACTERS
+import com.example.cyclistance.core.utils.MappingConstants.MAX_CHARACTERS
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black500
 
 
 @Composable
-fun MappingAdditionalMessage(modifier: Modifier) {
+fun MappingAdditionalMessage(
+    modifier: Modifier,
+    message: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit) {
 
     Column(modifier = modifier) {
 
@@ -28,6 +32,7 @@ fun MappingAdditionalMessage(modifier: Modifier) {
             text = "Message",
             color = MaterialTheme.colors.onBackground,
             style = MaterialTheme.typography.h6,
+            fontWeight = FontWeight.SemiBold,
             modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))
 
 
@@ -40,7 +45,6 @@ fun MappingAdditionalMessage(modifier: Modifier) {
             ConstraintLayout(modifier = Modifier.wrapContentHeight()) {
 
 
-                var text by remember { mutableStateOf(TextFieldValue("")) }
                 val (textField, numberOfCharactersText) = createRefs()
                 val numberOfCharacters = remember { mutableStateOf(0) }
 
@@ -54,11 +58,11 @@ fun MappingAdditionalMessage(modifier: Modifier) {
                             start.linkTo(parent.start)
 
                         },
-                    value = text,
+                    value = message,
                     onValueChange = { newText ->
                         if (newText.text.length <= MAX_CHARACTERS) {
                             numberOfCharacters.value = newText.text.length
-                            text = newText
+                            onValueChange(newText)
                         }
                     },
                     shape = RoundedCornerShape(12.dp),
