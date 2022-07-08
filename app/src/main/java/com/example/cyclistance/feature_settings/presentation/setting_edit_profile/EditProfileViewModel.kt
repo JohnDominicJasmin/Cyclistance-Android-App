@@ -107,12 +107,12 @@ class EditProfileViewModel @Inject constructor(
                     viewModelScope.launch {
                         runCatching {
                             _state.value = state.copy(
-                                name = TextFieldValue(text = getName()),
+                                name = TextFieldValue(text = getName().ifEmpty { throw MappingExceptions.NameException() }),
                                 isLoading = true
                             )
                         }.onSuccess {
                             _state.value = state.copy(isLoading = false)
-                        }.onFailure { exception ->
+                        }.onFailure {
                             _state.value = state.copy(
                                 isLoading = false,
                                 nameErrorMessage = "Field cannot be blank."
