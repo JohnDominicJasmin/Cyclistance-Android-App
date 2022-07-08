@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogModel
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEvent
@@ -69,7 +69,7 @@ fun SignUpScreen(
                         alertDialogState = AlertDialogModel(
                             title = event.title,
                             description = event.description,
-                            resId = event.imageResId)
+                            icon = event.imageResId)
                     }
                     is SignUpUiEvent.ShowEmailAuthScreen -> {
                         navigateTo(Screens.EmailAuthScreen.route, Screens.SignUpScreen.route)

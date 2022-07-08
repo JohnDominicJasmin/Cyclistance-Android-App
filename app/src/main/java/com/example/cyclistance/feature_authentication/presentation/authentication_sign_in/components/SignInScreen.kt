@@ -23,7 +23,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
-import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogModel
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
@@ -104,7 +104,7 @@ fun SignInScreen(
                             alertDialogState = AlertDialogModel(
                                 title = signInEvent.title,
                                 description = signInEvent.description,
-                                resId = signInEvent.imageResId)
+                                icon = signInEvent.imageResId)
                         }
                         is SignInUiEvent.ShowMappingScreen -> {
                             navigateTo(Screens.MappingScreen.route, Screens.SignInScreen.route)
@@ -135,6 +135,7 @@ fun SignInScreen(
                         is EmailAuthUiEvent.ShowEmailAuthScreen -> {
                               navigateTo(Screens.EmailAuthScreen.route, Screens.SignInScreen.route)
                         }
+                        else -> {}
                     }
                 }
             }

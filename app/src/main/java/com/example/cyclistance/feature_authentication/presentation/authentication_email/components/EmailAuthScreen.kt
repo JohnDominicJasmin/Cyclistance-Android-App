@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogModel
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
@@ -74,7 +74,7 @@ fun EmailAuthScreen(
                             alertDialogState = AlertDialogModel(
                                 title = event.title,
                                 description = event.description,
-                                resId = event.imageResId)
+                                icon = event.imageResId)
                         }
                         is EmailAuthUiEvent.ShowMappingScreen -> {
                             navigateTo(Screens.MappingScreen.route, Screens.EmailAuthScreen.route)

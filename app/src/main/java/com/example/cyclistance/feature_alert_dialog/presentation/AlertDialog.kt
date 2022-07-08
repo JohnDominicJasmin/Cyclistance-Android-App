@@ -30,15 +30,11 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.theme.CyclistanceTheme
 import io.github.farhanroy.composeawesomedialog.themes.Shapes
 
 
-data class AlertDialogModel(
-    var title: String = "",
-    var description: String = "",
-    @RawRes var resId: Int = 0
-)
 
 @Composable
 fun SetupAlertDialog(
@@ -123,7 +119,7 @@ fun SetupAlertDialog(
                             border = BorderStroke(width = 2.dp, color = Transparent),
                             shape = CircleShape
                         ),
-                       alertDialog.resId)
+                       alertDialog.icon)
             }
         }
     }
@@ -148,7 +144,7 @@ fun AlertDialogPreview() {
             alertDialog = AlertDialogModel(
                 title = "Success",
                 description = "Sample this is description",
-                resId = io.github.farhanroy.composeawesomedialog.R.raw.error)) {
+                icon = io.github.farhanroy.composeawesomedialog.R.raw.error)) {
         }
     }
 

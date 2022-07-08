@@ -17,15 +17,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.cyclistance.R
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
-data class MappingDialogModel(
-    var icon: Int = 0,
-    var title: String = "",
-    var description: String = "")
+
 
 
 
@@ -45,7 +43,7 @@ fun Preview() {
 
 
             AlertDialogContent(
-                mappingDialogModel = MappingDialogModel(
+                alertDialogModel = AlertDialogModel(
                     icon = R.drawable.ic_question,
                     title = "Are you sure?",
                     description = "You want to cancel rescue request?"),
@@ -77,7 +75,7 @@ fun AlertDialogCreator(
 
 @Composable
 fun AlertDialogContent(
-    mappingDialogModel: MappingDialogModel,
+    alertDialogModel: AlertDialogModel,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit) {
     Card(
@@ -96,14 +94,14 @@ fun AlertDialogContent(
 
 
             Icon(
-                painter = painterResource(id = mappingDialogModel.icon),
+                painter = painterResource(id = alertDialogModel.icon),
                 contentDescription = null,
                 tint = Color.Unspecified)
 
             Spacer(modifier = Modifier.height(17.dp))
 
             Text(
-                text = mappingDialogModel.title,
+                text = alertDialogModel.title,
                 style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.onSurface,
                 textAlign = TextAlign.Center)
@@ -111,7 +109,7 @@ fun AlertDialogContent(
             Spacer(modifier = Modifier.height(3.dp))
 
             Text(
-                text = mappingDialogModel.description,
+                text = alertDialogModel.description,
                 style = MaterialTheme.typography.subtitle1,
                 color = Black450,
                 textAlign = TextAlign.Center,

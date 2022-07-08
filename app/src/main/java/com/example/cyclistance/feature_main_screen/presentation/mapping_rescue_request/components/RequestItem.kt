@@ -22,22 +22,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.R
+import com.example.cyclistance.feature_main_screen.domain.model.CardModel
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.theme.*
 
-data class CardData(
 
-    val name: String = "",
-    val profileImage:String = "",
-    val estimatedTimeTravel: String = "",
-    val distance:String = "",
-    val address:String = "",
-
-    )
 
 
 @Composable
-fun RequestItem(modifier: Modifier, cardState: CardData) {
+fun RequestItem(modifier: Modifier, cardState: CardModel) {
 
     Card(
         modifier = modifier,

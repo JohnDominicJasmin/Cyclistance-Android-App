@@ -24,22 +24,22 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.findViewTreeLifecycleOwner
 
-import com.example.cyclistance.common.MappingConstants.CAMERA_TILT_DEGREES
-import com.example.cyclistance.common.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
-import com.example.cyclistance.common.MappingConstants.DEFAULT_LATITUDE
-import com.example.cyclistance.common.MappingConstants.DEFAULT_LONGITUDE
-import com.example.cyclistance.common.MappingConstants.MAP_ZOOM
-import com.example.cyclistance.common.MappingConstants.MAX_ZOOM_LEVEL_MAPS
-import com.example.cyclistance.common.MappingConstants.MIN_ZOOM_LEVEL_MAPS
-import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialogModel
+import com.example.cyclistance.core.utils.MappingConstants.CAMERA_TILT_DEGREES
+import com.example.cyclistance.core.utils.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
+import com.example.cyclistance.core.utils.MappingConstants.DEFAULT_LATITUDE
+import com.example.cyclistance.core.utils.MappingConstants.DEFAULT_LONGITUDE
+import com.example.cyclistance.core.utils.MappingConstants.MAP_ZOOM
+import com.example.cyclistance.core.utils.MappingConstants.MAX_ZOOM_LEVEL_MAPS
+import com.example.cyclistance.core.utils.MappingConstants.MIN_ZOOM_LEVEL_MAPS
 import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
 import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingUiEvent
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.utils.ConnectionStatus
-import com.example.cyclistance.utils.ConnectionStatus.checkLocationSetting
+import com.example.cyclistance.core.utils.ConnectionStatus
+import com.example.cyclistance.core.utils.ConnectionStatus.checkLocationSetting
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.mapbox.mapboxsdk.camera.CameraPosition
@@ -60,11 +60,11 @@ fun MappingScreen(
     onBackPressed: () -> Unit,
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
-//todo: wait for user to click the search button before starting permission
+
     val scaffoldState =
         rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
-    val state = mappingViewModel.state.value
+    val state = mappingViewModel.state
 
     BackHandler(enabled = true, onBack = onBackPressed)
 
@@ -129,7 +129,7 @@ fun MappingScreen(
                     alertDialogState = AlertDialogModel(
                         title = event.title,
                         description = event.description,
-                        resId = event.imageResId
+                        icon = event.imageResId
                     )
                 }
                 is MappingUiEvent.ShowNoInternetScreen -> {

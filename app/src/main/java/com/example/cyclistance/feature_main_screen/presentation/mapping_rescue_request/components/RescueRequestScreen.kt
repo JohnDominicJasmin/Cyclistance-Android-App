@@ -16,43 +16,44 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.example.cyclistance.feature_main_screen.domain.model.CardModel
 
- val sampleCardState = listOf(
+val sampleCardState = listOf(
 
-     CardData(name = "John Doe",
-         profileImage = "",
-         estimatedTimeTravel = "5-7 Mins",
-         address = "Manila, Philippines",
-         distance = "6.9km away"),
-
-     CardData(name = "John Doe",
+     CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6.9km away"),
 
-     CardData(name = "John Doe",
+     CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6.9km away"),
 
-     CardData(name = "John Doe",
+     CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6.9km away"),
-     CardData(name = "John Doe",
+
+     CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6.9km away"),
-     CardData(name = "John Doe",
+     CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6.9km away"),
-     CardData(name = "John Doe",
+     CardModel(name = "John Doe",
+         profileImage = "",
+         estimatedTimeTravel = "5-7 Mins",
+         address = "Manila, Philippines",
+         distance = "6.9km away"),
+     CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
