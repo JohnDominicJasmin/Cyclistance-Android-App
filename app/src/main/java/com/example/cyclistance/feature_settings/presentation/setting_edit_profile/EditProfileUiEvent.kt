@@ -2,4 +2,5 @@ package com.example.cyclistance.feature_settings.presentation.setting_edit_profi
 
 sealed class EditProfileUiEvent {
     object ShowMappingScreen : EditProfileUiEvent()
+    data class ShowToastMessage(val message: String) : EditProfileUiEvent()
 }
