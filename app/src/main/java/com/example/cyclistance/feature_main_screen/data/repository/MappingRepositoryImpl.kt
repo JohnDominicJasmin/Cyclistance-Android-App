@@ -19,6 +19,7 @@ import com.example.cyclistance.core.utils.SharedLocationModel
 import com.example.cyclistance.core.utils.dataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
 import timber.log.Timber
@@ -52,7 +53,7 @@ class MappingRepositoryImpl(
     }
 
     override fun getUserLocation(): Flow<SharedLocationModel> {
-        return sharedLocationManager.locationFlow()
+        return sharedLocationManager.locationFlow().distinctUntilChanged()
     }
 
     override suspend fun getUserById(userId: String): User {
@@ -65,7 +66,7 @@ class MappingRepositoryImpl(
        }
     }
 
-    //todo: add cold flows here
+
     override suspend fun getUsers(): List<User> {
         return try{
             api.getUsers().map { it.toUser() }
