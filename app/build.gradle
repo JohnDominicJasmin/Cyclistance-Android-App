@@ -42,7 +42,7 @@ android {
         release {
             minifyEnabled true
             shrinkResources true
-            crunchPngs false
+            crunchPngs true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
 
             resValue("string", "MapsDownloadToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
