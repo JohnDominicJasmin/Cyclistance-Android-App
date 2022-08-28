@@ -16,7 +16,6 @@ import timber.log.Timber
 object ConnectionStatus {
 
 
-    @SuppressLint("MissingPermission")
     @Suppress("Deprecation")
     fun hasInternetConnection(context: Context): Boolean =
         (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).activeNetworkInfo.let {networkInfo->
