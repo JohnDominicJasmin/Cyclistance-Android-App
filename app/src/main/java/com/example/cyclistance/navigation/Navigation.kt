@@ -13,8 +13,8 @@ import com.example.cyclistance.feature_main_screen.presentation.mapping_cancella
 import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.ConfirmDetailsScreen
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingScreen
 import com.example.cyclistance.feature_main_screen.presentation.mapping_rescue_request.components.RescueRequestScreen
-import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderScreen
-import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.components.SplashScreen
+import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.IntroSliderScreen
+import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.SplashScreen
 import com.example.cyclistance.feature_settings.presentation.setting_change_password.components.ChangePasswordScreen
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.EditProfileScreen
 import com.example.cyclistance.feature_settings.presentation.setting_main_screen.components.SettingScreen
@@ -32,50 +32,39 @@ fun Navigation(
 
     NavHost(navController = navController, startDestination = Screens.SplashScreen.route) {
         composable(Screens.SplashScreen.route) {
-            SplashScreen { destination, popUpToDestination ->
-                navigateScreen(navController, destination, popUpToDestination)
-            }
+            SplashScreen(navigateTo = navController::navigateScreen)
         }
 
 
         composable(Screens.IntroSliderScreen.route) {
-            IntroSliderScreen(onBackPressed = onBackPressed) { destination, popUpToDestination ->
-                navigateScreen(navController, destination, popUpToDestination)
-            }
+            IntroSliderScreen(onBackPressed = onBackPressed, navigateTo = navController::navigateScreen)
         }
 
         composable(Screens.SignInScreen.route) {
-            SignInScreen(onBackPressed = onBackPressed) { destination, popUpToDestination ->
-                navigateScreen(navController, destination, popUpToDestination)
-            }
+            SignInScreen(onBackPressed = onBackPressed, navigateTo = navController::navigateScreen)
         }
 
         composable(Screens.SignUpScreen.route) {
-            SignUpScreen { destination, popUpToDestination ->
-                navigateScreen(navController, destination, popUpToDestination)
-            }
+            SignUpScreen(navigateTo = navController::navigateScreen)
         }
 
         composable(Screens.EmailAuthScreen.route) {
             EmailAuthScreen(
                 onBackPressed = onBackPressed,
-                isDarkTheme = isDarkTheme) { destination, popUpToDestination ->
-                navigateScreen(navController, destination, popUpToDestination)
-            }
+                isDarkTheme = isDarkTheme,
+                navigateTo = navController::navigateScreen)
         }
 
         composable(Screens.NoInternetScreen.route) {
-            NoInternetScreen(onBackPressed = onBackPressed) {
-                navController.popBackStack()
-            }
+            NoInternetScreen(onBackPressed = onBackPressed,
+                navigateTo = navController::popBackStack)
         }
 
         composable(Screens.MappingScreen.route) {
             MappingScreen(
                 isDarkTheme = isDarkThemeLiveData,
-                onBackPressed = onBackPressed) { destination, popUpToDestination ->
-                navigateScreen(navController, destination, popUpToDestination)
-            }
+                onBackPressed = onBackPressed,
+                navigateTo = navController::navigateScreen)
         }
 
 
@@ -85,11 +74,9 @@ fun Navigation(
 
 
         composable(Screens.ConfirmDetailsScreen.route) {
-            ConfirmDetailsScreen(onPopBackStack = {
-                navController.popBackStack()
-            }, navigateTo =  { destination, popUpToDestination ->
-                navigateScreen(navController, destination, popUpToDestination)
-            })
+
+            ConfirmDetailsScreen(onPopBackStack = navController::popBackStack,
+                navigateTo = navController::navigateScreen)
         }
 
         composable(Screens.RescueRequestScreen.route) {
@@ -101,31 +88,28 @@ fun Navigation(
         }
 
         composable(Screens.EditProfileScreen.route) {
-            EditProfileScreen(onPopBackStack = {
-                navController.popBackStack()
-            }) { destination, popUpToDestination ->
-                navigateScreen(navController, destination, popUpToDestination)
-            }
+
+            EditProfileScreen(onPopBackStack = navController::popBackStack,
+                navigateTo = navController::navigateScreen)
         }
 
         composable(Screens.SettingScreen.route) {
             SettingScreen(
                 isDarkTheme = isDarkTheme,
-                onToggleTheme = onToggleTheme) { destination, popUpToDestination ->
-                navigateScreen(navController, destination, popUpToDestination)
-            }
+                onToggleTheme = onToggleTheme,
+                navigateTo = navController::navigateScreen)
+
         }
 
     }
 }
 
-private fun navigateScreen(
-    navController: NavHostController,
+private fun NavHostController.navigateScreen(
     destination: String,
     popUpToDestination: String? = null) {
 
 
-    navController.navigate(destination) {
+    this.navigate(destination) {
         popUpToDestination?.let {
             popUpTo(it) {
                 inclusive = true

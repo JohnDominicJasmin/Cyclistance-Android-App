@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_readable_displays.presentation.splash_screen
 
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -10,9 +9,7 @@ import com.example.cyclistance.feature_authentication.domain.use_case.Authentica
 import com.example.cyclistance.feature_readable_displays.domain.use_case.IntroSliderUseCase
 import com.example.cyclistance.navigation.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -31,27 +28,31 @@ class SplashScreenViewModel @Inject constructor(
 
 
     private fun isUserCompletedWalkThrough() {
-            kotlin.runCatching {
 
-                introSliderUseCase.readIntroSliderUseCase()
+        viewModelScope.launch {
+            runCatching {
 
-            }.onSuccess { result:Flow<Boolean> ->
-                result.onEach { userCompletedWalkThrough ->
+                introSliderUseCase.readIntroSliderUseCase().collect { userCompletedWalkThrough ->
                     if (userCompletedWalkThrough) {
 
                         if (isUserSignedIn()) {
-                            _splashScreenState.value = splashScreenState.copy(navigationStartingDestination = Screens.MappingScreen.route)
-                            return@onEach
+                            _splashScreenState.value =
+                                splashScreenState.copy(navigationStartingDestination = Screens.MappingScreen.route)
+                            return@collect
                         }
-                        _splashScreenState.value = splashScreenState.copy(navigationStartingDestination = Screens.SignInScreen.route)
+                        _splashScreenState.value =
+                            splashScreenState.copy(navigationStartingDestination = Screens.SignInScreen.route)
 
                     } else {
-                        _splashScreenState.value = splashScreenState.copy(navigationStartingDestination = Screens.IntroSliderScreen.route)
+                        _splashScreenState.value =
+                            splashScreenState.copy(navigationStartingDestination = Screens.IntroSliderScreen.route)
                     }
-                }.launchIn(viewModelScope)
+                }
+
             }.onFailure {
                 Timber.e("IntroSlider DataStore Reading Failed: ${it.localizedMessage}")
             }
+        }
 
     }
     private suspend fun isUserSignedIn():Boolean{
