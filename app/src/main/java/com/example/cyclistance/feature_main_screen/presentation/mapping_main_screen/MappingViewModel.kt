@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_main_screen.presentation.mapping_main_sc
 
 import android.location.Address
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -24,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MappingViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase,
-    private val mappingUseCase: MappingUseCase):ViewModel() {
+    private val mappingUseCase: MappingUseCase) : ViewModel() {
 
     private val _eventFlow: MutableSharedFlow<MappingUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingUiEvent> = _eventFlow.asSharedFlow()
@@ -32,23 +31,20 @@ class MappingViewModel @Inject constructor(
     private val _state: MutableState<MappingState> = mutableStateOf(MappingState())
     val state by _state
 
-    private lateinit var locationUpdatesFlow: Job
+    private var locationUpdatesFlow: Job? = null
 
 
+    fun getEmail(): String = authUseCase.getEmailUseCase() ?: ""
+    private fun getId(): String? = authUseCase.getIdUseCase()
 
-
-
-    fun getEmail():String = authUseCase.getEmailUseCase() ?: ""
-    private fun getId():String? = authUseCase.getIdUseCase()
-
-    private fun getName():String = authUseCase.getNameUseCase() ?: getEmail().apply{
+    private fun getName(): String = authUseCase.getNameUseCase() ?: getEmail().apply {
         val index = this.indexOf('@')
         return this.substring(0, index)
     }
 
 
     private suspend fun getPhoneNumber(): String = authUseCase.getPhoneNumberUseCase()
-    private fun getPhotoUrl(): String{
+    private fun getPhotoUrl(): String {
         return authUseCase.getPhotoUrlUseCase()?.toString()
                ?: IMAGE_PLACEHOLDER_URL
     }
@@ -82,25 +78,25 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun subscribeToLocationUpdates(){
-
-        runCatching {
-            mappingUseCase.getUserLocationUseCase()
-        }.onSuccess { locationFlow ->
-            locationUpdatesFlow = locationFlow.onEach { userLocation ->
-                _state.value = state.copy(addresses = userLocation.addresses, currentLatLng = userLocation.latLng)
-            }.launchIn(viewModelScope)
-
-        }.onFailure {
-            Timber.e("Error Location Updates: ${it.message}")
+    private fun subscribeToLocationUpdates() {
+        viewModelScope.launch {
+            runCatching {
+                mappingUseCase.getUserLocationUseCase().collect { userLocation ->
+                    _state.value = state.copy(
+                        addresses = userLocation.addresses,
+                        currentLatLng = userLocation.latLng)
+                }
+            }.onFailure {
+                Timber.e("Error Location Updates: ${it.message}")
+            }
         }
     }
 
-    private fun unSubscribeToLocationUpdates(){
-        locationUpdatesFlow.cancel()
+    private fun unSubscribeToLocationUpdates() {
+        locationUpdatesFlow?.cancel()
     }
 
-    private suspend fun signOutAccount(){
+    private suspend fun signOutAccount() {
         runCatching {
             authUseCase.signOutUseCase()
         }.onSuccess {
@@ -112,40 +108,45 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun postUser() {
 
-            if (state.addresses.isNotEmpty()) {
-                state.addresses.forEach { address ->
-                    runCatching {
-                         _state.value = state.copy(isLoading = true)
-                         createUser(address)
-                    }.onSuccess {
-                        _state.value = state.copy(isLoading = false, findAssistanceButtonVisible = false)
-                        _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
-                    }.onFailure { exception ->
-                        _state.value = state.copy(isLoading = false)
-                        when (exception) {
-                            is MappingExceptions.NoInternetException -> {
-                                _eventFlow.emit(MappingUiEvent.ShowNoInternetScreen)
-                            }
-                            is MappingExceptions.UnexpectedErrorException -> {
-                                _eventFlow.emit(
-                                    MappingUiEvent.ShowToastMessage(
-                                        message = exception.message ?: "",
-                                    ))
-                            }
-                            is MappingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
-                                _eventFlow.emit(MappingUiEvent.ShowSettingScreen)
-                            }
-
-                        }
-                    }
+        if (state.addresses.isNotEmpty()) {
+            state.addresses.forEach { address ->
+                runCatching {
+                    _state.value = state.copy(isLoading = true)
+                    createUser(address)
+                }.onSuccess {
+                    _state.value = state.copy(isLoading = false, findAssistanceButtonVisible = false)
+                    _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
+                }.onFailure { exception ->
+                    _state.value = state.copy(isLoading = false)
+                    handleException(exception)
                 }
-            } else {
-                _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
             }
+        } else {
+            _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
+        }
+
 
     }
+    private suspend fun handleException(exception: Throwable){
+        when (exception) {
+            is MappingExceptions.NoInternetException -> {
+                _eventFlow.emit(MappingUiEvent.ShowNoInternetScreen)
+            }
+            is MappingExceptions.UnexpectedErrorException -> {
+                _eventFlow.emit(
+                    MappingUiEvent.ShowToastMessage(
+                        message = exception.message ?: "",
+                    ))
+            }
+            is MappingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
+                _eventFlow.emit(MappingUiEvent.ShowSettingScreen)
+            }
 
-    private suspend fun createUser(address: Address){
+        }
+    }
+
+
+    private suspend fun createUser(address: Address) {
         with(address) {
             mappingUseCase.createUserUseCase(
                 user = User(
