@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_readable_displays.presentation.splash_screen.components
+package com.example.cyclistance.feature_readable_displays.presentation.splash_screen
 
 import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable

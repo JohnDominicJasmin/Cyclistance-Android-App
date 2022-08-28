@@ -12,7 +12,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -31,7 +30,7 @@ import com.example.cyclistance.core.utils.ConnectionStatus
 fun NoInternetScreen(
     isDarkTheme: Boolean = false,
     onBackPressed: () -> Unit,
-    navigate: () -> Unit,
+    navigateTo: () -> Unit,
 ) {
 
     val context = LocalContext.current
@@ -102,7 +101,7 @@ fun NoInternetScreen(
                 shape = RoundedCornerShape(12.dp),
                 onClick = {
                     if (ConnectionStatus.hasInternetConnection(context)) {
-                        navigate()
+                        navigateTo()
                     }
                 },
                 modifier = Modifier

@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_main_screen.domain.model.CardModel
+import com.example.cyclistance.theme.CyclistanceTheme
 
 val sampleCardState = listOf(
 
@@ -24,40 +25,40 @@ val sampleCardState = listOf(
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
-         distance = "6.9km away"),
+         distance = "6km away"),
 
      CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
-         distance = "6.9km away"),
+         distance = "2.9km away"),
 
      CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
-         distance = "6.9km away"),
+         distance = "2.9km away"),
 
      CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
-         distance = "6.9km away"),
+         distance = "1.9km away"),
      CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
-         distance = "6.9km away"),
+         distance = "6.2km away"),
      CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
-         distance = "6.9km away"),
+         distance = "10km away"),
      CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
-         distance = "6.9km away")
+         distance = "2km away")
 
  )
 
@@ -69,7 +70,7 @@ fun RescueRequestScreen() {
 
         val (items, titleText ) = createRefs()
 
-        Text(text = "3 NEW REQUEST",
+        Text(text = "13 NEW REQUEST",
             color = MaterialTheme.colors.onBackground,
             style = TextStyle(
                 letterSpacing = 4.sp,
@@ -112,5 +113,7 @@ fun RescueRequestScreen() {
 @Preview
 @Composable
 fun PreviewRescueRequest() {
-    RescueRequestScreen()
+    CyclistanceTheme(true) {
+        RescueRequestScreen()
+    }
 }

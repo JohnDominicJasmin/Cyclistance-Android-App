@@ -48,7 +48,7 @@ fun CancellationReasonScreen() {
                     width = Dimension.percent(0.9f)
 
                 },
-            message = TextFieldValue("TEST"),
+            message = TextFieldValue("My bike is already fixed."),
             onValueChange = {
                 //todo: implement later
             }
@@ -80,7 +80,7 @@ fun CancellationReasonScreen() {
 @Preview
 @Composable
 fun CancellationReasonPreview() {
-    CyclistanceTheme(false) {
+    CyclistanceTheme(true) {
         CancellationReasonScreen()
     }
 }
