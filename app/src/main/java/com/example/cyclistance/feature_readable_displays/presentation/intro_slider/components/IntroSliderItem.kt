@@ -12,6 +12,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.theme.Black440
@@ -98,6 +99,13 @@ fun PagerIndicator(pagerState: PagerState,modifier: Modifier) {
         spacing = 7.dp,
         indicatorShape = RoundedCornerShape(15.dp)
     )
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Preview
+@Composable
+fun IntroSliderItemPreview() {
+    IntroSliderItem(PagerState(currentPage = 0))
 }
 
 
