@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.domain.use_case.verification
+package com.example.cyclistance.feature_authentication.domain.use_case.verify_account
 
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.google.firebase.auth.AuthCredential

@@ -4,10 +4,10 @@ import android.content.Context
 import com.example.cyclistance.feature_authentication.data.repository.AuthRepositoryImpl
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_authentication.domain.use_case.*
-import com.example.cyclistance.feature_authentication.domain.use_case.create.*
-import com.example.cyclistance.feature_authentication.domain.use_case.read.*
+import com.example.cyclistance.feature_authentication.domain.use_case.create_account.*
+import com.example.cyclistance.feature_authentication.domain.use_case.read_account.*
 import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.verification.*
+import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.*
 import com.google.firebase.auth.AuthCredential
 import dagger.Module
 import dagger.Provides
