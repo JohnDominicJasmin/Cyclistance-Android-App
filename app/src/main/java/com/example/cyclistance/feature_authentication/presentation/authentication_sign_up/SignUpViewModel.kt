@@ -11,9 +11,7 @@ import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExce
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -22,12 +20,13 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
+    private val _state: MutableStateFlow<SignUpState> = MutableStateFlow(SignUpState())
+    val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<SignUpUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<SignUpUiEvent> = _eventFlow.asSharedFlow()
 
-    private val _state: MutableState<SignUpState> = mutableStateOf(SignUpState())
-    val state by _state
+
 
     fun hasAccountSignedIn(): Boolean = authUseCase.hasAccountSignedInUseCase()
 
@@ -35,7 +34,7 @@ class SignUpViewModel @Inject constructor(
     fun onEvent(event: SignUpEvent){
         when(event){
             is SignUpEvent.SignUp -> {
-                with(state){
+                with(state.value){
                     viewModelScope.launch{
                         createUserWithEmailAndPassword(authModel = AuthModel(
                             email = email.text.trim(),
@@ -49,25 +48,23 @@ class SignUpViewModel @Inject constructor(
                 authUseCase.signOutUseCase()
             }
             is SignUpEvent.EnteredEmail -> {
-                _state.value = state.copy(email = event.email, emailErrorMessage = "")
+                _state.update { it.copy(email = event.email, emailErrorMessage = "") }
             }
 
             is SignUpEvent.EnteredPassword -> {
-                _state.value = state.copy(password = event.password, passwordErrorMessage = "")
+                _state.update { it.copy(password = event.password, passwordErrorMessage = "") }
             }
             is SignUpEvent.EnteredConfirmPassword -> {
-                _state.value = state.copy(confirmPassword = event.confirmPassword, confirmPasswordErrorMessage = "")
+                _state.update { it.copy(confirmPassword = event.confirmPassword, confirmPasswordErrorMessage = "") }
             }
             is SignUpEvent.ClearEmail -> {
-                _state.value = state.copy(email = TextFieldValue(""))
+                _state.update { it.copy(email = TextFieldValue("")) }
             }
             is SignUpEvent.ClearPassword -> {
-                _state.value = state.copy(password = TextFieldValue(""))
+                _state.update { it.copy(password = TextFieldValue("")) }
             }
             is SignUpEvent.TogglePasswordVisibility -> {
-                _state.value =
-                    state.copy(
-                        passwordVisibility = !state.passwordVisibility)
+                _state.update { it.copy(passwordVisibility = !state.value.passwordVisibility) }
             }
 
 
@@ -77,27 +74,27 @@ class SignUpViewModel @Inject constructor(
 
 
     private suspend fun createUserWithEmailAndPassword(authModel: AuthModel) {
-            kotlin.runCatching {
-                _state.value = state.copy(isLoading = true)
+            runCatching {
+                _state.update { it.copy(isLoading = true) }
                 authUseCase.createWithEmailAndPasswordUseCase(authModel)
             }.onSuccess { isAccountCreated ->
-                _state.value = state.copy(isLoading = false)
+                _state.update { it.copy(isLoading = false) }
                 if(isAccountCreated) {
                     _eventFlow.emit(SignUpUiEvent.ShowEmailAuthScreen)
                 }else{
                     _eventFlow.emit(SignUpUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
                 }
             }.onFailure {exception ->
-                _state.value = state.copy(isLoading = false)
+                _state.update { it.copy(isLoading = false) }
                 when(exception) {
                     is AuthExceptions.EmailException -> {
-                        _state.value = state.copy(emailErrorMessage = exception.message ?: "Invalid Email.")
+                        _state.update { it.copy(emailErrorMessage = exception.message ?: "Invalid Email.") }
                     }
                     is AuthExceptions.PasswordException -> {
-                        _state.value = state.copy(passwordErrorMessage = exception.message ?: "Invalid Password.")
+                        _state.update { it.copy(passwordErrorMessage = exception.message ?: "Invalid Password.") }
                     }
                     is AuthExceptions.ConfirmPasswordException -> {
-                        _state.value = state.copy(confirmPasswordErrorMessage = exception.message ?: "Invalid Password.")
+                        _state.update { it.copy(confirmPasswordErrorMessage = exception.message ?: "Invalid Password.") }
                     }
                     is AuthExceptions.InternetException -> {
                         _eventFlow.emit(SignUpUiEvent.ShowNoInternetScreen)

@@ -14,8 +14,7 @@ import com.example.cyclistance.feature_main_screen.domain.model.User
 import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,8 +24,8 @@ class ConfirmDetailsViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
-    private val _state: MutableState<ConfirmDetailsState> = mutableStateOf(ConfirmDetailsState())
-    val state by _state
+    private val _state: MutableStateFlow<ConfirmDetailsState> = MutableStateFlow(ConfirmDetailsState())
+    val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<ConfirmDetailsUiEvent> = MutableSharedFlow()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -38,17 +37,17 @@ class ConfirmDetailsViewModel @Inject constructor(
             when (event) {
                 is ConfirmDetailsEvent.Save -> {
                     viewModelScope.launch {
-                        updateUser(state)
+                        updateUser(state.value)
                     }
                 }
                 is ConfirmDetailsEvent.SelectBikeType -> {
-                    _state.value = state.copy(bikeType = event.bikeType, bikeTypeErrorMessage = "")
+                    _state.update { it.copy(bikeType = event.bikeType, bikeTypeErrorMessage = "") }
                 }
                 is ConfirmDetailsEvent.EnteredMessage -> {
-                    _state.value = state.copy(message = event.message)
+                    _state.update { it.copy(message = event.message) }
                 }
                 is ConfirmDetailsEvent.SelectDescription -> {
-                    _state.value = state.copy(description = event.description, descriptionErrorMessage = "")
+                    _state.update { it.copy(description = event.description, descriptionErrorMessage = "") }
                 }
 
         }
@@ -57,7 +56,7 @@ class ConfirmDetailsViewModel @Inject constructor(
 
     private suspend fun updateUser(confirmDetailsState: ConfirmDetailsState){
         runCatching {
-            _state.value = state.copy(isLoading = true)
+            _state.update { it.copy(isLoading = true) }
             mappingUseCase.updateUserUseCase(
                 itemId = getId() ?: return,
                 user = User(
@@ -71,29 +70,34 @@ class ConfirmDetailsViewModel @Inject constructor(
                     )
                 ))
         }.onSuccess {
-            _state.value = state.copy(isLoading = false)
+            _state.update { it.copy(isLoading = false) }
             _eventFlow.emit(value = ConfirmDetailsUiEvent.ShowMappingScreen)
+//            todo:create rescue request
         }.onFailure { exception ->
-            _state.value = state.copy(isLoading = false)
-            when(exception){
-                is MappingExceptions.UnexpectedErrorException -> {
-                    _eventFlow.emit(
-                        ConfirmDetailsUiEvent.ShowToastMessage(
-                            message = exception.message ?: "",
-                        ))
-                }
-                is MappingExceptions.NoInternetException -> {
-                    _eventFlow.emit(ConfirmDetailsUiEvent.ShowNoInternetScreen)
-                }
-                is MappingExceptions.BikeTypeException -> {
-                    _state.value = state.copy(bikeTypeErrorMessage = exception.message!!)
-                }
-                is MappingExceptions.DescriptionException -> {
-                    _state.value = state.copy(descriptionErrorMessage = exception.message!!)
-                }
+            _state.update { it.copy(isLoading = false) }
+            handleException(exception)
+        }
+    }
 
-
+    private suspend fun handleException(exception: Throwable){
+        when(exception){
+            is MappingExceptions.UnexpectedErrorException -> {
+                _eventFlow.emit(
+                    ConfirmDetailsUiEvent.ShowToastMessage(
+                        message = exception.message ?: "",
+                    ))
             }
+            is MappingExceptions.NoInternetException -> {
+                _eventFlow.emit(ConfirmDetailsUiEvent.ShowNoInternetScreen)
+            }
+            is MappingExceptions.BikeTypeException -> {
+                _state.update { it.copy(bikeTypeErrorMessage = exception.message!!) }
+            }
+            is MappingExceptions.DescriptionException -> {
+                _state.update { it.copy(descriptionErrorMessage = exception.message!!) }
+            }
+
+
         }
     }
 }

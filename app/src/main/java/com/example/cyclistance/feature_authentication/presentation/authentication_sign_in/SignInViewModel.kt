@@ -23,9 +23,7 @@ import com.facebook.login.LoginResult
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FacebookAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -37,12 +35,12 @@ class SignInViewModel @Inject constructor(
 
     private var callbackManager = CallbackManager.Factory.create()
 
+    private val _state: MutableStateFlow<SignInState> = MutableStateFlow(SignInState())
+    val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<SignInUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<SignInUiEvent> = _eventFlow.asSharedFlow()
 
-    private val _state: MutableState<SignInState> = mutableStateOf(SignInState())
-    val state by _state
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
@@ -59,7 +57,8 @@ class SignInViewModel @Inject constructor(
 
         when (event) {
             is SignInEvent.SignInFacebook -> {
-                _state.value = state.copy(isLoading = true)
+
+                _state.update { it.copy(isLoading = true) }
                 event.context.findActivity()?.let { activity ->
                     LoginManager.getInstance().logInWithReadPermissions(activity, listOf("email", "public_profile"))
                 }
@@ -71,7 +70,7 @@ class SignInViewModel @Inject constructor(
 
             is SignInEvent.SignInDefault -> {
 
-                with(state) {
+                with(state.value) {
                     viewModelScope.launch {
                         signInWithEmailAndPassword(
                             authModel = AuthModel(
@@ -81,19 +80,16 @@ class SignInViewModel @Inject constructor(
                 }
             }
             is SignInEvent.EnteredEmail -> {
-                _state.value = state.copy(email = event.email, emailErrorMessage = "")
+                _state.update { it.copy(email = event.email, emailErrorMessage = "") }
             }
             is SignInEvent.EnteredPassword -> {
-                _state.value = state.copy(password = event.password, passwordErrorMessage = "")
-
+                _state.update { it.copy(password = event.password, passwordErrorMessage = "") }
             }
             is SignInEvent.ClearEmail -> {
-                _state.value = state.copy(email = TextFieldValue(""))
+                _state.update { it.copy(email = TextFieldValue("")) }
             }
             is SignInEvent.TogglePasswordVisibility -> {
-                _state.value =
-                    state.copy(
-                        passwordVisibility = !state.passwordVisibility)
+                _state.update { it.copy( passwordVisibility = !state.value.passwordVisibility) }
             }
 
         }
@@ -102,25 +98,25 @@ class SignInViewModel @Inject constructor(
 
     private suspend fun signInWithEmailAndPassword(authModel: AuthModel) {
 
-        kotlin.runCatching {
-            _state.value = state.copy(isLoading = true)
+        runCatching {
+            _state.update { it.copy(isLoading = true) }
             authUseCase.signInWithEmailAndPasswordUseCase(authModel)
 
         }.onSuccess { isSignedIn ->
-            _state.value = state.copy(isLoading = false)
+            _state.update { it.copy(isLoading = false) }
             if (isSignedIn) {
                 _eventFlow.emit(SignInUiEvent.RefreshEmail)
             }else{
                 _eventFlow.emit(SignInUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
             }
         }.onFailure { exception ->
-            _state.value = state.copy(isLoading = false)
+            _state.update { it.copy(isLoading = false) }
             when (exception) {
                 is AuthExceptions.EmailException -> {
-                    _state.value = state.copy(emailErrorMessage = exception.message ?: "Email is Invalid.")
+                    _state.update { it.copy(emailErrorMessage = exception.message ?: "Email is Invalid.") }
                 }
                 is AuthExceptions.PasswordException -> {
-                    _state.value = state.copy(passwordErrorMessage = exception.message ?: "Password is Invalid.")
+                    _state.update { it.copy(passwordErrorMessage = exception.message ?: "Password is Invalid.") }
                 }
                 is AuthExceptions.InternetException -> {
                     _eventFlow.emit(SignInUiEvent.ShowNoInternetScreen)
@@ -144,15 +140,16 @@ class SignInViewModel @Inject constructor(
     private fun signInWithCredential(authCredential: AuthCredential) {
         viewModelScope.launch {
             kotlin.runCatching {
-                _state.value = state.copy(isLoading = true)
+
+                _state.update { it.copy(isLoading = true) }
                 authUseCase.signInWithCredentialUseCase(authCredential)
             }.onSuccess { isSuccess ->
-                _state.value = state.copy(isLoading = false)
+                _state.update { it.copy(isLoading = false) }
                 if (isSuccess) {
                     _eventFlow.emit(SignInUiEvent.ShowMappingScreen)
                 }
             }.onFailure { exception ->
-                _state.value = state.copy(isLoading = false)
+                _state.update { it.copy(isLoading = false) }
                 when (exception) {
                     is AuthExceptions.InternetException -> {
                         _eventFlow.emit(SignInUiEvent.ShowNoInternetScreen)
@@ -173,17 +170,17 @@ class SignInViewModel @Inject constructor(
             callbackManager,
             object : FacebookCallback<LoginResult> {
                 override fun onSuccess(result: LoginResult) {
-                    _state.value = state.copy(isLoading = true)
+                    _state.update { it.copy(isLoading = true) }
                     signInWithCredential(authCredential = FacebookAuthProvider.getCredential(result.accessToken.token))
                 }
 
                 override fun onCancel() {
-                    _state.value = state.copy(isLoading = false)
+                    _state.update { it.copy(isLoading = false) }
                     Timber.e("facebook:onCancel");
                 }
 
                 override fun onError(error: FacebookException) {
-                    _state.value = state.copy(isLoading = false)
+                    _state.update { it.copy(isLoading = false) }
                     viewModelScope.launch {
                         handleFacebookSignInException(error)
                     }

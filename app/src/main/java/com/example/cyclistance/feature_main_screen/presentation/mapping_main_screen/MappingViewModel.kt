@@ -25,11 +25,11 @@ class MappingViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
+    private val _state: MutableStateFlow<MappingState> = MutableStateFlow(MappingState())
+    val state  = _state.asStateFlow()
+
     private val _eventFlow: MutableSharedFlow<MappingUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingUiEvent> = _eventFlow.asSharedFlow()
-
-    private val _state: MutableState<MappingState> = mutableStateOf(MappingState())
-    val state by _state
 
     private var locationUpdatesFlow: Job? = null
 
@@ -82,9 +82,9 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 mappingUseCase.getUserLocationUseCase().collect { userLocation ->
-                    _state.value = state.copy(
+                    _state.update { it.copy(
                         addresses = userLocation.addresses,
-                        currentLatLng = userLocation.latLng)
+                        currentLatLng = userLocation.latLng) }
                 }
             }.onFailure {
                 Timber.e("Error Location Updates: ${it.message}")
@@ -108,16 +108,16 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun postUser() {
 
-        if (state.addresses.isNotEmpty()) {
-            state.addresses.forEach { address ->
+        if (state.value.addresses.isNotEmpty()) {
+            state.value.addresses.forEach { address ->
                 runCatching {
-                    _state.value = state.copy(isLoading = true)
+                    _state.update { it.copy(isLoading = true) }
                     createUser(address)
                 }.onSuccess {
-                    _state.value = state.copy(isLoading = false, findAssistanceButtonVisible = false)
+                    _state.update { it.copy(isLoading = false, findAssistanceButtonVisible = false) }
                     _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
                 }.onFailure { exception ->
-                    _state.value = state.copy(isLoading = false)
+                    _state.update { it.copy(isLoading = false) }
                     handleException(exception)
                 }
             }
