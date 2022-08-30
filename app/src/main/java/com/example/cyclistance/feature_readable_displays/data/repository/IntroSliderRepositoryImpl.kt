@@ -3,7 +3,7 @@ package com.example.cyclistance.feature_readable_displays.data.repository
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
-import com.example.cyclistance.core.utils.ReadableDisplaysConstants.DATA_STORE_INTRO_SLIDER_KEY
+import com.example.cyclistance.core.utils.ReadableConstants.DATA_STORE_INTRO_SLIDER_KEY
 import com.example.cyclistance.feature_readable_displays.domain.repository.IntroSliderRepository
 import com.example.cyclistance.core.utils.dataStore
 import kotlinx.coroutines.flow.Flow
