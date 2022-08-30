@@ -2,7 +2,8 @@ package com.example.cyclistance.di
 
 import android.content.Context
 import com.example.cyclistance.BaseApplication
-import com.example.cyclistance.core.utils.MappingConstants.CYCLISTANCE_API_BASE_URL
+import com.example.cyclistance.BuildConfig
+import com.example.cyclistance.R
 import com.example.cyclistance.feature_main_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_main_screen.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_main_screen.domain.repository.MappingRepository
@@ -34,12 +35,13 @@ object MappingModule {
 
     @Provides
     @Singleton
-    fun provideCyclistanceApi():CyclistanceApi{
+    fun provideCyclistanceApi(@ApplicationContext context: Context): CyclistanceApi {
 
         val gson = GsonBuilder().serializeNulls().create()
 
+        val url = if (BuildConfig.DEBUG) R.string.CyclistanceApiBaseUrlLocal else R.string.CyclistanceApiBaseUrl
         return Retrofit.Builder()
-            .baseUrl(CYCLISTANCE_API_BASE_URL)
+            .baseUrl(context.getString(url))
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(CyclistanceApi::class.java)
@@ -48,13 +50,16 @@ object MappingModule {
 
     @Provides
     @Singleton
-    fun provideCyclistanceRepository(@ApplicationContext context: Context,sharedLocationManager: SharedLocationManager,api: CyclistanceApi):MappingRepository{
-        return MappingRepositoryImpl(sharedLocationManager,api, context)
+    fun provideCyclistanceRepository(
+        @ApplicationContext context: Context,
+        sharedLocationManager: SharedLocationManager,
+        api: CyclistanceApi): MappingRepository {
+        return MappingRepositoryImpl(sharedLocationManager, api, context)
     }
 
     @Provides
     @Singleton
-    fun provideMappingUseCase(repository: MappingRepository): MappingUseCase{
+    fun provideMappingUseCase(repository: MappingRepository): MappingUseCase {
         return MappingUseCase(
             getUsersUseCase = GetUsersUseCase(repository),
             getUserByIdUseCase = GetUserByIdUseCase(repository),
@@ -75,7 +80,6 @@ object MappingModule {
             getUserLocationUseCase = GetUserLocationUseCase(repository)
         )
     }
-
 
 
     @Provides

@@ -38,6 +38,8 @@ android {
             resValue("string", "FacebookLoginProtocolScheme", localProperties.getProperty("FACEBOOK_LOGIN_PROTOCOL_SCHEME"))
             resValue("string", "FacebookClientToken", localProperties.getProperty("FACEBOOK_CLIENT_TOKEN"))
             resValue("string", "DefaultWebClientId", localProperties.getProperty("DEFAULT_WEB_CLIENT_ID"))
+            resValue("string", "CyclistanceApiBaseUrl", localProperties.getProperty("CYCLISTANCE_API_BASE_URL"))
+            resValue("string", "CyclistanceApiBaseUrlLocal", localProperties.getProperty("CYCLISTANCE_API_BASE_URL_LOCAL"))
         }
         release {
             minifyEnabled true
@@ -50,6 +52,8 @@ android {
             resValue("string", "FacebookLoginProtocolScheme", localProperties.getProperty("FACEBOOK_LOGIN_PROTOCOL_SCHEME"))
             resValue("string", "FacebookClientToken", localProperties.getProperty("FACEBOOK_CLIENT_TOKEN"))
             resValue("string", "DefaultWebClientId", localProperties.getProperty("DEFAULT_WEB_CLIENT_ID"))
+            resValue("string", "CyclistanceApiBaseUrl", localProperties.getProperty("CYCLISTANCE_API_BASE_URL"))
+            resValue("string", "CyclistanceApiBaseUrlLocal", localProperties.getProperty("CYCLISTANCE_API_BASE_URL_LOCAL"))
         }
     }
 

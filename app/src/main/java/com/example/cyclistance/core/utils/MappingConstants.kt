@@ -3,7 +3,6 @@ package com.example.cyclistance.core.utils
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object MappingConstants {
-    const val CYCLISTANCE_API_BASE_URL = "https://cyclistance-app.herokuapp.com/"
     const val MAX_ZOOM_LEVEL_MAPS = 18.85
     const val MIN_ZOOM_LEVEL_MAPS = 3.00
 
