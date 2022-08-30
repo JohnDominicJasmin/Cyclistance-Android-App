@@ -1,12 +1,14 @@
-package com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components
+package com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details
 
 import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,9 +18,9 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingAdditionalMessage
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
-import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.ConfirmDetailsEvent
-import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.ConfirmDetailsUiEvent
-import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.ConfirmDetailsViewModel
+import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.AddressTextField
+import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.ButtonDescriptionDetails
+import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.DropDownBikeList
 import com.example.cyclistance.navigation.Screens
 
 import com.example.cyclistance.theme.*
@@ -31,7 +33,7 @@ fun ConfirmDetailsScreen(
     onPopBackStack: () -> Unit,
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
 
-    val state = viewModel.state
+    val state by viewModel.state.collectAsState()
     val context = LocalContext.current
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
@@ -58,11 +60,21 @@ fun ConfirmDetailsScreen(
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colors.background)) {
 
-        val (bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText) = createRefs()
+        val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText) = createRefs()
 
+        AddressTextField(
+            modifier = Modifier
+                .shadow(2.dp, shape = RoundedCornerShape(12.dp), clip = true)
+                .constrainAs(addressTextField) {
+                    top.linkTo(parent.top, margin = 15.dp)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                    width = Dimension.percent(0.9f)
+                    height = Dimension.wrapContent
+                })
         DropDownBikeList(modifier = Modifier
             .constrainAs(bikeTypeDropDownList) {
-                top.linkTo(parent.top, margin = 25.dp)
+                top.linkTo(addressTextField.bottom, margin = 10.dp)
                 end.linkTo(parent.end)
                 start.linkTo(parent.start)
                 width = Dimension.percent(0.9f)
@@ -153,11 +165,22 @@ fun ConfirmationDetailsPreview(
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colors.background)) {
 
-        val (bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText) = createRefs()
+        val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText) = createRefs()
+
+        AddressTextField(
+            modifier = Modifier
+                .shadow(2.dp, shape = RoundedCornerShape(12.dp), clip = true)
+                .constrainAs(addressTextField) {
+                    top.linkTo(parent.top, margin = 15.dp)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                    width = Dimension.percent(0.9f)
+                    height = Dimension.wrapContent
+                })
 
         DropDownBikeList(modifier = Modifier
             .constrainAs(bikeTypeDropDownList) {
-                top.linkTo(parent.top, margin = 25.dp)
+                top.linkTo(addressTextField.bottom, margin = 10.dp)
                 end.linkTo(parent.end)
                 start.linkTo(parent.start)
                 width = Dimension.percent(0.9f)

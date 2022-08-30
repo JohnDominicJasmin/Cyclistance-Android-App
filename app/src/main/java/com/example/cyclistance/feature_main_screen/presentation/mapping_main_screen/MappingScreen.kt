@@ -31,7 +31,7 @@ import com.example.cyclistance.core.utils.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.MappingConstants.MAP_ZOOM
 import com.example.cyclistance.core.utils.MappingConstants.MAX_ZOOM_LEVEL_MAPS
 import com.example.cyclistance.core.utils.MappingConstants.MIN_ZOOM_LEVEL_MAPS
-import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
+import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingUiEvent
@@ -64,7 +64,7 @@ fun MappingScreen(
     val scaffoldState =
         rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
-    val state = mappingViewModel.state
+    val state by mappingViewModel.state.collectAsState()
 
     BackHandler(enabled = true, onBack = onBackPressed)
 
@@ -201,7 +201,7 @@ fun MappingScreen(
                 })
 
             if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
-                SetupAlertDialog(
+                AlertDialog(
                     alertDialog = alertDialogState,
                     onDismissRequest = {
                         alertDialogState = AlertDialogModel()

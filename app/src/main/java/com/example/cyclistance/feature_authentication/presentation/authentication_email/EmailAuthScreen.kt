@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
-import com.example.cyclistance.feature_alert_dialog.presentation.SetupAlertDialog
+import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
@@ -46,6 +46,7 @@ fun EmailAuthScreen(
     val context = LocalContext.current
     val email = remember { mappingViewModel.getEmail() }
 
+    val emailAuthState by emailAuthViewModel.state.collectAsState()
     val intent = Intent(Intent.ACTION_MAIN).apply {
         addCategory(Intent.CATEGORY_APP_EMAIL)
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
@@ -55,7 +56,7 @@ fun EmailAuthScreen(
 
     BackHandler(enabled = true, onBack = onBackPressed)
 
-    with(emailAuthViewModel.state) {
+    with(emailAuthState) {
 
         LaunchedEffect(key1 = true) {
 
@@ -124,7 +125,7 @@ fun EmailAuthScreen(
                 EmailAuthTextStatus(email = email)
 
                 if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
-                    SetupAlertDialog(
+                    AlertDialog(
                         alertDialog = alertDialogState,
                         onDismissRequest = {
                             alertDialogState = AlertDialogModel()
@@ -167,7 +168,7 @@ fun EmailAuthScreen(
 
 }
 
-@Preview(device = Devices.NEXUS_5)
+@Preview(device = Devices.PIXEL_4)
 @Composable
 fun EmailAuthScreenPreview() {
     val state  = false
@@ -179,19 +180,18 @@ fun EmailAuthScreenPreview() {
         intent.addCategory(Intent.CATEGORY_APP_EMAIL)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             Column(
-
-                horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-                verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
-                modifier = androidx.compose.ui.Modifier
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
                     .fillMaxSize()
-                    .background(androidx.compose.material.MaterialTheme.colors.background)) {
+                    .background(MaterialTheme.colors.background)) {
 
 
                 ConstraintLayout(
-                    constraintSet = com.example.cyclistance.feature_authentication.presentation.authentication_email.components.emailAuthConstraints,
-                    modifier = androidx.compose.ui.Modifier
+                    constraintSet = emailAuthConstraints,
+                    modifier = Modifier
                         .fillMaxHeight(0.9f)
-                        .background(androidx.compose.material.MaterialTheme.colors.background)) {
+                        .background(MaterialTheme.colors.background)) {
 
 
                     Image(
@@ -207,7 +207,7 @@ fun EmailAuthScreenPreview() {
                     EmailAuthTextStatus(email = email)
 
                     if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
-                        SetupAlertDialog(
+                        AlertDialog(
                             alertDialog = alertDialogState,
                             onDismissRequest = {
                                 alertDialogState = AlertDialogModel()
