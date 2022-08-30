@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_no_internet.presentation.components
+package com.example.cyclistance.feature_no_internet.presentation
 
 import android.content.Intent
 import android.provider.Settings

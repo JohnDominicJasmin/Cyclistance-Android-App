@@ -37,7 +37,7 @@ import io.github.farhanroy.composeawesomedialog.themes.Shapes
 
 
 @Composable
-fun SetupAlertDialog(
+fun AlertDialog(
     alertDialog: AlertDialogModel,
     onDismissRequest: () -> Unit) {
 
@@ -140,7 +140,7 @@ private fun DialogHeader(modifier: Modifier, @RawRes resId: Int) {
 fun AlertDialogPreview() {
 
     CyclistanceTheme(false) {
-        SetupAlertDialog(
+        AlertDialog(
             alertDialog = AlertDialogModel(
                 title = "Success",
                 description = "Sample this is description",

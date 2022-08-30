@@ -29,8 +29,10 @@ class SharedLocationManager constructor(
         }
         location.setListener {
             if (location.hasLocationEnabled()) {
-                trySend(element = SharedLocationModel(latLng = LatLng(location.latitude, location.longitude),
-                        addresses = geocoder.getFromLocation(location.latitude,location.longitude, 1)))
+                val latitude = location.latitude
+                val longitude = location.longitude
+                trySend(element = SharedLocationModel(latLng = LatLng(latitude, longitude),
+                        addresses = geocoder.getFromLocation(latitude,longitude, 1)))
             }
         }
 
