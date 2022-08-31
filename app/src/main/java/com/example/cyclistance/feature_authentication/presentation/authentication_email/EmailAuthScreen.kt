@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.presentation.authentication_email.components
+package com.example.cyclistance.feature_authentication.presentation.authentication_email
 
 import android.content.Intent
 import android.widget.Toast
@@ -13,7 +13,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingViewModel
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
@@ -25,8 +24,10 @@ import androidx.core.content.ContextCompat.startActivity
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthResendButton
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthTextStatus
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthVerifyEmailButton
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.emailAuthConstraints
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -36,7 +37,6 @@ import timber.log.Timber
 @Composable
 fun EmailAuthScreen(
     isDarkTheme: Boolean = false,
-    onBackPressed:() -> Unit,
     mappingViewModel: MappingViewModel = hiltViewModel(),
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel(),
     navigateTo : (destination: String, popUpToDestination: String?) -> Unit) {
@@ -54,7 +54,6 @@ fun EmailAuthScreen(
 
 
 
-    BackHandler(enabled = true, onBack = onBackPressed)
 
     with(emailAuthState) {
 
