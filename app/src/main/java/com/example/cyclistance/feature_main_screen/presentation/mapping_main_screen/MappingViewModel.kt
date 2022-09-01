@@ -1,9 +1,6 @@
 package com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen
 
 import android.location.Address
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.MappingConstants.IMAGE_PLACEHOLDER_URL
@@ -139,7 +136,7 @@ class MappingViewModel @Inject constructor(
                     ))
             }
             is MappingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
-                _eventFlow.emit(MappingUiEvent.ShowSettingScreen)
+                _eventFlow.emit(MappingUiEvent.ShowEditProfileScreen)
             }
 
         }
