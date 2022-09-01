@@ -16,12 +16,14 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.cyclistance.feature_main_screen.presentation.common.MappingAdditionalMessage
+import androidx.navigation.NavController
+import com.example.cyclistance.feature_main_screen.presentation.common.AdditionalMessage
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.AddressTextField
 import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.ButtonDescriptionDetails
 import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.DropDownBikeList
 import com.example.cyclistance.navigation.Screens
+import com.example.cyclistance.navigation.navigateScreen
 
 import com.example.cyclistance.theme.*
 import kotlinx.coroutines.flow.collectLatest
@@ -30,8 +32,8 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun ConfirmDetailsScreen(
     viewModel: ConfirmDetailsViewModel = hiltViewModel(),
-    onPopBackStack: () -> Unit,
-    navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
+    paddingValues: PaddingValues,
+    navController: NavController) {
 
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
@@ -39,11 +41,11 @@ fun ConfirmDetailsScreen(
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is ConfirmDetailsUiEvent.ShowMappingScreen -> {
-                    onPopBackStack()
+                    navController.popBackStack()
                 }
 
                 is ConfirmDetailsUiEvent.ShowNoInternetScreen -> {
-                    navigateTo(Screens.NoInternetScreen.route, null)
+                    navController.navigateScreen(Screens.NoInternetScreen.route, Screens.ConfirmDetailsScreen.route)
                 }
 
                 is ConfirmDetailsUiEvent.ShowToastMessage -> {
@@ -57,6 +59,7 @@ fun ConfirmDetailsScreen(
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
+            .padding(paddingValues)
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colors.background)) {
 
@@ -102,7 +105,7 @@ fun ConfirmDetailsScreen(
                 viewModel.onEvent(event = ConfirmDetailsEvent.SelectDescription(selectedDescription))
             })
 
-        MappingAdditionalMessage(
+        AdditionalMessage(
             modifier = Modifier
                 .constrainAs(additionalMessageSection) {
                     top.linkTo(buttonDescriptionSection.bottom, margin = 15.dp)
@@ -140,7 +143,7 @@ fun ConfirmDetailsScreen(
                     width = Dimension.percent(0.9f)
                 },
             onClickCancelButton = {
-                onPopBackStack()
+                navController.popBackStack()
             },
             onClickConfirmButton = {
                 viewModel.onEvent(event = ConfirmDetailsEvent.Save)
@@ -152,10 +155,13 @@ fun ConfirmDetailsScreen(
 
 }
 
+
+
+
+@Preview
 @Composable
 fun ConfirmationDetailsPreview(
-    onPopBackStack: () -> Unit,
-    navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
+   ) {
 
     val context = LocalContext.current
 
@@ -206,7 +212,7 @@ fun ConfirmationDetailsPreview(
             onClick = { selectedDescription ->
             })
 
-        MappingAdditionalMessage(
+        AdditionalMessage(
             modifier = Modifier
                 .constrainAs(additionalMessageSection) {
                     top.linkTo(buttonDescriptionSection.bottom, margin = 15.dp)
@@ -243,7 +249,7 @@ fun ConfirmationDetailsPreview(
                     width = Dimension.percent(0.9f)
                 },
             onClickCancelButton = {
-                onPopBackStack()
+
             },
             onClickConfirmButton = {
             })
@@ -252,13 +258,7 @@ fun ConfirmationDetailsPreview(
     }
 }
 
-@Preview
-@Composable
-fun PreviewDetailsScreen() {
-    CyclistanceTheme(true) {
-        ConfirmationDetailsPreview(onPopBackStack = { /*TODO*/ }, navigateTo = { _, _ -> })
-    }
-}
+
 
 
 

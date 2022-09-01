@@ -18,7 +18,7 @@ import com.example.cyclistance.theme.Black500
 
 
 @Composable
-fun MappingAdditionalMessage(
+fun AdditionalMessage(
     modifier: Modifier,
     message: TextFieldValue,
     onValueChange: (TextFieldValue) -> Unit) {
