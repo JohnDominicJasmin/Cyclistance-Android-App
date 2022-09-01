@@ -1,8 +1,5 @@
 package com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
@@ -12,7 +9,6 @@ import com.example.cyclistance.feature_main_screen.data.remote.dto.UserAssistanc
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_main_screen.domain.model.User
 import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingUiEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -72,7 +68,6 @@ class ConfirmDetailsViewModel @Inject constructor(
         }.onSuccess {
             _state.update { it.copy(isLoading = false) }
             _eventFlow.emit(value = ConfirmDetailsUiEvent.ShowMappingScreen)
-//            todo:create rescue request
         }.onFailure { exception ->
             _state.update { it.copy(isLoading = false) }
             handleException(exception)
