@@ -1,0 +1,131 @@
+package com.example.cyclistance.navigation
+
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.runtime.*
+import androidx.lifecycle.LiveData
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthScreen
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInScreen
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpScreen
+import com.example.cyclistance.feature_main_screen.presentation.mapping_cancellation.components.components.CancellationReasonScreen
+import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.ConfirmDetailsScreen
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingScreen
+import com.example.cyclistance.feature_main_screen.presentation.mapping_rescue_request.RescueRequestScreen
+import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.IntroSliderScreen
+import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.SplashScreen
+import com.example.cyclistance.feature_settings.presentation.setting_change_password.ChangePasswordScreen
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileScreen
+import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingScreen
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+
+
+@ExperimentalPermissionsApi
+@Composable
+fun NavGraph(
+    navController: NavHostController,
+    paddingValues: PaddingValues,
+    isDarkThemeLiveData: LiveData<Boolean>,
+    isDarkThemeState: State<Boolean>,
+    onToggleTheme: () -> Unit
+
+) {
+
+    NavHost(navController = navController, startDestination = Screens.SplashScreen.route) {
+
+        composable(Screens.SplashScreen.route) {
+            SplashScreen(navController = navController, paddingValues = paddingValues)
+        }
+
+        composable(Screens.IntroSliderScreen.route) {
+            IntroSliderScreen(navController = navController, paddingValues = paddingValues)
+        }
+
+        composable(Screens.SignInScreen.route) {
+            SignInScreen(navController = navController, paddingValues = paddingValues)
+        }
+
+        composable(Screens.SignUpScreen.route) {
+            SignUpScreen(navController = navController, paddingValues = paddingValues)
+        }
+
+        composable(Screens.EmailAuthScreen.route) {
+            EmailAuthScreen(
+                isDarkTheme = isDarkThemeState.value,
+                navController = navController,
+                paddingValues = paddingValues)
+        }
+
+        composable(Screens.NoInternetScreen.route) {
+            NoInternetScreen(navController = navController)
+        }
+
+
+        composable(Screens.MappingScreen.route) {
+            MappingScreen(
+                isDarkTheme = isDarkThemeLiveData,
+                navController = navController,
+            paddingValues = paddingValues)
+        }
+
+
+        composable(Screens.CancellationScreen.route) {
+            CancellationReasonScreen(paddingValues = paddingValues)
+        }
+
+
+        composable(Screens.ConfirmDetailsScreen.route) {
+
+            ConfirmDetailsScreen(
+                navController = navController,
+                paddingValues = paddingValues)
+        }
+
+        composable(Screens.RescueRequestScreen.route) {
+            RescueRequestScreen(paddingValues = paddingValues)
+        }
+
+        composable(Screens.ChangePasswordScreen.route) {
+            ChangePasswordScreen(paddingValues = paddingValues)
+        }
+
+        composable(Screens.EditProfileScreen.route) {
+            EditProfileScreen(navController = navController, paddingValues = paddingValues)
+        }
+
+        composable(Screens.SettingScreen.route) {
+            SettingScreen(
+                isDarkTheme = isDarkThemeState.value,
+                onToggleTheme = onToggleTheme,
+                navController = navController,
+                paddingValues = paddingValues)
+
+        }
+
+    }
+}
+
+fun NavController.navigateScreenInclusively(
+    destination: String,
+    popUpToDestination: String) {
+    navigate(destination) {
+        popUpTo(popUpToDestination) {
+            inclusive = true
+        }
+        launchSingleTop = true
+    }
+
+}
+
+fun NavController.navigateScreen(destination: String, popUpToDestination: String) {
+    navigate(destination) {
+        popUpTo(popUpToDestination) {
+            saveState = true
+        }
+        launchSingleTop = true
+        restoreState = true
+    }
+}

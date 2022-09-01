@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_main_screen.components
+package com.example.cyclistance.feature_settings.presentation.setting_main_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,19 +8,27 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.R
+import com.example.cyclistance.feature_settings.presentation.setting_main_screen.components.SectionTitle
+import com.example.cyclistance.feature_settings.presentation.setting_main_screen.components.SettingSwitchButton
+import com.example.cyclistance.feature_settings.presentation.setting_main_screen.components.SettingsButtonItem
 import com.example.cyclistance.navigation.Screens
+import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun SettingScreen(
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit,
-    navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
+    paddingValues: PaddingValues,
+    navController: NavController) {
 
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(paddingValues)
             .background(MaterialTheme.colors.background),
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally) {
@@ -52,7 +60,7 @@ fun SettingScreen(
 
             SectionTitle(iconId = R.drawable.ic_baseline_person_24, title = "Account")
             SettingsButtonItem(buttonText = "Edit Profile", onClick = {
-                navigateTo(Screens.EditProfileScreen.route, null)
+                navController.navigateScreen(Screens.EditProfileScreen.route, Screens.SettingScreen.route)
             })
 
         }
@@ -85,9 +93,8 @@ fun SettingScreen(
 @Composable
 fun SettingScreenPreview() {
     CyclistanceTheme(true) {
-        SettingScreen(true,onToggleTheme = {}) { _, _ ->
-
-        }
+        val navController = rememberNavController()
+        SettingScreen(true,onToggleTheme = {}, navController = navController, paddingValues = PaddingValues())
     }
 }
 
