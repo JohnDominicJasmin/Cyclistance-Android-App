@@ -1,54 +1,36 @@
-package com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components
+package com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen
 
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.os.Build
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.findViewTreeLifecycleOwner
-
-import com.example.cyclistance.core.utils.MappingConstants.CAMERA_TILT_DEGREES
-import com.example.cyclistance.core.utils.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
-import com.example.cyclistance.core.utils.MappingConstants.DEFAULT_LATITUDE
-import com.example.cyclistance.core.utils.MappingConstants.DEFAULT_LONGITUDE
-import com.example.cyclistance.core.utils.MappingConstants.MAP_ZOOM
-import com.example.cyclistance.core.utils.MappingConstants.MAX_ZOOM_LEVEL_MAPS
-import com.example.cyclistance.core.utils.MappingConstants.MIN_ZOOM_LEVEL_MAPS
-import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
-import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingEvent
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingUiEvent
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingViewModel
-import com.example.cyclistance.navigation.Screens
+import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.ConnectionStatus
 import com.example.cyclistance.core.utils.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
+import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
+import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.*
+import com.example.cyclistance.navigation.Screens
+import com.example.cyclistance.navigation.navigateScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.mapbox.mapboxsdk.camera.CameraPosition
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
-import com.mapbox.mapboxsdk.geometry.LatLng
-import com.mapbox.mapboxsdk.maps.MapView
-import com.mapbox.mapboxsdk.maps.Style
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -57,16 +39,12 @@ import timber.log.Timber
 fun MappingScreen(
     isDarkTheme: LiveData<Boolean>,
     mappingViewModel: MappingViewModel = hiltViewModel(),
-    onBackPressed: () -> Unit,
-    navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
+    paddingValues: PaddingValues,
+    navController: NavController) {
 
 
-    val scaffoldState =
-        rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
-    val coroutineScope = rememberCoroutineScope()
     val state by mappingViewModel.state.collectAsState()
 
-    BackHandler(enabled = true, onBack = onBackPressed)
 
     val locationPermissionsState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         rememberMultiplePermissionsState(
@@ -133,60 +111,21 @@ fun MappingScreen(
                     )
                 }
                 is MappingUiEvent.ShowNoInternetScreen -> {
-                    navigateTo(Screens.NoInternetScreen.route, null)
+                    navController.navigateScreen(Screens.NoInternetScreen.route, Screens.MappingScreen.route)
                 }
                 is MappingUiEvent.ShowConfirmDetailsScreen -> {
-                    navigateTo(Screens.ConfirmDetailsScreen.route, null)
+                    navController.navigateScreen(Screens.ConfirmDetailsScreen.route, Screens.MappingScreen.route)
                 }
-                is MappingUiEvent.ShowSettingScreen -> {
-                    navigateTo(Screens.EditProfileScreen.route, null)
+                is MappingUiEvent.ShowEditProfileScreen -> {
+                    navController.navigateScreen(Screens.EditProfileScreen.route, Screens.MappingScreen.route)
                 }
                 is MappingUiEvent.ShowSignInScreen -> {
-                    navigateTo(Screens.SignInScreen.route, Screens.MappingScreen.route)
+                    navController.navigateScreen(Screens.SignInScreen.route, Screens.MappingScreen.route)
                 }
             }
         }
     }
 
-
-
-
-//todo: add snackbarHost, fab button values, topbar, just use all the parameter values.
-    Scaffold(
-        drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
-        scaffoldState = scaffoldState,
-        topBar = {
-            TopAppBar(
-                elevation = 10.dp,
-                title = { DefaultTitleTopAppBar() },
-                backgroundColor = MaterialTheme.colors.background,
-                navigationIcon = {
-                    IconButton(onClick = {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.open()
-                        }
-                    }) {
-                        Icon(
-                            Icons.Filled.Menu,
-                            contentDescription = "",
-                            tint = MaterialTheme.colors.onBackground)
-                    }
-                })
-        },
-        drawerContent = {
-            MappingDrawerContent(
-                onSettingsItemClick = {
-                    navigateTo(Screens.SettingScreen.route, null)
-                },
-                onChatItemClick = {
-                    /*  todo: open chat screen here   */
-                },
-                onSignOutItemClick = {
-                    mappingViewModel.onEvent(event = MappingEvent.SignOut)
-                }
-            )
-        },
-        content = {
 
             RequestMultiplePermissions(
                 multiplePermissionsState = locationPermissionsState, onPermissionGranted = {
@@ -209,7 +148,7 @@ fun MappingScreen(
             }
 
 
-            ConstraintLayout {
+            ConstraintLayout(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
 
                 val (mapScreen, searchButton, circularProgressbar) = createRefs()
 
@@ -229,6 +168,7 @@ fun MappingScreen(
                         start.linkTo(parent.start)
                         height = Dimension.value(45.dp)
                     }, onClick = {
+
                         if (locationPermissionsState.allPermissionsGranted) {
                             mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates).also {
                                 postProfile()
@@ -256,65 +196,13 @@ fun MappingScreen(
                 }
 
             }
-        })
+
 
 }
 
-@Composable
-fun SearchAssistanceButton(onClick: () -> Unit, modifier: Modifier) {
-    Button(
-        onClick = onClick,
-        shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
-        modifier = modifier) {
-        Text(
-            text = "Search for Assistance",
-            color = MaterialTheme.colors.onPrimary,
-            style = MaterialTheme.typography.button,
-            modifier = Modifier.padding(
-                top = 4.dp,
-                bottom = 4.dp,
-                start = 12.dp,
-                end = 12.dp)
-        )
-    }
-}
 
-@Composable
-fun MapScreen(isDarkTheme: LiveData<Boolean>, modifier: Modifier) {
 
-    AndroidView(
-        modifier = modifier,
-        factory = { context ->
 
-            MapView(context).apply {
-
-                this.getMapAsync { mapboxMap ->
-                    with(mapboxMap) {
-                        this@apply.findViewTreeLifecycleOwner()?.let { lifeCycleOwner ->
-                            isDarkTheme.observe(lifeCycleOwner) { darkTheme ->
-                                setStyle(if (darkTheme) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY)
-                            }
-                        }
-                        uiSettings.isAttributionEnabled = false
-                        uiSettings.isLogoEnabled = false
-                        setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
-                        setMinZoomPreference(MIN_ZOOM_LEVEL_MAPS)
-                        animateCamera(
-                            CameraUpdateFactory.newCameraPosition(
-                                CameraPosition.Builder()
-                                    .target(LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE))
-                                    .zoom(MAP_ZOOM)
-                                    .tilt(CAMERA_TILT_DEGREES)
-                                    .build()), DEFAULT_CAMERA_ANIMATION_DURATION)
-                    }
-
-                }
-
-            }
-        }
-    )
-}
 
 
 
