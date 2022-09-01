@@ -29,13 +29,11 @@ import com.example.cyclistance.core.utils.ConnectionStatus
 @Composable
 fun NoInternetScreen(
     isDarkTheme: Boolean = false,
-    onBackPressed: () -> Unit,
     navigateTo: () -> Unit,
 ) {
 
     val context = LocalContext.current
 
-    BackHandler(enabled = true, onBack = onBackPressed)
 
 
     Column(
@@ -165,7 +163,7 @@ fun NoInternetScreen(
 fun NoInternetScreenPreview() {
     val isDarkTheme = true
     CyclistanceTheme(isDarkTheme) {
-        NoInternetScreen(onBackPressed = {  }, isDarkTheme = isDarkTheme) {
+        NoInternetScreen(isDarkTheme = isDarkTheme) {
 
         }
     }

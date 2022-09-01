@@ -52,7 +52,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SignInScreen(
-    onBackPressed: () -> Unit,
     signInViewModel: SignInViewModel = hiltViewModel(),
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel(),
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
@@ -63,7 +62,6 @@ fun SignInScreen(
 
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
-    BackHandler(enabled = true, onBack = onBackPressed)
     val authResultLauncher = rememberLauncherForActivityResult(contract = AuthResult()) { task ->
         try {
             val account: GoogleSignInAccount? = task?.getResult(ApiException::class.java)

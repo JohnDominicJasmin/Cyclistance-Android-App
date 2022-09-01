@@ -29,13 +29,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun IntroSliderScreen(
     introSliderViewModel: IntroSliderViewModel = hiltViewModel(),
-    onBackPressed: () -> Unit,
     navigateTo: (destination: String, popUpToDestination: String?) -> Unit,) {
 
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
 
-    BackHandler(enabled = true, onBack = onBackPressed)
 
 
     Column(
@@ -80,7 +78,7 @@ fun IntroSliderScreen(
 @Composable
 fun IntroSliderScreenPreview() {
     CyclistanceTheme(false) {
-        IntroSliderScreen(onBackPressed = {  }, navigateTo = {_,_->})
+        IntroSliderScreen( navigateTo = {_,_->})
     }
 
 }
