@@ -1,7 +1,9 @@
-package com.example.cyclistance.feature_settings.presentation.setting_change_password.components
+package com.example.cyclistance.feature_settings.presentation.setting_change_password
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
@@ -12,13 +14,15 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.feature_settings.presentation.setting_change_password.components.PasswordTextFieldArea
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun ChangePasswordScreen() {
+fun ChangePasswordScreen(paddingValues: PaddingValues) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
+            .padding(paddingValues)
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colors.background)) {
 
@@ -55,6 +59,6 @@ fun ChangePasswordScreen() {
 @Composable
 fun ChangePasswordPreview() {
     CyclistanceTheme(false) {
-        ChangePasswordScreen()
+        ChangePasswordScreen(paddingValues = PaddingValues())
     }
 }

@@ -4,9 +4,7 @@ package com.example.cyclistance.feature_readable_displays.presentation.intro_sli
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -15,10 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderButtons
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderItem
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.introSliderConstraints
 import com.example.cyclistance.navigation.Screens
+import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
@@ -29,7 +29,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun IntroSliderScreen(
     introSliderViewModel: IntroSliderViewModel = hiltViewModel(),
-    navigateTo: (destination: String, popUpToDestination: String?) -> Unit,) {
+    paddingValues: PaddingValues,
+    navController: NavController) {
 
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
@@ -41,6 +42,7 @@ fun IntroSliderScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier
             .fillMaxSize()
+            .padding(paddingValues)
             .background(MaterialTheme.colors.background)) {
         ConstraintLayout(
             constraintSet = introSliderConstraints,
@@ -56,7 +58,7 @@ fun IntroSliderScreen(
 
                 onClickSkipButton = {
                     introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
-                    navigateTo(Screens.SignInScreen.route, Screens.IntroSliderScreen.route)
+                    navController.navigateScreenInclusively(Screens.SignInScreen.route, Screens.IntroSliderScreen.route)
                 },
                 onClickNextButton = {
                     if (pagerState.currentPage != 2) {
@@ -67,21 +69,13 @@ fun IntroSliderScreen(
                         }
                     } else {
                         introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
-                        navigateTo(Screens.SignInScreen.route, Screens.IntroSliderScreen.route)
+                        navController.navigateScreenInclusively(Screens.SignInScreen.route, Screens.IntroSliderScreen.route)
                     }
                 })
         }
     }
 }
 
-@Preview
-@Composable
-fun IntroSliderScreenPreview() {
-    CyclistanceTheme(false) {
-        IntroSliderScreen( navigateTo = {_,_->})
-    }
-
-}
 
 
 

@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_main_screen.presentation.mapping_rescue_request.components
+package com.example.cyclistance.feature_main_screen.presentation.mapping_rescue_request
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -8,7 +8,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,6 +16,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_main_screen.domain.model.CardModel
+import com.example.cyclistance.feature_main_screen.presentation.mapping_rescue_request.components.RequestItem
 import com.example.cyclistance.theme.CyclistanceTheme
 
 val sampleCardState = listOf(
@@ -63,9 +63,10 @@ val sampleCardState = listOf(
  )
 
 @Composable
-fun RescueRequestScreen() {
+fun RescueRequestScreen(paddingValues: PaddingValues) {
     ConstraintLayout(modifier = Modifier
         .fillMaxSize()
+        .padding(paddingValues)
         .background(MaterialTheme.colors.background)) {
 
         val (items, titleText ) = createRefs()
@@ -114,6 +115,6 @@ fun RescueRequestScreen() {
 @Composable
 fun PreviewRescueRequest() {
     CyclistanceTheme(true) {
-        RescueRequestScreen()
+        RescueRequestScreen(paddingValues = PaddingValues())
     }
 }

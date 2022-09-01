@@ -1,14 +1,14 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in
 
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,31 +17,26 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
-
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
-import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.domain.util.AuthResult
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.*
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.navigation.Screens
+import com.example.cyclistance.navigation.navigateScreen
+import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
@@ -54,7 +49,8 @@ import kotlinx.coroutines.launch
 fun SignInScreen(
     signInViewModel: SignInViewModel = hiltViewModel(),
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel(),
-    navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
+    paddingValues: PaddingValues,
+    navController: NavController) {
 
     val scope = rememberCoroutineScope()
     val signInStateValue by signInViewModel.state.collectAsState()
@@ -100,7 +96,7 @@ fun SignInScreen(
                     emailAuthViewModel.onEvent(EmailAuthEvent.RefreshEmail)
                 }
                 is SignInUiEvent.ShowNoInternetScreen -> {
-                    navigateTo(Screens.NoInternetScreen.route, null)
+                    navController.navigateScreen(Screens.NoInternetScreen.route, Screens.SignInScreen.route)
                 }
                 is SignInUiEvent.ShowAlertDialog -> {
                     alertDialogState = AlertDialogModel(
@@ -109,7 +105,7 @@ fun SignInScreen(
                         icon = signInEvent.imageResId)
                 }
                 is SignInUiEvent.ShowMappingScreen -> {
-                    navigateTo(Screens.MappingScreen.route, Screens.SignInScreen.route)
+                    navController.navigateScreenInclusively(Screens.MappingScreen.route, Screens.SignInScreen.route)
                 }
                 is SignInUiEvent.ShowToastMessage -> {
                     Toast.makeText(context, signInEvent.message, Toast.LENGTH_SHORT).show()
@@ -125,17 +121,17 @@ fun SignInScreen(
         emailAuthViewModel.eventFlow.collectLatest { emailAuthEvent ->
             when (emailAuthEvent) {
                 is EmailAuthUiEvent.ShowNoInternetScreen -> {
-                    navigateTo(Screens.NoInternetScreen.route, null)
+                    navController.navigateScreen(Screens.NoInternetScreen.route, Screens.SignInScreen.route)
                 }
 
                 is EmailAuthUiEvent.ShowMappingScreen -> {
-                    navigateTo(Screens.MappingScreen.route, Screens.SignInScreen.route)
+                    navController.navigateScreenInclusively(Screens.MappingScreen.route, Screens.SignInScreen.route)
                 }
                 is EmailAuthUiEvent.ShowToastMessage -> {
                     Toast.makeText(context, emailAuthEvent.message, Toast.LENGTH_SHORT).show()
                 }
                 is EmailAuthUiEvent.ShowEmailAuthScreen -> {
-                    navigateTo(Screens.EmailAuthScreen.route, Screens.SignInScreen.route)
+                    navController.navigateScreenInclusively(Screens.EmailAuthScreen.route, Screens.SignInScreen.route)
                 }
                 else -> {}
             }
@@ -148,6 +144,7 @@ fun SignInScreen(
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
+            .padding(paddingValues)
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colors.background)) {
 
@@ -208,7 +205,7 @@ fun SignInScreen(
 
 
             SignInClickableText(onClick = {
-                navigateTo(Screens.SignUpScreen.route, null)
+                navController.navigateScreen(Screens.SignUpScreen.route, Screens.SignInScreen.route)
             })
 
             if (signInStateValue.isLoading || emailAuthStateValue.isLoading) {

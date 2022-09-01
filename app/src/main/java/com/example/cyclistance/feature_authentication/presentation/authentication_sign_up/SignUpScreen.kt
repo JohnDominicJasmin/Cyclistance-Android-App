@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
@@ -29,6 +30,8 @@ import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.*
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingViewModel
+import com.example.cyclistance.navigation.navigateScreen
+import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.flow.collectLatest
 
@@ -36,7 +39,8 @@ import kotlinx.coroutines.flow.collectLatest
 fun SignUpScreen(
     signUpViewModel: SignUpViewModel = hiltViewModel(),
     mappingViewModel: MappingViewModel = hiltViewModel(),
-    navigateTo : (destination: String, popUpToDestination: String?) -> Unit) {
+    paddingValues: PaddingValues,
+    navController: NavController) {
 
     val signUpStateValue by signUpViewModel.state.collectAsState()
     val focusManager = LocalFocusManager.current
@@ -55,13 +59,15 @@ fun SignUpScreen(
         }
 
 
-        LaunchedEffect(key1 = true){
+        LaunchedEffect(key1 = true) {
             signUpStateValue.focusRequester.requestFocus()
-            signUpViewModel.eventFlow.collectLatest{ event ->
+            signUpViewModel.eventFlow.collectLatest { event ->
 
-                when(event){
+                when (event) {
                     is SignUpUiEvent.ShowNoInternetScreen -> {
-                        navigateTo(Screens.NoInternetScreen.route, null)
+                        navController.navigateScreen(
+                            Screens.NoInternetScreen.route,
+                            Screens.SignUpScreen.route)
                     }
                     is SignUpUiEvent.ShowAlertDialog -> {
                         alertDialogState = AlertDialogModel(
@@ -70,7 +76,10 @@ fun SignUpScreen(
                             icon = event.imageResId)
                     }
                     is SignUpUiEvent.ShowEmailAuthScreen -> {
-                        navigateTo(Screens.EmailAuthScreen.route, Screens.SignUpScreen.route)
+                        navController.navigateScreenInclusively(
+                            Screens.EmailAuthScreen.route,
+                            Screens.SignUpScreen.route)
+
                     }
                     is SignUpUiEvent.ShowToastMessage -> {
                         Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
@@ -88,6 +97,7 @@ fun SignUpScreen(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
                 .background(MaterialTheme.colors.background)) {
             Spacer(modifier = Modifier.weight(0.04f, fill = true))
@@ -136,7 +146,9 @@ fun SignUpScreen(
                 })
 
                 SignUpClickableText() {
-                    navigateTo(Screens.SignInScreen.route, Screens.SignUpScreen.route)
+                    navController.navigateScreenInclusively(
+                        Screens.SignInScreen.route,
+                        Screens.SignUpScreen.route)
                 }
 
                 if (isLoading) {

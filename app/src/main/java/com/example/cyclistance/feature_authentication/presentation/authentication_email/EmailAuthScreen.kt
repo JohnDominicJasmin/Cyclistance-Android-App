@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
+import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
@@ -30,6 +31,8 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.emailAuthConstraints
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.navigation.Screens
+import com.example.cyclistance.navigation.navigateScreen
+import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
@@ -39,7 +42,8 @@ fun EmailAuthScreen(
     isDarkTheme: Boolean = false,
     mappingViewModel: MappingViewModel = hiltViewModel(),
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel(),
-    navigateTo : (destination: String, popUpToDestination: String?) -> Unit) {
+    paddingValues: PaddingValues,
+    navController: NavController) {
 
 
     var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
@@ -68,7 +72,7 @@ fun EmailAuthScreen(
 
                     when (event) {
                         is EmailAuthUiEvent.ShowNoInternetScreen -> {
-                            navigateTo(Screens.NoInternetScreen.route, null)
+                            navController.navigateScreen(Screens.NoInternetScreen.route,Screens.EmailAuthScreen.route)
                         }
                         is EmailAuthUiEvent.ShowAlertDialog -> {
                             alertDialogState = AlertDialogModel(
@@ -77,7 +81,7 @@ fun EmailAuthScreen(
                                 icon = event.imageResId)
                         }
                         is EmailAuthUiEvent.ShowMappingScreen -> {
-                            navigateTo(Screens.MappingScreen.route, Screens.EmailAuthScreen.route)
+                            navController.navigateScreenInclusively(Screens.MappingScreen.route, Screens.EmailAuthScreen.route)
                         }
                         is EmailAuthUiEvent.ShowToastMessage -> {
                             Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
@@ -102,6 +106,7 @@ fun EmailAuthScreen(
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues)
                 .background(MaterialTheme.colors.background)) {
 
 

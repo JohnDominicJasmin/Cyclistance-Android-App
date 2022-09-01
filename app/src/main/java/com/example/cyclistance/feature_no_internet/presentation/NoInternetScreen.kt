@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_no_internet.presentation
 
 import android.content.Intent
 import android.provider.Settings
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,6 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.R
 import com.example.cyclistance.theme.Black300
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -29,7 +30,7 @@ import com.example.cyclistance.core.utils.ConnectionStatus
 @Composable
 fun NoInternetScreen(
     isDarkTheme: Boolean = false,
-    navigateTo: () -> Unit,
+    navController: NavController,
 ) {
 
     val context = LocalContext.current
@@ -99,7 +100,7 @@ fun NoInternetScreen(
                 shape = RoundedCornerShape(12.dp),
                 onClick = {
                     if (ConnectionStatus.hasInternetConnection(context)) {
-                        navigateTo()
+                        navController.popBackStack()
                     }
                 },
                 modifier = Modifier
@@ -162,9 +163,8 @@ fun NoInternetScreen(
 @Composable
 fun NoInternetScreenPreview() {
     val isDarkTheme = true
+    val navController = rememberNavController()
     CyclistanceTheme(isDarkTheme) {
-        NoInternetScreen(isDarkTheme = isDarkTheme) {
-
-        }
+        NoInternetScreen(isDarkTheme = isDarkTheme, navController = navController)
     }
 }

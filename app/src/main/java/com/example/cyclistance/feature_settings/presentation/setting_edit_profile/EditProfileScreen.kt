@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components
+package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
 
 import android.Manifest
 import android.app.Activity
@@ -24,12 +24,13 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.MappingConstants.NONE_OF_THE_ABOVE_RESULT_CODE
 import com.example.cyclistance.core.utils.MappingConstants.NO_SIM_CARD_RESULT_CODE
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileEvent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileUiEvent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.SelectImageBottomSheet
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.TextFieldInputArea
 import com.example.cyclistance.theme.*
 import com.google.accompanist.permissions.*
 import com.google.android.gms.auth.api.credentials.Credential
@@ -43,8 +44,9 @@ import kotlinx.coroutines.launch
 @Composable
 fun EditProfileScreen(
     editProfileViewModel: EditProfileViewModel = hiltViewModel(),
-    onPopBackStack: () -> Unit,
-    navigateTo: (destination: String, popUpToDestination: String?) -> Unit) {
+    navController: NavController,
+    paddingValues: PaddingValues
+    ) {
 
     val state = editProfileViewModel.state
 
@@ -167,7 +169,7 @@ fun EditProfileScreen(
         editProfileViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is EditProfileUiEvent.ShowMappingScreen -> {
-                    onPopBackStack()
+                    navController.popBackStack()
                 }
                 is EditProfileUiEvent.ShowToastMessage -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
@@ -210,6 +212,7 @@ fun EditProfileScreen(
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues)
                 .background(MaterialTheme.colors.background)) {
 
 
@@ -272,7 +275,7 @@ fun EditProfileScreen(
                 },
                 positiveButtonText = "Save",
                 onClickCancelButton = {
-                    onPopBackStack()
+                    navController.popBackStack()
                 },
                 onClickConfirmButton = {
                     editProfileViewModel.onEvent(event = EditProfileEvent.Save)

@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_main_screen.presentation.mapping_rescue_request.components
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_main_screen.domain.model.CardModel
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.feature_main_screen.presentation.mapping_rescue_request.sampleCardState
 import com.example.cyclistance.theme.*
 
 
