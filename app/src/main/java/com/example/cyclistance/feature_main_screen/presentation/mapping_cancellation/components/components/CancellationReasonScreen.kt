@@ -12,17 +12,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.cyclistance.feature_main_screen.presentation.common.MappingAdditionalMessage
+import com.example.cyclistance.feature_main_screen.presentation.common.AdditionalMessage
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_main_screen.presentation.mapping_cancellation.components.RadioButtonsSection
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
 @Composable
-fun CancellationReasonScreen() {
+fun CancellationReasonScreen(paddingValues: PaddingValues) {
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
+            .padding(paddingValues)
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colors.background)) {
 
@@ -38,7 +39,7 @@ fun CancellationReasonScreen() {
             height = Dimension.wrapContent
         })
 
-        MappingAdditionalMessage(
+        AdditionalMessage(
             modifier = Modifier
                 .constrainAs(additionalMessageSection) {
                     top.linkTo(radioButtonsSection.bottom, margin = 15.dp)
@@ -81,7 +82,7 @@ fun CancellationReasonScreen() {
 @Composable
 fun CancellationReasonPreview() {
     CyclistanceTheme(true) {
-        CancellationReasonScreen()
+        CancellationReasonScreen(paddingValues = PaddingValues())
     }
 }
 
