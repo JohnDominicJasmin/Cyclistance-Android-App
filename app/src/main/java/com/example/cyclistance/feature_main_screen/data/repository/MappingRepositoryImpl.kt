@@ -1,8 +1,11 @@
 package com.example.cyclistance.feature_main_screen.data.repository
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.core.utils.MappingConstants.BIKE_TYPE_KEY
 import com.example.cyclistance.feature_main_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toUser
@@ -11,7 +14,6 @@ import com.example.cyclistance.feature_main_screen.domain.model.*
 import com.example.cyclistance.feature_main_screen.domain.repository.MappingRepository
 import com.example.cyclistance.core.utils.SharedLocationManager
 import com.example.cyclistance.core.utils.SharedLocationModel
-import com.example.cyclistance.core.utils.dataStore
 import com.example.cyclistance.feature_main_screen.data.remote.dto.UserDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -21,7 +23,7 @@ import retrofit2.HttpException
 import timber.log.Timber
 import java.io.IOException
 
-
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
 class MappingRepositoryImpl(
     private val sharedLocationManager: SharedLocationManager,
     private val api: CyclistanceApi,
@@ -30,7 +32,8 @@ class MappingRepositoryImpl(
     private var dataStore = context.dataStore
 
 
-    override fun getPreference(): Flow<String?> {
+
+    override fun getBikeType(): Flow<String?> {
         return dataStore.data.catch { exception ->
             if (exception is IOException) {
                 emit(emptyPreferences())
@@ -42,9 +45,9 @@ class MappingRepositoryImpl(
         }
     }
 
-    override suspend fun updatePreference(value: String?) {
+    override suspend fun updateBikeType(bikeType: String) {
         dataStore.edit { preferences ->
-            preferences[BIKE_TYPE_KEY] = value!!
+            preferences[BIKE_TYPE_KEY] = bikeType
         }
     }
 

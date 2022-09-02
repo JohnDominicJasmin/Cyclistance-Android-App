@@ -1,10 +1,9 @@
 package com.example.cyclistance.feature_authentication.domain.repository
 
 import android.net.Uri
-import com.example.cyclistance.core.utils.SavePreferences
 import kotlinx.coroutines.flow.Flow
 
-interface AuthRepository<T>:SavePreferences<String> {
+interface AuthRepository<T> {
     suspend fun reloadEmail(): Boolean
     fun signOut()
     fun getEmail(): String?
@@ -21,4 +20,6 @@ interface AuthRepository<T>:SavePreferences<String> {
     suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean
     suspend fun signInWithCredentials(v: T): Boolean
     suspend fun updateProfilePicture(photoUri: Uri?, name: String?): Boolean
-    }
+    suspend fun updatePhoneNumber(name: String)
+    fun getPhoneNumber(): Flow<String>
+}

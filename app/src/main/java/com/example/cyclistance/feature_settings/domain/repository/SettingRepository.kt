@@ -2,10 +2,11 @@ package com.example.cyclistance.feature_settings.domain.repository
 
 import android.graphics.Bitmap
 import android.net.Uri
-import com.example.cyclistance.core.utils.SavePreferences
 import kotlinx.coroutines.flow.Flow
 
-interface SettingRepository:SavePreferences<Boolean> {
+interface SettingRepository {
 
     suspend fun saveImageToGallery(bitmap: Bitmap):Uri?
+    suspend fun toggleTheme(value: Boolean)
+    fun isDarkTheme(): Flow<Boolean>
 }
