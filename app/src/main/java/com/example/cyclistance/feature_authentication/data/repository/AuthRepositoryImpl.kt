@@ -10,8 +10,8 @@ import com.example.cyclistance.core.utils.AuthConstants.FACEBOOK_CONNECTION_FAIL
 import com.example.cyclistance.core.utils.AuthConstants.USER_NOT_FOUND
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
+import com.example.cyclistance.feature_main_screen.data.repository.dataStore
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
-import com.example.cyclistance.core.utils.dataStore
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
@@ -189,18 +189,6 @@ class AuthRepositoryImpl @Inject constructor(
         return FirebaseAuth.getInstance().currentUser?.displayName
     }
 
-    override fun getPreference(): Flow<String> {
-        return dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                Timber.e(message = exception.localizedMessage ?: "Unexpected error occurred.")
-            }
-        }.map { preference ->
-            preference[DATA_STORE_PHONE_NUMBER_KEY]
-            ?: throw MappingExceptions.PhoneNumberException()
-        }
-    }
 
 
     override fun getPhotoUrl(): String {
@@ -225,11 +213,7 @@ class AuthRepositoryImpl @Inject constructor(
         return FirebaseAuth.getInstance().currentUser != null
     }
 
-    override suspend fun updatePreference(value: String) {
-        dataStore.edit { preferences ->
-            preferences[DATA_STORE_PHONE_NUMBER_KEY] = value
-        }
-    }
+
 
 
     override suspend fun updateProfilePicture(photoUri: Uri?, name: String?): Boolean {
@@ -247,5 +231,22 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
+    override suspend fun updatePhoneNumber(name: String) {
+        dataStore.edit { preferences ->
+            preferences[DATA_STORE_PHONE_NUMBER_KEY] = name
+        }
+    }
 
+    override fun getPhoneNumber(): Flow<String> {
+        return dataStore.data.catch { exception ->
+            if (exception is IOException) {
+                emit(emptyPreferences())
+            } else {
+                Timber.e(message = exception.localizedMessage ?: "Unexpected error occurred.")
+            }
+        }.map { preference ->
+            preference[DATA_STORE_PHONE_NUMBER_KEY]
+            ?: throw MappingExceptions.PhoneNumberException()
+        }
+    }
 }

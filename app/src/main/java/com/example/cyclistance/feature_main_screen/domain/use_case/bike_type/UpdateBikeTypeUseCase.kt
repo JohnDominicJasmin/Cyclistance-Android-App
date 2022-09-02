@@ -9,6 +9,6 @@ class UpdateBikeTypeUseCase(private val repository: MappingRepository) {
         if(value!!.isEmpty()){
             throw MappingExceptions.BikeTypeException()
         }
-        repository.updatePreference(value)
+        repository.updateBikeType(value)
     }
 }

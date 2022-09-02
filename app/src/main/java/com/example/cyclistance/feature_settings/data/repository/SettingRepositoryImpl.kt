@@ -14,8 +14,8 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.core.utils.SettingConstants.DATA_STORE_THEME_KEY
+import com.example.cyclistance.feature_main_screen.data.repository.dataStore
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
-import com.example.cyclistance.core.utils.dataStore
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.io.File
@@ -28,7 +28,13 @@ class SettingRepositoryImpl(val context: Context, private val contentValues: Con
     private var dataStore = context.dataStore
 
 
-    override fun getPreference(): Flow<Boolean> {
+    override suspend fun toggleTheme(value: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[DATA_STORE_THEME_KEY] = value
+        }
+    }
+
+    override fun isDarkTheme(): Flow<Boolean> {
         return dataStore.data.catch { exception ->
             if (exception is IOException) {
                 emit(emptyPreferences())
@@ -39,13 +45,6 @@ class SettingRepositoryImpl(val context: Context, private val contentValues: Con
             preference[DATA_STORE_THEME_KEY] ?: false
         }
     }
-
-    override suspend fun updatePreference(value: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[DATA_STORE_THEME_KEY] = value
-        }
-    }
-
 
 
     override suspend fun saveImageToGallery(bitmap: Bitmap): Uri? {
