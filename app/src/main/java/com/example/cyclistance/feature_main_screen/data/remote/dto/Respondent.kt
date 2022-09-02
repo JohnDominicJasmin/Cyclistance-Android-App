@@ -2,10 +2,14 @@ package com.example.cyclistance.feature_main_screen.data.remote.dto
 
 
 import com.google.gson.annotations.SerializedName
+import androidx.annotation.Keep
 
+@Keep
 data class Respondent(
+    @SerializedName("cancellation")
+    val cancellation: Cancellation = Cancellation(),
     @SerializedName("client_id")
-    val clientId: String,
+    val clientId: String = "",
     @SerializedName("request_accepted")
-    val requestAccepted: Boolean
+    val requestAccepted: Boolean = false
 )

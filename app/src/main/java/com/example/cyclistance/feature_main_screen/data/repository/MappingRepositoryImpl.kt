@@ -5,18 +5,14 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import com.example.cyclistance.core.utils.MappingConstants.BIKE_TYPE_KEY
 import com.example.cyclistance.feature_main_screen.data.CyclistanceApi
-import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toCancellationEvent
-import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toRescueRequest
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toUser
-import com.example.cyclistance.feature_main_screen.data.remote.dto.CancellationEventDto
-import com.example.cyclistance.feature_main_screen.data.remote.dto.RescueRequestDto
-import com.example.cyclistance.feature_main_screen.data.remote.dto.UserDto
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_main_screen.domain.model.*
 import com.example.cyclistance.feature_main_screen.domain.repository.MappingRepository
 import com.example.cyclistance.core.utils.SharedLocationManager
 import com.example.cyclistance.core.utils.SharedLocationModel
 import com.example.cyclistance.core.utils.dataStore
+import com.example.cyclistance.feature_main_screen.data.remote.dto.UserDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -79,8 +75,8 @@ class MappingRepositoryImpl(
                         userNeededHelp = this.userNeededHelp,
                         userAssistance = this.userAssistance,
                         profilePictureUrl = this.profilePictureUrl ?: return@handleException,
-                        contactNumber = this.contactNumber ?: return@handleException
-
+                        contactNumber = this.contactNumber ?: return@handleException,
+                        rescueRequest = this.rescueRequest
                     ))
             }
         }
@@ -109,74 +105,6 @@ class MappingRepositoryImpl(
             api.deleteUser(id)
         }
 
-
-    override suspend fun getRescueRequest(eventId: String): RescueRequest =
-        handleException {
-            api.getRescueRequest(eventId).toRescueRequest()
-        }
-
-    override suspend fun createRescueRequest(rescueRequest: RescueRequest) =
-        handleException {
-            with(rescueRequest) {
-                api.createRescueRequest(
-                    rescueRequestDto = RescueRequestDto(
-                        rescueEventId = this.rescueEventId,
-                        respondents = this.respondents
-                    )
-                )
-            }
-        }
-
-    override suspend fun updateRescueRequest(eventId: String, rescueRequest: RescueRequest) =
-        handleException {
-            with(rescueRequest) {
-                api.updateRescueRequest(
-                    eventId = eventId,
-                    rescueRequestDto = RescueRequestDto(
-                        rescueEventId = this.rescueEventId,
-                        respondents = this.respondents
-                    )
-                )
-            }
-        }
-
-    override suspend fun deleteRescueRequest(id: String) =
-        handleException { api.deleteRescueRequest(id) }
-
-    override suspend fun getCancellationById(userId: String, clientId: String): CancellationEvent =
-        handleException { api.getCancellationById(userId, clientId).toCancellationEvent() }
-
-    override suspend fun createCancellationEvent(cancellationEvent: CancellationEvent) =
-        handleException {
-            with(cancellationEvent) {
-                api.createCancellationEvent(
-                    cancellationEventDto = CancellationEventDto(
-                        cancellationReasons = this.cancellationReasons,
-                        clientId = this.clientId,
-                        id = this.id
-                    ))
-            }
-        }
-
-    override suspend fun updateCancellationEvent(
-        itemId: String,
-        cancellationEvent: CancellationEvent) =
-
-        handleException {
-            with(cancellationEvent) {
-                api.updateCancellationEvent(
-                    itemId = itemId,
-                    cancellationEventDto = CancellationEventDto(
-                        cancellationReasons = this.cancellationReasons,
-                        clientId = this.clientId,
-                        id = this.id
-                    ))
-            }
-        }
-
-
-    override suspend fun deleteCancellationEvent(id: String) =
-        handleException { api.deleteCancellationEvent(id) }
 
 }
 
