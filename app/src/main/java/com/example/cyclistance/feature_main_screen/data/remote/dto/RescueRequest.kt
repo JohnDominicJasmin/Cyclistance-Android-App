@@ -2,10 +2,10 @@ package com.example.cyclistance.feature_main_screen.data.remote.dto
 
 
 import com.google.gson.annotations.SerializedName
+import androidx.annotation.Keep
 
-data class RescueRequestDto(
-    @SerializedName("rescue_event_id")
-    val rescueEventId: String,
+@Keep
+data class RescueRequest(
     @SerializedName("respondents")
-    val respondents: List<Respondent>
+    val respondents: List<Respondent> = emptyList()
 )

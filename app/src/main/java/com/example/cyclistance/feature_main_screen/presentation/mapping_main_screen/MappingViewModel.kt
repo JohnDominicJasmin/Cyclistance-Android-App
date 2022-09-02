@@ -23,7 +23,7 @@ class MappingViewModel @Inject constructor(
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(MappingState())
-    val state  = _state.asStateFlow()
+    val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<MappingUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingUiEvent> = _eventFlow.asSharedFlow()
@@ -47,15 +47,12 @@ class MappingViewModel @Inject constructor(
     }
 
 
-
-
-
-    fun onEvent(event: MappingEvent){
-        when(event){
+    fun onEvent(event: MappingEvent) {
+        when (event) {
 
             is MappingEvent.UploadProfile -> {
                 viewModelScope.launch {
-                    postUser()
+                    uploadUserProfile()
                 }
             }
 
@@ -79,9 +76,11 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 mappingUseCase.getUserLocationUseCase().collect { userLocation ->
-                    _state.update { it.copy(
-                        addresses = userLocation.addresses,
-                        currentLatLng = userLocation.latLng) }
+                    _state.update {
+                        it.copy(
+                            addresses = userLocation.addresses,
+                            currentLatLng = userLocation.latLng)
+                    }
                 }
             }.onFailure {
                 Timber.e("Error Location Updates: ${it.message}")
@@ -103,7 +102,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun postUser() {
+    private suspend fun uploadUserProfile() {
 
         if (state.value.addresses.isNotEmpty()) {
             state.value.addresses.forEach { address ->
@@ -111,7 +110,11 @@ class MappingViewModel @Inject constructor(
                     _state.update { it.copy(isLoading = true) }
                     createUser(address)
                 }.onSuccess {
-                    _state.update { it.copy(isLoading = false, findAssistanceButtonVisible = false) }
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            findAssistanceButtonVisible = false)
+                    }
                     _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
                 }.onFailure { exception ->
                     _state.update { it.copy(isLoading = false) }
@@ -124,7 +127,8 @@ class MappingViewModel @Inject constructor(
 
 
     }
-    private suspend fun handleException(exception: Throwable){
+
+    private suspend fun handleException(exception: Throwable) {
         when (exception) {
             is MappingExceptions.NoInternetException -> {
                 _eventFlow.emit(MappingUiEvent.ShowNoInternetScreen)
@@ -147,14 +151,15 @@ class MappingViewModel @Inject constructor(
         with(address) {
             mappingUseCase.createUserUseCase(
                 user = User(
-                    address = "$subThoroughfare $thoroughfare., $locality, $subAdminArea",
                     id = getId() ?: return,
+                    name = getName().ifEmpty { throw MappingExceptions.NameException() },
+                    address = "$subThoroughfare $thoroughfare., $locality, $subAdminArea",
+                    profilePictureUrl = getPhotoUrl(),
+                    contactNumber = getPhoneNumber(),
                     location = Location(
                         lat = latitude.toString(),
                         lng = longitude.toString()),
-                    name = getName().ifEmpty { throw MappingExceptions.NameException() },
-                    profilePictureUrl = getPhotoUrl(),
-                    contactNumber = getPhoneNumber()
+                    userNeededHelp = false,
                 ))
         }
     }

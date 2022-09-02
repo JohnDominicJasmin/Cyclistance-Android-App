@@ -13,16 +13,6 @@ interface MappingRepository:SavePreferences<String?> {
     suspend fun deleteUser(id: String)
 
 
-    suspend fun getRescueRequest(eventId: String): RescueRequest
-    suspend fun createRescueRequest(rescueRequest: RescueRequest)
-    suspend fun updateRescueRequest(eventId: String, rescueRequest: RescueRequest)
-    suspend fun deleteRescueRequest(id: String)
-
-
-    suspend fun getCancellationById(userId: String, clientId: String): CancellationEvent
-    suspend fun createCancellationEvent(cancellationEvent: CancellationEvent)
-    suspend fun updateCancellationEvent(itemId: String, cancellationEvent: CancellationEvent)
-    suspend fun deleteCancellationEvent(id: String)
 
 
     fun getUserLocation(): Flow<SharedLocationModel>
