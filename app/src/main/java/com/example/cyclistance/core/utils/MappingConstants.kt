@@ -17,4 +17,5 @@ object MappingConstants {
     const val NONE_OF_THE_ABOVE_RESULT_CODE = 1001
     const val LOCATION_UPDATES_INTERVAL: Long = 5000
     val BIKE_TYPE_KEY = stringPreferencesKey("bike_type")
+    val ADDRESS_KEY = stringPreferencesKey("address")
 }

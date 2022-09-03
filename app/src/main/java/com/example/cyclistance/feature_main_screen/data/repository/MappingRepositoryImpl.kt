@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.cyclistance.core.utils.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.MappingConstants.BIKE_TYPE_KEY
 import com.example.cyclistance.feature_main_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toUser
@@ -20,10 +21,10 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
-import timber.log.Timber
 import java.io.IOException
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
+
 class MappingRepositoryImpl(
     private val sharedLocationManager: SharedLocationManager,
     private val api: CyclistanceApi,
@@ -32,23 +33,20 @@ class MappingRepositoryImpl(
     private var dataStore = context.dataStore
 
 
-
     override fun getBikeType(): Flow<String?> {
-        return dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                Timber.e(message = exception.localizedMessage ?: "Unexpected error occurred.")
-            }
-        }.map { preference ->
-            preference[BIKE_TYPE_KEY]
-        }
+        return dataStore.getData(BIKE_TYPE_KEY)
     }
 
     override suspend fun updateBikeType(bikeType: String) {
-        dataStore.edit { preferences ->
-            preferences[BIKE_TYPE_KEY] = bikeType
-        }
+        dataStore.editData(BIKE_TYPE_KEY, bikeType)
+    }
+
+    override fun getAddress(): Flow<String?> {
+        return dataStore.getData(ADDRESS_KEY)
+    }
+
+    override suspend fun updateAddress(address: String) {
+        dataStore.editData(ADDRESS_KEY, address)
     }
 
     override fun getUserLocation(): Flow<SharedLocationModel> {
@@ -110,6 +108,32 @@ class MappingRepositoryImpl(
 
 
 }
+
+
+
+inline fun <reified T> DataStore<Preferences>.getData(
+    key: Preferences.Key<T>,
+): Flow<T?> {
+    return data.catch { exception ->
+        if (exception is IOException) {
+            emit(emptyPreferences())
+        } else {
+            throw exception
+        }
+    }.map { preferences ->
+        preferences[key]
+    }
+}
+
+suspend inline fun <reified T> DataStore<Preferences>.editData(
+    key: Preferences.Key<T>,
+    value: T
+) {
+    edit { preferences ->
+        preferences[key] = value
+    }
+}
+
 
 private suspend fun <T> handleException(action: suspend () -> T): T {
     return try {

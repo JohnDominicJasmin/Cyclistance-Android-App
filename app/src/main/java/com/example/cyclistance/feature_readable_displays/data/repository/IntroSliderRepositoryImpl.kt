@@ -1,40 +1,25 @@
 package com.example.cyclistance.feature_readable_displays.data.repository
 
 import android.content.Context
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
 import com.example.cyclistance.core.utils.ReadableConstants.DATA_STORE_INTRO_SLIDER_KEY
 import com.example.cyclistance.feature_readable_displays.domain.repository.IntroSliderRepository
 import com.example.cyclistance.feature_main_screen.data.repository.dataStore
+import com.example.cyclistance.feature_main_screen.data.repository.getData
+import com.example.cyclistance.feature_main_screen.data.repository.editData
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
-import okio.IOException
-import timber.log.Timber
 
 
 class IntroSliderRepositoryImpl(context: Context) : IntroSliderRepository {
     private var dataStore = context.dataStore
 
 
-    override fun userCompletedWalkThrough(): Flow<Boolean> {
-        return dataStore.data.catch { exception ->
+    override fun userCompletedWalkThrough(): Flow<Boolean?> {
+        return dataStore.getData(DATA_STORE_INTRO_SLIDER_KEY)
 
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                Timber.e(message = exception.localizedMessage ?: "Unexpected error occurred.")
-            }
-
-        }.map { preference ->
-            preference[DATA_STORE_INTRO_SLIDER_KEY] ?: false
-        }
     }
 
     override suspend fun setUserCompletedWalkThrough() {
-        dataStore.edit { preferences ->
-            preferences[DATA_STORE_INTRO_SLIDER_KEY] = true
-        }
+        dataStore.editData(DATA_STORE_INTRO_SLIDER_KEY, true)
     }
 
 

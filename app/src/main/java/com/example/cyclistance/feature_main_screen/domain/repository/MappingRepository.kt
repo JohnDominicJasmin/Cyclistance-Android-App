@@ -14,6 +14,8 @@ interface MappingRepository {
     fun getBikeType(): Flow<String?>
     suspend fun updateBikeType(bikeType: String)
 
+    fun getAddress(): Flow<String?>
+    suspend fun updateAddress(address: String)
 
 
     fun getUserLocation(): Flow<SharedLocationModel>

@@ -40,7 +40,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private suspend fun getPhoneNumber(): String = authUseCase.getPhoneNumberUseCase()
+    private suspend fun getPhoneNumber(): String? = authUseCase.getPhoneNumberUseCase()
     private fun getPhotoUrl(): String {
         return authUseCase.getPhotoUrlUseCase()?.toString()
                ?: IMAGE_PLACEHOLDER_URL
@@ -128,7 +128,7 @@ class MappingViewModel @Inject constructor(
 
     }
 
-    private suspend fun handleException(exception: Throwable) {
+    private suspend inline fun handleException(exception: Throwable) {
         when (exception) {
             is MappingExceptions.NoInternetException -> {
                 _eventFlow.emit(MappingUiEvent.ShowNoInternetScreen)
@@ -147,7 +147,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private suspend fun createUser(address: Address) {
+    private suspend inline fun createUser(address: Address) {
         with(address) {
             mappingUseCase.createUserUseCase(
                 user = User(
@@ -155,7 +155,7 @@ class MappingViewModel @Inject constructor(
                     name = getName().ifEmpty { throw MappingExceptions.NameException() },
                     address = "$subThoroughfare $thoroughfare., $locality, $subAdminArea",
                     profilePictureUrl = getPhotoUrl(),
-                    contactNumber = getPhoneNumber(),
+                    contactNumber = getPhoneNumber() ?: return,
                     location = Location(
                         lat = latitude.toString(),
                         lng = longitude.toString()),

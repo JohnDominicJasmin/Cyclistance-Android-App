@@ -43,7 +43,7 @@ class EditProfileViewModel @Inject constructor(
                ?: IMAGE_PLACEHOLDER_URL
     }
 
-    private suspend fun getPhoneNumber() = authUseCase.getPhoneNumberUseCase()
+    private suspend fun getPhoneNumber(): String = authUseCase.getPhoneNumberUseCase() ?: ""
 
 
     init {

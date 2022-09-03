@@ -37,7 +37,7 @@ import timber.log.Timber
 @ExperimentalPermissionsApi
 @Composable
 fun MappingScreen(
-    isDarkTheme: LiveData<Boolean>,
+    isDarkTheme: LiveData<Boolean?>,
     mappingViewModel: MappingViewModel = hiltViewModel(),
     paddingValues: PaddingValues,
     navController: NavController) {
