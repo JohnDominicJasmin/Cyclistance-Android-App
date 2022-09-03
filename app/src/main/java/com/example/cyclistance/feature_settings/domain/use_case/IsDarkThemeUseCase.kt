@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 class IsDarkThemeUseCase(
     private val settingRepository: SettingRepository){
 
-    operator fun invoke(): Flow<Boolean> {
+    operator fun invoke(): Flow<Boolean?> {
         return settingRepository.isDarkTheme()
     }
 

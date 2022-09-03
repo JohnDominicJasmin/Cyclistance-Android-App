@@ -15,6 +15,8 @@ import androidx.datastore.preferences.core.emptyPreferences
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.core.utils.SettingConstants.DATA_STORE_THEME_KEY
 import com.example.cyclistance.feature_main_screen.data.repository.dataStore
+import com.example.cyclistance.feature_main_screen.data.repository.editData
+import com.example.cyclistance.feature_main_screen.data.repository.getData
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
@@ -29,27 +31,14 @@ class SettingRepositoryImpl(val context: Context, private val contentValues: Con
 
 
     override suspend fun toggleTheme(value: Boolean) {
-        dataStore.edit { preferences ->
-            preferences[DATA_STORE_THEME_KEY] = value
-        }
+        dataStore.editData(DATA_STORE_THEME_KEY, value)
     }
 
-    override fun isDarkTheme(): Flow<Boolean> {
-        return dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                Timber.e(message = exception.localizedMessage ?: "Unexpected error occurred.")
-            }
-        }.map { preference ->
-            preference[DATA_STORE_THEME_KEY] ?: false
-        }
+    override fun isDarkTheme(): Flow<Boolean?> {
+        return dataStore.getData(DATA_STORE_THEME_KEY)
     }
-
 
     override suspend fun saveImageToGallery(bitmap: Bitmap): Uri? {
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             return modernSaveUri(bitmap)
         }

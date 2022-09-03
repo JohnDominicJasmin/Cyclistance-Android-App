@@ -13,7 +13,7 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.Style
 
 @Composable
-fun MapScreen(isDarkTheme: LiveData<Boolean>, modifier: Modifier) {
+fun MapScreen(isDarkTheme: LiveData<Boolean?>, modifier: Modifier) {
 
     AndroidView(
         modifier = modifier,
@@ -25,7 +25,7 @@ fun MapScreen(isDarkTheme: LiveData<Boolean>, modifier: Modifier) {
                     with(mapboxMap) {
                         this@apply.findViewTreeLifecycleOwner()?.let { lifeCycleOwner ->
                             isDarkTheme.observe(lifeCycleOwner) { darkTheme ->
-                                setStyle(if (darkTheme) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY)
+                                setStyle(if (darkTheme == true) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY)
                             }
                         }
                         uiSettings.isAttributionEnabled = false

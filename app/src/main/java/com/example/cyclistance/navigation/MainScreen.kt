@@ -38,7 +38,7 @@ fun MainScreen(
 
     val navController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val isDarkThemeLiveData: LiveData<Boolean> = settingViewModel.isDarkTheme
+    val isDarkThemeLiveData: LiveData<Boolean?> = settingViewModel.isDarkTheme
     val isDarkThemeState = isDarkThemeLiveData.observeAsState(initial = isSystemInDarkTheme())
     val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
@@ -67,7 +67,7 @@ fun MainScreen(
     }
 
 
-    CyclistanceTheme(darkTheme = isDarkThemeState.value) {
+    CyclistanceTheme(darkTheme = isDarkThemeState.value == true) {
 
         Scaffold(
             drawerGesturesEnabled = scaffoldState.drawerState.isOpen,

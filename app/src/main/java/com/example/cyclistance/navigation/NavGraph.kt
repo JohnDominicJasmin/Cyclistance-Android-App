@@ -28,8 +28,8 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 fun NavGraph(
     navController: NavHostController,
     paddingValues: PaddingValues,
-    isDarkThemeLiveData: LiveData<Boolean>,
-    isDarkThemeState: State<Boolean>,
+    isDarkThemeLiveData: LiveData<Boolean?>,
+    isDarkThemeState: State<Boolean?>,
     onToggleTheme: () -> Unit
 
 ) {
@@ -54,7 +54,7 @@ fun NavGraph(
 
         composable(Screens.EmailAuthScreen.route) {
             EmailAuthScreen(
-                isDarkTheme = isDarkThemeState.value,
+                isDarkTheme = isDarkThemeState.value == true,
                 navController = navController,
                 paddingValues = paddingValues)
         }
@@ -98,7 +98,7 @@ fun NavGraph(
 
         composable(Screens.SettingScreen.route) {
             SettingScreen(
-                isDarkTheme = isDarkThemeState.value,
+                isDarkTheme = isDarkThemeState.value == true,
                 onToggleTheme = onToggleTheme,
                 navController = navController,
                 paddingValues = paddingValues)

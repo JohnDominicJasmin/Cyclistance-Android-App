@@ -2,8 +2,6 @@ package com.example.cyclistance.feature_authentication.data.repository
 
 import android.content.Context
 import android.net.Uri
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.AuthConstants.DATA_STORE_PHONE_NUMBER_KEY
 import com.example.cyclistance.core.utils.AuthConstants.FACEBOOK_CONNECTION_FAILURE
@@ -11,7 +9,8 @@ import com.example.cyclistance.core.utils.AuthConstants.USER_NOT_FOUND
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_main_screen.data.repository.dataStore
-import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_main_screen.data.repository.getData
+import com.example.cyclistance.feature_main_screen.data.repository.editData
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
@@ -19,11 +18,7 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
-import timber.log.Timber
-import java.io.IOException
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -70,8 +65,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun sendEmailVerification(): Boolean {
         return suspendCoroutine { continuation ->
-            FirebaseAuth.getInstance().currentUser?.sendEmailVerification()
-                ?.addOnCompleteListener { sendEmail ->
+            FirebaseAuth.getInstance().currentUser?.sendEmailVerification()?.addOnCompleteListener { sendEmail ->
                     sendEmail.exception?.let {
                         continuation.resumeWithException(
                             AuthExceptions.EmailVerificationException(
@@ -85,8 +79,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean {
 
         return suspendCoroutine { continuation ->
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.trim(), password.trim())
-                .addOnCompleteListener { createAccount ->
+            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.trim(), password.trim()).addOnCompleteListener { createAccount ->
                     createAccount.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
                             continuation.resumeWithException(
@@ -232,21 +225,11 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override suspend fun updatePhoneNumber(name: String) {
-        dataStore.edit { preferences ->
-            preferences[DATA_STORE_PHONE_NUMBER_KEY] = name
-        }
+        dataStore.editData(DATA_STORE_PHONE_NUMBER_KEY, name)
     }
 
-    override fun getPhoneNumber(): Flow<String> {
-        return dataStore.data.catch { exception ->
-            if (exception is IOException) {
-                emit(emptyPreferences())
-            } else {
-                Timber.e(message = exception.localizedMessage ?: "Unexpected error occurred.")
-            }
-        }.map { preference ->
-            preference[DATA_STORE_PHONE_NUMBER_KEY]
-            ?: throw MappingExceptions.PhoneNumberException()
-        }
+    override fun getPhoneNumber(): Flow<String?> {
+        return dataStore.getData(DATA_STORE_PHONE_NUMBER_KEY)
     }
+
 }
