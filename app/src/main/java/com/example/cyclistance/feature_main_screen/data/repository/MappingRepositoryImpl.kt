@@ -111,7 +111,7 @@ class MappingRepositoryImpl(
 
 
 
-inline fun <reified T> DataStore<Preferences>.getData(
+fun <T> DataStore<Preferences>.getData(
     key: Preferences.Key<T>,
 ): Flow<T?> {
     return data.catch { exception ->
@@ -125,7 +125,7 @@ inline fun <reified T> DataStore<Preferences>.getData(
     }
 }
 
-suspend inline fun <reified T> DataStore<Preferences>.editData(
+suspend fun <T> DataStore<Preferences>.editData(
     key: Preferences.Key<T>,
     value: T
 ) {
