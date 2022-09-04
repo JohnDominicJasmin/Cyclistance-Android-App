@@ -135,7 +135,7 @@ suspend fun <T> DataStore<Preferences>.editData(
 }
 
 
-private suspend fun <T> handleException(action: suspend () -> T): T {
+private inline fun <T> handleException(action: () -> T): T {
     return try {
         action()
     } catch (e: HttpException) {
