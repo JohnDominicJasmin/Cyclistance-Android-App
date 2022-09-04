@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_email.components
 
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -25,7 +24,8 @@ fun EmailAuthVerifyEmailButton(onClick: () -> Unit) {
         onClick = onClick,
         modifier = Modifier
             .height(50.dp)
-            .width(220.dp)
+            .widthIn(max = 650.dp)
+            .fillMaxWidth(0.73f)
             .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)
             .layoutId(AuthenticationConstraintsItem.VerifyEmailButton.layoutId),
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
