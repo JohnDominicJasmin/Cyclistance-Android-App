@@ -1,9 +1,12 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_email
 
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
+
 
 data class EmailAuthState(
-    var secondsLeft: Int = 0,
-    var isTimerRunning: Boolean = false,
-    var isEmailResendClicked: Boolean = false,
-    var isLoading: Boolean = false
+    val secondsLeft: Int = 0,
+    val isTimerRunning: Boolean = false,
+    val isEmailResendClicked: Boolean = false,
+    val isLoading: Boolean = false,
+    val alertDialogModel: AlertDialogModel = AlertDialogModel()
     )
