@@ -20,17 +20,20 @@ class SettingViewModel @Inject constructor(
     fun onEvent(event: SettingEvent) {
         when (event) {
             is SettingEvent.ToggleTheme -> {
-                viewModelScope.launch {
-                    runCatching {
-                        settingUseCase.toggleThemeUseCase()
-                    }.onFailure { exception ->
-                        Timber.e(exception.message)
-                    }
-                }
+                toggleTheme()
             }
         }
 
     }
 
+    private fun toggleTheme() {
+        viewModelScope.launch {
+            kotlin.runCatching {
+                settingUseCase.toggleThemeUseCase()
+            }.onFailure { exception ->
+                Timber.e(exception.message)
+            }
+        }
+    }
 
 }
