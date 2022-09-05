@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
+import timber.log.Timber
 import java.io.IOException
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
@@ -139,8 +140,9 @@ private inline fun <T> handleException(action: () -> T): T {
     return try {
         action()
     } catch (e: HttpException) {
-        throw MappingExceptions.UnexpectedErrorException()
+        throw MappingExceptions.UnexpectedErrorException(message = e.message())
     } catch (e: IOException) {
+        Timber.e("Exception is ${e.message}")
         throw MappingExceptions.NoInternetException()
     }
 }

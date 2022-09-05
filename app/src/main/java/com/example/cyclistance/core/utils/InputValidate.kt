@@ -20,11 +20,11 @@ object InputValidate {
 
     fun isEmailValid(email: String) = Patterns.EMAIL_ADDRESS.matcher(email).matches()
     fun isPasswordStrong(password: String): Boolean {
-        return isNumberOfCharactersLongEnough(password) &&
+        return isPasswordLongEnough(password) &&
                (containsNumeric(password) ||
                 containsSpecialCharacters(password))
     }
 
-     private fun isNumberOfCharactersLongEnough(password:String) =
+     private fun isPasswordLongEnough(password:String) =
          password.toCharArray().size >= AuthConstants.PASSWORD_MINIMUM_NUMBER_OF_CHARACTERS
 }
