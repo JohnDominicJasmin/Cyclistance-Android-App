@@ -32,18 +32,18 @@ class MappingViewModel @Inject constructor(
 
 
     fun getEmail(): String = authUseCase.getEmailUseCase() ?: ""
+
     private fun getId(): String? = authUseCase.getIdUseCase()
 
-    private fun getName(): String = authUseCase.getNameUseCase() ?: getEmail().apply {
-        val index = this.indexOf('@')
-        return this.substring(0, index)
-    }
+    private fun getName(): String = authUseCase.getNameUseCase().takeIf { !it.isNullOrEmpty() }
+                                    ?: throw MappingExceptions.NameException()
 
+    private suspend fun getPhoneNumber(): String =
+        authUseCase.getPhoneNumberUseCase().takeIf { !it.isNullOrEmpty() }
+        ?:  throw MappingExceptions.PhoneNumberException()
 
-    private suspend fun getPhoneNumber(): String? = authUseCase.getPhoneNumberUseCase()
     private fun getPhotoUrl(): String {
-        return authUseCase.getPhotoUrlUseCase()?.toString()
-               ?: IMAGE_PLACEHOLDER_URL
+        return authUseCase.getPhotoUrlUseCase() ?: IMAGE_PLACEHOLDER_URL
     }
 
 
@@ -153,10 +153,10 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.createUserUseCase(
                 user = User(
                     id = getId() ?: return,
-                    name = getName().ifEmpty { throw MappingExceptions.NameException() },
+                    name = getName(),
                     address = userAddress,
                     profilePictureUrl = getPhotoUrl(),
-                    contactNumber = getPhoneNumber() ?: return,
+                    contactNumber = getPhoneNumber(),
                     location = Location(
                         lat = latitude.toString(),
                         lng = longitude.toString()),

@@ -41,11 +41,12 @@ class EditProfileViewModel @Inject constructor(
                ?: IMAGE_PLACEHOLDER_URL
     }
 
-    private suspend fun getPhoneNumber(): String = authUseCase.getPhoneNumberUseCase() ?: ""
+    private suspend fun getPhoneNumber(): String =
+        authUseCase.getPhoneNumberUseCase() ?: throw MappingExceptions.PhoneNumberException()
 
 
     init {
-        onEvent(event = EditProfileEvent.LoadName) //todo: fix this not working
+        onEvent(event = EditProfileEvent.LoadName)
         onEvent(event = EditProfileEvent.LoadPhoto)
         onEvent(event = EditProfileEvent.LoadPhoneNumber)
     }
@@ -142,10 +143,10 @@ class EditProfileViewModel @Inject constructor(
                 )
             }.onSuccess {
                 _state.value = state.copy(isLoading = false)
-            }.onFailure {
+            }.onFailure { exception ->
                 _state.value = state.copy(
                     isLoading = false,
-                    phoneNumberErrorMessage = "Field cannot be blank."
+                    phoneNumberErrorMessage = exception.message!!
                 )
             }
         }
