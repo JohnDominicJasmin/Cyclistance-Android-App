@@ -149,11 +149,12 @@ class MappingViewModel @Inject constructor(
 
     private suspend inline fun createUser(address: Address) {
         with(address) {
+            val userAddress = "$subThoroughfare $thoroughfare., $locality, $subAdminArea"
             mappingUseCase.createUserUseCase(
                 user = User(
                     id = getId() ?: return,
                     name = getName().ifEmpty { throw MappingExceptions.NameException() },
-                    address = "$subThoroughfare $thoroughfare., $locality, $subAdminArea",
+                    address = userAddress,
                     profilePictureUrl = getPhotoUrl(),
                     contactNumber = getPhoneNumber() ?: return,
                     location = Location(
@@ -161,6 +162,8 @@ class MappingViewModel @Inject constructor(
                         lng = longitude.toString()),
                     userNeededHelp = false,
                 ))
+
+            mappingUseCase.updateAddressUseCase(userAddress)
         }
     }
 

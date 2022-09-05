@@ -17,13 +17,12 @@ import com.example.cyclistance.feature_authentication.presentation.common.textFi
 import com.example.cyclistance.theme.Black500
 
 @Composable
-fun AddressTextField(modifier: Modifier) {
+fun AddressTextField(modifier: Modifier, address: String, onValueChange: (String) -> Unit) {
 
-    var address by remember { mutableStateOf("Manila Philippines") }
 
     TextField(
         value = address,
-        onValueChange = { address = it },
+        onValueChange = onValueChange,
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
         label = {
