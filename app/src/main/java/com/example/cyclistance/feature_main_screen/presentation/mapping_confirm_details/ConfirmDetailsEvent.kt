@@ -7,6 +7,7 @@ sealed class ConfirmDetailsEvent{
     data class SelectBikeType(val bikeType: String): ConfirmDetailsEvent()
     data class SelectDescription(val description: String): ConfirmDetailsEvent()
     data class EnteredMessage(val message: TextFieldValue): ConfirmDetailsEvent()
+    data class EnteredAddress(val address: String): ConfirmDetailsEvent()
 
 
 }

@@ -7,6 +7,7 @@ data class ConfirmDetailsState(
     val bikeTypeErrorMessage: String = "",
     val description: String = "",
     val descriptionErrorMessage: String = "",
+    val address: String = "",
     val message: TextFieldValue = TextFieldValue(),
     val isLoading: Boolean = false,
 )

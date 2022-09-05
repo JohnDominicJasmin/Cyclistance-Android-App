@@ -74,7 +74,12 @@ fun ConfirmDetailsScreen(
                     start.linkTo(parent.start)
                     width = Dimension.percent(0.9f)
                     height = Dimension.wrapContent
-                })
+                },
+            address = state.address,
+            onValueChange = { address ->
+                viewModel.onEvent(event = ConfirmDetailsEvent.EnteredAddress(address = address))
+            }
+        )
         DropDownBikeList(modifier = Modifier
             .constrainAs(bikeTypeDropDownList) {
                 top.linkTo(addressTextField.bottom, margin = 10.dp)
@@ -182,7 +187,12 @@ fun ConfirmationDetailsPreview(
                     start.linkTo(parent.start)
                     width = Dimension.percent(0.9f)
                     height = Dimension.wrapContent
-                })
+                },
+            address = "Address",
+            onValueChange = {
+
+            }
+        )
 
         DropDownBikeList(modifier = Modifier
             .constrainAs(bikeTypeDropDownList) {
