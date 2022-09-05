@@ -20,6 +20,6 @@ interface AuthRepository<T> {
     suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean
     suspend fun signInWithCredentials(v: T): Boolean
     suspend fun updateProfilePicture(photoUri: Uri?, name: String?): Boolean
-    suspend fun updatePhoneNumber(name: String)
+    suspend fun updatePhoneNumber(phoneNumber: String)
     fun getPhoneNumber(): Flow<String?>
 }

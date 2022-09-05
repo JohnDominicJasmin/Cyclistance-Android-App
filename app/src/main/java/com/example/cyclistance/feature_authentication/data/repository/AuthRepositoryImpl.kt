@@ -224,8 +224,8 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun updatePhoneNumber(name: String) {
-        dataStore.editData(DATA_STORE_PHONE_NUMBER_KEY, name)
+    override suspend fun updatePhoneNumber(phoneNumber: String) {
+        dataStore.editData(DATA_STORE_PHONE_NUMBER_KEY, phoneNumber)
     }
 
     override fun getPhoneNumber(): Flow<String?> {
