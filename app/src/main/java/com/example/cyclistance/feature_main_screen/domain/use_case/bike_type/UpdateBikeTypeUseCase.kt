@@ -4,11 +4,11 @@ import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExce
 import com.example.cyclistance.feature_main_screen.domain.repository.MappingRepository
 
 class UpdateBikeTypeUseCase(private val repository: MappingRepository) {
-    suspend operator fun invoke(value: String?){
+    suspend operator fun invoke(bikeType: String?){
 
-        if(value!!.isEmpty()){
+        if(bikeType!!.isEmpty()){
             throw MappingExceptions.BikeTypeException()
         }
-        repository.updateBikeType(value)
+        repository.updateBikeType(bikeType)
     }
 }

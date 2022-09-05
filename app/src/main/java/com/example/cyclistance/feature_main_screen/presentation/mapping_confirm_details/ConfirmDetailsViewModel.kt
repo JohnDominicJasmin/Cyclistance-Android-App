@@ -22,22 +22,23 @@ class ConfirmDetailsViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
-    private val _state: MutableStateFlow<ConfirmDetailsState> = MutableStateFlow(ConfirmDetailsState())
+    private val _state: MutableStateFlow<ConfirmDetailsState> =
+        MutableStateFlow(ConfirmDetailsState())
     val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<ConfirmDetailsUiEvent> = MutableSharedFlow()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private fun getId():String? = authUseCase.getIdUseCase()
+    private fun getId(): String? = authUseCase.getIdUseCase()
 
 
-    init{
+    init {
         getAddress()
         getBikeType()
     }
 
 
-    private fun getBikeType(){
+    private fun getBikeType() {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 mappingUseCase.getBikeTypeUseCase().first()
@@ -49,7 +50,7 @@ class ConfirmDetailsViewModel @Inject constructor(
         }
     }
 
-    private fun getAddress(){
+    private fun getAddress() {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 mappingUseCase.getAddressUseCase().first()
@@ -62,30 +63,34 @@ class ConfirmDetailsViewModel @Inject constructor(
     }
 
     fun onEvent(event: ConfirmDetailsEvent) {
-            when (event) {
-                is ConfirmDetailsEvent.Save -> {
-                    viewModelScope.launch {
-                        updateUser(state.value)
-                    }
+        when (event) {
+            is ConfirmDetailsEvent.Save -> {
+                viewModelScope.launch {
+                    updateUser(state.value)
                 }
-                is ConfirmDetailsEvent.EnteredAddress -> {
-                    _state.update { it.copy(address = event.address) }
+            }
+            is ConfirmDetailsEvent.EnteredAddress -> {
+                _state.update { it.copy(address = event.address) }
+            }
+            is ConfirmDetailsEvent.SelectBikeType -> {
+                _state.update { it.copy(bikeType = event.bikeType, bikeTypeErrorMessage = "") }
+            }
+            is ConfirmDetailsEvent.EnteredMessage -> {
+                _state.update { it.copy(message = event.message) }
+            }
+            is ConfirmDetailsEvent.SelectDescription -> {
+                _state.update {
+                    it.copy(
+                        description = event.description,
+                        descriptionErrorMessage = "")
                 }
-                is ConfirmDetailsEvent.SelectBikeType -> {
-                    _state.update { it.copy(bikeType = event.bikeType, bikeTypeErrorMessage = "") }
-                }
-                is ConfirmDetailsEvent.EnteredMessage -> {
-                    _state.update { it.copy(message = event.message) }
-                }
-                is ConfirmDetailsEvent.SelectDescription -> {
-                    _state.update { it.copy(description = event.description, descriptionErrorMessage = "") }
-                }
+            }
 
         }
     }
 
 
-    private suspend fun updateUser(confirmDetailsState: ConfirmDetailsState){
+    private suspend fun updateUser(confirmDetailsState: ConfirmDetailsState) {
         runCatching {
             _state.update { it.copy(isLoading = true) }
             mappingUseCase.updateUserUseCase(
@@ -100,19 +105,25 @@ class ConfirmDetailsViewModel @Inject constructor(
                             message = confirmDetailsState.message.text),
                         status = Status(started = true)
                     )
-                ))
+                )).also {
+
+                mappingUseCase.updateAddressUseCase(address = confirmDetailsState.address)
+                mappingUseCase.updateBikeTypeUseCase(bikeType = confirmDetailsState.bikeType)
+            }
+
+
         }.onSuccess {
             _state.update { it.copy(isLoading = false) }
             _eventFlow.emit(value = ConfirmDetailsUiEvent.ShowMappingScreen)
-                //todo: show mapping screen and bottomSheet
+            //todo: show mapping screen and bottomSheet
         }.onFailure { exception ->
             _state.update { it.copy(isLoading = false) }
             handleException(exception)
         }
     }
 
-    private suspend fun handleException(exception: Throwable){
-        when(exception){
+    private suspend fun handleException(exception: Throwable) {
+        when (exception) {
             is MappingExceptions.UnexpectedErrorException -> {
                 _eventFlow.emit(
                     ConfirmDetailsUiEvent.ShowToastMessage(
