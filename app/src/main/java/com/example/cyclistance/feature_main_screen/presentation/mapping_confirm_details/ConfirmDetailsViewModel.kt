@@ -10,8 +10,10 @@ import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExce
 import com.example.cyclistance.feature_main_screen.domain.model.User
 import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -28,13 +30,46 @@ class ConfirmDetailsViewModel @Inject constructor(
 
     private fun getId():String? = authUseCase.getIdUseCase()
 
-    //todo: load saved bike type from data store
+
+    init{
+        getAddress()
+        getBikeType()
+    }
+
+
+    private fun getBikeType(){
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                mappingUseCase.getBikeTypeUseCase().first()
+            }.onSuccess { bikeType ->
+                _state.update { it.copy(bikeType = bikeType ?: "") }
+            }.onFailure { exception ->
+                Timber.e(exception.message)
+            }
+        }
+    }
+
+    private fun getAddress(){
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                mappingUseCase.getAddressUseCase().first()
+            }.onSuccess { address ->
+                _state.update { it.copy(address = address ?: "") }
+            }.onFailure { exception ->
+                Timber.e(exception.message)
+            }
+        }
+    }
+
     fun onEvent(event: ConfirmDetailsEvent) {
             when (event) {
                 is ConfirmDetailsEvent.Save -> {
                     viewModelScope.launch {
                         updateUser(state.value)
                     }
+                }
+                is ConfirmDetailsEvent.EnteredAddress -> {
+                    _state.update { it.copy(address = event.address) }
                 }
                 is ConfirmDetailsEvent.SelectBikeType -> {
                     _state.update { it.copy(bikeType = event.bikeType, bikeTypeErrorMessage = "") }
@@ -57,6 +92,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                 itemId = getId() ?: return,
                 user = User(
                     userNeededHelp = true,
+                    address = confirmDetailsState.address,
                     userAssistance = UserAssistance(
                         confirmationDetails = ConfirmationDetails(
                             bikeType = confirmDetailsState.bikeType,
@@ -68,6 +104,7 @@ class ConfirmDetailsViewModel @Inject constructor(
         }.onSuccess {
             _state.update { it.copy(isLoading = false) }
             _eventFlow.emit(value = ConfirmDetailsUiEvent.ShowMappingScreen)
+                //todo: show mapping screen and bottomSheet
         }.onFailure { exception ->
             _state.update { it.copy(isLoading = false) }
             handleException(exception)
