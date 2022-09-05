@@ -11,6 +11,10 @@ import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCas
 import com.example.cyclistance.feature_main_screen.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.user.*
 import com.example.cyclistance.core.utils.SharedLocationManager
+import com.example.cyclistance.feature_main_screen.domain.use_case.address.GetAddressUseCase
+import com.example.cyclistance.feature_main_screen.domain.use_case.address.UpdateAddressUseCase
+import com.example.cyclistance.feature_main_screen.domain.use_case.bike_type.GetBikeTypeUseCase
+import com.example.cyclistance.feature_main_screen.domain.use_case.bike_type.UpdateBikeTypeUseCase
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -58,9 +62,11 @@ object MappingModule {
             createUserUseCase = CreateUserUseCase(repository),
             deleteUserUseCase = DeleteUserUseCase(repository),
             updateUserUseCase = UpdateUserUseCase(repository),
-
-
-            getUserLocationUseCase = GetUserLocationUseCase(repository)
+            getUserLocationUseCase = GetUserLocationUseCase(repository),
+            getBikeTypeUseCase = GetBikeTypeUseCase(repository),
+            updateBikeTypeUseCase = UpdateBikeTypeUseCase(repository),
+            getAddressUseCase = GetAddressUseCase(repository),
+            updateAddressUseCase = UpdateAddressUseCase(repository)
         )
     }
 
