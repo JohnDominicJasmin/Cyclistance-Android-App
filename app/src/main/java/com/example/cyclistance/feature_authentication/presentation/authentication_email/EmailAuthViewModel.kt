@@ -56,7 +56,7 @@ class EmailAuthViewModel @Inject constructor(
                 _state.update { it.copy(isEmailResendClicked = true) }
             }
 
-            is EmailAuthEvent.DismissDialog -> {
+            is EmailAuthEvent.DismissAlertDialog -> {
                 _state.update{it.copy(alertDialogModel = AlertDialogModel())}
             }
         }

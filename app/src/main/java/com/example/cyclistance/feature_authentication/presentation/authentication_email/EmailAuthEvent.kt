@@ -7,6 +7,6 @@ sealed class EmailAuthEvent{
     object RefreshEmail: EmailAuthEvent()
     object StartTimer: EmailAuthEvent()
     object SubscribeEmailVerification: EmailAuthEvent()
-    object DismissDialog: EmailAuthEvent()
+    object DismissAlertDialog: EmailAuthEvent()
 
 }
