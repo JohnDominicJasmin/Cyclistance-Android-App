@@ -15,6 +15,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -53,7 +54,7 @@ fun EditProfileScreen(
     val bottomSheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val scope = rememberCoroutineScope()
 
-    var isGalleryButtonClick by remember{ mutableStateOf(false)}
+    var isGalleryButtonClick by rememberSaveable{ mutableStateOf(false)}
     val toggleBottomSheet = {
         scope.launch {
             with(bottomSheetState) {
