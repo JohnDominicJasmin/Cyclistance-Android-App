@@ -128,7 +128,7 @@ fun EmailAuthScreen(
                     AlertDialog(
                         alertDialog = emailAuthState.alertDialogModel,
                         onDismissRequest = {
-                            emailAuthViewModel.onEvent(EmailAuthEvent.DismissDialog)
+                            emailAuthViewModel.onEvent(EmailAuthEvent.DismissAlertDialog)
                         }
                     )
                 }

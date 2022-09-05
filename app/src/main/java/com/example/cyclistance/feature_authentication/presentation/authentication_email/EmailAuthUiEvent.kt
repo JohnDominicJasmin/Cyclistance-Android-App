@@ -1,6 +1,6 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_email
 
-import androidx.annotation.RawRes
+
 
 sealed class EmailAuthUiEvent{
     object ShowMappingScreen: EmailAuthUiEvent()
