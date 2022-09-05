@@ -33,6 +33,7 @@ android {
 
         debug {
             crunchPngs true
+            manifestPlaceholders.cleartextTrafficPermitted ="true"
             resValue("string", "MapsDownloadToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
             resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
             resValue("string", "FacebookLoginProtocolScheme", localProperties.getProperty("FACEBOOK_LOGIN_PROTOCOL_SCHEME"))
