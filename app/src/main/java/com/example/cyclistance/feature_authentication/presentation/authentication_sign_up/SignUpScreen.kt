@@ -44,17 +44,7 @@ fun SignUpScreen(
 
     val signUpState by signUpViewModel.state.collectAsState()
     val focusManager = LocalFocusManager.current
-    val (email, onEmailValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue())
-    }
 
-    val (password, onPasswordValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue())
-    }
-
-    val (confirmPassword, onConfirmPasswordValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue())
-    }
 
 
     with(signUpState) {
@@ -67,11 +57,7 @@ fun SignUpScreen(
             if (hasAccountSignedIn && isUserCreatedNewAccount) {
                 signUpViewModel.onEvent(SignUpEvent.SignOut)
             }
-            signUpViewModel.onEvent(
-                SignUpEvent.SignUp(
-                    email = email.text,
-                    password = password.text,
-                    confirmPassword = confirmPassword.text))
+            signUpViewModel.onEvent(SignUpEvent.SignUp)
         }
 
 
@@ -148,12 +134,15 @@ fun SignUpScreen(
                         signUpAccount()
                         focusManager.clearFocus()
                     },
-                    email = email,
-                    password = password,
-                    confirmPassword = confirmPassword,
-                    onEmailValueChange = onEmailValueChange,
-                    onPasswordValueChange = onPasswordValueChange,
-                    onConfirmPasswordValueChange = onConfirmPasswordValueChange,
+                    onEmailValueChange = {
+                        signUpViewModel.onEvent(SignUpEvent.EnterEmail(it))
+                    },
+                    onPasswordValueChange = {
+                        signUpViewModel.onEvent(SignUpEvent.EnterPassword(it))
+                    },
+                    onConfirmPasswordValueChange = {
+                        signUpViewModel.onEvent(SignUpEvent.EnterConfirmPassword(it))
+                    },
                     passwordVisibilityOnClick = {
                         signUpViewModel.onEvent(SignUpEvent.TogglePasswordVisibility)
                     }
@@ -184,17 +173,7 @@ fun SignUpScreen(
 @Preview(device = Devices.PIXEL_4)
 @Composable
 fun SignUpScreenPreview() {
-    val (email, onEmailValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue())
-    }
 
-    val (password, onPasswordValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue())
-    }
-
-    val (confirmPassword, onConfirmPasswordValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue())
-    }
 
     CyclistanceTheme(false) {
 
@@ -233,12 +212,9 @@ fun SignUpScreenPreview() {
                 SignUpTextFieldsArea(focusRequester = FocusRequester(),
                     state = SignUpState(),
                     keyboardActionOnDone = { },
-                    email = email,
-                    password = password,
-                    confirmPassword = confirmPassword,
-                    onEmailValueChange = onEmailValueChange,
-                    onPasswordValueChange = onPasswordValueChange,
-                    onConfirmPasswordValueChange = onConfirmPasswordValueChange,
+                    onEmailValueChange = {},
+                    onPasswordValueChange = {},
+                    onConfirmPasswordValueChange = {},
                     passwordVisibilityOnClick = { }
                 )
 

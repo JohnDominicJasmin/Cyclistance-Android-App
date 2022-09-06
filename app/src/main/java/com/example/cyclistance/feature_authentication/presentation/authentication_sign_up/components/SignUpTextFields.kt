@@ -18,12 +18,9 @@ import com.example.cyclistance.feature_authentication.presentation.common.*
 fun SignUpTextFieldsArea(
     state: SignUpState,
     focusRequester: FocusRequester,
-    email: TextFieldValue,
-    password: TextFieldValue,
-    confirmPassword: TextFieldValue,
-    onEmailValueChange: (TextFieldValue) -> Unit,
-    onPasswordValueChange: (TextFieldValue) -> Unit,
-    onConfirmPasswordValueChange: (TextFieldValue) -> Unit,
+    onEmailValueChange: (String) -> Unit,
+    onPasswordValueChange: (String) -> Unit,
+    onConfirmPasswordValueChange: (String) -> Unit,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit),
     passwordVisibilityOnClick: () -> Unit) {
 
@@ -39,10 +36,10 @@ fun SignUpTextFieldsArea(
 
             EmailTextField(
                 focusRequester = focusRequester,
-                textFieldValue = email,
+                email = email,
                 emailExceptionMessage = emailErrorMessage,
                 clearIconOnClick = {
-                 onEmailValueChange(TextFieldValue())
+                 onEmailValueChange("")
                 },
                 onValueChange = onEmailValueChange)
 
@@ -51,12 +48,12 @@ fun SignUpTextFieldsArea(
                 password = password,
                 passwordExceptionMessage = passwordErrorMessage,
                 clearIconOnClick = {
-                    onPasswordValueChange(TextFieldValue())
+                    onPasswordValueChange("")
                 },
                 onValueChange = onPasswordValueChange)
 
             ConfirmPasswordTextField(
-                passwordValue = confirmPassword,
+                password = confirmPassword,
                 passwordExceptionMessage = confirmPasswordErrorMessage,
                 onValueChange = onConfirmPasswordValueChange,
                 keyboardActionOnDone = keyboardActionOnDone,
