@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
@@ -37,31 +38,19 @@ class SignUpViewModel @Inject constructor(
                 with(state.value){
                     viewModelScope.launch{
                         createUserWithEmailAndPassword(authModel = AuthModel(
-                            email = email.text.trim(),
-                            password = password.text.trim(),
-                            confirmPassword = confirmPassword.text.trim()
+                            email = event.email.trim(),
+                            password = event.password.trim(),
+                            confirmPassword = event.confirmPassword.trim()
                         ))
                     }
                 }
             }
+
+            is SignUpEvent.DismissAlertDialog -> {
+                _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
+            }
             is SignUpEvent.SignOut -> {
                 authUseCase.signOutUseCase()
-            }
-            is SignUpEvent.EnteredEmail -> {
-                _state.update { it.copy(email = event.email, emailErrorMessage = "") }
-            }
-
-            is SignUpEvent.EnteredPassword -> {
-                _state.update { it.copy(password = event.password, passwordErrorMessage = "") }
-            }
-            is SignUpEvent.EnteredConfirmPassword -> {
-                _state.update { it.copy(confirmPassword = event.confirmPassword, confirmPasswordErrorMessage = "") }
-            }
-            is SignUpEvent.ClearEmail -> {
-                _state.update { it.copy(email = TextFieldValue("")) }
-            }
-            is SignUpEvent.ClearPassword -> {
-                _state.update { it.copy(password = TextFieldValue("")) }
             }
             is SignUpEvent.TogglePasswordVisibility -> {
                 _state.update { it.copy(passwordVisibility = !state.value.passwordVisibility) }
@@ -100,12 +89,10 @@ class SignUpViewModel @Inject constructor(
                         _eventFlow.emit(SignUpUiEvent.ShowNoInternetScreen)
                     }
                     is AuthExceptions.UserAlreadyExistsException -> {
-                        _eventFlow.emit(
-                            SignUpUiEvent.ShowAlertDialog(
-                                title = exception.title,
-                                description = exception.message ?: "This account is Already in Use.",
-                                imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error,
-                            ))
+
+                        _state.update { it.copy(alertDialogModel = AlertDialogModel(      title = exception.title,
+                            description = exception.message ?: "This account is Already in Use.",
+                            icon = io.github.farhanroy.composeawesomedialog.R.raw.error,)) }
                     }
                     else ->{
                         Timber.e("${this@SignUpViewModel.javaClass.name}: ${exception.message}")

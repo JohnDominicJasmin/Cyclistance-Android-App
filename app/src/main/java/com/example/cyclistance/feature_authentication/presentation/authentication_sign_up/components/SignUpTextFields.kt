@@ -9,18 +9,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpState
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpViewModel
 import com.example.cyclistance.feature_authentication.presentation.common.*
 
 @Composable
 fun SignUpTextFieldsArea(
     state: SignUpState,
     focusRequester: FocusRequester,
-    signUpViewModel: SignUpViewModel? = null,
-    keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
+    email: TextFieldValue,
+    password: TextFieldValue,
+    confirmPassword: TextFieldValue,
+    onEmailValueChange: (TextFieldValue) -> Unit,
+    onPasswordValueChange: (TextFieldValue) -> Unit,
+    onConfirmPasswordValueChange: (TextFieldValue) -> Unit,
+    keyboardActionOnDone: (KeyboardActionScope.() -> Unit),
+    passwordVisibilityOnClick: () -> Unit) {
 
 
     with(state) {
@@ -37,36 +42,30 @@ fun SignUpTextFieldsArea(
                 textFieldValue = email,
                 emailExceptionMessage = emailErrorMessage,
                 clearIconOnClick = {
-                    signUpViewModel?.onEvent(SignUpEvent.ClearEmail)
+                 onEmailValueChange(TextFieldValue())
                 },
-                onValueChange = {
-                    signUpViewModel?.onEvent(SignUpEvent.EnteredEmail(email = it))
-                })
+                onValueChange = onEmailValueChange)
 
 
             PasswordTextField(
                 password = password,
                 passwordExceptionMessage = passwordErrorMessage,
                 clearIconOnClick = {
-                    signUpViewModel?.onEvent(SignUpEvent.ClearPassword)
+                    onPasswordValueChange(TextFieldValue())
                 },
-                onValueChange = {
-                    signUpViewModel?.onEvent(SignUpEvent.EnteredPassword(password = it))
-                })
+                onValueChange = onPasswordValueChange)
 
             ConfirmPasswordTextField(
                 passwordValue = confirmPassword,
                 passwordExceptionMessage = confirmPasswordErrorMessage,
-                onValueChange = {
-                    signUpViewModel?.onEvent(SignUpEvent.EnteredConfirmPassword(confirmPassword = it))
-                },
+                onValueChange = onConfirmPasswordValueChange,
                 keyboardActionOnDone = keyboardActionOnDone,
                 isPasswordVisible = passwordVisibility,
-                passwordVisibilityIconOnClick = {
-                    signUpViewModel?.onEvent(SignUpEvent.TogglePasswordVisibility)
-                })
+                passwordVisibilityIconOnClick = passwordVisibilityOnClick)
 
         }
     }
 
 }
+
+
