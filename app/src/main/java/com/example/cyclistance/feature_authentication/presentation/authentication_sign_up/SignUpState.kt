@@ -4,12 +4,14 @@ import androidx.compose.ui.focus.FocusRequester
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 
 data class SignUpState(
-
-    var emailErrorMessage: String = "",
-    var passwordErrorMessage: String = "",
-    var confirmPasswordErrorMessage: String = "",
-    var passwordVisibility: Boolean = false,
-    var focusRequester: FocusRequester = FocusRequester(),
-    var isLoading: Boolean = false,
+    val email: String = "",
+    val password: String = "",
+    val confirmPassword: String = "",
+    val emailErrorMessage: String = "",
+    val passwordErrorMessage: String = "",
+    val confirmPasswordErrorMessage: String = "",
+    val passwordVisibility: Boolean = false,
+    val focusRequester: FocusRequester = FocusRequester(),
+    val isLoading: Boolean = false,
     val alertDialogModel: AlertDialogModel = AlertDialogModel(),
 )

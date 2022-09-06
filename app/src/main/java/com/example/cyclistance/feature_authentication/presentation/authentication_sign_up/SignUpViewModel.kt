@@ -38,14 +38,23 @@ class SignUpViewModel @Inject constructor(
                 with(state.value){
                     viewModelScope.launch{
                         createUserWithEmailAndPassword(authModel = AuthModel(
-                            email = event.email.trim(),
-                            password = event.password.trim(),
-                            confirmPassword = event.confirmPassword.trim()
+                            email = email.trim(),
+                            password = password.trim(),
+                            confirmPassword = confirmPassword.trim()
                         ))
                     }
                 }
             }
 
+            is SignUpEvent.EnterEmail -> {
+                _state.update { it.copy(email = event.email, emailErrorMessage = "") }
+            }
+            is SignUpEvent.EnterPassword -> {
+               _state.update { it.copy(password = event.password, passwordErrorMessage = "") }
+            }
+            is SignUpEvent.EnterConfirmPassword -> {
+                _state.update { it.copy(confirmPassword = event.confirmPassword, confirmPasswordErrorMessage = "") }
+            }
             is SignUpEvent.DismissAlertDialog -> {
                 _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
             }
