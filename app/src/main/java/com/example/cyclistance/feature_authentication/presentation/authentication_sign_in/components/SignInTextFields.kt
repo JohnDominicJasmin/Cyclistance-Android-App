@@ -21,8 +21,10 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 fun SignInTextFieldsArea(
     state: SignInState,
     focusRequester: FocusRequester,
-    signInViewModel: SignInViewModel? = null,
-    keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
+    onEmailValueChange: (String) -> Unit,
+    onPasswordValueChange: (String) -> Unit,
+    keyboardActionOnDone: (KeyboardActionScope.() -> Unit),
+    passwordVisibilityOnClick: () -> Unit) {
 
     with(state) {
 
@@ -36,28 +38,20 @@ fun SignInTextFieldsArea(
 
             EmailTextField(
                 focusRequester = focusRequester,
-                textFieldValue = email,
+                email = email,
                 emailExceptionMessage = emailErrorMessage,
-                onValueChange = {
-                    signInViewModel?.onEvent(SignInEvent.EnteredEmail(email = it))
-                },
+                onValueChange = onEmailValueChange,
                 clearIconOnClick = {
-                    signInViewModel?.onEvent(SignInEvent.ClearEmail)
+                    onEmailValueChange("")
                 })
 
             ConfirmPasswordTextField(
-                passwordValue = password,
+                password = password,
                 passwordExceptionMessage = passwordErrorMessage,
-                onValueChange = {
-                    signInViewModel?.onEvent(SignInEvent.EnteredPassword(password = it))
-                },
-                keyboardActionOnDone = {
-                    keyboardActionOnDone()
-                },
+                onValueChange = onPasswordValueChange,
+                keyboardActionOnDone = keyboardActionOnDone,
                 isPasswordVisible = passwordVisibility,
-                passwordVisibilityIconOnClick = {
-                    signInViewModel?.onEvent(SignInEvent.TogglePasswordVisibility)
-                }
+                passwordVisibilityIconOnClick = passwordVisibilityOnClick
             )
 
 

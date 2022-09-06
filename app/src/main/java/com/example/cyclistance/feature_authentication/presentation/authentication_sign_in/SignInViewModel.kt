@@ -1,14 +1,10 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in
 
 import android.content.Intent
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.AuthConstants.FACEBOOK_CONNECTION_FAILURE
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
@@ -42,7 +38,6 @@ class SignInViewModel @Inject constructor(
     val eventFlow: SharedFlow<SignInUiEvent> = _eventFlow.asSharedFlow()
 
 
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
         return callbackManager.onActivityResult(requestCode, resultCode, data)
     }
@@ -59,9 +54,14 @@ class SignInViewModel @Inject constructor(
             is SignInEvent.SignInFacebook -> {
 
                 _state.update { it.copy(isLoading = true) }
-                event.context.findActivity()?.let { activity ->
-                    LoginManager.getInstance().logInWithReadPermissions(activity, listOf("email", "public_profile"))
+                event.context.findActivity()?.let { activity -> // todo: remove context here
+                    LoginManager.getInstance()
+                        .logInWithReadPermissions(activity, listOf("email", "public_profile"))
                 }
+            }
+
+            is SignInEvent.DismissAlertDialog -> {
+                _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
             }
 
             is SignInEvent.SignInGoogle -> {
@@ -72,31 +72,28 @@ class SignInViewModel @Inject constructor(
 
                 with(state.value) {
                     viewModelScope.launch {
-                        signInWithEmailAndPassword(
+                        signInDefault(
                             authModel = AuthModel(
-                                email = email.text.trim(),
-                                password = password.text.trim()))
+                                email = email.trim(),
+                                password = password.trim()))
                     }
                 }
             }
-            is SignInEvent.EnteredEmail -> {
+            is SignInEvent.EnterEmail -> {
                 _state.update { it.copy(email = event.email, emailErrorMessage = "") }
             }
-            is SignInEvent.EnteredPassword -> {
+            is SignInEvent.EnterPassword -> {
                 _state.update { it.copy(password = event.password, passwordErrorMessage = "") }
             }
-            is SignInEvent.ClearEmail -> {
-                _state.update { it.copy(email = TextFieldValue("")) }
-            }
             is SignInEvent.TogglePasswordVisibility -> {
-                _state.update { it.copy( passwordVisibility = !state.value.passwordVisibility) }
+                _state.update { it.copy(passwordVisibility = !state.value.passwordVisibility) }
             }
 
         }
     }
 
 
-    private suspend fun signInWithEmailAndPassword(authModel: AuthModel) {
+    private suspend fun signInDefault(authModel: AuthModel) {
 
         runCatching {
             _state.update { it.copy(isLoading = true) }
@@ -106,32 +103,44 @@ class SignInViewModel @Inject constructor(
             _state.update { it.copy(isLoading = false) }
             if (isSignedIn) {
                 _eventFlow.emit(SignInUiEvent.RefreshEmail)
-            }else{
+            } else {
                 _eventFlow.emit(SignInUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
             }
         }.onFailure { exception ->
             _state.update { it.copy(isLoading = false) }
-            when (exception) {
-                is AuthExceptions.EmailException -> {
-                    _state.update { it.copy(emailErrorMessage = exception.message ?: "Email is Invalid.") }
+            handleSignInDefaultException(exception)
+        }
+    }
+
+    private suspend fun handleSignInDefaultException(exception:Throwable){
+        when (exception) {
+            is AuthExceptions.EmailException -> {
+                _state.update {
+                    it.copy(
+                        emailErrorMessage = exception.message ?: "Email is Invalid.")
                 }
-                is AuthExceptions.PasswordException -> {
-                    _state.update { it.copy(passwordErrorMessage = exception.message ?: "Password is Invalid.") }
+            }
+            is AuthExceptions.PasswordException -> {
+                _state.update {
+                    it.copy(
+                        passwordErrorMessage = exception.message ?: "Password is Invalid.")
                 }
-                is AuthExceptions.InternetException -> {
-                    _eventFlow.emit(SignInUiEvent.ShowNoInternetScreen)
-                }
-                is AuthExceptions.TooManyRequestsException -> {
-                    _eventFlow.emit(
-                        SignInUiEvent.ShowAlertDialog(
+            }
+            is AuthExceptions.InternetException -> {
+                _eventFlow.emit(SignInUiEvent.ShowNoInternetScreen)
+            }
+            is AuthExceptions.TooManyRequestsException -> {
+                _state.update {
+                    it.copy(
+                        alertDialogModel = AlertDialogModel(
                             title = exception.title,
                             description = exception.message ?: "You have been blocked for too many failed attempts. Please try again later.",
-                            imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error,
+                            icon = io.github.farhanroy.composeawesomedialog.R.raw.error,
                         ))
                 }
-                else -> {
-                    Timber.e("${this@SignInViewModel.javaClass.name}: ${exception.message}")
-                }
+            }
+            else -> {
+                Timber.e("${this@SignInViewModel.javaClass.name}: ${exception.message}")
             }
         }
     }
@@ -150,17 +159,7 @@ class SignInViewModel @Inject constructor(
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
-                when (exception) {
-                    is AuthExceptions.InternetException -> {
-                        _eventFlow.emit(SignInUiEvent.ShowNoInternetScreen)
-                    }
-                    is AuthExceptions.ConflictFBTokenException -> {
-                        removeFacebookUserAccountPreviousToken()
-                        _eventFlow.emit(SignInUiEvent.ShowAlertDialog(title = "Error", description = exception.message?:"Sorry, something went wrong. Please try again.", imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error ))
-
-
-                    }
-                }
+                handleSignInWithCredentialException(exception)
             }
         }
     }
@@ -190,17 +189,18 @@ class SignInViewModel @Inject constructor(
     }
 
 
-   private suspend fun handleFacebookSignInException(error: Exception) {
+    private suspend fun handleFacebookSignInException(error: Exception) {
         if (error.message == FACEBOOK_CONNECTION_FAILURE) {
             _eventFlow.emit(SignInUiEvent.ShowNoInternetScreen)
             return
         }
         error.message?.let { errorMessage ->
-            _eventFlow.emit(SignInUiEvent.ShowAlertDialog(
-                    title = "Error",
-                    description = errorMessage,
-                    imageResId = io.github.farhanroy.composeawesomedialog.R.raw.error))
-
+            _state.update {
+                it.copy(alertDialogModel = AlertDialogModel(
+                        title = "Error",
+                        description = errorMessage,
+                        icon = io.github.farhanroy.composeawesomedialog.R.raw.error))
+            }
             removeFacebookUserAccountPreviousToken()
         }
     }
@@ -210,6 +210,7 @@ class SignInViewModel @Inject constructor(
             LoginManager.getInstance().logOut()
         }
     }
+
     override fun onCleared() {
         super.onCleared()
         LoginManager.getInstance().unregisterCallback(callbackManager)

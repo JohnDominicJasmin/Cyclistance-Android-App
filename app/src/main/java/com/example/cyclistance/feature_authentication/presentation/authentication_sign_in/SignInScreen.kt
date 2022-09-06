@@ -53,8 +53,8 @@ fun SignInScreen(
     navController: NavController) {
 
     val scope = rememberCoroutineScope()
-    val signInStateValue by signInViewModel.state.collectAsState()
-    val emailAuthStateValue by emailAuthViewModel.state.collectAsState()
+    val signInState by signInViewModel.state.collectAsState()
+    val emailAuthState by emailAuthViewModel.state.collectAsState()
 
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -84,10 +84,9 @@ fun SignInScreen(
     }
 
 
-    var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
 
     LaunchedEffect(key1 = true) {
-        signInStateValue.focusRequester.requestFocus()
+        signInState.focusRequester.requestFocus()
         signInViewModel.eventFlow.collectLatest { signInEvent ->
 
             when (signInEvent) {
@@ -96,13 +95,9 @@ fun SignInScreen(
                     emailAuthViewModel.onEvent(EmailAuthEvent.RefreshEmail)
                 }
                 is SignInUiEvent.ShowNoInternetScreen -> {
-                    navController.navigateScreen(Screens.NoInternetScreen.route, Screens.SignInScreen.route)
-                }
-                is SignInUiEvent.ShowAlertDialog -> {
-                    alertDialogState = AlertDialogModel(
-                        title = signInEvent.title,
-                        description = signInEvent.description,
-                        icon = signInEvent.imageResId)
+                    navController.navigateScreen(
+                        Screens.NoInternetScreen.route,
+                        Screens.SignInScreen.route)
                 }
                 is SignInUiEvent.ShowMappingScreen -> {
                     navController.navigateScreenInclusively(Screens.MappingScreen.route, Screens.SignInScreen.route)
@@ -133,7 +128,6 @@ fun SignInScreen(
                 is EmailAuthUiEvent.ShowEmailAuthScreen -> {
                     navController.navigateScreenInclusively(Screens.EmailAuthScreen.route, Screens.SignInScreen.route)
                 }
-                else -> {}
             }
         }
     }
@@ -170,23 +164,32 @@ fun SignInScreen(
 
             SignUpTextArea()
 
-            if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
+            if (signInState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
                 AlertDialog(
-                    alertDialog = alertDialogState,
+                    alertDialog = signInState.alertDialogModel,
                     onDismissRequest = {
-                        alertDialogState = AlertDialogModel()
+                        signInViewModel.onEvent(SignInEvent.DismissAlertDialog)
                     })
             }
 
             SignInTextFieldsArea(
-                focusRequester = signInStateValue.focusRequester,
-                state = signInStateValue,
-                signInViewModel = signInViewModel,
+                focusRequester = signInState.focusRequester,
+                state = signInState,
                 keyboardActionOnDone = {
                     signInViewModel.onEvent(SignInEvent.SignInDefault)
                     focusManager.clearFocus()
 
-                })
+                },
+                onEmailValueChange = {
+                   signInViewModel.onEvent(event = SignInEvent.EnterEmail(it))
+                },
+                onPasswordValueChange = {
+                   signInViewModel.onEvent(event = SignInEvent.EnterPassword(it))
+                },
+                passwordVisibilityOnClick = {
+                   signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility)
+                }
+            )
 
             SignInGoogleAndFacebookSection(
                 facebookButtonOnClick = {
@@ -208,7 +211,7 @@ fun SignInScreen(
                 navController.navigateScreen(Screens.SignUpScreen.route, Screens.SignInScreen.route)
             })
 
-            if (signInStateValue.isLoading || emailAuthStateValue.isLoading) {
+            if (signInState.isLoading || emailAuthState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
                 )
@@ -255,7 +258,7 @@ fun SignInScreenPreview() {
                     modifier = Modifier
                         .height(100.dp)
                         .width(90.dp)
-                            .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId))
+                        .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId))
 
                 SignUpTextArea()
 
@@ -273,7 +276,10 @@ fun SignInScreenPreview() {
                 SignInTextFieldsArea(
                     state = SignInState(),
                     keyboardActionOnDone = { },
-                    signInViewModel = null, focusRequester = FocusRequester())
+                    focusRequester = FocusRequester(),
+                    onEmailValueChange = { },
+                    onPasswordValueChange = { },
+                    passwordVisibilityOnClick = { })
 
                 SignInGoogleAndFacebookSection(
                     facebookButtonOnClick = {
@@ -298,7 +304,6 @@ fun SignInScreenPreview() {
                 }
 
             }
-
 
 
         }
