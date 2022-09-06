@@ -20,8 +20,8 @@ import com.example.cyclistance.theme.Black500
 @Composable
 fun AdditionalMessage(
     modifier: Modifier,
-    message: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit) {
+    message: String,
+    onValueChange: (String) -> Unit) {
 
     Column(modifier = modifier) {
 
@@ -60,8 +60,8 @@ fun AdditionalMessage(
                         },
                     value = message,
                     onValueChange = { newText ->
-                        if (newText.text.length <= MAX_CHARACTERS) {
-                            numberOfCharacters.value = newText.text.length
+                        if (newText.length <= MAX_CHARACTERS) {
+                            numberOfCharacters.value = newText.length
                             onValueChange(newText)
                         }
                     },

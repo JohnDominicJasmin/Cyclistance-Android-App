@@ -19,7 +19,6 @@ import com.example.cyclistance.theme.Black500
 @Composable
 fun AddressTextField(modifier: Modifier, address: String, onValueChange: (String) -> Unit) {
 
-
     TextField(
         value = address,
         onValueChange = onValueChange,

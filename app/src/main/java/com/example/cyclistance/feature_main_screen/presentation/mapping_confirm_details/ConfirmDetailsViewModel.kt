@@ -69,13 +69,13 @@ class ConfirmDetailsViewModel @Inject constructor(
                     updateUser(state.value)
                 }
             }
-            is ConfirmDetailsEvent.EnteredAddress -> {
+            is ConfirmDetailsEvent.EnterAddress -> {
                 _state.update { it.copy(address = event.address) }
             }
             is ConfirmDetailsEvent.SelectBikeType -> {
                 _state.update { it.copy(bikeType = event.bikeType, bikeTypeErrorMessage = "") }
             }
-            is ConfirmDetailsEvent.EnteredMessage -> {
+            is ConfirmDetailsEvent.EnterMessage -> {
                 _state.update { it.copy(message = event.message) }
             }
             is ConfirmDetailsEvent.SelectDescription -> {
@@ -92,25 +92,27 @@ class ConfirmDetailsViewModel @Inject constructor(
 
     private suspend fun updateUser(confirmDetailsState: ConfirmDetailsState) {
         runCatching {
-            _state.update { it.copy(isLoading = true) }
-            mappingUseCase.updateUserUseCase(
-                itemId = getId() ?: return,
-                user = User(
-                    userNeededHelp = true,
-                    address = confirmDetailsState.address,
-                    userAssistance = UserAssistance(
-                        confirmationDetails = ConfirmationDetails(
-                            bikeType = confirmDetailsState.bikeType,
-                            description = confirmDetailsState.description,
-                            message = confirmDetailsState.message.text),
-                        status = Status(started = true)
-                    )
-                )).also {
+            with(confirmDetailsState) {
+                _state.update { it.copy(isLoading = true) }
+                mappingUseCase.updateUserUseCase(
+                    itemId = getId() ?: return,
+                    user = User(
+                        userNeededHelp = true,
+                        address = address.trim(),
+                        userAssistance = UserAssistance(
+                            confirmationDetails = ConfirmationDetails(
+                                bikeType = bikeType,
+                                description = description,
+                                message = message.trim()),
+                            status = Status(started = true)
+                        )
+                    )).also {
 
-                mappingUseCase.updateAddressUseCase(address = confirmDetailsState.address)
-                mappingUseCase.updateBikeTypeUseCase(bikeType = confirmDetailsState.bikeType)
+                    mappingUseCase.updateAddressUseCase(address = confirmDetailsState.address)
+                    mappingUseCase.updateBikeTypeUseCase(bikeType = confirmDetailsState.bikeType)
+                }
+
             }
-
 
         }.onSuccess {
             _state.update { it.copy(isLoading = false) }
