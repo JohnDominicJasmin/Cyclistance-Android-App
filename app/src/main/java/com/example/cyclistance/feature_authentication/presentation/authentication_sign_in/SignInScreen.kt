@@ -10,7 +10,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -18,7 +17,6 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,15 +53,8 @@ fun SignInScreen(
     navController: NavController) {
 
     val scope = rememberCoroutineScope()
-    val signInState by signInViewModel.state.collectAsState()
-    val emailAuthState by emailAuthViewModel.state.collectAsState()
-
-    val (email, onEmailValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue())
-    }
-    val (password, onPasswordValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue())
-    }
+    val signInStateValue by signInViewModel.state.collectAsState()
+    val emailAuthStateValue by emailAuthViewModel.state.collectAsState()
 
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
@@ -74,8 +65,9 @@ fun SignInScreen(
                 scope.launch {
                     signInViewModel.onEvent(
                         event = SignInEvent.SignInGoogle(
-                            authCredential =
-                            GoogleAuthProvider.getCredential(account.idToken, null)))
+                            authCredential = GoogleAuthProvider.getCredential(
+                                account.idToken,
+                                null)))
                 }
             }
         } catch (e: ApiException) {
@@ -92,10 +84,10 @@ fun SignInScreen(
     }
 
 
-
+    var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
 
     LaunchedEffect(key1 = true) {
-        signInState.focusRequester.requestFocus()
+        signInStateValue.focusRequester.requestFocus()
         signInViewModel.eventFlow.collectLatest { signInEvent ->
 
             when (signInEvent) {
@@ -104,14 +96,16 @@ fun SignInScreen(
                     emailAuthViewModel.onEvent(EmailAuthEvent.RefreshEmail)
                 }
                 is SignInUiEvent.ShowNoInternetScreen -> {
-                    navController.navigateScreen(
-                        Screens.NoInternetScreen.route,
-                        Screens.SignInScreen.route)
+                    navController.navigateScreen(Screens.NoInternetScreen.route, Screens.SignInScreen.route)
+                }
+                is SignInUiEvent.ShowAlertDialog -> {
+                    alertDialogState = AlertDialogModel(
+                        title = signInEvent.title,
+                        description = signInEvent.description,
+                        icon = signInEvent.imageResId)
                 }
                 is SignInUiEvent.ShowMappingScreen -> {
-                    navController.navigateScreenInclusively(
-                        Screens.MappingScreen.route,
-                        Screens.SignInScreen.route)
+                    navController.navigateScreenInclusively(Screens.MappingScreen.route, Screens.SignInScreen.route)
                 }
                 is SignInUiEvent.ShowToastMessage -> {
                     Toast.makeText(context, signInEvent.message, Toast.LENGTH_SHORT).show()
@@ -127,23 +121,17 @@ fun SignInScreen(
         emailAuthViewModel.eventFlow.collectLatest { emailAuthEvent ->
             when (emailAuthEvent) {
                 is EmailAuthUiEvent.ShowNoInternetScreen -> {
-                    navController.navigateScreen(
-                        Screens.NoInternetScreen.route,
-                        Screens.SignInScreen.route)
+                    navController.navigateScreen(Screens.NoInternetScreen.route, Screens.SignInScreen.route)
                 }
 
                 is EmailAuthUiEvent.ShowMappingScreen -> {
-                    navController.navigateScreenInclusively(
-                        Screens.MappingScreen.route,
-                        Screens.SignInScreen.route)
+                    navController.navigateScreenInclusively(Screens.MappingScreen.route, Screens.SignInScreen.route)
                 }
                 is EmailAuthUiEvent.ShowToastMessage -> {
                     Toast.makeText(context, emailAuthEvent.message, Toast.LENGTH_SHORT).show()
                 }
                 is EmailAuthUiEvent.ShowEmailAuthScreen -> {
-                    navController.navigateScreenInclusively(
-                        Screens.EmailAuthScreen.route,
-                        Screens.SignInScreen.route)
+                    navController.navigateScreenInclusively(Screens.EmailAuthScreen.route, Screens.SignInScreen.route)
                 }
                 else -> {}
             }
@@ -182,32 +170,23 @@ fun SignInScreen(
 
             SignUpTextArea()
 
-            if (signInState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
+            if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
                 AlertDialog(
-                    alertDialog = signInState.alertDialogModel,
+                    alertDialog = alertDialogState,
                     onDismissRequest = {
-                        signInViewModel.onEvent(SignInEvent.DismissAlertDialog)
+                        alertDialogState = AlertDialogModel()
                     })
             }
 
             SignInTextFieldsArea(
-                focusRequester = signInState.focusRequester,
-                state = signInState,
+                focusRequester = signInStateValue.focusRequester,
+                state = signInStateValue,
+                signInViewModel = signInViewModel,
                 keyboardActionOnDone = {
-                    signInViewModel.onEvent(
-                        SignInEvent.SignInDefault(
-                            email = email.text,
-                            password = password.text))
-
+                    signInViewModel.onEvent(SignInEvent.SignInDefault)
                     focusManager.clearFocus()
-                },
-                email = email,
-                onEmailValueChange = onEmailValueChange,
-                password = password,
-                onPasswordValueChange = onPasswordValueChange,
-                passwordVisibilityOnClick = {
-                    signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility)
-                }, )
+
+                })
 
             SignInGoogleAndFacebookSection(
                 facebookButtonOnClick = {
@@ -221,10 +200,7 @@ fun SignInScreen(
             )
 
             SignInButton(onClickButton = {
-                signInViewModel.onEvent(
-                    SignInEvent.SignInDefault(
-                        email = email.text,
-                        password = password.text))
+                signInViewModel.onEvent(SignInEvent.SignInDefault)
             })
 
 
@@ -232,7 +208,7 @@ fun SignInScreen(
                 navController.navigateScreen(Screens.SignUpScreen.route, Screens.SignInScreen.route)
             })
 
-            if (signInState.isLoading || emailAuthState.isLoading) {
+            if (signInStateValue.isLoading || emailAuthStateValue.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
                 )
@@ -252,14 +228,7 @@ fun SignInScreenPreview() {
 
         val scope = rememberCoroutineScope()
         var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
-        val (email, onEmailValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(
-                TextFieldValue())
-        }
-        val (password, onPasswordValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(
-                TextFieldValue())
-        }
+
 
         Column(
 
@@ -286,7 +255,7 @@ fun SignInScreenPreview() {
                     modifier = Modifier
                         .height(100.dp)
                         .width(90.dp)
-                        .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId))
+                            .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId))
 
                 SignUpTextArea()
 
@@ -304,15 +273,7 @@ fun SignInScreenPreview() {
                 SignInTextFieldsArea(
                     state = SignInState(),
                     keyboardActionOnDone = { },
-                    focusRequester = FocusRequester(),
-                    email = email,
-                    password = password,
-                    onEmailValueChange = onEmailValueChange,
-                    onPasswordValueChange = onPasswordValueChange,
-                    passwordVisibilityOnClick = {
-
-                    },
-                  )
+                    signInViewModel = null, focusRequester = FocusRequester())
 
                 SignInGoogleAndFacebookSection(
                     facebookButtonOnClick = {
@@ -337,6 +298,7 @@ fun SignInScreenPreview() {
                 }
 
             }
+
 
 
         }
