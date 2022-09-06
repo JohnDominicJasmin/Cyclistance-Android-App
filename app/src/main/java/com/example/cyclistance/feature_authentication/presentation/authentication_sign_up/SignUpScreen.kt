@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -24,7 +25,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.*
@@ -42,25 +42,41 @@ fun SignUpScreen(
     paddingValues: PaddingValues,
     navController: NavController) {
 
-    val signUpStateValue by signUpViewModel.state.collectAsState()
+    val signUpState by signUpViewModel.state.collectAsState()
     val focusManager = LocalFocusManager.current
-    with(signUpStateValue) {
+    val (email, onEmailValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+
+    val (password, onPasswordValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+
+    val (confirmPassword, onConfirmPasswordValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+
+
+    with(signUpState) {
 
         val hasAccountSignedIn = remember { signUpViewModel.hasAccountSignedIn() }
         val isUserCreatedNewAccount = remember { email.text != mappingViewModel.getEmail() }
-        var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
         val context = LocalContext.current
 
         val signUpAccount = {
             if (hasAccountSignedIn && isUserCreatedNewAccount) {
                 signUpViewModel.onEvent(SignUpEvent.SignOut)
             }
-            signUpViewModel.onEvent(SignUpEvent.SignUp)
+            signUpViewModel.onEvent(
+                SignUpEvent.SignUp(
+                    email = email.text,
+                    password = password.text,
+                    confirmPassword = confirmPassword.text))
         }
 
 
         LaunchedEffect(key1 = true) {
-            signUpStateValue.focusRequester.requestFocus()
+            signUpState.focusRequester.requestFocus()
             signUpViewModel.eventFlow.collectLatest { event ->
 
                 when (event) {
@@ -69,12 +85,7 @@ fun SignUpScreen(
                             Screens.NoInternetScreen.route,
                             Screens.SignUpScreen.route)
                     }
-                    is SignUpUiEvent.ShowAlertDialog -> {
-                        alertDialogState = AlertDialogModel(
-                            title = event.title,
-                            description = event.description,
-                            icon = event.imageResId)
-                    }
+
                     is SignUpUiEvent.ShowEmailAuthScreen -> {
                         navController.navigateScreenInclusively(
                             Screens.EmailAuthScreen.route,
@@ -122,21 +133,29 @@ fun SignUpScreen(
 
 
 
-                if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
+                if (signUpState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
                     AlertDialog(
-                        alertDialog = alertDialogState,
+                        alertDialog = signUpState.alertDialogModel,
                         onDismissRequest = {
-                            alertDialogState = AlertDialogModel()
+                           signUpViewModel.onEvent(SignUpEvent.DismissAlertDialog)
                         })
                 }
 
                 SignUpTextFieldsArea(
-                    focusRequester = signUpStateValue.focusRequester,
+                    focusRequester = signUpState.focusRequester,
                     state = this@with,
-                    signUpViewModel = signUpViewModel,
                     keyboardActionOnDone = {
                         signUpAccount()
                         focusManager.clearFocus()
+                    },
+                    email = email,
+                    password = password,
+                    confirmPassword = confirmPassword,
+                    onEmailValueChange = onEmailValueChange,
+                    onPasswordValueChange = onPasswordValueChange,
+                    onConfirmPasswordValueChange = onConfirmPasswordValueChange,
+                    passwordVisibilityOnClick = {
+                        signUpViewModel.onEvent(SignUpEvent.TogglePasswordVisibility)
                     }
                 )
 
@@ -165,6 +184,17 @@ fun SignUpScreen(
 @Preview(device = Devices.PIXEL_4)
 @Composable
 fun SignUpScreenPreview() {
+    val (email, onEmailValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+
+    val (password, onPasswordValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+
+    val (confirmPassword, onConfirmPasswordValueChange) = rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
 
     CyclistanceTheme(false) {
 
@@ -201,9 +231,15 @@ fun SignUpScreenPreview() {
 
 
                 SignUpTextFieldsArea(focusRequester = FocusRequester(),
-                    state = SignUpState(email = TextFieldValue("Testing@gmail,com")),
-                    signUpViewModel = null,
-                    keyboardActionOnDone = { }
+                    state = SignUpState(),
+                    keyboardActionOnDone = { },
+                    email = email,
+                    password = password,
+                    confirmPassword = confirmPassword,
+                    onEmailValueChange = onEmailValueChange,
+                    onPasswordValueChange = onPasswordValueChange,
+                    onConfirmPasswordValueChange = onConfirmPasswordValueChange,
+                    passwordVisibilityOnClick = { }
                 )
 
 
