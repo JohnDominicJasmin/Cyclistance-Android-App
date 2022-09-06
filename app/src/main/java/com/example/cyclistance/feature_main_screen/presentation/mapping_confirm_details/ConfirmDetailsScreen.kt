@@ -77,7 +77,7 @@ fun ConfirmDetailsScreen(
                 },
             address = state.address,
             onValueChange = { address ->
-                viewModel.onEvent(event = ConfirmDetailsEvent.EnteredAddress(address = address))
+                viewModel.onEvent(event = ConfirmDetailsEvent.EnterMessage(address.trim()))
             }
         )
         DropDownBikeList(modifier = Modifier
@@ -109,7 +109,6 @@ fun ConfirmDetailsScreen(
             onClick = { selectedDescription ->
                 viewModel.onEvent(event = ConfirmDetailsEvent.SelectDescription(selectedDescription))
             })
-
         AdditionalMessage(
             modifier = Modifier
                 .constrainAs(additionalMessageSection) {
@@ -122,7 +121,7 @@ fun ConfirmDetailsScreen(
                 },
             message = state.message,
             onValueChange = { message ->
-                viewModel.onEvent(event = ConfirmDetailsEvent.EnteredMessage(message))
+                viewModel.onEvent(event = ConfirmDetailsEvent.EnterMessage(message))
             }
         )
 
@@ -232,7 +231,7 @@ fun ConfirmationDetailsPreview(
                     width = Dimension.percent(0.9f)
 
                 },
-            message = TextFieldValue(""),
+            message = "",
             onValueChange = { message ->
             }
         )
