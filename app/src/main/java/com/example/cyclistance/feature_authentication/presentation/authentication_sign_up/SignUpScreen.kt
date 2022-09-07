@@ -201,10 +201,6 @@ fun SignUpScreenPreview() {
 
                 SignUpTextArea()
 
-
-
-
-
                 SignUpTextFieldsArea(focusRequester = FocusRequester(),
                     state = SignUpState(),
                     keyboardActionOnDone = { },

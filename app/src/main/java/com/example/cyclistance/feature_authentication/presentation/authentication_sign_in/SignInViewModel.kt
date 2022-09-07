@@ -54,7 +54,7 @@ class SignInViewModel @Inject constructor(
             is SignInEvent.SignInFacebook -> {
 
                 _state.update { it.copy(isLoading = true) }
-                event.context.findActivity()?.let { activity ->
+                event.context.findActivity()?.let { activity ->//todo: remove this context parameter
                     LoginManager.getInstance()
                         .logInWithReadPermissions(activity, listOf("email", "public_profile"))
                 }
