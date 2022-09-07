@@ -2,6 +2,7 @@ package com.example.cyclistance.core.utils
 
 import android.content.Context
 import android.location.Geocoder
+import android.os.Build
 import com.example.cyclistance.core.utils.MappingConstants.LOCATION_UPDATES_INTERVAL
 import com.google.android.gms.maps.model.LatLng
 import im.delight.android.location.SimpleLocation
@@ -29,8 +30,20 @@ class SharedLocationManager constructor(
         }
         location.setListener {
             if (location.hasLocationEnabled()) {
-                trySend(element = SharedLocationModel(latLng = LatLng(location.latitude, location.longitude),
-                        addresses = geocoder.getFromLocation(location.latitude,location.longitude, 1)))
+
+                if (Build.VERSION.SDK_INT >= 33) {
+                    geocoder.getFromLocation(location.latitude, location.longitude, 1,
+                    ) { addresses ->
+                        trySend(
+                            element = SharedLocationModel(latLng = LatLng(location.latitude,
+                                    location.longitude), addresses = addresses))
+                    }
+                } else {
+                    trySend(
+                        element = SharedLocationModel(
+                            latLng = LatLng(location.latitude, location.longitude),
+                            addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1) ?: emptyList()))
+                }
             }
         }
 
