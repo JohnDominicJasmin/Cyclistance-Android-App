@@ -39,14 +39,12 @@ import timber.log.Timber
 @Composable
 fun EmailAuthScreen(
     isDarkTheme: Boolean = false,
-    mappingViewModel: MappingViewModel = hiltViewModel(),
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel(),
     paddingValues: PaddingValues,
     navController: NavController) {
 
 
     val context = LocalContext.current
-    val email = remember { mappingViewModel.getEmail() }
 
     val emailAuthState by emailAuthViewModel.state.collectAsState()
     val intent = Intent(Intent.ACTION_MAIN).apply {
@@ -122,7 +120,7 @@ fun EmailAuthScreen(
 
                 )
 
-                EmailAuthTextStatus(email = email)
+                EmailAuthTextStatus(email = emailAuthState.savedAccountEmail)
 
                 if (emailAuthState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
                     AlertDialog(

@@ -8,5 +8,6 @@ data class EmailAuthState(
     val isTimerRunning: Boolean = false,
     val isEmailResendClicked: Boolean = false,
     val isLoading: Boolean = false,
-    val alertDialogModel: AlertDialogModel = AlertDialogModel()
+    val alertDialogModel: AlertDialogModel = AlertDialogModel(),
+    val savedAccountEmail: String = ""
     )

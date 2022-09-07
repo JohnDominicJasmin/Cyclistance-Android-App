@@ -9,7 +9,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -17,7 +16,6 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,7 +27,6 @@ import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.*
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -38,7 +35,6 @@ import kotlinx.coroutines.flow.collectLatest
 @Composable
 fun SignUpScreen(
     signUpViewModel: SignUpViewModel = hiltViewModel(),
-    mappingViewModel: MappingViewModel = hiltViewModel(),
     paddingValues: PaddingValues,
     navController: NavController) {
 
@@ -49,11 +45,11 @@ fun SignUpScreen(
 
     with(signUpState) {
 
-        val hasAccountSignedIn = remember { signUpViewModel.hasAccountSignedIn() }
-        val isUserCreatedNewAccount = remember { email.text != mappingViewModel.getEmail() }
+
         val context = LocalContext.current
 
         val signUpAccount = {
+            val isUserCreatedNewAccount = email != savedAccountEmail
             if (hasAccountSignedIn && isUserCreatedNewAccount) {
                 signUpViewModel.onEvent(SignUpEvent.SignOut)
             }

@@ -30,6 +30,10 @@ class EmailAuthViewModel @Inject constructor(
     val eventFlow: SharedFlow<EmailAuthUiEvent> = _eventFlow.asSharedFlow()
 
 
+    init{
+        _state.update { it.copy(savedAccountEmail = authUseCase.getEmailUseCase() ?: "") }
+    }
+
     fun onEvent(event: EmailAuthEvent) {
         when (event) {
             is EmailAuthEvent.RefreshEmail -> {
