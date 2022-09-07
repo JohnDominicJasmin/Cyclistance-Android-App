@@ -31,7 +31,6 @@ class MappingViewModel @Inject constructor(
     private var locationUpdatesFlow: Job? = null
 
 
-    fun getEmail(): String = authUseCase.getEmailUseCase() ?: ""
 
     private fun getId(): String? = authUseCase.getIdUseCase()
 
@@ -78,7 +77,7 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getUserLocationUseCase().collect { userLocation ->
                     _state.update {
                         it.copy(
-                            addresses = userLocation.addresses,
+                            addresses = userLocation.addresses ?: emptyList(),
                             currentLatLng = userLocation.latLng)
                     }
                 }

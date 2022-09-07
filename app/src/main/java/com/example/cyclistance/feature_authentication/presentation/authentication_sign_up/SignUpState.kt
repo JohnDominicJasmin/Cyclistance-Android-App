@@ -14,4 +14,6 @@ data class SignUpState(
     val focusRequester: FocusRequester = FocusRequester(),
     val isLoading: Boolean = false,
     val alertDialogModel: AlertDialogModel = AlertDialogModel(),
+    val hasAccountSignedIn: Boolean = false,
+    val savedAccountEmail: String = "",
 )

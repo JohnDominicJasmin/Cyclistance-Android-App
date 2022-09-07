@@ -54,7 +54,7 @@ class SignInViewModel @Inject constructor(
             is SignInEvent.SignInFacebook -> {
 
                 _state.update { it.copy(isLoading = true) }
-                event.context.findActivity()?.let { activity -> // todo: remove context here
+                event.context.findActivity()?.let { activity ->
                     LoginManager.getInstance()
                         .logInWithReadPermissions(activity, listOf("email", "public_profile"))
                 }
@@ -108,42 +108,10 @@ class SignInViewModel @Inject constructor(
             }
         }.onFailure { exception ->
             _state.update { it.copy(isLoading = false) }
-            handleSignInDefaultException(exception)
+            handleException(exception)
         }
     }
 
-    private suspend fun handleSignInDefaultException(exception:Throwable){
-        when (exception) {
-            is AuthExceptions.EmailException -> {
-                _state.update {
-                    it.copy(
-                        emailErrorMessage = exception.message ?: "Email is Invalid.")
-                }
-            }
-            is AuthExceptions.PasswordException -> {
-                _state.update {
-                    it.copy(
-                        passwordErrorMessage = exception.message ?: "Password is Invalid.")
-                }
-            }
-            is AuthExceptions.InternetException -> {
-                _eventFlow.emit(SignInUiEvent.ShowNoInternetScreen)
-            }
-            is AuthExceptions.TooManyRequestsException -> {
-                _state.update {
-                    it.copy(
-                        alertDialogModel = AlertDialogModel(
-                            title = exception.title,
-                            description = exception.message ?: "You have been blocked for too many failed attempts. Please try again later.",
-                            icon = io.github.farhanroy.composeawesomedialog.R.raw.error,
-                        ))
-                }
-            }
-            else -> {
-                Timber.e("${this@SignInViewModel.javaClass.name}: ${exception.message}")
-            }
-        }
-    }
 
 
     private fun signInWithCredential(authCredential: AuthCredential) {
@@ -159,7 +127,53 @@ class SignInViewModel @Inject constructor(
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
-                handleSignInWithCredentialException(exception)
+                handleException(exception)
+            }
+        }
+    }
+
+    private suspend fun handleException(exception: Throwable){
+        when (exception) {
+            is AuthExceptions.EmailException -> {
+                _state.update {
+                    it.copy(
+                        emailErrorMessage = exception.message ?: "Email is Invalid.")
+                }
+            }
+            is AuthExceptions.PasswordException -> {
+                _state.update {
+                    it.copy(
+                        passwordErrorMessage = exception.message ?: "Password is Invalid.")
+                }
+            }
+
+            is AuthExceptions.TooManyRequestsException -> {
+                _state.update {
+                    it.copy(
+                        alertDialogModel = AlertDialogModel(
+                            title = exception.title,
+                            description = exception.message ?: "You have been blocked for too many failed attempts. Please try again later.",
+                            icon = io.github.farhanroy.composeawesomedialog.R.raw.error,
+                        ))
+                }
+            }
+
+            is AuthExceptions.InternetException -> {
+                _eventFlow.emit(SignInUiEvent.ShowNoInternetScreen)
+            }
+            is AuthExceptions.ConflictFBTokenException -> {
+                removeFacebookUserAccountPreviousToken()
+                _state.update {
+                    it.copy(
+                        alertDialogModel = AlertDialogModel(
+                            title = "Error",
+                            description = exception.message ?: "Sorry, something went wrong. Please try again.",
+                            icon = io.github.farhanroy.composeawesomedialog.R.raw.error))
+                }
+            }
+
+            else -> {
+                Timber.e("${this@SignInViewModel.javaClass.name}: ${exception.message}")
             }
         }
     }

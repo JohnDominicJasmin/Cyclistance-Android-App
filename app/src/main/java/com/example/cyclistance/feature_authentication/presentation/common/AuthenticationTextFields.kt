@@ -25,17 +25,17 @@ import com.example.cyclistance.theme.Black500
 
 @Composable
 fun ConfirmPasswordTextField(
-    passwordValue: TextFieldValue,
+    password: String,
     passwordExceptionMessage: String,
     isPasswordVisible: Boolean,
     passwordVisibilityIconOnClick: () -> Unit,
-    onValueChange: (TextFieldValue) -> Unit,
+    onValueChange: (String) -> Unit,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
 
 
 
     SetupTextField(
-        textFieldValue = passwordValue,
+        textFieldValue = password,
         exceptionMessage = passwordExceptionMessage,
         onValueChange = onValueChange,
         placeholderText = "Confirm Password",
@@ -55,10 +55,10 @@ fun ConfirmPasswordTextField(
 
 @Composable
 fun PasswordTextField(
-    password: TextFieldValue,
+    password: String,
     passwordExceptionMessage: String,
     clearIconOnClick: () -> Unit,
-    onValueChange: (TextFieldValue) -> Unit) {
+    onValueChange: (String) -> Unit) {
 
     val hasError = passwordExceptionMessage.isNotEmpty()
 
@@ -76,7 +76,7 @@ fun PasswordTextField(
                     tint = MaterialTheme.colors.error)
             }
 
-            if(password.text.isNotEmpty()  && !hasError){
+            if(password.isNotEmpty() && !hasError){
                 IconButton(onClick = clearIconOnClick) {
                     Icon(
                         imageVector = Icons.Default.Cancel,
@@ -100,9 +100,9 @@ fun PasswordTextField(
 @Composable
 private fun SetupTextField(
     focusRequester: FocusRequester = FocusRequester(),
-    textFieldValue: TextFieldValue,
+    textFieldValue: String,
     exceptionMessage: String,
-    onValueChange: (TextFieldValue) -> Unit,
+    onValueChange: (String) -> Unit,
     placeholderText: String,
     leadingIcon: ImageVector = Icons.Default.Lock,
     trailingIcon: @Composable (() -> Unit)? = null,
@@ -167,16 +167,16 @@ private fun SetupTextField(
 @Composable
 fun EmailTextField(
     focusRequester: FocusRequester,
-    textFieldValue: TextFieldValue,
+    email: String,
     emailExceptionMessage: String,
     clearIconOnClick: ()-> Unit,
-    onValueChange: (TextFieldValue) -> Unit) {
+    onValueChange: (String) -> Unit) {
 
     val hasError = emailExceptionMessage.isNotEmpty()
 
     SetupTextField(
         focusRequester = focusRequester,
-        textFieldValue = textFieldValue,
+        textFieldValue = email,
         exceptionMessage = emailExceptionMessage,
         onValueChange = onValueChange,
         placeholderText = "Email",
@@ -191,7 +191,7 @@ fun EmailTextField(
                 )
             }
 
-            if(textFieldValue.text.isNotEmpty() && !hasError){
+            if(email.isNotEmpty() && !hasError){
                 IconButton(onClick = clearIconOnClick) {
                     Icon(
                         imageVector = Icons.Default.Cancel,

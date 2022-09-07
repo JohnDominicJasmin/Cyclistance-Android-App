@@ -1,10 +1,5 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
@@ -27,21 +22,27 @@ class SignUpViewModel @Inject constructor(
     private val _eventFlow: MutableSharedFlow<SignUpUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<SignUpUiEvent> = _eventFlow.asSharedFlow()
 
+    init {
+        _state.update {
+            it.copy(
+                hasAccountSignedIn = authUseCase.hasAccountSignedInUseCase(),
+                savedAccountEmail = authUseCase.getEmailUseCase() ?: "",
+            )
+        }
 
+    }
 
-    fun hasAccountSignedIn(): Boolean = authUseCase.hasAccountSignedInUseCase()
-
-
-    fun onEvent(event: SignUpEvent){
-        when(event){
+    fun onEvent(event: SignUpEvent) {
+        when (event) {
             is SignUpEvent.SignUp -> {
-                with(state.value){
-                    viewModelScope.launch{
-                        createUserWithEmailAndPassword(authModel = AuthModel(
-                            email = email.trim(),
-                            password = password.trim(),
-                            confirmPassword = confirmPassword.trim()
-                        ))
+                with(state.value) {
+                    viewModelScope.launch {
+                        createUserWithEmailAndPassword(
+                            authModel = AuthModel(
+                                email = email.trim(),
+                                password = password.trim(),
+                                confirmPassword = confirmPassword.trim()
+                            ))
                     }
                 }
             }
@@ -50,10 +51,14 @@ class SignUpViewModel @Inject constructor(
                 _state.update { it.copy(email = event.email, emailErrorMessage = "") }
             }
             is SignUpEvent.EnterPassword -> {
-               _state.update { it.copy(password = event.password, passwordErrorMessage = "") }
+                _state.update { it.copy(password = event.password, passwordErrorMessage = "") }
             }
             is SignUpEvent.EnterConfirmPassword -> {
-                _state.update { it.copy(confirmPassword = event.confirmPassword, confirmPasswordErrorMessage = "") }
+                _state.update {
+                    it.copy(
+                        confirmPassword = event.confirmPassword,
+                        confirmPasswordErrorMessage = "")
+                }
             }
             is SignUpEvent.DismissAlertDialog -> {
                 _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
@@ -66,53 +71,64 @@ class SignUpViewModel @Inject constructor(
             }
 
 
-
         }
     }
 
 
     private suspend fun createUserWithEmailAndPassword(authModel: AuthModel) {
-            runCatching {
-                _state.update { it.copy(isLoading = true) }
-                authUseCase.createWithEmailAndPasswordUseCase(authModel)
-            }.onSuccess { isAccountCreated ->
-                _state.update { it.copy(isLoading = false) }
-                if(isAccountCreated) {
-                    _eventFlow.emit(SignUpUiEvent.ShowEmailAuthScreen)
-                }else{
-                    _eventFlow.emit(SignUpUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
-                }
-            }.onFailure {exception ->
-                _state.update { it.copy(isLoading = false) }
-                when(exception) {
-                    is AuthExceptions.EmailException -> {
-                        _state.update { it.copy(emailErrorMessage = exception.message ?: "Invalid Email.") }
-                    }
-                    is AuthExceptions.PasswordException -> {
-                        _state.update { it.copy(passwordErrorMessage = exception.message ?: "Invalid Password.") }
-                    }
-                    is AuthExceptions.ConfirmPasswordException -> {
-                        _state.update { it.copy(confirmPasswordErrorMessage = exception.message ?: "Invalid Password.") }
-                    }
-                    is AuthExceptions.InternetException -> {
-                        _eventFlow.emit(SignUpUiEvent.ShowNoInternetScreen)
-                    }
-                    is AuthExceptions.UserAlreadyExistsException -> {
-
-                        _state.update { it.copy(alertDialogModel = AlertDialogModel(      title = exception.title,
-                            description = exception.message ?: "This account is Already in Use.",
-                            icon = io.github.farhanroy.composeawesomedialog.R.raw.error,)) }
-                    }
-                    else ->{
-                        Timber.e("${this@SignUpViewModel.javaClass.name}: ${exception.message}")
-                    }
-
-                }
+        runCatching {
+            _state.update { it.copy(isLoading = true) }
+            authUseCase.createWithEmailAndPasswordUseCase(authModel)
+        }.onSuccess { isAccountCreated ->
+            _state.update { it.copy(isLoading = false) }
+            if (isAccountCreated) {
+                _eventFlow.emit(SignUpUiEvent.ShowEmailAuthScreen)
+            } else {
+                _eventFlow.emit(SignUpUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
+            }
+        }.onFailure { exception ->
+            _state.update { it.copy(isLoading = false) }
+            handleException(exception)
         }
     }
 
+    private suspend fun handleException(exception: Throwable) {
+        when (exception) {
+            is AuthExceptions.EmailException -> {
+                _state.update { it.copy(emailErrorMessage = exception.message ?: "Invalid Email.") }
+            }
+            is AuthExceptions.PasswordException -> {
+                _state.update {
+                    it.copy(
+                        passwordErrorMessage = exception.message ?: "Invalid Password.")
+                }
+            }
+            is AuthExceptions.ConfirmPasswordException -> {
+                _state.update {
+                    it.copy(
+                        confirmPasswordErrorMessage = exception.message ?: "Invalid Password.")
+                }
+            }
+            is AuthExceptions.InternetException -> {
+                _eventFlow.emit(SignUpUiEvent.ShowNoInternetScreen)
+            }
+            is AuthExceptions.UserAlreadyExistsException -> {
 
+                _state.update {
+                    it.copy(
+                        alertDialogModel = AlertDialogModel(
+                            title = exception.title,
+                            description = exception.message ?: "This account is Already in Use.",
+                            icon = io.github.farhanroy.composeawesomedialog.R.raw.error,
+                        ))
+                }
+            }
+            else -> {
+                Timber.e("${this@SignUpViewModel.javaClass.name}: ${exception.message}")
+            }
 
+        }
+    }
 
 
 }
