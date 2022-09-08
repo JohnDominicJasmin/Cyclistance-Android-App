@@ -80,8 +80,7 @@ fun EditProfileScreen(
                     result.data?.getParcelableExtra(Credential.EXTRA_KEY)
                 editProfileViewModel.onEvent(
                     event = EditProfileEvent.EnteredPhoneNumber(
-                        phoneNumber = TextFieldValue(
-                            text = credential!!.id)))
+                        phoneNumber = credential!!.id))
             }
             NO_SIM_CARD_RESULT_CODE -> {
                 Toast.makeText(context, "No SIM Card Detected", Toast.LENGTH_LONG).show()
@@ -89,7 +88,7 @@ fun EditProfileScreen(
             NONE_OF_THE_ABOVE_RESULT_CODE -> {
                 editProfileViewModel.onEvent(
                     event = EditProfileEvent.EnteredPhoneNumber(
-                        phoneNumber = TextFieldValue(text = "")))
+                        phoneNumber = ""))
             }
         }
     }

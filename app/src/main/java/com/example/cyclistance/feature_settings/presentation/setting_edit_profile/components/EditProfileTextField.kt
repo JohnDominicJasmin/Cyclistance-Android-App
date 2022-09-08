@@ -83,10 +83,10 @@ fun TextFieldInputArea(
 fun TextFieldItem(
     label: String,
     errorMessage: String,
-    value: TextFieldValue,
+    value: String,
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions = KeyboardActions(),
-    onValueChange: (TextFieldValue) -> Unit,
+    onValueChange: (String) -> Unit,
     enabled: Boolean = true,
     onClick: () -> Unit) {
 

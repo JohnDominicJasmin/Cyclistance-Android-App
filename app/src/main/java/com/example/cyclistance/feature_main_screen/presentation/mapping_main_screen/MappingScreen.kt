@@ -59,7 +59,6 @@ fun MappingScreen(
                 Manifest.permission.ACCESS_COARSE_LOCATION))
     }
     val context = LocalContext.current
-    var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
     val settingResultRequest = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
@@ -103,13 +102,6 @@ fun MappingScreen(
                 is MappingUiEvent.ShowToastMessage -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
-                is MappingUiEvent.ShowAlertDialog -> {
-                    alertDialogState = AlertDialogModel(
-                        title = event.title,
-                        description = event.description,
-                        icon = event.imageResId
-                    )
-                }
                 is MappingUiEvent.ShowNoInternetScreen -> {
                     navController.navigateScreen(Screens.NoInternetScreen.route, Screens.MappingScreen.route)
                 }
@@ -138,14 +130,6 @@ fun MappingScreen(
                             })
                     }
                 })
-
-            if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
-                AlertDialog(
-                    alertDialog = alertDialogState,
-                    onDismissRequest = {
-                        alertDialogState = AlertDialogModel()
-                    })
-            }
 
 
             ConstraintLayout(modifier = Modifier.fillMaxSize().padding(paddingValues)) {

@@ -5,8 +5,8 @@ import android.net.Uri
 import androidx.compose.ui.text.input.TextFieldValue
 
 data class EditProfileState(
-    val name: TextFieldValue = TextFieldValue(""),
-    var phoneNumber: TextFieldValue = TextFieldValue(""),
+    val name: String = "",
+    var phoneNumber: String = "",
     val nameErrorMessage: String = "",
     val phoneNumberErrorMessage: String = "",
     val photoUrl: String = "",
