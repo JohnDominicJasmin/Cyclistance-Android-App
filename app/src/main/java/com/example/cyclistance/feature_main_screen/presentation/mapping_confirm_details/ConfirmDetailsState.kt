@@ -8,5 +8,7 @@ data class ConfirmDetailsState(
     val descriptionErrorMessage: String = "",
     val message: String = "",
     val isLoading: Boolean = false,
-    val address: String = ""
+    val address: String = "",
+    val hasInternet: Boolean = true
+
 )

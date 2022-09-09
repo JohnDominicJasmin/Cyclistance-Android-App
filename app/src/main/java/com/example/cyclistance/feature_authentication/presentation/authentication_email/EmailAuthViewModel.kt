@@ -41,6 +41,11 @@ class EmailAuthViewModel @Inject constructor(
                     reloadEmail()
                 }
             }
+
+            is EmailAuthEvent.DismissNoInternetScreen -> {
+                _state.update { it.copy(hasInternet = true) }
+            }
+
             is EmailAuthEvent.SendEmailVerification -> {
                 viewModelScope.launch {
                     sendEmailVerification()
@@ -56,6 +61,7 @@ class EmailAuthViewModel @Inject constructor(
                     refreshEmailAsync()
                 }
             }
+
             is EmailAuthEvent.ResendButtonClick -> {
                 _state.update { it.copy(isEmailResendClicked = true) }
             }
@@ -98,27 +104,28 @@ class EmailAuthViewModel @Inject constructor(
     }
 
     private suspend fun reloadEmail() {
-        runCatching {
-            authUseCase.reloadEmailUseCase()
-        }.onSuccess { isEmailReloaded ->
-            _state.update { it.copy(isLoading = false) }
-            if (isEmailReloaded) {
-                verifyEmail()
-            } else {
-                _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
-            }
-        }.onFailure { exception ->
-            _state.update { it.copy(isLoading = false) }
-            when (exception) {
-                is AuthExceptions.InternetException -> {
-                    _eventFlow.emit(EmailAuthUiEvent.ShowNoInternetScreen)
-                }
-                else -> {
-                    Timber.e("${this.javaClass.name}: ${exception.message}")
-                }
-            }
 
-
+        coroutineScope {
+            runCatching {
+                authUseCase.reloadEmailUseCase()
+            }.onSuccess { isEmailReloaded ->
+                _state.update { it.copy(isLoading = false) }
+                if (isEmailReloaded) {
+                    verifyEmail()
+                } else {
+                    _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
+                }
+            }.onFailure { exception ->
+                _state.update { it.copy(isLoading = false) }
+                when (exception) {
+                    is AuthExceptions.InternetException -> {
+                        _state.update { it.copy(hasInternet = false) }
+                    }
+                    else -> {
+                        Timber.e("${this.javaClass.name}: ${exception.message}")
+                    }
+                }
+            }
         }
     }
 
@@ -147,39 +154,41 @@ class EmailAuthViewModel @Inject constructor(
     }
 
     private suspend fun sendEmailVerification() {
-        runCatching {
-            _state.update { it.copy(isLoading = true) }
-            authUseCase.sendEmailVerificationUseCase()
-        }.onSuccess { isEmailVerificationSent ->
-            _state.update { it.copy(isLoading = false) }
-            if (state.value.isEmailResendClicked) {
-                if (isEmailVerificationSent) {
+        coroutineScope {
+            runCatching {
+                _state.update { it.copy(isLoading = true) }
+                authUseCase.sendEmailVerificationUseCase()
+            }.onSuccess { isEmailVerificationSent ->
+                _state.update { it.copy(isLoading = false) }
+                if (state.value.isEmailResendClicked) {
+                    if (isEmailVerificationSent) {
+                        _state.update {
+                            it.copy(
+                                alertDialogModel = AlertDialogModel(
+                                    title = "New Email Sent.",
+                                    description = "New verification email has been sent to your email address.",
+                                    icon = io.github.farhanroy.composeawesomedialog.R.raw.success))
+                        }
+
+                    } else {
+                        _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
+                    }
+                }
+
+
+            }.onFailure {
+
+                _state.update { it.copy(isLoading = false) }
+                if (state.value.isEmailResendClicked) {
                     _state.update {
                         it.copy(
                             alertDialogModel = AlertDialogModel(
-                                title = "New Email Sent.",
-                                description = "New verification email has been sent to your email address.",
-                                icon = io.github.farhanroy.composeawesomedialog.R.raw.success))
-                    }
-
-                } else {
-                    _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
-                }
-            }
-
-
-        }.onFailure {
-
-            _state.update { it.copy(isLoading = false) }
-            if (state.value.isEmailResendClicked) {
-                _state.update{
-                    it.copy(
-                        alertDialogModel = AlertDialogModel(
-                            title = "Error",
-                            description = "Sorry, something went wrong. Please try again.",
-                            icon = io.github.farhanroy.composeawesomedialog.R.raw.error
+                                title = "Error",
+                                description = "Sorry, something went wrong. Please try again.",
+                                icon = io.github.farhanroy.composeawesomedialog.R.raw.error
+                            )
                         )
-                    )
+                    }
                 }
             }
         }

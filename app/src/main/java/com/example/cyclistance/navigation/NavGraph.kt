@@ -59,9 +59,7 @@ fun NavGraph(
                 paddingValues = paddingValues)
         }
 
-        composable(Screens.NoInternetScreen.route) {
-            NoInternetScreen(navController = navController)
-        }
+
 
 
         composable(Screens.MappingScreen.route) {

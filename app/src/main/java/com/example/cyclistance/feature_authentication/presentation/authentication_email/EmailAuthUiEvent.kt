@@ -5,6 +5,5 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 sealed class EmailAuthUiEvent{
     object ShowMappingScreen: EmailAuthUiEvent()
     object ShowEmailAuthScreen: EmailAuthUiEvent()
-    object ShowNoInternetScreen: EmailAuthUiEvent()
     data class ShowToastMessage(val message: String): EmailAuthUiEvent()
 }

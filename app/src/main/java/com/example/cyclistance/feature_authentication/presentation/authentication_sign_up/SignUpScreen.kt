@@ -23,11 +23,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.ConnectionStatus
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.*
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
-import com.example.cyclistance.navigation.navigateScreen
+import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -62,12 +63,6 @@ fun SignUpScreen(
             signUpViewModel.eventFlow.collectLatest { event ->
 
                 when (event) {
-                    is SignUpUiEvent.ShowNoInternetScreen -> {
-                        navController.navigateScreen(
-                            Screens.NoInternetScreen.route,
-                            Screens.SignUpScreen.route)
-                    }
-
                     is SignUpUiEvent.ShowEmailAuthScreen -> {
                         navController.navigateScreenInclusively(
                             Screens.EmailAuthScreen.route,
@@ -93,7 +88,9 @@ fun SignUpScreen(
                 .padding(paddingValues)
                 .verticalScroll(rememberScrollState())
                 .background(MaterialTheme.colors.background)) {
+
             Spacer(modifier = Modifier.weight(0.04f, fill = true))
+
             ConstraintLayout(
                 constraintSet = signUpConstraints,
                 modifier = Modifier
@@ -160,7 +157,18 @@ fun SignUpScreen(
                         modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
                     )
                 }
+                if(!hasInternet){
+                    NoInternetScreen(
+                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                        onClickRetryButton = {
+                        if(ConnectionStatus.hasInternetConnection(context)){
+                            signUpViewModel.onEvent(event = SignUpEvent.DismissNoInternetScreen)
+                        }
+                    })
+                }
             }
+
+
         }
     }
 
@@ -221,6 +229,14 @@ fun SignUpScreenPreview() {
                     CircularProgressIndicator(
                         modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
                     )
+                }
+
+                if(true){
+                    NoInternetScreen(
+                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                        onClickRetryButton = {
+
+                        })
                 }
             }
         }

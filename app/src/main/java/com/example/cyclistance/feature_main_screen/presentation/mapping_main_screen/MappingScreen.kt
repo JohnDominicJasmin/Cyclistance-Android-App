@@ -22,10 +22,9 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.ConnectionStatus
 import com.example.cyclistance.core.utils.ConnectionStatus.checkLocationSetting
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
-import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.*
+import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -102,9 +101,6 @@ fun MappingScreen(
                 is MappingUiEvent.ShowToastMessage -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
-                is MappingUiEvent.ShowNoInternetScreen -> {
-                    navController.navigateScreen(Screens.NoInternetScreen.route, Screens.MappingScreen.route)
-                }
                 is MappingUiEvent.ShowConfirmDetailsScreen -> {
                     navController.navigateScreen(Screens.ConfirmDetailsScreen.route, Screens.MappingScreen.route)
                 }
@@ -132,9 +128,11 @@ fun MappingScreen(
                 })
 
 
-            ConstraintLayout(modifier = Modifier.fillMaxSize().padding(paddingValues)) {
+            ConstraintLayout(modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)) {
 
-                val (mapScreen, searchButton, circularProgressbar) = createRefs()
+                val (mapScreen, searchButton, circularProgressbar, noInternetScreen) = createRefs()
 
                 MapScreen(
                     isDarkTheme = isDarkTheme,
@@ -179,7 +177,26 @@ fun MappingScreen(
                     })
                 }
 
+                if(!state.hasInternet){
+                    NoInternetScreen(
+                        modifier = Modifier.constrainAs(noInternetScreen){
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            centerTo(parent)
+                            width= Dimension.matchParent
+                            height= Dimension.matchParent
+                        },
+                        onClickRetryButton = {
+                        if(ConnectionStatus.hasInternetConnection(context)){
+                            mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetScreen)
+                        }
+                    })
+                }
             }
+
+
 
 
 }

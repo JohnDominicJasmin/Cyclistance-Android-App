@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 
 
 sealed class SignUpUiEvent{
-    object ShowNoInternetScreen: SignUpUiEvent()
     object ShowEmailAuthScreen: SignUpUiEvent()
     data class ShowToastMessage(val message: String) : SignUpUiEvent()
 

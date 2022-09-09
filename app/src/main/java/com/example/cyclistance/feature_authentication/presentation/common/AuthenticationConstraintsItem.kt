@@ -13,4 +13,5 @@ sealed class AuthenticationConstraintsItem(val layoutId:String){
     object ResendButton: AuthenticationConstraintsItem(layoutId = "resend_email_button")
     object VerifyEmailButton: AuthenticationConstraintsItem(layoutId = "verify_email_button")
     object ProgressBar: AuthenticationConstraintsItem(layoutId = "progress_bar")
+    object NoInternetScreen: AuthenticationConstraintsItem(layoutId = "no_internet_screen")
 }

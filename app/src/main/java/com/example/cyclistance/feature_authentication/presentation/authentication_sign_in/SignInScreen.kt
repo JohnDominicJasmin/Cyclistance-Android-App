@@ -25,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
+import com.example.cyclistance.core.utils.ConnectionStatus
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_authentication.domain.util.AuthResult
@@ -34,6 +35,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.*
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.navigation.navigateScreenInclusively
@@ -94,11 +96,6 @@ fun SignInScreen(
                 is SignInUiEvent.RefreshEmail -> {
                     emailAuthViewModel.onEvent(EmailAuthEvent.RefreshEmail)
                 }
-                is SignInUiEvent.ShowNoInternetScreen -> {
-                    navController.navigateScreen(
-                        Screens.NoInternetScreen.route,
-                        Screens.SignInScreen.route)
-                }
                 is SignInUiEvent.ShowMappingScreen -> {
                     navController.navigateScreenInclusively(Screens.MappingScreen.route, Screens.SignInScreen.route)
                 }
@@ -115,10 +112,6 @@ fun SignInScreen(
     LaunchedEffect(key1 = true) {
         emailAuthViewModel.eventFlow.collectLatest { emailAuthEvent ->
             when (emailAuthEvent) {
-                is EmailAuthUiEvent.ShowNoInternetScreen -> {
-                    navController.navigateScreen(Screens.NoInternetScreen.route, Screens.SignInScreen.route)
-                }
-
                 is EmailAuthUiEvent.ShowMappingScreen -> {
                     navController.navigateScreenInclusively(Screens.MappingScreen.route, Screens.SignInScreen.route)
                 }
@@ -216,8 +209,20 @@ fun SignInScreen(
                     modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
                 )
             }
+            if(!emailAuthState.hasInternet || !signInState.hasInternet){
+                NoInternetScreen(
+                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                    onClickRetryButton = {
+                    if(ConnectionStatus.hasInternetConnection(context)){
+                        emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
+                        signInViewModel.onEvent(event = SignInEvent.DismissNoInternetScreen)
+                    }
+                })
 
+            }
         }
+
+
 
 
     }
@@ -227,6 +232,7 @@ fun SignInScreen(
 @Composable
 fun SignInScreenPreview() {
 
+    val context = LocalContext.current
     CyclistanceTheme(false) {
 
         val scope = rememberCoroutineScope()
@@ -301,6 +307,17 @@ fun SignInScreenPreview() {
                     CircularProgressIndicator(
                         modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
                     )
+                }
+
+                if(true){
+                    NoInternetScreen(
+                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                        onClickRetryButton = {
+                        if(ConnectionStatus.hasInternetConnection(context)){
+
+                        }
+                    })
+
                 }
 
             }

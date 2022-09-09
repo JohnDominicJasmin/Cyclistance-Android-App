@@ -6,4 +6,5 @@ sealed class MappingEvent {
     object SignOut: MappingEvent()
     object SubscribeToLocationUpdates: MappingEvent()
     object UnsubscribeToLocationUpdates: MappingEvent()
+    object DismissNoInternetScreen: MappingEvent()
 }

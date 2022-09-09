@@ -7,5 +7,6 @@ data class MappingState(
     val isLoading: Boolean =  false,
     val findAssistanceButtonVisible: Boolean = true,
     val addresses: List<Address> = emptyList(),
-    val currentLatLng: LatLng? = null
+    val currentLatLng: LatLng? = null,
+    val hasInternet: Boolean = true
 )
