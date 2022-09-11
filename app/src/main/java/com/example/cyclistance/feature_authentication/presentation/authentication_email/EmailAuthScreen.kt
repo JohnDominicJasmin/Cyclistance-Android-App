@@ -132,11 +132,8 @@ fun EmailAuthScreen(
                 }
 
 
-//todo: test this later
-                val secondsRemaining =
-                    remember(secondsLeft) { if (secondsLeft < 2) "$secondsLeft" else "$secondsLeft s" }
-                val secondsRemainingText by remember { derivedStateOf { if (isTimerRunning) "Resend Email in $secondsRemaining" else "Resend Email" } }
-
+                val secondsRemaining = if (secondsLeft < 2) "$secondsLeft" else "$secondsLeft s"
+                val secondsRemainingText =  if (isTimerRunning) "Resend Email in $secondsRemaining" else "Resend Email"
                 EmailAuthVerifyEmailButton(onClick = {
                     kotlin.runCatching {
                         startActivity(context, intent, null)

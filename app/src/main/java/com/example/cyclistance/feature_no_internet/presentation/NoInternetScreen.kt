@@ -54,7 +54,6 @@ fun NoInternetScreen(
 
             val (image, title, description, retryButton, goToSettingsButton) = createRefs()
 
-//todo:test this later
             Image(
                 painter = painterResource( R.drawable.ic_light_astronaut),
                 contentDescription = "Astronaut",
