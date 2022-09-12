@@ -8,7 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,18 +19,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.R
 import com.example.cyclistance.theme.Black300
 import com.example.cyclistance.theme.CyclistanceTheme
-import com.example.cyclistance.core.utils.ConnectionStatus
 
 
 @Composable
 fun NoInternetScreen(
-    isDarkTheme: Boolean = false,
-    navController: NavController,
+    modifier:Modifier = Modifier,
+    onClickRetryButton : () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -41,7 +38,7 @@ fun NoInternetScreen(
 
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colors.background)) {
 
@@ -54,11 +51,11 @@ fun NoInternetScreen(
 
             val (image, title, description, retryButton, goToSettingsButton) = createRefs()
 
-
             Image(
-                painter = painterResource(id = if(isDarkTheme) R.drawable.ic_dark_astronaut else R.drawable.ic_light_astronaut),
+                painter = painterResource( R.drawable.ic_light_astronaut),
                 contentDescription = "Astronaut",
                 modifier = Modifier
+                    .sizeIn(maxWidth = 1000.dp, maxHeight = 1000.dp)
                     .fillMaxWidth(0.5f)
                     .fillMaxHeight(0.2f)
                     .constrainAs(image) {
@@ -98,11 +95,7 @@ fun NoInternetScreen(
 
             OutlinedButton(
                 shape = RoundedCornerShape(12.dp),
-                onClick = {
-                    if (ConnectionStatus.hasInternetConnection(context)) {
-                        navController.popBackStack()
-                    }
-                },
+                onClick = onClickRetryButton,
                 modifier = Modifier
                     .padding(4.dp)
                     .width(150.dp)
@@ -159,12 +152,12 @@ fun NoInternetScreen(
 
 }
 
+
 @Preview(device = Devices.NEXUS_5)
 @Composable
 fun NoInternetScreenPreview() {
     val isDarkTheme = true
-    val navController = rememberNavController()
     CyclistanceTheme(isDarkTheme) {
-        NoInternetScreen(isDarkTheme = isDarkTheme, navController = navController)
+        NoInternetScreen(){}
     }
 }
