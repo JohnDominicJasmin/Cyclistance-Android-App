@@ -9,8 +9,8 @@ import com.example.cyclistance.core.utils.AuthConstants.USER_NOT_FOUND
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_main_screen.data.repository.dataStore
-import com.example.cyclistance.feature_main_screen.data.repository.getData
 import com.example.cyclistance.feature_main_screen.data.repository.editData
+import com.example.cyclistance.feature_main_screen.data.repository.getData
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*
@@ -19,15 +19,16 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import javax.inject.Inject
+import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 
-
-class AuthRepositoryImpl @Inject constructor(
+class AuthRepositoryImpl (
     private val context: Context,
+    private val auth: FirebaseAuth,
+
 ) : AuthRepository<AuthCredential> {
 
     private var dataStore = context.dataStore
@@ -49,7 +50,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun reloadEmail(): Boolean {
         return suspendCoroutine { continuation ->
-            FirebaseAuth.getInstance().currentUser?.reload()?.addOnCompleteListener { reload ->
+            auth.currentUser?.reload()?.addOnCompleteListener { reload ->
                 reload.exception?.let { exception ->
                     if (exception is FirebaseNetworkException) {
                         continuation.resumeWithException(
@@ -65,7 +66,7 @@ class AuthRepositoryImpl @Inject constructor(
 
     override suspend fun sendEmailVerification(): Boolean {
         return suspendCoroutine { continuation ->
-            FirebaseAuth.getInstance().currentUser?.sendEmailVerification()?.addOnCompleteListener { sendEmail ->
+            auth.currentUser?.sendEmailVerification()?.addOnCompleteListener { sendEmail ->
                     sendEmail.exception?.let {
                         continuation.resumeWithException(
                             AuthExceptions.EmailVerificationException(
@@ -79,7 +80,7 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean {
 
         return suspendCoroutine { continuation ->
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(email.trim(), password.trim()).addOnCompleteListener { createAccount ->
+            auth.createUserWithEmailAndPassword(email.trim(), password.trim()).addOnCompleteListener { createAccount ->
                     createAccount.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
                             continuation.resumeWithException(
@@ -105,9 +106,10 @@ class AuthRepositoryImpl @Inject constructor(
     override suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean {
 
         return suspendCoroutine { continuation ->
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(email.trim(), password.trim())
+            auth.signInWithEmailAndPassword(email.trim(), password.trim())
                 .addOnCompleteListener { signInWithEmailAndPassword ->
                     signInWithEmailAndPassword.exception?.let { exception ->
+                        Timber.e(exception.message)
                         if(exception is FirebaseNetworkException){
                             continuation.resumeWithException(AuthExceptions.InternetException(
                                 message = context.getString(
@@ -148,9 +150,8 @@ class AuthRepositoryImpl @Inject constructor(
 
 
     override suspend fun signInWithCredentials(v: AuthCredential): Boolean {
-
         return suspendCoroutine { continuation ->
-            FirebaseAuth.getInstance().signInWithCredential(v)
+            auth.signInWithCredential(v)
                 .addOnCompleteListener { signInWithCredential ->
                     signInWithCredential.exception?.let { exception ->
                         if(exception.message == FACEBOOK_CONNECTION_FAILURE){
@@ -167,30 +168,30 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun signOut() {
-        FirebaseAuth.getInstance().signOut()
+        auth.signOut()
     }
 
     override fun getId(): String? {
-        return FirebaseAuth.getInstance().currentUser?.uid
+        return auth.currentUser?.uid
     }
 
     override fun getEmail(): String? {
-        return FirebaseAuth.getInstance().currentUser?.email
+        return auth.currentUser?.email
     }
 
     override fun getName(): String? {
-        return FirebaseAuth.getInstance().currentUser?.displayName
+        return auth.currentUser?.displayName
     }
 
 
 
     override fun getPhotoUrl(): String {
-        return FirebaseAuth.getInstance().currentUser?.photoUrl.toString()
+        return auth.currentUser?.photoUrl.toString()
             .replace(oldValue = "=s96-c", newValue = "=s400-c");
     }
 
     override fun isSignedInWithProvider(): Flow<Boolean> = flow {
-        FirebaseAuth.getInstance().currentUser?.providerData?.forEach {
+        auth.currentUser?.providerData?.forEach {
             emit(
                 value = (it.providerId == FacebookAuthProvider.PROVIDER_ID ||
                          it.providerId == GoogleAuthProvider.PROVIDER_ID))
@@ -199,11 +200,11 @@ class AuthRepositoryImpl @Inject constructor(
     }
 
     override fun isEmailVerified(): Boolean? {
-        return FirebaseAuth.getInstance().currentUser?.isEmailVerified
+        return auth.currentUser?.isEmailVerified
     }
 
     override fun hasAccountSignedIn(): Boolean {
-        return FirebaseAuth.getInstance().currentUser != null
+        return auth.currentUser != null
     }
 
 
@@ -216,7 +217,7 @@ class AuthRepositoryImpl @Inject constructor(
         }
 
         return suspendCoroutine { continuation ->
-            FirebaseAuth.getInstance().currentUser?.updateProfile(profileUpdates)
+            auth.currentUser?.updateProfile(profileUpdates)
                 ?.addOnCompleteListener { updateProfile ->
                     updateProfile.exception?.let(continuation::resumeWithException)
                     continuation.resume(updateProfile.isSuccessful)
