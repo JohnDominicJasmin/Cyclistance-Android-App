@@ -6,6 +6,7 @@ sealed class SignUpEvent{
     object SignOut: SignUpEvent()
     object TogglePasswordVisibility: SignUpEvent()
     object DismissAlertDialog: SignUpEvent()
+    object DismissNoInternetScreen: SignUpEvent()
     data class EnterEmail(val email: String): SignUpEvent()
     data class EnterPassword(val password: String): SignUpEvent()
     data class EnterConfirmPassword(val confirmPassword: String): SignUpEvent()

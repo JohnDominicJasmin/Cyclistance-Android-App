@@ -60,6 +60,9 @@ class SignInViewModel @Inject constructor(
                 }
             }
 
+            is SignInEvent.DismissNoInternetScreen -> {
+             _state.update { it.copy(hasInternet = true) }
+            }
             is SignInEvent.DismissAlertDialog -> {
                 _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
             }
@@ -159,7 +162,7 @@ class SignInViewModel @Inject constructor(
             }
 
             is AuthExceptions.InternetException -> {
-                _eventFlow.emit(SignInUiEvent.ShowNoInternetScreen)
+                _state.update { it.copy(hasInternet = false) }
             }
             is AuthExceptions.ConflictFBTokenException -> {
                 removeFacebookUserAccountPreviousToken()
@@ -203,9 +206,9 @@ class SignInViewModel @Inject constructor(
     }
 
 
-    private suspend fun handleFacebookSignInException(error: Exception) {
+    private fun handleFacebookSignInException(error: Exception) {
         if (error.message == FACEBOOK_CONNECTION_FAILURE) {
-            _eventFlow.emit(SignInUiEvent.ShowNoInternetScreen)
+            _state.update { it.copy(hasInternet = false) }
             return
         }
         error.message?.let { errorMessage ->

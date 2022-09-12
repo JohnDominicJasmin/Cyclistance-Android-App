@@ -6,6 +6,7 @@ sealed class EmailAuthEvent{
     object SendEmailVerification: EmailAuthEvent()
     object RefreshEmail: EmailAuthEvent()
     object StartTimer: EmailAuthEvent()
+    object DismissNoInternetScreen: EmailAuthEvent()
     object SubscribeEmailVerification: EmailAuthEvent()
     object DismissAlertDialog: EmailAuthEvent()
 

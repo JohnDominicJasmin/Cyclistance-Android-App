@@ -11,6 +11,7 @@ data class SignInState(
     val passwordVisibility: Boolean = false,
     val isLoading: Boolean = false,
     val focusRequester: FocusRequester = FocusRequester(),
-    val alertDialogModel: AlertDialogModel = AlertDialogModel()
+    val alertDialogModel: AlertDialogModel = AlertDialogModel(),
+    val hasInternet: Boolean = true
 
     )

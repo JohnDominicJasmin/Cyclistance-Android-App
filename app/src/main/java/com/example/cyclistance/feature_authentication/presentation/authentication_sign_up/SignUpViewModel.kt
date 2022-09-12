@@ -46,6 +46,9 @@ class SignUpViewModel @Inject constructor(
                     }
                 }
             }
+            is SignUpEvent.DismissNoInternetScreen -> {
+                _state.update { it.copy(hasInternet = true) }
+            }
 
             is SignUpEvent.EnterEmail -> {
                 _state.update { it.copy(email = event.email, emailErrorMessage = "") }
@@ -92,7 +95,7 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private suspend fun handleException(exception: Throwable) {
+    private fun handleException(exception: Throwable) {
         when (exception) {
             is AuthExceptions.EmailException -> {
                 _state.update { it.copy(emailErrorMessage = exception.message ?: "Invalid Email.") }
@@ -110,7 +113,7 @@ class SignUpViewModel @Inject constructor(
                 }
             }
             is AuthExceptions.InternetException -> {
-                _eventFlow.emit(SignUpUiEvent.ShowNoInternetScreen)
+                _state.update { it.copy(hasInternet = false) }
             }
             is AuthExceptions.UserAlreadyExistsException -> {
 

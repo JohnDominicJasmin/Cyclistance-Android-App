@@ -16,4 +16,6 @@ data class SignUpState(
     val alertDialogModel: AlertDialogModel = AlertDialogModel(),
     val hasAccountSignedIn: Boolean = false,
     val savedAccountEmail: String = "",
+    val hasInternet: Boolean = true,
+
 )

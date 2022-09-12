@@ -16,6 +16,7 @@ val signInConstraints = ConstraintSet {
     val signInButton = createRefFor(id = AuthenticationConstraintsItem.SignInButton.layoutId)
     val dontHaveAccountText = createRefFor(id = AuthenticationConstraintsItem.ClickableTextSection.layoutId)
     val progressBar = createRefFor(id = AuthenticationConstraintsItem.ProgressBar.layoutId)
+    val noInternetScreen = createRefFor(id = AuthenticationConstraintsItem.NoInternetScreen.layoutId)
 
     constrain(appIcon) {
         top.linkTo(parent.top, margin = 15.dp)
@@ -39,6 +40,16 @@ val signInConstraints = ConstraintSet {
         start.linkTo(parent.start)
         bottom.linkTo(parent.bottom)
         this.centerTo(parent)
+    }
+
+    constrain(noInternetScreen){
+        top.linkTo(parent.top)
+        end.linkTo(parent.end)
+        start.linkTo(parent.start)
+        bottom.linkTo(parent.bottom)
+        this.centerTo(parent)
+        width = Dimension.matchParent
+        height = Dimension.matchParent
     }
 
     constrain(topWave) {

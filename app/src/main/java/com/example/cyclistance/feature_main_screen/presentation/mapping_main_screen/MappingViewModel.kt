@@ -55,6 +55,10 @@ class MappingViewModel @Inject constructor(
                 }
             }
 
+            is MappingEvent.DismissNoInternetScreen -> {
+                _state.update { it.copy(hasInternet = true) }
+            }
+
             is MappingEvent.SignOut -> {
                 viewModelScope.launch {
                     signOutAccount()
@@ -130,7 +134,7 @@ class MappingViewModel @Inject constructor(
     private suspend inline fun handleException(exception: Throwable) {
         when (exception) {
             is MappingExceptions.NoInternetException -> {
-                _eventFlow.emit(MappingUiEvent.ShowNoInternetScreen)
+                _state.update { it.copy(hasInternet = false) }
             }
             is MappingExceptions.UnexpectedErrorException -> {
                 _eventFlow.emit(

@@ -69,6 +69,9 @@ class ConfirmDetailsViewModel @Inject constructor(
                     updateUser(state.value)
                 }
             }
+            is ConfirmDetailsEvent.DismissNoInternetScreen -> {
+                _state.update { it.copy(hasInternet = true) }
+            }
             is ConfirmDetailsEvent.EnterAddress -> {
                 _state.update { it.copy(address = event.address) }
             }
@@ -133,7 +136,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                     ))
             }
             is MappingExceptions.NoInternetException -> {
-                _eventFlow.emit(ConfirmDetailsUiEvent.ShowNoInternetScreen)
+                _state.update { it.copy(hasInternet = false) }
             }
             is MappingExceptions.BikeTypeException -> {
                 _state.update { it.copy(bikeTypeErrorMessage = exception.message!!) }
