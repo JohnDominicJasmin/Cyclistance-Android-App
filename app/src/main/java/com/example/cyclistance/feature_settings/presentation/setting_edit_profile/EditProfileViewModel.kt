@@ -120,7 +120,7 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 _state.value = state.copy(
-                    name = TextFieldValue(text = getName()),
+                    name = getName(),
                     isLoading = true
                 )
             }.onSuccess {
@@ -138,7 +138,7 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 _state.value = state.copy(
-                    phoneNumber = TextFieldValue(text = getPhoneNumber()),
+                    phoneNumber = getPhoneNumber(),
                     isLoading = true
                 )
             }.onSuccess {
@@ -162,9 +162,9 @@ class EditProfileViewModel @Inject constructor(
                             authUseCase.uploadImageUseCase(localImageUri)
                         }
                     },
-                    name = state.name.text)
+                    name = state.name.trim())
 
-                authUseCase.updatePhoneNumberUseCase(state.phoneNumber.text)
+                authUseCase.updatePhoneNumberUseCase(state.phoneNumber.trim())
             }.onSuccess {
                 _state.value = state.copy(isLoading = false)
                 _eventFlow.emit(EditProfileUiEvent.ShowToastMessage(message = "Successfully Updated!"))
