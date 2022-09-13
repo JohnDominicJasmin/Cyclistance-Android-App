@@ -17,8 +17,8 @@ import com.example.cyclistance.R
 @ExperimentalMaterialApi
 @Composable
 fun SelectImageBottomSheet(
-    galleryButtonOnClick: () -> Unit,
-    cameraButtonOnClick: () -> Unit,
+    onClickGalleryButton: () -> Unit,
+    onClickCameraButton: () -> Unit,
     bottomSheetScaffoldState: ModalBottomSheetState,
     content: @Composable () -> Unit) {
 
@@ -37,12 +37,12 @@ fun SelectImageBottomSheet(
                     BottomSheetButtonItem(
                         iconId = R.drawable.ic_gallery,
                         buttonText = "Open Gallery",
-                        onClick = galleryButtonOnClick)
+                        onClick = onClickGalleryButton)
 
                     BottomSheetButtonItem(
                         iconId = R.drawable.ic_camera,
                         buttonText = "Take Photo",
-                        onClick = cameraButtonOnClick)
+                        onClick = onClickCameraButton)
                 }
 
             }
@@ -101,8 +101,8 @@ fun BottomSheetPreview() {
     val scope = rememberCoroutineScope()
 
     SelectImageBottomSheet(
-        galleryButtonOnClick = {},
-        cameraButtonOnClick = {},
+        onClickGalleryButton = {},
+        onClickCameraButton = {},
         bottomSheetScaffoldState = bottomSheetScaffoldState) {
         Button(onClick = {
             scope.launch {
