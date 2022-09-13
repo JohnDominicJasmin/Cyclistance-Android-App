@@ -6,34 +6,30 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileState
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.theme.*
 
 
 @Composable
 fun TextFieldInputArea(
     modifier: Modifier,
-    editProfileViewModel: EditProfileViewModel,
     state: EditProfileState,
-    onPhoneTextFieldClick: () -> Unit) {
+    onClickPhoneTextField: () -> Unit,
+    onValueChangeName: (String) -> Unit,
+    onValueChangePhoneNumber: (String) -> Unit,
+    keyboardActions: KeyboardActions
+) {
 
 
     Column(
@@ -48,16 +44,11 @@ fun TextFieldInputArea(
                 autoCorrect = false,
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Next),
-            onClick = {},
-            onValueChange = { name ->
-                editProfileViewModel.onEvent(
-                    event = EditProfileEvent.EnteredName(
-                        name = name
-                    ))
-            })
+            onValueChange = onValueChangeName)
 
 
-        TextFieldItem(label = "Phone Number",
+        TextFieldItem(
+            label = "Phone Number",
             errorMessage = state.phoneNumberErrorMessage,
             value = state.phoneNumber,
             keyboardOptions = KeyboardOptions(
@@ -65,16 +56,9 @@ fun TextFieldInputArea(
                 autoCorrect = false,
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Done),
-            keyboardActions = KeyboardActions(onDone = {
-                editProfileViewModel.onEvent(event = EditProfileEvent.Save)
-            }),
-            onClick = onPhoneTextFieldClick,
-            onValueChange = { phoneNumber ->
-                editProfileViewModel.onEvent(event =
-                    EditProfileEvent.EnteredPhoneNumber(
-                    phoneNumber = phoneNumber
-                ))
-            },
+            keyboardActions = keyboardActions,
+            onClick = onClickPhoneTextField,
+            onValueChange = onValueChangePhoneNumber,
             enabled = false)
     }
 }
@@ -88,7 +72,7 @@ fun TextFieldItem(
     keyboardActions: KeyboardActions = KeyboardActions(),
     onValueChange: (String) -> Unit,
     enabled: Boolean = true,
-    onClick: () -> Unit) {
+    onClick: () -> Unit = {}) {
 
     val hasError = errorMessage.isNotEmpty()
 
@@ -122,7 +106,7 @@ fun TextFieldItem(
                 .fillMaxWidth(), color = Black450)
 
         if (hasError) {
-             ErrorMessage(errorMessage = errorMessage, modifier = Modifier.padding(1.2.dp))
+            ErrorMessage(errorMessage = errorMessage, modifier = Modifier.padding(1.2.dp))
         }
 
     }

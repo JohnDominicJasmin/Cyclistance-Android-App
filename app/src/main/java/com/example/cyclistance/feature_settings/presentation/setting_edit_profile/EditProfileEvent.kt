@@ -6,8 +6,8 @@ import android.net.Uri
 sealed class EditProfileEvent {
 
     object Save: EditProfileEvent()
-    data class EnteredPhoneNumber(val phoneNumber: String): EditProfileEvent()
-    data class EnteredName(val name: String): EditProfileEvent()
+    data class EnterPhoneNumber(val phoneNumber: String): EditProfileEvent()
+    data class EnterName(val name: String): EditProfileEvent()
     object LoadPhoto: EditProfileEvent()
     object LoadName: EditProfileEvent()
     object LoadPhoneNumber: EditProfileEvent()

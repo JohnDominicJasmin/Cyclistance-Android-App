@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_settings.presentation.setting_edit_profi
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.MappingConstants.IMAGE_PLACEHOLDER_URL
@@ -58,12 +57,12 @@ class EditProfileViewModel @Inject constructor(
             is EditProfileEvent.Save -> {
                 updateUserProfile()
             }
-            is EditProfileEvent.EnteredPhoneNumber -> {
+            is EditProfileEvent.EnterPhoneNumber -> {
                 _state.value = state.copy(
                     phoneNumber = event.phoneNumber,
                     phoneNumberErrorMessage = "")
             }
-            is EditProfileEvent.EnteredName -> {
+            is EditProfileEvent.EnterName -> {
                 _state.value = state.copy(name = event.name, nameErrorMessage = "")
             }
             is EditProfileEvent.SelectImageUri -> {
