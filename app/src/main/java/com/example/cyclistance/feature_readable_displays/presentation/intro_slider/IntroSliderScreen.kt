@@ -2,7 +2,6 @@
 
 package com.example.cyclistance.feature_readable_displays.presentation.intro_slider
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
@@ -21,6 +20,7 @@ import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
@@ -35,14 +35,60 @@ fun IntroSliderScreen(
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
 
+    IntroSlider(modifier = Modifier
+        .fillMaxSize()
+        .padding(paddingValues),
+        pagerState = pagerState,
+        onClickSkipButton = {
+            introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
+            navController.navigateScreenInclusively(
+                Screens.SignInScreen.route,
+                Screens.IntroSliderScreen.route)
+        },
+        onClickNextButton = {
+            if (pagerState.currentPage != 2) {
+                scope.launch {
+                    pagerState.animateScrollToPage(
+                        page = pagerState.currentPage + 1
+                    )
+                }
+            } else {
+                introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
+                navController.navigateScreenInclusively(
+                    Screens.SignInScreen.route,
+                    Screens.IntroSliderScreen.route)
+            }
+        })
+
+}
+
+
+@Preview
+@Composable
+fun IntroSliderPreview() {
+    CyclistanceTheme(darkTheme = true) {
+        IntroSlider(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background),
+            pagerState = rememberPagerState(),
+            onClickSkipButton = {},
+            onClickNextButton = {}
+        )
+    }
+}
+@Composable
+private fun IntroSlider(
+    modifier: Modifier,
+    pagerState: PagerState,
+    onClickSkipButton: () -> Unit,
+    onClickNextButton: () -> Unit) {
 
 
     Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
+        modifier = modifier
             .background(MaterialTheme.colors.background)) {
         ConstraintLayout(
             constraintSet = introSliderConstraints,
@@ -55,28 +101,11 @@ fun IntroSliderScreen(
 
             IntroSliderButtons(
                 text = if (isOnLastPage) "Let's get Started!" else "Next",
-
-                onClickSkipButton = {
-                    introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
-                    navController.navigateScreenInclusively(Screens.SignInScreen.route, Screens.IntroSliderScreen.route)
-                },
-                onClickNextButton = {
-                    if (pagerState.currentPage != 2) {
-                        scope.launch {
-                            pagerState.animateScrollToPage(
-                                page = pagerState.currentPage + 1
-                            )
-                        }
-                    } else {
-                        introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
-                        navController.navigateScreenInclusively(Screens.SignInScreen.route, Screens.IntroSliderScreen.route)
-                    }
-                })
+                onClickSkipButton = onClickSkipButton,
+                onClickNextButton = onClickNextButton)
         }
     }
 }
-
-
 
 
 
