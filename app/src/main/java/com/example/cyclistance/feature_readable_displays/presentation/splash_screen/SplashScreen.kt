@@ -17,11 +17,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
+import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.delay
 
 @Composable
@@ -31,6 +33,21 @@ fun SplashScreen(
     navController: NavController) {
 
     val state = splashScreenViewModel.splashScreenState
+    SplashScreen(
+        modifier = Modifier
+            .padding(paddingValues)
+
+    ) {
+        navController.navigateScreenInclusively(
+            state.navigationStartingDestination,
+            Screens.SplashScreen.route)
+    }
+
+
+}
+
+@Composable
+private fun SplashScreen(modifier: Modifier, onNavigateScreen: () -> Unit) {
     val scale = remember { Animatable(initialValue = 0f) }
     LaunchedEffect(key1 = true) {
         scale.animateTo(0.9f,
@@ -40,23 +57,28 @@ fun SplashScreen(
             ))
 
         delay(1200L)
-        navController.navigateScreenInclusively(
-            state.navigationStartingDestination,
-            Screens.SplashScreen.route)
+        onNavigateScreen()
+
     }
 
 
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .padding(paddingValues)
             .background(MaterialTheme.colors.background)) {
         Image(
             painter = painterResource(id = R.drawable.ic_app_icon_cyclistance),
             contentDescription = "App Icon", modifier = Modifier.scale(scale.value))
 
     }
+}
 
+@Preview
+@Composable
+fun SplashScreenPreview() {
+    CyclistanceTheme(darkTheme = true) {
+        SplashScreen(modifier = Modifier, onNavigateScreen = {})
+    }
 }
 
