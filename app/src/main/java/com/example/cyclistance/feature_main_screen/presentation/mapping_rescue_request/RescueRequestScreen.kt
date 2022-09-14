@@ -44,16 +44,19 @@ val sampleCardState = listOf(
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "1.9km away"),
+
      CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6.2km away"),
+
      CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "10km away"),
+
      CardModel(name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
@@ -66,16 +69,13 @@ val sampleCardState = listOf(
 fun RescueRequestScreen(paddingValues: PaddingValues) {
     ConstraintLayout(modifier = Modifier
         .fillMaxSize()
-        .padding(paddingValues)
         .background(MaterialTheme.colors.background)) {
 
         val (items, titleText ) = createRefs()
 
         Text(text = "13 NEW REQUEST",
             color = MaterialTheme.colors.onBackground,
-            style = TextStyle(
-                letterSpacing = 4.sp,
-            ),
+            style = TextStyle(letterSpacing = 4.sp, ),
             modifier = Modifier.constrainAs(titleText){
                 top.linkTo(parent.top, margin = 14.dp)
                 end.linkTo(parent.end)
@@ -83,19 +83,18 @@ fun RescueRequestScreen(paddingValues: PaddingValues) {
                 width = Dimension.wrapContent
             },
             textAlign = TextAlign.Center
-
         )
 
 
         LazyColumn(modifier = Modifier
             .constrainAs(items) {
-                top.linkTo(titleText.bottom, margin = 12.dp)
+                top.linkTo(titleText.bottom, margin = 50.dp)
                 end.linkTo(parent.end)
                 start.linkTo(parent.start)
-                height = Dimension.percent(0.9f)
+                bottom.linkTo(parent.bottom)
             }) {
 
-            items(items = sampleCardState){ requestItem ->
+            items(items = sampleCardState, key = {it.id}){ requestItem ->
                 RequestItem(
                     modifier = Modifier
                         .fillMaxWidth(fraction = 0.9f)
