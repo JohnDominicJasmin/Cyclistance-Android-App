@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 
 @Composable
-fun SignInButton(onClickButton: ()-> Unit) {
+fun SignInButton(onClickSignInButton: ()-> Unit) {
 
     Box(
         modifier = Modifier
@@ -25,7 +25,7 @@ fun SignInButton(onClickButton: ()-> Unit) {
         contentAlignment = Alignment.Center) {
         Button(
 
-            onClick = onClickButton,
+            onClick = onClickSignInButton,
             modifier = Modifier
                 .height(45.dp)
                 .width(220.dp)

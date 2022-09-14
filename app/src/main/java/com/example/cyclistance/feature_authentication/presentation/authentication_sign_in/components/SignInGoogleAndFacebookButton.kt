@@ -22,7 +22,7 @@ import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.Blue500
 
 @Composable
-fun SignInGoogleAndFacebookSection(facebookButtonOnClick: ()-> Unit, googleSignInButtonOnClick: ()-> Unit) {
+fun SignInGoogleAndFacebookSection(onClickFacebookButton: ()-> Unit, onClickGoogleButton: ()-> Unit) {
     Row(modifier = Modifier
             .layoutId( AuthenticationConstraintsItem.OtherSignIns.layoutId)
             .wrapContentSize(),
@@ -30,7 +30,7 @@ fun SignInGoogleAndFacebookSection(facebookButtonOnClick: ()-> Unit, googleSignI
         horizontalArrangement = Arrangement.Center) {
 
         Button(
-            onClick = googleSignInButtonOnClick,
+            onClick = onClickGoogleButton,
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
@@ -64,7 +64,7 @@ fun SignInGoogleAndFacebookSection(facebookButtonOnClick: ()-> Unit, googleSignI
         Spacer(modifier = Modifier.width(14.dp))
 
         Button(
-            onClick = facebookButtonOnClick,
+            onClick = onClickFacebookButton,
             colors = ButtonDefaults.buttonColors(backgroundColor = Blue500),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier

@@ -6,13 +6,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -26,11 +26,11 @@ import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
 import com.example.cyclistance.core.utils.ConnectionStatus
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_authentication.domain.util.AuthResult
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthState
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.*
@@ -97,7 +97,9 @@ fun SignInScreen(
                     emailAuthViewModel.onEvent(EmailAuthEvent.RefreshEmail)
                 }
                 is SignInUiEvent.ShowMappingScreen -> {
-                    navController.navigateScreenInclusively(Screens.MappingScreen.route, Screens.SignInScreen.route)
+                    navController.navigateScreenInclusively(
+                        Screens.MappingScreen.route,
+                        Screens.SignInScreen.route)
                 }
                 is SignInUiEvent.ShowToastMessage -> {
                     Toast.makeText(context, signInEvent.message, Toast.LENGTH_SHORT).show()
@@ -113,25 +115,100 @@ fun SignInScreen(
         emailAuthViewModel.eventFlow.collectLatest { emailAuthEvent ->
             when (emailAuthEvent) {
                 is EmailAuthUiEvent.ShowMappingScreen -> {
-                    navController.navigateScreenInclusively(Screens.MappingScreen.route, Screens.SignInScreen.route)
+                    navController.navigateScreenInclusively(
+                        Screens.MappingScreen.route,
+                        Screens.SignInScreen.route)
                 }
                 is EmailAuthUiEvent.ShowToastMessage -> {
                     Toast.makeText(context, emailAuthEvent.message, Toast.LENGTH_SHORT).show()
                 }
                 is EmailAuthUiEvent.ShowEmailAuthScreen -> {
-                    navController.navigateScreenInclusively(Screens.EmailAuthScreen.route, Screens.SignInScreen.route)
+                    navController.navigateScreenInclusively(
+                        Screens.EmailAuthScreen.route,
+                        Screens.SignInScreen.route)
                 }
             }
         }
     }
 
+
+
+    SignInScreen(
+        modifier = Modifier.padding(paddingValues),
+        signInState = signInState,
+        emailAuthState = emailAuthState,
+        onDismissAlertDialog = {
+            signInViewModel.onEvent(SignInEvent.DismissAlertDialog)
+        },
+        keyboardActionOnDone = {
+            signInViewModel.onEvent(SignInEvent.SignInDefault)
+            focusManager.clearFocus()
+        },
+        onValueChangeEmail = {
+            signInViewModel.onEvent(event = SignInEvent.EnterEmail(it))
+        },
+        onValueChangePassword = {
+            signInViewModel.onEvent(event = SignInEvent.EnterPassword(it))
+        },
+        onClickPasswordVisibility = {
+            signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility)
+        },
+        onClickFacebookButton = {
+            signInViewModel.onEvent(SignInEvent.SignInFacebook(context = context))
+        },
+        onClickGoogleButton = {
+            scope.launch {
+                authResultLauncher.launch(GOOGLE_SIGN_IN_REQUEST_CODE)
+            }
+        },
+        onClickSignInButton = {
+            signInViewModel.onEvent(SignInEvent.SignInDefault)
+        },
+        onClickSignInText = {
+            navController.navigateScreen(Screens.SignUpScreen.route, Screens.SignInScreen.route)
+        },
+        onClickRetryButton = {
+            if (ConnectionStatus.hasInternetConnection(context)) {
+                emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
+                signInViewModel.onEvent(event = SignInEvent.DismissNoInternetScreen)
+            }
+        })
+}
+
+@Preview
+@Composable
+fun SignInScreenPreview() {
+    CyclistanceTheme(true) {
+        SignInScreen()
+    }
+}
+
+
+@Composable
+fun SignInScreen(
+    modifier: Modifier = Modifier,
+    signInState: SignInState = SignInState(),
+    emailAuthState: EmailAuthState = EmailAuthState(),
+    onDismissAlertDialog: () -> Unit = {},
+    keyboardActionOnDone: (KeyboardActionScope.() -> Unit) = {},
+    onValueChangeEmail: (String) -> Unit = {},
+    onValueChangePassword: (String) -> Unit = {},
+    onClickPasswordVisibility: () -> Unit = {},
+    onClickFacebookButton: () -> Unit = {},
+    onClickGoogleButton: () -> Unit = {},
+    onClickSignInButton: () -> Unit = {},
+    onClickSignInText: () -> Unit = {},
+    onClickRetryButton: () -> Unit = {}
+
+) {
+
+
     Column(
 
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .padding(paddingValues)
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colors.background)) {
 
@@ -160,170 +237,42 @@ fun SignInScreen(
             if (signInState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
                 AlertDialog(
                     alertDialog = signInState.alertDialogModel,
-                    onDismissRequest = {
-                        signInViewModel.onEvent(SignInEvent.DismissAlertDialog)
-                    })
+                    onDismissRequest = onDismissAlertDialog)
             }
 
             SignInTextFieldsArea(
                 focusRequester = signInState.focusRequester,
                 state = signInState,
-                keyboardActionOnDone = {
-                    signInViewModel.onEvent(SignInEvent.SignInDefault)
-                    focusManager.clearFocus()
-
-                },
-                onEmailValueChange = {
-                   signInViewModel.onEvent(event = SignInEvent.EnterEmail(it))
-                },
-                onPasswordValueChange = {
-                   signInViewModel.onEvent(event = SignInEvent.EnterPassword(it))
-                },
-                passwordVisibilityOnClick = {
-                   signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility)
-                }
+                keyboardActionOnDone = keyboardActionOnDone,
+                onValueChangeEmail = onValueChangeEmail,
+                onValueChangePassword = onValueChangePassword,
+                onClickPasswordVisibility = onClickPasswordVisibility
             )
 
             SignInGoogleAndFacebookSection(
-                facebookButtonOnClick = {
-                    signInViewModel.onEvent(SignInEvent.SignInFacebook(context = context))
-                },
-                googleSignInButtonOnClick = {
-                    scope.launch {
-                        authResultLauncher.launch(GOOGLE_SIGN_IN_REQUEST_CODE)
-                    }
-                }
+                onClickFacebookButton = onClickFacebookButton,
+                onClickGoogleButton = onClickGoogleButton
             )
 
-            SignInButton(onClickButton = {
-                signInViewModel.onEvent(SignInEvent.SignInDefault)
-            })
+            SignInButton(onClickSignInButton = onClickSignInButton)
 
 
-            SignInClickableText(onClick = {
-                navController.navigateScreen(Screens.SignUpScreen.route, Screens.SignInScreen.route)
-            })
+            SignInClickableText(onClickSignInText = onClickSignInText)
 
             if (signInState.isLoading || emailAuthState.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
                 )
             }
-            if(!emailAuthState.hasInternet || !signInState.hasInternet){
+            if (!emailAuthState.hasInternet || !signInState.hasInternet) {
                 NoInternetScreen(
                     modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                    onClickRetryButton = {
-                    if(ConnectionStatus.hasInternetConnection(context)){
-                        emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
-                        signInViewModel.onEvent(event = SignInEvent.DismissNoInternetScreen)
-                    }
-                })
+                    onClickRetryButton = onClickRetryButton)
 
             }
         }
 
 
-
-
-    }
-}
-
-@Preview(device = Devices.PIXEL_4)
-@Composable
-fun SignInScreenPreview() {
-
-    val context = LocalContext.current
-    CyclistanceTheme(false) {
-
-        val scope = rememberCoroutineScope()
-        var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
-
-
-        Column(
-
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .background(MaterialTheme.colors.background)) {
-
-            Spacer(modifier = Modifier.weight(0.04f, fill = true))
-            ConstraintLayout(
-                constraintSet = signInConstraints,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(0.95f)
-                    .align(Alignment.CenterHorizontally)
-                    .background(MaterialTheme.colors.background)) {
-
-
-                Image(
-                    contentDescription = "App Icon",
-                    painter = painterResource(R.drawable.ic_app_icon_cyclistance),
-                    modifier = Modifier
-                        .height(100.dp)
-                        .width(90.dp)
-                        .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId))
-
-                SignUpTextArea()
-
-                if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
-                    AlertDialog(
-                        alertDialog = alertDialogState,
-                        onDismissRequest = {
-                            alertDialogState = AlertDialogModel()
-                        })
-                }
-
-
-
-
-                SignInTextFieldsArea(
-                    state = SignInState(),
-                    keyboardActionOnDone = { },
-                    focusRequester = FocusRequester(),
-                    onEmailValueChange = { },
-                    onPasswordValueChange = { },
-                    passwordVisibilityOnClick = { })
-
-                SignInGoogleAndFacebookSection(
-                    facebookButtonOnClick = {
-                    },
-                    googleSignInButtonOnClick = {
-                        scope.launch {
-                        }
-                    }
-                )
-
-                SignInButton(onClickButton = {
-                })
-
-
-                SignInClickableText(onClick = {
-                })
-
-                if (true) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
-                    )
-                }
-
-                if(true){
-                    NoInternetScreen(
-                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                        onClickRetryButton = {
-                        if(ConnectionStatus.hasInternetConnection(context)){
-
-                        }
-                    })
-
-                }
-
-            }
-
-
-        }
     }
 }
 
