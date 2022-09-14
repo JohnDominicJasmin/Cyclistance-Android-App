@@ -21,7 +21,6 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.ConnectionStatus
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthResendButton
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthTextStatus
@@ -54,200 +53,231 @@ fun EmailAuthScreen(
 
 
 
-    with(emailAuthState) {
 
-        LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = true) {
 
-            with(emailAuthViewModel) {
-                onEvent(EmailAuthEvent.StartTimer)
-                onEvent(EmailAuthEvent.SendEmailVerification)
-                onEvent(EmailAuthEvent.SubscribeEmailVerification)
+        with(emailAuthViewModel) {
+            onEvent(EmailAuthEvent.StartTimer)
+            onEvent(EmailAuthEvent.SendEmailVerification)
+            onEvent(EmailAuthEvent.SubscribeEmailVerification)
 
-                eventFlow.collectLatest { event ->
+            eventFlow.collectLatest { event ->
 
-                    when (event) {
+                when (event) {
 
-                        is EmailAuthUiEvent.ShowMappingScreen -> {
-                            navController.navigateScreenInclusively(
-                                Screens.MappingScreen.route,
-                                Screens.EmailAuthScreen.route)
-                        }
-                        is EmailAuthUiEvent.ShowToastMessage -> {
-                            Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                        }
+                    is EmailAuthUiEvent.ShowMappingScreen -> {
+                        navController.navigateScreenInclusively(
+                            Screens.MappingScreen.route,
+                            Screens.EmailAuthScreen.route)
+                    }
+                    is EmailAuthUiEvent.ShowToastMessage -> {
+                        Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    }
 
-                        else -> {
-                            Timber.d("User email is not verified yet. Verification is not success.")
-                        }
+                    else -> {
+                        Timber.d("User email is not verified yet. Verification is not success.")
                     }
                 }
             }
-
         }
 
+    }
 
 
 
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .background(MaterialTheme.colors.background)) {
+
+
+        ConstraintLayout(
+            constraintSet = emailAuthConstraints,
             modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
+                .fillMaxHeight(0.9f)
                 .background(MaterialTheme.colors.background)) {
 
-
-            ConstraintLayout(
-                constraintSet = emailAuthConstraints,
+            Image(
+                contentDescription = "App Icon",
+                painter = painterResource(id = if (isDarkTheme) R.drawable.ic_dark_email else R.drawable.ic_light_email),
                 modifier = Modifier
-                    .fillMaxHeight(0.9f)
-                    .background(MaterialTheme.colors.background)) {
+                    .height(165.dp)
+                    .width(155.dp)
+                    .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
 
-                Image(
-                    contentDescription = "App Icon",
-                    painter = painterResource(id = if (isDarkTheme) R.drawable.ic_dark_email else R.drawable.ic_light_email),
-                    modifier = Modifier
-                        .height(165.dp)
-                        .width(155.dp)
-                        .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
+            )
 
+            EmailAuthTextStatus(email = emailAuthState.savedAccountEmail)
+
+            if (emailAuthState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
+                AlertDialog(
+                    alertDialog = emailAuthState.alertDialogModel,
+                    onDismissRequest = {
+                        emailAuthViewModel.onEvent(EmailAuthEvent.DismissAlertDialog)
+                    }
                 )
+            }
 
-                EmailAuthTextStatus(email = emailAuthState.savedAccountEmail)
+            if (emailAuthState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.layoutId(
+                        AuthenticationConstraintsItem.ProgressBar.layoutId))
+            }
 
-                if (emailAuthState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
-                    AlertDialog(
-                        alertDialog = emailAuthState.alertDialogModel,
-                        onDismissRequest = {
-                            emailAuthViewModel.onEvent(EmailAuthEvent.DismissAlertDialog)
-                        }
-                    )
+
+            val secondsRemaining =
+                if (emailAuthState.secondsLeft < 2) "$emailAuthState.secondsLeft" else "$emailAuthState.secondsLeft s"
+            val secondsRemainingText =
+                if (emailAuthState.isTimerRunning) "Resend Email in $secondsRemaining" else "Resend Email"
+            EmailAuthVerifyEmailButton(onClickVerifyButton = {
+                kotlin.runCatching {
+                    startActivity(context, intent, null)
+                }.onFailure {
+                    Toast.makeText(context, "No email app detected.", Toast.LENGTH_LONG).show()
                 }
+            })
 
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.layoutId(
-                            AuthenticationConstraintsItem.ProgressBar.layoutId))
-                }
-
-
-                val secondsRemaining = if (secondsLeft < 2) "$secondsLeft" else "$secondsLeft s"
-                val secondsRemainingText =  if (isTimerRunning) "Resend Email in $secondsRemaining" else "Resend Email"
-                EmailAuthVerifyEmailButton(onClick = {
-                    kotlin.runCatching {
-                        startActivity(context, intent, null)
-                    }.onFailure {
-                        Toast.makeText(context, "No email app detected.", Toast.LENGTH_LONG).show()
+            EmailAuthResendButton(
+                text = secondsRemainingText,
+                isEnabled = !emailAuthState.isTimerRunning,
+                onClickResendButton = {
+                    emailAuthViewModel.apply {
+                        onEvent(EmailAuthEvent.StartTimer)
+                        onEvent(EmailAuthEvent.ResendButtonClick)
+                        onEvent(EmailAuthEvent.SendEmailVerification)
                     }
                 })
 
-                EmailAuthResendButton(
-                    text = secondsRemainingText,
-                    isEnabled = !isTimerRunning,
-                    onClick = {
-                        emailAuthViewModel.apply {
-                            onEvent(EmailAuthEvent.StartTimer)
-                            onEvent(EmailAuthEvent.ResendButtonClick)
-                            onEvent(EmailAuthEvent.SendEmailVerification)
+            if (!emailAuthState.hasInternet) {
+                NoInternetScreen(
+                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                    onClickRetryButton = {
+                        if (ConnectionStatus.hasInternetConnection(context)) {
+                            emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
                         }
                     })
-
-                if (!hasInternet) {
-                    NoInternetScreen(
-                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                        onClickRetryButton = {
-                            if (ConnectionStatus.hasInternetConnection(context)) {
-                                emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
-                            }
-                        })
-                }
-
             }
 
-
         }
+
+
     }
 
+    EmailAuthScreen(
+        modifier = Modifier.padding(paddingValues),
+        emailAuthState = emailAuthState,
+        isDarkTheme = isDarkTheme,
+        onDismissAlertDialog = {
+            emailAuthViewModel.onEvent(EmailAuthEvent.DismissAlertDialog)
+        },
+        onClickVerifyButton = {
+            runCatching {
+                startActivity(context, intent, null)
+            }.onFailure {
+                Toast.makeText(context, "No email app detected.", Toast.LENGTH_LONG).show()
+            }
+        },
+        onClickResendButton = {
+            emailAuthViewModel.apply {
+                onEvent(EmailAuthEvent.StartTimer)
+                onEvent(EmailAuthEvent.ResendButtonClick)
+                onEvent(EmailAuthEvent.SendEmailVerification)
+            }
+        },
+        onClickRetryButton = {
+            if (ConnectionStatus.hasInternetConnection(context)) {
+                emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
+            }
+        })
 
 }
 
 @Preview()
 @Composable
 fun EmailAuthScreenPreview() {
-    val state = false
-    CyclistanceTheme(state) {
-        var alertDialogState by remember { mutableStateOf(AlertDialogModel()) }
-        val email = remember { "Mikocabal27@gmail.com" }
-        val context = LocalContext.current
-        val intent = Intent(Intent.ACTION_MAIN)
-        intent.addCategory(Intent.CATEGORY_APP_EMAIL)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+    CyclistanceTheme(true) {
+        EmailAuthScreen(isDarkTheme = true)
+    }
+
+}
+
+
+@Composable
+fun EmailAuthScreen(
+    modifier: Modifier = Modifier,
+    emailAuthState: EmailAuthState = EmailAuthState(),
+    isDarkTheme: Boolean,
+    onDismissAlertDialog: () -> Unit = {},
+    onClickVerifyButton: () -> Unit = {},
+    onClickResendButton: () -> Unit = {},
+    onClickRetryButton: () -> Unit = {},
+) {
+
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)) {
+
+
+        ConstraintLayout(
+            constraintSet = emailAuthConstraints,
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxHeight(0.9f)
                 .background(MaterialTheme.colors.background)) {
 
-
-            ConstraintLayout(
-                constraintSet = emailAuthConstraints,
+            Image(
+                contentDescription = "App Icon",
+                painter = painterResource(id = if (isDarkTheme) R.drawable.ic_dark_email else R.drawable.ic_light_email),
                 modifier = Modifier
-                    .fillMaxHeight(0.9f)
-                    .background(MaterialTheme.colors.background)) {
+                    .height(165.dp)
+                    .width(155.dp)
+                    .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
 
+            )
 
-                Image(
-                    contentDescription = null,
-                    painter = painterResource(if (state) R.drawable.ic_dark_email else R.drawable.ic_light_email),
-                    modifier = Modifier
-                        .height(165.dp)
-                        .width(155.dp)
-                        .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
+            EmailAuthTextStatus(email = emailAuthState.savedAccountEmail)
 
+            if (emailAuthState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
+                AlertDialog(
+                    alertDialog = emailAuthState.alertDialogModel,
+                    onDismissRequest = onDismissAlertDialog
                 )
+            }
 
-                EmailAuthTextStatus(email = email)
-
-                if (alertDialogState.run { title.isNotEmpty() || description.isNotEmpty() }) {
-                    AlertDialog(
-                        alertDialog = alertDialogState,
-                        onDismissRequest = {
-                            alertDialogState = AlertDialogModel()
-                        })
-                }
+            if (emailAuthState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.layoutId(
+                        AuthenticationConstraintsItem.ProgressBar.layoutId))
+            }
 
 
-                if (true) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId))
-                }
+            val secondsRemaining =
+                if (emailAuthState.secondsLeft < 2) "$emailAuthState.secondsLeft" else "$emailAuthState.secondsLeft s"
+            val secondsRemainingText =
+                if (emailAuthState.isTimerRunning) "Resend Email in $secondsRemaining" else "Resend Email"
+            EmailAuthVerifyEmailButton(onClickVerifyButton = onClickVerifyButton)
 
+            EmailAuthResendButton(
+                text = secondsRemainingText,
+                isEnabled = !emailAuthState.isTimerRunning,
+                onClickResendButton = onClickResendButton)
 
-                EmailAuthVerifyEmailButton(onClick = {
-                    startActivity(context, intent, null)
-                })
-
-                EmailAuthResendButton(
-                    text = "Resend Email in 20s",
-                    isEnabled = true,
-                    onClick = {
-
-                    })
-
-                if (true) {
-                    NoInternetScreen(
-                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                        onClickRetryButton = {
-                            if (ConnectionStatus.hasInternetConnection(context)) {
-
-                            }
-                        })
-                }
+            if (!emailAuthState.hasInternet) {
+                NoInternetScreen(
+                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                    onClickRetryButton = onClickRetryButton)
             }
 
         }
-    }
 
+
+    }
 }

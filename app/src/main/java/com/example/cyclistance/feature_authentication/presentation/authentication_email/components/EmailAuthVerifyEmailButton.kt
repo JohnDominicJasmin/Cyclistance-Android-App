@@ -19,9 +19,9 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 
 @Composable
-fun EmailAuthVerifyEmailButton(onClick: () -> Unit) {
+fun EmailAuthVerifyEmailButton(onClickVerifyButton: () -> Unit) {
     Button(
-        onClick = onClick,
+        onClick = onClickVerifyButton,
         modifier = Modifier
             .height(50.dp)
             .widthIn(max = 650.dp)
