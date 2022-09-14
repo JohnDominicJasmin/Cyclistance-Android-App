@@ -49,25 +49,72 @@ fun ConfirmDetailsScreen(
                 }
 
             }
-
         }
     }
-    Column(
 
+    CoinDetailScreen(modifier = Modifier.padding(paddingValues), state = state,
+
+        onValueChangeAddress = { address ->
+            viewModel.onEvent(event = ConfirmDetailsEvent.EnterAddress(address.trim()))
+        },
+        onValueChangeMessage = { message ->
+            viewModel.onEvent(event = ConfirmDetailsEvent.EnterMessage(message))
+        },
+        onClickBikeType = { bikeType ->
+            viewModel.onEvent(event = ConfirmDetailsEvent.SelectBikeType(bikeType))
+        },
+        onClickDescriptionButton = { description ->
+            viewModel.onEvent(event = ConfirmDetailsEvent.SelectDescription(description))
+        },
+        onClickCancelButton = {
+            navController.popBackStack()
+        },
+        onClickConfirmButton = {
+            viewModel.onEvent(event = ConfirmDetailsEvent.Save)
+        },
+        onClickRetryButton = {
+            if (ConnectionStatus.hasInternetConnection(context)) {
+                viewModel.onEvent(event = ConfirmDetailsEvent.DismissNoInternetScreen)
+            }
+        })
+}
+
+@Preview
+@Composable
+fun CoinDetailScreenPreview() {
+    CyclistanceTheme(true) {
+        CoinDetailScreen(modifier = Modifier, state = ConfirmDetailsState())
+    }
+}
+
+
+@Composable
+fun CoinDetailScreen(
+    modifier: Modifier,
+    state: ConfirmDetailsState,
+    onValueChangeAddress: (String) -> Unit = {},
+    onClickBikeType: (String) -> Unit = {},
+    onClickDescriptionButton: (String) -> Unit = {},
+    onValueChangeMessage: (String) -> Unit = {},
+    onClickCancelButton: () -> Unit = {},
+    onClickConfirmButton: () -> Unit = {},
+    onClickRetryButton: () -> Unit = {},
+
+    ) {
+
+
+    Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .padding(paddingValues)
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colors.background)) {
 
-        Spacer(modifier = Modifier.weight(0.04f, fill = true))
 
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
                 .background(MaterialTheme.colors.background)) {
 
             val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText, noInternetScreen, circularProgressBar) = createRefs()
@@ -83,23 +130,20 @@ fun ConfirmDetailsScreen(
                         height = Dimension.wrapContent
                     },
                 address = state.address,
-                onValueChange = { address ->
-                    viewModel.onEvent(event = ConfirmDetailsEvent.EnterMessage(address.trim()))
-                }
+                onValueChange = onValueChangeAddress
             )
-            DropDownBikeList(modifier = Modifier
-                .constrainAs(bikeTypeDropDownList) {
-                    top.linkTo(addressTextField.bottom, margin = 10.dp)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    width = Dimension.percent(0.9f)
-                    height = Dimension.wrapContent
-                },
+            DropDownBikeList(
+                modifier = Modifier
+                    .constrainAs(bikeTypeDropDownList) {
+                        top.linkTo(addressTextField.bottom, margin = 10.dp)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                        width = Dimension.percent(0.9f)
+                        height = Dimension.wrapContent
+                    },
                 errorMessage = state.bikeTypeErrorMessage,
                 selectedItem = state.bikeType,
-                onClickItem = { selectedItem ->
-                    viewModel.onEvent(event = ConfirmDetailsEvent.SelectBikeType(selectedItem))
-                })
+                onClickItem = onClickBikeType)
 
             ButtonDescriptionDetails(
                 modifier = Modifier
@@ -113,11 +157,8 @@ fun ConfirmDetailsScreen(
                     },
                 selectedOption = state.description,
                 errorMessage = state.descriptionErrorMessage,
-                onClick = { selectedDescription ->
-                    viewModel.onEvent(
-                        event = ConfirmDetailsEvent.SelectDescription(
-                            selectedDescription))
-                })
+                onClickButton = onClickDescriptionButton)
+
             AdditionalMessage(
                 modifier = Modifier
                     .constrainAs(additionalMessageSection) {
@@ -129,9 +170,7 @@ fun ConfirmDetailsScreen(
 
                     },
                 message = state.message,
-                onValueChange = { message ->
-                    viewModel.onEvent(event = ConfirmDetailsEvent.EnterMessage(message))
-                }
+                onValueChange = onValueChangeMessage
             )
 
             Text(
@@ -155,15 +194,11 @@ fun ConfirmDetailsScreen(
                         height = Dimension.wrapContent
                         width = Dimension.percent(0.9f)
                     },
-                onClickCancelButton = {
-                    navController.popBackStack()
-                },
-                onClickConfirmButton = {
-                    viewModel.onEvent(event = ConfirmDetailsEvent.Save)
-                })
+                onClickCancelButton = onClickCancelButton,
+                onClickConfirmButton = onClickConfirmButton)
 
 
-            if(state.isLoading){
+            if (state.isLoading) {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .constrainAs(circularProgressBar) {
@@ -175,10 +210,9 @@ fun ConfirmDetailsScreen(
                         }
                 )
             }
-
             if (!state.hasInternet) {
                 NoInternetScreen(
-                    modifier = Modifier.constrainAs(noInternetScreen){
+                    modifier = Modifier.constrainAs(noInternetScreen) {
                         top.linkTo(parent.top)
                         bottom.linkTo(parent.bottom)
                         start.linkTo(parent.start)
@@ -186,163 +220,13 @@ fun ConfirmDetailsScreen(
                         centerTo(parent)
                         width = Dimension.matchParent
                         height = Dimension.matchParent
-                    },onClickRetryButton = {
-                    if (ConnectionStatus.hasInternetConnection(context)) {
-                        viewModel.onEvent(event = ConfirmDetailsEvent.DismissNoInternetScreen)
-                    }
-                })
+                    }, onClickRetryButton = onClickRetryButton)
             }
         }
 
     }
 
-
 }
-
-
-@Preview
-@Composable
-fun ConfirmationDetailsPreview(
-) {
-
-    val context = LocalContext.current
-
-    Column(
-
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)) {
-        Spacer(modifier = Modifier.weight(0.04f, fill = true))
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background)) {
-
-            val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText, noInternetScreen, circularProgressBar) = createRefs()
-
-            AddressTextField(
-                modifier = Modifier
-                    .shadow(2.dp, shape = RoundedCornerShape(12.dp), clip = true)
-                    .constrainAs(addressTextField) {
-                        top.linkTo(parent.top, margin = 15.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        width = Dimension.percent(0.9f)
-                        height = Dimension.wrapContent
-                    },
-                address = "Address",
-                onValueChange = {
-
-                }
-            )
-
-            DropDownBikeList(modifier = Modifier
-                .constrainAs(bikeTypeDropDownList) {
-                    top.linkTo(addressTextField.bottom, margin = 10.dp)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    width = Dimension.percent(0.9f)
-                    height = Dimension.wrapContent
-                },
-                errorMessage = "",
-                selectedItem = "",
-                onClickItem = { selectedItem ->
-                })
-
-            ButtonDescriptionDetails(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .constrainAs(buttonDescriptionSection) {
-                        top.linkTo(bikeTypeDropDownList.bottom, margin = 15.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        height = Dimension.wrapContent
-                        width = Dimension.percent(0.9f)
-                    },
-                selectedOption = "Description",
-                errorMessage = "",
-                onClick = { selectedDescription ->
-                })
-
-            AdditionalMessage(
-                modifier = Modifier
-                    .constrainAs(additionalMessageSection) {
-                        top.linkTo(buttonDescriptionSection.bottom, margin = 15.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        height = Dimension.percent(0.25f)
-                        width = Dimension.percent(0.9f)
-
-                    },
-                message = "",
-                onValueChange = { message ->
-                }
-            )
-
-            Text(
-                text = "This will send a request to nearby bikers.",
-                color = Black440,
-                style = MaterialTheme.typography.caption,
-                modifier = Modifier.constrainAs(noteText) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(buttonNavButtonSection.top)
-                }
-            )
-
-            MappingButtonNavigation(
-                modifier = Modifier
-                    .constrainAs(buttonNavButtonSection) {
-                        top.linkTo(additionalMessageSection.bottom, margin = 50.dp)
-                        bottom.linkTo(parent.bottom, margin = 12.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        height = Dimension.wrapContent
-                        width = Dimension.percent(0.9f)
-                    },
-                onClickCancelButton = {
-
-                },
-                onClickConfirmButton = {
-                })
-            if(true){
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .constrainAs(circularProgressBar) {
-                            top.linkTo(parent.top)
-                            end.linkTo(parent.end)
-                            start.linkTo(parent.start)
-                            bottom.linkTo(parent.bottom)
-                            centerTo(parent)
-                        }
-                )
-            }
-
-            if (true) {
-                NoInternetScreen(
-                    modifier = Modifier.constrainAs(noInternetScreen){
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        centerTo(parent)
-                        width = Dimension.matchParent
-                        height = Dimension.matchParent
-                    },onClickRetryButton = {
-
-                    })
-            }
-
-
-
-        }
-    }
-
-}
-
-
 
 
 

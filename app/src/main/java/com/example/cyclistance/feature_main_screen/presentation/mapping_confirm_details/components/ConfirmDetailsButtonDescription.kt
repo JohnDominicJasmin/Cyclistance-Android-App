@@ -31,7 +31,7 @@ fun ButtonDescriptionDetails(
     modifier: Modifier,
     errorMessage: String,
     selectedOption: String,
-    onClick: (String) -> Unit) {
+    onClickButton: (String) -> Unit) {
 
     val hasError = errorMessage.isNotEmpty()
     val buttonOptions = listOf(
@@ -69,7 +69,7 @@ fun ButtonDescriptionDetails(
                     image = it.icon,
                     description = it.buttonText,
                     onClick = {
-                        onClick(it.buttonText)
+                        onClickButton(it.buttonText)
                     })
             }
         }
@@ -176,7 +176,7 @@ fun ButtonDescriptionItem() {
                 modifier = Modifier.fillMaxWidth(0.9f),
                 errorMessage = "Field cannot be left blank.",
                 selectedOption = "",
-                onClick = { selectedDescription ->
+                onClickButton = { selectedDescription ->
 
                 })
 
