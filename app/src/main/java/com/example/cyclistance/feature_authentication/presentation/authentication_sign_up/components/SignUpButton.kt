@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -21,7 +20,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 
 
 @Composable
-fun SignUpButton(onClickButton: ()-> Unit) {
+fun SignUpButton(onClickSignUpButton: ()-> Unit) {
 
 
     Box(
@@ -34,7 +33,7 @@ fun SignUpButton(onClickButton: ()-> Unit) {
 
         Button(
 
-            onClick = onClickButton,
+            onClick = onClickSignUpButton,
             modifier = Modifier
                 .height(45.dp)
                 .width(220.dp)

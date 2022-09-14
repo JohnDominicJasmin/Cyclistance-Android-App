@@ -6,7 +6,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -17,7 +16,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 import com.example.cyclistance.theme.Blue600
 
 @Composable
-fun SignUpClickableText(onClick:()->Unit) {
+fun SignUpClickableText(onSignUpTextClick:()->Unit) {
     Box(modifier = Modifier.wrapContentSize().layoutId(AuthenticationConstraintsItem.ClickableTextSection.layoutId)){
         ClickableText(text = buildAnnotatedString {
             withStyle(style = SpanStyle(color = MaterialTheme.colors.onBackground, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)){
@@ -27,7 +26,7 @@ fun SignUpClickableText(onClick:()->Unit) {
                 append(" ")
                 append(text = "Sign In")
             }
-        }, onClick = { onClick() })
+        }, onClick = { onSignUpTextClick() })
     }
 
 }

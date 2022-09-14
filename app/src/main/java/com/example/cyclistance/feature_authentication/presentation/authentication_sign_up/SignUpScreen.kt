@@ -5,13 +5,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -43,203 +43,261 @@ fun SignUpScreen(
     val focusManager = LocalFocusManager.current
 
 
+    val context = LocalContext.current
 
-    with(signUpState) {
-
-
-        val context = LocalContext.current
-
-        val signUpAccount = {
-            val isUserCreatedNewAccount = email != savedAccountEmail
-            if (hasAccountSignedIn && isUserCreatedNewAccount) {
-                signUpViewModel.onEvent(SignUpEvent.SignOut)
-            }
-            signUpViewModel.onEvent(SignUpEvent.SignUp)
+    val signUpAccount = {
+        val isUserCreatedNewAccount = signUpState.email != signUpState.savedAccountEmail
+        if (signUpState.hasAccountSignedIn && isUserCreatedNewAccount) {
+            signUpViewModel.onEvent(SignUpEvent.SignOut)
         }
+        signUpViewModel.onEvent(SignUpEvent.SignUp)
+    }
 
 
-        LaunchedEffect(key1 = true) {
-            signUpState.focusRequester.requestFocus()
-            signUpViewModel.eventFlow.collectLatest { event ->
+    LaunchedEffect(key1 = true) {
+        signUpState.focusRequester.requestFocus()
+        signUpViewModel.eventFlow.collectLatest { event ->
 
-                when (event) {
-                    is SignUpUiEvent.ShowEmailAuthScreen -> {
-                        navController.navigateScreenInclusively(
-                            Screens.EmailAuthScreen.route,
-                            Screens.SignUpScreen.route)
-
-                    }
-                    is SignUpUiEvent.ShowToastMessage -> {
-                        Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        }
-
-
-
-
-        Column(
-
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .background(MaterialTheme.colors.background)) {
-
-            Spacer(modifier = Modifier.weight(0.04f, fill = true))
-
-            ConstraintLayout(
-                constraintSet = signUpConstraints,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .weight(0.95f)
-                    .align(Alignment.CenterHorizontally)
-                    .background(MaterialTheme.colors.background)) {
-
-                Image(
-                    contentDescription = "App Icon",
-                    painter = painterResource(R.drawable.ic_app_icon_cyclistance),
-                    modifier = Modifier
-                        .height(100.dp)
-                        .width(90.dp)
-                        .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
-                )
-
-                SignUpTextArea()
-
-
-
-                if (signUpState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
-                    AlertDialog(
-                        alertDialog = signUpState.alertDialogModel,
-                        onDismissRequest = {
-                           signUpViewModel.onEvent(SignUpEvent.DismissAlertDialog)
-                        })
-                }
-
-                SignUpTextFieldsArea(
-                    focusRequester = signUpState.focusRequester,
-                    state = this@with,
-                    keyboardActionOnDone = {
-                        signUpAccount()
-                        focusManager.clearFocus()
-                    },
-                    onEmailValueChange = {
-                        signUpViewModel.onEvent(SignUpEvent.EnterEmail(it))
-                    },
-                    onPasswordValueChange = {
-                        signUpViewModel.onEvent(SignUpEvent.EnterPassword(it))
-                    },
-                    onConfirmPasswordValueChange = {
-                        signUpViewModel.onEvent(SignUpEvent.EnterConfirmPassword(it))
-                    },
-                    passwordVisibilityOnClick = {
-                        signUpViewModel.onEvent(SignUpEvent.TogglePasswordVisibility)
-                    }
-                )
-
-
-                SignUpButton(onClickButton = {
-                    signUpAccount()
-                })
-
-                SignUpClickableText() {
+            when (event) {
+                is SignUpUiEvent.ShowEmailAuthScreen -> {
                     navController.navigateScreenInclusively(
-                        Screens.SignInScreen.route,
+                        Screens.EmailAuthScreen.route,
                         Screens.SignUpScreen.route)
-                }
 
-                if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
-                    )
                 }
-                if(!hasInternet){
-                    NoInternetScreen(
-                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                        onClickRetryButton = {
-                        if(ConnectionStatus.hasInternetConnection(context)){
-                            signUpViewModel.onEvent(event = SignUpEvent.DismissNoInternetScreen)
-                        }
-                    })
+                is SignUpUiEvent.ShowToastMessage -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
             }
-
-
         }
     }
 
+
+
+
+    Column(
+
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .verticalScroll(rememberScrollState())
+            .background(MaterialTheme.colors.background)) {
+
+        Spacer(modifier = Modifier.weight(0.04f, fill = true))
+
+        ConstraintLayout(
+            constraintSet = signUpConstraints,
+            modifier = Modifier
+                .fillMaxSize()
+                .weight(0.95f)
+                .align(Alignment.CenterHorizontally)
+                .background(MaterialTheme.colors.background)) {
+
+            Image(
+                contentDescription = "App Icon",
+                painter = painterResource(R.drawable.ic_app_icon_cyclistance),
+                modifier = Modifier
+                    .height(100.dp)
+                    .width(90.dp)
+                    .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
+            )
+
+            SignUpTextArea()
+
+
+
+            if (signUpState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
+                AlertDialog(
+                    alertDialog = signUpState.alertDialogModel,
+                    onDismissRequest = {
+                        signUpViewModel.onEvent(SignUpEvent.DismissAlertDialog)
+                    })
+            }
+
+            SignUpTextFieldsArea(
+                focusRequester = signUpState.focusRequester,
+                state = signUpState,
+                keyboardActionOnDone = {
+                    signUpAccount()
+                    focusManager.clearFocus()
+                },
+                onValueChangeEmail = {
+                    signUpViewModel.onEvent(SignUpEvent.EnterEmail(it))
+                },
+                onValueChangePassword = {
+                    signUpViewModel.onEvent(SignUpEvent.EnterPassword(it))
+                },
+                onValueChangeConfirmPassword = {
+                    signUpViewModel.onEvent(SignUpEvent.EnterConfirmPassword(it))
+                },
+                onClickPasswordVisibility = {
+                    signUpViewModel.onEvent(SignUpEvent.TogglePasswordVisibility)
+                }
+            )
+
+
+            SignUpButton(onClickSignUpButton = {
+                signUpAccount()
+            })
+
+            SignUpClickableText() {
+                navController.navigateScreenInclusively(
+                    Screens.SignInScreen.route,
+                    Screens.SignUpScreen.route)
+            }
+
+            if (signUpState.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
+                )
+            }
+
+            if (!signUpState.hasInternet) {
+                NoInternetScreen(
+                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                    onClickRetryButton = {
+                        if (ConnectionStatus.hasInternetConnection(context)) {
+                            signUpViewModel.onEvent(event = SignUpEvent.DismissNoInternetScreen)
+                        }
+                    })
+            }
+        }
+
+
+    }
+    SignUpScreen(
+        modifier = Modifier.padding(paddingValues),
+        signUpState = signUpState,
+        onDismissAlertDialog = {
+            signUpViewModel.onEvent(SignUpEvent.DismissAlertDialog)
+        },
+        keyboardActionOnDone = {
+            signUpAccount()
+            focusManager.clearFocus()
+        },
+        onValueChangeEmail = { email ->
+            signUpViewModel.onEvent(SignUpEvent.EnterEmail(email))
+        },
+        onValueChangePassword = { password ->
+            signUpViewModel.onEvent(SignUpEvent.EnterPassword(password))
+        },
+        onValueChangeConfirmPassword = { confirmPassword ->
+            signUpViewModel.onEvent(SignUpEvent.EnterConfirmPassword(confirmPassword))
+        },
+        onClickPasswordVisibility = {
+            signUpViewModel.onEvent(SignUpEvent.TogglePasswordVisibility)
+        },
+        onClickSignUpButton = {
+            signUpAccount()
+        },
+        onClickSignUpText = {
+            navController.navigateScreenInclusively(
+                Screens.SignInScreen.route,
+                Screens.SignUpScreen.route)
+        },
+        onClickRetryButton = {
+            if (ConnectionStatus.hasInternetConnection(context)) {
+                signUpViewModel.onEvent(event = SignUpEvent.DismissNoInternetScreen)
+            }
+        }
+
+
+    )
 }
+
 
 @Preview(device = Devices.PIXEL_4)
 @Composable
 fun SignUpScreenPreview() {
+    CyclistanceTheme(true) {
+        SignUpScreen()
+    }
+
+}
 
 
-    CyclistanceTheme(false) {
+@Composable
+fun SignUpScreen(
+    modifier: Modifier = Modifier,
+    signUpState: SignUpState = SignUpState(),
+    onDismissAlertDialog: () -> Unit = {},
+    keyboardActionOnDone: (KeyboardActionScope.() -> Unit) = {},
+    onValueChangeEmail: (String) -> Unit = {},
+    onValueChangePassword: (String) -> Unit = { },
+    onValueChangeConfirmPassword: (String) -> Unit = {},
+    onClickPasswordVisibility: () -> Unit = {},
+    onClickSignUpButton: () -> Unit = {},
+    onClickSignUpText: () -> Unit = {},
+    onClickRetryButton: () -> Unit = {}
+) {
 
-        Column(
+    Column(
 
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .background(MaterialTheme.colors.background)) {
+
+        Spacer(modifier = Modifier.weight(0.04f, fill = true))
+
+        ConstraintLayout(
+            constraintSet = signUpConstraints,
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .weight(0.95f)
+                .align(Alignment.CenterHorizontally)
                 .background(MaterialTheme.colors.background)) {
-            Spacer(modifier = Modifier.weight(0.04f, fill = true))
-            ConstraintLayout(
-                constraintSet = signUpConstraints,
+
+            Image(
+                contentDescription = "App Icon",
+                painter = painterResource(R.drawable.ic_app_icon_cyclistance),
                 modifier = Modifier
-                    .fillMaxSize()
-                    .weight(0.95f)
-                    .align(Alignment.CenterHorizontally)
-                    .background(MaterialTheme.colors.background)) {
+                    .height(100.dp)
+                    .width(90.dp)
+                    .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
+            )
 
-                Image(
-                    contentDescription = "App Icon",
-                    painter = painterResource(R.drawable.ic_app_icon_cyclistance),
-                    modifier = Modifier
-                        .height(100.dp)
-                        .width(90.dp)
-                        .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
-                )
-
-                SignUpTextArea()
-
-                SignUpTextFieldsArea(focusRequester = FocusRequester(),
-                    state = SignUpState(),
-                    keyboardActionOnDone = { },
-                    onEmailValueChange = {},
-                    onPasswordValueChange = {},
-                    onConfirmPasswordValueChange = {},
-                    passwordVisibilityOnClick = { }
-                )
+            SignUpTextArea()
 
 
-                SignUpButton(onClickButton = {
-                })
 
-                SignUpClickableText() {
-                }
+            if (signUpState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
+                AlertDialog(
+                    alertDialog = signUpState.alertDialogModel,
+                    onDismissRequest = onDismissAlertDialog)
+            }
 
-                if (true) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
-                    )
-                }
+            SignUpTextFieldsArea(
+                focusRequester = signUpState.focusRequester,
+                state = signUpState,
+                keyboardActionOnDone = keyboardActionOnDone,
+                onValueChangeEmail = onValueChangeEmail,
+                onValueChangePassword = onValueChangePassword,
+                onValueChangeConfirmPassword = onValueChangeConfirmPassword,
+                onClickPasswordVisibility = onClickPasswordVisibility
+            )
 
-                if(true){
-                    NoInternetScreen(
-                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                        onClickRetryButton = {
 
-                        })
-                }
+            SignUpButton(onClickSignUpButton = onClickSignUpButton)
+            SignUpClickableText(onSignUpTextClick = onClickSignUpText)
+
+
+            if (signUpState.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId))
+            }
+
+            if (!signUpState.hasInternet) {
+                NoInternetScreen(
+                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                    onClickRetryButton = onClickRetryButton)
             }
         }
+
+
     }
 }
 
