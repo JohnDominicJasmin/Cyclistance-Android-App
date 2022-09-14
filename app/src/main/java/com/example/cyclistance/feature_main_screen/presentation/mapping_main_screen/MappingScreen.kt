@@ -14,11 +14,13 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.ConnectionStatus
 import com.example.cyclistance.core.utils.ConnectionStatus.checkLocationSetting
@@ -102,106 +104,140 @@ fun MappingScreen(
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
                 is MappingUiEvent.ShowConfirmDetailsScreen -> {
-                    navController.navigateScreen(Screens.ConfirmDetailsScreen.route, Screens.MappingScreen.route)
+                    navController.navigateScreen(
+                        Screens.ConfirmDetailsScreen.route,
+                        Screens.MappingScreen.route)
                 }
                 is MappingUiEvent.ShowEditProfileScreen -> {
-                    navController.navigateScreen(Screens.EditProfileScreen.route, Screens.MappingScreen.route)
+                    navController.navigateScreen(
+                        Screens.EditProfileScreen.route,
+                        Screens.MappingScreen.route)
                 }
                 is MappingUiEvent.ShowSignInScreen -> {
-                    navController.navigateScreen(Screens.SignInScreen.route, Screens.MappingScreen.route)
+                    navController.navigateScreen(
+                        Screens.SignInScreen.route,
+                        Screens.MappingScreen.route)
                 }
             }
         }
     }
 
 
-            RequestMultiplePermissions(
-                multiplePermissionsState = locationPermissionsState, onPermissionGranted = {
-                    if (!ConnectionStatus.hasGPSConnection(context)) {
-                        checkLocationSetting(
-                            context = context,
-                            onDisabled = settingResultRequest::launch,
-                            onEnabled = {
-                                mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
-                            })
-                    }
-                })
-
-
-            ConstraintLayout(modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)) {
-
-                val (mapScreen, searchButton, circularProgressbar, noInternetScreen) = createRefs()
-
-                MapScreen(
-                    isDarkTheme = isDarkTheme,
-                    modifier = Modifier.constrainAs(mapScreen) {
-                        top.linkTo(parent.top)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
+    RequestMultiplePermissions(
+        multiplePermissionsState = locationPermissionsState, onPermissionGranted = {
+            if (!ConnectionStatus.hasGPSConnection(context)) {
+                checkLocationSetting(
+                    context = context,
+                    onDisabled = settingResultRequest::launch,
+                    onEnabled = {
+                        mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
                     })
+            }
+        })
 
-                if (state.findAssistanceButtonVisible) {
-                    SearchAssistanceButton(modifier = Modifier.constrainAs(searchButton) {
-                        bottom.linkTo(parent.bottom, margin = 15.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        height = Dimension.value(45.dp)
-                    }, onClick = {
 
-                        if (locationPermissionsState.allPermissionsGranted) {
-                            mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates).also {
-                                postProfile()
-                            }
-                            return@SearchAssistanceButton
-                        }
-
-                        if(!locationPermissionsState.shouldShowRationale){
-                            Toast.makeText(context, "Location permission is not yet granted.", Toast.LENGTH_SHORT).show()
-                            return@SearchAssistanceButton
-                        }
-
-                        locationPermissionsState.launchMultiplePermissionRequest()
-                    })
+    MappingScreen(
+        modifier = Modifier.padding(paddingValues),
+        isDarkTheme = isDarkTheme,
+        state = state,
+        onClickRetryButton = {
+            if (ConnectionStatus.hasInternetConnection(context)) {
+                mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetScreen)
+            }
+        },
+        onClickSearchButton = {
+            if (locationPermissionsState.allPermissionsGranted) {
+                mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates).also {
+                    postProfile()
                 }
-
-                if (state.isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.constrainAs(circularProgressbar) {
-                        top.linkTo(parent.top)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                        this.centerTo(parent)
-                    })
-                }
-
-                if(!state.hasInternet){
-                    NoInternetScreen(
-                        modifier = Modifier.constrainAs(noInternetScreen){
-                            top.linkTo(parent.top)
-                            end.linkTo(parent.end)
-                            start.linkTo(parent.start)
-                            bottom.linkTo(parent.bottom)
-                            centerTo(parent)
-                            width= Dimension.matchParent
-                            height= Dimension.matchParent
-                        },
-                        onClickRetryButton = {
-                        if(ConnectionStatus.hasInternetConnection(context)){
-                            mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetScreen)
-                        }
-                    })
-                }
+                return@MappingScreen
             }
 
+            if (!locationPermissionsState.shouldShowRationale) {
+                Toast.makeText(
+                    context,
+                    "Location permission is not yet granted.",
+                    Toast.LENGTH_SHORT).show()
+                return@MappingScreen
+            }
 
-
+            locationPermissionsState.launchMultiplePermissionRequest()
+        })
 
 }
 
 
+@Preview
+@Composable
+fun MappingScreenPreview() {
+    MappingScreen(
+        modifier = Modifier,
+        isDarkTheme = MutableLiveData(true),
+        state = MappingState(),
+        onClickRetryButton = {},
+        onClickSearchButton = {}
+    )
+}
+
+
+@Composable
+fun MappingScreen(
+    modifier: Modifier,
+    isDarkTheme: LiveData<Boolean?>,
+    state: MappingState,
+    onClickRetryButton: () -> Unit,
+    onClickSearchButton: () -> Unit) {
+
+    ConstraintLayout(
+        modifier = modifier
+            .fillMaxSize()) {
+
+        val (mapScreen, searchButton, circularProgressbar, noInternetScreen) = createRefs()
+
+        MapScreen(
+            isDarkTheme = isDarkTheme,
+            modifier = Modifier.constrainAs(mapScreen) {
+                top.linkTo(parent.top)
+                end.linkTo(parent.end)
+                start.linkTo(parent.start)
+                bottom.linkTo(parent.bottom)
+            })
+
+        if (state.findAssistanceButtonVisible) {
+            SearchAssistanceButton(modifier = Modifier.constrainAs(searchButton) {
+                bottom.linkTo(parent.bottom, margin = 15.dp)
+                end.linkTo(parent.end)
+                start.linkTo(parent.start)
+                height = Dimension.value(45.dp)
+            }, onClickSearchButton = onClickSearchButton)
+        }
+
+        if (state.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.constrainAs(circularProgressbar) {
+                top.linkTo(parent.top)
+                end.linkTo(parent.end)
+                start.linkTo(parent.start)
+                bottom.linkTo(parent.bottom)
+                this.centerTo(parent)
+            })
+        }
+
+        if (!state.hasInternet) {
+            NoInternetScreen(
+                modifier = Modifier.constrainAs(noInternetScreen) {
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom)
+                    centerTo(parent)
+                    width = Dimension.matchParent
+                    height = Dimension.matchParent
+                },
+                onClickRetryButton = onClickRetryButton)
+        }
+    }
+
+}
 
 
 

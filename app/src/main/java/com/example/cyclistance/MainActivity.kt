@@ -34,9 +34,8 @@ class MainActivity : ComponentActivity() {
         AppEventsLogger.activateApp(application);
 
 
-        Mapbox.getInstance(
-            this,
-            getString(R.string.MapsDownloadToken))
+        Mapbox.getInstance(this, getString(R.string.MapsDownloadToken))
+
         setContent {
             CompositionLocalProvider(LocalActivityResultCallbackManager provides callbackManager) {
                 MainScreen()
