@@ -141,6 +141,10 @@ class AuthRepositoryImpl (
                             return@addOnCompleteListener
                         }
 
+                        if(exception is IllegalStateException){
+                            Timber.e(exception.message)
+                        }
+
                         continuation.resumeWithException(exception)
                     }
                     continuation.resume(signInWithEmailAndPassword.isSuccessful)
