@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.os.Build
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,6 +33,7 @@ import com.example.cyclistance.navigation.navigateScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -41,11 +43,21 @@ fun MappingScreen(
     isDarkTheme: LiveData<Boolean?>,
     mappingViewModel: MappingViewModel = hiltViewModel(),
     paddingValues: PaddingValues,
+    scaffoldState: ScaffoldState,
     navController: NavController) {
 
 
     val state by mappingViewModel.state.collectAsState()
-
+    val coroutineScope = rememberCoroutineScope()
+    BackHandler(enabled = true, onBack = {
+        coroutineScope.launch {
+            if (scaffoldState.drawerState.isOpen) {
+                scaffoldState.drawerState.close()
+            } else {
+                navController.popBackStack()
+            }
+        }
+    })
 
     val locationPermissionsState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
         rememberMultiplePermissionsState(

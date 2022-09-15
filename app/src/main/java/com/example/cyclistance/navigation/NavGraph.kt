@@ -1,13 +1,13 @@
 package com.example.cyclistance.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpScreen
@@ -30,6 +30,7 @@ fun NavGraph(
     paddingValues: PaddingValues,
     isDarkThemeLiveData: LiveData<Boolean?>,
     isDarkThemeState: State<Boolean?>,
+    scaffoldState: ScaffoldState,
     onToggleTheme: () -> Unit
 
 ) {
@@ -66,6 +67,7 @@ fun NavGraph(
             MappingScreen(
                 isDarkTheme = isDarkThemeLiveData,
                 navController = navController,
+                scaffoldState = scaffoldState,
             paddingValues = paddingValues)
         }
 
@@ -115,6 +117,7 @@ fun NavController.navigateScreenInclusively(
         }
         launchSingleTop = true
     }
+
 
 }
 

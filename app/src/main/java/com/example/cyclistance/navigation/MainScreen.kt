@@ -1,6 +1,5 @@
 package com.example.cyclistance.navigation
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -42,16 +41,6 @@ fun MainScreen(
     val isDarkThemeState = isDarkThemeLiveData.observeAsState(initial = isSystemInDarkTheme())
     val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
-
-    BackHandler(enabled = true, onBack = {
-        if (scaffoldState.drawerState.isOpen) {
-            coroutineScope.launch {
-                scaffoldState.drawerState.close()
-            }
-        } else {
-            navController.popBackStack()
-        }
-    })
 
     LaunchedEffect(key1 = true) {
         mappingViewModel.eventFlow.collectLatest { event ->
@@ -113,6 +102,7 @@ fun MainScreen(
                 paddingValues = paddingValues,
                 isDarkThemeLiveData = isDarkThemeLiveData,
                 isDarkThemeState = isDarkThemeState,
+                scaffoldState = scaffoldState,
                 onToggleTheme = {
                     settingViewModel.onEvent(event = SettingEvent.ToggleTheme)
                 }
