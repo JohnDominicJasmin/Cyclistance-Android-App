@@ -19,6 +19,8 @@ import com.example.cyclistance.feature_main_screen.presentation.mapping_main_scr
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.TitleTopAppBar
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingDrawerContent
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.TopAppBarCreator
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileEvent
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingEvent
 import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingViewModel
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -32,10 +34,12 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     settingViewModel: SettingViewModel = hiltViewModel(),
     mappingViewModel: MappingViewModel = hiltViewModel(),
+    editProfileViewModel: EditProfileViewModel = hiltViewModel()
 ) {
 
 
     val navController = rememberNavController()
+
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val isDarkThemeLiveData: LiveData<Boolean?> = settingViewModel.isDarkTheme
     val isDarkThemeState = isDarkThemeLiveData.observeAsState(initial = isSystemInDarkTheme())
@@ -66,11 +70,14 @@ fun MainScreen(
                     navController = navController,
                     scaffoldState = scaffoldState,
                     route = navBackStackEntry?.destination?.route,
-                    coroutineScope = coroutineScope)
+                    coroutineScope = coroutineScope,
+                    onClickSaveProfile = {
+                        editProfileViewModel.onEvent(EditProfileEvent.Save)
+                    })
             },
             drawerContent = {
                 MappingDrawerContent(
-                    onSettingsItemClick = {
+                    onClickSettings = {
 
                         navController.navigateScreen(
                             Screens.SettingScreen.route,
@@ -81,13 +88,18 @@ fun MainScreen(
                             }
                         }
                     },
-                    onChatItemClick = {
+                    onClickRescueRequest = {
+                        coroutineScope.launch {
+                            scaffoldState.drawerState.close()
+                        }
+                    },
+                    onClickChat = {
                         /*  todo: open chat screen here   */
                         coroutineScope.launch {
                             scaffoldState.drawerState.close()
                         }
                     },
-                    onSignOutItemClick = {
+                    onClickSignOut = {
                         mappingViewModel.onEvent(event = MappingEvent.SignOut).also {
                             coroutineScope.launch {
                                 scaffoldState.drawerState.close()
@@ -102,6 +114,7 @@ fun MainScreen(
                 paddingValues = paddingValues,
                 isDarkThemeLiveData = isDarkThemeLiveData,
                 isDarkThemeState = isDarkThemeState,
+                editProfileViewModel = editProfileViewModel,
                 scaffoldState = scaffoldState,
                 onToggleTheme = {
                     settingViewModel.onEvent(event = SettingEvent.ToggleTheme)
@@ -116,6 +129,7 @@ fun TopAppBar(
     navController: NavController,
     scaffoldState: ScaffoldState,
     coroutineScope: CoroutineScope,
+    onClickSaveProfile: () -> Unit,
     route: String?) {
 
 
@@ -167,9 +181,7 @@ fun TopAppBar(
                 }, topAppBarTitle = {
                     TitleTopAppBar(title = "Edit Profile",
                         confirmationText = "Save",
-                        onConfirmationClick = {
-                            /*TODO*/
-                        })
+                        onClickConfirmation = onClickSaveProfile)
                 })
         }
         Screens.SettingScreen.route -> {

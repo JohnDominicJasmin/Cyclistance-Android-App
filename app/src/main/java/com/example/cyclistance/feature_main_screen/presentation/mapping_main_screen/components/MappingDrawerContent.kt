@@ -24,9 +24,10 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun MappingDrawerContent(
-    onSettingsItemClick: () -> Unit,
-    onChatItemClick: () -> Unit,
-    onSignOutItemClick: () -> Unit,
+    onClickSettings: () -> Unit = {},
+    onClickChat: () -> Unit = {},
+    onClickRescueRequest: () -> Unit = {},
+    onClickSignOut: () -> Unit = {},
 ) {
 
     ConstraintLayout(
@@ -86,7 +87,7 @@ fun MappingDrawerContent(
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_baseline_settings_24,
                 buttonText = "Settings",
-                onClick = onSettingsItemClick)
+                onClick = onClickSettings)
 
             DrawerContentButtonItem(
                 modifier = Modifier
@@ -95,8 +96,16 @@ fun MappingDrawerContent(
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_baseline_chat_bubble_outline_24,
                 buttonText = "Chat",
-                onClick = onChatItemClick)
+                onClick = onClickChat)
 
+            DrawerContentButtonItem(
+                modifier = Modifier
+                    .background(Color.Transparent)
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                iconId = R.drawable.rescue_request,
+                buttonText = "Rescue Request",
+                onClick = onClickRescueRequest)
 
             DrawerContentButtonItem(
                 modifier = Modifier
@@ -105,7 +114,10 @@ fun MappingDrawerContent(
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_group_35,
                 buttonText = "Sign out",
-                onClick = onSignOutItemClick)
+                onClick = onClickSignOut)
+
+
+
         }
 
 
@@ -113,6 +125,17 @@ fun MappingDrawerContent(
 
 }
 
+@Preview
+@Composable
+fun MappingDrawerContentPreview() {
+    CyclistanceTheme(true) {
+        MappingDrawerContent(
+            onClickSettings = {},
+            onClickChat = {},
+            onClickSignOut = {}
+        )
+    }
+}
 
 @Composable
 private fun DrawerContentButtonItem(
