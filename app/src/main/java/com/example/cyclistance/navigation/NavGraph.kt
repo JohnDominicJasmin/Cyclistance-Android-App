@@ -19,6 +19,7 @@ import com.example.cyclistance.feature_readable_displays.presentation.intro_slid
 import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.SplashScreen
 import com.example.cyclistance.feature_settings.presentation.setting_change_password.ChangePasswordScreen
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileScreen
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
@@ -28,6 +29,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 fun NavGraph(
     navController: NavHostController,
     paddingValues: PaddingValues,
+    editProfileViewModel: EditProfileViewModel,
     isDarkThemeLiveData: LiveData<Boolean?>,
     isDarkThemeState: State<Boolean?>,
     scaffoldState: ScaffoldState,
@@ -93,7 +95,7 @@ fun NavGraph(
         }
 
         composable(Screens.EditProfileScreen.route) {
-            EditProfileScreen(navController = navController, paddingValues = paddingValues)
+            EditProfileScreen(navController = navController, paddingValues = paddingValues, editProfileViewModel = editProfileViewModel)
         }
 
         composable(Screens.SettingScreen.route) {

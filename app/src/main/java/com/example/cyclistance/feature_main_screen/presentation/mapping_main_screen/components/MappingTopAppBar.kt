@@ -43,7 +43,8 @@ fun TopAppBarCreator(
 fun TitleTopAppBar(
     title: String,
     confirmationText: String? = null,
-    onConfirmationClick: () -> Unit = {}) {
+    onClickConfirmation: () -> Unit = {}) {
+
     Row(verticalAlignment = Alignment.CenterVertically) {
         Text(
             text = title,
@@ -53,7 +54,7 @@ fun TitleTopAppBar(
 
         Spacer(modifier = Modifier.weight(0.1f))
         confirmationText?.let {
-            TextButton(onClick = onConfirmationClick, modifier = Modifier.padding(end = 4.dp)) {
+            TextButton(onClick = onClickConfirmation, modifier = Modifier.padding(end = 4.dp)) {
                 Text(
                     text = "SAVE",
                     color = MaterialTheme.colors.onBackground,
