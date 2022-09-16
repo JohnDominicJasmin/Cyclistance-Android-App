@@ -25,7 +25,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.MappingConstants.NONE_OF_THE_ABOVE_RESULT_CODE
 import com.example.cyclistance.core.utils.MappingConstants.NO_SIM_CARD_RESULT_CODE
@@ -42,15 +41,15 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun EditProfileScreen(
-    editProfileViewModel: EditProfileViewModel = hiltViewModel(),
+    editProfileViewModel: EditProfileViewModel,
     navController: NavController,
     paddingValues: PaddingValues
 ) {
 
-    val state = editProfileViewModel.state
+    val state by editProfileViewModel.state.collectAsState()
     val (isGalleryButtonClick, onClickGalleryButton) = rememberSaveable { mutableStateOf(false) }
 
 

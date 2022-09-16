@@ -10,8 +10,7 @@ import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExce
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -22,8 +21,8 @@ class EditProfileViewModel @Inject constructor(
     private val settingUseCase: SettingUseCase,
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
-    private val _state = mutableStateOf(EditProfileState())
-    val state by _state
+    private val _state = MutableStateFlow(EditProfileState())
+    val state = _state.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<EditProfileUiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
@@ -36,12 +35,12 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private fun getPhotoUrl(): String {
-        return authUseCase.getPhotoUrlUseCase()?.toString()
+        return authUseCase.getPhotoUrlUseCase()
                ?: IMAGE_PLACEHOLDER_URL
     }
 
     private suspend fun getPhoneNumber(): String =
-        authUseCase.getPhoneNumberUseCase() ?: throw MappingExceptions.PhoneNumberException()
+        authUseCase.getPhoneNumberUseCase().ifEmpty { throw MappingExceptions.PhoneNumberException() }
 
 
     init {
@@ -58,18 +57,21 @@ class EditProfileViewModel @Inject constructor(
                 updateUserProfile()
             }
             is EditProfileEvent.EnterPhoneNumber -> {
-                _state.value = state.copy(
-                    phoneNumber = event.phoneNumber,
-                    phoneNumberErrorMessage = "")
+                _state.update {
+                    it.copy(
+                        phoneNumber = event.phoneNumber,
+                        phoneNumberErrorMessage = "")
+                }
+
             }
             is EditProfileEvent.EnterName -> {
-                _state.value = state.copy(name = event.name, nameErrorMessage = "")
+                _state.update { it.copy(name = event.name, nameErrorMessage = "") }
             }
             is EditProfileEvent.SelectImageUri -> {
-                _state.value = state.copy(imageUri = event.uri)
+                _state.update { it.copy(imageUri = event.uri) }
             }
             is EditProfileEvent.SelectBitmapPicture -> {
-                _state.value = state.copy(bitmap = event.bitmap)
+                _state.update { it.copy(bitmap = event.bitmap) }
             }
             is EditProfileEvent.LoadPhoto -> {
                 loadPhoto()
@@ -90,11 +92,11 @@ class EditProfileViewModel @Inject constructor(
 
     private fun saveImageToGallery() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            state.bitmap?.let { bitmap ->
+            state.value.bitmap?.let { bitmap ->
                 runCatching {
                     settingUseCase.saveImageToGalleryUseCase(bitmap)
                 }.onSuccess { uri ->
-                    _state.value = state.copy(imageUri = uri)
+                    _state.update { it.copy(imageUri = uri) }
                 }.onFailure {
                     Timber.e("Saving Image to Gallery: ${it.message}")
                 }
@@ -105,12 +107,17 @@ class EditProfileViewModel @Inject constructor(
     private fun loadPhoto() {
         viewModelScope.launch {
             runCatching {
-                _state.value = state.copy(
-                    photoUrl = getPhotoUrl(),
-                    isLoading = true
-                )
+                _state.update {
+                    it.copy(
+                        photoUrl = getPhotoUrl(),
+                        isLoading = true)
+                }
             }.onSuccess {
-                _state.value = state.copy(isLoading = false)
+                _state.update {
+                    it.copy(
+                        isLoading = false
+                    )
+                }
             }
         }
     }
@@ -118,17 +125,22 @@ class EditProfileViewModel @Inject constructor(
     private fun loadName() {
         viewModelScope.launch {
             runCatching {
-                _state.value = state.copy(
-                    name = getName(),
-                    isLoading = true
-                )
+                _state.update {
+                    it.copy(
+                        name = getName(),
+                        isLoading = true
+                    )
+                }
+
             }.onSuccess {
-                _state.value = state.copy(isLoading = false)
+                _state.update { it.copy(isLoading = false) }
             }.onFailure { exception ->
-                _state.value = state.copy(
-                    isLoading = false,
-                    nameErrorMessage = exception.message!!
-                )
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        nameErrorMessage = exception.message!!)
+                }
+
             }
         }
     }
@@ -136,17 +148,21 @@ class EditProfileViewModel @Inject constructor(
     private fun loadPhoneNumber() {
         viewModelScope.launch {
             runCatching {
-                _state.value = state.copy(
-                    phoneNumber = getPhoneNumber(),
-                    isLoading = true
-                )
+                _state.update {
+                    it.copy(
+                        phoneNumber = getPhoneNumber(),
+                        isLoading = true)
+                }
+
             }.onSuccess {
-                _state.value = state.copy(isLoading = false)
+                _state.update { it.copy(isLoading = false) }
             }.onFailure { exception ->
-                _state.value = state.copy(
-                    isLoading = false,
-                    phoneNumberErrorMessage = exception.message!!
-                )
+                _state.update {
+                    it.copy(
+                        isLoading = false,
+                        phoneNumberErrorMessage = exception.message!!)
+                }
+
             }
         }
     }
@@ -154,28 +170,35 @@ class EditProfileViewModel @Inject constructor(
     private fun updateUserProfile() {
         viewModelScope.launch {
             runCatching {
-                _state.value = state.copy(isLoading = true)
+                _state.update { it.copy(isLoading = true) }
                 authUseCase.updateProfileUseCase(
                     photoUri = run {
-                        state.imageUri?.let { localImageUri ->
+
+                        state.value.imageUri?.let { localImageUri ->
                             authUseCase.uploadImageUseCase(localImageUri)
                         }
                     },
-                    name = state.name.trim())
+                    name = state.value.name.trim())
 
-                authUseCase.updatePhoneNumberUseCase(state.phoneNumber.trim())
+                authUseCase.updatePhoneNumberUseCase(state.value.phoneNumber.trim())
             }.onSuccess {
-                _state.value = state.copy(isLoading = false)
+                _state.update { it.copy(isLoading = false) }
                 _eventFlow.emit(EditProfileUiEvent.ShowToastMessage(message = "Successfully Updated!"))
                 _eventFlow.emit(EditProfileUiEvent.ShowMappingScreen)
             }.onFailure { exception ->
-                _state.value = state.copy(isLoading = false)
+                _state.update { it.copy(isLoading = false) }
                 when (exception) {
                     is MappingExceptions.PhoneNumberException -> {
-                        _state.value = state.copy(phoneNumberErrorMessage = exception.message!!)
+                        _state.update {
+                            it.copy(
+                                phoneNumberErrorMessage = exception.message!!)
+                        }
                     }
                     is MappingExceptions.NameException -> {
-                        _state.value = state.copy(nameErrorMessage = exception.message!!)
+                        _state.update {
+                            it.copy(
+                                nameErrorMessage = exception.message!!)
+                        }
                     }
                     else -> {
                         Timber.e("Update Profile: ${exception.message}")
