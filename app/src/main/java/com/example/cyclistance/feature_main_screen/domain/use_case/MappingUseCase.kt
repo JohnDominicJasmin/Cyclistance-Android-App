@@ -18,9 +18,9 @@ data class MappingUseCase(
     val updateUserUseCase: UpdateUserUseCase,
     val getUserLocationUseCase: GetUserLocationUseCase,
     val getBikeTypeUseCase: GetBikeTypeUseCase,
-    val updateBikeTypeUseCase: UpdateBikeTypeUseCase, //todo: use this
+    val updateBikeTypeUseCase: UpdateBikeTypeUseCase,
     val getAddressUseCase: GetAddressUseCase,
-    val updateAddressUseCase: UpdateAddressUseCase//todo: use this
+    val updateAddressUseCase: UpdateAddressUseCase
 
 
 )
