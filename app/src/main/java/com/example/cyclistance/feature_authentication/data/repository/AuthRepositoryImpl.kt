@@ -19,6 +19,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -154,7 +155,8 @@ class AuthRepositoryImpl (
 
 
     override suspend fun signInWithCredentials(v: AuthCredential): Boolean {
-        return suspendCoroutine { continuation ->
+        return suspendCancellableCoroutine { continuation ->
+
             auth.signInWithCredential(v)
                 .addOnCompleteListener { signInWithCredential ->
                     signInWithCredential.exception?.let { exception ->
@@ -166,7 +168,9 @@ class AuthRepositoryImpl (
                         continuation.resumeWithException(AuthExceptions.ConflictFBTokenException(exception.message
                             ?: "Sorry, something went wrong. Please try again."))
                     }
-                    continuation.resume(signInWithCredential.isSuccessful)
+                    if(continuation.isActive) {
+                        continuation.resume(signInWithCredential.isSuccessful)
+                    }
                 }
         }
     }
@@ -233,8 +237,8 @@ class AuthRepositoryImpl (
         dataStore.editData(DATA_STORE_PHONE_NUMBER_KEY, phoneNumber)
     }
 
-    override fun getPhoneNumber(): Flow<String?> {
-        return dataStore.getData(DATA_STORE_PHONE_NUMBER_KEY)
+    override fun getPhoneNumber(): Flow<String> {
+        return dataStore.getData(key = DATA_STORE_PHONE_NUMBER_KEY, defaultValue = "")
     }
 
 }
