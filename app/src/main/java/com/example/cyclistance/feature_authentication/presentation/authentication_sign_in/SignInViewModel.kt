@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in
 
 import android.content.Intent
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.AuthConstants.FACEBOOK_CONNECTION_FAILURE
@@ -19,6 +20,8 @@ import com.facebook.login.LoginResult
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FacebookAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -29,6 +32,7 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase) : ViewModel(), ActivityResultCallbackI {
 
+    private var job: Job? = null
     private var callbackManager = CallbackManager.Factory.create()
 
     private val _state: MutableStateFlow<SignInState> = MutableStateFlow(SignInState())
@@ -54,9 +58,9 @@ class SignInViewModel @Inject constructor(
             is SignInEvent.SignInFacebook -> {
 
                 _state.update { it.copy(isLoading = true) }
-                event.context.findActivity()?.let { activity ->//todo: remove this context parameter
+                event.activity?.let {
                     LoginManager.getInstance()
-                        .logInWithReadPermissions(activity, listOf("email", "public_profile"))
+                        .logInWithReadPermissions(it, listOf("email", "public_profile"))
                 }
             }
 
@@ -118,7 +122,8 @@ class SignInViewModel @Inject constructor(
 
 
     private fun signInWithCredential(authCredential: AuthCredential) {
-        viewModelScope.launch {
+        job?.cancel()
+        job = viewModelScope.launch {
             kotlin.runCatching {
 
                 _state.update { it.copy(isLoading = true) }
@@ -135,7 +140,7 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private suspend fun handleException(exception: Throwable){
+    private fun handleException(exception: Throwable){
         when (exception) {
             is AuthExceptions.EmailException -> {
                 _state.update {

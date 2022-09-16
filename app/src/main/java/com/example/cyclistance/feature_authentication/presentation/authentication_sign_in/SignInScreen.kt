@@ -17,7 +17,6 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -29,6 +28,7 @@ import com.example.cyclistance.core.utils.ConnectionStatus
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_authentication.domain.util.AuthResult
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
+import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthState
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
@@ -154,7 +154,7 @@ fun SignInScreen(
             signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility)
         },
         onClickFacebookButton = {
-            signInViewModel.onEvent(SignInEvent.SignInFacebook(context = context))
+            signInViewModel.onEvent(SignInEvent.SignInFacebook(activity = context.findActivity()))
         },
         onClickGoogleButton = {
             scope.launch {
