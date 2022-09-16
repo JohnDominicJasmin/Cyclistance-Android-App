@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 class GetBikeTypeUseCase(private val repository: MappingRepository) {
 
-    operator fun invoke(): Flow<String?> {
+    operator fun invoke(): Flow<String> {
         return repository.getBikeType()
     }
 

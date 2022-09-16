@@ -13,8 +13,8 @@ class IntroSliderRepositoryImpl(context: Context) : IntroSliderRepository {
     private var dataStore = context.dataStore
 
 
-    override fun userCompletedWalkThrough(): Flow<Boolean?> {
-        return dataStore.getData(DATA_STORE_INTRO_SLIDER_KEY)
+    override fun userCompletedWalkThrough(): Flow<Boolean> {
+        return dataStore.getData(key = DATA_STORE_INTRO_SLIDER_KEY, defaultValue = false)
 
     }
 

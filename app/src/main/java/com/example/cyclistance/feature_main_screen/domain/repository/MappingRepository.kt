@@ -11,10 +11,10 @@ interface MappingRepository {
     suspend fun updateUser(itemId: String, user: User)
     suspend fun deleteUser(id: String)
 
-    fun getBikeType(): Flow<String?>
+    fun getBikeType(): Flow<String>
     suspend fun updateBikeType(bikeType: String)
 
-    fun getAddress(): Flow<String?>
+    fun getAddress(): Flow<String>
     suspend fun updateAddress(address: String)
 
 

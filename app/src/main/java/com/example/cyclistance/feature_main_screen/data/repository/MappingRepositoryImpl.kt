@@ -34,16 +34,16 @@ class MappingRepositoryImpl(
     private var dataStore = context.dataStore
 
 
-    override fun getBikeType(): Flow<String?> {
-        return dataStore.getData(BIKE_TYPE_KEY)
+    override fun getBikeType(): Flow<String> {
+        return dataStore.getData(key = BIKE_TYPE_KEY, defaultValue = "")
     }
 
     override suspend fun updateBikeType(bikeType: String) {
         dataStore.editData(BIKE_TYPE_KEY, bikeType)
     }
 
-    override fun getAddress(): Flow<String?> {
-        return dataStore.getData(ADDRESS_KEY)
+    override fun getAddress(): Flow<String> {
+        return dataStore.getData(key = ADDRESS_KEY, defaultValue = "")
     }
 
     override suspend fun updateAddress(address: String) {
@@ -114,7 +114,8 @@ class MappingRepositoryImpl(
 
 fun <T> DataStore<Preferences>.getData(
     key: Preferences.Key<T>,
-): Flow<T?> {
+    defaultValue: T
+): Flow<T> {
     return data.catch { exception ->
         if (exception is IOException) {
             emit(emptyPreferences())
@@ -122,7 +123,7 @@ fun <T> DataStore<Preferences>.getData(
             throw exception
         }
     }.map { preferences ->
-        preferences[key]
+        preferences[key]?:defaultValue
     }
 }
 

@@ -4,7 +4,7 @@ import com.example.cyclistance.feature_main_screen.domain.repository.MappingRepo
 import kotlinx.coroutines.flow.Flow
 
 class GetAddressUseCase(private val repository: MappingRepository) {
-     operator fun invoke(): Flow<String?> {
+     operator fun invoke(): Flow<String> {
        return repository.getAddress()
     }
 }

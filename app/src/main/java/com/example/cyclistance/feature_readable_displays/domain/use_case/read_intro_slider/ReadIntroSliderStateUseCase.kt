@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 class ReadIntroSliderStateUseCase(
     private val repository: IntroSliderRepository) {
 
-    operator fun invoke():Flow<Boolean?> =
+    operator fun invoke():Flow<Boolean> =
         repository.userCompletedWalkThrough()
 
 

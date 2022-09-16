@@ -8,5 +8,5 @@ interface SettingRepository {
 
     suspend fun saveImageToGallery(bitmap: Bitmap):Uri?
     suspend fun toggleTheme(value: Boolean)
-    fun isDarkTheme(): Flow<Boolean?>
+    fun isDarkTheme(): Flow<Boolean>
 }

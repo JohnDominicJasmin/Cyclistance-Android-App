@@ -34,8 +34,8 @@ class SettingRepositoryImpl(val context: Context, private val contentValues: Con
         dataStore.editData(DATA_STORE_THEME_KEY, value)
     }
 
-    override fun isDarkTheme(): Flow<Boolean?> {
-        return dataStore.getData(DATA_STORE_THEME_KEY)
+    override fun isDarkTheme(): Flow<Boolean> {
+        return dataStore.getData(key = DATA_STORE_THEME_KEY, defaultValue = false)
     }
 
     override suspend fun saveImageToGallery(bitmap: Bitmap): Uri? {

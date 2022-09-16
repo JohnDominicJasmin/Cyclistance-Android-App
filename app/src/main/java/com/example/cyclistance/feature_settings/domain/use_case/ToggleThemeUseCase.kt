@@ -7,6 +7,6 @@ class ToggleThemeUseCase(
     private val settingRepository: SettingRepository) {
 
     suspend operator fun invoke(){
-        settingRepository.toggleTheme(value = !settingRepository.isDarkTheme().first()!!)
+        settingRepository.toggleTheme(value = !settingRepository.isDarkTheme().first())
     }
 }
