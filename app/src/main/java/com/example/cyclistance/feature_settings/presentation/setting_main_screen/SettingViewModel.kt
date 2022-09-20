@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_settings.presentation.setting_main_screen
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope

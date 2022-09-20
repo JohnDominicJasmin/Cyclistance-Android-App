@@ -81,7 +81,7 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getUserLocationUseCase().collect { userLocation ->
                     _state.update {
                         it.copy(
-                            addresses = userLocation.addresses ?: emptyList(),
+                            addresses = userLocation.addresses,
                             currentLatLng = userLocation.latLng)
                     }
                 }
