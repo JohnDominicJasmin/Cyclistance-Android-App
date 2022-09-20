@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in
 
 import android.content.Intent
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.AuthConstants.FACEBOOK_CONNECTION_FAILURE

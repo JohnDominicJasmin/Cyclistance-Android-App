@@ -81,7 +81,7 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getUserLocationUseCase().collect { userLocation ->
                     _state.update {
                         it.copy(
-                            addresses = userLocation.addresses,
+                            userAddress = UserAddress(userLocation.addresses),
                             currentLatLng = userLocation.latLng)
                     }
                 }
@@ -107,8 +107,10 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun uploadUserProfile() {
 
-        if (state.value.addresses.isNotEmpty()) {
-            state.value.addresses.forEach { address ->
+        val userAddress = state.value.userAddress.address
+
+        if (userAddress.isNotEmpty()) {
+            userAddress.forEach { address ->
                 runCatching {
                     _state.update { it.copy(isLoading = true) }
                     createUser(address)

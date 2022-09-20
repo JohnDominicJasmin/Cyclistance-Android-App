@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.MappingConstants.IMAGE_PLACEHOLDER_URL
@@ -27,6 +26,7 @@ class EditProfileViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<EditProfileUiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
+    private var imageUri: Uri? = null
 
     private fun getName(): String {
         return authUseCase.getNameUseCase().takeIf { !it.isNullOrEmpty() }
@@ -68,10 +68,10 @@ class EditProfileViewModel @Inject constructor(
                 _state.update { it.copy(name = event.name, nameErrorMessage = "") }
             }
             is EditProfileEvent.SelectImageUri -> {
-                _state.update { it.copy(imageUri = event.uri) }
+                imageUri = event.uri
             }
             is EditProfileEvent.SelectBitmapPicture -> {
-                _state.update { it.copy(bitmap = event.bitmap) }
+                _state.update { it.copy(imageBitmap = ImageBitmap(event.bitmap)) }
             }
             is EditProfileEvent.LoadPhoto -> {
                 loadPhoto()
@@ -92,11 +92,11 @@ class EditProfileViewModel @Inject constructor(
 
     private fun saveImageToGallery() {
         viewModelScope.launch(context = Dispatchers.IO) {
-            state.value.bitmap?.let { bitmap ->
+            state.value.imageBitmap.bitmap?.let { bitmap ->
                 runCatching {
                     settingUseCase.saveImageToGalleryUseCase(bitmap)
                 }.onSuccess { uri ->
-                    _state.update { it.copy(imageUri = uri) }
+                    imageUri = uri
                 }.onFailure {
                     Timber.e("Saving Image to Gallery: ${it.message}")
                 }
@@ -173,8 +173,7 @@ class EditProfileViewModel @Inject constructor(
                 _state.update { it.copy(isLoading = true) }
                 authUseCase.updateProfileUseCase(
                     photoUri = run {
-
-                        state.value.imageUri?.let { localImageUri ->
+                        imageUri?.let { localImageUri ->
                             authUseCase.uploadImageUseCase(localImageUri)
                         }
                     },

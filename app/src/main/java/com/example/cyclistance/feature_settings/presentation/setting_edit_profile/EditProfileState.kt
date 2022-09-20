@@ -1,7 +1,12 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
 
 import android.graphics.Bitmap
-import android.net.Uri
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+
+@Immutable
+@Stable
+data class ImageBitmap(val bitmap: Bitmap? = null)
 
 data class EditProfileState(
     val name: String = "",
@@ -10,6 +15,5 @@ data class EditProfileState(
     val phoneNumberErrorMessage: String = "",
     val photoUrl: String = "",
     val isLoading: Boolean = false,
-    val imageUri: Uri? = null,
-    val bitmap: Bitmap? = null,
+    val imageBitmap: ImageBitmap = ImageBitmap()
     )
