@@ -168,7 +168,7 @@ fun EditProfileScreen(
                 openGalleryResultLauncher.launch("image/*")
                 return@EditProfileScreen
             }
-            if (accessStoragePermissionState.shouldShowRationale) {
+            if (accessStoragePermissionState.shouldShowRationale || !accessStoragePermissionState.allPermissionsGranted) {
                 Toast.makeText(
                     context,
                     "Storage permission is not yet granted.",
@@ -183,9 +183,8 @@ fun EditProfileScreen(
                 openCameraResultLauncher.launch()
                 return@EditProfileScreen
             }
-            if (openCameraPermissionState.status.shouldShowRationale) {
-                Toast.makeText(context, "Camera permission is not yet granted.", Toast.LENGTH_SHORT)
-                    .show()
+            if (openCameraPermissionState.status.shouldShowRationale || !openCameraPermissionState.status.isGranted) {
+                Toast.makeText(context, "Camera permission is not yet granted.", Toast.LENGTH_SHORT).show()
                 return@EditProfileScreen
             }
             openCameraPermissionState.launchPermissionRequest()
