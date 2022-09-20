@@ -52,6 +52,9 @@ fun CyclistanceTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compo
         )
         DarkColorPalette
     } else {
+        systemUiController.setSystemBarsColor(
+            color = DarkColorPalette.onBackground
+        )
         LightColorPalette
     }
 
