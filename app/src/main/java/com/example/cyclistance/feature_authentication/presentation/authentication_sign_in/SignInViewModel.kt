@@ -10,7 +10,6 @@ import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExce
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_authentication.domain.util.ActivityResultCallbackI
-import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -20,7 +19,7 @@ import com.facebook.login.LoginResult
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FacebookAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
+import io.github.farhanroy.composeawesomedialog.R
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -161,7 +160,7 @@ class SignInViewModel @Inject constructor(
                         alertDialogModel = AlertDialogModel(
                             title = exception.title,
                             description = exception.message ?: "You have been blocked for too many failed attempts. Please try again later.",
-                            icon = io.github.farhanroy.composeawesomedialog.R.raw.error,
+                            icon = R.raw.error,
                         ))
                 }
             }
@@ -176,7 +175,7 @@ class SignInViewModel @Inject constructor(
                         alertDialogModel = AlertDialogModel(
                             title = "Error",
                             description = exception.message ?: "Sorry, something went wrong. Please try again.",
-                            icon = io.github.farhanroy.composeawesomedialog.R.raw.error))
+                            icon = R.raw.error))
                 }
             }
 
@@ -197,7 +196,7 @@ class SignInViewModel @Inject constructor(
 
                 override fun onCancel() {
                     _state.update { it.copy(isLoading = false) }
-                    Timber.e("facebook:onCancel");
+                    Timber.e("facebook:onCancel")
                 }
 
                 override fun onError(error: FacebookException) {
@@ -221,7 +220,7 @@ class SignInViewModel @Inject constructor(
                 it.copy(alertDialogModel = AlertDialogModel(
                         title = "Error",
                         description = errorMessage,
-                        icon = io.github.farhanroy.composeawesomedialog.R.raw.error))
+                        icon = R.raw.error))
             }
             removeFacebookUserAccountPreviousToken()
         }

@@ -24,7 +24,6 @@ fun SignInTextFieldsArea(
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit),
     onClickPasswordVisibility: () -> Unit) {
 
-    with(state) {
 
         Column(
             modifier = Modifier
@@ -36,24 +35,23 @@ fun SignInTextFieldsArea(
 
             EmailTextField(
                 focusRequester = focusRequester,
-                email = email,
-                emailExceptionMessage = emailErrorMessage,
+                email = state.email,
+                emailExceptionMessage = state.emailErrorMessage,
                 onValueChange = onValueChangeEmail,
                 clearIconOnClick = {
                     onValueChangeEmail("")
                 })
 
             ConfirmPasswordTextField(
-                password = password,
-                passwordExceptionMessage = passwordErrorMessage,
+                password = state.password,
+                passwordExceptionMessage = state.passwordErrorMessage,
                 onValueChange = onValueChangePassword,
                 keyboardActionOnDone = keyboardActionOnDone,
-                isPasswordVisible = passwordVisibility,
+                isPasswordVisible = state.passwordVisibility,
                 passwordVisibilityIconOnClick = onClickPasswordVisibility
             )
 
 
         }
-    }
 
 }

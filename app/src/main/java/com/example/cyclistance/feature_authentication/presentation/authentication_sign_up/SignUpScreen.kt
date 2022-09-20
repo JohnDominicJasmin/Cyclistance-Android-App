@@ -12,6 +12,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -41,7 +42,7 @@ fun SignUpScreen(
 
     val signUpState by signUpViewModel.state.collectAsState()
     val focusManager = LocalFocusManager.current
-
+    val focusRequester = remember { FocusRequester() }
 
     val context = LocalContext.current
 
@@ -55,7 +56,7 @@ fun SignUpScreen(
 
 
     LaunchedEffect(key1 = true) {
-        signUpState.focusRequester.requestFocus()
+        focusRequester.requestFocus()
         signUpViewModel.eventFlow.collectLatest { event ->
 
             when (event) {
@@ -75,100 +76,9 @@ fun SignUpScreen(
 
 
 
-    Column(
-
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)
-            .verticalScroll(rememberScrollState())
-            .background(MaterialTheme.colors.background)) {
-
-        Spacer(modifier = Modifier.weight(0.04f, fill = true))
-
-        ConstraintLayout(
-            constraintSet = signUpConstraints,
-            modifier = Modifier
-                .fillMaxSize()
-                .weight(0.95f)
-                .align(Alignment.CenterHorizontally)
-                .background(MaterialTheme.colors.background)) {
-
-            Image(
-                contentDescription = "App Icon",
-                painter = painterResource(R.drawable.ic_app_icon_cyclistance),
-                modifier = Modifier
-                    .height(100.dp)
-                    .width(90.dp)
-                    .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
-            )
-
-            SignUpTextArea()
-
-
-
-            if (signUpState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
-                AlertDialog(
-                    alertDialog = signUpState.alertDialogModel,
-                    onDismissRequest = {
-                        signUpViewModel.onEvent(SignUpEvent.DismissAlertDialog)
-                    })
-            }
-
-            SignUpTextFieldsArea(
-                focusRequester = signUpState.focusRequester,
-                state = signUpState,
-                keyboardActionOnDone = {
-                    signUpAccount()
-                    focusManager.clearFocus()
-                },
-                onValueChangeEmail = {
-                    signUpViewModel.onEvent(SignUpEvent.EnterEmail(it))
-                },
-                onValueChangePassword = {
-                    signUpViewModel.onEvent(SignUpEvent.EnterPassword(it))
-                },
-                onValueChangeConfirmPassword = {
-                    signUpViewModel.onEvent(SignUpEvent.EnterConfirmPassword(it))
-                },
-                onClickPasswordVisibility = {
-                    signUpViewModel.onEvent(SignUpEvent.TogglePasswordVisibility)
-                }
-            )
-
-
-            SignUpButton(onClickSignUpButton = {
-                signUpAccount()
-            })
-
-            SignUpClickableText() {
-                navController.navigateScreenInclusively(
-                    Screens.SignInScreen.route,
-                    Screens.SignUpScreen.route)
-            }
-
-            if (signUpState.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
-                )
-            }
-
-            if (!signUpState.hasInternet) {
-                NoInternetScreen(
-                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                    onClickRetryButton = {
-                        if (ConnectionStatus.hasInternetConnection(context)) {
-                            signUpViewModel.onEvent(event = SignUpEvent.DismissNoInternetScreen)
-                        }
-                    })
-            }
-        }
-
-
-    }
     SignUpScreen(
         modifier = Modifier.padding(paddingValues),
+        focusRequester = focusRequester,
         signUpState = signUpState,
         onDismissAlertDialog = {
             signUpViewModel.onEvent(SignUpEvent.DismissAlertDialog)
@@ -222,6 +132,7 @@ fun SignUpScreenPreview() {
 fun SignUpScreen(
     modifier: Modifier = Modifier,
     signUpState: SignUpState = SignUpState(),
+    focusRequester: FocusRequester = FocusRequester(),
     onDismissAlertDialog: () -> Unit = {},
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit) = {},
     onValueChangeEmail: (String) -> Unit = {},
@@ -272,7 +183,7 @@ fun SignUpScreen(
             }
 
             SignUpTextFieldsArea(
-                focusRequester = signUpState.focusRequester,
+                focusRequester = focusRequester,
                 state = signUpState,
                 keyboardActionOnDone = keyboardActionOnDone,
                 onValueChangeEmail = onValueChangeEmail,

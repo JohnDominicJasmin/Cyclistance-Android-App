@@ -13,6 +13,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -57,7 +58,7 @@ fun SignInScreen(
     val scope = rememberCoroutineScope()
     val signInState by signInViewModel.state.collectAsState()
     val emailAuthState by emailAuthViewModel.state.collectAsState()
-
+    val focusRequester = remember { FocusRequester() }
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val authResultLauncher = rememberLauncherForActivityResult(contract = AuthResult()) { task ->
@@ -88,7 +89,7 @@ fun SignInScreen(
 
 
     LaunchedEffect(key1 = true) {
-        signInState.focusRequester.requestFocus()
+        focusRequester.requestFocus()
         signInViewModel.eventFlow.collectLatest { signInEvent ->
 
             when (signInEvent) {
@@ -137,6 +138,7 @@ fun SignInScreen(
         modifier = Modifier.padding(paddingValues),
         signInState = signInState,
         emailAuthState = emailAuthState,
+        focusRequester = focusRequester,
         onDismissAlertDialog = {
             signInViewModel.onEvent(SignInEvent.DismissAlertDialog)
         },
@@ -187,6 +189,7 @@ fun SignInScreenPreview() {
 @Composable
 fun SignInScreen(
     modifier: Modifier = Modifier,
+    focusRequester: FocusRequester = FocusRequester(),
     signInState: SignInState = SignInState(),
     emailAuthState: EmailAuthState = EmailAuthState(),
     onDismissAlertDialog: () -> Unit = {},
@@ -241,7 +244,7 @@ fun SignInScreen(
             }
 
             SignInTextFieldsArea(
-                focusRequester = signInState.focusRequester,
+                focusRequester = focusRequester,
                 state = signInState,
                 keyboardActionOnDone = keyboardActionOnDone,
                 onValueChangeEmail = onValueChangeEmail,
