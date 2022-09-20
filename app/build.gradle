@@ -5,7 +5,6 @@ plugins {
     id 'kotlin-kapt'
     id("dagger.hilt.android.plugin")
     id 'com.google.gms.google-services'
-    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
 }
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.android.application'
@@ -19,7 +18,7 @@ android {
         //minSdk 24
 
         minSdkVersion 21
-        targetSdk 32
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -77,6 +76,25 @@ android {
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+
+    subprojects {
+        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+            kotlinOptions {
+                if (project.findProperty("myapp.enableComposeCompilerReports") == "true") {
+                    freeCompilerArgs += [
+                            "-P",
+                            "plugin:androidx.compose.compiler.plugins.kotlin:reportsDestination=" +
+                                    project.buildDir.absolutePath + "/compose_metrics"
+                    ]
+                    freeCompilerArgs += [
+                            "-P",
+                            "plugin:androidx.compose.compiler.plugins.kotlin:metricsDestination=" +
+                                    project.buildDir.absolutePath + "/compose_metrics"
+                    ]
+                }
+            }
         }
     }
 }
@@ -195,7 +213,6 @@ dependencies {
 
     //livedata
     implementation 'androidx.compose.runtime:runtime-livedata:1.2.0-rc02'
-    ktlintRuleset "com.twitter.compose.rules:ktlint:0.46.0"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.4.1"
 }
 
