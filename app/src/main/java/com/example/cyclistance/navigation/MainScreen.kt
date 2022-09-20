@@ -78,12 +78,11 @@ fun MainScreen(
             drawerContent = {
                 MappingDrawerContent(
                     onClickSettings = {
+                        coroutineScope.launch {
+                            navController.navigateScreen(
+                                Screens.SettingScreen.route,
+                                Screens.MappingScreen.route).also {
 
-                        navController.navigateScreen(
-                            Screens.SettingScreen.route,
-                            Screens.MappingScreen.route).also {
-
-                            coroutineScope.launch {
                                 scaffoldState.drawerState.close()
                             }
                         }
@@ -100,8 +99,8 @@ fun MainScreen(
                         }
                     },
                     onClickSignOut = {
-                        mappingViewModel.onEvent(event = MappingEvent.SignOut).also {
-                            coroutineScope.launch {
+                        coroutineScope.launch {
+                            mappingViewModel.onEvent(event = MappingEvent.SignOut).also {
                                 scaffoldState.drawerState.close()
                             }
                         }
@@ -179,7 +178,8 @@ fun TopAppBar(
                 icon = Icons.Default.Close, onClickIcon = {
                     navController.popBackStack()
                 }, topAppBarTitle = {
-                    TitleTopAppBar(title = "Edit Profile",
+                    TitleTopAppBar(
+                        title = "Edit Profile",
                         confirmationText = "Save",
                         onClickConfirmation = onClickSaveProfile)
                 })
