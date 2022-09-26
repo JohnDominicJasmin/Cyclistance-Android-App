@@ -18,33 +18,42 @@ class SharedLocationManager constructor(
     context: Context,
     externalScope: CoroutineScope
 ) {
-    private val location = SimpleLocation(context, false, false, LOCATION_UPDATES_INTERVAL)
+    private val location = SimpleLocation(context, false, false, LOCATION_UPDATES_INTERVAL).apply {
+        beginUpdates()
+    }
     private val geocoder = Geocoder(context, Locale.ENGLISH)
-    private var isUpdateBegan: Boolean = false
+
 
     private val _locationUpdates = callbackFlow {
 
-        if (!isUpdateBegan) {
-            location.beginUpdates()
-            isUpdateBegan = true
-        }
-        location.setListener {
-            if (location.hasLocationEnabled()) {
 
-                if (Build.VERSION.SDK_INT >= 33) {
-                    geocoder.getFromLocation(location.latitude, location.longitude, 1,
-                    ) { addresses ->
-                        trySend(
-                            element = SharedLocationModel(latLng = LatLng(location.latitude,
-                                    location.longitude), addresses = addresses))
-                    }
-                } else {
+        val updateLocation = {
+            if (Build.VERSION.SDK_INT >= 33) {
+                geocoder.getFromLocation(
+                    location.latitude, location.longitude, 1,
+                ) { addresses ->
                     trySend(
                         element = SharedLocationModel(
-                            latLng = LatLng(location.latitude, location.longitude),
-                            addresses = geocoder.getFromLocation(location.latitude, location.longitude, 1) ?: emptyList()))
+                            latLng = LatLng(
+                                location.latitude,
+                                location.longitude), addresses = addresses))
                 }
+            } else {
+                trySend(
+                    element = SharedLocationModel(
+                        latLng = LatLng(location.latitude, location.longitude),
+                        addresses = geocoder.getFromLocation(
+                            location.latitude,
+                            location.longitude,
+                            1) ?: emptyList()))
             }
+        }
+
+
+
+        updateLocation()
+        location.setListener {
+            updateLocation()
         }
 
         awaitClose {
