@@ -93,8 +93,8 @@ fun AlertDialog(
                                     modifier = Modifier.width(100.dp),
                                     onClick = {
                                         openDialog.value = false
-                                              onDismissRequest()
-                                              },
+                                        onDismissRequest()
+                                    },
                                     shape = RoundedCornerShape(12.dp),
                                     colors = ButtonDefaults.buttonColors(
                                         backgroundColor = MaterialTheme.colors.primary)) {
@@ -119,7 +119,7 @@ fun AlertDialog(
                             border = BorderStroke(width = 2.dp, color = Transparent),
                             shape = CircleShape
                         ),
-                       alertDialog.icon)
+                    alertDialog.icon)
             }
         }
     }
