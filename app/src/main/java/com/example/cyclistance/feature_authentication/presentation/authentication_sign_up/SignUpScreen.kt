@@ -4,13 +4,10 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActionScope
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
@@ -26,10 +23,11 @@ import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.ConnectionStatus
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
-import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.*
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
+import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -144,24 +142,18 @@ fun SignUpScreen(
     onClickRetryButton: () -> Unit = {}
 ) {
 
-    Column(
 
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .background(MaterialTheme.colors.background)) {
 
-        Spacer(modifier = Modifier.weight(0.04f, fill = true))
 
         ConstraintLayout(
             constraintSet = signUpConstraints,
             modifier = Modifier
                 .fillMaxSize()
-                .weight(0.95f)
-                .align(Alignment.CenterHorizontally)
                 .background(MaterialTheme.colors.background)) {
+
+            Spacer(modifier = Modifier.layoutId(
+                AuthenticationConstraintsItem.TopSpacer.layoutId
+            ))
 
             Image(
                 contentDescription = "App Icon",
@@ -175,6 +167,7 @@ fun SignUpScreen(
             SignUpTextArea()
 
 
+            Waves(topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId, bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId)
 
             if (signUpState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
                 AlertDialog(
@@ -206,7 +199,6 @@ fun SignUpScreen(
                     modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
                     onClickRetryButton = onClickRetryButton)
             }
-        }
 
 
     }
