@@ -36,6 +36,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.*
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
@@ -206,73 +207,67 @@ fun SignInScreen(
 ) {
 
 
-    Column(
-
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+    ConstraintLayout(
+        constraintSet = signInConstraints,
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colors.background)) {
 
-        Spacer(modifier = Modifier.weight(0.04f, fill = true))
-        ConstraintLayout(
-            constraintSet = signInConstraints,
+        Spacer(modifier = Modifier.layoutId(AuthenticationConstraintsItem.TopSpacer.layoutId))
+
+        Image(
+            contentDescription = "App Icon",
+            painter = painterResource(R.drawable.ic_app_icon_cyclistance),
             modifier = Modifier
-                .fillMaxSize()
-                .weight(0.95f)
-                .align(Alignment.CenterHorizontally)
-                .background(MaterialTheme.colors.background)) {
+                .height(100.dp)
+                .width(90.dp)
+                .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
+        )
 
 
-            Image(
-                contentDescription = "App Icon",
-                painter = painterResource(R.drawable.ic_app_icon_cyclistance),
-                modifier = Modifier
-                    .height(100.dp)
-                    .width(90.dp)
-                    .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
+        SignUpTextArea()
+
+        if (signInState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
+            AlertDialog(
+                alertDialog = signInState.alertDialogModel,
+                onDismissRequest = onDismissAlertDialog)
+        }
+
+        Waves(
+            topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
+            bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId,
+        )
+
+        SignInTextFieldsArea(
+            focusRequester = focusRequester,
+            state = signInState,
+            keyboardActionOnDone = keyboardActionOnDone,
+            onValueChangeEmail = onValueChangeEmail,
+            onValueChangePassword = onValueChangePassword,
+            onClickPasswordVisibility = onClickPasswordVisibility
+        )
+
+        SignInGoogleAndFacebookSection(
+            onClickFacebookButton = onClickFacebookButton,
+            onClickGoogleButton = onClickGoogleButton
+        )
+
+        SignInButton(onClickSignInButton = onClickSignInButton)
+
+
+        SignInClickableText(onClickSignInText = onClickSignInText)
+
+        if (signInState.isLoading || emailAuthState.isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
             )
+        }
+        if (!emailAuthState.hasInternet || !signInState.hasInternet) {
+            NoInternetScreen(
+                modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                onClickRetryButton = onClickRetryButton)
 
-
-            SignUpTextArea()
-
-            if (signInState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
-                AlertDialog(
-                    alertDialog = signInState.alertDialogModel,
-                    onDismissRequest = onDismissAlertDialog)
-            }
-
-            SignInTextFieldsArea(
-                focusRequester = focusRequester,
-                state = signInState,
-                keyboardActionOnDone = keyboardActionOnDone,
-                onValueChangeEmail = onValueChangeEmail,
-                onValueChangePassword = onValueChangePassword,
-                onClickPasswordVisibility = onClickPasswordVisibility
-            )
-
-            SignInGoogleAndFacebookSection(
-                onClickFacebookButton = onClickFacebookButton,
-                onClickGoogleButton = onClickGoogleButton
-            )
-
-            SignInButton(onClickSignInButton = onClickSignInButton)
-
-
-            SignInClickableText(onClickSignInText = onClickSignInText)
-
-            if (signInState.isLoading || emailAuthState.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
-                )
-            }
-            if (!emailAuthState.hasInternet || !signInState.hasInternet) {
-                NoInternetScreen(
-                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                    onClickRetryButton = onClickRetryButton)
-
-            }
         }
 
 
