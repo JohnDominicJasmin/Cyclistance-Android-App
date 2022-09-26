@@ -133,7 +133,8 @@ fun TopAppBar(
 
 
     when (route) {
-        Screens.MappingScreen.route -> {
+        Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}" -> {
+
             DefaultTopBar(onClickIcon = {
                 coroutineScope.launch {
                     scaffoldState.drawerState.open()

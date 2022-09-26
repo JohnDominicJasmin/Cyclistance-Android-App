@@ -8,6 +8,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpScreen
@@ -65,12 +66,21 @@ fun NavGraph(
 
 
 
-        composable(Screens.MappingScreen.route) {
-            MappingScreen(
-                isDarkTheme = isDarkThemeLiveData,
-                navController = navController,
-                scaffoldState = scaffoldState,
-            paddingValues = paddingValues)
+        composable(
+            Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}",
+            arguments = listOf(navArgument("bottomSheetType") {
+                defaultValue = ""
+            })
+        ) {
+
+            it.arguments?.getString("bottomSheetType")?.let { bottomSheetType ->
+                MappingScreen(
+                    typeBottomSheet = bottomSheetType,
+                    isDarkTheme = isDarkThemeLiveData,
+                    navController = navController,
+                    scaffoldState = scaffoldState,
+                    paddingValues = paddingValues)
+            }
         }
 
 
@@ -95,7 +105,10 @@ fun NavGraph(
         }
 
         composable(Screens.EditProfileScreen.route) {
-            EditProfileScreen(navController = navController, paddingValues = paddingValues, editProfileViewModel = editProfileViewModel)
+            EditProfileScreen(
+                navController = navController,
+                paddingValues = paddingValues,
+                editProfileViewModel = editProfileViewModel)
         }
 
         composable(Screens.SettingScreen.route) {
@@ -128,7 +141,7 @@ fun NavController.navigateScreen(destination: String, popUpToDestination: String
         popUpTo(popUpToDestination) {
             saveState = true
         }
-        launchSingleTop = true
         restoreState = true
+        launchSingleTop = true
     }
 }

@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
+import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.ConnectionStatus
 import com.example.cyclistance.core.utils.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
@@ -30,8 +33,10 @@ import com.example.cyclistance.feature_main_screen.presentation.mapping_main_scr
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
+import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.mapbox.mapboxsdk.Mapbox
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -40,6 +45,7 @@ import timber.log.Timber
 @ExperimentalPermissionsApi
 @Composable
 fun MappingScreen(
+    typeBottomSheet: String = "",
     isDarkTheme: LiveData<Boolean?>,
     mappingViewModel: MappingViewModel = hiltViewModel(),
     paddingValues: PaddingValues,
@@ -49,6 +55,14 @@ fun MappingScreen(
 
     val state by mappingViewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+    val (bottomSheetType, onChangeBottomSheetType) = rememberSaveable {
+        mutableStateOf("")
+    }
+
+    LaunchedEffect(key1 = typeBottomSheet){
+        onChangeBottomSheetType(typeBottomSheet)
+    }
+
     BackHandler(enabled = true, onBack = {
         coroutineScope.launch {
             if (scaffoldState.drawerState.isOpen) {
@@ -130,6 +144,11 @@ fun MappingScreen(
                         Screens.SignInScreen.route,
                         Screens.MappingScreen.route)
                 }
+                is MappingUiEvent.ShowBottomSheet -> {
+                    onChangeBottomSheetType(event.bottomSheetType.type)
+                }
+
+
             }
         }
     }
@@ -150,6 +169,7 @@ fun MappingScreen(
 
     MappingScreen(
         modifier = Modifier.padding(paddingValues),
+        bottomSheetType = bottomSheetType,
         isDarkTheme = isDarkTheme,
         state = state,
         onClickRetryButton = {
@@ -182,13 +202,21 @@ fun MappingScreen(
 @Preview
 @Composable
 fun MappingScreenPreview() {
-    MappingScreen(
-        modifier = Modifier,
-        isDarkTheme = MutableLiveData(true),
-        state = MappingState(),
-        onClickRetryButton = {},
-        onClickSearchButton = {}
-    )
+    val context = LocalContext.current
+    Mapbox.getInstance(context, context.getString(R.string.MapsDownloadToken))
+
+    CyclistanceTheme(true) {
+
+        MappingScreen(
+            modifier = Modifier,
+            bottomSheetType = BottomSheetType.RescuerArrived.type,
+            isDarkTheme = MutableLiveData(true),
+            state = MappingState(),
+            onClickRetryButton = {},
+            onClickSearchButton = {},
+
+            )
+    }
 }
 
 
@@ -197,61 +225,72 @@ fun MappingScreen(
     modifier: Modifier,
     isDarkTheme: LiveData<Boolean?>,
     state: MappingState,
+    bottomSheetType: String,
     onClickRetryButton: () -> Unit,
     onClickSearchButton: () -> Unit) {
 
-    ConstraintLayout(
-        modifier = modifier
-            .fillMaxSize()) {
+    val _isDarkTheme = isDarkTheme.observeAsState().value
 
-        val (mapScreen, searchButton, circularProgressbar, noInternetScreen) = createRefs()
+    MappingBottomSheet(
+        isDarkTheme = _isDarkTheme == true,
+        onClickActionButton = { /*TODO*/ },
+        bottomSheetType = bottomSheetType) {
 
-        MapScreen(
-            isDarkTheme = isDarkTheme,
-            modifier = Modifier.constrainAs(mapScreen) {
-                top.linkTo(parent.top)
-                end.linkTo(parent.end)
-                start.linkTo(parent.start)
-                bottom.linkTo(parent.bottom)
-            })
+        ConstraintLayout(
+            modifier = modifier
+                .fillMaxSize()) {
 
-        if (state.findAssistanceButtonVisible) {
-            SearchAssistanceButton(modifier = Modifier.constrainAs(searchButton) {
-                bottom.linkTo(parent.bottom, margin = 15.dp)
-                end.linkTo(parent.end)
-                start.linkTo(parent.start)
-                height = Dimension.value(45.dp)
-            }, onClickSearchButton = onClickSearchButton)
-        }
+            val (mapScreen, searchButton, circularProgressbar, noInternetScreen) = createRefs()
 
-        if (state.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.constrainAs(circularProgressbar) {
-                top.linkTo(parent.top)
-                end.linkTo(parent.end)
-                start.linkTo(parent.start)
-                bottom.linkTo(parent.bottom)
-                this.centerTo(parent)
-            })
-        }
 
-        if (!state.hasInternet) {
-            NoInternetScreen(
-                modifier = Modifier.constrainAs(noInternetScreen) {
+            MapScreen(
+                isDarkTheme = isDarkTheme,
+                modifier = Modifier.constrainAs(mapScreen) {
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom)
-                    centerTo(parent)
-                    width = Dimension.matchParent
-                    height = Dimension.matchParent
-                },
-                onClickRetryButton = onClickRetryButton)
+                })
+
+
+            if (state.findAssistanceButtonVisible) {
+                SearchAssistanceButton(modifier = Modifier.constrainAs(searchButton) {
+                    bottom.linkTo(parent.bottom, margin = 15.dp)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                    height = Dimension.value(45.dp)
+                }, onClickSearchButton = onClickSearchButton)
+            }
+
+            if (state.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.constrainAs(circularProgressbar) {
+                    top.linkTo(parent.top)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom)
+                    this.centerTo(parent)
+                })
+            }
+
+            if (!state.hasInternet) {
+                NoInternetScreen(
+                    modifier = Modifier.constrainAs(noInternetScreen) {
+                        top.linkTo(parent.top)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                        bottom.linkTo(parent.bottom)
+                        centerTo(parent)
+                        width = Dimension.matchParent
+                        height = Dimension.matchParent
+                    },
+                    onClickRetryButton = onClickRetryButton)
+            }
         }
+
     }
 
+
 }
-
-
 
 
 

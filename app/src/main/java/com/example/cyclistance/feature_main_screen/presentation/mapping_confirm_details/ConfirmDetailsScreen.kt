@@ -19,12 +19,15 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.ConnectionStatus
+import com.example.cyclistance.core.utils.MappingConstants.SEARCH_BOTTOM_SHEET
 import com.example.cyclistance.feature_main_screen.presentation.common.AdditionalMessage
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.AddressTextField
 import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.ButtonDescriptionDetails
 import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.components.DropDownBikeList
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
+import com.example.cyclistance.navigation.Screens
+import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.*
 import kotlinx.coroutines.flow.collectLatest
 
@@ -41,7 +44,9 @@ fun ConfirmDetailsScreen(
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is ConfirmDetailsUiEvent.ShowMappingScreen -> {
-                    navController.popBackStack()
+                    navController.navigateScreenInclusively(
+                        destination = Screens.MappingScreen.route + "?bottomSheetType=$SEARCH_BOTTOM_SHEET",
+                        popUpToDestination = Screens.ConfirmDetailsScreen.route)
                 }
 
                 is ConfirmDetailsUiEvent.ShowToastMessage -> {

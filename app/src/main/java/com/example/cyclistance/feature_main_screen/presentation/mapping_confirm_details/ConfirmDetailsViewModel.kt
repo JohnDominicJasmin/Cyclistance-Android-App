@@ -120,7 +120,7 @@ class ConfirmDetailsViewModel @Inject constructor(
         }.onSuccess {
             _state.update { it.copy(isLoading = false) }
             _eventFlow.emit(value = ConfirmDetailsUiEvent.ShowMappingScreen)
-            //todo: show mapping screen and bottomSheet
+
         }.onFailure { exception ->
             _state.update { it.copy(isLoading = false) }
             handleException(exception)
