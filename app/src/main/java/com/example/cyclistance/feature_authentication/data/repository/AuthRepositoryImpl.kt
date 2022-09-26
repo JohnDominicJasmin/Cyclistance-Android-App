@@ -23,14 +23,13 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlin.coroutines.suspendCoroutine
 
 
-class AuthRepositoryImpl (
+class AuthRepositoryImpl(
     private val context: Context,
     private val auth: FirebaseAuth,
 
-) : AuthRepository<AuthCredential> {
+    ) : AuthRepository<AuthCredential> {
 
     private var dataStore = context.dataStore
 
@@ -39,7 +38,7 @@ class AuthRepositoryImpl (
         val firebaseStorageReference: StorageReference = FirebaseStorage.getInstance().reference
         val reference = firebaseStorageReference.child("images/${getId()}")
         val uploadTask = reference.putFile(uri)
-        return suspendCoroutine { continuation ->
+        return suspendCancellableCoroutine { continuation ->
             uploadTask.addOnCompleteListener { task ->
                 task.exception?.let(continuation::resumeWithException)
                 if (task.isSuccessful) {
@@ -50,7 +49,7 @@ class AuthRepositoryImpl (
     }
 
     override suspend fun reloadEmail(): Boolean {
-        return suspendCoroutine { continuation ->
+        return suspendCancellableCoroutine { continuation ->
             auth.currentUser?.reload()?.addOnCompleteListener { reload ->
                 reload.exception?.let { exception ->
                     if (exception is FirebaseNetworkException) {
@@ -60,28 +59,33 @@ class AuthRepositoryImpl (
                                     R.string.no_internet_message)))
                     }
                 }
-                continuation.resume(reload.isSuccessful)
+                if(continuation.isActive){
+                    continuation.resume(reload.isSuccessful)
+                }
             }
         }
     }
 
     override suspend fun sendEmailVerification(): Boolean {
-        return suspendCoroutine { continuation ->
+        return suspendCancellableCoroutine { continuation ->
             auth.currentUser?.sendEmailVerification()?.addOnCompleteListener { sendEmail ->
-                    sendEmail.exception?.let {
-                        continuation.resumeWithException(
-                            AuthExceptions.EmailVerificationException(
-                                message = context.getString(R.string.failed_email_verification)))
-                    }
+                sendEmail.exception?.let {
+                    continuation.resumeWithException(
+                        AuthExceptions.EmailVerificationException(
+                            message = context.getString(R.string.failed_email_verification)))
+                }
+                if (continuation.isActive) {
                     continuation.resume(sendEmail.isSuccessful)
                 }
+            }
         }
     }
 
     override suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean {
 
-        return suspendCoroutine { continuation ->
-            auth.createUserWithEmailAndPassword(email.trim(), password.trim()).addOnCompleteListener { createAccount ->
+        return suspendCancellableCoroutine { continuation ->
+            auth.createUserWithEmailAndPassword(email.trim(), password.trim())
+                .addOnCompleteListener { createAccount ->
                     createAccount.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
                             continuation.resumeWithException(
@@ -99,56 +103,64 @@ class AuthRepositoryImpl (
                         }
                         continuation.resumeWithException(exception)
                     }
-                    continuation.resume(createAccount.isSuccessful)
+                    if (continuation.isActive) {
+                        continuation.resume(createAccount.isSuccessful)
+                    }
                 }
         }
     }
 
     override suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean {
 
-        return suspendCoroutine { continuation ->
+        return suspendCancellableCoroutine { continuation ->
             auth.signInWithEmailAndPassword(email.trim(), password.trim())
                 .addOnCompleteListener { signInWithEmailAndPassword ->
                     signInWithEmailAndPassword.exception?.let { exception ->
                         Timber.e(exception.message)
-                        if(exception is FirebaseNetworkException){
-                            continuation.resumeWithException(AuthExceptions.InternetException(
-                                message = context.getString(
-                                    R.string.no_internet_message)))
-                            return@addOnCompleteListener
-                        }
-
-                        if(exception is FirebaseAuthInvalidCredentialsException){
-                            continuation.resumeWithException( AuthExceptions.PasswordException(
-                                message = context.getString(
-                                    R.string.incorrectPasswordMessage)))
-                            return@addOnCompleteListener
-                        }
-
-                        if(exception is FirebaseAuthInvalidUserException){
-                            if(exception.errorCode == USER_NOT_FOUND){
-                                continuation.resumeWithException(AuthExceptions.EmailException(
+                        if (exception is FirebaseNetworkException) {
+                            continuation.resumeWithException(
+                                AuthExceptions.InternetException(
                                     message = context.getString(
-                                        R.string.couldntFindAccount)))
+                                        R.string.no_internet_message)))
+                            return@addOnCompleteListener
+                        }
+
+                        if (exception is FirebaseAuthInvalidCredentialsException) {
+                            continuation.resumeWithException(
+                                AuthExceptions.PasswordException(
+                                    message = context.getString(
+                                        R.string.incorrectPasswordMessage)))
+                            return@addOnCompleteListener
+                        }
+
+                        if (exception is FirebaseAuthInvalidUserException) {
+                            if (exception.errorCode == USER_NOT_FOUND) {
+                                continuation.resumeWithException(
+                                    AuthExceptions.EmailException(
+                                        message = context.getString(
+                                            R.string.couldntFindAccount)))
                                 return@addOnCompleteListener
                             }
                         }
 
                         if (exception is FirebaseTooManyRequestsException) {
-                            continuation.resumeWithException(  AuthExceptions.TooManyRequestsException(
-                                title = context.getString(
-                                    R.string.tooManyFailedAttempts),
-                                message = context.getString(R.string.manyFailedAttempts)))
+                            continuation.resumeWithException(
+                                AuthExceptions.TooManyRequestsException(
+                                    title = context.getString(
+                                        R.string.tooManyFailedAttempts),
+                                    message = context.getString(R.string.manyFailedAttempts)))
                             return@addOnCompleteListener
                         }
 
-                        if(exception is IllegalStateException){
+                        if (exception is IllegalStateException) {
                             Timber.e(exception.message)
                         }
 
                         continuation.resumeWithException(exception)
                     }
-                    continuation.resume(signInWithEmailAndPassword.isSuccessful)
+                    if (continuation.isActive) {
+                        continuation.resume(signInWithEmailAndPassword.isSuccessful)
+                    }
                 }
         }
     }
@@ -160,15 +172,18 @@ class AuthRepositoryImpl (
             auth.signInWithCredential(v)
                 .addOnCompleteListener { signInWithCredential ->
                     signInWithCredential.exception?.let { exception ->
-                        if(exception.message == FACEBOOK_CONNECTION_FAILURE){
-                            continuation.resumeWithException(AuthExceptions.InternetException(
-                                message = context.getString(
-                                    R.string.no_internet_message)))
+                        if (exception.message == FACEBOOK_CONNECTION_FAILURE) {
+                            continuation.resumeWithException(
+                                AuthExceptions.InternetException(
+                                    message = context.getString(
+                                        R.string.no_internet_message)))
                         }
-                        continuation.resumeWithException(AuthExceptions.ConflictFBTokenException(exception.message
-                            ?: "Sorry, something went wrong. Please try again."))
+                        continuation.resumeWithException(
+                            AuthExceptions.ConflictFBTokenException(
+                                exception.message
+                                ?: "Sorry, something went wrong. Please try again."))
                     }
-                    if(continuation.isActive) {
+                    if (continuation.isActive) {
                         continuation.resume(signInWithCredential.isSuccessful)
                     }
                 }
@@ -190,7 +205,6 @@ class AuthRepositoryImpl (
     override fun getName(): String? {
         return auth.currentUser?.displayName
     }
-
 
 
     override fun getPhotoUrl(): String {
@@ -216,19 +230,19 @@ class AuthRepositoryImpl (
     }
 
 
-
-
     override suspend fun updateProfilePicture(photoUri: Uri?, name: String?): Boolean {
         val profileUpdates = userProfileChangeRequest {
             name?.let { this.displayName = it }
             photoUri?.let { this.photoUri = photoUri }
         }
 
-        return suspendCoroutine { continuation ->
+        return suspendCancellableCoroutine { continuation ->
             auth.currentUser?.updateProfile(profileUpdates)
                 ?.addOnCompleteListener { updateProfile ->
                     updateProfile.exception?.let(continuation::resumeWithException)
-                    continuation.resume(updateProfile.isSuccessful)
+                    if (continuation.isActive) {
+                        continuation.resume(updateProfile.isSuccessful)
+                    }
                 }
         }
     }
