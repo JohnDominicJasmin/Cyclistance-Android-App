@@ -7,11 +7,9 @@ import androidx.compose.foundation.BorderStroke
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -21,12 +19,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.common.AnimatedImage
-import com.example.cyclistance.feature_main_screen.data.repository.MappingRepositoryImpl
 
 import com.example.cyclistance.theme.*
 import kotlinx.coroutines.launch
@@ -34,181 +33,340 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun MappingBottomSheet(
+    modifier: Modifier = Modifier,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
+    sheetPeekHeight: Dp = 0.dp,
     sheetContent: @Composable ColumnScope.() -> Unit,
-    content: @Composable (PaddingValues) -> Unit) {
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = BottomSheetState(BottomSheetValue.Expanded)
-    )
+    content: @Composable (PaddingValues) -> Unit,
+) {
 
-    val scope = rememberCoroutineScope()
 
     BottomSheetScaffold(
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = sheetContent,
-        sheetPeekHeight = 0.dp,
-        content = {
-             Button(onClick = {
-             scope.launch {
+        sheetPeekHeight = sheetPeekHeight,
+        content = content,
+        modifier = modifier,
+        sheetBackgroundColor = Color.Transparent,
+        sheetElevation = 0.dp,
 
-                 if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
-                     bottomSheetScaffoldState.bottomSheetState.expand()
-                 } else {
-                     bottomSheetScaffoldState.bottomSheetState.collapse()
-                 }
-             }
-         }) {
-             Text(text = "Expand/Collapse Bottom Sheet")
-         }
-        }
-    )
+
+        )
 
 
 }
-
 
 
 @Composable
 fun BottomSheetSearchingAssistance(
     isDarkTheme: Boolean,
     content: @Composable (PaddingValues) -> Unit,
-    onClickButton: () -> Unit) {
+    onClickCancelButton: () -> Unit) {
 
-    MappingBottomSheet(sheetContent = {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)) {
-
-
-            ConstraintLayout(
+    val bottomSheetScaffoldState =
+        rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(initialValue = BottomSheetValue.Expanded))
+    val scope = rememberCoroutineScope()
+    MappingBottomSheet(
+        sheetPeekHeight = 120.dp,
+        bottomSheetScaffoldState = bottomSheetScaffoldState,
+        sheetContent = {
+            Card(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = MaterialTheme.colors.surface)) {
+                    .fillMaxWidth(0.92f)
+                    .align(Alignment.CenterHorizontally),
+                shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp), elevation = 14.dp) {
 
-                val (gripLine, searchAnimatedIcon, searchingText, cancelButton) = createRefs()
 
-                Divider(
-                    modifier = Modifier.constrainAs(gripLine) {
-                        top.linkTo(parent.top, margin = 8.5.dp)
-                        width = Dimension.percent(0.08f)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-
-                    },
-                    color = Black440,
-                    thickness = 1.5.dp)
-
-                AnimatedImage(
-                    imageId = if(isDarkTheme) R.drawable.ic_dark_magnifying_glass else R.drawable.ic_light_magnifying_glass,
+                ConstraintLayout(
                     modifier = Modifier
-                        .constrainAs(searchAnimatedIcon) {
-                            top.linkTo(gripLine.top, margin = 12.dp)
+                        .background(color = MaterialTheme.colors.surface)) {
+
+                    val (gripLine, searchAnimatedIcon, searchingText, cancelButton) = createRefs()
+
+                    Divider(
+                        modifier = Modifier.constrainAs(gripLine) {
+                            top.linkTo(parent.top, margin = 8.5.dp)
+                            width = Dimension.percent(0.08f)
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
-                            height = Dimension.value(50.dp)
-                            width = Dimension.value(50.dp)
-                        })
+
+                        },
+                        color = Black440,
+                        thickness = 1.5.dp)
+
+                    AnimatedImage(
+                        imageId = if (isDarkTheme) R.drawable.ic_dark_magnifying_glass else R.drawable.ic_light_magnifying_glass,
+                        modifier = Modifier
+                            .constrainAs(searchAnimatedIcon) {
+                                top.linkTo(gripLine.top, margin = 12.dp)
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                height = Dimension.value(50.dp)
+                                width = Dimension.value(50.dp)
+                            })
 
 
 
 
-                Text(
-                    text = "Searching for nearby assistance...",
-                    color = MaterialTheme.colors.onSurface,
-                    style = MaterialTheme.typography.subtitle1,
-                    modifier = Modifier
-                        .constrainAs(searchingText) {
-                            top.linkTo(searchAnimatedIcon.bottom, margin = 10.dp)
-                            end.linkTo(parent.end)
-                            start.linkTo(parent.start)
-                        })
-
-                OutlinedButton(
-                    onClick = onClickButton,
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-                    border = BorderStroke(width = 1.dp, color = Black300),
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .constrainAs(cancelButton) {
-                            top.linkTo(searchingText.bottom, margin = 4.dp)
-                            end.linkTo(parent.end)
-                            start.linkTo(parent.start)
-                            bottom.linkTo(parent.bottom, margin = 10.dp)
-                        }) {
                     Text(
-                        text = "CANCEL",
-                        style = MaterialTheme.typography.button,
+                        text = "Searching for nearby assistance...",
                         color = MaterialTheme.colors.onSurface,
+                        style = MaterialTheme.typography.subtitle1,
+                        modifier = Modifier
+                            .constrainAs(searchingText) {
+                                top.linkTo(searchAnimatedIcon.bottom, margin = 4.dp)
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                            })
+
+                    OutlinedActionButton(
+                        modifier = Modifier
+                            .padding(3.dp)
+                            .constrainAs(cancelButton) {
+                                top.linkTo(searchingText.bottom, margin = 8.dp)
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom, margin = 6.dp)
+                            },
+                        onClick = {
+                            onClickCancelButton()
+                            scope.launch {
+                                bottomSheetScaffoldState.bottomSheetState.collapse()
+                            }
+                        },
+                        text = "Cancel"
                     )
-
-
                 }
             }
-        }
-    }, content = content)
+        }, content = content)
+}
+
+
+@Composable
+fun BottomSheetOnGoingRescue(
+    content: @Composable (PaddingValues) -> Unit,
+    estimatedTimeRemaining: String) {
+
+
+    val bottomSheetScaffoldState =
+        rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(initialValue = BottomSheetValue.Expanded))
+
+    MappingBottomSheet(
+        bottomSheetScaffoldState = bottomSheetScaffoldState,
+        sheetContent = {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth(0.92f)
+                    .align(Alignment.CenterHorizontally),
+                shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp), elevation = 14.dp) {
+
+                ConstraintLayout(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(color = MaterialTheme.colors.surface)) {
+
+                    val (gripLine, timeRemaining, roundedButtonSection) = createRefs()
+
+
+                    Divider(
+                        modifier = Modifier.constrainAs(gripLine) {
+                            top.linkTo(parent.top, margin = 8.5.dp)
+                            width = Dimension.percent(0.08f)
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+
+                        },
+                        color = Black440,
+                        thickness = 1.5.dp)
+
+
+                    Text(
+                        text = "Estimated time of arrival: $estimatedTimeRemaining",
+                        color = MaterialTheme.colors.onSurface,
+                        style = MaterialTheme.typography.subtitle2,
+                        modifier = Modifier.constrainAs(timeRemaining) {
+                            top.linkTo(gripLine.top, margin = 20.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        })
+
+
+                    Row(
+                        modifier = Modifier
+                            .background(Color.Transparent)
+                            .fillMaxWidth()
+                            .constrainAs(roundedButtonSection) {
+                                top.linkTo(timeRemaining.bottom, margin = 22.dp)
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom, margin = 17.dp)
+                            },
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly) {
+
+                        RoundedButtonItem(
+                            backgroundColor = MaterialTheme.colors.secondary,
+                            contentColor = MaterialTheme.colors.onSurface,
+                            imageId = R.drawable.ic_call,
+                            buttonSubtitle = "Call", onClick = {})
+
+
+                        RoundedButtonItem(
+                            backgroundColor = MaterialTheme.colors.secondary,
+                            contentColor = MaterialTheme.colors.onSurface,
+                            imageId = R.drawable.ic_chat,
+                            buttonSubtitle = "Chat", onClick = {})
+
+
+                        RoundedButtonItem(
+                            backgroundColor = Red900,
+                            contentColor = Color.White,
+                            imageId = R.drawable.ic_cancel,
+                            buttonSubtitle = "Cancel", onClick = {})
+                    }
+                }
+            }
+        },
+        content = content)
+
+}
+
+@Composable
+fun BottomSheetRescueArrived(
+    isDarkTheme: Boolean,
+    content: @Composable (PaddingValues) -> Unit,
+    onClickOkButton: () -> Unit) {
+
+    BottomSheetRescue(
+        isDarkTheme = isDarkTheme,
+        displayedText = "Your rescuer has arrived.",
+        content = content, onClickOkButton = onClickOkButton)
+}
+
+@Composable
+fun BottomSheetReachedDestination(
+    isDarkTheme: Boolean,
+    content: @Composable (PaddingValues) -> Unit,
+    onClickOkButton: () -> Unit) {
+
+    BottomSheetRescue(
+        isDarkTheme = isDarkTheme,
+        displayedText = "You have reached your destination.",
+        content = content, onClickOkButton = onClickOkButton)
 }
 
 
 @Composable
 private fun BottomSheetRescue(
     isDarkTheme: Boolean,
+    onClickOkButton: () -> Unit,
     content: @Composable (PaddingValues) -> Unit,
     displayedText: String) {
 
-    MappingBottomSheet(sheetContent = {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)) {
+
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = BottomSheetState(initialValue = BottomSheetValue.Expanded))
+
+    val scope = rememberCoroutineScope()
 
 
-            ConstraintLayout(
+    MappingBottomSheet(
+        bottomSheetScaffoldState = bottomSheetScaffoldState,
+        sheetContent = {
+            Card(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = MaterialTheme.colors.surface)) {
-
-                val (gripLine, animatedIcon, arrivedText) = createRefs()
-
-                Divider(
-                    modifier = Modifier.constrainAs(gripLine) {
-                        top.linkTo(parent.top, margin = 8.5.dp)
-                        width = Dimension.percent(0.08f)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-
-                    },
-                    color = Black440,
-                    thickness = 1.5.dp)
+                    .fillMaxWidth(0.92f)
+                    .align(Alignment.CenterHorizontally),
+                shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp), elevation = 14.dp) {
 
 
-                Text(
-                    text = displayedText,
-                    color = MaterialTheme.colors.onSurface,
-                    style = MaterialTheme.typography.subtitle2,
+                ConstraintLayout(
                     modifier = Modifier
-                        .constrainAs(arrivedText) {
-                            top.linkTo(gripLine.top, margin = 25.dp)
+                        .fillMaxWidth()
+                        .background(color = MaterialTheme.colors.surface)) {
+
+                    val (gripLine, animatedIcon, arrivedText, cancelButton) = createRefs()
+
+                    Divider(
+                        modifier = Modifier.constrainAs(gripLine) {
+                            top.linkTo(parent.top, margin = 8.5.dp)
+                            width = Dimension.percent(0.08f)
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
-                        })
+
+                        },
+                        color = Black440,
+                        thickness = 1.5.dp)
+
+                    AnimatedImage(
+                        imageId = if (isDarkTheme) R.drawable.ic_dark_ellipsis else R.drawable.ic_light_ellipsis,
+                        modifier = Modifier
+                            .constrainAs(animatedIcon) {
+                                top.linkTo(gripLine.bottom, margin = 3.dp)
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                width = Dimension.value(55.dp)
+
+                            })
+
+                    Text(
+                        text = displayedText,
+                        color = MaterialTheme.colors.onSurface,
+                        style = MaterialTheme.typography.subtitle2,
+                        fontSize = 16.sp,
+                        modifier = Modifier
+                            .constrainAs(arrivedText) {
+                                top.linkTo(animatedIcon.bottom, margin = 4.dp)
+                                end.linkTo(parent.end)
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                            })
 
 
-                AnimatedImage(
-                    imageId = if(isDarkTheme) R.drawable.ic_dark_ellipsis else R.drawable.ic_light_ellipsis,
-                    modifier = Modifier
-                        .constrainAs(animatedIcon) {
-                            top.linkTo(arrivedText.bottom, margin = 10.dp)
+                    OutlinedActionButton(
+                        modifier = Modifier.constrainAs(cancelButton) {
+                            top.linkTo(arrivedText.bottom, margin = 8.dp)
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
-                            width = Dimension.value(55.dp)
-                            bottom.linkTo(parent.bottom, margin = 15.dp)
-
-                        })
+                            width = Dimension.value(80.dp)
+                            bottom.linkTo(parent.bottom, margin = 6.dp)
+                        },
+                        onClick = {
+                            onClickOkButton()
+                            scope.launch {
+                                bottomSheetScaffoldState.bottomSheetState.collapse()
+                            }
+                        },
+                        text = "Ok"
+                    )
+                }
             }
-        }
-    }, content = content)
+        }, content = content)
 
 
 }
 
+@Composable
+private fun OutlinedActionButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    text: String) {
+    OutlinedButton(
+        onClick = onClick,
+        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+        border = BorderStroke(width = 1.dp, color = Black300),
+        shape = RoundedCornerShape(8.dp),
+        modifier = modifier) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.button,
+            color = MaterialTheme.colors.onSurface,
+        )
+
+
+    }
+}
 
 @Composable
 private fun RoundedButtonItem(
@@ -252,95 +410,16 @@ private fun RoundedButtonItem(
 
 }
 
-@Composable
-fun OnGoingRescueBottomSheet(
-    content: @Composable (PaddingValues) -> Unit,
-    estimatedTimeRemaining: String) {
-    MappingBottomSheet(sheetContent = {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)) {
-
-            ConstraintLayout(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(color = MaterialTheme.colors.surface)) {
-
-                val (gripLine, timeRemaining, roundedButtonSection) = createRefs()
-
-
-                Divider(
-                    modifier = Modifier.constrainAs(gripLine) {
-                        top.linkTo(parent.top, margin = 8.5.dp)
-                        width = Dimension.percent(0.08f)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-
-                    },
-                    color = Black440,
-                    thickness = 1.5.dp)
-
-
-                Text(
-                    text = "Estimated time of arrival: $estimatedTimeRemaining",
-                    color = MaterialTheme.colors.onSurface,
-                    style = MaterialTheme.typography.subtitle2,
-                    modifier = Modifier.constrainAs(timeRemaining) {
-                        top.linkTo(gripLine.top, margin = 20.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    })
-
-
-                Row(
-                    modifier = Modifier
-                        .background(Color.Transparent)
-                        .fillMaxWidth()
-                        .constrainAs(roundedButtonSection) {
-                            top.linkTo(timeRemaining.bottom, margin = 22.dp)
-                            end.linkTo(parent.end)
-                            start.linkTo(parent.start)
-                            bottom.linkTo(parent.bottom, margin = 17.dp)
-                        },
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-
-                    RoundedButtonItem(
-                        backgroundColor = MaterialTheme.colors.secondary,
-                        contentColor = MaterialTheme.colors.onSurface,
-                        imageId = R.drawable.ic_call,
-                        buttonSubtitle = "Call", onClick = {})
-
-
-                    RoundedButtonItem(
-                        backgroundColor = MaterialTheme.colors.secondary,
-                        contentColor = MaterialTheme.colors.onSurface,
-                        imageId = R.drawable.ic_chat,
-                        buttonSubtitle = "Chat", onClick = {})
-
-
-                    RoundedButtonItem(
-                        backgroundColor = Red900,
-                        contentColor = Color.White,
-                        imageId = R.drawable.ic_cancel,
-                        buttonSubtitle = "Cancel", onClick = {})
-                }
-            }
-        }
-    }, content = content)
-
-}
-
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun BottomSheetRescuerArrivedPreview() {
-    val isDarkTheme = false
+    val isDarkTheme = true
     CyclistanceTheme(isDarkTheme) {
         BottomSheetRescue(
             isDarkTheme = isDarkTheme,
             displayedText = "Your rescuer has arrived.",
-            content = {})
+            content = {}, onClickOkButton = {})
     }
 }
 
@@ -352,25 +431,29 @@ fun DestinationReachedBottomSheetPreview() {
         BottomSheetRescue(
             isDarkTheme = isDarkTheme,
             displayedText = "You have reached your destination.",
-            content = {})
+            content = {}, onClickOkButton = {})
     }
 
 }
+
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun SearchingAssistancePreview() {
-    val isDarkTheme = false
+    val isDarkTheme = true
     CyclistanceTheme(isDarkTheme) {
-        BottomSheetSearchingAssistance(isDarkTheme = isDarkTheme,onClickButton = {}, content = {})
+        BottomSheetSearchingAssistance(
+            isDarkTheme = isDarkTheme,
+            onClickCancelButton = {},
+            content = {})
     }
 }
 
 
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
-fun MappingBottomSheetPreview() {
+fun OnGoingRescueBottomSheetPreview() {
     CyclistanceTheme(true) {
-        OnGoingRescueBottomSheet(estimatedTimeRemaining = "2mins", content = {})
+        BottomSheetOnGoingRescue(estimatedTimeRemaining = "2mins", content = {})
     }
 }
 
