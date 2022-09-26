@@ -176,7 +176,7 @@ fun EmailAuthScreen(
 
 
             val secondsRemaining =
-                if (emailAuthState.secondsLeft < 2) "$emailAuthState.secondsLeft" else "$emailAuthState.secondsLeft s"
+                if (emailAuthState.secondsLeft < 2) "${emailAuthState.secondsLeft}" else "${emailAuthState.secondsLeft} s"
             val secondsRemainingText =
                 if (emailAuthState.isTimerRunning) "Resend Email in $secondsRemaining" else "Resend Email"
             EmailAuthVerifyEmailButton(onClickVerifyButton = onClickVerifyButton)
