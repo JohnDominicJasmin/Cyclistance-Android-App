@@ -175,15 +175,18 @@ fun EmailAuthScreen(
             }
 
 
-            val secondsRemaining =
-                if (emailAuthState.secondsLeft < 2) "${emailAuthState.secondsLeft}" else "${emailAuthState.secondsLeft} s"
-            val secondsRemainingText =
-                if (emailAuthState.isTimerRunning) "Resend Email in $secondsRemaining" else "Resend Email"
-            EmailAuthVerifyEmailButton(onClickVerifyButton = onClickVerifyButton)
+            val secondsRemaining = if (emailAuthState.secondsLeft < 2) "${emailAuthState.secondsLeft}" else "${emailAuthState.secondsLeft} s"
+            val secondsRemainingText = remember(secondsRemaining, emailAuthState.isTimerRunning) {
+                        if (emailAuthState.isTimerRunning) "Resend Email in $secondsRemaining" else "Resend Email"
+                    }
+
+            EmailAuthVerifyEmailButton(
+                onClickVerifyButton = onClickVerifyButton,
+                enabled = !emailAuthState.isLoading)
 
             EmailAuthResendButton(
                 text = secondsRemainingText,
-                isEnabled = !emailAuthState.isTimerRunning,
+                isEnabled = !emailAuthState.isTimerRunning && !emailAuthState.isLoading,
                 onClickResendButton = onClickResendButton)
 
             if (!emailAuthState.hasInternet) {
