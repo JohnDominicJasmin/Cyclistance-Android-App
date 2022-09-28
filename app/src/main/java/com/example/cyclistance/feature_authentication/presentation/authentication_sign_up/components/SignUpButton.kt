@@ -20,7 +20,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 
 
 @Composable
-fun SignUpButton(onClickSignUpButton: ()-> Unit) {
+fun SignUpButton(enabled: Boolean, onClickSignUpButton: () -> Unit) {
 
 
     Box(
@@ -32,16 +32,20 @@ fun SignUpButton(onClickSignUpButton: ()-> Unit) {
 
 
         Button(
-
+            enabled = enabled,
             onClick = onClickSignUpButton,
             modifier = Modifier
                 .height(45.dp)
                 .width(220.dp)
                 .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
-            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colors.primary,
+                contentColor = MaterialTheme.colors.onPrimary,
+                disabledContentColor = MaterialTheme.colors.onPrimary,
+                disabledBackgroundColor = MaterialTheme.colors.primary),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "Sign Up", color = MaterialTheme.colors.onPrimary, fontSize = 16.sp)
+            Text(text = "Sign Up", fontSize = 16.sp)
         }
     }
 

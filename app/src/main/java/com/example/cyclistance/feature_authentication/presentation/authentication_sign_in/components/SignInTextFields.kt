@@ -25,33 +25,35 @@ fun SignInTextFieldsArea(
     onClickPasswordVisibility: () -> Unit) {
 
 
-        Column(
-            modifier = Modifier
-                .layoutId(AuthenticationConstraintsItem.TextFields.layoutId)
-                .fillMaxWidth(fraction = 0.9f),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(13.dp)) {
+    Column(
+        modifier = Modifier
+            .layoutId(AuthenticationConstraintsItem.TextFields.layoutId)
+            .fillMaxWidth(fraction = 0.9f),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(13.dp)) {
 
 
-            EmailTextField(
-                focusRequester = focusRequester,
-                email = state.email,
-                emailExceptionMessage = state.emailErrorMessage,
-                onValueChange = onValueChangeEmail,
-                clearIconOnClick = {
-                    onValueChangeEmail("")
-                })
+        EmailTextField(
+            focusRequester = focusRequester,
+            email = state.email,
+            emailExceptionMessage = state.emailErrorMessage,
+            onValueChange = onValueChangeEmail,
+            clearIconOnClick = {
+                onValueChangeEmail("")
+            },
+            enabled = !state.isLoading)
 
-            ConfirmPasswordTextField(
-                password = state.password,
-                passwordExceptionMessage = state.passwordErrorMessage,
-                onValueChange = onValueChangePassword,
-                keyboardActionOnDone = keyboardActionOnDone,
-                isPasswordVisible = state.passwordVisibility,
-                passwordVisibilityIconOnClick = onClickPasswordVisibility
-            )
+        ConfirmPasswordTextField(
+            password = state.password,
+            passwordExceptionMessage = state.passwordErrorMessage,
+            onValueChange = onValueChangePassword,
+            keyboardActionOnDone = keyboardActionOnDone,
+            isPasswordVisible = state.passwordVisibility,
+            passwordVisibilityIconOnClick = onClickPasswordVisibility,
+            enabled = !state.isLoading
+        )
 
 
-        }
+    }
 
 }

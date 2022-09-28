@@ -16,7 +16,7 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 import com.example.cyclistance.theme.Blue600
 
 @Composable
-fun SignInClickableText(onClickSignInText:()->Unit) {
+fun SignInClickableText(enabled: Boolean, onClickSignInText:()->Unit) {
 
     Box(modifier = Modifier
         .wrapContentSize()
@@ -30,7 +30,11 @@ fun SignInClickableText(onClickSignInText:()->Unit) {
                 append(" ")
                 append(text = "Sign up")
             }
-        }, onClick = { onClickSignInText() })
+        }, onClick = {
+            if(enabled) {
+                onClickSignInText()
+            }
+        })
     }
 
 }

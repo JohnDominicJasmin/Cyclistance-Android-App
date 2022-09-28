@@ -19,20 +19,26 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 
 @Composable
-fun EmailAuthVerifyEmailButton(onClickVerifyButton: () -> Unit) {
+fun EmailAuthVerifyEmailButton(enabled: Boolean = false, onClickVerifyButton: () -> Unit) {
     Button(
         onClick = onClickVerifyButton,
+        enabled = enabled,
         modifier = Modifier
             .height(50.dp)
             .widthIn(max = 650.dp)
             .fillMaxWidth(0.73f)
             .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)
             .layoutId(AuthenticationConstraintsItem.VerifyEmailButton.layoutId),
-        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
+
+        colors = ButtonDefaults.buttonColors(
+            backgroundColor = MaterialTheme.colors.primary,
+            contentColor = MaterialTheme.colors.onPrimary,
+            disabledBackgroundColor = MaterialTheme.colors.primary,
+            disabledContentColor = MaterialTheme.colors.onPrimary),
+
         shape = RoundedCornerShape(12.dp)) {
         Text(
             text = "Verify Email",
-            color = MaterialTheme.colors.onPrimary,
             fontSize = 16.sp,
             textAlign = TextAlign.Center
 
@@ -43,9 +49,9 @@ fun EmailAuthVerifyEmailButton(onClickVerifyButton: () -> Unit) {
 @Preview
 @Composable
 fun EmailAuthVerifyEmailButtonPreview() {
-    CyclistanceTheme(true){
-        EmailAuthVerifyEmailButton {
-            
+    CyclistanceTheme(true) {
+        EmailAuthVerifyEmailButton() {
+
         }
     }
 

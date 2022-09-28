@@ -143,62 +143,63 @@ fun SignUpScreen(
 ) {
 
 
+    ConstraintLayout(
+        constraintSet = signUpConstraints,
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)) {
 
-
-        ConstraintLayout(
-            constraintSet = signUpConstraints,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background)) {
-
-            Spacer(modifier = Modifier.layoutId(
+        Spacer(
+            modifier = Modifier.layoutId(
                 AuthenticationConstraintsItem.TopSpacer.layoutId
             ))
 
-            Image(
-                contentDescription = "App Icon",
-                painter = painterResource(R.drawable.ic_app_icon_cyclistance),
-                modifier = Modifier
-                    .height(100.dp)
-                    .width(90.dp)
-                    .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
-            )
+        Image(
+            contentDescription = "App Icon",
+            painter = painterResource(R.drawable.ic_app_icon_cyclistance),
+            modifier = Modifier
+                .height(100.dp)
+                .width(90.dp)
+                .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
+        )
 
-            SignUpTextArea()
-
-
-            Waves(topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId, bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId)
-
-            if (signUpState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
-                AlertDialog(
-                    alertDialog = signUpState.alertDialogModel,
-                    onDismissRequest = onDismissAlertDialog)
-            }
-
-            SignUpTextFieldsArea(
-                focusRequester = focusRequester,
-                state = signUpState,
-                keyboardActionOnDone = keyboardActionOnDone,
-                onValueChangeEmail = onValueChangeEmail,
-                onValueChangePassword = onValueChangePassword,
-                onValueChangeConfirmPassword = onValueChangeConfirmPassword,
-                onClickPasswordVisibility = onClickPasswordVisibility
-            )
+        SignUpTextArea()
 
 
-            SignUpButton(onClickSignUpButton = onClickSignUpButton)
-            SignUpClickableText(onSignUpTextClick = onClickSignUpText)
+        Waves(
+            topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
+            bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId)
+
+        if (signUpState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
+            AlertDialog(
+                alertDialog = signUpState.alertDialogModel,
+                onDismissRequest = onDismissAlertDialog)
+        }
+
+        SignUpTextFieldsArea(
+            focusRequester = focusRequester,
+            state = signUpState,
+            keyboardActionOnDone = keyboardActionOnDone,
+            onValueChangeEmail = onValueChangeEmail,
+            onValueChangePassword = onValueChangePassword,
+            onValueChangeConfirmPassword = onValueChangeConfirmPassword,
+            onClickPasswordVisibility = onClickPasswordVisibility
+        )
 
 
-            if (signUpState.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId))
-            }
+        SignUpButton(enabled = !signUpState.isLoading, onClickSignUpButton = onClickSignUpButton)
+        SignUpClickableText(enabled = !signUpState.isLoading, onSignUpTextClick = onClickSignUpText)
 
-            if (!signUpState.hasInternet) {
-                NoInternetScreen(
-                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                    onClickRetryButton = onClickRetryButton)
-            }
+
+        if (signUpState.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId))
+        }
+
+        if (!signUpState.hasInternet) {
+            NoInternetScreen(
+                modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                onClickRetryButton = onClickRetryButton)
+        }
 
 
     }

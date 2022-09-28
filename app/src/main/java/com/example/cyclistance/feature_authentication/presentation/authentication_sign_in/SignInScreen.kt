@@ -247,16 +247,18 @@ fun SignInScreen(
             onValueChangePassword = onValueChangePassword,
             onClickPasswordVisibility = onClickPasswordVisibility
         )
+        val isEnabled = !(signInState.isLoading || emailAuthState.isLoading)
 
         SignInGoogleAndFacebookSection(
             onClickFacebookButton = onClickFacebookButton,
-            onClickGoogleButton = onClickGoogleButton
+            onClickGoogleButton = onClickGoogleButton,
+            enabled = isEnabled
         )
 
-        SignInButton(onClickSignInButton = onClickSignInButton)
+        SignInButton(onClickSignInButton = onClickSignInButton, enabled = isEnabled )
 
 
-        SignInClickableText(onClickSignInText = onClickSignInText)
+        SignInClickableText(onClickSignInText = onClickSignInText, enabled = isEnabled)
 
         if (signInState.isLoading || emailAuthState.isLoading) {
             CircularProgressIndicator(

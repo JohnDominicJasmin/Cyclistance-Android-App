@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 
 @Composable
-fun SignInButton(onClickSignInButton: ()-> Unit) {
+fun SignInButton(enabled: Boolean, onClickSignInButton: () -> Unit) {
 
     Box(
         modifier = Modifier
@@ -26,14 +26,19 @@ fun SignInButton(onClickSignInButton: ()-> Unit) {
         Button(
 
             onClick = onClickSignInButton,
+            enabled = enabled,
             modifier = Modifier
                 .height(45.dp)
                 .width(220.dp)
                 .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
-            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = MaterialTheme.colors.primary,
+                contentColor = MaterialTheme.colors.onPrimary,
+                disabledBackgroundColor = MaterialTheme.colors.primary,
+                disabledContentColor = MaterialTheme.colors.onPrimary),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "Sign In", color = MaterialTheme.colors.onPrimary, fontSize = 16.sp)
+            Text(text = "Sign In", fontSize = 16.sp)
         }
     }
 

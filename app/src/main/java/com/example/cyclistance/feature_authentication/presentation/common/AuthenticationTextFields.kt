@@ -25,6 +25,7 @@ import com.example.cyclistance.theme.Black500
 
 @Composable
 fun ConfirmPasswordTextField(
+    enabled: Boolean,
     password: String,
     passwordExceptionMessage: String,
     isPasswordVisible: Boolean,
@@ -35,6 +36,7 @@ fun ConfirmPasswordTextField(
 
 
     SetupTextField(
+        enabled = enabled,
         textFieldValue = password,
         exceptionMessage = passwordExceptionMessage,
         onValueChange = onValueChange,
@@ -55,6 +57,7 @@ fun ConfirmPasswordTextField(
 
 @Composable
 fun PasswordTextField(
+    enabled: Boolean,
     password: String,
     passwordExceptionMessage: String,
     clearIconOnClick: () -> Unit,
@@ -64,6 +67,7 @@ fun PasswordTextField(
 
 
     SetupTextField(
+        enabled = enabled,
         textFieldValue = password,
         exceptionMessage = passwordExceptionMessage,
         onValueChange = onValueChange,
@@ -99,6 +103,7 @@ fun PasswordTextField(
 
 @Composable
 private fun SetupTextField(
+    enabled: Boolean,
     focusRequester: FocusRequester = FocusRequester(),
     textFieldValue: String,
     exceptionMessage: String,
@@ -118,6 +123,7 @@ private fun SetupTextField(
         verticalArrangement = Arrangement.spacedBy(3.dp)) {
 
         TextField(
+            enabled = enabled,
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
@@ -166,6 +172,7 @@ private fun SetupTextField(
 
 @Composable
 fun EmailTextField(
+    enabled: Boolean,
     focusRequester: FocusRequester,
     email: String,
     emailExceptionMessage: String,
@@ -175,6 +182,7 @@ fun EmailTextField(
     val hasError = emailExceptionMessage.isNotEmpty()
 
     SetupTextField(
+        enabled = enabled,
         focusRequester = focusRequester,
         textFieldValue = email,
         exceptionMessage = emailExceptionMessage,
