@@ -67,7 +67,7 @@ class EmailAuthViewModel @Inject constructor(
             }
 
             is EmailAuthEvent.DismissAlertDialog -> {
-                _state.update{it.copy(alertDialogModel = AlertDialogModel())}
+                _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
             }
         }
     }
@@ -78,19 +78,23 @@ class EmailAuthViewModel @Inject constructor(
             authUseCase.isEmailVerifiedUseCase() == true
         }.onSuccess { emailIsVerified ->
             _state.update { it.copy(isLoading = false) }
-            if (emailIsVerified) {
-                _eventFlow.emit(EmailAuthUiEvent.ShowMappingScreen)
-                delay(300)
-                job?.let {
-                    if (it.isActive) {
-                        it.cancel()
-                    }
-                }
-            } else {
-                _eventFlow.emit(EmailAuthUiEvent.ShowEmailAuthScreen)
-            }
+            showVerifyEmailResult(emailIsVerified)
         }.onFailure {
             _state.update { it.copy(isLoading = false) }
+        }
+    }
+
+    private suspend fun showVerifyEmailResult(emailIsVerified: Boolean) {
+        if (emailIsVerified) {
+            _eventFlow.emit(EmailAuthUiEvent.ShowMappingScreen)
+            delay(300)
+            job?.let {
+                if (it.isActive) {
+                    it.cancel()
+                }
+            }
+        } else {
+            _eventFlow.emit(EmailAuthUiEvent.ShowEmailAuthScreen)
         }
     }
 
@@ -160,21 +164,22 @@ class EmailAuthViewModel @Inject constructor(
                 authUseCase.sendEmailVerificationUseCase()
             }.onSuccess { isEmailVerificationSent ->
                 _state.update { it.copy(isLoading = false) }
-                if (state.value.isEmailResendClicked) {
-                    if (isEmailVerificationSent) {
-                        _state.update {
-                            it.copy(
-                                alertDialogModel = AlertDialogModel(
-                                    title = "New Email Sent.",
-                                    description = "New verification email has been sent to your email address.",
-                                    icon = io.github.farhanroy.composeawesomedialog.R.raw.success))
-                        }
-
-                    } else {
-                        _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
-                    }
+                if (!state.value.isEmailResendClicked) {
+                    return@coroutineScope
                 }
 
+                if (isEmailVerificationSent) {
+                    _state.update {
+                        it.copy(
+                            alertDialogModel = AlertDialogModel(
+                                title = "New Email Sent.",
+                                description = "New verification email has been sent to your email address.",
+                                icon = io.github.farhanroy.composeawesomedialog.R.raw.success))
+                    }
+                    return@coroutineScope
+                }
+
+                _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
 
             }.onFailure {
 
