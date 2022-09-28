@@ -18,15 +18,13 @@ class SharedLocationManager constructor(
     context: Context,
     externalScope: CoroutineScope
 ) {
-    private val location = SimpleLocation(context, false, false, LOCATION_UPDATES_INTERVAL).apply {
-        beginUpdates()
-    }
+    private val location = SimpleLocation(context, false, false, LOCATION_UPDATES_INTERVAL)
     private val geocoder = Geocoder(context, Locale.ENGLISH)
 
 
     private val _locationUpdates = callbackFlow {
 
-
+        location.beginUpdates()
         val updateLocation = {
             if (Build.VERSION.SDK_INT >= 33) {
                 geocoder.getFromLocation(
