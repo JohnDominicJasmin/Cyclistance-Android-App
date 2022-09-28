@@ -40,7 +40,8 @@ fun SignUpTextFieldsArea(
                 clearIconOnClick = {
                  onValueChangeEmail("")
                 },
-                onValueChange = onValueChangeEmail)
+                onValueChange = onValueChangeEmail,
+                enabled = !isLoading)
 
 
             PasswordTextField(
@@ -49,7 +50,10 @@ fun SignUpTextFieldsArea(
                 clearIconOnClick = {
                     onValueChangePassword("")
                 },
-                onValueChange = onValueChangePassword)
+                onValueChange = onValueChangePassword,
+                enabled = !isLoading,
+
+                )
 
             ConfirmPasswordTextField(
                 password = confirmPassword,
@@ -57,7 +61,9 @@ fun SignUpTextFieldsArea(
                 onValueChange = onValueChangeConfirmPassword,
                 keyboardActionOnDone = keyboardActionOnDone,
                 isPasswordVisible = passwordVisibility,
-                passwordVisibilityIconOnClick = onClickPasswordVisibility)
+                passwordVisibilityIconOnClick = onClickPasswordVisibility,
+                enabled = !isLoading
+                )
 
         }
     }

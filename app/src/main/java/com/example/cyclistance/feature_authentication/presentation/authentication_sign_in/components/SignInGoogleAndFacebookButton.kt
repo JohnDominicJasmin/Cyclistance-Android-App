@@ -22,24 +22,34 @@ import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.Blue500
 
 @Composable
-fun SignInGoogleAndFacebookSection(onClickFacebookButton: ()-> Unit, onClickGoogleButton: ()-> Unit) {
-    Row(modifier = Modifier
-            .layoutId( AuthenticationConstraintsItem.OtherSignIns.layoutId)
+fun SignInGoogleAndFacebookSection(
+    onClickFacebookButton: () -> Unit,
+    enabled: Boolean,
+    onClickGoogleButton: () -> Unit) {
+    Row(
+        modifier = Modifier
+            .layoutId(AuthenticationConstraintsItem.OtherSignIns.layoutId)
             .wrapContentSize(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center) {
 
         Button(
             onClick = onClickGoogleButton,
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+            enabled = enabled,
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Color.White,
+                contentColor = Black450,
+                disabledBackgroundColor = Color.White,
+                disabledContentColor = Black450),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
                 .padding(top = 15.dp, bottom = 15.dp)
-                .shadow(10.dp,shape = RoundedCornerShape(15.dp), clip = true)
+                .shadow(10.dp, shape = RoundedCornerShape(15.dp), clip = true)
                 .width(150.dp)
                 .height(45.dp)) {
 
-            Row(modifier = Modifier.fillMaxWidth(),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center) {
 
@@ -52,7 +62,6 @@ fun SignInGoogleAndFacebookSection(onClickFacebookButton: ()-> Unit, onClickGoog
 
                 Text(
                     text = "Google",
-                    color = Black450,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                     fontSize = 14.sp)
@@ -65,11 +74,16 @@ fun SignInGoogleAndFacebookSection(onClickFacebookButton: ()-> Unit, onClickGoog
 
         Button(
             onClick = onClickFacebookButton,
-            colors = ButtonDefaults.buttonColors(backgroundColor = Blue500),
+            enabled = enabled,
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = Blue500,
+                disabledBackgroundColor = Blue500,
+                contentColor = Color.White,
+                disabledContentColor = Color.White),
             shape = RoundedCornerShape(10.dp),
             modifier = Modifier
                 .padding(top = 15.dp, bottom = 15.dp)
-                .shadow(10.dp,shape = RoundedCornerShape(15.dp), clip = true)
+                .shadow(10.dp, shape = RoundedCornerShape(15.dp), clip = true)
                 .width(150.dp)
                 .height(45.dp)
         ) {
@@ -89,7 +103,6 @@ fun SignInGoogleAndFacebookSection(onClickFacebookButton: ()-> Unit, onClickGoog
 
                 Text(
                     text = "Facebook",
-                    color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth(),
                     fontSize = 14.sp

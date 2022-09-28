@@ -16,17 +16,31 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 import com.example.cyclistance.theme.Blue600
 
 @Composable
-fun SignUpClickableText(onSignUpTextClick:()->Unit) {
-    Box(modifier = Modifier.wrapContentSize().layoutId(AuthenticationConstraintsItem.ClickableTextSection.layoutId)){
+fun SignUpClickableText(enabled: Boolean, onSignUpTextClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .wrapContentSize()
+            .layoutId(AuthenticationConstraintsItem.ClickableTextSection.layoutId)) {
         ClickableText(text = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = MaterialTheme.colors.onBackground, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)){
-                append(text = "Already have an account?" )
+            withStyle(
+                style = SpanStyle(
+                    color = MaterialTheme.colors.onBackground,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp)) {
+                append(text = "Already have an account?")
             }
-            withStyle(style = SpanStyle(color = Blue600,fontWeight = FontWeight.SemiBold,fontSize = 14.sp)){
-                append(" ")
-                append(text = "Sign In")
+            withStyle(
+                style = SpanStyle(
+                    color = Blue600,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 14.sp)) {
+                append(text = " Sign In")
             }
-        }, onClick = { onSignUpTextClick() })
+        }, onClick = {
+            if (enabled) {
+                onSignUpTextClick()
+            }
+        })
     }
 
 }
