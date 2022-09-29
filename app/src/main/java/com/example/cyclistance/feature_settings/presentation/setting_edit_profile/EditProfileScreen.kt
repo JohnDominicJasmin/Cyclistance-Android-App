@@ -11,8 +11,12 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
-import androidx.compose.foundation.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
@@ -20,7 +24,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -32,7 +39,8 @@ import com.example.cyclistance.feature_main_screen.presentation.common.MappingBu
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.SelectImageBottomSheet
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.TextFieldInputArea
-import com.example.cyclistance.theme.*
+import com.example.cyclistance.theme.Blue600
+import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.*
 import com.google.android.gms.auth.api.credentials.Credential
 import com.google.android.gms.auth.api.credentials.Credentials
@@ -184,7 +192,8 @@ fun EditProfileScreen(
                 return@EditProfileScreen
             }
             if (openCameraPermissionState.status.shouldShowRationale || !openCameraPermissionState.status.isGranted) {
-                Toast.makeText(context, "Camera permission is not yet granted.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Camera permission is not yet granted.", Toast.LENGTH_SHORT)
+                    .show()
                 return@EditProfileScreen
             }
             openCameraPermissionState.launchPermissionRequest()
@@ -215,12 +224,24 @@ fun EditProfileScreen(
 
 }
 
+@Preview
+@Composable
+fun EditProfilePreview() {
+    CyclistanceTheme(true) {
+        EditProfileScreen(
+            modifier = Modifier,
+            photoUrl = "",
+            state = EditProfileState(isLoading = false))
+    }
+}
+
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EditProfileScreen(
     modifier: Modifier,
     photoUrl: Any,
-    state: EditProfileState,
+    state: EditProfileState = EditProfileState(),
     onClickGalleryButton: () -> Unit = {},
     onClickCameraButton: () -> Unit = {},
     onClickPhoneTextField: () -> Unit = {},
@@ -229,16 +250,17 @@ fun EditProfileScreen(
     keyboardActions: KeyboardActions = KeyboardActions { },
     onClickCancelButton: () -> Unit = {},
     onClickConfirmButton: () -> Unit = {},
-
-    ) {
+) {
 
 
     val scope = rememberCoroutineScope()
     val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val toggleBottomSheet = {
         scope.launch {
-            with(bottomSheetScaffoldState) {
-                if (isVisible) hide() else show()
+            if (!state.isLoading) {
+                with(bottomSheetScaffoldState) {
+                    if (isVisible) hide() else show()
+                }
             }
         }
     }
@@ -252,96 +274,102 @@ fun EditProfileScreen(
             toggleBottomSheet()
             onClickCameraButton()
         },
-        bottomSheetScaffoldState = bottomSheetScaffoldState) {
+        bottomSheetScaffoldState = bottomSheetScaffoldState,
+        editProfileState = state){
 
-        ConstraintLayout(
-            modifier = modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background)) {
-
-
-            val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText, progressBar) = createRefs()
-
-            ProfilePictureArea(
-                photoUrl = photoUrl,
-                modifier = Modifier
-                    .size(125.dp)
-                    .constrainAs(profilePictureArea) {
-
-                        top.linkTo(parent.top, margin = 30.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-
-                    },
-                onClick = {
-                    toggleBottomSheet()
-                })
+    ConstraintLayout(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)) {
 
 
+        val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText, progressBar) = createRefs()
 
+        ProfilePictureArea(
+            photoUrl = photoUrl,
+            modifier = Modifier
+                .size(125.dp)
+                .constrainAs(profilePictureArea) {
 
-            Text(
-                text = "Change Profile Photo",
-                color = Blue600,
-                style = MaterialTheme.typography.caption, fontWeight = FontWeight.SemiBold,
-                modifier = Modifier.constrainAs(changePhotoText) {
-                    top.linkTo(profilePictureArea.bottom, margin = 12.dp)
+                    top.linkTo(parent.top, margin = 30.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
 
-                })
-
-
-            TextFieldInputArea(
-                modifier = Modifier
-                    .constrainAs(textFieldInputArea) {
-                        top.linkTo(changePhotoText.bottom, margin = 30.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        height = Dimension.percent(0.5f)
-                        width = Dimension.percent(0.9f)
-
-                    },
-                state = state,
-                onClickPhoneTextField = onClickPhoneTextField,
-                onValueChangeName = onValueChangeName,
-                onValueChangePhoneNumber = onValueChangePhoneNumber,
-                keyboardActions = keyboardActions,
-            )
+                },
+            onClick = {
+                toggleBottomSheet()
+            })
 
 
 
-            MappingButtonNavigation(
-                modifier = Modifier
-                    .constrainAs(buttonNavigationArea) {
-                        top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(parent.bottom, margin = 50.dp)
-                        height = Dimension.percent(0.1f)
-                        width = Dimension.percent(0.8f)
-                    },
-                positiveButtonText = "Save",
-                onClickCancelButton = onClickCancelButton,
-                onClickConfirmButton = onClickConfirmButton)
 
-            if (state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.constrainAs(progressBar) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    bottom.linkTo(parent.bottom)
-                    this.centerTo(parent)
-                })
+        ClickableText(text = buildAnnotatedString {
+            withStyle(
+                style = SpanStyle(color = Blue600, fontWeight = FontWeight.SemiBold)) {
+                append("Change Profile Photo")
             }
+        },
+            modifier = Modifier.constrainAs(changePhotoText) {
+                top.linkTo(profilePictureArea.bottom, margin = 12.dp)
+                start.linkTo(parent.start)
+                end.linkTo(parent.end)
+
+            },
+            style = MaterialTheme.typography.body2,
+            onClick = {
+                toggleBottomSheet()
+            })
+
+
+
+
+
+        TextFieldInputArea(
+            modifier = Modifier
+                .constrainAs(textFieldInputArea) {
+                    top.linkTo(changePhotoText.bottom, margin = 30.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    height = Dimension.percent(0.5f)
+                    width = Dimension.percent(0.9f)
+
+                },
+            state = state,
+            onClickPhoneTextField = onClickPhoneTextField,
+            onValueChangeName = onValueChangeName,
+            onValueChangePhoneNumber = onValueChangePhoneNumber,
+            keyboardActions = keyboardActions,
+        )
+
+
+
+        MappingButtonNavigation(
+            modifier = Modifier
+                .constrainAs(buttonNavigationArea) {
+                    top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    bottom.linkTo(parent.bottom, margin = 50.dp)
+                    height = Dimension.percent(0.1f)
+                    width = Dimension.percent(0.8f)
+                },
+            positiveButtonText = "Save",
+            onClickCancelButton = onClickCancelButton,
+            onClickConfirmButton = onClickConfirmButton,
+            negativeButtonEnabled = !state.isLoading,
+            positiveButtonEnabled = !state.isLoading,
+        )
+
+        if (state.isLoading) {
+            CircularProgressIndicator(modifier = Modifier.constrainAs(progressBar) {
+                top.linkTo(parent.top)
+                end.linkTo(parent.end)
+                start.linkTo(parent.start)
+                bottom.linkTo(parent.bottom)
+                this.centerTo(parent)
+            })
         }
     }
 }
-
-@Preview
-@Composable
-fun EditProfilePreview() {
-    CyclistanceTheme(true) {
-        EditProfileScreen(modifier = Modifier, photoUrl = "", state = EditProfileState())
-    }
 }
+

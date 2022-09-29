@@ -17,9 +17,14 @@ import com.example.cyclistance.feature_authentication.presentation.common.textFi
 import com.example.cyclistance.theme.Black500
 
 @Composable
-fun AddressTextField(modifier: Modifier, address: String, onValueChange: (String) -> Unit) {
+fun AddressTextField(
+    modifier: Modifier,
+    address: String,
+    enabled: Boolean,
+    onValueChange: (String) -> Unit) {
 
     TextField(
+        enabled = enabled,
         value = address,
         onValueChange = onValueChange,
         modifier = modifier,

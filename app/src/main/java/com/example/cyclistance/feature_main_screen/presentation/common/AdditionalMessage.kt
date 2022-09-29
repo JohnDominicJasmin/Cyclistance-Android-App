@@ -9,7 +9,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.core.utils.MappingConstants.MAX_CHARACTERS
@@ -21,8 +20,8 @@ import com.example.cyclistance.theme.Black500
 fun AdditionalMessage(
     modifier: Modifier,
     message: String,
+    enabled: Boolean,
     onValueChange: (String) -> Unit) {
-
     Column(modifier = modifier) {
 
 
@@ -49,6 +48,7 @@ fun AdditionalMessage(
                 val numberOfCharacters = remember { mutableStateOf(0) }
 
                 TextField(
+                    enabled = enabled,
                     modifier = Modifier
                         .fillMaxSize()
                         .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)

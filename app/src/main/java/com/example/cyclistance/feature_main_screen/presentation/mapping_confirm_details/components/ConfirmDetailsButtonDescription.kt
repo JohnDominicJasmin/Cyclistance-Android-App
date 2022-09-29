@@ -20,6 +20,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
 import com.example.cyclistance.feature_main_screen.domain.model.ButtonDescriptionModel
+import com.example.cyclistance.feature_main_screen.presentation.mapping_confirm_details.ConfirmDetailsState
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.flowlayout.FlowRow
@@ -31,8 +32,8 @@ fun ButtonDescriptionDetails(
     modifier: Modifier,
     errorMessage: String,
     selectedOption: String,
+    state: ConfirmDetailsState ,
     onClickButton: (String) -> Unit) {
-
     val hasError = errorMessage.isNotEmpty()
     val buttonOptions = listOf(
         ButtonDescriptionModel(buttonText = "Injury", icon = R.drawable.ic_injury),
@@ -65,6 +66,7 @@ fun ButtonDescriptionDetails(
 
             buttonOptions.forEach {
                 SetupButtonDescriptionItem(
+                    enabled = !state.isLoading,
                     selectedState = it.buttonText == selectedOption,
                     image = it.icon,
                     description = it.buttonText,
@@ -93,6 +95,7 @@ fun SetupButtonDescriptionItem(
     selectedState: Boolean,
     image: Int,
     description: String,
+    enabled: Boolean,
     onClick: () -> Unit) {
 
     ConstraintLayout(modifier = Modifier.wrapContentSize()) {
@@ -102,6 +105,7 @@ fun SetupButtonDescriptionItem(
         val borderColor = if (selectedState) MaterialTheme.colors.primary else Color.Transparent
 
         OutlinedButton(
+            enabled = enabled,
             contentPadding = PaddingValues(all = 13.5.dp),
             colors = ButtonDefaults.buttonColors(
                 backgroundColor = MaterialTheme.colors.surface,
@@ -178,7 +182,9 @@ fun ButtonDescriptionItem() {
                 selectedOption = "",
                 onClickButton = { selectedDescription ->
 
-                })
+                },
+                state = ConfirmDetailsState()
+                )
 
         }
     }

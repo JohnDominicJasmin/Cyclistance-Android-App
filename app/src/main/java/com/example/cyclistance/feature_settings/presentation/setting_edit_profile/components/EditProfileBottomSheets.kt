@@ -13,10 +13,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import com.example.cyclistance.R
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileState
 
 @ExperimentalMaterialApi
 @Composable
 fun SelectImageBottomSheet(
+    editProfileState: EditProfileState,
     onClickGalleryButton: () -> Unit,
     onClickCameraButton: () -> Unit,
     bottomSheetScaffoldState: ModalBottomSheetState,
@@ -37,12 +39,14 @@ fun SelectImageBottomSheet(
                     BottomSheetButtonItem(
                         iconId = R.drawable.ic_gallery,
                         buttonText = "Open Gallery",
-                        onClick = onClickGalleryButton)
+                        onClick = onClickGalleryButton,
+                        enabled = !editProfileState.isLoading)
 
                     BottomSheetButtonItem(
                         iconId = R.drawable.ic_camera,
                         buttonText = "Take Photo",
-                        onClick = onClickCameraButton)
+                        onClick = onClickCameraButton,
+                        enabled = !editProfileState.isLoading)
                 }
 
             }
@@ -60,9 +64,14 @@ fun SelectImageBottomSheet(
 
 
 @Composable
-fun BottomSheetButtonItem(@DrawableRes iconId: Int, buttonText: String, onClick: () -> Unit) {
+fun BottomSheetButtonItem(
+    @DrawableRes iconId: Int,
+    buttonText: String,
+    onClick: () -> Unit,
+    enabled: Boolean) {
 
     TextButton(
+        enabled = enabled,
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         elevation = ButtonDefaults.elevation(
@@ -103,7 +112,8 @@ fun BottomSheetPreview() {
     SelectImageBottomSheet(
         onClickGalleryButton = {},
         onClickCameraButton = {},
-        bottomSheetScaffoldState = bottomSheetScaffoldState) {
+        bottomSheetScaffoldState = bottomSheetScaffoldState,
+        editProfileState = EditProfileState()) {
         Button(onClick = {
             scope.launch {
 

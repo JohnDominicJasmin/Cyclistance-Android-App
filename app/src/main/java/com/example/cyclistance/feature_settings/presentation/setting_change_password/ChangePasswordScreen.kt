@@ -36,7 +36,8 @@ fun ChangePasswordScreen(paddingValues: PaddingValues) {
             width = Dimension.percent(0.9f)
         })
 
-        MappingButtonNavigation(modifier = Modifier.constrainAs(buttonNavigationArea) {
+        MappingButtonNavigation(
+            modifier = Modifier.constrainAs(buttonNavigationArea) {
             top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
             start.linkTo(parent.start)
             end.linkTo(parent.end)

@@ -254,7 +254,9 @@ fun MappingScreen(
 
 
             if (state.findAssistanceButtonVisible) {
-                SearchAssistanceButton(modifier = Modifier.constrainAs(searchButton) {
+                SearchAssistanceButton(
+                    enabled = !state.isLoading,
+                    modifier = Modifier.constrainAs(searchButton) {
                     bottom.linkTo(parent.bottom, margin = 15.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
