@@ -88,7 +88,7 @@ fun ConfirmDetailsScreen(
 @Composable
 fun CoinDetailScreenPreview() {
     CyclistanceTheme(true) {
-        CoinDetailScreen(modifier = Modifier, state = ConfirmDetailsState())
+        CoinDetailScreen(modifier = Modifier, state = ConfirmDetailsState(isLoading = true))
     }
 }
 
@@ -96,7 +96,7 @@ fun CoinDetailScreenPreview() {
 @Composable
 fun CoinDetailScreen(
     modifier: Modifier,
-    state: ConfirmDetailsState,
+    state: ConfirmDetailsState = ConfirmDetailsState(),
     onValueChangeAddress: (String) -> Unit = {},
     onClickBikeType: (String) -> Unit = {},
     onClickDescriptionButton: (String) -> Unit = {},
@@ -135,8 +135,10 @@ fun CoinDetailScreen(
                         height = Dimension.wrapContent
                     },
                 address = state.address,
-                onValueChange = onValueChangeAddress
+                onValueChange = onValueChangeAddress,
+                enabled = !state.isLoading
             )
+
             DropDownBikeList(
                 modifier = Modifier
                     .constrainAs(bikeTypeDropDownList) {
@@ -148,7 +150,8 @@ fun CoinDetailScreen(
                     },
                 errorMessage = state.bikeTypeErrorMessage,
                 selectedItem = state.bikeType,
-                onClickItem = onClickBikeType)
+                onClickItem = onClickBikeType,
+                enabled = !state.isLoading)
 
             ButtonDescriptionDetails(
                 modifier = Modifier
@@ -162,7 +165,9 @@ fun CoinDetailScreen(
                     },
                 selectedOption = state.description,
                 errorMessage = state.descriptionErrorMessage,
-                onClickButton = onClickDescriptionButton)
+                onClickButton = onClickDescriptionButton,
+                state = state,
+                )
 
             AdditionalMessage(
                 modifier = Modifier
@@ -175,7 +180,8 @@ fun CoinDetailScreen(
 
                     },
                 message = state.message,
-                onValueChange = onValueChangeMessage
+                onValueChange = onValueChangeMessage,
+                enabled = !state.isLoading
             )
 
             Text(
@@ -200,7 +206,9 @@ fun CoinDetailScreen(
                         width = Dimension.percent(0.9f)
                     },
                 onClickCancelButton = onClickCancelButton,
-                onClickConfirmButton = onClickConfirmButton)
+                onClickConfirmButton = onClickConfirmButton,
+            negativeButtonEnabled = !state.isLoading,
+            positiveButtonEnabled = !state.isLoading)
 
 
             if (state.isLoading) {

@@ -26,17 +26,17 @@ fun CancellationReasonScreen(paddingValues: PaddingValues) {
             .verticalScroll(rememberScrollState())
             .background(MaterialTheme.colors.background)) {
 
-        val (radioButtonsSection, additionalMessageSection,buttonNavButtonSection) = createRefs()
+        val (radioButtonsSection, additionalMessageSection, buttonNavButtonSection) = createRefs()
 
-    RadioButtonsSection(modifier = Modifier
-        .fillMaxSize()
-        .constrainAs(radioButtonsSection) {
-            top.linkTo(parent.top, margin = 15.dp)
-            end.linkTo(parent.end)
-            start.linkTo(parent.start)
-            width = Dimension.fillToConstraints
-            height = Dimension.wrapContent
-        })
+        RadioButtonsSection(modifier = Modifier
+            .fillMaxSize()
+            .constrainAs(radioButtonsSection) {
+                top.linkTo(parent.top, margin = 15.dp)
+                end.linkTo(parent.end)
+                start.linkTo(parent.start)
+                width = Dimension.fillToConstraints
+                height = Dimension.wrapContent
+            })
 
         AdditionalMessage(
             modifier = Modifier
@@ -51,7 +51,8 @@ fun CancellationReasonScreen(paddingValues: PaddingValues) {
             message = "My bike is already fixed.",
             onValueChange = {
                 //todo: implement later
-            }
+            },
+            enabled = true // todo: change this later
         )
 
 
@@ -59,7 +60,7 @@ fun CancellationReasonScreen(paddingValues: PaddingValues) {
             modifier = Modifier
                 .constrainAs(buttonNavButtonSection) {
                     top.linkTo(additionalMessageSection.bottom, margin = 50.dp)
-                    bottom.linkTo(parent.bottom,margin = 5.dp)
+                    bottom.linkTo(parent.bottom, margin = 5.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
                     height = Dimension.percent(0.1f)
@@ -70,8 +71,9 @@ fun CancellationReasonScreen(paddingValues: PaddingValues) {
             },
             onClickConfirmButton = {
                 //todo: implement later
-            })
-
+            },
+            negativeButtonEnabled = true,
+            positiveButtonEnabled = true)
 
 
     }

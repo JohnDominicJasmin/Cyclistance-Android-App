@@ -36,7 +36,9 @@ fun TextFieldInputArea(
         modifier = modifier, verticalArrangement = Arrangement.spacedBy(15.dp)) {
 
 
-        TextFieldItem(label = "Full Name",
+        TextFieldItem(
+            label = "Full Name",
+            enabled = !state.isLoading,
             errorMessage = state.nameErrorMessage,
             value = state.name,
             keyboardOptions = KeyboardOptions(

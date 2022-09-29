@@ -36,6 +36,7 @@ fun DropDownBikeList(
     modifier: Modifier,
     errorMessage: String,
     selectedItem: String,
+    enabled: Boolean,
     onClickItem: (String) -> Unit) {
 
     val hasError = errorMessage.isNotEmpty()
@@ -44,11 +45,14 @@ fun DropDownBikeList(
 
     Column(modifier = modifier) {
 
-        ExposedDropdownMenuBox(modifier = Modifier
-            .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
+        ExposedDropdownMenuBox(
+            modifier = Modifier
+                .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
             expanded = expanded,
             onExpandedChange = {
-                expanded = !expanded
+                if (enabled) {
+                    expanded = !expanded
+                }
             }) {
 
             TextField(
@@ -71,47 +75,47 @@ fun DropDownBikeList(
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Default.PedalBike,
-                    contentDescription = "Bike Icon",
-                    tint = Black500,
-                )
-            },
-            colors = TextFieldDefaults.textFieldColors(
-                textColor = MaterialTheme.colors.onSecondary,
-                backgroundColor = MaterialTheme.colors.secondary,
-                focusedIndicatorColor = MaterialTheme.colors.secondary,
-                unfocusedIndicatorColor = MaterialTheme.colors.secondary,
-                cursorColor = MaterialTheme.colors.primary,
-                trailingIconColor = Black500
+                        contentDescription = "Bike Icon",
+                        tint = Black500,
+                    )
+                },
+                colors = TextFieldDefaults.textFieldColors(
+                    textColor = MaterialTheme.colors.onSecondary,
+                    backgroundColor = MaterialTheme.colors.secondary,
+                    focusedIndicatorColor = MaterialTheme.colors.secondary,
+                    unfocusedIndicatorColor = MaterialTheme.colors.secondary,
+                    cursorColor = MaterialTheme.colors.primary,
+                    trailingIconColor = Black500
 
-            ),
-        )
-
-
-        ExposedDropdownMenu(modifier = Modifier
-            .background(MaterialTheme.colors.secondary)
-            .fillMaxWidth()
-            .wrapContentHeight(),
-            expanded = expanded,
-            onDismissRequest = {
-                expanded = false
-            }) {
+                ),
+            )
 
 
-            bikeList.forEach { selectionOption ->
-                DropdownMenuItem(
-                    onClick = {
-                        onClickItem(selectionOption)
-                        expanded = false
-                    }, modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        text = selectionOption,
-                        color = MaterialTheme.colors.onSecondary,
-                        style = MaterialTheme.typography.subtitle2)
+            ExposedDropdownMenu(modifier = Modifier
+                .background(MaterialTheme.colors.secondary)
+                .fillMaxWidth()
+                .wrapContentHeight(),
+                expanded = expanded,
+                onDismissRequest = {
+                    expanded = false
+                }) {
+
+
+                bikeList.forEach { selectionOption ->
+                    DropdownMenuItem(
+                        onClick = {
+                            onClickItem(selectionOption)
+                            expanded = false
+                        }, modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = selectionOption,
+                            color = MaterialTheme.colors.onSecondary,
+                            style = MaterialTheme.typography.subtitle2)
+                    }
                 }
             }
         }
-    }
-        if(hasError){
+        if (hasError) {
             ErrorMessage(errorMessage = errorMessage, modifier = Modifier.padding(top = 7.dp))
         }
     }
@@ -121,11 +125,12 @@ fun DropDownBikeList(
 @Preview
 @Composable
 fun DropDownListPreview() {
-    CyclistanceTheme(false){
+    CyclistanceTheme(false) {
         DropDownBikeList(modifier = Modifier
             .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
             selectedItem = "Mountain Bike",
             errorMessage = "Field cannot be left blank",
+            enabled = true,
             onClickItem = {
 
             })

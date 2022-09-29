@@ -17,6 +17,8 @@ import com.example.cyclistance.theme.Black300
 @Composable
 fun MappingButtonNavigation(
     modifier: Modifier,
+    negativeButtonEnabled: Boolean = true,
+    positiveButtonEnabled: Boolean = true,
     negativeButtonText: String = "Cancel",
     positiveButtonText: String = "Confirm",
     onClickCancelButton: () -> Unit,
@@ -28,6 +30,7 @@ fun MappingButtonNavigation(
             verticalAlignment = Alignment.CenterVertically) {
 
             OutlinedButton(
+                enabled = negativeButtonEnabled,
                 onClick = onClickCancelButton,
                 border = BorderStroke(1.dp, Black300),
                 modifier = Modifier
@@ -46,6 +49,7 @@ fun MappingButtonNavigation(
 
 
             Button(
+                enabled = positiveButtonEnabled,
                 onClick = onClickConfirmButton,
                 modifier = Modifier
                     .wrapContentHeight()

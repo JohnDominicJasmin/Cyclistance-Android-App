@@ -11,8 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SearchAssistanceButton(onClickSearchButton: () -> Unit, modifier: Modifier) {
+fun SearchAssistanceButton(onClickSearchButton: () -> Unit, modifier: Modifier, enabled: Boolean) {
+
+
     Button(
+        enabled = enabled,
         onClick = onClickSearchButton,
         shape = RoundedCornerShape(12.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
@@ -28,4 +31,5 @@ fun SearchAssistanceButton(onClickSearchButton: () -> Unit, modifier: Modifier) 
                 end = 12.dp)
         )
     }
+
 }

@@ -121,7 +121,9 @@ fun AlertDialogContent(
             MappingButtonNavigation(
                 modifier = Modifier.wrapContentHeight().fillMaxWidth(0.8f),
                 onClickCancelButton = onDismiss,
-                onClickConfirmButton = onConfirm
+                onClickConfirmButton = onConfirm,
+                positiveButtonEnabled = true,
+                negativeButtonEnabled = true,
             )
 
 
