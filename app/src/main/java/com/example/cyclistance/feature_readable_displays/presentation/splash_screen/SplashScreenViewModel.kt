@@ -33,7 +33,7 @@ class SplashScreenViewModel @Inject constructor(
             runCatching {
 
                 introSliderUseCase.readIntroSliderUseCase().collect { userCompletedWalkThrough ->
-                    if (userCompletedWalkThrough == true) {
+                    if (userCompletedWalkThrough) {
 
                         if (isUserSignedIn()) {
                             _splashScreenState.value =
