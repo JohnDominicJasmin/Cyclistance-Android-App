@@ -175,11 +175,10 @@ dependencies {
 
 
     //mapbox
-    implementation 'com.mapbox.maps:android:10.6.0'
-    implementation ('com.mapbox.mapboxsdk:mapbox-android-sdk:9.2.0@aar'){
-        transitive=true
-    }
+
     implementation "com.mapbox.navigation:android:2.7.0"
+    implementation("com.google.android.gms:play-services-location:20.0.0")
+
 
     //location provider
     implementation("com.google.android.gms:play-services-location:20.0.0")
