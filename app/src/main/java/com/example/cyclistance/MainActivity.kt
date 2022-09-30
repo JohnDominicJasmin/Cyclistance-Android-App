@@ -13,10 +13,8 @@ import com.facebook.FacebookSdk.sdkInitialize
 import com.facebook.appevents.AppEventsLogger
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import com.mapbox.mapboxsdk.Mapbox
 import dagger.hilt.android.AndroidEntryPoint
 
-const val CLICK_TIME_INTERVAL = 1800
 
 @ExperimentalPermissionsApi
 @ExperimentalAnimationApi
@@ -33,8 +31,6 @@ class MainActivity : ComponentActivity() {
         sdkInitialize(applicationContext);
         AppEventsLogger.activateApp(application);
 
-
-        Mapbox.getInstance(this, getString(R.string.MapsDownloadToken))
 
         setContent {
             CompositionLocalProvider(LocalActivityResultCallbackManager provides callbackManager) {
