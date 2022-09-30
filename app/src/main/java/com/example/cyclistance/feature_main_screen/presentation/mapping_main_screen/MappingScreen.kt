@@ -25,7 +25,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
-import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.ConnectionStatus
 import com.example.cyclistance.core.utils.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
@@ -36,7 +35,6 @@ import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.mapbox.mapboxsdk.Mapbox
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -203,7 +201,7 @@ fun MappingScreen(
 @Composable
 fun MappingScreenPreview() {
     val context = LocalContext.current
-    Mapbox.getInstance(context, context.getString(R.string.MapsDownloadToken))
+
 
     CyclistanceTheme(true) {
 
@@ -243,7 +241,7 @@ fun MappingScreen(
             val (mapScreen, searchButton, circularProgressbar, noInternetScreen) = createRefs()
 
 
-            MapScreen(
+            MappingMapsScreen(
                 isDarkTheme = isDarkTheme,
                 modifier = Modifier.constrainAs(mapScreen) {
                     top.linkTo(parent.top)
