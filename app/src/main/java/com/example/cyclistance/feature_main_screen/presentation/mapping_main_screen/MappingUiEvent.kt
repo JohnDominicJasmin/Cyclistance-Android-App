@@ -13,6 +13,6 @@ sealed class MappingUiEvent{
     object ShowEditProfileScreen: MappingUiEvent()
     object ShowSignInScreen: MappingUiEvent()
     data class ShowToastMessage(val message: String): MappingUiEvent()
-    data class ShowBottomSheet(val bottomSheetType: BottomSheetType): MappingUiEvent()
+
 
 }

@@ -11,10 +11,9 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,13 +21,13 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.ConnectionStatus
 import com.example.cyclistance.core.utils.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.*
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingBottomSheet
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingMapsScreen
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
@@ -44,7 +43,7 @@ import timber.log.Timber
 @Composable
 fun MappingScreen(
     typeBottomSheet: String = "",
-    isDarkTheme: LiveData<Boolean?>,
+    isDarkTheme: Boolean,
     mappingViewModel: MappingViewModel = hiltViewModel(),
     paddingValues: PaddingValues,
     scaffoldState: ScaffoldState,
@@ -53,12 +52,10 @@ fun MappingScreen(
 
     val state by mappingViewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    val (bottomSheetType, onChangeBottomSheetType) = rememberSaveable {
-        mutableStateOf("")
-    }
+
 
     LaunchedEffect(key1 = typeBottomSheet){
-        onChangeBottomSheetType(typeBottomSheet)
+        mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(typeBottomSheet))
     }
 
     BackHandler(enabled = true, onBack = {
@@ -89,7 +86,7 @@ fun MappingScreen(
     ) { activityResult ->
         if (activityResult.resultCode == RESULT_OK) {
             Timber.d("GPS Setting Request Accepted")
-            mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
+            mappingViewModel.onEvent(event = MappingEvent.LocationPermissionGranted)
             return@rememberLauncherForActivityResult
         }
         Timber.d("GPS Setting Request Denied")
@@ -119,7 +116,7 @@ fun MappingScreen(
     LaunchedEffect(key1 = true) {
 
         if (locationPermissionsState.allPermissionsGranted) {
-            mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
+            mappingViewModel.onEvent(event = MappingEvent.LocationPermissionGranted)
         }
 
         mappingViewModel.eventFlow.collectLatest { event ->
@@ -142,9 +139,6 @@ fun MappingScreen(
                         Screens.SignInScreen.route,
                         Screens.MappingScreen.route)
                 }
-                is MappingUiEvent.ShowBottomSheet -> {
-                    onChangeBottomSheetType(event.bottomSheetType.type)
-                }
 
 
             }
@@ -159,7 +153,7 @@ fun MappingScreen(
                     context = context,
                     onDisabled = settingResultRequest::launch,
                     onEnabled = {
-                        mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
+                        mappingViewModel.onEvent(event = MappingEvent.LocationPermissionGranted)
                     })
             }
         })
@@ -167,7 +161,6 @@ fun MappingScreen(
 
     MappingScreen(
         modifier = Modifier.padding(paddingValues),
-        bottomSheetType = bottomSheetType,
         isDarkTheme = isDarkTheme,
         state = state,
         onClickRetryButton = {
@@ -177,7 +170,7 @@ fun MappingScreen(
         },
         onClickSearchButton = {
             if (locationPermissionsState.allPermissionsGranted) {
-                mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates).also {
+                mappingViewModel.onEvent(event = MappingEvent.LocationPermissionGranted).also {
                     postProfile()
                 }
                 return@MappingScreen
@@ -207,8 +200,7 @@ fun MappingScreenPreview() {
 
         MappingScreen(
             modifier = Modifier,
-            bottomSheetType = BottomSheetType.RescuerArrived.type,
-            isDarkTheme = MutableLiveData(true),
+            isDarkTheme = true,
             state = MappingState(),
             onClickRetryButton = {},
             onClickSearchButton = {},
@@ -221,18 +213,16 @@ fun MappingScreenPreview() {
 @Composable
 fun MappingScreen(
     modifier: Modifier,
-    isDarkTheme: LiveData<Boolean?>,
+    isDarkTheme: Boolean,
     state: MappingState,
-    bottomSheetType: String,
     onClickRetryButton: () -> Unit,
     onClickSearchButton: () -> Unit) {
 
-    val _isDarkTheme = isDarkTheme.observeAsState().value
 
     MappingBottomSheet(
-        isDarkTheme = _isDarkTheme == true,
+        isDarkTheme = isDarkTheme,
         onClickActionButton = { /*TODO*/ },
-        bottomSheetType = bottomSheetType) {
+        bottomSheetType = state.bottomSheetType) {
 
         ConstraintLayout(
             modifier = modifier
@@ -242,6 +232,7 @@ fun MappingScreen(
 
 
             MappingMapsScreen(
+                state = state,
                 isDarkTheme = isDarkTheme,
                 modifier = Modifier.constrainAs(mapScreen) {
                     top.linkTo(parent.top)

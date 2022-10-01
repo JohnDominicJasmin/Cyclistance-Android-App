@@ -14,6 +14,7 @@ data class MappingState(
     val isLoading: Boolean = false,
     val findAssistanceButtonVisible: Boolean = true,
     val userAddress: UserAddress = UserAddress(),
-    val currentLatLng: LatLng? = null,
-    val hasInternet: Boolean = true
+    val hasInternet: Boolean = true,
+    val bottomSheetType: String = "",
+    val locationPermissionGranted: Boolean = false,
 )
