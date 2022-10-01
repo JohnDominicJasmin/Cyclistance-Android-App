@@ -1,16 +1,14 @@
 package com.example.cyclistance.di
 
 import android.content.Context
-import com.example.cyclistance.BaseApplication
+import android.location.Geocoder
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_main_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_main_screen.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_main_screen.domain.repository.MappingRepository
 import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_main_screen.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.user.*
-import com.example.cyclistance.core.utils.SharedLocationManager
 import com.example.cyclistance.feature_main_screen.domain.use_case.address.GetAddressUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.address.UpdateAddressUseCase
 import com.example.cyclistance.feature_main_screen.domain.use_case.bike_type.GetBikeTypeUseCase
@@ -23,6 +21,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 import javax.inject.Singleton
 
 @Module
@@ -48,9 +47,8 @@ object MappingModule {
     @Singleton
     fun provideCyclistanceRepository(
         @ApplicationContext context: Context,
-        sharedLocationManager: SharedLocationManager,
         api: CyclistanceApi): MappingRepository {
-        return MappingRepositoryImpl(sharedLocationManager, api, context)
+        return MappingRepositoryImpl(api, context)
     }
 
     @Provides
@@ -62,7 +60,6 @@ object MappingModule {
             createUserUseCase = CreateUserUseCase(repository),
             deleteUserUseCase = DeleteUserUseCase(repository),
             updateUserUseCase = UpdateUserUseCase(repository),
-            getUserLocationUseCase = GetUserLocationUseCase(repository),
             getBikeTypeUseCase = GetBikeTypeUseCase(repository),
             updateBikeTypeUseCase = UpdateBikeTypeUseCase(repository),
             getAddressUseCase = GetAddressUseCase(repository),
@@ -73,11 +70,7 @@ object MappingModule {
 
     @Provides
     @Singleton
-    fun provideSharedLocationManager(
-        @ApplicationContext context: Context
-    ): SharedLocationManager =
-        SharedLocationManager(context, (context.applicationContext as BaseApplication).applicationScope)
-
-
+    fun providesGeocoder(@ApplicationContext context: Context): Geocoder =
+        Geocoder(context, Locale.ENGLISH)
 
 }

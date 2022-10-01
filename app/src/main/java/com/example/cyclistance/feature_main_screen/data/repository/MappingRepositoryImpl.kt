@@ -13,12 +13,9 @@ import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toUser
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_main_screen.domain.model.*
 import com.example.cyclistance.feature_main_screen.domain.repository.MappingRepository
-import com.example.cyclistance.core.utils.SharedLocationManager
-import com.example.cyclistance.core.utils.SharedLocationModel
 import com.example.cyclistance.feature_main_screen.data.remote.dto.UserDto
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import retrofit2.HttpException
 import timber.log.Timber
@@ -27,7 +24,6 @@ import java.io.IOException
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
 
 class MappingRepositoryImpl(
-    private val sharedLocationManager: SharedLocationManager,
     private val api: CyclistanceApi,
     context: Context) : MappingRepository {
 
@@ -48,10 +44,6 @@ class MappingRepositoryImpl(
 
     override suspend fun updateAddress(address: String) {
         dataStore.editData(ADDRESS_KEY, address)
-    }
-
-    override fun getUserLocation(): Flow<SharedLocationModel> {
-        return sharedLocationManager.locationFlow().distinctUntilChanged()
     }
 
     override suspend fun getUserById(userId: String): User =
