@@ -31,10 +31,11 @@ class MainActivity : ComponentActivity() {
         sdkInitialize(applicationContext);
         AppEventsLogger.activateApp(application);
 
-
-        setContent {
-            CompositionLocalProvider(LocalActivityResultCallbackManager provides callbackManager) {
-                MainScreen()
+        if(savedInstanceState == null) {
+            setContent {
+                CompositionLocalProvider(LocalActivityResultCallbackManager provides callbackManager) {
+                    MainScreen()
+                }
             }
         }
     }
