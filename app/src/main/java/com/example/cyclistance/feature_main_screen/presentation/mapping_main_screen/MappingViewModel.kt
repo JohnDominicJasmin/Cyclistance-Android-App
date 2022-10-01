@@ -65,34 +65,14 @@ class MappingViewModel @Inject constructor(
                 }
             }
 
-            is MappingEvent.SubscribeToLocationUpdates -> {
-                subscribeToLocationUpdates()
+            is MappingEvent.LocationPermissionGranted -> {
+                _state.update { it.copy(locationPermissionGranted = true) }
             }
 
-            is MappingEvent.UnsubscribeToLocationUpdates -> {
-                unSubscribeToLocationUpdates()
-            }
-        }
-    }
-
-    private fun subscribeToLocationUpdates() {
-        viewModelScope.launch {
-            runCatching {
-                mappingUseCase.getUserLocationUseCase().collect { userLocation ->
-                    _state.update {
-                        it.copy(
-                            userAddress = UserAddress(userLocation.addresses),
-                            currentLatLng = userLocation.latLng)
-                    }
-                }
-            }.onFailure {
-                Timber.e("Error Location Updates: ${it.message}")
+            is MappingEvent.ChangeBottomSheet -> {
+                _state.update { it.copy(bottomSheetType = event.bottomSheetType) }
             }
         }
-    }
-
-    private fun unSubscribeToLocationUpdates() {
-        locationUpdatesFlow?.cancel()
     }
 
     private suspend fun signOutAccount() {
@@ -173,7 +153,6 @@ class MappingViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        unSubscribeToLocationUpdates()
         super.onCleared()
     }
 }
