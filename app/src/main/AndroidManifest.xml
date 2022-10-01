@@ -24,6 +24,7 @@
         android:theme="@style/Theme.Cyclistance">
         <activity
             android:name=".MainActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize"
             android:exported="true"
             android:theme="@style/Theme.Cyclistance">
             <intent-filter>
