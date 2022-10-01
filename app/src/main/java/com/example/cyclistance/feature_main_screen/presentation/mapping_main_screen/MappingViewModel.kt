@@ -1,34 +1,40 @@
 package com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen
 
 import android.location.Address
+import android.location.Geocoder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.utils.MappingConstants
 import com.example.cyclistance.core.utils.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_main_screen.data.remote.dto.Location
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_main_screen.domain.model.User
 import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingDrawerContent
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.utils.getAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
-
+import android.location.Location as AndroidLocation
 import javax.inject.Inject
 
 @HiltViewModel
 class MappingViewModel @Inject constructor(
+    private val geocoder: Geocoder,
     private val authUseCase: AuthenticationUseCase,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(MappingState())
     val state = _state.asStateFlow()
 
+    private val locationState = MutableStateFlow(AndroidLocation(""))
+
     private val _eventFlow: MutableSharedFlow<MappingUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingUiEvent> = _eventFlow.asSharedFlow()
 
-    private var locationUpdatesFlow: Job? = null
+
 
 
 
@@ -39,7 +45,7 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun getPhoneNumber(): String =
         authUseCase.getPhoneNumberUseCase().takeIf { !it.isNullOrEmpty() }
-        ?:  throw MappingExceptions.PhoneNumberException()
+        ?: throw MappingExceptions.PhoneNumberException()
 
     private fun getPhotoUrl(): String {
         return authUseCase.getPhotoUrlUseCase() ?: IMAGE_PLACEHOLDER_URL
@@ -72,6 +78,19 @@ class MappingViewModel @Inject constructor(
             is MappingEvent.ChangeBottomSheet -> {
                 _state.update { it.copy(bottomSheetType = event.bottomSheetType) }
             }
+
+            is MappingEvent.OnLocationChange -> {
+
+                viewModelScope.launch {
+                    locationState.update { event.userLocation }.also {
+                            geocoder.getAddress(location = event.userLocation) { address ->
+                                _state.update { it.copy(userAddress = UserAddress(address)) }
+                            }
+                        }
+                }
+
+
+            }
         }
     }
 
@@ -88,7 +107,6 @@ class MappingViewModel @Inject constructor(
     private suspend fun uploadUserProfile() {
 
         val userAddress = state.value.userAddress.address
-
         if (userAddress.isNotEmpty()) {
             userAddress.forEach { address ->
                 runCatching {
