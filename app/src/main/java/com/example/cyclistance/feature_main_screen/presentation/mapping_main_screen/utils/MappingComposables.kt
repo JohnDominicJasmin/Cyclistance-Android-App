@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -42,7 +42,7 @@ fun rememberNavigationLocalProvider() = remember {
 }
 
 @Composable
-fun rememberLocation() = remember {
+fun rememberSaveableLocation() = rememberSaveable {
     mutableStateOf(Location(MappingConstants.ENHANCE_LOCATION_PROVIDER))
 }
 
