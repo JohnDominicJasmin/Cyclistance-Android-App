@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_main_screen.presentation.mapping_main_sc
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
+import android.location.Location
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -38,7 +39,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-@SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @ExperimentalPermissionsApi
 @Composable
 fun MappingScreen(
@@ -53,8 +53,7 @@ fun MappingScreen(
     val state by mappingViewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-
-    LaunchedEffect(key1 = typeBottomSheet){
+    LaunchedEffect(key1 = typeBottomSheet) {
         mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(typeBottomSheet))
     }
 
@@ -185,6 +184,8 @@ fun MappingScreen(
             }
 
             locationPermissionsState.launchMultiplePermissionRequest()
+        }, onNewLocationResult = {
+            mappingViewModel.onEvent(event = MappingEvent.OnLocationChange(it))
         })
 
 }
@@ -204,8 +205,8 @@ fun MappingScreenPreview() {
             state = MappingState(),
             onClickRetryButton = {},
             onClickSearchButton = {},
-
-            )
+            onNewLocationResult = {},
+        )
     }
 }
 
@@ -216,7 +217,8 @@ fun MappingScreen(
     isDarkTheme: Boolean,
     state: MappingState,
     onClickRetryButton: () -> Unit,
-    onClickSearchButton: () -> Unit) {
+    onClickSearchButton: () -> Unit,
+    onNewLocationResult: (Location) -> Unit) {
 
 
     MappingBottomSheet(
@@ -230,7 +232,6 @@ fun MappingScreen(
 
             val (mapScreen, searchButton, circularProgressbar, noInternetScreen) = createRefs()
 
-
             MappingMapsScreen(
                 state = state,
                 isDarkTheme = isDarkTheme,
@@ -239,18 +240,19 @@ fun MappingScreen(
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom)
-                })
+                },
+                onNewLocationResult = onNewLocationResult)
 
 
             if (state.findAssistanceButtonVisible) {
                 SearchAssistanceButton(
                     enabled = !state.isLoading,
                     modifier = Modifier.constrainAs(searchButton) {
-                    bottom.linkTo(parent.bottom, margin = 15.dp)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    height = Dimension.value(45.dp)
-                }, onClickSearchButton = onClickSearchButton)
+                        bottom.linkTo(parent.bottom, margin = 15.dp)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                        height = Dimension.value(45.dp)
+                    }, onClickSearchButton = onClickSearchButton)
             }
 
             if (state.isLoading) {
