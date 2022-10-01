@@ -1,14 +1,11 @@
 package com.example.cyclistance.navigation
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -41,8 +38,7 @@ fun MainScreen(
     val navController = rememberNavController()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val isDarkThemeLiveData: LiveData<Boolean?> = settingViewModel.isDarkTheme
-    val isDarkThemeState = isDarkThemeLiveData.observeAsState(initial = isSystemInDarkTheme())
+    val isDarkTheme by settingViewModel.isDarkTheme.collectAsState(initial = false)
     val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
 
@@ -60,7 +56,7 @@ fun MainScreen(
     }
 
 
-    CyclistanceTheme(darkTheme = isDarkThemeState.value == true) {
+    CyclistanceTheme(darkTheme = isDarkTheme) {
 
         Scaffold(
             drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
@@ -111,8 +107,7 @@ fun MainScreen(
             NavGraph(
                 navController = navController,
                 paddingValues = paddingValues,
-                isDarkThemeLiveData = isDarkThemeLiveData,
-                isDarkThemeState = isDarkThemeState,
+                isDarkTheme = isDarkTheme,
                 editProfileViewModel = editProfileViewModel,
                 scaffoldState = scaffoldState,
                 onToggleTheme = {

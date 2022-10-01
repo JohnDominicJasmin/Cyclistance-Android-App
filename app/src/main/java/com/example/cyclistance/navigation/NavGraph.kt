@@ -3,7 +3,6 @@ package com.example.cyclistance.navigation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
-import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -31,8 +30,7 @@ fun NavGraph(
     navController: NavHostController,
     paddingValues: PaddingValues,
     editProfileViewModel: EditProfileViewModel,
-    isDarkThemeLiveData: LiveData<Boolean?>,
-    isDarkThemeState: State<Boolean?>,
+    isDarkTheme: Boolean,
     scaffoldState: ScaffoldState,
     onToggleTheme: () -> Unit
 
@@ -58,7 +56,7 @@ fun NavGraph(
 
         composable(Screens.EmailAuthScreen.route) {
             EmailAuthScreen(
-                isDarkTheme = isDarkThemeState.value == true,
+                isDarkTheme = isDarkTheme,
                 navController = navController,
                 paddingValues = paddingValues)
         }
@@ -76,7 +74,7 @@ fun NavGraph(
             it.arguments?.getString("bottomSheetType")?.let { bottomSheetType ->
                 MappingScreen(
                     typeBottomSheet = bottomSheetType,
-                    isDarkTheme = isDarkThemeLiveData,
+                    isDarkTheme = isDarkTheme,
                     navController = navController,
                     scaffoldState = scaffoldState,
                     paddingValues = paddingValues)
@@ -113,7 +111,7 @@ fun NavGraph(
 
         composable(Screens.SettingScreen.route) {
             SettingScreen(
-                isDarkTheme = isDarkThemeState.value == true,
+                isDarkTheme = isDarkTheme,
                 onToggleTheme = onToggleTheme,
                 navController = navController,
                 paddingValues = paddingValues)

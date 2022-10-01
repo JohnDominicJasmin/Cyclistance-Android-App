@@ -13,7 +13,8 @@ import javax.inject.Inject
 class SettingViewModel @Inject constructor(
     private val settingUseCase: SettingUseCase) : ViewModel() {
 
-    val isDarkTheme = settingUseCase.isDarkThemeUseCase().asLiveData()
+    val isDarkTheme = settingUseCase.isDarkThemeUseCase()
+
 
 
     fun onEvent(event: SettingEvent) {
