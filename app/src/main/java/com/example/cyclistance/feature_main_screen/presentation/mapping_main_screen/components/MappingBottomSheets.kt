@@ -36,6 +36,7 @@ private fun MappingBottomSheet(
     modifier: Modifier = Modifier,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     sheetPeekHeight: Dp = 0.dp,
+    sheetGesturesEnabled: Boolean = true,
     sheetContent: @Composable ColumnScope.() -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
@@ -45,6 +46,7 @@ private fun MappingBottomSheet(
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = sheetContent,
         sheetPeekHeight = sheetPeekHeight,
+        sheetGesturesEnabled = sheetGesturesEnabled,
         content = content,
         modifier = modifier,
         sheetBackgroundColor = Color.Transparent,
@@ -67,7 +69,8 @@ fun BottomSheetSearchingAssistance(
         rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(initialValue = BottomSheetValue.Expanded))
     val scope = rememberCoroutineScope()
     MappingBottomSheet(
-        sheetPeekHeight = 120.dp,
+        sheetPeekHeight = 0.dp,
+        sheetGesturesEnabled = false,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         sheetContent = {
             Card(
@@ -81,24 +84,13 @@ fun BottomSheetSearchingAssistance(
                     modifier = Modifier
                         .background(color = MaterialTheme.colors.surface)) {
 
-                    val (gripLine, searchAnimatedIcon, searchingText, cancelButton) = createRefs()
-
-                    Divider(
-                        modifier = Modifier.constrainAs(gripLine) {
-                            top.linkTo(parent.top, margin = 8.5.dp)
-                            width = Dimension.percent(0.08f)
-                            end.linkTo(parent.end)
-                            start.linkTo(parent.start)
-
-                        },
-                        color = Black440,
-                        thickness = 1.5.dp)
+                    val (searchAnimatedIcon, searchingText, cancelButton) = createRefs()
 
                     AnimatedImage(
                         imageId = if (isDarkTheme) R.drawable.ic_dark_magnifying_glass else R.drawable.ic_light_magnifying_glass,
                         modifier = Modifier
                             .constrainAs(searchAnimatedIcon) {
-                                top.linkTo(gripLine.top, margin = 12.dp)
+                                top.linkTo(parent.top, margin = 4.dp)
                                 end.linkTo(parent.end)
                                 start.linkTo(parent.start)
                                 height = Dimension.value(50.dp)
@@ -153,6 +145,7 @@ fun BottomSheetOnGoingRescue(
 
     MappingBottomSheet(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
+        sheetPeekHeight = 0.dp,
         sheetContent = {
             Card(
                 modifier = Modifier
@@ -165,19 +158,8 @@ fun BottomSheetOnGoingRescue(
                         .fillMaxWidth()
                         .background(color = MaterialTheme.colors.surface)) {
 
-                    val (gripLine, timeRemaining, roundedButtonSection) = createRefs()
+                    val (timeRemaining, roundedButtonSection) = createRefs()
 
-
-                    Divider(
-                        modifier = Modifier.constrainAs(gripLine) {
-                            top.linkTo(parent.top, margin = 8.5.dp)
-                            width = Dimension.percent(0.08f)
-                            end.linkTo(parent.end)
-                            start.linkTo(parent.start)
-
-                        },
-                        color = Black440,
-                        thickness = 1.5.dp)
 
 
                     Text(
@@ -185,7 +167,7 @@ fun BottomSheetOnGoingRescue(
                         color = MaterialTheme.colors.onSurface,
                         style = MaterialTheme.typography.subtitle2,
                         modifier = Modifier.constrainAs(timeRemaining) {
-                            top.linkTo(gripLine.top, margin = 20.dp)
+                            top.linkTo(parent.top, margin = 14.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                         })
@@ -196,7 +178,7 @@ fun BottomSheetOnGoingRescue(
                             .background(Color.Transparent)
                             .fillMaxWidth()
                             .constrainAs(roundedButtonSection) {
-                                top.linkTo(timeRemaining.bottom, margin = 22.dp)
+                                top.linkTo(timeRemaining.bottom, margin = 15.dp)
                                 end.linkTo(parent.end)
                                 start.linkTo(parent.start)
                                 bottom.linkTo(parent.bottom, margin = 17.dp)
@@ -416,9 +398,8 @@ private fun RoundedButtonItem(
 fun BottomSheetRescuerArrivedPreview() {
     val isDarkTheme = true
     CyclistanceTheme(isDarkTheme) {
-        BottomSheetRescue(
+        BottomSheetRescueArrived(
             isDarkTheme = isDarkTheme,
-            displayedText = "Your rescuer has arrived.",
             content = {}, onClickOkButton = {})
     }
 }
@@ -428,10 +409,10 @@ fun BottomSheetRescuerArrivedPreview() {
 fun DestinationReachedBottomSheetPreview() {
     val isDarkTheme = true
     CyclistanceTheme(isDarkTheme) {
-        BottomSheetRescue(
+        BottomSheetReachedDestination(
             isDarkTheme = isDarkTheme,
-            displayedText = "You have reached your destination.",
             content = {}, onClickOkButton = {})
+
     }
 
 }
