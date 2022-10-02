@@ -3,11 +3,11 @@ package com.example.cyclistance.feature_main_screen.data.repository
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.core.utils.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.MappingConstants.BIKE_TYPE_KEY
+import com.example.cyclistance.core.utils.editData
+import com.example.cyclistance.core.utils.getData
 import com.example.cyclistance.feature_main_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_main_screen.data.mapper.UserMapper.toUser
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
@@ -103,30 +103,6 @@ class MappingRepositoryImpl(
 }
 
 
-
-fun <T> DataStore<Preferences>.getData(
-    key: Preferences.Key<T>,
-    defaultValue: T
-): Flow<T> {
-    return data.catch { exception ->
-        if (exception is IOException) {
-            emit(emptyPreferences())
-        } else {
-            throw exception
-        }
-    }.map { preferences ->
-        preferences[key]?:defaultValue
-    }
-}
-
-suspend fun <T> DataStore<Preferences>.editData(
-    key: Preferences.Key<T>,
-    value: T
-) {
-    edit { preferences ->
-        preferences[key] = value
-    }
-}
 
 
 private inline fun <T> handleException(action: () -> T): T {

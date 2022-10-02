@@ -6,11 +6,11 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.AuthConstants.DATA_STORE_PHONE_NUMBER_KEY
 import com.example.cyclistance.core.utils.AuthConstants.FACEBOOK_CONNECTION_FAILURE
 import com.example.cyclistance.core.utils.AuthConstants.USER_NOT_FOUND
+import com.example.cyclistance.core.utils.editData
+import com.example.cyclistance.core.utils.getData
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_main_screen.data.repository.dataStore
-import com.example.cyclistance.feature_main_screen.data.repository.editData
-import com.example.cyclistance.feature_main_screen.data.repository.getData
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.*

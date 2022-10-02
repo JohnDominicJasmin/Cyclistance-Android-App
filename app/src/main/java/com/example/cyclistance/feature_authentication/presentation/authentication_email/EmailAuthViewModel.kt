@@ -14,7 +14,7 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import javax.inject.Inject
-
+import io.github.farhanroy.composeawesomedialog.R as R1
 @HiltViewModel
 class EmailAuthViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
@@ -174,7 +174,7 @@ class EmailAuthViewModel @Inject constructor(
                             alertDialogModel = AlertDialogModel(
                                 title = "New Email Sent.",
                                 description = "New verification email has been sent to your email address.",
-                                icon = io.github.farhanroy.composeawesomedialog.R.raw.success))
+                                icon = R1.raw.success))
                     }
                     return@coroutineScope
                 }
@@ -190,7 +190,7 @@ class EmailAuthViewModel @Inject constructor(
                             alertDialogModel = AlertDialogModel(
                                 title = "Error",
                                 description = "Sorry, something went wrong. Please try again.",
-                                icon = io.github.farhanroy.composeawesomedialog.R.raw.error
+                                icon = R1.raw.error
                             )
                         )
                     }

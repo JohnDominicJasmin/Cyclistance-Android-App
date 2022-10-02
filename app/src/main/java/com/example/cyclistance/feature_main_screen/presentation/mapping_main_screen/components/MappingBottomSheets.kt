@@ -4,7 +4,6 @@ package com.example.cyclistance.feature_main_screen.presentation.mapping_main_sc
 
 
 import androidx.compose.foundation.BorderStroke
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -26,8 +25,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.common.AnimatedImage
-
-import com.example.cyclistance.theme.*
+import com.example.cyclistance.theme.Black300
+import com.example.cyclistance.theme.Black440
+import com.example.cyclistance.theme.CyclistanceTheme
+import com.example.cyclistance.theme.Red900
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
