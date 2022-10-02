@@ -4,26 +4,26 @@ import android.location.Address
 import android.location.Geocoder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.MappingConstants
 import com.example.cyclistance.core.utils.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_main_screen.data.remote.dto.Location
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_main_screen.domain.model.User
 import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingDrawerContent
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.utils.MapUiComponents
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.utils.getAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import android.location.Location as AndroidLocation
 import javax.inject.Inject
+import android.location.Location as AndroidLocation
 
 @HiltViewModel
 class MappingViewModel @Inject constructor(
     private val geocoder: Geocoder,
     private val authUseCase: AuthenticationUseCase,
+    val mapUiComponents: MapUiComponents,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(MappingState())
@@ -33,10 +33,6 @@ class MappingViewModel @Inject constructor(
 
     private val _eventFlow: MutableSharedFlow<MappingUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingUiEvent> = _eventFlow.asSharedFlow()
-
-
-
-
 
     private fun getId(): String? = authUseCase.getIdUseCase()
 

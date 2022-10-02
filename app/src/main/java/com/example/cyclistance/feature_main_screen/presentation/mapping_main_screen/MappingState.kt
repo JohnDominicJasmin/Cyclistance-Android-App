@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_main_screen.presentation.mapping_main_sc
 
 import android.location.Address
 import androidx.compose.runtime.Immutable
-import com.google.android.gms.maps.model.LatLng
 
 
 @Immutable
