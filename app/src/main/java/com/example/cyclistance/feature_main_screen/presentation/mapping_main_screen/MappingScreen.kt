@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.location.Location
 import android.os.Build
@@ -29,6 +28,7 @@ import com.example.cyclistance.feature_main_screen.presentation.common.RequestMu
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingBottomSheet
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingMapsScreen
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.utils.MapUiComponents
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
@@ -161,6 +161,7 @@ fun MappingScreen(
     MappingScreen(
         modifier = Modifier.padding(paddingValues),
         isDarkTheme = isDarkTheme,
+        mapUiComponents = mappingViewModel.mapUiComponents,
         state = state,
         onClickRetryButton = {
             if (ConnectionStatus.hasInternetConnection(context)) {
@@ -206,6 +207,7 @@ fun MappingScreenPreview() {
             onClickRetryButton = {},
             onClickSearchButton = {},
             onNewLocationResult = {},
+            mapUiComponents = MapUiComponents()
         )
     }
 }
@@ -216,6 +218,7 @@ fun MappingScreen(
     modifier: Modifier,
     isDarkTheme: Boolean,
     state: MappingState,
+    mapUiComponents: MapUiComponents,
     onClickRetryButton: () -> Unit,
     onClickSearchButton: () -> Unit,
     onNewLocationResult: (Location) -> Unit) {
@@ -241,7 +244,9 @@ fun MappingScreen(
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom)
                 },
-                onNewLocationResult = onNewLocationResult)
+                onNewLocationResult = onNewLocationResult,
+                mapUiComponents = mapUiComponents
+            )
 
 
             if (state.findAssistanceButtonVisible) {

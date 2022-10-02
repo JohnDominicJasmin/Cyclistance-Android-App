@@ -1,65 +1,58 @@
 package com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components
 
+import android.animation.ValueAnimator
 import android.location.Location
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LiveData
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.utils.ComposableLifecycle
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.utils.rememberLocation
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.utils.rememberMapView
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.utils.rememberNavigationLocalProvider
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.MappingState
+import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.utils.*
 import com.mapbox.geojson.Point
-import com.mapbox.maps.CameraOptions
-import com.mapbox.maps.EdgeInsets
 import com.mapbox.maps.Style
-import com.mapbox.maps.plugin.animation.MapAnimationOptions
-import com.mapbox.maps.plugin.animation.camera
+import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.locationcomponent.location
-import com.mapbox.navigation.base.options.NavigationOptions
 import com.mapbox.navigation.core.MapboxNavigationProvider
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult
 import com.mapbox.navigation.core.trip.session.LocationObserver
 import timber.log.Timber
 
 
+
+val locations = listOf(
+    Point.fromLngLat(120.984222,14.599512),
+    Point.fromLngLat(121.252176,14.628978),
+    Point.fromLngLat(121.429968, 14.208007),
+    Point.fromLngLat(121.269195, 13.823594),
+    Point.fromLngLat(121.747392, 14.044194),
+    Point.fromLngLat(125.037057, 6.523497),
+    Point.fromLngLat(125.043330, 6.531999),
+    Point.fromLngLat(125.224905, 6.887962),
+    Point.fromLngLat(125.283468, 7.118415),
+)
+
+
+
+
+
 @Composable
-fun MappingMapsScreen(isDarkTheme: LiveData<Boolean?>, modifier: Modifier) {
+fun MappingMapsScreen(
+    state: MappingState,
+    isDarkTheme: Boolean,
+    mapUiComponents: MapUiComponents,
+    modifier: Modifier,
+    onNewLocationResult: (Location) -> Unit) {
+
+
     val context = LocalContext.current
 
     val navigationLocationProvider by rememberNavigationLocalProvider()
-    var enhanceLocation by rememberLocation()
+    var enhanceLocation by rememberSaveableLocation()
 
-    val locationObserver = remember {
-
-        object : LocationObserver {
-            override fun onNewRawLocation(rawLocation: Location) {
-//                Timber.d("onNewRawLocation: $rawLocation")
-            }
-
-            override fun onNewLocationMatcherResult(locationMatcherResult: LocationMatcherResult) {
-                val isMoving = with(locationMatcherResult.enhancedLocation) {
-                    enhanceLocation.latitude != latitude && enhanceLocation.longitude != longitude
-                }
-
-                if (isMoving) {
-                    enhanceLocation = locationMatcherResult.enhancedLocation
-                    navigationLocationProvider.changePosition(
-                        locationMatcherResult.enhancedLocation,
-                        locationMatcherResult.keyPoints
-                    )
-                }
-
-
-            }
-        }
-    }
 
     val mapView = rememberMapView(context = context)
 
@@ -73,29 +66,66 @@ fun MappingMapsScreen(isDarkTheme: LiveData<Boolean?>, modifier: Modifier) {
         if (MapboxNavigationProvider.isCreated()) {
             MapboxNavigationProvider.retrieve()
         } else {
-            MapboxNavigationProvider.create(
-                NavigationOptions.Builder(mapView.context)
-                    .accessToken(mapView.context.getString(R.string.MapsDownloadToken))
-                    .build())
+            mapUiComponents.navigationOptions?.let(MapboxNavigationProvider::create)
         }
 
 
     }
 
+    LaunchedEffect(key1 = state.locationPermissionGranted) {
+        if (state.locationPermissionGranted) {
+            mapboxNavigation?.startTripSession()
+        }
+    }
+    val locationObserver = remember {
+
+        object : LocationObserver {
+            override fun onNewRawLocation(rawLocation: Location) {
+//                Timber.d("onNewRawLocation: $rawLocation")
+            }
+
+            override fun onNewLocationMatcherResult(locationMatcherResult: LocationMatcherResult) {
+                val locationChange = with(locationMatcherResult.enhancedLocation) {
+                    enhanceLocation.latitude != latitude && enhanceLocation.longitude != longitude
+                }
+
+                if (locationChange) {
+                    enhanceLocation = locationMatcherResult.enhancedLocation
+                    onNewLocationResult(enhanceLocation)
+                }
+
+
+                navigationLocationProvider.changePosition(
+                    location = locationMatcherResult.enhancedLocation,
+                    keyPoints = locationMatcherResult.keyPoints,
+                    latLngTransitionOptions = mapUiComponents.transitionOptions,
+                    bearingTransitionOptions = mapUiComponents.transitionOptions
+                )
+
+            }
+        }
+    }
     ComposableLifecycle { _, event ->
         when (event) {
             Lifecycle.Event.ON_CREATE -> {
-                Timber.v("Lifecycle Event: ON_CREATE")
+
                 mapView.location.apply {
                     setLocationProvider(navigationLocationProvider)
                     enabled = true
                 }
-                mapboxMap.loadStyleUri(Style.MAPBOX_STREETS)
+                mapboxMap.loadStyleUri(if (isDarkTheme) Style.DARK else Style.MAPBOX_STREETS)
                 mapboxNavigation.apply {
-                    this.startTripSession()
-                    this.registerLocationObserver(locationObserver)
+                    this?.registerLocationObserver(locationObserver)
                 }
 
+                locations.forEach {
+                    val annotationApi = mapView.annotations
+                    val pointAnnotationManager = annotationApi.createPointAnnotationManager()
+                    val pointAnnotationOptions = mapUiComponents.pointAnnotationOptions
+                        .withPoint(it)
+                        .withIconImage(context.getDrawable(R.drawable.ic_arrow)?.toBitmap() ?: return@forEach)
+                    pointAnnotationManager.create(pointAnnotationOptions)
+                }
             }
 
             Lifecycle.Event.ON_START -> {
@@ -119,9 +149,9 @@ fun MappingMapsScreen(isDarkTheme: LiveData<Boolean?>, modifier: Modifier) {
             Lifecycle.Event.ON_DESTROY -> {
                 Timber.v("Lifecycle Event: ON_DESTROY")
                 mapView.onDestroy()
-                mapboxNavigation.stopTripSession()
-                mapboxNavigation.unregisterLocationObserver(locationObserver)
-                mapboxNavigation.onDestroy()
+                mapboxNavigation?.stopTripSession()
+                mapboxNavigation?.unregisterLocationObserver(locationObserver)
+                mapboxNavigation?.onDestroy()
 
             }
 
@@ -136,19 +166,6 @@ fun MappingMapsScreen(isDarkTheme: LiveData<Boolean?>, modifier: Modifier) {
             mapView
 
         }, update = { updatedMapView ->
-
-            val mapAnimationOptions = MapAnimationOptions.Builder().duration(1500L).build()
-            updatedMapView.camera.easeTo(
-                CameraOptions.Builder()
-// Centers the camera to the lng/lat specified.
-                    .center(Point.fromLngLat(enhanceLocation.longitude, enhanceLocation.latitude))
-// specifies the zoom value. Increase or decrease to zoom in or zoom out
-                    .zoom(6.0)
-// specify frame of reference from the center.
-                    .padding(EdgeInsets(500.0, 0.0, 0.0, 0.0))
-                    .build(),
-                animationOptions = mapAnimationOptions
-            )
 
 
         })
