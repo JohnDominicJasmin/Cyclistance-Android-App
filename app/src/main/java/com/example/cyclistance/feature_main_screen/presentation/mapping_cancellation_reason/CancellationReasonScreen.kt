@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_main_screen.presentation.mapping_cancellation.components.components
+package com.example.cyclistance.feature_main_screen.presentation.mapping_cancellation.components.jb
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,7 +13,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_main_screen.presentation.common.AdditionalMessage
 import com.example.cyclistance.feature_main_screen.presentation.common.MappingButtonNavigation
-import com.example.cyclistance.feature_main_screen.presentation.mapping_cancellation.components.RadioButtonsSection
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
