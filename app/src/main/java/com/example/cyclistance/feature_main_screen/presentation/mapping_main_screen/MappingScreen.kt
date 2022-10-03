@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.Activity.RESULT_OK
 import android.location.Location
 import android.os.Build
+import android.os.Build.VERSION_CODES.*
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -24,6 +25,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.ConnectionStatus
 import com.example.cyclistance.core.utils.ConnectionStatus.checkLocationSetting
+import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingBottomSheet
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingMapsScreen
@@ -38,6 +40,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.system.exitProcess
 
 @ExperimentalPermissionsApi
 @Composable
@@ -49,20 +52,30 @@ fun MappingScreen(
     scaffoldState: ScaffoldState,
     navController: NavController) {
 
-
+    val context = LocalContext.current
     val state by mappingViewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = typeBottomSheet) {
         mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(typeBottomSheet))
+        //todo: start alerting nearby cyclist
     }
 
     BackHandler(enabled = true, onBack = {
         coroutineScope.launch {
+
             if (scaffoldState.drawerState.isOpen) {
                 scaffoldState.drawerState.close()
-            } else {
-                navController.popBackStack()
+                return@launch
+            }
+
+            if(Build.VERSION.SDK_INT in JELLY_BEAN .. KITKAT_WATCH){
+                context.findActivity()?.finishAffinity();
+                return@launch
+            }
+
+            if(Build.VERSION.SDK_INT >= LOLLIPOP){
+                context.findActivity()?.finishAndRemoveTask()
             }
         }
     })
@@ -79,7 +92,6 @@ fun MappingScreen(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION))
     }
-    val context = LocalContext.current
     val settingResultRequest = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
@@ -247,7 +259,6 @@ fun MappingScreen(
                 onNewLocationResult = onNewLocationResult,
                 mapUiComponents = mapUiComponents
             )
-
 
             if (state.findAssistanceButtonVisible) {
                 SearchAssistanceButton(
