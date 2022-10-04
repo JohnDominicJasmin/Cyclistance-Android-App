@@ -58,14 +58,13 @@ class MappingViewModel @Inject constructor(
     }
 
 
-
-    private fun getUsers(){
+    private fun getUsers() {
         viewModelScope.launch {
             while (this.isActive) {
                 runCatching {
-                mappingUseCase.getUsersUseCase().collect { users ->
-                    _state.update { it.copy(users = Users(users = users)) }
-                }
+                    mappingUseCase.getUsersUseCase().collect { users ->
+                        _state.update { it.copy(users = Users(users = users)) }
+                    }
                 }.onFailure {
                     Timber.e("ON INIT ERROR GETTING USERS: ${it.message}")
                 }

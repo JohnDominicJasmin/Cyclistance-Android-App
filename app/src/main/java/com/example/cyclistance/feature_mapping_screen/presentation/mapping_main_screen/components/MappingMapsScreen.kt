@@ -14,7 +14,10 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.locationcomponent.location
+import com.mapbox.maps.plugin.logo.logo
+import com.mapbox.maps.plugin.scalebar.scalebar
 import com.mapbox.navigation.core.MapboxNavigationProvider
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult
 import com.mapbox.navigation.core.trip.session.LocationObserver
@@ -108,9 +111,18 @@ fun MappingMapsScreen(
         when (event) {
             Lifecycle.Event.ON_CREATE -> {
 
-                mapView.location.apply {
-                    setLocationProvider(navigationLocationProvider)
-                    enabled = true
+                mapView.apply {
+                    scalebar.enabled = false
+                    logo.updateSettings{
+                        enabled = false
+                    }
+                    attribution.updateSettings {
+                        enabled = false
+                    }
+                    location.apply {
+                        setLocationProvider(navigationLocationProvider)
+                        enabled = true
+                    }
                 }
                 mapboxMap.loadStyleUri(if (isDarkTheme) Style.DARK else Style.MAPBOX_STREETS)
                 mapboxNavigation.apply {
