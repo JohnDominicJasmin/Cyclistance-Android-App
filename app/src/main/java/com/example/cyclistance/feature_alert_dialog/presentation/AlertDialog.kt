@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -136,15 +137,16 @@ private fun DialogHeader(modifier: Modifier, @RawRes resId: Int) {
     )
 }
 
+@Preview
 @Composable
 fun AlertDialogPreview() {
 
-    CyclistanceTheme(false) {
+    CyclistanceTheme(true) {
         AlertDialog(
             alertDialog = AlertDialogModel(
                 title = "Success",
                 description = "Sample this is description",
-                icon = io.github.farhanroy.composeawesomedialog.R.raw.error)) {
+                icon = io.github.farhanroy.composeawesomedialog.R.raw.success)) {
         }
     }
 

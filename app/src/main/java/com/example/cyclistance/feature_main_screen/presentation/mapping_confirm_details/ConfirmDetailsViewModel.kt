@@ -55,7 +55,7 @@ class ConfirmDetailsViewModel @Inject constructor(
             runCatching {
                 mappingUseCase.getAddressUseCase().first()
             }.onSuccess { address ->
-                _state.update { it.copy(address = address ?: "") }
+                _state.update { it.copy(address = address) }
             }.onFailure { exception ->
                 Timber.e(exception.message)
             }
