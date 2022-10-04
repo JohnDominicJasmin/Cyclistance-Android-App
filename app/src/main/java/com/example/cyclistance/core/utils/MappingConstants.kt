@@ -23,6 +23,7 @@ object MappingConstants {
     val ADDRESS_KEY = stringPreferencesKey("address")
     val SEARCH_BOTTOM_SHEET = BottomSheetType.SearchAssistance.type
     const val ENHANCE_LOCATION_PROVIDER = "enhance_location_provider"
+    const val INTERVAL_UPDATE_USERS = 5000L
 
 
 }
