@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen
+package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
@@ -26,11 +26,11 @@ import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.ConnectionStatus
 import com.example.cyclistance.core.utils.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
-import com.example.cyclistance.feature_main_screen.presentation.common.RequestMultiplePermissions
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingBottomSheet
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.MappingMapsScreen
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.utils.MapUiComponents
+import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingMapsScreen
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
@@ -40,7 +40,6 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.system.exitProcess
 
 @ExperimentalPermissionsApi
 @Composable
@@ -58,7 +57,6 @@ fun MappingScreen(
 
     LaunchedEffect(key1 = typeBottomSheet) {
         mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(typeBottomSheet))
-        //todo: start alerting nearby cyclist
     }
 
     BackHandler(enabled = true, onBack = {
@@ -80,7 +78,7 @@ fun MappingScreen(
         }
     })
 
-    val locationPermissionsState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    val locationPermissionsState = if (Build.VERSION.SDK_INT >= Q) {
         rememberMultiplePermissionsState(
             permissions = listOf(
                 Manifest.permission.ACCESS_FINE_LOCATION,

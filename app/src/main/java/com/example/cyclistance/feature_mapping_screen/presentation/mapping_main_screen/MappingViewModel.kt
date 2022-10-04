@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen
+package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
 import android.location.Address
 import android.location.Geocoder
@@ -7,13 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.MappingConstants.INTERVAL_UPDATE_USERS
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_main_screen.data.remote.dto.Location
-import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_main_screen.domain.model.User
-import com.example.cyclistance.feature_main_screen.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.utils.MapUiComponents
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.utils.getAddress
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Location
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Status
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.UserAssistance
+import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_mapping_screen.domain.model.User
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -102,10 +105,10 @@ class MappingViewModel @Inject constructor(
 
                 viewModelScope.launch {
                     locationState.update { event.userLocation }.also {
-                            geocoder.getAddress(location = event.userLocation) { address ->
-                                _state.update { it.copy(userAddress = UserAddress(address)) }
-                            }
+                        geocoder.getAddress(location = event.userLocation) { address ->
+                            _state.update { it.copy(userAddress = UserAddress(address)) }
                         }
+                    }
                 }
 
 
@@ -171,21 +174,25 @@ class MappingViewModel @Inject constructor(
 
     private suspend inline fun createUser(address: Address) {
         with(address) {
-            val userAddress = "$subThoroughfare $thoroughfare., $locality, $subAdminArea"
+            val currentAddress = "$subThoroughfare $thoroughfare., $locality, $subAdminArea"
+            _state.update { it.copy(currentAddress = currentAddress) }
             mappingUseCase.createUserUseCase(
                 user = User(
                     id = getId() ?: return,
                     name = getName(),
-                    address = userAddress,
+                    address = currentAddress,
                     profilePictureUrl = getPhotoUrl(),
                     contactNumber = getPhoneNumber(),
                     location = Location(
                         lat = latitude.toString(),
                         lng = longitude.toString()),
+                    userAssistance = UserAssistance(
+                        status = Status(started = true)
+                    ),
                     userNeededHelp = false,
                 ))
 
-            mappingUseCase.updateAddressUseCase(userAddress)
+            mappingUseCase.updateAddressUseCase(currentAddress)
         }
     }
 
