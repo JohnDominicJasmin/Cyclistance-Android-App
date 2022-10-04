@@ -5,6 +5,7 @@ import android.location.Geocoder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.MappingConstants.IMAGE_PLACEHOLDER_URL
+import com.example.cyclistance.core.utils.MappingConstants.INTERVAL_UPDATE_USERS
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_main_screen.data.remote.dto.Location
 import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
@@ -14,6 +15,7 @@ import com.example.cyclistance.feature_main_screen.presentation.mapping_main_scr
 import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.utils.getAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -47,6 +49,27 @@ class MappingViewModel @Inject constructor(
         return authUseCase.getPhotoUrlUseCase() ?: IMAGE_PLACEHOLDER_URL
     }
 
+
+    init {
+        getUsers()
+    }
+
+
+
+    private fun getUsers(){
+        viewModelScope.launch {
+            while (this.isActive) {
+                runCatching {
+                mappingUseCase.getUsersUseCase().collect { users ->
+                    _state.update { it.copy(users = Users(users = users)) }
+                }
+                }.onFailure {
+                    Timber.e("ON INIT ERROR GETTING USERS: ${it.message}")
+                }
+                delay(INTERVAL_UPDATE_USERS)
+            }
+        }
+    }
 
     fun onEvent(event: MappingEvent) {
         when (event) {
