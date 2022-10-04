@@ -1,7 +1,7 @@
 package com.example.cyclistance.feature_authentication.domain.use_case.create_account
 
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
-import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.google.firebase.auth.AuthCredential
 
 class UpdatePhoneNumberUseCase(private val repository: AuthRepository<AuthCredential>) {

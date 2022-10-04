@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_main_screen.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers

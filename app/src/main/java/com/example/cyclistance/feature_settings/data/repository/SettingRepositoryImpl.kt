@@ -10,18 +10,16 @@ import android.os.Environment
 import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
-import androidx.datastore.preferences.core.emptyPreferences
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.core.utils.SettingConstants.DATA_STORE_THEME_KEY
 import com.example.cyclistance.core.utils.editData
 import com.example.cyclistance.core.utils.getData
-import com.example.cyclistance.feature_main_screen.data.repository.dataStore
+import com.example.cyclistance.feature_mapping_screen.data.repository.dataStore
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.io.OutputStream
 
 

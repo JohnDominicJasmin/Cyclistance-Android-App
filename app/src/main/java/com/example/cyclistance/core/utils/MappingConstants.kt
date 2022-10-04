@@ -1,7 +1,7 @@
 package com.example.cyclistance.core.utils
 
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.example.cyclistance.feature_main_screen.presentation.mapping_main_screen.BottomSheetType
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.BottomSheetType
 
 object MappingConstants {
     const val MAX_ZOOM_LEVEL_MAPS = 18.85
