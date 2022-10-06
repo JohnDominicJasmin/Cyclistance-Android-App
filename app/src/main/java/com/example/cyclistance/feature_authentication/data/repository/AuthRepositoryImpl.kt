@@ -5,6 +5,8 @@ import android.net.Uri
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.AuthConstants.DATA_STORE_PHONE_NUMBER_KEY
 import com.example.cyclistance.core.utils.AuthConstants.FACEBOOK_CONNECTION_FAILURE
+import com.example.cyclistance.core.utils.AuthConstants.IMAGE_LARGE_SIZE
+import com.example.cyclistance.core.utils.AuthConstants.IMAGE_SMALL_SIZE
 import com.example.cyclistance.core.utils.AuthConstants.USER_NOT_FOUND
 import com.example.cyclistance.core.utils.editData
 import com.example.cyclistance.core.utils.getData
@@ -59,7 +61,7 @@ class AuthRepositoryImpl(
                                     R.string.no_internet_message)))
                     }
                 }
-                if(continuation.isActive){
+                if (continuation.isActive) {
                     continuation.resume(reload.isSuccessful)
                 }
             }
@@ -71,8 +73,7 @@ class AuthRepositoryImpl(
             auth.currentUser?.sendEmailVerification()?.addOnCompleteListener { sendEmail ->
                 sendEmail.exception?.let {
                     continuation.resumeWithException(
-                        AuthExceptions.EmailVerificationException(
-                            message = context.getString(R.string.failed_email_verification)))
+                        AuthExceptions.EmailVerificationException(message = context.getString(R.string.failed_email_verification)))
                 }
                 if (continuation.isActive) {
                     continuation.resume(sendEmail.isSuccessful)
@@ -209,16 +210,14 @@ class AuthRepositoryImpl(
 
     override fun getPhotoUrl(): String {
         return auth.currentUser?.photoUrl.toString()
-            .replace(oldValue = "=s96-c", newValue = "=s400-c");
+            .replace(oldValue = IMAGE_SMALL_SIZE, newValue = IMAGE_LARGE_SIZE)
     }
 
-    override fun isSignedInWithProvider(): Flow<Boolean> = flow {
-        auth.currentUser?.providerData?.forEach {
-            emit(
-                value = (it.providerId == FacebookAuthProvider.PROVIDER_ID ||
-                         it.providerId == GoogleAuthProvider.PROVIDER_ID))
+    override fun isSignedInWithProvider(): Boolean? {
+        return auth.currentUser?.providerData?.any {
+            it.providerId == FacebookAuthProvider.PROVIDER_ID ||
+            it.providerId == GoogleAuthProvider.PROVIDER_ID
         }
-
     }
 
     override fun isEmailVerified(): Boolean? {

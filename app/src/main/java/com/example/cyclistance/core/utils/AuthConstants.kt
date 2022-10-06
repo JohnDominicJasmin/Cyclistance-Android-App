@@ -14,5 +14,7 @@ object AuthConstants {
     const val USER_NOT_FOUND = "ERROR_USER_NOT_FOUND"
     val DATA_STORE_PHONE_NUMBER_KEY = stringPreferencesKey("phone_number_key")
     const val MINIMUM_NUMBER_OF_CHARACTERS = 3
+    const val IMAGE_SMALL_SIZE = "=s96-c"
+    const val IMAGE_LARGE_SIZE = "=s400-c"
 
 }
