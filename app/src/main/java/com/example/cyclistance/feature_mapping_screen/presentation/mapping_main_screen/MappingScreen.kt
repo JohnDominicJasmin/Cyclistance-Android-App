@@ -34,6 +34,7 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
+import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -55,9 +56,13 @@ fun MappingScreen(
     val state by mappingViewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
+    LaunchedEffect(key1 = true){
+        mappingViewModel.onEvent(event = MappingEvent.GetUsersAsynchronously)
+    }
+
     LaunchedEffect(key1 = typeBottomSheet) {
         if(typeBottomSheet.isNotEmpty()){
-// TODO: start pinging animation in location puck
+            mappingViewModel.onEvent(event = MappingEvent.StartPinging)
         }
         mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(typeBottomSheet))
     }
@@ -140,7 +145,7 @@ fun MappingScreen(
                         Screens.MappingScreen.route)
                 }
                 is MappingUiEvent.ShowSignInScreen -> {
-                    navController.navigateScreen(
+                    navController.navigateScreenInclusively(
                         Screens.SignInScreen.route,
                         Screens.MappingScreen.route)
                 }
@@ -198,6 +203,12 @@ fun MappingScreen(
 }
 
 
+
+
+
+
+
+
 @Preview
 @Composable
 fun MappingScreenPreview() {
@@ -217,6 +228,16 @@ fun MappingScreenPreview() {
         )
     }
 }
+
+
+
+
+
+
+
+
+
+
 
 
 @Composable
