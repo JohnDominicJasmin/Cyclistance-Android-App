@@ -14,15 +14,11 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
-import com.mapbox.maps.plugin.attribution.attribution
-import com.mapbox.maps.plugin.locationcomponent.location
-import com.mapbox.maps.plugin.logo.logo
-import com.mapbox.maps.plugin.scalebar.scalebar
+import com.mapbox.maps.plugin.locationcomponent.location2
 import com.mapbox.navigation.core.MapboxNavigationProvider
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult
 import com.mapbox.navigation.core.trip.session.LocationObserver
 import timber.log.Timber
-
 
 
 val locations = listOf(
@@ -112,23 +108,15 @@ fun MappingMapsScreen(
             Lifecycle.Event.ON_CREATE -> {
 
                 mapView.apply {
-                    scalebar.enabled = false
-                    logo.updateSettings{
-                        enabled = false
+                    location2.apply {
+                        pulsingEnabled = state.isSearchingForAssistance
                     }
-                    attribution.updateSettings {
-                        enabled = false
-                    }
-                    location.apply {
-                        setLocationProvider(navigationLocationProvider)
-                        enabled = true
-                    }
+
                 }
                 mapboxMap.loadStyleUri(if (isDarkTheme) Style.DARK else Style.MAPBOX_STREETS)
                 mapboxNavigation.apply {
                     this?.registerLocationObserver(locationObserver)
                 }
-
                 locations.forEach {
                     val annotationApi = mapView.annotations
                     val pointAnnotationManager = annotationApi.createPointAnnotationManager()

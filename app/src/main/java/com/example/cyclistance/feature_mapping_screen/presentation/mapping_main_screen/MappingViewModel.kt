@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.location.Address
 import android.location.Geocoder
+import androidx.annotation.WorkerThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.MappingConstants.IMAGE_PLACEHOLDER_URL
@@ -16,6 +17,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUse
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.isActive
@@ -53,13 +55,8 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    init {
-        getUsers()
-    }
-
-
-    private fun getUsers() {
-        viewModelScope.launch {
+    private suspend fun getUsers() {
+        coroutineScope {
             while (this.isActive) {
                 runCatching {
                     mappingUseCase.getUsersUseCase().collect { users ->
@@ -80,6 +77,19 @@ class MappingViewModel @Inject constructor(
                 viewModelScope.launch {
                     uploadUserProfile()
                 }
+            }
+
+            is MappingEvent.GetUsersAsynchronously -> {
+                viewModelScope.launch {
+                    getUsers()
+                }
+            }
+            is MappingEvent.StartPinging -> {
+                _state.update { it.copy(isSearchingForAssistance = true) }
+            }
+
+            is MappingEvent.StopPinging -> {
+                _state.update { it.copy(isSearchingForAssistance = false) }
             }
 
             is MappingEvent.DismissNoInternetScreen -> {
