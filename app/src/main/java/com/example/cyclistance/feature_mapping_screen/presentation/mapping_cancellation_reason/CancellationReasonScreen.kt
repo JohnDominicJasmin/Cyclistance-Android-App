@@ -49,9 +49,8 @@ fun CancellationReasonScreen(paddingValues: PaddingValues) {
                 },
             message = "My bike is already fixed.",
             onValueChange = {
-                //todo: implement later
             },
-            enabled = true // todo: change this later
+            enabled = true
         )
 
 
@@ -66,10 +65,8 @@ fun CancellationReasonScreen(paddingValues: PaddingValues) {
                     width = Dimension.percent(0.9f)
                 },
             onClickCancelButton = {
-                //todo: implement later
             },
             onClickConfirmButton = {
-                //todo: implement later
             },
             negativeButtonEnabled = true,
             positiveButtonEnabled = true)

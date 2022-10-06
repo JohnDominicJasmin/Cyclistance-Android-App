@@ -89,7 +89,6 @@ fun MainScreen(
                         }
                     },
                     onClickChat = {
-                        /*  todo: open chat screen here   */
                         coroutineScope.launch {
                             scaffoldState.drawerState.close()
                         }
