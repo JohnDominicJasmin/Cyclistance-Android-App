@@ -102,7 +102,7 @@ fun BottomSheetSearchingAssistance(
 
 
                     Text(
-                        text = "Searching for nearby assistance...",
+                        text = "Requesting help to nearby Cyclists…",
                         color = MaterialTheme.colors.onSurface,
                         style = MaterialTheme.typography.subtitle1,
                         modifier = Modifier
