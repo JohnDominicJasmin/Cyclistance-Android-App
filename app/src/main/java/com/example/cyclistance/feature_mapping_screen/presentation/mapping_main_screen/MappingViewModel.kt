@@ -31,11 +31,12 @@ class MappingViewModel @Inject constructor(
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
     private var getUsersJob: Job? = null
+    private var locationUpdatesFlow: Job? = null
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(MappingState())
     val state = _state.asStateFlow()
 
-    private val locationState = MutableStateFlow(AndroidLocation(""))
+
 
     private val _eventFlow: MutableSharedFlow<MappingUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingUiEvent> = _eventFlow.asSharedFlow()
@@ -100,30 +101,39 @@ class MappingViewModel @Inject constructor(
                     signOutAccount()
                 }
             }
+            is MappingEvent.SubscribeToLocationUpdates -> {
+                subscribeToLocationUpdates()
+            }
 
-            is MappingEvent.LocationPermissionGranted -> {
-                _state.update { it.copy(locationPermissionGranted = true) }
+            is MappingEvent.UnsubscribeToLocationUpdates -> {
+                unSubscribeToLocationUpdates()
             }
 
             is MappingEvent.ChangeBottomSheet -> {
                 _state.update { it.copy(bottomSheetType = event.bottomSheetType) }
             }
 
-            is MappingEvent.OnLocationChange -> {
 
-                viewModelScope.launch {
-                    locationState.update { event.userLocation }.also {
-                        geocoder.getAddress(location = event.userLocation) { address ->
-                            _state.update { it.copy(userAddress = UserAddress(address)) }
-                        }
+        }
+    }
+    private fun subscribeToLocationUpdates() {
+        locationUpdatesFlow = viewModelScope.launch {
+            runCatching {
+                mappingUseCase.getUserLocationUseCase().collect { userLocation ->
+                    _state.update {
+                        it.copy(
+                            userAddress = UserAddress(userLocation.addresses))
                     }
                 }
-
-
+            }.onFailure {
+                Timber.e("Error Location Updates: ${it.message}")
             }
         }
     }
 
+    private fun unSubscribeToLocationUpdates() {
+        locationUpdatesFlow?.cancel()
+    }
     private suspend fun signOutAccount() {
         runCatching {
             authUseCase.signOutUseCase()
@@ -206,7 +216,7 @@ class MappingViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        getUsersJob?.cancel()
+        onEvent(event = MappingEvent.UnsubscribeToLocationUpdates)
         onEvent(event = MappingEvent.StopPinging)
     }
 }

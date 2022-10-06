@@ -96,7 +96,7 @@ fun MappingScreen(
     ) { activityResult ->
         if (activityResult.resultCode == RESULT_OK) {
             Timber.d("GPS Setting Request Accepted")
-            mappingViewModel.onEvent(event = MappingEvent.LocationPermissionGranted)
+            mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
             return@rememberLauncherForActivityResult
         }
         Timber.d("GPS Setting Request Denied")
@@ -126,7 +126,7 @@ fun MappingScreen(
     LaunchedEffect(key1 = true) {
 
         if (locationPermissionsState.allPermissionsGranted) {
-            mappingViewModel.onEvent(event = MappingEvent.LocationPermissionGranted)
+            mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
         }
 
         mappingViewModel.eventFlow.collectLatest { event ->
@@ -163,7 +163,7 @@ fun MappingScreen(
                     context = context,
                     onDisabled = settingResultRequest::launch,
                     onEnabled = {
-                        mappingViewModel.onEvent(event = MappingEvent.LocationPermissionGranted)
+                        mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
                     })
             }
         })
@@ -181,7 +181,7 @@ fun MappingScreen(
         },
         onClickSearchButton = {
             if (locationPermissionsState.allPermissionsGranted) {
-                mappingViewModel.onEvent(event = MappingEvent.LocationPermissionGranted).also {
+                mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates).also {
                     postProfile()
                 }
                 return@MappingScreen
@@ -196,8 +196,6 @@ fun MappingScreen(
             }
 
             locationPermissionsState.launchMultiplePermissionRequest()
-        }, onNewLocationResult = {
-            mappingViewModel.onEvent(event = MappingEvent.OnLocationChange(it))
         })
 
 }
@@ -223,7 +221,6 @@ fun MappingScreenPreview() {
             state = MappingState(),
             onClickRetryButton = {},
             onClickSearchButton = {},
-            onNewLocationResult = {},
             mapUiComponents = MapUiComponents()
         )
     }
@@ -247,8 +244,7 @@ fun MappingScreen(
     state: MappingState,
     mapUiComponents: MapUiComponents,
     onClickRetryButton: () -> Unit,
-    onClickSearchButton: () -> Unit,
-    onNewLocationResult: (Location) -> Unit) {
+    onClickSearchButton: () -> Unit) {
 
 
     MappingBottomSheet(
@@ -271,7 +267,6 @@ fun MappingScreen(
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom)
                 },
-                onNewLocationResult = onNewLocationResult,
                 mapUiComponents = mapUiComponents
             )
 

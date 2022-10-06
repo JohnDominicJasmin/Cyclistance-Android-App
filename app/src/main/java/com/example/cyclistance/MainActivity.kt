@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         sdkInitialize(applicationContext);
         AppEventsLogger.activateApp(application);
-
+//        Mapbox.getInstance(this, getString(R.string.MapsDownloadToken))
         if(savedInstanceState == null) {
             setContent {
                 CompositionLocalProvider(LocalActivityResultCallbackManager provides callbackManager) {

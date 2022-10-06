@@ -15,9 +15,6 @@ import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.locationcomponent.location2
-import com.mapbox.navigation.core.MapboxNavigationProvider
-import com.mapbox.navigation.core.trip.session.LocationMatcherResult
-import com.mapbox.navigation.core.trip.session.LocationObserver
 import timber.log.Timber
 
 
@@ -42,13 +39,11 @@ fun MappingMapsScreen(
     state: MappingState,
     isDarkTheme: Boolean,
     mapUiComponents: MapUiComponents,
-    modifier: Modifier,
-    onNewLocationResult: (Location) -> Unit) {
+    modifier: Modifier) {
 
 
     val context = LocalContext.current
 
-    val navigationLocationProvider by rememberNavigationLocalProvider()
     var enhanceLocation by rememberSaveableLocation()
 
 
@@ -59,50 +54,8 @@ fun MappingMapsScreen(
     }
 
 
-    val mapboxNavigation = remember {
-
-        if (MapboxNavigationProvider.isCreated()) {
-            MapboxNavigationProvider.retrieve()
-        } else {
-            mapUiComponents.navigationOptions?.let(MapboxNavigationProvider::create)
-        }
 
 
-    }
-
-    LaunchedEffect(key1 = state.locationPermissionGranted) {
-        if (state.locationPermissionGranted) {
-            mapboxNavigation?.startTripSession()
-        }
-    }
-    val locationObserver = remember {
-
-        object : LocationObserver {
-            override fun onNewRawLocation(rawLocation: Location) {
-//                Timber.d("onNewRawLocation: $rawLocation")
-            }
-
-            override fun onNewLocationMatcherResult(locationMatcherResult: LocationMatcherResult) {
-                val locationChange = with(locationMatcherResult.enhancedLocation) {
-                    enhanceLocation.latitude != latitude && enhanceLocation.longitude != longitude
-                }
-
-                if (locationChange) {
-                    enhanceLocation = locationMatcherResult.enhancedLocation
-                    onNewLocationResult(enhanceLocation)
-                }
-
-
-                navigationLocationProvider.changePosition(
-                    location = locationMatcherResult.enhancedLocation,
-                    keyPoints = locationMatcherResult.keyPoints,
-                    latLngTransitionOptions = mapUiComponents.transitionOptions,
-                    bearingTransitionOptions = mapUiComponents.transitionOptions
-                )
-
-            }
-        }
-    }
     ComposableLifecycle { _, event ->
         when (event) {
             Lifecycle.Event.ON_CREATE -> {
@@ -114,9 +67,7 @@ fun MappingMapsScreen(
 
                 }
                 mapboxMap.loadStyleUri(if (isDarkTheme) Style.DARK else Style.MAPBOX_STREETS)
-                mapboxNavigation.apply {
-                    this?.registerLocationObserver(locationObserver)
-                }
+
                 locations.forEach {
                     val annotationApi = mapView.annotations
                     val pointAnnotationManager = annotationApi.createPointAnnotationManager()
@@ -129,7 +80,6 @@ fun MappingMapsScreen(
 
             Lifecycle.Event.ON_START -> {
                 Timber.v("Lifecycle Event: ON_START")
-                mapView.onStart()
             }
 
             Lifecycle.Event.ON_RESUME -> {
@@ -142,15 +92,11 @@ fun MappingMapsScreen(
 
             Lifecycle.Event.ON_STOP -> {
                 Timber.v("Lifecycle Event: ON_STOP")
-                mapView.onStop()
             }
 
             Lifecycle.Event.ON_DESTROY -> {
                 Timber.v("Lifecycle Event: ON_DESTROY")
-                mapView.onDestroy()
-                mapboxNavigation?.stopTripSession()
-                mapboxNavigation?.unregisterLocationObserver(locationObserver)
-                mapboxNavigation?.onDestroy()
+
 
             }
 

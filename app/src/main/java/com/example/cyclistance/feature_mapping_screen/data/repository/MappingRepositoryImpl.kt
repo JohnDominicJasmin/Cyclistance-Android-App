@@ -6,6 +6,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.core.utils.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.MappingConstants.BIKE_TYPE_KEY
+import com.example.cyclistance.core.utils.SharedLocationManager
+import com.example.cyclistance.core.utils.SharedLocationModel
 import com.example.cyclistance.core.utils.editData
 import com.example.cyclistance.core.utils.getData
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
@@ -15,6 +17,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.model.*
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.UserDto
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import retrofit2.HttpException
 import timber.log.Timber
 import java.io.IOException
@@ -22,6 +25,7 @@ import java.io.IOException
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
 
 class MappingRepositoryImpl(
+    private val sharedLocationManager: SharedLocationManager,
     private val api: CyclistanceApi,
     context: Context) : MappingRepository {
 
@@ -49,6 +53,9 @@ class MappingRepositoryImpl(
             api.getUserById(userId).toUser()
         }
 
+    override fun getUserLocation(): Flow<SharedLocationModel> {
+        return sharedLocationManager.locationFlow().distinctUntilChanged()
+    }
 
     override suspend fun getUsers(): List<User> =
         handleException {

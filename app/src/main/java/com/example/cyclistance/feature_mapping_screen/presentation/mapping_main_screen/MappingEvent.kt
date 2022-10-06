@@ -10,7 +10,7 @@ sealed class MappingEvent {
     object StopPinging: MappingEvent()
     object GetUsersAsynchronously: MappingEvent()
     data class ChangeBottomSheet(val bottomSheetType: String): MappingEvent()
-    object LocationPermissionGranted: MappingEvent()
-    data class OnLocationChange(val userLocation: Location): MappingEvent()
+    object SubscribeToLocationUpdates: MappingEvent()
+    object UnsubscribeToLocationUpdates: MappingEvent()
     object DismissNoInternetScreen: MappingEvent()
 }

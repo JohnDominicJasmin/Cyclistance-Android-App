@@ -23,7 +23,6 @@ import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.locationcomponent.location2
 import com.mapbox.maps.plugin.logo.logo
 import com.mapbox.maps.plugin.scalebar.scalebar
-import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider
 
 @Composable
 fun ComposableLifecycle(
@@ -41,12 +40,7 @@ fun ComposableLifecycle(
     }
 }
 
-@Composable
-fun rememberNavigationLocalProvider() = remember {
-    mutableStateOf(
-        NavigationLocationProvider()
-    )
-}
+
 
 @Composable
 fun rememberSaveableLocation() = rememberSaveable {
@@ -74,21 +68,21 @@ fun rememberMapView(context: Context) = remember {
                 locationPuck = LocationPuck2D(
                     bearingImage = ContextCompat.getDrawable(
                         context,
-                        com.mapbox.navigation.R.drawable.mapbox_mylocation_bg_shape
+                        com.mapbox.maps.R.drawable.mapbox_mylocation_bg_shape
                     ),
                     topImage = ContextCompat.getDrawable(
                         context,
-                        com.mapbox.navigation.R.drawable.mapbox_mylocation_icon_default
+                        com.mapbox.maps.R.drawable.mapbox_mylocation_icon_default
                     ),
                     shadowImage = ContextCompat.getDrawable(
                         context,
-                        com.mapbox.navigation.R.drawable.mapbox_user_icon_shadow
+                        com.mapbox.maps.R.drawable.mapbox_user_icon_shadow
                     )
                 )
                 enabled = true
                 pulsingEnabled = true
                 this.showAccuracyRing = true
-                this.pulsingColor = context.getColor(R.color.DodgerBlue)
+                this.pulsingColor = ContextCompat.getColor(context,R.color.DodgerBlue)
                 this.puckBearingEnabled = true
                 this.pulsingMaxRadius = 120.0f
                 this.puckBearingSource = PuckBearingSource.HEADING

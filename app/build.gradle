@@ -176,7 +176,8 @@ dependencies {
 
     //mapbox
 
-    implementation "com.mapbox.navigation:android:2.7.0"
+    implementation 'com.mapbox.maps:android:10.8.1'
+
     implementation("com.google.android.gms:play-services-location:20.0.0")
 
 

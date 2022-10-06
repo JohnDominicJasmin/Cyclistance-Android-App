@@ -2,9 +2,12 @@ package com.example.cyclistance.di
 
 import android.content.Context
 import android.location.Geocoder
+import com.example.cyclistance.BaseApplication
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.MappingConstants
+import com.example.cyclistance.core.utils.SharedLocationManager
+import com.example.cyclistance.feature_main_screen.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
@@ -19,10 +22,6 @@ import com.google.gson.GsonBuilder
 import com.mapbox.android.core.location.LocationEngineProvider
 import com.mapbox.android.core.location.LocationEngineRequest
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
-import com.mapbox.navigation.base.TimeFormat
-import com.mapbox.navigation.base.options.DeviceProfile
-import com.mapbox.navigation.base.options.DeviceType
-import com.mapbox.navigation.base.options.NavigationOptions
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -56,8 +55,9 @@ object MappingModule {
     @Singleton
     fun provideCyclistanceRepository(
         @ApplicationContext context: Context,
+        sharedLocationManager: SharedLocationManager,
         api: CyclistanceApi): MappingRepository {
-        return MappingRepositoryImpl(api, context)
+        return MappingRepositoryImpl(sharedLocationManager = sharedLocationManager, api = api, context = context)
     }
 
     @Provides
@@ -72,20 +72,14 @@ object MappingModule {
             .setFastestInterval(MappingConstants.FASTEST_LOCATION_UPDATES_INTERVAL)
             .build()
 
-        val navigationOptions = NavigationOptions.Builder(context)
-            .deviceProfile(DeviceProfile.Builder().deviceType(DeviceType.HANDHELD).build())
-            .timeFormatType(TimeFormat.TWELVE_HOURS)
-            .locationEngine(locationEngine = locationEngine)
-            .locationEngineRequest(locationEngineRequest)
-            .accessToken(context.getString(R.string.MapsDownloadToken))
-            .build()
 
 
 
+
+        //todo remove later
         return MapUiComponents(
             locationEngine = locationEngine,
             locationEngineRequest = locationEngineRequest,
-            navigationOptions = navigationOptions,
             transitionOptions = {
                 duration = 1000
             },
@@ -107,12 +101,21 @@ object MappingModule {
             createUserUseCase = CreateUserUseCase(repository),
             deleteUserUseCase = DeleteUserUseCase(repository),
             updateUserUseCase = UpdateUserUseCase(repository),
+            getUserLocationUseCase = GetUserLocationUseCase(repository),
             getBikeTypeUseCase = GetBikeTypeUseCase(repository),
             updateBikeTypeUseCase = UpdateBikeTypeUseCase(repository),
             getAddressUseCase = GetAddressUseCase(repository),
             updateAddressUseCase = UpdateAddressUseCase(repository)
         )
     }
+
+    @Provides
+    @Singleton
+    fun provideSharedLocationManager(
+        @ApplicationContext context: Context
+    ): SharedLocationManager =
+        SharedLocationManager(context, (context.applicationContext as BaseApplication).applicationScope)
+
 
 
     @Provides

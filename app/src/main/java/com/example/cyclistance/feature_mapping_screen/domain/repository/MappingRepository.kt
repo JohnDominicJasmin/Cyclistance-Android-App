@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_mapping_screen.domain.repository
 
+import com.example.cyclistance.core.utils.SharedLocationModel
 import com.example.cyclistance.feature_mapping_screen.domain.model.*
 import kotlinx.coroutines.flow.Flow
 
@@ -16,6 +17,7 @@ interface MappingRepository {
     fun getAddress(): Flow<String>
     suspend fun updateAddress(address: String)
 
+    fun getUserLocation(): Flow<SharedLocationModel>
 
 
 }

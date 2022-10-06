@@ -9,19 +9,19 @@ import timber.log.Timber
 import java.io.IOException
 
 @WorkerThread
-fun Geocoder.getAddress(location: Location, onCallbackAddress: (List<Address>) -> Unit) {
+fun Geocoder.getAddress(latitude: Double,longitude: Double, onCallbackAddress: (List<Address>) -> Unit) {
     
     try {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             getFromLocation(
-                location.latitude, location.longitude, 1,
+                latitude, longitude, 1,
             ) { addresses ->
                 onCallbackAddress(addresses)
             }
         } else {
             onCallbackAddress(
-                getFromLocation(location.latitude, location.longitude, 1) ?: emptyList())
+                getFromLocation(latitude, longitude, 1) ?: emptyList())
         }
 
     } catch (e: IOException) {
