@@ -12,7 +12,7 @@ interface AuthRepository<T> {
     fun getId(): String?
 
     fun getPhotoUrl(): String?
-    fun isSignedInWithProvider(): Flow<Boolean>
+    fun isSignedInWithProvider(): Boolean?
     fun isEmailVerified(): Boolean?
     fun hasAccountSignedIn(): Boolean
     suspend fun uploadImage(uri: Uri): Uri

@@ -55,7 +55,7 @@ class SplashScreenViewModel @Inject constructor(
         }
 
     }
-    private  fun isUserSignedIn():Boolean{
+    private fun isUserSignedIn():Boolean{
         return (authUseCase.isSignedInWithProviderUseCase() == true || authUseCase.isEmailVerifiedUseCase() == true) &&
                 authUseCase.hasAccountSignedInUseCase()
     }
