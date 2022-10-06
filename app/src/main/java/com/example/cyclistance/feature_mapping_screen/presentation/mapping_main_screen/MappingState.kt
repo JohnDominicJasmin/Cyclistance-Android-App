@@ -24,5 +24,6 @@ data class Users(
     val hasInternet: Boolean = true,
     val bottomSheetType: String = "",
     val locationPermissionGranted: Boolean = false,
+    val isSearchingForAssistance: Boolean = false,
     val users: Users = Users()
 )

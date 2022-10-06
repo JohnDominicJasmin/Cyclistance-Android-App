@@ -17,11 +17,8 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUse
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.isActive
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 import android.location.Location as AndroidLocation
@@ -32,6 +29,8 @@ class MappingViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase,
     val mapUiComponents: MapUiComponents,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
+
+    private var getUsersJob: Job? = null
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(MappingState())
     val state = _state.asStateFlow()
@@ -80,7 +79,7 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.GetUsersAsynchronously -> {
-                viewModelScope.launch {
+                getUsersJob = viewModelScope.launch {
                     getUsers()
                 }
             }
@@ -207,5 +206,7 @@ class MappingViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
+        getUsersJob?.cancel()
+        onEvent(event = MappingEvent.StopPinging)
     }
 }
