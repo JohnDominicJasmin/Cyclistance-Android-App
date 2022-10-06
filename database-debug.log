@@ -1,8 +1,5 @@
-20:05:28.642 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
-20:05:28.919 [main] INFO com.firebase.server.forge.App$ - Listening at localhost:9000
-20:05:38.489 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - wqqwddqw2asd-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 165ms, init: 0ms
-20:05:38.609 [NamespaceSystem-blocking-namespace-operation-dispatcher-7:wqqwddqw2asd-default-rtdb$-29356269:] INFO com.firebase.core.namespace.StateManager - Namespace wqqwddqw2asd-default-rtdb status Active to Active
-21:18:04.432 [Thread-0] INFO com.firebase.server.forge.App$ - Attempting graceful shutdown.
-21:18:04.457 [NamespaceSystem-akka.actor.default-dispatcher-14] INFO com.firebase.core.namespace.Terminator$Terminator - 1 actors left to terminate: wqqwddqw2asd-default-rtdb
-21:18:04.494 [NamespaceSystem-akka.actor.default-dispatcher-14] INFO com.firebase.core.namespace.NamespaceActor - stopped namespace actor for wqqwddqw2asd-default-rtdb
-21:18:04.508 [Thread-0] INFO com.firebase.server.forge.App$ - Graceful shutdown complete.
+15:35:52.037 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+15:35:52.194 [main] INFO com.firebase.server.forge.App$ - Listening at localhost:9000
+15:36:01.400 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO com.firebase.core.namespace.NamespaceActor - cyclistance-cc715-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 105ms, init: 0ms
+15:36:01.458 [NamespaceSystem-blocking-namespace-operation-dispatcher-6:cyclistance-cc715-default-rtdb$1993642385:] INFO com.firebase.core.namespace.StateManager - Namespace cyclistance-cc715-default-rtdb status Active to Active
+15:40:50.458 [NamespaceSystem-akka.actor.default-dispatcher-12] INFO com.firebase.core.namespace.NamespaceActor - cyclistance-cc715 successfully activated FBKV (SurveyIdle(0)) wait: 17ms, init: 0ms
