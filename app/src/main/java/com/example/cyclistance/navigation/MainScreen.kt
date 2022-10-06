@@ -75,12 +75,10 @@ fun MainScreen(
                 MappingDrawerContent(
                     onClickSettings = {
                         coroutineScope.launch {
+                            scaffoldState.drawerState.close()
                             navController.navigateScreen(
                                 Screens.SettingScreen.route,
-                                Screens.MappingScreen.route).also {
-
-                                scaffoldState.drawerState.close()
-                            }
+                                Screens.MappingScreen.route)
                         }
                     },
                     onClickRescueRequest = {
@@ -95,9 +93,8 @@ fun MainScreen(
                     },
                     onClickSignOut = {
                         coroutineScope.launch {
-                            mappingViewModel.onEvent(event = MappingEvent.SignOut).also {
-                                scaffoldState.drawerState.close()
-                            }
+                            scaffoldState.drawerState.close()
+                            mappingViewModel.onEvent(event = MappingEvent.SignOut)
                         }
                     }
                 )
