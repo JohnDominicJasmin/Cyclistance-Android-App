@@ -56,6 +56,9 @@ fun MappingScreen(
     val coroutineScope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = typeBottomSheet) {
+        if(typeBottomSheet.isNotEmpty()){
+// TODO: start pinging animation in location puck
+        }
         mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(typeBottomSheet))
     }
 
@@ -67,14 +70,7 @@ fun MappingScreen(
                 return@launch
             }
 
-            if(Build.VERSION.SDK_INT in JELLY_BEAN .. KITKAT_WATCH){
-                context.findActivity()?.finishAffinity();
-                return@launch
-            }
-
-            if(Build.VERSION.SDK_INT >= LOLLIPOP){
-                context.findActivity()?.finishAndRemoveTask()
-            }
+            context.findActivity()?.finish()
         }
     })
 
@@ -236,7 +232,7 @@ fun MappingScreen(
 
     MappingBottomSheet(
         isDarkTheme = isDarkTheme,
-        onClickActionButton = { /*TODO*/ },
+        onClickActionButton = { /*TODO: add action here, or lambda parameters*/ },
         bottomSheetType = state.bottomSheetType) {
 
         ConstraintLayout(
