@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.cyclistance.core.utils.MappingConstants.ADDRESS_KEY
-import com.example.cyclistance.core.utils.MappingConstants.BIKE_TYPE_KEY
-import com.example.cyclistance.core.utils.SharedLocationManager
-import com.example.cyclistance.core.utils.SharedLocationModel
+import com.example.cyclistance.core.utils.constants.MappingConstants.ADDRESS_KEY
+import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_KEY
+import com.example.cyclistance.core.utils.location.SharedLocationManager
+import com.example.cyclistance.core.utils.location.SharedLocationModel
 import com.example.cyclistance.core.utils.editData
 import com.example.cyclistance.core.utils.getData
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi

@@ -2,11 +2,10 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.location.Address
 import android.location.Geocoder
-import androidx.annotation.WorkerThread
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.MappingConstants.IMAGE_PLACEHOLDER_URL
-import com.example.cyclistance.core.utils.MappingConstants.INTERVAL_UPDATE_USERS
+import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
+import com.example.cyclistance.core.utils.constants.MappingConstants.INTERVAL_UPDATE_USERS
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Location
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Status
@@ -15,13 +14,11 @@ import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingE
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import javax.inject.Inject
-import android.location.Location as AndroidLocation
 
 @HiltViewModel
 class MappingViewModel @Inject constructor(

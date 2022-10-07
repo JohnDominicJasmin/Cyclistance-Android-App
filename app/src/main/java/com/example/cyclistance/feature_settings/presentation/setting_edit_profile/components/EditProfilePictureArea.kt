@@ -19,7 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.MappingConstants
+import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.theme.CyclistanceTheme
 
 

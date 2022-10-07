@@ -11,7 +11,7 @@ import android.provider.MediaStore
 import androidx.annotation.RequiresApi
 import androidx.core.content.FileProvider
 import com.example.cyclistance.BuildConfig
-import com.example.cyclistance.core.utils.SettingConstants.DATA_STORE_THEME_KEY
+import com.example.cyclistance.core.utils.constants.SettingConstants.DATA_STORE_THEME_KEY
 import com.example.cyclistance.core.utils.editData
 import com.example.cyclistance.core.utils.getData
 import com.example.cyclistance.feature_mapping_screen.data.repository.dataStore

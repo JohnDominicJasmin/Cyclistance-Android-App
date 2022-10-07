@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.cyclistance.core.utils.MappingConstants.MAX_CHARACTERS
+import com.example.cyclistance.core.utils.constants.MappingConstants.MAX_CHARACTERS
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black500
 

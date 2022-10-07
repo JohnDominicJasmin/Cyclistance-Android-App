@@ -1,38 +1,50 @@
-package com.example.cyclistance.core.utils
+package com.example.cyclistance.core.utils.location
 
-import android.annotation.SuppressLint
+import android.Manifest
 import android.content.Context
 import android.content.IntentSender
+import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.ConnectivityManager
-import androidx.activity.compose.ManagedActivityResultLauncher
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.IntentSenderRequest
+import androidx.core.content.ContextCompat
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
-import timber.log.Timber
 
 object ConnectionStatus {
 
 
     @Suppress("Deprecation")
-    fun hasInternetConnection(context: Context): Boolean =
-        (context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).activeNetworkInfo.let {networkInfo->
+    fun Context.hasInternetConnection(): Boolean =
+        (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).activeNetworkInfo.let {networkInfo->
             networkInfo?.isConnected == true && networkInfo.isAvailable
         }
 
 
-    fun hasGPSConnection(context: Context): Boolean =
-        (context.getSystemService(Context.LOCATION_SERVICE) as LocationManager).let { locationManager ->
+    fun Context.hasGPSConnection(): Boolean =
+        (getSystemService(Context.LOCATION_SERVICE) as LocationManager).let { locationManager ->
             locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
                 LocationManager.NETWORK_PROVIDER)
         }
 
 
 
-     fun checkLocationSetting(
-        context: Context,
+
+
+    fun Context.hasLocationPermission(): Boolean {
+        return ContextCompat.checkSelfPermission(
+            this,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED &&
+               ContextCompat.checkSelfPermission(
+                   this,
+                   Manifest.permission.ACCESS_FINE_LOCATION
+               ) == PackageManager.PERMISSION_GRANTED
+    }
+
+
+     fun Context.checkLocationSetting(
         onDisabled: (IntentSenderRequest) -> Unit,
         onEnabled: () -> Unit
     ) {
@@ -43,7 +55,7 @@ object ConnectionStatus {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
-        val client: SettingsClient = LocationServices.getSettingsClient(context)
+        val client: SettingsClient = LocationServices.getSettingsClient(this)
         val builder: LocationSettingsRequest.Builder = LocationSettingsRequest
             .Builder()
             .addLocationRequest(locationRequest)

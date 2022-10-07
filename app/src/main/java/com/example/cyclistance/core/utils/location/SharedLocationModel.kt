@@ -1,4 +1,4 @@
-package com.example.cyclistance.core.utils
+package com.example.cyclistance.core.utils.location
 
 import android.location.Address
 import com.google.android.gms.maps.model.LatLng

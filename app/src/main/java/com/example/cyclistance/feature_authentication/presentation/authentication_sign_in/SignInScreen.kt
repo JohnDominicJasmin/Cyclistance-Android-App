@@ -11,7 +11,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
@@ -24,8 +23,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
-import com.example.cyclistance.core.utils.ConnectionStatus
+import com.example.cyclistance.core.utils.constants.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
+import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_authentication.domain.util.AuthResult
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
@@ -171,7 +170,7 @@ fun SignInScreen(
             navController.navigateScreen(Screens.SignUpScreen.route, Screens.SignInScreen.route)
         },
         onClickRetryButton = {
-            if (ConnectionStatus.hasInternetConnection(context)) {
+            if (context.hasInternetConnection()) {
                 emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
                 signInViewModel.onEvent(event = SignInEvent.DismissNoInternetScreen)
             }

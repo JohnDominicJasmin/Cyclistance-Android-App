@@ -33,8 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
-import com.example.cyclistance.core.utils.MappingConstants.NONE_OF_THE_ABOVE_RESULT_CODE
-import com.example.cyclistance.core.utils.MappingConstants.NO_SIM_CARD_RESULT_CODE
+import com.example.cyclistance.core.utils.constants.MappingConstants.NONE_OF_THE_ABOVE_RESULT_CODE
+import com.example.cyclistance.core.utils.constants.MappingConstants.NO_SIM_CARD_RESULT_CODE
 import com.example.cyclistance.feature_mapping_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.SelectImageBottomSheet

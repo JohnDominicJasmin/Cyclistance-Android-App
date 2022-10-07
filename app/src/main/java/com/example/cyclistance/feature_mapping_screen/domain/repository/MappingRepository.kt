@@ -1,6 +1,6 @@
 package com.example.cyclistance.feature_mapping_screen.domain.repository
 
-import com.example.cyclistance.core.utils.SharedLocationModel
+import com.example.cyclistance.core.utils.location.SharedLocationModel
 import com.example.cyclistance.feature_mapping_screen.domain.model.*
 import kotlinx.coroutines.flow.Flow
 

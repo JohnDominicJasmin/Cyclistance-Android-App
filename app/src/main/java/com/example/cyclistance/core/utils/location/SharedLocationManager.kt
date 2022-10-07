@@ -1,9 +1,8 @@
-package com.example.cyclistance.core.utils
+package com.example.cyclistance.core.utils.location
 
 import android.content.Context
 import android.location.Geocoder
-import android.os.Build
-import com.example.cyclistance.core.utils.MappingConstants.LOCATION_UPDATES_INTERVAL
+import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATION_UPDATES_INTERVAL
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getAddress
 import com.google.android.gms.maps.model.LatLng
 import im.delight.android.location.SimpleLocation

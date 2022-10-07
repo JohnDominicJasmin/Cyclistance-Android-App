@@ -3,9 +3,9 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import android.os.CountDownTimer
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.ViewModel
-import com.example.cyclistance.core.utils.AuthConstants.ONE_SECOND_TO_MILLIS
-import com.example.cyclistance.core.utils.AuthConstants.REFRESH_EMAIL_INTERVAL
-import com.example.cyclistance.core.utils.AuthConstants.TIMER_COUNTS
+import com.example.cyclistance.core.utils.constants.AuthConstants.ONE_SECOND_TO_MILLIS
+import com.example.cyclistance.core.utils.constants.AuthConstants.REFRESH_EMAIL_INTERVAL
+import com.example.cyclistance.core.utils.constants.AuthConstants.TIMER_COUNTS
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase

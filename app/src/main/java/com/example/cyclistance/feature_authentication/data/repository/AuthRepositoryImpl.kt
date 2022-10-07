@@ -3,11 +3,11 @@ package com.example.cyclistance.feature_authentication.data.repository
 import android.content.Context
 import android.net.Uri
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.AuthConstants.DATA_STORE_PHONE_NUMBER_KEY
-import com.example.cyclistance.core.utils.AuthConstants.FACEBOOK_CONNECTION_FAILURE
-import com.example.cyclistance.core.utils.AuthConstants.IMAGE_LARGE_SIZE
-import com.example.cyclistance.core.utils.AuthConstants.IMAGE_SMALL_SIZE
-import com.example.cyclistance.core.utils.AuthConstants.USER_NOT_FOUND
+import com.example.cyclistance.core.utils.constants.AuthConstants.DATA_STORE_PHONE_NUMBER_KEY
+import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNECTION_FAILURE
+import com.example.cyclistance.core.utils.constants.AuthConstants.IMAGE_LARGE_SIZE
+import com.example.cyclistance.core.utils.constants.AuthConstants.IMAGE_SMALL_SIZE
+import com.example.cyclistance.core.utils.constants.AuthConstants.USER_NOT_FOUND
 import com.example.cyclistance.core.utils.editData
 import com.example.cyclistance.core.utils.getData
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
@@ -20,7 +20,6 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
 import kotlin.coroutines.resume
