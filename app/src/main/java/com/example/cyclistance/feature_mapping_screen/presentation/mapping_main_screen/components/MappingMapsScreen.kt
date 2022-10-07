@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components
 
 import android.location.Location
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -11,9 +12,12 @@ import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
 import com.mapbox.geojson.Point
+import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.plugin.gestures.gestures
+import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location2
 import timber.log.Timber
 
@@ -43,23 +47,17 @@ fun MappingMapsScreen(
 
 
     val context = LocalContext.current
-
-    var enhanceLocation by rememberSaveableLocation()
-
-
     val mapView = rememberMapView(context = context)
+
 
     val mapboxMap = remember {
         mapView.getMapboxMap()
     }
 
 
-
-
     ComposableLifecycle { _, event ->
         when (event) {
             Lifecycle.Event.ON_CREATE -> {
-
                 mapView.apply {
                     location2.apply {
                         pulsingEnabled = state.isSearchingForAssistance
@@ -73,7 +71,7 @@ fun MappingMapsScreen(
                     val pointAnnotationManager = annotationApi.createPointAnnotationManager()
                     val pointAnnotationOptions = mapUiComponents.pointAnnotationOptions
                         .withPoint(it)
-                        .withIconImage(context.getDrawable(R.drawable.ic_arrow)?.toBitmap() ?: return@forEach)
+                        .withIconImage(AppCompatResources.getDrawable(context, R.drawable.ic_arrow)?.toBitmap() ?: return@forEach)
                     pointAnnotationManager.create(pointAnnotationOptions)
                 }
             }

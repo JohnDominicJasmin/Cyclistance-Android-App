@@ -18,8 +18,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.cyclistance.core.utils.ConnectionStatus
-import com.example.cyclistance.core.utils.MappingConstants.SEARCH_BOTTOM_SHEET
+import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
+import com.example.cyclistance.core.utils.constants.MappingConstants.SEARCH_BOTTOM_SHEET
 import com.example.cyclistance.feature_mapping_screen.presentation.common.AdditionalMessage
 import com.example.cyclistance.feature_mapping_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details.components.AddressTextField
@@ -78,7 +78,7 @@ fun ConfirmDetailsScreen(
             viewModel.onEvent(event = ConfirmDetailsEvent.Save)
         },
         onClickRetryButton = {
-            if (ConnectionStatus.hasInternetConnection(context)) {
+            if (context.hasInternetConnection()) {
                 viewModel.onEvent(event = ConfirmDetailsEvent.DismissNoInternetScreen)
             }
         })

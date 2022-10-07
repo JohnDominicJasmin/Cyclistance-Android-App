@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
-import android.location.Location
 import android.os.Build
 import android.os.Build.VERSION_CODES.*
 import android.widget.Toast
@@ -23,8 +22,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.cyclistance.core.utils.ConnectionStatus
-import com.example.cyclistance.core.utils.ConnectionStatus.checkLocationSetting
+import com.example.cyclistance.core.utils.location.ConnectionStatus.checkLocationSetting
+import com.example.cyclistance.core.utils.location.ConnectionStatus.hasGPSConnection
+import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
@@ -104,9 +104,8 @@ fun MappingScreen(
     }
 
     val postProfile = {
-        if (!ConnectionStatus.hasGPSConnection(context)) {
-            checkLocationSetting(
-                context = context,
+        if (!context.hasGPSConnection()) {
+            context.checkLocationSetting(
                 onDisabled = settingResultRequest::launch,
                 onEnabled = {
                     mappingViewModel.onEvent(
@@ -158,9 +157,8 @@ fun MappingScreen(
 
     RequestMultiplePermissions(
         multiplePermissionsState = locationPermissionsState, onPermissionGranted = {
-            if (!ConnectionStatus.hasGPSConnection(context)) {
-                checkLocationSetting(
-                    context = context,
+            if (!context.hasGPSConnection()) {
+                context.checkLocationSetting(
                     onDisabled = settingResultRequest::launch,
                     onEnabled = {
                         mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
@@ -175,7 +173,7 @@ fun MappingScreen(
         mapUiComponents = mappingViewModel.mapUiComponents,
         state = state,
         onClickRetryButton = {
-            if (ConnectionStatus.hasInternetConnection(context)) {
+            if (context.hasInternetConnection()) {
                 mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetScreen)
             }
         },

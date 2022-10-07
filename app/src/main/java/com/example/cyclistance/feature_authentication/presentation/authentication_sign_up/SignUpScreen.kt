@@ -21,7 +21,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.ConnectionStatus
+import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.*
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
@@ -106,7 +106,7 @@ fun SignUpScreen(
                 Screens.SignUpScreen.route)
         },
         onClickRetryButton = {
-            if (ConnectionStatus.hasInternetConnection(context)) {
+            if (context.hasInternetConnection()) {
                 signUpViewModel.onEvent(event = SignUpEvent.DismissNoInternetScreen)
             }
         }

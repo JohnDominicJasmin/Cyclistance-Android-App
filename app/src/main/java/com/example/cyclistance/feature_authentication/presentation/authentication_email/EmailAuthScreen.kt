@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.NavController
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.ConnectionStatus
+import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthResendButton
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthTextStatus
@@ -106,7 +106,7 @@ fun EmailAuthScreen(
             }
         },
         onClickRetryButton = {
-            if (ConnectionStatus.hasInternetConnection(context)) {
+            if (context.hasInternetConnection()) {
                 emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
             }
         })

@@ -2,8 +2,8 @@ package com.example.cyclistance.feature_authentication.domain.use_case.create_ac
 
 import android.content.Context
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.ConnectionStatus
 import com.example.cyclistance.core.utils.InputValidate.isEmailValid
+import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
@@ -25,7 +25,7 @@ class SignInWithEmailAndPasswordUseCase(
             authModel.password.trim().isEmpty() ->
                 throw AuthExceptions.PasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
 
-            !ConnectionStatus.hasInternetConnection(context) ->
+            !context.hasInternetConnection() ->
                 throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
 
             else -> repository.signInWithEmailAndPassword(
