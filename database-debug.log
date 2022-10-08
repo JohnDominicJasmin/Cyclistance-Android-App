@@ -1,10 +1,4 @@
-15:35:52.037 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
-15:35:52.194 [main] INFO com.firebase.server.forge.App$ - Listening at localhost:9000
-15:36:01.400 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO com.firebase.core.namespace.NamespaceActor - cyclistance-cc715-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 105ms, init: 0ms
-15:36:01.458 [NamespaceSystem-blocking-namespace-operation-dispatcher-6:cyclistance-cc715-default-rtdb$1993642385:] INFO com.firebase.core.namespace.StateManager - Namespace cyclistance-cc715-default-rtdb status Active to Active
-15:40:50.458 [NamespaceSystem-akka.actor.default-dispatcher-12] INFO com.firebase.core.namespace.NamespaceActor - cyclistance-cc715 successfully activated FBKV (SurveyIdle(0)) wait: 17ms, init: 0ms
-19:10:36.315 [Thread-0] INFO com.firebase.server.forge.App$ - Attempting graceful shutdown.
-19:10:36.334 [NamespaceSystem-akka.actor.default-dispatcher-33] INFO com.firebase.core.namespace.Terminator$Terminator - 2 actors left to terminate: cyclistance-cc715, cyclistance-cc715-default-rtdb
-19:10:36.349 [NamespaceSystem-akka.actor.default-dispatcher-33] INFO com.firebase.core.namespace.NamespaceActor - stopped namespace actor for cyclistance-cc715
-19:10:36.349 [NamespaceSystem-akka.actor.default-dispatcher-34] INFO com.firebase.core.namespace.NamespaceActor - stopped namespace actor for cyclistance-cc715-default-rtdb
-19:10:36.354 [Thread-0] INFO com.firebase.server.forge.App$ - Graceful shutdown complete.
+01:34:32.676 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+01:34:32.901 [main] INFO com.firebase.server.forge.App$ - Listening at localhost:9000
+01:34:41.951 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - cyclistance-cc715-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 127ms, init: 0ms
+01:34:42.014 [NamespaceSystem-blocking-namespace-operation-dispatcher-7:cyclistance-cc715-default-rtdb$1239093634:] INFO com.firebase.core.namespace.StateManager - Namespace cyclistance-cc715-default-rtdb status Active to Active
