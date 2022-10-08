@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION_CODES.*
 import android.widget.Toast
@@ -22,15 +23,18 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_START
 import com.example.cyclistance.core.utils.location.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
+import com.example.cyclistance.core.utils.service.LocationService
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingMapsScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startServiceIntent
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
@@ -93,6 +97,7 @@ fun MappingScreen(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
         if (activityResult.resultCode == RESULT_OK) {
+            context.startServiceIntent()
             Timber.d("GPS Setting Request Accepted")
             return@rememberLauncherForActivityResult
         }
@@ -121,30 +126,34 @@ fun MappingScreen(
 
     LaunchedEffect(key1 = true) {
 
-        if (locationPermissionsState.allPermissionsGranted) {
-            mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
-        }
+        with(mappingViewModel) {
 
-        mappingViewModel.eventFlow.collectLatest { event ->
-            when (event) {
-                is MappingUiEvent.ShowToastMessage -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                }
-                is MappingUiEvent.ShowConfirmDetailsScreen -> {
-                    navController.navigateScreen(
-                        Screens.ConfirmDetailsScreen.route,
-                        Screens.MappingScreen.route)
-                }
-                is MappingUiEvent.ShowEditProfileScreen -> {
-                    navController.navigateScreen(
-                        Screens.EditProfileScreen.route,
-                        Screens.MappingScreen.route)
-                }
-                is MappingUiEvent.ShowSignInScreen -> {
-                    navController.navigateScreenInclusively(
-                        Screens.SignInScreen.route,
-                        Screens.MappingScreen.route)
-                }
+            onEvent(event = MappingEvent.GetUsersAsynchronously)
+            onEvent(event = MappingEvent.SubscribeToLocationUpdates)
+
+            eventFlow.collectLatest { event ->
+                when (event) {
+                    is MappingUiEvent.ShowToastMessage -> {
+                        Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                    }
+
+                    is MappingUiEvent.ShowConfirmDetailsScreen -> {
+                        navController.navigateScreen(
+                            Screens.ConfirmDetailsScreen.route,
+                            Screens.MappingScreen.route)
+                    }
+
+                    is MappingUiEvent.ShowEditProfileScreen -> {
+                        navController.navigateScreen(
+                            Screens.EditProfileScreen.route,
+                            Screens.MappingScreen.route)
+                    }
+
+                    is MappingUiEvent.ShowSignInScreen -> {
+                        navController.navigateScreenInclusively(
+                            Screens.SignInScreen.route,
+                            Screens.MappingScreen.route)
+                    }
 
 
                 }
@@ -159,7 +168,7 @@ fun MappingScreen(
                 context.checkLocationSetting(
                     onDisabled = settingResultRequest::launch,
                     onEnabled = {
-                        mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
+                        context.startServiceIntent()
                     })
             }
         })
@@ -177,11 +186,8 @@ fun MappingScreen(
         },
         onClickSearchButton = {
             if (locationPermissionsState.allPermissionsGranted) {
+                context.startServiceIntent()
 
-                Intent(context, LocationService::class.java).apply {
-                    action = ACTION_START
-                    context.startService(this)
-                }
                 postProfile()
 
                 return@MappingScreen

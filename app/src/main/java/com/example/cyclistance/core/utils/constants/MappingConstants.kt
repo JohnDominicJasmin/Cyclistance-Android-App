@@ -27,8 +27,7 @@ object MappingConstants {
     val SEARCH_BOTTOM_SHEET = BottomSheetType.SearchAssistance.type
     const val ENHANCE_LOCATION_PROVIDER = "enhance_location_provider"
     const val LOCATION_NAME = "cyclistance-location"
-    const val LOCATION_ID = "cyclistance-location-id"
-    const val LOCATION_CHANNEL_ID = "cyclistance-location-channel-id"
+    const val LOCATION_SERVICE_CHANNEL_ID = "cyclistance-location-channel-id"
     const val NOTIFICATION_FOREGROUND_ID = 1
     const val ACTION_START = "start"
     const val ACTION_STOP = "stop"
