@@ -6,10 +6,5 @@ import com.mapbox.android.core.location.LocationEngineRequest
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 
 data class MapUiComponents(
-    val locationEngine: LocationEngine? = null,
-    val locationEngineRequest: LocationEngineRequest? = null,
-    val transitionOptions: ValueAnimator.() -> Unit = {},
     val pointAnnotationOptions: PointAnnotationOptions = PointAnnotationOptions()
-
-
 )
