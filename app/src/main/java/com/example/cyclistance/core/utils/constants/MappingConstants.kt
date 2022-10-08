@@ -25,13 +25,12 @@ object MappingConstants {
     val BIKE_TYPE_KEY = stringPreferencesKey("bike_type")
     val ADDRESS_KEY = stringPreferencesKey("address")
     val SEARCH_BOTTOM_SHEET = BottomSheetType.SearchAssistance.type
-    const val ENHANCE_LOCATION_PROVIDER = "enhance_location_provider"
+
     const val LOCATION_NAME = "cyclistance-location"
     const val LOCATION_SERVICE_CHANNEL_ID = "cyclistance-location-channel-id"
     const val NOTIFICATION_FOREGROUND_ID = 1
     const val ACTION_START = "start"
     const val ACTION_STOP = "stop"
-
 
 
 }
