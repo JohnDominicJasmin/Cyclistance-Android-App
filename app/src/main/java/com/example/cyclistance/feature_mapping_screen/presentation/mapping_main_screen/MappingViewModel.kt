@@ -59,7 +59,7 @@ class MappingViewModel @Inject constructor(
                         _state.update { it.copy(users = Users(users = users)) }
                     }
                 }.onFailure {
-                    Timber.e("ON INIT ERROR GETTING USERS: ${it.message}")
+                    Timber.e("ERROR GETTING USERS: ${it.message}")
                 }
                 delay(INTERVAL_UPDATE_USERS)
             }
