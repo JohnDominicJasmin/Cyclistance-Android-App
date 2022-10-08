@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_main_screen.domain.use_case.location
+package com.example.cyclistance.feature_mapping_screen.domain.use_case.location
 
 import android.location.Address
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository

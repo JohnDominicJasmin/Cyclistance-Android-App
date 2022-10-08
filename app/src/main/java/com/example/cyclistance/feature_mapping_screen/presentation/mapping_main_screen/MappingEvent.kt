@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
-import android.location.Location
 
 
 sealed class MappingEvent {

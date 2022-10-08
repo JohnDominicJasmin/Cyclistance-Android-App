@@ -3,9 +3,7 @@ package com.example.cyclistance.di
 import android.content.Context
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.core.utils.location.LocationClient
-import com.example.cyclistance.feature_main_screen.domain.use_case.location.GetUserLocationUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
