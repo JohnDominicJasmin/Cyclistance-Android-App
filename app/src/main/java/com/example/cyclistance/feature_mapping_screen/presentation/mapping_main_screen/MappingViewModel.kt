@@ -22,7 +22,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MappingViewModel @Inject constructor(
-    private val geocoder: Geocoder,
     private val authUseCase: AuthenticationUseCase,
     val mapUiComponents: MapUiComponents,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
@@ -77,6 +76,7 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.GetUsersAsynchronously -> {
+                getUsersJob?.cancel()
                 getUsersJob = viewModelScope.launch {
                     getUsers()
                 }
@@ -114,12 +114,14 @@ class MappingViewModel @Inject constructor(
         }
     }
     private fun subscribeToLocationUpdates() {
+        locationUpdatesFlow?.cancel()
         locationUpdatesFlow = viewModelScope.launch {
             runCatching {
-                mappingUseCase.getUserLocationUseCase().collect { userLocation ->
+                mappingUseCase.getUserLocationUseCase().collect { addressList ->
+                    Timber.v("LOCATION UPDATES: ${addressList.firstOrNull()?.locality}")
                     _state.update {
                         it.copy(
-                            userAddress = UserAddress(userLocation.addresses))
+                            userAddress = UserAddress(addressList))
                     }
                 }
             }.onFailure {
