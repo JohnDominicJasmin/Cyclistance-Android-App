@@ -56,12 +56,10 @@ fun MappingScreen(
     val state by mappingViewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(key1 = true){
-        mappingViewModel.onEvent(event = MappingEvent.GetUsersAsynchronously)
-    }
+
 
     LaunchedEffect(key1 = typeBottomSheet) {
-        if(typeBottomSheet.isNotEmpty()){
+        if (typeBottomSheet.isNotEmpty()) {
             mappingViewModel.onEvent(event = MappingEvent.StartPinging)
         }
         mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(typeBottomSheet))
@@ -96,7 +94,6 @@ fun MappingScreen(
     ) { activityResult ->
         if (activityResult.resultCode == RESULT_OK) {
             Timber.d("GPS Setting Request Accepted")
-            mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
             return@rememberLauncherForActivityResult
         }
         Timber.d("GPS Setting Request Denied")
@@ -150,6 +147,7 @@ fun MappingScreen(
                 }
 
 
+                }
             }
         }
     }
@@ -179,9 +177,13 @@ fun MappingScreen(
         },
         onClickSearchButton = {
             if (locationPermissionsState.allPermissionsGranted) {
-                mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates).also {
-                    postProfile()
+
+                Intent(context, LocationService::class.java).apply {
+                    action = ACTION_START
+                    context.startService(this)
                 }
+                postProfile()
+
                 return@MappingScreen
             }
 
@@ -197,12 +199,6 @@ fun MappingScreen(
         })
 
 }
-
-
-
-
-
-
 
 
 @Preview
@@ -223,16 +219,6 @@ fun MappingScreenPreview() {
         )
     }
 }
-
-
-
-
-
-
-
-
-
-
 
 
 @Composable
