@@ -42,10 +42,6 @@ fun ComposableLifecycle(
 
 
 
-@Composable
-fun rememberSaveableLocation() = rememberSaveable {
-    mutableStateOf(Location(MappingConstants.ENHANCE_LOCATION_PROVIDER))
-}
 
 @Composable
 fun rememberMapView(context: Context) = remember {
