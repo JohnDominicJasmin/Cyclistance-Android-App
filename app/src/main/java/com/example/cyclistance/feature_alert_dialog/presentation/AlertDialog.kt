@@ -49,7 +49,7 @@ import io.github.farhanroy.composeawesomedialog.themes.Shapes
 
 @Composable
 fun DeleteAccountDialog(
-    @RawRes icon: Int,
+    icon: Int,
     onDismissRequest: () -> Unit = {}) {
 
     val (isDialogOpen, onDialogVisibilityToggle) = rememberSaveable { mutableStateOf(true) }
@@ -252,7 +252,7 @@ fun AlertDialog(
 
 @Composable
 private fun DialogHeadCreator(
-    @RawRes icon: Int,
+    icon: Int,
     isDialogOpen: Boolean,
     onDialogVisibilityToggle: () -> Unit,
     onDismissRequest: () -> Unit,
