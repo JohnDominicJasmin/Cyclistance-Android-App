@@ -44,7 +44,6 @@ class EditProfileViewModel @Inject constructor(
 
 
     init {
-        //todo: put this to LaunchEffect
         onEvent(event = EditProfileEvent.LoadName)
         onEvent(event = EditProfileEvent.LoadPhoto)
         onEvent(event = EditProfileEvent.LoadPhoneNumber)
