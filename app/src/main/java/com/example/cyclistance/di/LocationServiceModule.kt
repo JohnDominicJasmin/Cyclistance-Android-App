@@ -60,11 +60,12 @@ object LocationServiceModule {
         @ApplicationContext context: Context
     ): NotificationCompat.Builder {
         return NotificationCompat.Builder(context, MappingConstants.LOCATION_SERVICE_CHANNEL_ID)
-            .setAutoCancel(false)
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setContentTitle("Cyclistance")
             .setContentText("Tracking your ride")
             .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setAutoCancel(true);
+
     }
 }
