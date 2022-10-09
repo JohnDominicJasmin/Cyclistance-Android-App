@@ -1,17 +1,20 @@
 package com.example.cyclistance.core.utils.service
 
+import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.location.Address
+import android.os.Build
 import androidx.core.app.NotificationCompat
-import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_START
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_STOP
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATION_SERVICE_CHANNEL_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.NOTIFICATION_FOREGROUND_ID
 import com.example.cyclistance.core.utils.location.LocationClient
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -22,12 +25,14 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
-
+@AndroidEntryPoint
 class LocationService(
 ): Service() {
 
     @Inject lateinit var locationClient: LocationClient
     @Inject lateinit var notification: NotificationCompat.Builder
+
+    private lateinit var  notificationManager: NotificationManager
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -35,6 +40,18 @@ class LocationService(
         val address: MutableStateFlow<List<Address>> = MutableStateFlow(emptyList())
     }
 
+    override fun onCreate() {
+        super.onCreate()
+        notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(LOCATION_SERVICE_CHANNEL_ID, MappingConstants.LOCATION_NAME, NotificationManager.IMPORTANCE_LOW)
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+
+
+        }
+    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when(intent?.action) {
@@ -53,7 +70,6 @@ class LocationService(
 
 
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         locationClient.getLocationUpdates()
             .catch {
