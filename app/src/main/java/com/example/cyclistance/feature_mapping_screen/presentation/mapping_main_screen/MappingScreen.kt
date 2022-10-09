@@ -2,16 +2,13 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
-import android.content.Intent
 import android.os.Build
 import android.os.Build.VERSION_CODES.*
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
@@ -23,18 +20,16 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_START
 import com.example.cyclistance.core.utils.location.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
-import com.example.cyclistance.core.utils.service.LocationService
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingMapsScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startServiceIntent
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startServiceIntentAction
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
@@ -97,7 +92,7 @@ fun MappingScreen(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
         if (activityResult.resultCode == RESULT_OK) {
-            context.startServiceIntent()
+            context.startServiceIntentAction()
             Timber.d("GPS Setting Request Accepted")
             return@rememberLauncherForActivityResult
         }
@@ -168,7 +163,7 @@ fun MappingScreen(
                 context.checkLocationSetting(
                     onDisabled = settingResultRequest::launch,
                     onEnabled = {
-                        context.startServiceIntent()
+                        context.startServiceIntentAction()
                     })
             }
         })
@@ -186,8 +181,7 @@ fun MappingScreen(
         },
         onClickSearchButton = {
             if (locationPermissionsState.allPermissionsGranted) {
-                context.startServiceIntent()
-
+                context.startServiceIntentAction()
                 postProfile()
 
                 return@MappingScreen

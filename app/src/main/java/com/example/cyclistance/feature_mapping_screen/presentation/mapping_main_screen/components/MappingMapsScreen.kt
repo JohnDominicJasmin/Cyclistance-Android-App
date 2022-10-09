@@ -1,23 +1,19 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components
 
-import android.location.Location
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.Lifecycle
-import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.ComposableLifecycle
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapView
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startServiceIntentAction
 import com.mapbox.geojson.Point
-import com.mapbox.maps.CameraOptions
 import com.mapbox.maps.Style
-import com.mapbox.maps.plugin.annotation.annotations
-import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
-import com.mapbox.maps.plugin.gestures.gestures
-import com.mapbox.maps.plugin.locationcomponent.OnIndicatorPositionChangedListener
 import com.mapbox.maps.plugin.locationcomponent.location2
 import timber.log.Timber
 
@@ -58,6 +54,7 @@ fun MappingMapsScreen(
     ComposableLifecycle { _, event ->
         when (event) {
             Lifecycle.Event.ON_CREATE -> {
+                Timber.v("Lifecycle Event: ON_CREATE")
                 mapView.apply {
                     location2.apply {
                         pulsingEnabled = state.isSearchingForAssistance
@@ -66,14 +63,14 @@ fun MappingMapsScreen(
                 }
                 mapboxMap.loadStyleUri(if (isDarkTheme) Style.DARK else Style.MAPBOX_STREETS)
 
-                locations.forEach {
+            /*    locations.forEach {
                     val annotationApi = mapView.annotations
                     val pointAnnotationManager = annotationApi.createPointAnnotationManager()
                     val pointAnnotationOptions = mapUiComponents.pointAnnotationOptions
                         .withPoint(it)
                         .withIconImage(AppCompatResources.getDrawable(context, R.drawable.ic_arrow)?.toBitmap() ?: return@forEach)
                     pointAnnotationManager.create(pointAnnotationOptions)
-                }
+                }*/
             }
 
             Lifecycle.Event.ON_START -> {
@@ -94,7 +91,7 @@ fun MappingMapsScreen(
 
             Lifecycle.Event.ON_DESTROY -> {
                 Timber.v("Lifecycle Event: ON_DESTROY")
-
+                context.startServiceIntentAction(intentAction = MappingConstants.ACTION_STOP)
 
             }
 

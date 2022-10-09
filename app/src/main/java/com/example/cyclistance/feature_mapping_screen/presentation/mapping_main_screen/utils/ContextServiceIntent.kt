@@ -5,9 +5,9 @@ import android.content.Intent
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.service.LocationService
 
-fun Context.startServiceIntent(){
+fun Context.startServiceIntentAction(intentAction:String = MappingConstants.ACTION_START){
     Intent(this, LocationService::class.java).apply {
-        action = MappingConstants.ACTION_START
+        action = intentAction
         startService(this)
     }
 }
