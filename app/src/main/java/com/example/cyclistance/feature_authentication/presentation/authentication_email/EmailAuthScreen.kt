@@ -45,11 +45,12 @@ fun EmailAuthScreen(
     val context = LocalContext.current
 
     val emailAuthState by emailAuthViewModel.state.collectAsState()
-    val intent = Intent(Intent.ACTION_MAIN).apply {
-        addCategory(Intent.CATEGORY_APP_EMAIL)
-        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    val intent = remember {
+        Intent(Intent.ACTION_MAIN).apply {
+            addCategory(Intent.CATEGORY_APP_EMAIL)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
     }
-
 
 
 
@@ -134,7 +135,6 @@ fun EmailAuthScreen(
     onClickRetryButton: () -> Unit = {},
 ) {
 
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -175,7 +175,7 @@ fun EmailAuthScreen(
             }
 
 
-            val secondsRemaining = if (emailAuthState.secondsLeft < 2) "${emailAuthState.secondsLeft}" else "${emailAuthState.secondsLeft} s"
+            val secondsRemaining = remember(emailAuthState.secondsLeft) { if (emailAuthState.secondsLeft < 2) "${emailAuthState.secondsLeft}" else "${emailAuthState.secondsLeft} s" }
             val secondsRemainingText = remember(secondsRemaining, emailAuthState.isTimerRunning) {
                         if (emailAuthState.isTimerRunning) "Resend Email in $secondsRemaining" else "Resend Email"
                     }

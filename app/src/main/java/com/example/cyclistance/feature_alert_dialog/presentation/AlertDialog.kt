@@ -276,15 +276,17 @@ private fun DialogHeadCreator(
                 contentAlignment = Alignment.Center
             ) {
 
-                val iconResourceType = context.resources.getResourceTypeName(icon)
-                val iconModifier = Modifier
-                    .zIndex(100f)
-                    .size(72.dp)
-                    .align(Alignment.TopCenter)
-                    .shadow(elevation = 20.dp, shape = CircleShape, clip = true)
-                    .border(
-                        border = BorderStroke(width = 2.dp, color = Transparent),
-                        shape = CircleShape)
+                val iconResourceType =  remember { context.resources.getResourceTypeName(icon) }
+                val iconModifier = remember {
+                    Modifier
+                        .zIndex(100f)
+                        .size(72.dp)
+                        .align(Alignment.TopCenter)
+                        .shadow(elevation = 20.dp, shape = CircleShape, clip = true)
+                        .border(
+                            border = BorderStroke(width = 2.dp, color = Transparent),
+                            shape = CircleShape)
+                }
 
 
                 if (iconResourceType == "raw") {
