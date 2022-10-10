@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
 
 
 sealed class MappingEvent {
@@ -12,4 +13,6 @@ sealed class MappingEvent {
     object SubscribeToLocationUpdates: MappingEvent()
     object UnsubscribeToLocationUpdates: MappingEvent()
     object DismissNoInternetScreen: MappingEvent()
+    object LocateUserPosition: MappingEvent()
+
 }

@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
 import android.location.Address
-import android.location.Geocoder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
@@ -32,10 +31,24 @@ class MappingViewModel @Inject constructor(
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(MappingState())
     val state = _state.asStateFlow()
 
-
-
     private val _eventFlow: MutableSharedFlow<MappingUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingUiEvent> = _eventFlow.asSharedFlow()
+
+    private var address: List<Address> = emptyList()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private fun getId(): String? = authUseCase.getIdUseCase()
 
@@ -56,7 +69,7 @@ class MappingViewModel @Inject constructor(
             while (this.isActive) {
                 runCatching {
                     mappingUseCase.getUsersUseCase().collect { users ->
-                        _state.update { it.copy(users = Users(users = users)) }
+                        _state.update { it.copy(users = Users(activeUsers = users)) }
                     }
                 }.onFailure {
                     Timber.e("ERROR GETTING USERS: ${it.message}")
@@ -74,6 +87,17 @@ class MappingViewModel @Inject constructor(
                     uploadUserProfile()
                 }
             }
+
+            is MappingEvent.LocateUserPosition -> {
+                val location = address.lastOrNull()
+                _state.update {
+                    it.copy(
+                        latitude = location?.latitude ?: 0.0,
+                        longitude = location?.longitude ?: 0.0
+                    )
+                }
+            }
+
 
             is MappingEvent.GetUsersAsynchronously -> {
                 getUsersJob?.cancel()
@@ -113,16 +137,13 @@ class MappingViewModel @Inject constructor(
 
         }
     }
+
     private fun subscribeToLocationUpdates() {
         locationUpdatesFlow?.cancel()
         locationUpdatesFlow = viewModelScope.launch {
             runCatching {
-                mappingUseCase.getUserLocationUseCase().collect { addressList ->
-                    Timber.v("LOCATION UPDATES: ${addressList.firstOrNull()?.locality}")
-                    _state.update {
-                        it.copy(
-                            userAddress = UserAddress(addressList))
-                    }
+                mappingUseCase.getUserLocationUseCase().collect {
+                    address = it
                 }
             }.onFailure {
                 Timber.e("Error Location Updates: ${it.message}")
@@ -133,6 +154,7 @@ class MappingViewModel @Inject constructor(
     private fun unSubscribeToLocationUpdates() {
         locationUpdatesFlow?.cancel()
     }
+
     private suspend fun signOutAccount() {
         runCatching {
             authUseCase.signOutUseCase()
@@ -145,9 +167,9 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun uploadUserProfile() {
 
-        val userAddress = state.value.userAddress.address
-        if (userAddress.isNotEmpty()) {
-            userAddress.forEach { address ->
+        if (address.isNotEmpty()) {
+
+            address.forEach { address ->
                 runCatching {
                     _state.update { it.copy(isLoading = true) }
                     createUser(address)
@@ -163,9 +185,9 @@ class MappingViewModel @Inject constructor(
                     handleException(exception)
                 }
             }
-        } else {
-            _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
+            return
         }
+        _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
 
 
     }
