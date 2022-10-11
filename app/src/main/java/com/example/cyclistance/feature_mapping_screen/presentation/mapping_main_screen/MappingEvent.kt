@@ -13,6 +13,5 @@ sealed class MappingEvent {
     object SubscribeToLocationUpdates: MappingEvent()
     object UnsubscribeToLocationUpdates: MappingEvent()
     object DismissNoInternetScreen: MappingEvent()
-    object LocateUserPosition: MappingEvent()
 
 }

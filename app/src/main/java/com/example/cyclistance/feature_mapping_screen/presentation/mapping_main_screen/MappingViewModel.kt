@@ -3,6 +3,8 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 import android.location.Address
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.INTERVAL_UPDATE_USERS
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
@@ -35,18 +37,6 @@ class MappingViewModel @Inject constructor(
     val eventFlow: SharedFlow<MappingUiEvent> = _eventFlow.asSharedFlow()
 
     private var address: List<Address> = emptyList()
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -87,17 +77,6 @@ class MappingViewModel @Inject constructor(
                     uploadUserProfile()
                 }
             }
-
-            is MappingEvent.LocateUserPosition -> {
-                val location = address.lastOrNull()
-                _state.update {
-                    it.copy(
-                        latitude = location?.latitude ?: 0.0,
-                        longitude = location?.longitude ?: 0.0
-                    )
-                }
-            }
-
 
             is MappingEvent.GetUsersAsynchronously -> {
                 getUsersJob?.cancel()
