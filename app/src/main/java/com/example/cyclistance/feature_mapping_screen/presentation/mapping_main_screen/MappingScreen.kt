@@ -201,10 +201,10 @@ fun MappingScreen(
 }
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Preview
 @Composable
 fun MappingScreenPreview() {
-    val context = LocalContext.current
 
 
     CyclistanceTheme(true) {
@@ -215,20 +215,60 @@ fun MappingScreenPreview() {
             state = MappingState(),
             onClickRetryButton = {},
             onClickSearchButton = {},
-            mapUiComponents = MapUiComponents()
-        )
+            mapUiComponents = MapUiComponents(),
+
+            )
     }
 }
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MappingScreen(
     modifier: Modifier,
     isDarkTheme: Boolean,
     state: MappingState,
     mapUiComponents: MapUiComponents,
+    locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     onClickRetryButton: () -> Unit,
     onClickSearchButton: () -> Unit) {
+
+
+    val context = LocalContext.current
+    val mapView = rememberMapView(context = context)
+
+    val mapboxMap = remember {
+        mapView.getMapboxMap()
+    }
+
+    val userLocationAvailable = remember(state.latitude, state.longitude) {
+        locationPermissionState.allPermissionsGranted.and(state.latitude != DEFAULT_LATITUDE && state.longitude != DEFAULT_LONGITUDE)
+    }
+
+    val locateUser =
+        {
+            if (userLocationAvailable) {
+                mapView.location2.apply {
+                    enabled = true
+                }
+                val point = Point.fromLngLat(state.longitude, state.latitude)
+                mapboxMap.flyTo(
+                    cameraOptions {
+                        center(point)
+                        zoom(MAP_ZOOM)
+                        bearing(0.0)
+                    },
+                    mapAnimationOptions {
+                        duration(DEFAULT_CAMERA_ANIMATION_DURATION)
+                    }
+                )
+            }
+        }
+
+
+    LaunchedEffect(key1 = userLocationAvailable) {
+        locateUser()
+    }
 
 
     MappingBottomSheet(
@@ -240,19 +280,44 @@ fun MappingScreen(
             modifier = modifier
                 .fillMaxSize()) {
 
-            val (mapScreen, searchButton, circularProgressbar, noInternetScreen) = createRefs()
+            val (mapScreen, searchButton, circularProgressbar, noInternetScreen, locateButton) = createRefs()
 
             MappingMapsScreen(
                 state = state,
-                isDarkTheme = isDarkTheme,
                 modifier = Modifier.constrainAs(mapScreen) {
                     top.linkTo(parent.top)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom)
                 },
-                mapUiComponents = mapUiComponents
+                mapUiComponents = mapUiComponents,
+                mapView = mapView,
+                isDarkTheme = isDarkTheme,
+                mapboxMap = mapboxMap,
+                locationPermissionState = locationPermissionState
             )
+
+            LocateUserButton(
+                modifier = Modifier
+                    .size(53.dp)
+                    .constrainAs(locateButton) {
+                        end.linkTo(parent.end, margin = 5.dp)
+                        bottom.linkTo(parent.bottom)
+                        centerVerticallyTo(parent)
+                    },
+                icon = if (locationPermissionState.allPermissionsGranted) Resource.drawable.ic_baseline_my_location_24 else Resource.drawable.ic_locate_user_position,
+                onClick = {
+
+                    locationPermissionState.requestPermission(
+                        context = context,
+                        rationalMessage = "Location permission is not yet granted.") {
+                        locateUser()
+                    }
+
+
+                }
+            )
+
 
             if (state.findAssistanceButtonVisible) {
                 SearchAssistanceButton(
@@ -294,9 +359,6 @@ fun MappingScreen(
 
 
 }
-
-
-
 
 
 
