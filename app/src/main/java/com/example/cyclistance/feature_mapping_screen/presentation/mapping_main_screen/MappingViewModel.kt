@@ -54,20 +54,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private suspend fun getUsers() {
-        coroutineScope {
-            while (this.isActive) {
-                runCatching {
-                    mappingUseCase.getUsersUseCase().collect { users ->
-                        _state.update { it.copy(users = Users(activeUsers = users)) }
-                    }
-                }.onFailure {
-                    Timber.e("ERROR GETTING USERS: ${it.message}")
-                }
-                delay(INTERVAL_UPDATE_USERS)
-            }
-        }
-    }
+
 
     fun onEvent(event: MappingEvent) {
         when (event) {
@@ -116,13 +103,33 @@ class MappingViewModel @Inject constructor(
 
         }
     }
-
+    private suspend fun getUsers() {
+        coroutineScope {
+            while (this.isActive) {
+                runCatching {
+                    mappingUseCase.getUsersUseCase().collect { users ->
+                        _state.update { it.copy(users = Users(activeUsers = users)) }
+                    }
+                }.onFailure {
+                    Timber.e("ERROR GETTING USERS: ${it.message}")
+                }
+                delay(INTERVAL_UPDATE_USERS)
+            }
+        }
+    }
     private fun subscribeToLocationUpdates() {
         locationUpdatesFlow?.cancel()
         locationUpdatesFlow = viewModelScope.launch {
             runCatching {
-                mappingUseCase.getUserLocationUseCase().collect {
-                    address = it
+                mappingUseCase.getUserLocationUseCase().collect { addresses ->
+                    address = addresses
+                    val location = addresses.lastOrNull()
+                    _state.update {
+                        it.copy(
+                            latitude = location?.latitude ?: DEFAULT_LATITUDE,
+                            longitude = location?.longitude ?: DEFAULT_LONGITUDE
+                        )
+                    }
                 }
             }.onFailure {
                 Timber.e("Error Location Updates: ${it.message}")
