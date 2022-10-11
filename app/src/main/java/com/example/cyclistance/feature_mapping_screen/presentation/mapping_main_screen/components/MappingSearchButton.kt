@@ -21,7 +21,7 @@ fun SearchAssistanceButton(onClickSearchButton: () -> Unit, modifier: Modifier, 
         colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
         modifier = modifier) {
         Text(
-            text = "Search for Assistance",
+            text = "Search Assistance",
             color = MaterialTheme.colors.onPrimary,
             style = MaterialTheme.typography.button,
             modifier = Modifier.padding(
