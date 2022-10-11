@@ -9,10 +9,10 @@ import timber.log.Timber
 class Ref(var value: Int)
 
 @Composable
-inline fun LogCompositions(tag: String, msg: String) {
+inline fun LogCompositions(msg: String) {
     if (BuildConfig.DEBUG) {
         val ref = remember { Ref(0) }
         SideEffect { ref.value++ }
-        Timber.d(tag, "Compositions: $msg ${ref.value}")
+        Timber.d( "Compositions: $msg ${ref.value}")
     }
 }
