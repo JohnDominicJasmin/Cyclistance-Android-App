@@ -2,13 +2,17 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.content.Context
 import android.os.Build
-import android.os.Build.VERSION_CODES.*
+import android.os.Build.VERSION_CODES.Q
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
@@ -20,15 +24,22 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
+import com.example.cyclistance.core.utils.constants.MappingConstants.MAP_ZOOM
 import com.example.cyclistance.core.utils.location.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
+import com.example.cyclistance.core.utils.permission.requestPermission
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.LocateUserButton
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingMapsScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapView
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startServiceIntentAction
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
@@ -36,10 +47,17 @@ import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.mapbox.geojson.Point
+import com.mapbox.maps.dsl.cameraOptions
+import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
+import com.mapbox.maps.plugin.animation.flyTo
+import com.mapbox.maps.plugin.locationcomponent.location2
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import com.example.cyclistance.R as Resource
 
 @ExperimentalPermissionsApi
 @Composable
@@ -88,6 +106,7 @@ fun MappingScreen(
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION))
     }
+
     val settingResultRequest = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
@@ -117,7 +136,11 @@ fun MappingScreen(
     }
 
 
-
+    LaunchedEffect(key1 = locationPermissionsState.allPermissionsGranted) {
+        if (locationPermissionsState.allPermissionsGranted) {
+            context.startServiceIntentAction()
+        }
+    }
 
     LaunchedEffect(key1 = true) {
 
@@ -180,23 +203,15 @@ fun MappingScreen(
             }
         },
         onClickSearchButton = {
-            if (locationPermissionsState.allPermissionsGranted) {
+            locationPermissionsState.requestPermission(
+                context = context,
+                rationalMessage = "Location permission is not yet granted.") {
                 context.startServiceIntentAction()
                 postProfile()
-
-                return@MappingScreen
             }
-
-            if (!locationPermissionsState.shouldShowRationale) {
-                Toast.makeText(
-                    context,
-                    "Location permission is not yet granted.",
-                    Toast.LENGTH_SHORT).show()
-                return@MappingScreen
-            }
-
-            locationPermissionsState.launchMultiplePermissionRequest()
-        })
+        },
+        locationPermissionState = locationPermissionsState
+    )
 
 }
 
@@ -359,6 +374,7 @@ fun MappingScreen(
 
 
 }
+
 
 
 

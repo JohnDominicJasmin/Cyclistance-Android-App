@@ -35,6 +35,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.MappingConstants.NONE_OF_THE_ABOVE_RESULT_CODE
 import com.example.cyclistance.core.utils.constants.MappingConstants.NO_SIM_CARD_RESULT_CODE
+import com.example.cyclistance.core.utils.permission.requestPermission
 import com.example.cyclistance.feature_mapping_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.SelectImageBottomSheet
@@ -171,32 +172,26 @@ fun EditProfileScreen(
         photoUrl = state.imageBitmap.bitmap?.asImageBitmap() ?: state.photoUrl,
 
         onClickGalleryButton = {
+
             onClickGalleryButton(!isGalleryButtonClick)
-            if (accessStoragePermissionState.allPermissionsGranted) {
+
+            accessStoragePermissionState.requestPermission(
+                context = context,
+                rationalMessage = "Storage permission is not yet granted.") {
                 openGalleryResultLauncher.launch("image/*")
-                return@EditProfileScreen
             }
-            if (accessStoragePermissionState.shouldShowRationale || !accessStoragePermissionState.allPermissionsGranted) {
-                Toast.makeText(
-                    context,
-                    "Storage permission is not yet granted.",
-                    Toast.LENGTH_SHORT).show()
-                return@EditProfileScreen
-            }
-            accessStoragePermissionState.launchMultiplePermissionRequest()
+
+
         },
 
         onClickCameraButton = {
-            if (openCameraPermissionState.status.isGranted) {
+
+            openCameraPermissionState.requestPermission(
+                context = context,
+                rationalMessage = "Camera permission is not yet granted.") {
                 openCameraResultLauncher.launch()
-                return@EditProfileScreen
             }
-            if (openCameraPermissionState.status.shouldShowRationale || !openCameraPermissionState.status.isGranted) {
-                Toast.makeText(context, "Camera permission is not yet granted.", Toast.LENGTH_SHORT)
-                    .show()
-                return@EditProfileScreen
-            }
-            openCameraPermissionState.launchPermissionRequest()
+
         },
         state = state,
         onClickPhoneTextField = {
@@ -275,101 +270,101 @@ fun EditProfileScreen(
             onClickCameraButton()
         },
         bottomSheetScaffoldState = bottomSheetScaffoldState,
-        editProfileState = state){
+        editProfileState = state) {
 
-    ConstraintLayout(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)) {
-
-
-        val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText, progressBar) = createRefs()
-
-        ProfilePictureArea(
-            photoUrl = photoUrl,
-            modifier = Modifier
-                .size(125.dp)
-                .constrainAs(profilePictureArea) {
-
-                    top.linkTo(parent.top, margin = 30.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-
-                },
-            onClick = {
-                toggleBottomSheet()
-            })
+        ConstraintLayout(
+            modifier = modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)) {
 
 
+            val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText, progressBar) = createRefs()
+
+            ProfilePictureArea(
+                photoUrl = photoUrl,
+                modifier = Modifier
+                    .size(125.dp)
+                    .constrainAs(profilePictureArea) {
+
+                        top.linkTo(parent.top, margin = 30.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+
+                    },
+                onClick = {
+                    toggleBottomSheet()
+                })
 
 
-        ClickableText(text = buildAnnotatedString {
-            withStyle(
-                style = SpanStyle(color = Blue600, fontWeight = FontWeight.SemiBold)) {
-                append("Change Profile Photo")
-            }
-        },
-            modifier = Modifier.constrainAs(changePhotoText) {
-                top.linkTo(profilePictureArea.bottom, margin = 12.dp)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
 
+
+            ClickableText(text = buildAnnotatedString {
+                withStyle(
+                    style = SpanStyle(color = Blue600, fontWeight = FontWeight.SemiBold)) {
+                    append("Change Profile Photo")
+                }
             },
-            style = MaterialTheme.typography.body2,
-            onClick = {
-                toggleBottomSheet()
-            })
-
-
-
-
-
-        TextFieldInputArea(
-            modifier = Modifier
-                .constrainAs(textFieldInputArea) {
-                    top.linkTo(changePhotoText.bottom, margin = 30.dp)
+                modifier = Modifier.constrainAs(changePhotoText) {
+                    top.linkTo(profilePictureArea.bottom, margin = 12.dp)
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
-                    height = Dimension.percent(0.5f)
-                    width = Dimension.percent(0.9f)
 
                 },
-            state = state,
-            onClickPhoneTextField = onClickPhoneTextField,
-            onValueChangeName = onValueChangeName,
-            onValueChangePhoneNumber = onValueChangePhoneNumber,
-            keyboardActions = keyboardActions,
-        )
+                style = MaterialTheme.typography.body2,
+                onClick = {
+                    toggleBottomSheet()
+                })
 
 
 
-        MappingButtonNavigation(
-            modifier = Modifier
-                .constrainAs(buttonNavigationArea) {
-                    top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
-                    start.linkTo(parent.start)
+
+
+            TextFieldInputArea(
+                modifier = Modifier
+                    .constrainAs(textFieldInputArea) {
+                        top.linkTo(changePhotoText.bottom, margin = 30.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        height = Dimension.percent(0.5f)
+                        width = Dimension.percent(0.9f)
+
+                    },
+                state = state,
+                onClickPhoneTextField = onClickPhoneTextField,
+                onValueChangeName = onValueChangeName,
+                onValueChangePhoneNumber = onValueChangePhoneNumber,
+                keyboardActions = keyboardActions,
+            )
+
+
+
+            MappingButtonNavigation(
+                modifier = Modifier
+                    .constrainAs(buttonNavigationArea) {
+                        top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        bottom.linkTo(parent.bottom, margin = 50.dp)
+                        height = Dimension.percent(0.1f)
+                        width = Dimension.percent(0.8f)
+                    },
+                positiveButtonText = "Save",
+                onClickCancelButton = onClickCancelButton,
+                onClickConfirmButton = onClickConfirmButton,
+                negativeButtonEnabled = !state.isLoading,
+                positiveButtonEnabled = !state.isLoading,
+            )
+
+            if (state.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.constrainAs(progressBar) {
+                    top.linkTo(parent.top)
                     end.linkTo(parent.end)
-                    bottom.linkTo(parent.bottom, margin = 50.dp)
-                    height = Dimension.percent(0.1f)
-                    width = Dimension.percent(0.8f)
-                },
-            positiveButtonText = "Save",
-            onClickCancelButton = onClickCancelButton,
-            onClickConfirmButton = onClickConfirmButton,
-            negativeButtonEnabled = !state.isLoading,
-            positiveButtonEnabled = !state.isLoading,
-        )
-
-        if (state.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.constrainAs(progressBar) {
-                top.linkTo(parent.top)
-                end.linkTo(parent.end)
-                start.linkTo(parent.start)
-                bottom.linkTo(parent.bottom)
-                this.centerTo(parent)
-            })
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom)
+                    this.centerTo(parent)
+                })
+            }
         }
     }
-}
 }
 
