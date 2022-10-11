@@ -1,6 +1,8 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
 import androidx.compose.runtime.Immutable
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 
 
@@ -20,6 +22,6 @@ data class MappingState(
     val bottomSheetType: String = "",
     val isSearchingForAssistance: Boolean = false,
     val users: Users = Users(),
-    val latitude: Double = 0.0,
-    val longitude: Double = 0.0,
+    val latitude: Double = DEFAULT_LATITUDE,
+    val longitude: Double = DEFAULT_LONGITUDE,
 )
