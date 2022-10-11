@@ -1,19 +1,18 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils
 
 import android.content.Context
-import android.location.Location
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.LifecycleOwner
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.constants.MappingConstants.MAX_ZOOM_LEVEL_MAPS
+import com.example.cyclistance.core.utils.constants.MappingConstants.MIN_ZOOM_LEVEL_MAPS
+import com.mapbox.maps.CameraBoundsOptions
 import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.ResourceOptions
@@ -58,7 +57,12 @@ fun rememberMapView(context: Context) = remember {
             scalebar.enabled = false
             logo.enabled = false
             attribution.enabled = false
-
+            getMapboxMap().setBounds(
+                CameraBoundsOptions.Builder()
+                    .minZoom(MIN_ZOOM_LEVEL_MAPS)
+                    .maxZoom(MAX_ZOOM_LEVEL_MAPS)
+                    .build()
+            )
 
             location2.apply {
                 locationPuck = LocationPuck2D(
