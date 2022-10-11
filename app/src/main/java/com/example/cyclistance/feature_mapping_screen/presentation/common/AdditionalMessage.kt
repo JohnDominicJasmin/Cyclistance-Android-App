@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
-import com.example.cyclistance.core.utils.constants.MappingConstants.MAX_CHARACTERS
+import com.example.cyclistance.core.utils.constants.MappingConstants.CHARACTER_LIMIT
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black500
 
@@ -60,7 +60,7 @@ fun AdditionalMessage(
                         },
                     value = message,
                     onValueChange = { newText ->
-                        if (newText.length <= MAX_CHARACTERS) {
+                        if (newText.length <= CHARACTER_LIMIT) {
                             numberOfCharacters.value = newText.length
                             onValueChange(newText)
                         }
@@ -83,7 +83,7 @@ fun AdditionalMessage(
                 )
 
                 Text(
-                    text = "${numberOfCharacters.value}/$MAX_CHARACTERS",
+                    text = "${numberOfCharacters.value}/$CHARACTER_LIMIT",
                     color = Black440,
                     modifier = Modifier
                         .padding(top = 5.dp, bottom = 5.dp)
