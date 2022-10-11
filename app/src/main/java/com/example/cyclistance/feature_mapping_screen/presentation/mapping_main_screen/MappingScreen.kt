@@ -27,7 +27,7 @@ import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
-import com.example.cyclistance.core.utils.constants.MappingConstants.MAP_ZOOM
+import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
 import com.example.cyclistance.core.utils.location.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
@@ -261,7 +261,7 @@ fun MappingScreen(
     }
 
     val locateUser =
-        {
+        { zoomLevel: Double ->
             if (userLocationAvailable) {
                 mapView.location2.apply {
                     enabled = true
@@ -270,7 +270,7 @@ fun MappingScreen(
                 mapboxMap.flyTo(
                     cameraOptions {
                         center(point)
-                        zoom(MAP_ZOOM)
+                        zoom(zoomLevel)
                         bearing(0.0)
                     },
                     mapAnimationOptions {
@@ -282,7 +282,7 @@ fun MappingScreen(
 
 
     LaunchedEffect(key1 = userLocationAvailable) {
-        locateUser()
+        locateUser(LOCATE_USER_ZOOM_LEVEL)
     }
 
 
@@ -326,7 +326,7 @@ fun MappingScreen(
                     locationPermissionState.requestPermission(
                         context = context,
                         rationalMessage = "Location permission is not yet granted.") {
-                        locateUser()
+                        locateUser(LOCATE_USER_ZOOM_LEVEL)
                     }
 
 
