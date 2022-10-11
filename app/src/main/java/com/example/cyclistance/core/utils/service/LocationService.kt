@@ -12,17 +12,10 @@ import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_START
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_STOP
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATION_SERVICE_CHANNEL_ID
-import com.example.cyclistance.core.utils.constants.MappingConstants.NOTIFICATION_FOREGROUND_ID
 import com.example.cyclistance.core.utils.location.LocationClient
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -36,7 +29,7 @@ class LocationService(
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    companion object{
+    companion object {
         val address: MutableStateFlow<List<Address>> = MutableStateFlow(emptyList())
     }
 
@@ -44,9 +37,13 @@ class LocationService(
         super.onCreate()
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(LOCATION_SERVICE_CHANNEL_ID, MappingConstants.LOCATION_NAME, NotificationManager.IMPORTANCE_LOW)
-            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                LOCATION_SERVICE_CHANNEL_ID,
+                MappingConstants.LOCATION_NAME,
+                NotificationManager.IMPORTANCE_LOW)
+            val notificationManager =
+                getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.createNotificationChannel(channel)
 
 
@@ -56,37 +53,28 @@ class LocationService(
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when(intent?.action) {
             ACTION_START -> {
-                startService()
+                if(!isServiceRunning){
+                    startService()
+                    isServiceRunning = true
+                }
             }
             ACTION_STOP -> {
                 stopService()
+                isServiceRunning = false
             }
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
 
-    private fun startService(){
-
-
-
-
+    private fun startService() {
         locationClient.getLocationUpdates()
+            .distinctUntilChanged()
             .catch {
                 it.printStackTrace()
             }.onEach { location ->
                 address.emit(location.addresses)
-                val updatedNotification = notification.setContentText(
-                    "Location: (${location.latLng.latitude}, ${location.latLng.longitude})"
-                )
-                notificationManager.notify(NOTIFICATION_FOREGROUND_ID, updatedNotification.build())
             }.launchIn(serviceScope)
-
-
-
-        startForeground(NOTIFICATION_FOREGROUND_ID, notification.build())
-
-
     }
 
     private fun stopService(){
