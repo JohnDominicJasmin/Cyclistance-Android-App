@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
@@ -10,9 +9,12 @@ import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.ComposableLifecycle
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapView
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startServiceIntentAction
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.MultiplePermissionsState
 import com.mapbox.geojson.Point
+import com.mapbox.maps.MapView
+import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
 import com.mapbox.maps.plugin.locationcomponent.location2
 import timber.log.Timber
@@ -34,43 +36,39 @@ val locations = listOf(
 
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MappingMapsScreen(
     state: MappingState,
     isDarkTheme: Boolean,
     mapUiComponents: MapUiComponents,
+    mapView: MapView,
+    mapboxMap: MapboxMap,
+    locationPermissionState: MultiplePermissionsState?,
     modifier: Modifier) {
 
 
     val context = LocalContext.current
-    val mapView = rememberMapView(context = context)
-
-
-    val mapboxMap = remember {
-        mapView.getMapboxMap()
-    }
-
-
     ComposableLifecycle { _, event ->
         when (event) {
+
             Lifecycle.Event.ON_CREATE -> {
                 Timber.v("Lifecycle Event: ON_CREATE")
-                mapView.apply {
-                    location2.apply {
-                        pulsingEnabled = state.isSearchingForAssistance
-                    }
-
+                mapView.location2.apply {
+                    val pulsingEnabled = state.isSearchingForAssistance.and(locationPermissionState?.allPermissionsGranted == true)
+                    this.pulsingEnabled = pulsingEnabled
                 }
+
                 mapboxMap.loadStyleUri(if (isDarkTheme) Style.DARK else Style.MAPBOX_STREETS)
 
-            /*    locations.forEach {
-                    val annotationApi = mapView.annotations
-                    val pointAnnotationManager = annotationApi.createPointAnnotationManager()
-                    val pointAnnotationOptions = mapUiComponents.pointAnnotationOptions
-                        .withPoint(it)
-                        .withIconImage(AppCompatResources.getDrawable(context, R.drawable.ic_arrow)?.toBitmap() ?: return@forEach)
-                    pointAnnotationManager.create(pointAnnotationOptions)
-                }*/
+                /*    locations.forEach {
+                        val annotationApi = mapView.annotations
+                        val pointAnnotationManager = annotationApi.createPointAnnotationManager()
+                        val pointAnnotationOptions = mapUiComponents.pointAnnotationOptions
+                            .withPoint(it)
+                            .withIconImage(AppCompatResources.getDrawable(context, R.drawable.ic_arrow)?.toBitmap() ?: return@forEach)
+                        pointAnnotationManager.create(pointAnnotationOptions)
+                    }*/
             }
 
             Lifecycle.Event.ON_START -> {
