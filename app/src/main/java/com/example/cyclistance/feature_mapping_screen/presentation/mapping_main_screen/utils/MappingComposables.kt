@@ -75,8 +75,6 @@ fun rememberMapView(context: Context) = remember {
                         com.mapbox.maps.R.drawable.mapbox_user_icon_shadow
                     )
                 )
-                enabled = true
-                pulsingEnabled = true
                 this.showAccuracyRing = true
                 this.pulsingColor = ContextCompat.getColor(context,R.color.DodgerBlue)
                 this.puckBearingEnabled = true
