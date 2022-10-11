@@ -320,7 +320,7 @@ fun MappingScreen(
                         bottom.linkTo(parent.bottom)
                         centerVerticallyTo(parent)
                     },
-                icon = if (locationPermissionState.allPermissionsGranted) Resource.drawable.ic_baseline_my_location_24 else Resource.drawable.ic_locate_user_position,
+                locationPermissionGranted = locationPermissionState.allPermissionsGranted,
                 onClick = {
 
                     locationPermissionState.requestPermission(
