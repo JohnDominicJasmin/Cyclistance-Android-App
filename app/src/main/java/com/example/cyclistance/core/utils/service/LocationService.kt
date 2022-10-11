@@ -25,8 +25,8 @@ class LocationService(
     @Inject lateinit var locationClient: LocationClient
     @Inject lateinit var notification: NotificationCompat.Builder
 
-    private lateinit var  notificationManager: NotificationManager
-
+    private lateinit var notificationManager: NotificationManager
+    private var isServiceRunning: Boolean = false
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     companion object {
@@ -51,7 +51,7 @@ class LocationService(
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        when(intent?.action) {
+        when (intent?.action) {
             ACTION_START -> {
                 if(!isServiceRunning){
                     startService()
@@ -77,7 +77,7 @@ class LocationService(
             }.launchIn(serviceScope)
     }
 
-    private fun stopService(){
+    private fun stopService() {
         stopForeground(true)
         stopSelf()
     }
@@ -87,7 +87,7 @@ class LocationService(
         serviceScope.cancel()
     }
 
-    override fun onBind(intent: android.content.Intent?): android.os.IBinder? {
+    override fun onBind(intent: Intent?): android.os.IBinder? {
         return null
     }
 }
