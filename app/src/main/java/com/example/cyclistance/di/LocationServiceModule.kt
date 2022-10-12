@@ -2,6 +2,7 @@ package com.example.cyclistance.di
 
 import android.content.Context
 import androidx.core.app.NotificationCompat
+import com.example.cyclistance.BaseApplication
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.location.DefaultLocationClient
@@ -12,17 +13,17 @@ import com.google.android.gms.location.Priority
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ServiceScoped
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 @Module
-@InstallIn(ServiceComponent::class)
+@InstallIn(SingletonComponent::class)
 
 object LocationServiceModule {
 
     @Provides
-    @ServiceScoped
+    @Singleton
     fun provideLocationRequest(): LocationRequest {
         return LocationRequest.create()
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
@@ -32,7 +33,7 @@ object LocationServiceModule {
     }
 
     @Provides
-    @ServiceScoped
+    @Singleton
     fun provideFusedLocationProviderClient(
         @ApplicationContext context: Context
     ): FusedLocationProviderClient {
@@ -40,7 +41,7 @@ object LocationServiceModule {
     }
 
     @Provides
-    @ServiceScoped
+    @Singleton
     fun provideLocationClient(
         locationRequest: LocationRequest,
         @ApplicationContext context: Context,
@@ -50,12 +51,17 @@ object LocationServiceModule {
         return DefaultLocationClient(
             locationRequest = locationRequest,
             context = context,
-            fusedLocationProviderClient = fusedLocationProviderClient
+            fusedLocationProviderClient = fusedLocationProviderClient,
+            externalScope = (context.applicationContext as BaseApplication).applicationScope
         )
     }
 
+
+
+
+
     @Provides
-    @ServiceScoped
+    @Singleton
     fun provideNotificationBuilder(
         @ApplicationContext context: Context
     ): NotificationCompat.Builder {
