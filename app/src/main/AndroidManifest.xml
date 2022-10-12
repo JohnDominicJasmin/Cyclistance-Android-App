@@ -23,6 +23,9 @@
         android:theme="@style/Theme.Cyclistance"
         android:usesCleartextTraffic="true">
 
+        <service
+            android:name=".core.utils.service.LocationService"
+            android:foregroundServiceType="location" />
 
         <activity
             android:name=".MainActivity"

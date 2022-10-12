@@ -3,17 +3,16 @@ package com.example.cyclistance.di
 import android.content.Context
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.location.LocationClient
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.GetAddressUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.UpdateAddressUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.GetBikeTypeUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.UpdateBikeTypeUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.GetUserLocationUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
 import com.google.gson.GsonBuilder
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
@@ -49,13 +48,10 @@ object MappingModule {
     @Singleton
     fun provideCyclistanceRepository(
         @ApplicationContext context: Context,
-        api: CyclistanceApi,
-        locationClient: LocationClient
-        ): MappingRepository {
+        api: CyclistanceApi): MappingRepository {
         return MappingRepositoryImpl(
             api = api,
-            context = context,
-        locationClient = locationClient)
+            context = context)
     }
 
     @Provides
@@ -85,6 +81,8 @@ object MappingModule {
             updateAddressUseCase = UpdateAddressUseCase(repository)
         )
     }
+
+
 
 
 

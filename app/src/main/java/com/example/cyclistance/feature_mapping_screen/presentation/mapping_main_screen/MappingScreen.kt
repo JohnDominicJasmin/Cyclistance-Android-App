@@ -40,6 +40,7 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapView
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startServiceIntentAction
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
@@ -110,7 +111,7 @@ fun MappingScreen(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
         if (activityResult.resultCode == RESULT_OK) {
-            mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
+            context.startServiceIntentAction()
             Timber.d("GPS Setting Request Accepted")
             return@rememberLauncherForActivityResult
         }
@@ -137,7 +138,7 @@ fun MappingScreen(
 
     LaunchedEffect(key1 = locationPermissionsState.allPermissionsGranted) {
         if (locationPermissionsState.allPermissionsGranted) {
-            mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
+            context.startServiceIntentAction()
         }
     }
 
@@ -146,6 +147,7 @@ fun MappingScreen(
         with(mappingViewModel) {
 
             onEvent(event = MappingEvent.GetUsersAsynchronously)
+            onEvent(event = MappingEvent.SubscribeToLocationUpdates)
 
             eventFlow.collectLatest { event ->
                 when (event) {
@@ -184,7 +186,7 @@ fun MappingScreen(
                 context.checkLocationSetting(
                     onDisabled = settingResultRequest::launch,
                     onEnabled = {
-                        mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
+                        context.startServiceIntentAction()
                     })
             }
         })
@@ -204,7 +206,7 @@ fun MappingScreen(
             locationPermissionsState.requestPermission(
                 context = context,
                 rationalMessage = "Location permission is not yet granted.") {
-                mappingViewModel.onEvent(event = MappingEvent.SubscribeToLocationUpdates)
+                context.startServiceIntentAction()
                 postProfile()
             }
         },
