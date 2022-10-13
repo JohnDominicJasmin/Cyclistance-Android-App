@@ -45,13 +45,11 @@ object LocationServiceModule {
     fun provideLocationClient(
         locationRequest: LocationRequest,
         @ApplicationContext context: Context,
-        fusedLocationProviderClient: FusedLocationProviderClient
 
     ): LocationClient {
         return DefaultLocationClient(
             locationRequest = locationRequest,
             context = context,
-            fusedLocationProviderClient = fusedLocationProviderClient,
             externalScope = (context.applicationContext as BaseApplication).applicationScope
         )
     }
