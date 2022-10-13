@@ -2,7 +2,6 @@ package com.example.cyclistance.di
 
 import android.content.Context
 import androidx.core.app.NotificationCompat
-import com.example.cyclistance.BaseApplication
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.location.DefaultLocationClient
@@ -13,17 +12,17 @@ import com.google.android.gms.location.Priority
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.scopes.ServiceScoped
 
 @Module
-@InstallIn(SingletonComponent::class)
+@InstallIn(ServiceComponent::class)
 
 object LocationServiceModule {
 
     @Provides
-    @Singleton
+    @ServiceScoped
     fun provideLocationRequest(): LocationRequest {
         return LocationRequest.create()
             .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
@@ -32,16 +31,10 @@ object LocationServiceModule {
             .setSmallestDisplacement(2f)
     }
 
-    @Provides
-    @Singleton
-    fun provideFusedLocationProviderClient(
-        @ApplicationContext context: Context
-    ): FusedLocationProviderClient {
-        return FusedLocationProviderClient(context)
-    }
+
 
     @Provides
-    @Singleton
+    @ServiceScoped
     fun provideLocationClient(
         locationRequest: LocationRequest,
         @ApplicationContext context: Context,
@@ -50,16 +43,11 @@ object LocationServiceModule {
         return DefaultLocationClient(
             locationRequest = locationRequest,
             context = context,
-            externalScope = (context.applicationContext as BaseApplication).applicationScope
         )
     }
 
-
-
-
-
     @Provides
-    @Singleton
+    @ServiceScoped
     fun provideNotificationBuilder(
         @ApplicationContext context: Context
     ): NotificationCompat.Builder {

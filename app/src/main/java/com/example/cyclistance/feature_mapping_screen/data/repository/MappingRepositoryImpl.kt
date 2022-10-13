@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_mapping_screen.data.repository
 
 import android.content.Context
-import android.location.Address
 import android.location.Location
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -10,15 +9,14 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_KEY
 import com.example.cyclistance.core.utils.editData
 import com.example.cyclistance.core.utils.getData
-import com.example.cyclistance.core.utils.location.LocationClient
+import com.example.cyclistance.core.utils.service.LocationService
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUser
-import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping_screen.domain.model.*
-import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.UserDto
+import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_mapping_screen.domain.model.User
+import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.distinctUntilChanged
 import retrofit2.HttpException
 import timber.log.Timber
 import java.io.IOException
@@ -26,7 +24,6 @@ import java.io.IOException
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
 
 class MappingRepositoryImpl(
-    private val locationClient: LocationClient,
     private val api: CyclistanceApi,
     context: Context) : MappingRepository {
 
@@ -55,7 +52,7 @@ class MappingRepositoryImpl(
         }
 
     override fun getUserLocation(): Flow<Location> {
-        return locationClient.getLocationUpdates().distinctUntilChanged()
+        return LocationService.address
     }
 
     override suspend fun getUsers(): List<User> =

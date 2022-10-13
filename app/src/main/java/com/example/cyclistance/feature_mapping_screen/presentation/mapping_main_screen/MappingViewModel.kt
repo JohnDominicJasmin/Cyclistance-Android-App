@@ -4,6 +4,7 @@ import android.location.Address
 import android.location.Geocoder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.INTERVAL_UPDATE_USERS
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
@@ -102,6 +103,9 @@ class MappingViewModel @Inject constructor(
 
         }
     }
+
+
+
     private suspend fun getUsers() {
         coroutineScope {
             while (this.isActive) {
@@ -116,20 +120,23 @@ class MappingViewModel @Inject constructor(
             }
         }
     }
+
     private fun subscribeToLocationUpdates() {
         locationUpdatesFlow?.cancel()
         locationUpdatesFlow = viewModelScope.launch(Dispatchers.IO) {
             runCatching {
+
                 mappingUseCase.getUserLocationUseCase().collect { location ->
                     withContext(Dispatchers.Default){
                         geocoder.getAddress(location.latitude, location.longitude){ addresses ->
                             address = addresses
                         }
                     }
-                    _state.update {
-                        it.copy(
-                            latitude = location.latitude,
-                            longitude = location.longitude
+
+                    _state.update { state ->
+                        state.copy(
+                            latitude = location.latitude.takeIf { it != 0.0 } ?: DEFAULT_LATITUDE,
+                            longitude = location.longitude.takeIf { it != 0.0 } ?: DEFAULT_LATITUDE,
                         )
                     }
                 }
@@ -138,6 +145,7 @@ class MappingViewModel @Inject constructor(
             }
         }
     }
+
 
     private fun unSubscribeToLocationUpdates() {
         locationUpdatesFlow?.cancel()
