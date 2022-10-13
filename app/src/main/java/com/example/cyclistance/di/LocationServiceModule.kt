@@ -31,26 +31,18 @@ object LocationServiceModule {
             .setSmallestDisplacement(2f)
     }
 
-    @Provides
-    @ServiceScoped
-    fun provideFusedLocationProviderClient(
-        @ApplicationContext context: Context
-    ): FusedLocationProviderClient {
-        return FusedLocationProviderClient(context)
-    }
+
 
     @Provides
     @ServiceScoped
     fun provideLocationClient(
         locationRequest: LocationRequest,
         @ApplicationContext context: Context,
-        fusedLocationProviderClient: FusedLocationProviderClient
 
     ): LocationClient {
         return DefaultLocationClient(
             locationRequest = locationRequest,
             context = context,
-            fusedLocationProviderClient = fusedLocationProviderClient
         )
     }
 
