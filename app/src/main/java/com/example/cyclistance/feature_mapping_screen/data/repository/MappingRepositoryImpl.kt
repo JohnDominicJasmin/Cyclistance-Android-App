@@ -1,7 +1,7 @@
 package com.example.cyclistance.feature_mapping_screen.data.repository
 
 import android.content.Context
-import android.location.Address
+import android.location.Location
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -12,10 +12,10 @@ import com.example.cyclistance.core.utils.getData
 import com.example.cyclistance.core.utils.service.LocationService
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUser
-import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping_screen.domain.model.*
-import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.UserDto
+import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_mapping_screen.domain.model.User
+import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 import kotlinx.coroutines.flow.Flow
 import retrofit2.HttpException
 import timber.log.Timber
@@ -51,7 +51,7 @@ class MappingRepositoryImpl(
             api.getUserById(userId).toUser()
         }
 
-    override fun getUserLocation(): Flow<List<Address>> {
+    override fun getUserLocation(): Flow<Location> {
         return LocationService.address
     }
 

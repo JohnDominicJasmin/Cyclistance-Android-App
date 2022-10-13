@@ -5,7 +5,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.location.Address
+import android.location.Location
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.cyclistance.core.utils.constants.MappingConstants
@@ -14,7 +14,10 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_STOP
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATION_SERVICE_CHANNEL_ID
 import com.example.cyclistance.core.utils.location.LocationClient
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -30,7 +33,7 @@ class LocationService(
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     companion object {
-        val address: MutableStateFlow<List<Address>> = MutableStateFlow(emptyList())
+        val address: MutableStateFlow<Location> = MutableStateFlow(Location(""))
     }
 
     override fun onCreate() {
@@ -73,7 +76,7 @@ class LocationService(
             .catch {
                 it.printStackTrace()
             }.onEach { location ->
-                address.emit(location.addresses)
+                address.emit(location)
             }.launchIn(serviceScope)
     }
 
