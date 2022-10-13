@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
 import android.location.Address
+import android.location.Geocoder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
@@ -14,7 +15,7 @@ import com.example.cyclistance.feature_mapping_screen.data.remote.dto.UserAssist
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -24,7 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MappingViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase,
-    val mapUiComponents: MapUiComponents,
+    private val geocoder: Geocoder,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
     private var getUsersJob: Job? = null
@@ -60,14 +61,14 @@ class MappingViewModel @Inject constructor(
         when (event) {
 
             is MappingEvent.UploadProfile -> {
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     uploadUserProfile()
                 }
             }
 
             is MappingEvent.GetUsersAsynchronously -> {
                 getUsersJob?.cancel()
-                getUsersJob = viewModelScope.launch {
+                getUsersJob = viewModelScope.launch(Dispatchers.IO) {
                     getUsers()
                 }
             }
@@ -84,7 +85,7 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.SignOut -> {
-                viewModelScope.launch {
+                viewModelScope.launch(Dispatchers.IO) {
                     signOutAccount()
                 }
             }
@@ -119,15 +120,18 @@ class MappingViewModel @Inject constructor(
     }
     private fun subscribeToLocationUpdates() {
         locationUpdatesFlow?.cancel()
-        locationUpdatesFlow = viewModelScope.launch {
+        locationUpdatesFlow = viewModelScope.launch(Dispatchers.IO) {
             runCatching {
-                mappingUseCase.getUserLocationUseCase().collect { addresses ->
-                    address = addresses
-                    val location = addresses.lastOrNull()
+                mappingUseCase.getUserLocationUseCase().collect { location ->
+                    withContext(Dispatchers.Default){
+                        geocoder.getAddress(location.latitude, location.longitude){ addresses ->
+                            address = addresses
+                        }
+                    }
                     _state.update {
                         it.copy(
-                            latitude = location?.latitude ?: DEFAULT_LATITUDE,
-                            longitude = location?.longitude ?: DEFAULT_LONGITUDE
+                            latitude = location.latitude,
+                            longitude = location.longitude
                         )
                     }
                 }
