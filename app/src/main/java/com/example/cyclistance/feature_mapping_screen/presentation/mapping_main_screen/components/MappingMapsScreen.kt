@@ -7,7 +7,6 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.Lifecycle
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.ComposableLifecycle
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.mapbox.geojson.Point
@@ -39,7 +38,6 @@ val locations = listOf(
 fun MappingMapsScreen(
     state: MappingState,
     isDarkTheme: Boolean,
-    mapUiComponents: MapUiComponents,
     mapView: MapView,
     mapboxMap: MapboxMap,
     locationPermissionState: MultiplePermissionsState?,
@@ -62,7 +60,8 @@ fun MappingMapsScreen(
                 /*    locations.forEach {
                         val annotationApi = mapView.annotations
                         val pointAnnotationManager = annotationApi.createPointAnnotationManager()
-                        val pointAnnotationOptions = mapUiComponents.pointAnnotationOptions
+                        val pointAnnotationOptions = PointAnnotationOptions()
+                .withIconSize(1.2).pointAnnotationOptions
                             .withPoint(it)
                             .withIconImage(AppCompatResources.getDrawable(context, R.drawable.ic_arrow)?.toBitmap() ?: return@forEach)
                         pointAnnotationManager.create(pointAnnotationOptions)

@@ -1,6 +1,7 @@
 package com.example.cyclistance.di
 
 import android.content.Context
+import android.location.Geocoder
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.location.LocationClient
@@ -14,9 +15,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.UpdateBikeTypeUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
 import com.google.gson.GsonBuilder
-import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -24,6 +23,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 import javax.inject.Singleton
 
 @Module
@@ -51,23 +51,19 @@ object MappingModule {
         @ApplicationContext context: Context,
         api: CyclistanceApi,
         locationClient: LocationClient
-        ): MappingRepository {
+    ): MappingRepository {
         return MappingRepositoryImpl(
             api = api,
             context = context,
-        locationClient = locationClient)
+            locationClient = locationClient)
     }
 
     @Provides
     @Singleton
-    fun provideLocationEngine(@ApplicationContext context: Context): MapUiComponents {
-
-        return MapUiComponents(
-            pointAnnotationOptions = PointAnnotationOptions()
-                .withIconSize(1.2)
-        )
-
+    fun provideGeocoder(@ApplicationContext context: Context): Geocoder {
+        return Geocoder(context, Locale.ENGLISH)
     }
+
 
     @Provides
     @Singleton
@@ -85,7 +81,6 @@ object MappingModule {
             updateAddressUseCase = UpdateAddressUseCase(repository)
         )
     }
-
 
 
 }

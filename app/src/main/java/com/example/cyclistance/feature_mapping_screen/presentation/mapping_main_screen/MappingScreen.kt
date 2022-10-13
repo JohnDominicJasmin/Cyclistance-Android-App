@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
-import android.content.Context
 import android.os.Build
 import android.os.Build.VERSION_CODES.Q
 import android.widget.Toast
@@ -38,7 +37,6 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingMapsScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapView
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
@@ -56,7 +54,6 @@ import com.mapbox.maps.plugin.locationcomponent.location2
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import com.example.cyclistance.R as Resource
 
 @ExperimentalPermissionsApi
 @Composable
@@ -193,7 +190,6 @@ fun MappingScreen(
     MappingScreen(
         modifier = Modifier.padding(paddingValues),
         isDarkTheme = isDarkTheme,
-        mapUiComponents = mappingViewModel.mapUiComponents,
         state = state,
         onClickRetryButton = {
             if (context.hasInternetConnection()) {
@@ -228,8 +224,6 @@ fun MappingScreenPreview() {
             state = MappingState(),
             onClickRetryButton = {},
             onClickSearchButton = {},
-            mapUiComponents = MapUiComponents(),
-
             )
     }
 }
@@ -241,7 +235,6 @@ fun MappingScreen(
     modifier: Modifier,
     isDarkTheme: Boolean,
     state: MappingState,
-    mapUiComponents: MapUiComponents,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     onClickRetryButton: () -> Unit,
     onClickSearchButton: () -> Unit) {
@@ -303,7 +296,6 @@ fun MappingScreen(
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom)
                 },
-                mapUiComponents = mapUiComponents,
                 mapView = mapView,
                 isDarkTheme = isDarkTheme,
                 mapboxMap = mapboxMap,
