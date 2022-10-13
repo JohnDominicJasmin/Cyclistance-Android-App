@@ -1,11 +1,11 @@
 package com.example.cyclistance.core.utils.location
 
 
-import android.location.Address
+import android.location.Location
 import kotlinx.coroutines.flow.Flow
 
 
 interface LocationClient {
-    fun getLocationUpdates(): Flow<List<Address>>
+    fun getLocationUpdates(): Flow<Location>
 
 }

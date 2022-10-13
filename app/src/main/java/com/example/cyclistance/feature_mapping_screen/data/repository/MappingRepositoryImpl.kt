@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_mapping_screen.data.repository
 
 import android.content.Context
 import android.location.Address
+import android.location.Location
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -53,7 +54,7 @@ class MappingRepositoryImpl(
             api.getUserById(userId).toUser()
         }
 
-    override fun getUserLocation(): Flow<List<Address>> {
+    override fun getUserLocation(): Flow<Location> {
         return locationClient.getLocationUpdates().distinctUntilChanged()
     }
 
