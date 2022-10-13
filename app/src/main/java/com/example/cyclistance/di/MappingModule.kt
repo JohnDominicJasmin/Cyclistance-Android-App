@@ -1,6 +1,7 @@
 package com.example.cyclistance.di
 
 import android.content.Context
+import android.location.Geocoder
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.GetUserLocationUseCase
@@ -13,7 +14,6 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.Ge
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.UpdateAddressUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.GetBikeTypeUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.UpdateBikeTypeUseCase
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
 import com.google.gson.GsonBuilder
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import dagger.Module
@@ -54,16 +54,6 @@ object MappingModule {
             context = context)
     }
 
-    @Provides
-    @Singleton
-    fun provideLocationEngine(@ApplicationContext context: Context): MapUiComponents {
-
-        return MapUiComponents(
-            pointAnnotationOptions = PointAnnotationOptions()
-                .withIconSize(1.2)
-        )
-
-    }
 
     @Provides
     @Singleton
@@ -83,6 +73,11 @@ object MappingModule {
     }
 
 
+    @Provides
+    @Singleton
+    fun provideGeocoder(@ApplicationContext context : Context): Geocoder{
+        return Geocoder(context)
+    }
 
 
 

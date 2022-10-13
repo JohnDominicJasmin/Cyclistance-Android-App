@@ -8,7 +8,6 @@ import androidx.lifecycle.Lifecycle
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.ComposableLifecycle
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MapUiComponents
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startServiceIntentAction
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
@@ -41,7 +40,6 @@ val locations = listOf(
 fun MappingMapsScreen(
     state: MappingState,
     isDarkTheme: Boolean,
-    mapUiComponents: MapUiComponents,
     mapView: MapView,
     mapboxMap: MapboxMap,
     locationPermissionState: MultiplePermissionsState?,
