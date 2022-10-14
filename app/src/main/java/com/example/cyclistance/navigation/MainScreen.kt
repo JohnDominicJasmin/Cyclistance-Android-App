@@ -46,9 +46,8 @@ fun MainScreen(
         mappingViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is MappingUiEvent.ShowSignInScreen -> {
-                    navController.navigateScreenInclusively(
-                        Screens.SignInScreen.route,
-                        Screens.MappingScreen.route)
+                    navController.popBackStack()
+                    navController.navigate(Screens.SignInScreen.route)
                 }
                 else -> {}
             }
@@ -94,8 +93,9 @@ fun MainScreen(
                     onClickSignOut = {
                         coroutineScope.launch {
                             scaffoldState.drawerState.close()
-                            mappingViewModel.onEvent(event = MappingEvent.SignOut)
                         }
+                        mappingViewModel.onEvent(event = MappingEvent.SignOut)
+
                     }
                 )
             },
