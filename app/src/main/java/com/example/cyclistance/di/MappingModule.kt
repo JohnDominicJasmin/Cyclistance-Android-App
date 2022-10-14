@@ -2,6 +2,11 @@ package com.example.cyclistance.di
 
 import android.content.Context
 import android.location.Geocoder
+import coil.ImageLoader
+import coil.memory.MemoryCache
+import coil.request.CachePolicy
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
@@ -47,9 +52,11 @@ object MappingModule {
     @Provides
     @Singleton
     fun provideCyclistanceRepository(
+        imageRequestBuilder: ImageRequest.Builder,
         @ApplicationContext context: Context,
         api: CyclistanceApi): MappingRepository {
         return MappingRepositoryImpl(
+            imageRequestBuilder = imageRequestBuilder,
             api = api,
             context = context)
     }
@@ -80,6 +87,40 @@ object MappingModule {
         return Geocoder(context)
     }
 
+    @Provides
+    @Singleton
+    fun provideImageRequestBuilder(@ApplicationContext context: Context): ImageRequest.Builder{
+    return ImageRequest.Builder(context)
+        .placeholder(R.drawable.ic_empty_profile_placeholder)
+        .error(R.drawable.ic_empty_profile_placeholder)
+        .fallback(R.drawable.ic_empty_profile_placeholder)
+        .networkCachePolicy(CachePolicy.ENABLED)
+        .diskCachePolicy(CachePolicy.ENABLED)
+        .memoryCachePolicy(CachePolicy.ENABLED)
+
+        .allowHardware(false)
+        .transformations(CircleCropTransformation())
+        .size(105)
+    }
+
+    @Provides
+    @Singleton
+    fun provideImageLoaderBuilder(@ApplicationContext context: Context): ImageLoader.Builder{
+        return ImageLoader.Builder(context)
+            .crossfade(true)
+            .allowHardware(false)
+            .memoryCache {
+                MemoryCache.Builder(context)
+                    .maxSizePercent(0.25)
+                    .build()
+            }
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .networkCachePolicy(policy = CachePolicy.ENABLED)
+            .placeholder(R.drawable.ic_empty_profile_placeholder)
+            .error(R.drawable.ic_empty_profile_placeholder)
+            .fallback(R.drawable.ic_empty_profile_placeholder)
+    }
 
 
 

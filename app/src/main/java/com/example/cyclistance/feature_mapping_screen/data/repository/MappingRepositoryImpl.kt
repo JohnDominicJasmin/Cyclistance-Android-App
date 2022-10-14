@@ -32,6 +32,7 @@ import java.io.IOException
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
 
 class MappingRepositoryImpl(
+    val imageRequestBuilder: ImageRequest.Builder,
     private val api: CyclistanceApi,
     val context: Context) : MappingRepository {
 
@@ -117,24 +118,13 @@ class MappingRepositoryImpl(
     override suspend fun imageUrlToDrawable(imageUrl: String): Drawable {
         return handleException {
             withContext(Dispatchers.IO) {
-                // TODO: inject later
-                val request = ImageRequest.Builder(context)
+                val request = imageRequestBuilder
                     .data(imageUrl)
-                    .placeholder(R.drawable.ic_empty_profile_placeholder)
-                    .error(R.drawable.ic_empty_profile_placeholder)
-                    .fallback(R.drawable.ic_empty_profile_placeholder)
-                    .networkCachePolicy(CachePolicy.ENABLED)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
                     .diskCacheKey(imageUrl)
                     .memoryCacheKey(imageUrl)
                     .diskCacheKey(imageUrl)
                     .memoryCacheKey(imageUrl)
-                    .allowHardware(false)
-                    .transformations(CircleCropTransformation())
-                    .size(200)
                     .build()
-
                 val imageResult = context.imageLoader.execute(request)
                 imageResult.drawable!!
             }
