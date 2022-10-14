@@ -5,6 +5,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.Ge
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.UpdateAddressUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.GetBikeTypeUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.UpdateBikeTypeUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.image.ImageUrlToDrawableUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
 
 data class MappingUseCase(
@@ -19,10 +20,13 @@ data class MappingUseCase(
 
     val getUserLocationUseCase: GetUserLocationUseCase,
 
+    val imageUrlToDrawableUseCase: ImageUrlToDrawableUseCase,
+
     val getBikeTypeUseCase: GetBikeTypeUseCase,
     val updateBikeTypeUseCase: UpdateBikeTypeUseCase,
+
     val getAddressUseCase: GetAddressUseCase,
-    val updateAddressUseCase: UpdateAddressUseCase
+    val updateAddressUseCase: UpdateAddressUseCase,
 
 
 )

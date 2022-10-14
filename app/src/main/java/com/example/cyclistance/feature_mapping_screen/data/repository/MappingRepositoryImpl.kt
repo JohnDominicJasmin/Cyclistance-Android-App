@@ -1,10 +1,16 @@
 package com.example.cyclistance.feature_mapping_screen.data.repository
 
 import android.content.Context
+import android.graphics.drawable.Drawable
 import android.location.Location
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import coil.imageLoader
+import coil.request.CachePolicy
+import coil.request.ImageRequest
+import coil.transform.CircleCropTransformation
+import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_KEY
 import com.example.cyclistance.core.utils.editData
@@ -16,7 +22,9 @@ import com.example.cyclistance.feature_mapping_screen.data.remote.dto.UserDto
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import timber.log.Timber
 import java.io.IOException
@@ -25,7 +33,11 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "pr
 
 class MappingRepositoryImpl(
     private val api: CyclistanceApi,
-    context: Context) : MappingRepository {
+    val context: Context) : MappingRepository {
+
+
+
+
 
     private var dataStore = context.dataStore
 
@@ -102,7 +114,32 @@ class MappingRepositoryImpl(
             api.deleteUser(id)
         }
 
+    override suspend fun imageUrlToDrawable(imageUrl: String): Drawable {
+        return handleException {
+            withContext(Dispatchers.IO) {
+                // TODO: inject later
+                val request = ImageRequest.Builder(context)
+                    .data(imageUrl)
+                    .placeholder(R.drawable.ic_empty_profile_placeholder)
+                    .error(R.drawable.ic_empty_profile_placeholder)
+                    .fallback(R.drawable.ic_empty_profile_placeholder)
+                    .networkCachePolicy(CachePolicy.ENABLED)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .diskCacheKey(imageUrl)
+                    .memoryCacheKey(imageUrl)
+                    .diskCacheKey(imageUrl)
+                    .memoryCacheKey(imageUrl)
+                    .allowHardware(false)
+                    .transformations(CircleCropTransformation())
+                    .size(200)
+                    .build()
 
+                val imageResult = context.imageLoader.execute(request)
+                imageResult.drawable!!
+            }
+        }
+    }
 }
 
 

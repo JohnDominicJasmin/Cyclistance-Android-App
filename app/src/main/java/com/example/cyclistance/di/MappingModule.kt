@@ -4,16 +4,17 @@ import android.content.Context
 import android.location.Geocoder
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.GetAddressUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.UpdateAddressUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.GetBikeTypeUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.UpdateBikeTypeUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.image.ImageUrlToDrawableUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.GetUserLocationUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -67,7 +68,8 @@ object MappingModule {
             getBikeTypeUseCase = GetBikeTypeUseCase(repository),
             updateBikeTypeUseCase = UpdateBikeTypeUseCase(repository),
             getAddressUseCase = GetAddressUseCase(repository),
-            updateAddressUseCase = UpdateAddressUseCase(repository)
+            updateAddressUseCase = UpdateAddressUseCase(repository),
+            imageUrlToDrawableUseCase = ImageUrlToDrawableUseCase(repository)
         )
     }
 
@@ -77,6 +79,7 @@ object MappingModule {
     fun provideGeocoder(@ApplicationContext context : Context): Geocoder {
         return Geocoder(context)
     }
+
 
 
 

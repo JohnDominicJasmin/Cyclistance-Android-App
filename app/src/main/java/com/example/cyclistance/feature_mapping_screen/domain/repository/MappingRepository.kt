@@ -1,7 +1,9 @@
 package com.example.cyclistance.feature_mapping_screen.domain.repository
 
+import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Location
+import androidx.annotation.DrawableRes
 import com.example.cyclistance.feature_mapping_screen.domain.model.*
 import kotlinx.coroutines.flow.Flow
 
@@ -19,6 +21,8 @@ interface MappingRepository {
     suspend fun updateAddress(address: String)
 
     fun getUserLocation(): Flow<Location>
+
+    suspend fun imageUrlToDrawable(imageUrl: String): Drawable
 
 
 }
