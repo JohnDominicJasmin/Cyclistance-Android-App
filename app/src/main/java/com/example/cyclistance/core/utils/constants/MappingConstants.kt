@@ -19,7 +19,7 @@ object MappingConstants {
     const val DEFAULT_CAMERA_ANIMATION_DURATION = 700L
 
     const val CHARACTER_LIMIT = 110
-    const val IMAGE_PLACEHOLDER_URL = "https://i.redd.it/w8jys7vnupq91.jpg"
+    const val IMAGE_PLACEHOLDER_URL = "https://raw.githubusercontent.com/JohnDominicJasmin/JohnDominicJasmin/main/ic_empty_profile_placeholder.jpg"
     const val NO_SIM_CARD_RESULT_CODE = 1002
     const val NONE_OF_THE_ABOVE_RESULT_CODE = 1001
 
