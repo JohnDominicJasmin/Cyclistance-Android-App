@@ -26,6 +26,7 @@ import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_MAP_ZOOM_LEVEL
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
 import com.example.cyclistance.core.utils.location.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasGPSConnection
@@ -48,7 +49,10 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.mapbox.geojson.Point
+import com.mapbox.maps.MapView
+import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.dsl.cameraOptions
+import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.locationcomponent.location2
@@ -69,6 +73,13 @@ fun MappingScreen(
     val context = LocalContext.current
     val state by mappingViewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
+    val mapView = rememberMapView(context = context)
+
+    val mapboxMap = remember {
+        mapView.getMapboxMap()
+    }
+
+
 
 
 
@@ -132,6 +143,38 @@ fun MappingScreen(
         }
     }
 
+    val userLocationAvailable by derivedStateOf {
+        locationPermissionsState.allPermissionsGranted.and(state.latitude != DEFAULT_LATITUDE && state.longitude != DEFAULT_LONGITUDE)
+    }
+
+    val locateUser =
+        remember(Unit) {
+            { zoomLevel: Double ->
+                if (userLocationAvailable) {
+                    mapView.location2.apply {
+                        enabled = true
+                    }
+                    val point = Point.fromLngLat(state.longitude, state.latitude)
+                    mapboxMap.flyTo(
+                        cameraOptions {
+                            center(point)
+                            zoom(zoomLevel)
+                            bearing(0.0)
+                        },
+                        mapAnimationOptions {
+                            duration(DEFAULT_CAMERA_ANIMATION_DURATION)
+                        }
+                    )
+                }
+            }
+        }
+
+
+    LaunchedEffect(key1 = userLocationAvailable) {
+        locateUser(DEFAULT_MAP_ZOOM_LEVEL)
+    }
+
+
 
     LaunchedEffect(key1 = locationPermissionsState.allPermissionsGranted) {
         if (locationPermissionsState.allPermissionsGranted) {
@@ -139,11 +182,18 @@ fun MappingScreen(
         }
     }
 
+    LaunchedEffect(key1 = state.drawableImages.userDrawableImage){
+        mapView.location2.apply {
+            locationPuck = LocationPuck2D(
+                topImage = state.drawableImages.userDrawableImage
+            )
+        }
+    }
+
     LaunchedEffect(key1 = true) {
 
         with(mappingViewModel) {
-
-            onEvent(event = MappingEvent.GetUsersAsynchronously)
+            onEvent(event = MappingEvent.GetUsers)
             onEvent(event = MappingEvent.SubscribeToLocationUpdates)
 
             eventFlow.collectLatest { event ->
@@ -206,7 +256,16 @@ fun MappingScreen(
                 postProfile()
             }
         },
-        locationPermissionState = locationPermissionsState
+        locationPermissionState = locationPermissionsState,
+        onClickLocateUserButton = {
+            locationPermissionsState.requestPermission(
+                context = context,
+                rationalMessage = "Location permission is not yet granted.") {
+                locateUser(LOCATE_USER_ZOOM_LEVEL)
+            }
+        },
+        mapboxMap = mapboxMap,
+        mapView = mapView
     )
 
 }
@@ -216,7 +275,12 @@ fun MappingScreen(
 @Preview
 @Composable
 fun MappingScreenPreview() {
+    val context = LocalContext.current
+    val mapView = rememberMapView(context = context)
 
+    val mapboxMap = remember {
+        mapView.getMapboxMap()
+    }
 
     CyclistanceTheme(true) {
 
@@ -226,7 +290,10 @@ fun MappingScreenPreview() {
             state = MappingState(),
             onClickRetryButton = {},
             onClickSearchButton = {},
-            )
+            onClickLocateUserButton = {},
+            mapView = mapView,
+            mapboxMap = mapboxMap
+        )
     }
 }
 
@@ -237,46 +304,12 @@ fun MappingScreen(
     modifier: Modifier,
     isDarkTheme: Boolean,
     state: MappingState,
+    mapView: MapView,
+    mapboxMap: MapboxMap,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     onClickRetryButton: () -> Unit,
+    onClickLocateUserButton: () -> Unit,
     onClickSearchButton: () -> Unit) {
-
-
-    val context = LocalContext.current
-    val mapView = rememberMapView(context = context)
-
-    val mapboxMap = remember {
-        mapView.getMapboxMap()
-    }
-
-    val userLocationAvailable = remember(state.latitude, state.longitude) {
-        locationPermissionState.allPermissionsGranted.and(state.latitude != DEFAULT_LATITUDE && state.longitude != DEFAULT_LONGITUDE)
-    }
-
-    val locateUser =
-        { zoomLevel: Double ->
-            if (userLocationAvailable) {
-                mapView.location2.apply {
-                    enabled = true
-                }
-                val point = Point.fromLngLat(state.longitude, state.latitude)
-                mapboxMap.flyTo(
-                    cameraOptions {
-                        center(point)
-                        zoom(zoomLevel)
-                        bearing(0.0)
-                    },
-                    mapAnimationOptions {
-                        duration(DEFAULT_CAMERA_ANIMATION_DURATION)
-                    }
-                )
-            }
-        }
-
-
-    LaunchedEffect(key1 = userLocationAvailable) {
-        locateUser(LOCATE_USER_ZOOM_LEVEL)
-    }
 
 
     MappingBottomSheet(
@@ -298,10 +331,10 @@ fun MappingScreen(
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom)
                 },
-                mapView = mapView,
                 isDarkTheme = isDarkTheme,
-                mapboxMap = mapboxMap,
-                locationPermissionState = locationPermissionState
+                locationPermissionState = locationPermissionState,
+                mapView = mapView,
+                mapboxMap = mapboxMap
             )
 
             LocateUserButton(
@@ -313,16 +346,7 @@ fun MappingScreen(
                         centerVerticallyTo(parent)
                     },
                 locationPermissionGranted = locationPermissionState.allPermissionsGranted,
-                onClick = {
-
-                    locationPermissionState.requestPermission(
-                        context = context,
-                        rationalMessage = "Location permission is not yet granted.") {
-                        locateUser(LOCATE_USER_ZOOM_LEVEL)
-                    }
-
-
-                }
+                onClick = onClickLocateUserButton
             )
 
 

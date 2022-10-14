@@ -39,37 +39,15 @@ class MappingViewModel @Inject constructor(
     private var address: List<Address> = emptyList()
 
 
-
-    private fun getId(): String? = authUseCase.getIdUseCase()
-
-    private fun getName(): String = authUseCase.getNameUseCase().takeIf { !it.isNullOrEmpty() }
-                                    ?: throw MappingExceptions.NameException()
-
-    private suspend fun getPhoneNumber(): String =
-        authUseCase.getPhoneNumberUseCase().takeIf { !it.isNullOrEmpty() }
-        ?: throw MappingExceptions.PhoneNumberException()
-
-    private fun getPhotoUrl(): String {
-        return authUseCase.getPhotoUrlUseCase() ?: IMAGE_PLACEHOLDER_URL
-    }
-
-
-
-
     fun onEvent(event: MappingEvent) {
         when (event) {
 
             is MappingEvent.UploadProfile -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    uploadUserProfile()
-                }
+                uploadUserProfile()
             }
-
-            is MappingEvent.GetUsersAsynchronously -> {
-                getUsersJob?.cancel()
-                getUsersJob = viewModelScope.launch(Dispatchers.IO) {
-                    getUsers()
-                }
+            is MappingEvent.GetUsers -> {
+                getNearbyUsers()
+                getUserDrawableImage()
             }
             is MappingEvent.StartPinging -> {
                 _state.update { it.copy(isSearchingForAssistance = true) }
@@ -84,9 +62,7 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.SignOut -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    signOutAccount()
-                }
+              signOutAccount()
             }
             is MappingEvent.SubscribeToLocationUpdates -> {
                 subscribeToLocationUpdates()
@@ -101,17 +77,30 @@ class MappingViewModel @Inject constructor(
             }
 
 
+
+        }
+    }
+
+    private fun getUserDrawableImage(){
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                mappingUseCase.imageUrlToDrawableUseCase(getPhotoUrl())
+            }.onSuccess { drawableImage ->
+                _state.update { it.copy(drawableImages = DrawableImages(userDrawableImage = drawableImage)) }
+            }.onFailure {
+                Timber.v("GET USER DRAWABLE IMAGE: ${it.message}")
+            }
         }
     }
 
 
-
-    private suspend fun getUsers() {
-        coroutineScope {
+    private fun getNearbyUsers() {
+        getUsersJob?.cancel()
+        getUsersJob = viewModelScope.launch(Dispatchers.IO) {
             while (this.isActive) {
                 runCatching {
                     mappingUseCase.getUsersUseCase().collect { users ->
-                        _state.update { it.copy(users = Users(activeUsers = users)) }
+                        _state.update { it.copy(nearbyCyclists = NearbyCyclists(activeUsers = users)) }
                     }
                 }.onFailure {
                     Timber.e("ERROR GETTING USERS: ${it.message}")
@@ -151,40 +140,43 @@ class MappingViewModel @Inject constructor(
         locationUpdatesFlow?.cancel()
     }
 
-    private suspend fun signOutAccount() {
-        runCatching {
-            authUseCase.signOutUseCase()
-        }.onSuccess {
-            _eventFlow.emit(value = MappingUiEvent.ShowSignInScreen)
-        }.onFailure {
-            Timber.e("Error Sign out account: ${it.message}")
+    private fun signOutAccount() {
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                authUseCase.signOutUseCase()
+            }.onSuccess {
+                _eventFlow.emit(value = MappingUiEvent.ShowSignInScreen)
+            }.onFailure {
+                Timber.e("Error Sign out account: ${it.message}")
+            }
         }
     }
 
-    private suspend fun uploadUserProfile() {
+    private fun uploadUserProfile() {
+        viewModelScope.launch(Dispatchers.IO) {
+            if (address.isNotEmpty()) {
 
-        if (address.isNotEmpty()) {
-
-            address.forEach { address ->
-                runCatching {
-                    _state.update { it.copy(isLoading = true) }
-                    createUser(address)
-                }.onSuccess {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            findAssistanceButtonVisible = false)
+                address.forEach { address ->
+                    runCatching {
+                        _state.update { it.copy(isLoading = true) }
+                        createUser(address)
+                    }.onSuccess {
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                findAssistanceButtonVisible = false)
+                        }
+                        _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
+                    }.onFailure { exception ->
+                        _state.update { it.copy(isLoading = false) }
+                        handleException(exception)
                     }
-                    _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
-                }.onFailure { exception ->
-                    _state.update { it.copy(isLoading = false) }
-                    handleException(exception)
                 }
+                return@launch
             }
-            return
-        }
-        _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
+            _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
 
+        }
 
     }
 
@@ -236,4 +228,24 @@ class MappingViewModel @Inject constructor(
         onEvent(event = MappingEvent.UnsubscribeToLocationUpdates)
         onEvent(event = MappingEvent.StopPinging)
     }
+
+
+
+    private fun getId(): String? = authUseCase.getIdUseCase()
+
+    private fun getName(): String = authUseCase.getNameUseCase().takeIf { !it.isNullOrEmpty() }
+                                    ?: throw MappingExceptions.NameException()
+
+    private suspend fun getPhoneNumber(): String =
+        authUseCase.getPhoneNumberUseCase().takeIf { !it.isNullOrEmpty() }
+        ?: throw MappingExceptions.PhoneNumberException()
+
+    private fun getPhotoUrl(): String {
+        return authUseCase.getPhotoUrlUseCase() ?: IMAGE_PLACEHOLDER_URL
+    }
+
+
+
+
+
 }
