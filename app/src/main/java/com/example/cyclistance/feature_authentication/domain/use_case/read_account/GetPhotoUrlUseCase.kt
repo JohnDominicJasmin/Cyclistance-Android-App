@@ -5,6 +5,6 @@ import com.google.firebase.auth.AuthCredential
 
 class GetPhotoUrlUseCase(private val repository: AuthRepository<AuthCredential>) {
     operator fun invoke(): String?{
-        return repository.getPhotoUrl()
+        return repository.getPhotoUrl().takeIf { it != "null" }
     }
 }
