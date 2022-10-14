@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
@@ -185,7 +186,15 @@ fun MappingScreen(
     LaunchedEffect(key1 = state.drawableImages.userDrawableImage){
         mapView.location2.apply {
             locationPuck = LocationPuck2D(
-                topImage = state.drawableImages.userDrawableImage
+                bearingImage = ContextCompat.getDrawable(
+                    context,
+                    com.mapbox.maps.R.drawable.mapbox_mylocation_bg_shape
+                ),
+                topImage = state.drawableImages.userDrawableImage,
+                shadowImage = ContextCompat.getDrawable(
+                    context,
+                    com.mapbox.maps.R.drawable.mapbox_user_icon_shadow
+                )
             )
         }
     }
