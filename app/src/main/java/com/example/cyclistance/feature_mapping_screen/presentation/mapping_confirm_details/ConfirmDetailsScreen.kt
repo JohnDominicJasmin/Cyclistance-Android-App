@@ -60,7 +60,7 @@ fun ConfirmDetailsScreen(
     CoinDetailScreen(modifier = Modifier.padding(paddingValues), state = state,
 
         onValueChangeAddress = { address ->
-            viewModel.onEvent(event = ConfirmDetailsEvent.EnterAddress(address.trim()))
+            viewModel.onEvent(event = ConfirmDetailsEvent.EnterAddress(address))
         },
         onValueChangeMessage = { message ->
             viewModel.onEvent(event = ConfirmDetailsEvent.EnterMessage(message))
