@@ -4,7 +4,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.BottomSheetType
 
 object MappingConstants {
-    const val MAX_ZOOM_LEVEL_MAPS = 18.85
+    const val MAX_ZOOM_LEVEL_MAPS = 20.00
     const val MIN_ZOOM_LEVEL_MAPS = 3.00
 
     const val MAP_ZOOM = 6.00
@@ -19,12 +19,12 @@ object MappingConstants {
     const val DEFAULT_CAMERA_ANIMATION_DURATION = 700L
 
     const val CHARACTER_LIMIT = 110
-    const val IMAGE_PLACEHOLDER_URL = "https://raw.githubusercontent.com/JohnDominicJasmin/JohnDominicJasmin/main/ic_empty_profile_placeholder.jpg"
+    const val IMAGE_PLACEHOLDER_URL = "https://i.redd.it/w8jys7vnupq91.jpg"
     const val NO_SIM_CARD_RESULT_CODE = 1002
     const val NONE_OF_THE_ABOVE_RESULT_CODE = 1001
 
-    const val LOCATION_UPDATES_INTERVAL: Long = 3500
-    const val FASTEST_LOCATION_UPDATES_INTERVAL: Long = 1000L
+    const val LOCATION_UPDATES_INTERVAL: Long = 10000L
+    const val FASTEST_LOCATION_UPDATES_INTERVAL: Long = 7000L
     const val INTERVAL_UPDATE_USERS = 5000L
 
     val BIKE_TYPE_KEY = stringPreferencesKey("bike_type")
