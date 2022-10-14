@@ -53,7 +53,6 @@ fun rememberMapView(context: Context) = remember {
                     .accessToken(context.getString(R.string.MapsDownloadToken)).build())
         ).apply {
             id = R.id.mapView
-
             scalebar.enabled = false
             logo.enabled = false
             attribution.enabled = false
@@ -65,6 +64,7 @@ fun rememberMapView(context: Context) = remember {
             )
 
             location2.apply {
+
                 locationPuck = LocationPuck2D(
                     bearingImage = ContextCompat.getDrawable(
                         context,
@@ -79,11 +79,12 @@ fun rememberMapView(context: Context) = remember {
                         com.mapbox.maps.R.drawable.mapbox_user_icon_shadow
                     )
                 )
-                this.showAccuracyRing = true
-                this.pulsingColor = ContextCompat.getColor(context,R.color.DodgerBlue)
-                this.puckBearingEnabled = true
-                this.pulsingMaxRadius = 120.0f
-                this.puckBearingSource = PuckBearingSource.HEADING
+
+                showAccuracyRing = true
+                pulsingColor = ContextCompat.getColor(context,R.color.DodgerBlue)
+                puckBearingEnabled = false
+                pulsingMaxRadius = 120.0f
+                puckBearingSource = PuckBearingSource.HEADING
 
             }
         }
