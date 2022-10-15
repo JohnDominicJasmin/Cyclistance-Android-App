@@ -15,6 +15,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingE
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getAddress
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getFullAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -201,7 +202,7 @@ class MappingViewModel @Inject constructor(
 
     private suspend inline fun createUser(address: Address) {
         with(address) {
-            val currentAddress = "$subThoroughfare $thoroughfare., $locality, $subAdminArea"
+            val currentAddress = this.getFullAddress()
             _state.update { it.copy(currentAddress = currentAddress) }
             mappingUseCase.createUserUseCase(
                 user = User(
@@ -249,3 +250,4 @@ class MappingViewModel @Inject constructor(
 
 
 }
+
