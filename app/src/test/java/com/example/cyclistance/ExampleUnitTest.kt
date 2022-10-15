@@ -1,7 +1,9 @@
 package com.example.cyclistance
 
+import com.example.cyclistance.address.MockAddress
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getFullAddress
+import org.junit.Assert
 import org.junit.Test
-import java.lang.RuntimeException
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -30,6 +32,12 @@ class ExampleUnitTest {
     }
 
 
+    @Test
+    fun testAddress() {
+        val testAddress = MockAddress()
+        val expectedResult = "subAdminArea"
+        Assert.assertEquals(expectedResult, testAddress.getFullAddress())
+    }
 
 
 
