@@ -65,7 +65,7 @@ private fun MappingBottomSheet(
 fun BottomSheetSearchingAssistance(
     isDarkTheme: Boolean,
     content: @Composable (PaddingValues) -> Unit,
-    onClickCancelButton: () -> Unit) {
+    onClickCancelSearchButton: () -> Unit) {
 
     val bottomSheetScaffoldState =
         rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(initialValue = BottomSheetValue.Expanded))
@@ -123,7 +123,7 @@ fun BottomSheetSearchingAssistance(
                                 bottom.linkTo(parent.bottom, margin = 6.dp)
                             },
                         onClick = {
-                            onClickCancelButton()
+                            onClickCancelSearchButton()
                             scope.launch {
                                 bottomSheetScaffoldState.bottomSheetState.collapse()
                             }
@@ -138,6 +138,9 @@ fun BottomSheetSearchingAssistance(
 
 @Composable
 fun BottomSheetOnGoingRescue(
+    onClickCallButton: () -> Unit,
+    onClickChatButton: () -> Unit,
+    onClickCancelButton: () -> Unit,
     content: @Composable (PaddingValues) -> Unit,
     estimatedTimeRemaining: String) {
 
@@ -192,21 +195,21 @@ fun BottomSheetOnGoingRescue(
                             backgroundColor = MaterialTheme.colors.secondary,
                             contentColor = MaterialTheme.colors.onSurface,
                             imageId = R.drawable.ic_call,
-                            buttonSubtitle = "Call", onClick = {})
+                            buttonSubtitle = "Call", onClick = onClickCallButton)
 
 
                         RoundedButtonItem(
                             backgroundColor = MaterialTheme.colors.secondary,
                             contentColor = MaterialTheme.colors.onSurface,
                             imageId = R.drawable.ic_chat,
-                            buttonSubtitle = "Chat", onClick = {})
+                            buttonSubtitle = "Chat", onClick = onClickChatButton)
 
 
                         RoundedButtonItem(
                             backgroundColor = Red900,
                             contentColor = Color.White,
                             imageId = R.drawable.ic_cancel,
-                            buttonSubtitle = "Cancel", onClick = {})
+                            buttonSubtitle = "Cancel", onClick = onClickCancelButton)
                     }
                 }
             }
@@ -426,7 +429,7 @@ fun SearchingAssistancePreview() {
     CyclistanceTheme(isDarkTheme) {
         BottomSheetSearchingAssistance(
             isDarkTheme = isDarkTheme,
-            onClickCancelButton = {},
+            onClickCancelSearchButton = {},
             content = {})
     }
 }
@@ -436,7 +439,12 @@ fun SearchingAssistancePreview() {
 @Composable
 fun OnGoingRescueBottomSheetPreview() {
     CyclistanceTheme(true) {
-        BottomSheetOnGoingRescue(estimatedTimeRemaining = "2mins", content = {})
+        BottomSheetOnGoingRescue(
+            estimatedTimeRemaining = "2mins",
+            content = {},
+            onClickCancelButton = {},
+            onClickCallButton = {},
+            onClickChatButton = {})
     }
 }
 

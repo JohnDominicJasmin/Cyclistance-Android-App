@@ -59,14 +59,18 @@ fun TextFieldInputArea(
                 keyboardType = KeyboardType.Phone,
                 imeAction = ImeAction.Done),
             keyboardActions = keyboardActions,
-            onClick = onClickPhoneTextField,
+            onClick = {
+                if (!state.isLoading) {
+                    onClickPhoneTextField()
+                }
+            },
             onValueChange = onValueChangePhoneNumber,
             enabled = false)
     }
 }
 
 @Composable
-fun TextFieldItem(
+private fun TextFieldItem(
     label: String,
     errorMessage: String,
     value: String,

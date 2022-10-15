@@ -9,7 +9,12 @@ fun MappingBottomSheet(
     isDarkTheme: Boolean,
     bottomSheetType: String,
     estimatedTimeRemaining: String = "",
-    onClickActionButton: () -> Unit,
+    onClickRescueArrivedButton: () -> Unit,
+    onClickReachedDestinationButton: () -> Unit,
+    onClickCancelSearchButton: () -> Unit,
+    onClickCallButton: () -> Unit,
+    onClickChatButton: () -> Unit,
+    onClickCancelButton: () -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
 
@@ -20,7 +25,7 @@ fun MappingBottomSheet(
             BottomSheetRescueArrived(
                 isDarkTheme = isDarkTheme,
                 content = content,
-                onClickOkButton = onClickActionButton)
+                onClickOkButton = onClickRescueArrivedButton)
 
         }
         BottomSheetType.DestinationReached.type -> {
@@ -28,14 +33,14 @@ fun MappingBottomSheet(
             BottomSheetReachedDestination(
                 isDarkTheme = isDarkTheme,
                 content = content,
-                onClickOkButton = onClickActionButton)
+                onClickOkButton = onClickReachedDestinationButton)
 
         }
         BottomSheetType.SearchAssistance.type -> {
 
             BottomSheetSearchingAssistance(
                 isDarkTheme = isDarkTheme,
-                onClickCancelButton = {},
+                onClickCancelSearchButton = onClickCancelSearchButton,
                 content = content)
 
         }
@@ -43,7 +48,11 @@ fun MappingBottomSheet(
 
             BottomSheetOnGoingRescue(
                 estimatedTimeRemaining = estimatedTimeRemaining,
-                content = content)
+                content = content,
+                onClickCallButton = onClickCallButton,
+                onClickChatButton = onClickChatButton,
+                onClickCancelButton = onClickCancelButton)
+
         }
         else -> {content(PaddingValues())}
     }
