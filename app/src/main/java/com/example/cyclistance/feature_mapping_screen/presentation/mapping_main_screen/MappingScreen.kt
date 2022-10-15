@@ -16,6 +16,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -252,7 +253,7 @@ fun MappingScreen(
         modifier = Modifier.padding(paddingValues),
         isDarkTheme = isDarkTheme,
         state = state,
-        onClickRetryButton = {
+        onClickNoInternetRetryButton = {
             if (context.hasInternetConnection()) {
                 mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetScreen)
             }
@@ -274,7 +275,10 @@ fun MappingScreen(
             }
         },
         mapboxMap = mapboxMap,
-        mapView = mapView
+        mapView = mapView,
+        onClickCancelSearchButton = {
+
+        }
     )
 
 }
@@ -297,7 +301,7 @@ fun MappingScreenPreview() {
             modifier = Modifier,
             isDarkTheme = true,
             state = MappingState(),
-            onClickRetryButton = {},
+            onClickNoInternetRetryButton = {},
             onClickSearchButton = {},
             onClickLocateUserButton = {},
             mapView = mapView,
@@ -316,15 +320,29 @@ fun MappingScreen(
     mapView: MapView,
     mapboxMap: MapboxMap,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
-    onClickRetryButton: () -> Unit,
-    onClickLocateUserButton: () -> Unit,
-    onClickSearchButton: () -> Unit) {
+    onClickNoInternetRetryButton: () -> Unit = {},
+    onClickLocateUserButton: () -> Unit = {},
+    onClickSearchButton: () -> Unit = {},
+    onClickRescueArrivedButton: () -> Unit = {},
+    onClickReachedDestinationButton: () -> Unit = {},
+    onClickCancelSearchButton: () -> Unit = { },
+    onClickCallButton: () -> Unit = {},
+    onClickChatButton: () -> Unit = {},
+    onClickCancelButton: () -> Unit = {},
 
 
+    ) {
+
+    val configuration = LocalConfiguration.current
     MappingBottomSheet(
         isDarkTheme = isDarkTheme,
-        onClickActionButton = { /*TODO: add action here, or lambda parameters*/ },
-        bottomSheetType = state.bottomSheetType) {
+        bottomSheetType = state.bottomSheetType,
+        onClickRescueArrivedButton = onClickRescueArrivedButton,
+        onClickReachedDestinationButton = onClickReachedDestinationButton,
+        onClickCancelSearchButton = onClickCancelSearchButton,
+        onClickCallButton = onClickCallButton,
+        onClickChatButton = onClickChatButton,
+        onClickCancelButton = onClickCancelButton) {
 
         ConstraintLayout(
             modifier = modifier
@@ -350,9 +368,8 @@ fun MappingScreen(
                 modifier = Modifier
                     .size(53.dp)
                     .constrainAs(locateButton) {
-                        end.linkTo(parent.end, margin = 5.dp)
-                        bottom.linkTo(parent.bottom)
-                        centerVerticallyTo(parent)
+                        end.linkTo(parent.end, margin = 10.dp)
+                        bottom.linkTo(parent.bottom, margin = (configuration.screenHeightDp / 3).dp)
                     },
                 locationPermissionGranted = locationPermissionState.allPermissionsGranted,
                 onClick = onClickLocateUserButton
@@ -391,7 +408,7 @@ fun MappingScreen(
                         width = Dimension.matchParent
                         height = Dimension.matchParent
                     },
-                    onClickRetryButton = onClickRetryButton)
+                    onClickRetryButton = onClickNoInternetRetryButton)
             }
         }
 
