@@ -164,7 +164,7 @@ class SignInViewModel @Inject constructor(
                 }
             }
 
-            is AuthExceptions.InternetException -> {
+            is AuthExceptions.NetworkException -> {
                 _state.update { it.copy(hasInternet = false) }
             }
             is AuthExceptions.ConflictFBTokenException -> {

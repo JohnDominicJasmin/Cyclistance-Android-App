@@ -1,7 +1,7 @@
 package com.example.cyclistance.feature_authentication.domain.exceptions
 
 sealed class AuthExceptions {
-    class InternetException(message: String) : RuntimeException(message)
+    class NetworkException(message: String) : RuntimeException(message)
     class UserAlreadyExistsException(val title: String, message: String) : RuntimeException(message)
     class EmailVerificationException(message: String) : RuntimeException(message)
     class TooManyRequestsException(val title: String, message: String) : RuntimeException(message)

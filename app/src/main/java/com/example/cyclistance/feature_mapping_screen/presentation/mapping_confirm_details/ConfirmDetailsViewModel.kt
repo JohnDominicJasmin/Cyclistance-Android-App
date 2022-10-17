@@ -135,7 +135,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                         message = exception.message ?: "",
                     ))
             }
-            is MappingExceptions.NoInternetException -> {
+            is MappingExceptions.NetworkExceptions -> {
                 _state.update { it.copy(hasInternet = false) }
             }
             is MappingExceptions.BikeTypeException -> {

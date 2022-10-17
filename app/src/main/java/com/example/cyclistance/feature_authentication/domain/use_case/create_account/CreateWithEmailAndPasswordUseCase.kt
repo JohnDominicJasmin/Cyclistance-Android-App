@@ -39,7 +39,7 @@ class CreateWithEmailAndPasswordUseCase(
                 throw AuthExceptions.ConfirmPasswordException(message = context.getString(R.string.passwordIsWeakMessage))
 
             !context.hasInternetConnection() ->
-                throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
+                throw AuthExceptions.NetworkException(message = context.getString(R.string.no_internet_message))
 
             else -> repository.createUserWithEmailAndPassword(
                 authModel.email.trim(),

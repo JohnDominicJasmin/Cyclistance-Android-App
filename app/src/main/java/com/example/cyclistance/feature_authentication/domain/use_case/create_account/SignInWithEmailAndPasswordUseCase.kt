@@ -26,7 +26,7 @@ class SignInWithEmailAndPasswordUseCase(
                 throw AuthExceptions.PasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
 
             !context.hasInternetConnection() ->
-                throw AuthExceptions.InternetException(message = context.getString(R.string.no_internet_message))
+                throw AuthExceptions.NetworkException(message = context.getString(R.string.no_internet_message))
 
             else -> repository.signInWithEmailAndPassword(
                 authModel.email.trim(),

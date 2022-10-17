@@ -112,7 +112,7 @@ class SignUpViewModel @Inject constructor(
                         confirmPasswordErrorMessage = exception.message ?: "Invalid Password.")
                 }
             }
-            is AuthExceptions.InternetException -> {
+            is AuthExceptions.NetworkException -> {
                 _state.update { it.copy(hasInternet = false) }
             }
             is AuthExceptions.UserAlreadyExistsException -> {

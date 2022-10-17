@@ -122,7 +122,7 @@ class EmailAuthViewModel @Inject constructor(
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
                 when (exception) {
-                    is AuthExceptions.InternetException -> {
+                    is AuthExceptions.NetworkException -> {
                         _state.update { it.copy(hasInternet = false) }
                     }
                     else -> {
