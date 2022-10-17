@@ -57,7 +57,7 @@ fun MappingMapsScreen(
                     this.pulsingEnabled = pulsingEnabled
                 }
 
-                mapboxMap.loadStyleUri(if (isDarkTheme) Style.DARK else Style.MAPBOX_STREETS)
+                mapboxMap.loadStyleUri(if (isDarkTheme) Style.DARK else Style.OUTDOORS)
 
                 /*    locations.forEach {
                         val annotationApi = mapView.annotations
