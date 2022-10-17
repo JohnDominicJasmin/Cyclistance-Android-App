@@ -41,7 +41,13 @@ class AuthRepositoryImpl(
         val uploadTask = reference.putFile(uri)
         return suspendCancellableCoroutine { continuation ->
             uploadTask.addOnCompleteListener { task ->
-                task.exception?.let(continuation::resumeWithException)
+                task.exception?.let { exception ->
+                    if (exception is FirebaseNetworkException) {
+                        continuation.resumeWithException(
+                            AuthExceptions.NetworkException(
+                                message = context.getString(R.string.no_internet_message)))
+                    }
+                }
                 if (task.isSuccessful) {
                     reference.downloadUrl.addOnSuccessListener(continuation::resume)
                 }
@@ -55,7 +61,7 @@ class AuthRepositoryImpl(
                 reload.exception?.let { exception ->
                     if (exception is FirebaseNetworkException) {
                         continuation.resumeWithException(
-                            AuthExceptions.InternetException(
+                            AuthExceptions.NetworkException(
                                 message = context.getString(
                                     R.string.no_internet_message)))
                     }
@@ -89,7 +95,7 @@ class AuthRepositoryImpl(
                     createAccount.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
                             continuation.resumeWithException(
-                                AuthExceptions.InternetException(
+                                AuthExceptions.NetworkException(
                                     message = context.getString(R.string.no_internet_message)))
                             return@addOnCompleteListener
                         }
@@ -119,7 +125,7 @@ class AuthRepositoryImpl(
                         Timber.e(exception.message)
                         if (exception is FirebaseNetworkException) {
                             continuation.resumeWithException(
-                                AuthExceptions.InternetException(
+                                AuthExceptions.NetworkException(
                                     message = context.getString(
                                         R.string.no_internet_message)))
                             return@addOnCompleteListener
@@ -174,7 +180,7 @@ class AuthRepositoryImpl(
                     signInWithCredential.exception?.let { exception ->
                         if (exception.message == FACEBOOK_CONNECTION_FAILURE) {
                             continuation.resumeWithException(
-                                AuthExceptions.InternetException(
+                                AuthExceptions.NetworkException(
                                     message = context.getString(
                                         R.string.no_internet_message)))
                         }
@@ -237,7 +243,13 @@ class AuthRepositoryImpl(
         return suspendCancellableCoroutine { continuation ->
             auth.currentUser?.updateProfile(profileUpdates)
                 ?.addOnCompleteListener { updateProfile ->
-                    updateProfile.exception?.let(continuation::resumeWithException)
+                    updateProfile.exception?.let { exception ->
+                        if (exception is FirebaseNetworkException) {
+                            continuation.resumeWithException(
+                                AuthExceptions.NetworkException(
+                                    message = context.getString(R.string.no_internet_message)))
+                        }
+                    }
                     if (continuation.isActive) {
                         continuation.resume(updateProfile.isSuccessful)
                     }
