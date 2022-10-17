@@ -91,13 +91,10 @@ object MappingModule {
     @Singleton
     fun provideImageRequestBuilder(@ApplicationContext context: Context): ImageRequest.Builder{
     return ImageRequest.Builder(context)
-        .placeholder(R.drawable.ic_empty_profile_placeholder)
-        .error(R.drawable.ic_empty_profile_placeholder)
-        .fallback(R.drawable.ic_empty_profile_placeholder)
+
         .networkCachePolicy(CachePolicy.ENABLED)
         .diskCachePolicy(CachePolicy.ENABLED)
         .memoryCachePolicy(CachePolicy.ENABLED)
-
         .allowHardware(false)
         .transformations(CircleCropTransformation())
         .size(105)
@@ -117,9 +114,7 @@ object MappingModule {
             .diskCachePolicy(CachePolicy.ENABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .networkCachePolicy(policy = CachePolicy.ENABLED)
-            .placeholder(R.drawable.ic_empty_profile_placeholder)
-            .error(R.drawable.ic_empty_profile_placeholder)
-            .fallback(R.drawable.ic_empty_profile_placeholder)
+
     }
 
 

@@ -61,6 +61,8 @@ import com.mapbox.maps.plugin.locationcomponent.location2
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import com.example.cyclistance.R as Resource
+
 
 @ExperimentalPermissionsApi
 @Composable
@@ -135,12 +137,12 @@ fun MappingScreen(
                 onDisabled = settingResultRequest::launch,
                 onEnabled = {
                     mappingViewModel.onEvent(
-                        event = MappingEvent.UploadProfile)
+                        event = MappingEvent.SearchAssistance)
 
                 })
         } else {
             mappingViewModel.onEvent(
-                event = MappingEvent.UploadProfile)
+                event = MappingEvent.SearchAssistance)
 
         }
     }
@@ -189,9 +191,12 @@ fun MappingScreen(
             locationPuck = LocationPuck2D(
                 bearingImage = ContextCompat.getDrawable(
                     context,
-                    com.mapbox.maps.R.drawable.mapbox_mylocation_bg_shape
+                    Resource.drawable.ic_bearing_image
                 ),
-                topImage = state.drawableImages.userDrawableImage,
+                topImage = state.drawableImages.userDrawableImage ?: ContextCompat.getDrawable(
+                    context,
+                    Resource.drawable.ic_top_image
+                ),
                 shadowImage = ContextCompat.getDrawable(
                     context,
                     com.mapbox.maps.R.drawable.mapbox_user_icon_shadow
@@ -277,7 +282,7 @@ fun MappingScreen(
         mapboxMap = mapboxMap,
         mapView = mapView,
         onClickCancelSearchButton = {
-
+            //todo: update user profile to searching = false and show search assistance button
         }
     )
 
@@ -375,17 +380,16 @@ fun MappingScreen(
                 onClick = onClickLocateUserButton
             )
 
-
-            if (state.findAssistanceButtonVisible) {
-                SearchAssistanceButton(
-                    enabled = !state.isLoading,
-                    modifier = Modifier.constrainAs(searchButton) {
-                        bottom.linkTo(parent.bottom, margin = 15.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        height = Dimension.value(45.dp)
-                    }, onClickSearchButton = onClickSearchButton)
-            }
+            SearchAssistanceButton(
+                enabled = !state.isLoading,
+                modifier = Modifier.constrainAs(searchButton) {
+                    bottom.linkTo(parent.bottom, margin = 15.dp)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                    height = Dimension.value(45.dp)
+                }, onClickSearchButton = onClickSearchButton,
+                buttonVisible = state.findAssistanceButtonVisible
+            )
 
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.constrainAs(circularProgressbar) {
