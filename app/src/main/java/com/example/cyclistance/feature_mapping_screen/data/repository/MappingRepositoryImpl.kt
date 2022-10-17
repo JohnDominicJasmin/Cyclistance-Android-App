@@ -78,14 +78,14 @@ class MappingRepositoryImpl(
             with(user) {
                 api.createUser(
                     userDto = UserDto(
-                        address = this.address ?: return@handleException,
-                        id = this.id ?: return@handleException,
-                        location = this.location ?: return@handleException,
-                        name = this.name ?: return@handleException,
+                        address = this.address,
+                        id = this.id,
+                        location = this.location,
+                        name = this.name,
                         userNeededHelp = this.userNeededHelp,
                         userAssistance = this.userAssistance,
-                        profilePictureUrl = this.profilePictureUrl ?: return@handleException,
-                        contactNumber = this.contactNumber ?: return@handleException,
+                        profilePictureUrl = this.profilePictureUrl,
+                        contactNumber = this.contactNumber,
                         rescueRequest = this.rescueRequest
                     ))
             }
