@@ -52,9 +52,9 @@ fun ProfilePictureArea(photoUrl: Any, modifier: Modifier, onClick: () -> Unit) {
                                 .clickable { onClick() }
                                 .align(Alignment.Center),
                             contentScale = ContentScale.Crop,
-                            placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder),
-                            error = painterResource(id = R.drawable.ic_empty_profile_placeholder),
-                            fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder))
+                            placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
+                            error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
+                            fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
                     }
 
                     is ImageBitmap -> {
