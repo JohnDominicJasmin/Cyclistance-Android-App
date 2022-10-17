@@ -75,7 +75,7 @@ fun ConfirmDetailsScreen(
             navController.popBackStack()
         },
         onClickConfirmButton = {
-            viewModel.onEvent(event = ConfirmDetailsEvent.Save)
+            viewModel.onEvent(event = ConfirmDetailsEvent.ConfirmUpdate)
         },
         onClickRetryButton = {
             if (context.hasInternetConnection()) {
@@ -84,6 +84,16 @@ fun ConfirmDetailsScreen(
         })
 }
 
+
+
+
+
+
+
+
+
+
+
 @Preview
 @Composable
 fun CoinDetailScreenPreview() {
@@ -91,6 +101,13 @@ fun CoinDetailScreenPreview() {
         CoinDetailScreen(modifier = Modifier, state = ConfirmDetailsState(isLoading = true))
     }
 }
+
+
+
+
+
+
+
 
 
 @Composable

@@ -64,7 +64,7 @@ class ConfirmDetailsViewModel @Inject constructor(
 
     fun onEvent(event: ConfirmDetailsEvent) {
         when (event) {
-            is ConfirmDetailsEvent.Save -> {
+            is ConfirmDetailsEvent.ConfirmUpdate -> {
                 viewModelScope.launch {
                     updateUser(state.value)
                 }
@@ -107,7 +107,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                                 bikeType = bikeType,
                                 description = description,
                                 message = message.trim()),
-                            status = Status(started = true)
+                            status = Status(started = true, searching = true)
                         )
                     )).also {
 

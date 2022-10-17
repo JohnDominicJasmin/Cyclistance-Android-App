@@ -228,7 +228,7 @@ class AuthRepositoryImpl(
     }
 
 
-    override suspend fun updateProfilePicture(photoUri: Uri?, name: String?): Boolean {
+    override suspend fun updateProfile(photoUri: Uri?, name: String?): Boolean {
         val profileUpdates = userProfileChangeRequest {
             name?.let { this.displayName = it }
             photoUri?.let { this.photoUri = photoUri }

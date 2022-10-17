@@ -2,7 +2,7 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_conf
 
 
 sealed class ConfirmDetailsEvent{
-    object Save: ConfirmDetailsEvent()
+    object ConfirmUpdate: ConfirmDetailsEvent()
     data class SelectBikeType(val bikeType: String): ConfirmDetailsEvent()
     object DismissNoInternetScreen: ConfirmDetailsEvent()
     data class SelectDescription(val description: String): ConfirmDetailsEvent()

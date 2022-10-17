@@ -19,6 +19,6 @@ class UpdateProfileUseCase(private val repository: AuthRepository<AuthCredential
         if(!numberOfCharactersEnough(name)){
             throw MappingExceptions.NameException("Name is too short.")
         }
-        repository.updateProfilePicture(photoUri, name)
+        repository.updateProfile(photoUri, name)
     }
 }
