@@ -11,9 +11,13 @@ data class ImageBitmap(val bitmap: Bitmap? = null)
 data class EditProfileState(
     val name: String = "",
     var phoneNumber: String = "",
+    val photoUrl: String = "",
+
+    val nameSnapshot: String = "",
+    val phoneNumberSnapshot: String = "",
+
     val nameErrorMessage: String = "",
     val phoneNumberErrorMessage: String = "",
-    val photoUrl: String = "",
     val isLoading: Boolean = false,
     val imageBitmap: ImageBitmap = ImageBitmap()
     )

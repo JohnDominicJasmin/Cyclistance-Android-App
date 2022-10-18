@@ -44,13 +44,6 @@ class EditProfileViewModel @Inject constructor(
         authUseCase.getPhoneNumberUseCase().ifEmpty { throw MappingExceptions.PhoneNumberException() }
 
 
-    init {
-        onEvent(event = EditProfileEvent.LoadName)
-        onEvent(event = EditProfileEvent.LoadPhoto)
-        onEvent(event = EditProfileEvent.LoadPhoneNumber)
-    }
-
-
     fun onEvent(event: EditProfileEvent) {
 
         when (event) {
@@ -127,8 +120,10 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 _state.update {
+                    val name = getName()
                     it.copy(
-                        name = getName(),
+                        name = name,
+                        nameSnapshot = name,
                         isLoading = true
                     )
                 }
@@ -150,8 +145,10 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 _state.update {
+                    val phoneNumber = getPhoneNumber()
                     it.copy(
-                        phoneNumber = getPhoneNumber(),
+                        phoneNumber = phoneNumber,
+                        phoneNumberSnapshot = phoneNumber,
                         isLoading = true)
                 }
 
@@ -172,15 +169,23 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 _state.update { it.copy(isLoading = true) }
+                val phoneNumberChanges = with(state.value) {
+                    phoneNumber != phoneNumberSnapshot
+                }
+
+                if (phoneNumberChanges) {
+                    authUseCase.updatePhoneNumberUseCase(state.value.phoneNumber.trim())
+                }
+
                 authUseCase.updateProfileUseCase(
                     photoUri = run {
                         imageUri?.let { localImageUri ->
                             authUseCase.uploadImageUseCase(localImageUri)
-                        }
-                    },
+                        } },
                     name = state.value.name.trim())
 
-                authUseCase.updatePhoneNumberUseCase(state.value.phoneNumber.trim())
+
+
             }.onSuccess {
                 _state.update { it.copy(isLoading = false) }
                 _eventFlow.emit(EditProfileUiEvent.ShowToastMessage(message = "Successfully Updated!"))
