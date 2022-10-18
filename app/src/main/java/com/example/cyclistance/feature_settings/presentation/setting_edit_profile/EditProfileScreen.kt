@@ -1,14 +1,13 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
 
 import android.Manifest
-import android.app.Activity
+import android.annotation.SuppressLint
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.compose.foundation.background
@@ -33,23 +32,21 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
-import com.example.cyclistance.core.utils.constants.MappingConstants.NONE_OF_THE_ABOVE_RESULT_CODE
-import com.example.cyclistance.core.utils.constants.MappingConstants.NO_SIM_CARD_RESULT_CODE
 import com.example.cyclistance.core.utils.permission.requestPermission
 import com.example.cyclistance.feature_mapping_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.SelectImageBottomSheet
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.TextFieldInputArea
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.utils.isUserInformationChanges
 import com.example.cyclistance.theme.Blue600
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.*
-import com.google.android.gms.auth.api.credentials.Credential
-import com.google.android.gms.auth.api.credentials.Credentials
 import com.google.android.gms.auth.api.credentials.HintRequest
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
+@SuppressLint("MissingPermission")
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun EditProfileScreen(
@@ -67,30 +64,6 @@ fun EditProfileScreen(
         .setPhoneNumberIdentifierSupported(true)
         .build()
 
-    val simCardIntent = Credentials.getClient(context).getHintPickerIntent(hintRequest)
-    val intentSender = IntentSenderRequest.Builder(simCardIntent.intentSender).build()
-
-    val simCardResultLauncher = rememberLauncherForActivityResult(
-        ActivityResultContracts.StartIntentSenderForResult()) { result ->
-
-        when (result.resultCode) {
-            Activity.RESULT_OK -> {
-                val credential: Credential? =
-                    result.data?.getParcelableExtra(Credential.EXTRA_KEY)
-                editProfileViewModel.onEvent(
-                    event = EditProfileEvent.EnterPhoneNumber(
-                        phoneNumber = credential!!.id))
-            }
-            NO_SIM_CARD_RESULT_CODE -> {
-                Toast.makeText(context, "No SIM Card Detected", Toast.LENGTH_LONG).show()
-            }
-            NONE_OF_THE_ABOVE_RESULT_CODE -> {
-                editProfileViewModel.onEvent(
-                    event = EditProfileEvent.EnterPhoneNumber(
-                        phoneNumber = ""))
-            }
-        }
-    }
 
     val openGalleryResultLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -148,9 +121,15 @@ fun EditProfileScreen(
 
 
     LaunchedEffect(true) {
+
+        editProfileViewModel.onEvent(event = EditProfileEvent.LoadName)
+        editProfileViewModel.onEvent(event = EditProfileEvent.LoadPhoto)
+        editProfileViewModel.onEvent(event = EditProfileEvent.LoadPhoneNumber)
+
         if (!accessStoragePermissionState.allPermissionsGranted) {
             accessStoragePermissionState.launchMultiplePermissionRequest()
         }
+
         editProfileViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is EditProfileUiEvent.ShowMappingScreen -> {
@@ -162,6 +141,7 @@ fun EditProfileScreen(
 
             }
         }
+
     }
 
 
@@ -195,7 +175,7 @@ fun EditProfileScreen(
         },
         state = state,
         onClickPhoneTextField = {
-            simCardResultLauncher.launch(intentSender)
+//            todo: change implementation
         },
         onValueChangeName = { name ->
             editProfileViewModel.onEvent(
@@ -259,6 +239,9 @@ fun EditProfileScreen(
             }
         }
     }
+
+
+
 
     SelectImageBottomSheet(
         onClickGalleryButton = {
@@ -352,7 +335,7 @@ fun EditProfileScreen(
                 onClickCancelButton = onClickCancelButton,
                 onClickConfirmButton = onClickConfirmButton,
                 negativeButtonEnabled = !state.isLoading,
-                positiveButtonEnabled = !state.isLoading,
+                positiveButtonEnabled = !state.isLoading && state.isUserInformationChanges(),
             )
 
             if (state.isLoading) {
