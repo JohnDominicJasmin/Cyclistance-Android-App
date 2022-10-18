@@ -7,10 +7,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import coil.imageLoader
-import coil.request.CachePolicy
 import coil.request.ImageRequest
-import coil.transform.CircleCropTransformation
-import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_KEY
 import com.example.cyclistance.core.utils.editData
@@ -142,6 +139,6 @@ private inline fun <T> handleException(action: () -> T): T {
         throw MappingExceptions.UnexpectedErrorException(message = e.message())
     } catch (e: IOException) {
         Timber.e("Exception is ${e.message}")
-        throw MappingExceptions.NoInternetException()
+        throw MappingExceptions.NetworkExceptions()
     }
 }
