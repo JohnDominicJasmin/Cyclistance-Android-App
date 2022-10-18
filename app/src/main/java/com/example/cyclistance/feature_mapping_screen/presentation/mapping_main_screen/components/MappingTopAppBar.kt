@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.R
+import com.example.cyclistance.theme.Black440
 
 @Composable
 fun TopAppBarCreator(
@@ -43,6 +44,7 @@ fun TopAppBarCreator(
 fun TitleTopAppBar(
     title: String,
     confirmationText: String? = null,
+    confirmationTextEnable: Boolean = false,
     onClickConfirmation: () -> Unit = {}) {
 
     Row(verticalAlignment = Alignment.CenterVertically) {
@@ -54,10 +56,17 @@ fun TitleTopAppBar(
 
         Spacer(modifier = Modifier.weight(0.1f))
         confirmationText?.let {
-            TextButton(onClick = onClickConfirmation, modifier = Modifier.padding(end = 4.dp)) {
+
+            TextButton(
+                onClick = onClickConfirmation,
+                modifier = Modifier.padding(end = 4.dp),
+                enabled = confirmationTextEnable,
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colors.onBackground,
+                    disabledContentColor = Black440)) {
+
                 Text(
                     text = "SAVE",
-                    color = MaterialTheme.colors.onBackground,
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp)
             }

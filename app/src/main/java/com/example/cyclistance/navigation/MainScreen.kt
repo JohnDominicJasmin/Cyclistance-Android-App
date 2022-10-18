@@ -18,6 +18,7 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.TopAppBarCreator
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.utils.isUserInformationChanges
 import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingEvent
 import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingViewModel
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -25,6 +26,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -41,7 +43,7 @@ fun MainScreen(
     val isDarkTheme by settingViewModel.isDarkTheme.collectAsState(initial = false)
     val scaffoldState = rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
-
+    val editProfileState by editProfileViewModel.state.collectAsState()
     LaunchedEffect(key1 = true) {
         mappingViewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -53,6 +55,7 @@ fun MainScreen(
             }
         }
     }
+
 
 
     CyclistanceTheme(darkTheme = isDarkTheme) {
@@ -68,7 +71,8 @@ fun MainScreen(
                     coroutineScope = coroutineScope,
                     onClickSaveProfile = {
                         editProfileViewModel.onEvent(EditProfileEvent.Save)
-                    })
+                    },
+                editProfileSaveButtonEnabled = editProfileState.isUserInformationChanges())
             },
             drawerContent = {
                 MappingDrawerContent(
@@ -120,6 +124,7 @@ fun TopAppBar(
     scaffoldState: ScaffoldState,
     coroutineScope: CoroutineScope,
     onClickSaveProfile: () -> Unit,
+    editProfileSaveButtonEnabled: Boolean = false,
     route: String?) {
 
 
@@ -173,6 +178,7 @@ fun TopAppBar(
                     TitleTopAppBar(
                         title = "Edit Profile",
                         confirmationText = "Save",
+                        confirmationTextEnable = editProfileSaveButtonEnabled,
                         onClickConfirmation = onClickSaveProfile)
                 })
         }
