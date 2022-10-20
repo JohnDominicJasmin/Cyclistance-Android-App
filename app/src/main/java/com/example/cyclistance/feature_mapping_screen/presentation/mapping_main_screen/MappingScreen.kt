@@ -188,20 +188,28 @@ fun MappingScreen(
 
     LaunchedEffect(key1 = state.drawableImages.userDrawableImage){
         mapView.location2.apply {
-            locationPuck = LocationPuck2D(
-                bearingImage = ContextCompat.getDrawable(
-                    context,
-                    Resource.drawable.ic_bearing_image
-                ),
-                topImage = state.drawableImages.userDrawableImage ?: ContextCompat.getDrawable(
-                    context,
-                    Resource.drawable.ic_top_image
-                ),
-                shadowImage = ContextCompat.getDrawable(
-                    context,
-                    com.mapbox.maps.R.drawable.mapbox_user_icon_shadow
+
+
+            if(state.drawableImages.userDrawableImage != null){
+
+                locationPuck = LocationPuck2D(
+                    bearingImage = ContextCompat.getDrawable(context, Resource.drawable.ic_bearing_image_large),
+                    topImage = state.drawableImages.userDrawableImage,
+                    shadowImage = ContextCompat.getDrawable(context, com.mapbox.maps.R.drawable.mapbox_user_icon_shadow)
                 )
+
+                return@apply
+            }
+
+            locationPuck = LocationPuck2D(
+                bearingImage = ContextCompat.getDrawable(context, Resource.drawable.ic_bearing_image_small),
+                topImage = ContextCompat.getDrawable(context, Resource.drawable.ic_location_top_image_small),
+                shadowImage = ContextCompat.getDrawable(context, com.mapbox.maps.R.drawable.mapbox_user_icon_shadow)
             )
+
+
+
+
         }
     }
 
