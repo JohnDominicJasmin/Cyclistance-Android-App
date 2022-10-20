@@ -47,7 +47,6 @@ class EmailAuthViewModel @Inject constructor(
             }
 
             is EmailAuthEvent.SendEmailVerification -> {
-                viewModelScope.launch {
                     sendEmailVerification()
                 }
             }
@@ -88,11 +87,7 @@ class EmailAuthViewModel @Inject constructor(
         if (emailIsVerified) {
             _eventFlow.emit(EmailAuthUiEvent.ShowMappingScreen)
             delay(300)
-            job?.let {
-                if (it.isActive) {
-                    it.cancel()
-                }
-            }
+            job?.cancel()
         } else {
             _eventFlow.emit(EmailAuthUiEvent.ShowEmailAuthScreen)
         }
@@ -157,15 +152,15 @@ class EmailAuthViewModel @Inject constructor(
         }
     }
 
-    private suspend fun sendEmailVerification() {
-        coroutineScope {
+    private fun sendEmailVerification() {
+        viewModelScope.launch {
             runCatching {
                 _state.update { it.copy(isLoading = true) }
                 authUseCase.sendEmailVerificationUseCase()
             }.onSuccess { isEmailVerificationSent ->
                 _state.update { it.copy(isLoading = false) }
                 if (!state.value.isEmailResendClicked) {
-                    return@coroutineScope
+                    return@launch
                 }
 
                 if (isEmailVerificationSent) {
@@ -176,7 +171,7 @@ class EmailAuthViewModel @Inject constructor(
                                 description = "New verification email has been sent to your email address.",
                                 icon = R1.raw.success))
                     }
-                    return@coroutineScope
+                    return@launch
                 }
 
                 _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
