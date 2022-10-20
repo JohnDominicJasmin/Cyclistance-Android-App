@@ -206,7 +206,7 @@ fun EditProfilePreview() {
         EditProfileScreen(
             modifier = Modifier,
             photoUrl = "",
-            state = EditProfileState(isLoading = false))
+            state = EditProfileState(isLoading = false, nameErrorMessage = "Field cannot be blank"))
     }
 }
 

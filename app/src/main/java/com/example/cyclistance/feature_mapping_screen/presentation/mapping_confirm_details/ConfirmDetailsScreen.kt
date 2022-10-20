@@ -98,7 +98,7 @@ fun ConfirmDetailsScreen(
 @Composable
 fun CoinDetailScreenPreview() {
     CyclistanceTheme(true) {
-        CoinDetailScreen(modifier = Modifier, state = ConfirmDetailsState(isLoading = true))
+        CoinDetailScreen(modifier = Modifier, state = ConfirmDetailsState())
     }
 }
 
