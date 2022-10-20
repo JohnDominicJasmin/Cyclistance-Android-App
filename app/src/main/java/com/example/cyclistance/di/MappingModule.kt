@@ -97,7 +97,7 @@ object MappingModule {
         .memoryCachePolicy(CachePolicy.ENABLED)
         .allowHardware(false)
         .transformations(CircleCropTransformation())
-        .size(105)
+        .size(85)
     }
 
     @Provides
