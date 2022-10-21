@@ -1,6 +1,9 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
@@ -47,15 +50,21 @@ fun MappingMapsScreen(
 
 
     val context = LocalContext.current
+
+    val pulsingEnabled by derivedStateOf {
+        state.isSearchingForAssistance.and(locationPermissionState?.allPermissionsGranted == true)
+    }
+
+    LaunchedEffect(key1 = pulsingEnabled){
+        mapView.location2.pulsingEnabled = pulsingEnabled
+    }
+
     ComposableLifecycle { _, event ->
         when (event) {
 
             Lifecycle.Event.ON_CREATE -> {
                 Timber.v("Lifecycle Event: ON_CREATE")
-                mapView.location2.apply {
-                    val pulsingEnabled = state.isSearchingForAssistance.and(locationPermissionState?.allPermissionsGranted == true)
-                    this.pulsingEnabled = pulsingEnabled
-                }
+
 
                 mapboxMap.loadStyleUri(if (isDarkTheme) Style.DARK else Style.OUTDOORS)
 
