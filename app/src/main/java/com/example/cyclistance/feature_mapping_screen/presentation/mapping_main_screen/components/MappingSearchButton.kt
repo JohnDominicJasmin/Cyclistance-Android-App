@@ -9,11 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 
 @Composable
-fun SearchAssistanceButton(onClickSearchButton: () -> Unit, modifier: Modifier, enabled: Boolean, buttonVisible: Boolean = true) {
+fun SearchAssistanceButton(onClickSearchButton: () -> Unit, modifier: Modifier, enabled: Boolean, state: MappingState) {
 
-    if(buttonVisible) {
+    if(state.findAssistanceButtonVisible) {
 
         Button(
             enabled = enabled,
