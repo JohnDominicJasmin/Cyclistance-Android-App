@@ -41,7 +41,6 @@ import com.example.cyclistance.feature_settings.presentation.setting_edit_profil
 import com.example.cyclistance.theme.Blue600
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.*
-import com.google.android.gms.auth.api.credentials.HintRequest
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -129,7 +128,7 @@ fun EditProfileScreen(
 
         editProfileViewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is EditProfileUiEvent.ShowMappingScreen -> {
+                is EditProfileUiEvent.CloseScreen -> {
                     navController.popBackStack()
                 }
                 is EditProfileUiEvent.ShowToastMessage -> {

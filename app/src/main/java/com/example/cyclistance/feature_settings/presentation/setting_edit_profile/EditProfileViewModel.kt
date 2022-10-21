@@ -184,12 +184,10 @@ class EditProfileViewModel @Inject constructor(
                         } },
                     name = state.value.name.trim())
 
-
-
             }.onSuccess {
                 _state.update { it.copy(isLoading = false) }
                 _eventFlow.emit(EditProfileUiEvent.ShowToastMessage(message = "Successfully Updated!"))
-                _eventFlow.emit(EditProfileUiEvent.ShowMappingScreen)
+                _eventFlow.emit(EditProfileUiEvent.CloseScreen)
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
                 when (exception) {
