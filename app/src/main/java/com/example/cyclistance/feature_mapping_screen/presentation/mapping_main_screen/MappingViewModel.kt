@@ -8,6 +8,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LAT
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.INTERVAL_UPDATE_USERS
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.ConfirmationDetails
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Location
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Status
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.UserAssistance
@@ -43,8 +44,11 @@ class MappingViewModel @Inject constructor(
     fun onEvent(event: MappingEvent) {
         when (event) {
 
-            is MappingEvent.UploadProfile -> {
+            is MappingEvent.SearchAssistance -> {
                 uploadUserProfile()
+            }
+            is MappingEvent.CancelSearchAssistance -> {
+                cancelSearchAssistance()
             }
             is MappingEvent.GetUsers -> {
                 getNearbyUsers()
@@ -79,6 +83,33 @@ class MappingViewModel @Inject constructor(
 
 
 
+        }
+    }
+
+    private fun cancelSearchAssistance() {
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                _state.update { it.copy(isLoading = true) }
+                mappingUseCase.updateUserUseCase(
+                    itemId = getId() ?: return@launch,
+                    user = User(
+                        userNeededHelp = false,
+                        userAssistance = UserAssistance(
+                            confirmationDetails = ConfirmationDetails(),
+                            status = Status(searching = false, started = false)))
+                )
+
+            }.onSuccess {
+                _state.update {
+                    it.copy(
+                        isSearchingForAssistance = false,
+                        isLoading = false,
+                        findAssistanceButtonVisible = true)
+                }
+            }.onFailure { exception ->
+                _state.update { it.copy(isLoading = false) }
+                handleException(exception)
+            }
         }
     }
 
@@ -130,6 +161,8 @@ class MappingViewModel @Inject constructor(
                         )
                     }
                 }
+            }.onSuccess {
+                Timber.i("SUCCESS SUBSCRIBING TO LOCATION UPDATES")
             }.onFailure {
                 Timber.e("Error Location Updates: ${it.message}")
             }
@@ -183,7 +216,7 @@ class MappingViewModel @Inject constructor(
 
     private suspend inline fun handleException(exception: Throwable) {
         when (exception) {
-            is MappingExceptions.NoInternetException -> {
+            is MappingExceptions.NetworkExceptions -> {
                 _state.update { it.copy(hasInternet = false) }
             }
             is MappingExceptions.UnexpectedErrorException -> {

@@ -47,8 +47,7 @@ class EmailAuthViewModel @Inject constructor(
             }
 
             is EmailAuthEvent.SendEmailVerification -> {
-                    sendEmailVerification()
-                }
+                sendEmailVerification()
             }
             is EmailAuthEvent.StartTimer -> {
                 viewModelScope.launch {

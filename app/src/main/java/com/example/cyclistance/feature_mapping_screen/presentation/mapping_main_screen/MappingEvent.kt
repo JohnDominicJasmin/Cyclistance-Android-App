@@ -2,7 +2,7 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 
 sealed class MappingEvent {
-    object UploadProfile : MappingEvent()
+    object SearchAssistance : MappingEvent()
     object SignOut: MappingEvent()
     object StartPinging: MappingEvent()
     object StopPinging: MappingEvent()
@@ -11,5 +11,6 @@ sealed class MappingEvent {
     object SubscribeToLocationUpdates: MappingEvent()
     object UnsubscribeToLocationUpdates: MappingEvent()
     object DismissNoInternetScreen: MappingEvent()
+    object CancelSearchAssistance: MappingEvent()
 
 }
