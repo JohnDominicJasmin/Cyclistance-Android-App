@@ -97,6 +97,12 @@ class ConfirmDetailsViewModel @Inject constructor(
         runCatching {
             with(confirmDetailsState) {
                 _state.update { it.copy(isLoading = true) }
+                if (bikeType.isEmpty()){
+                    throw MappingExceptions.BikeTypeException()
+                }
+                if(description.isEmpty()){
+                    throw MappingExceptions.DescriptionException()
+                }
                 mappingUseCase.updateUserUseCase(
                     itemId = getId() ?: return,
                     user = User(
