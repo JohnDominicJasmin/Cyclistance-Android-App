@@ -42,7 +42,6 @@ private fun MappingBottomSheet(
     content: @Composable (PaddingValues) -> Unit,
 ) {
 
-
     BottomSheetScaffold(
         scaffoldState = bottomSheetScaffoldState,
         sheetContent = sheetContent,
@@ -64,12 +63,13 @@ private fun MappingBottomSheet(
 @Composable
 fun BottomSheetSearchingAssistance(
     isDarkTheme: Boolean,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
     content: @Composable (PaddingValues) -> Unit,
     onClickCancelSearchButton: () -> Unit) {
 
-    val bottomSheetScaffoldState =
-        rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(initialValue = BottomSheetValue.Expanded))
     val scope = rememberCoroutineScope()
+
+
     MappingBottomSheet(
         sheetPeekHeight = 0.dp,
         sheetGesturesEnabled = false,
@@ -138,15 +138,13 @@ fun BottomSheetSearchingAssistance(
 
 @Composable
 fun BottomSheetOnGoingRescue(
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
     onClickCallButton: () -> Unit,
     onClickChatButton: () -> Unit,
     onClickCancelButton: () -> Unit,
     content: @Composable (PaddingValues) -> Unit,
     estimatedTimeRemaining: String) {
 
-
-    val bottomSheetScaffoldState =
-        rememberBottomSheetScaffoldState(bottomSheetState = BottomSheetState(initialValue = BottomSheetValue.Expanded))
 
     MappingBottomSheet(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
@@ -221,38 +219,42 @@ fun BottomSheetOnGoingRescue(
 @Composable
 fun BottomSheetRescueArrived(
     isDarkTheme: Boolean,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
     content: @Composable (PaddingValues) -> Unit,
     onClickOkButton: () -> Unit) {
 
     BottomSheetRescue(
         isDarkTheme = isDarkTheme,
         displayedText = "Your rescuer has arrived.",
-        content = content, onClickOkButton = onClickOkButton)
+        content = content,
+        onClickOkButton = onClickOkButton,
+        bottomSheetScaffoldState = bottomSheetScaffoldState)
 }
 
 @Composable
 fun BottomSheetReachedDestination(
     isDarkTheme: Boolean,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
     content: @Composable (PaddingValues) -> Unit,
     onClickOkButton: () -> Unit) {
 
     BottomSheetRescue(
         isDarkTheme = isDarkTheme,
         displayedText = "You have reached your destination.",
-        content = content, onClickOkButton = onClickOkButton)
+        content = content,
+        onClickOkButton = onClickOkButton,
+        bottomSheetScaffoldState = bottomSheetScaffoldState)
 }
 
 
 @Composable
-private fun BottomSheetRescue(
+fun BottomSheetRescue(
     isDarkTheme: Boolean,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
     onClickOkButton: () -> Unit,
     content: @Composable (PaddingValues) -> Unit,
     displayedText: String) {
 
-
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = BottomSheetState(initialValue = BottomSheetValue.Expanded))
 
     val scope = rememberCoroutineScope()
 
@@ -402,10 +404,13 @@ private fun RoundedButtonItem(
 @Composable
 fun BottomSheetRescuerArrivedPreview() {
     val isDarkTheme = true
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
     CyclistanceTheme(isDarkTheme) {
         BottomSheetRescueArrived(
             isDarkTheme = isDarkTheme,
-            content = {}, onClickOkButton = {})
+            content = {},
+            onClickOkButton = {},
+        bottomSheetScaffoldState = bottomSheetScaffoldState)
     }
 }
 
@@ -413,10 +418,13 @@ fun BottomSheetRescuerArrivedPreview() {
 @Composable
 fun DestinationReachedBottomSheetPreview() {
     val isDarkTheme = true
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
     CyclistanceTheme(isDarkTheme) {
         BottomSheetReachedDestination(
             isDarkTheme = isDarkTheme,
-            content = {}, onClickOkButton = {})
+            content = {},
+            onClickOkButton = {},
+            bottomSheetScaffoldState = bottomSheetScaffoldState)
 
     }
 
@@ -426,11 +434,13 @@ fun DestinationReachedBottomSheetPreview() {
 @Composable
 fun SearchingAssistancePreview() {
     val isDarkTheme = true
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
     CyclistanceTheme(isDarkTheme) {
         BottomSheetSearchingAssistance(
             isDarkTheme = isDarkTheme,
             onClickCancelSearchButton = {},
-            content = {})
+            content = {},
+            bottomSheetScaffoldState = bottomSheetScaffoldState)
     }
 }
 
@@ -438,13 +448,15 @@ fun SearchingAssistancePreview() {
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun OnGoingRescueBottomSheetPreview() {
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
     CyclistanceTheme(true) {
         BottomSheetOnGoingRescue(
             estimatedTimeRemaining = "2mins",
             content = {},
             onClickCancelButton = {},
             onClickCallButton = {},
-            onClickChatButton = {})
+            onClickChatButton = {},
+            bottomSheetScaffoldState = bottomSheetScaffoldState)
     }
 }
 

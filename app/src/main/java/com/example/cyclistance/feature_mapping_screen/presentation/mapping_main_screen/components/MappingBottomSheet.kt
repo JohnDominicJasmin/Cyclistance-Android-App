@@ -1,14 +1,17 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.BottomSheetType
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MappingBottomSheet(
     isDarkTheme: Boolean,
     bottomSheetType: String,
     estimatedTimeRemaining: String = "",
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
     onClickRescueArrivedButton: () -> Unit,
     onClickReachedDestinationButton: () -> Unit,
     onClickCancelSearchButton: () -> Unit,
@@ -21,40 +24,44 @@ fun MappingBottomSheet(
 
     when (bottomSheetType) {
         BottomSheetType.RescuerArrived.type -> {
-
             BottomSheetRescueArrived(
                 isDarkTheme = isDarkTheme,
                 content = content,
-                onClickOkButton = onClickRescueArrivedButton)
-
+                onClickOkButton = onClickRescueArrivedButton,
+                bottomSheetScaffoldState = bottomSheetScaffoldState)
         }
-        BottomSheetType.DestinationReached.type -> {
 
+        BottomSheetType.DestinationReached.type -> {
             BottomSheetReachedDestination(
                 isDarkTheme = isDarkTheme,
                 content = content,
-                onClickOkButton = onClickReachedDestinationButton)
+                onClickOkButton = onClickReachedDestinationButton,
+                bottomSheetScaffoldState = bottomSheetScaffoldState)
 
         }
-        BottomSheetType.SearchAssistance.type -> {
 
+        BottomSheetType.SearchAssistance.type -> {
             BottomSheetSearchingAssistance(
                 isDarkTheme = isDarkTheme,
                 onClickCancelSearchButton = onClickCancelSearchButton,
-                content = content)
+                content = content,
+                bottomSheetScaffoldState = bottomSheetScaffoldState)
 
         }
-        BottomSheetType.OnGoingRescue.type -> {
 
+        BottomSheetType.OnGoingRescue.type -> {
             BottomSheetOnGoingRescue(
                 estimatedTimeRemaining = estimatedTimeRemaining,
                 content = content,
                 onClickCallButton = onClickCallButton,
                 onClickChatButton = onClickChatButton,
-                onClickCancelButton = onClickCancelButton)
-
+                onClickCancelButton = onClickCancelButton,
+                bottomSheetScaffoldState = bottomSheetScaffoldState)
         }
-        else -> {content(PaddingValues())}
+
+        else -> {
+            content(PaddingValues())
+        }
     }
 
 }
