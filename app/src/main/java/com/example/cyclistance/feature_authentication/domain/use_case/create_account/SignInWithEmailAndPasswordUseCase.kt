@@ -22,7 +22,7 @@ class SignInWithEmailAndPasswordUseCase(
             email.isEmpty() ->
                 throw AuthExceptions.EmailException(message = context.getString(R.string.fieldLeftBlankMessage))
 
-            !password.isEmailValid() ->
+            !email.isEmailValid() ->
                 throw AuthExceptions.EmailException(message = context.getString(R.string.emailIsInvalidMessage))
 
             password.isEmpty() ->
