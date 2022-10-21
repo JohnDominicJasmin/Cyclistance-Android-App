@@ -60,9 +60,6 @@ fun EditProfileScreen(
 
 
     val context = LocalContext.current
-    val hintRequest = HintRequest.Builder()
-        .setPhoneNumberIdentifierSupported(true)
-        .build()
 
 
     val openGalleryResultLauncher =
@@ -174,9 +171,6 @@ fun EditProfileScreen(
 
         },
         state = state,
-        onClickPhoneTextField = {
-//            todo: change implementation
-        },
         onValueChangeName = { name ->
             editProfileViewModel.onEvent(
                 event = EditProfileEvent.EnterName(name = name))
@@ -206,7 +200,7 @@ fun EditProfilePreview() {
         EditProfileScreen(
             modifier = Modifier,
             photoUrl = "",
-            state = EditProfileState(isLoading = false, nameErrorMessage = "Field cannot be blank"))
+            state = EditProfileState(isLoading = false, nameErrorMessage = "Field cannot be blank", phoneNumberErrorMessage = "Field cannot be blank"))
     }
 }
 
@@ -219,7 +213,6 @@ fun EditProfileScreen(
     state: EditProfileState = EditProfileState(),
     onClickGalleryButton: () -> Unit = {},
     onClickCameraButton: () -> Unit = {},
-    onClickPhoneTextField: () -> Unit = {},
     onValueChangeName: (String) -> Unit = {},
     onValueChangePhoneNumber: (String) -> Unit = {},
     keyboardActions: KeyboardActions = KeyboardActions { },
@@ -313,7 +306,6 @@ fun EditProfileScreen(
 
                     },
                 state = state,
-                onClickPhoneTextField = onClickPhoneTextField,
                 onValueChangeName = onValueChangeName,
                 onValueChangePhoneNumber = onValueChangePhoneNumber,
                 keyboardActions = keyboardActions,
