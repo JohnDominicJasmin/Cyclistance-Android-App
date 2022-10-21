@@ -44,7 +44,10 @@ fun MainScreen(
     val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
     val editProfileState by editProfileViewModel.state.collectAsState()
+    val mappingState by mappingViewModel.state.collectAsState()
+
     LaunchedEffect(key1 = true) {
+        mappingViewModel.onEvent(event = MappingEvent.LoadUserProfile)
         mappingViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is MappingUiEvent.ShowSignInScreen -> {
@@ -76,6 +79,7 @@ fun MainScreen(
             },
             drawerContent = {
                 MappingDrawerContent(
+                    state = mappingState,
                     onClickSettings = {
                         coroutineScope.launch {
                             scaffoldState.drawerState.close()

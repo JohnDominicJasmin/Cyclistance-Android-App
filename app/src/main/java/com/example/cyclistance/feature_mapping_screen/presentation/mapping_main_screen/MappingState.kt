@@ -34,4 +34,6 @@ data class MappingState(
     val drawableImages: DrawableImages = DrawableImages(),
     val latitude: Double = DEFAULT_LATITUDE,
     val longitude: Double = DEFAULT_LONGITUDE,
+    val name: String = "",
+    val photoUrl : String = "",
 )

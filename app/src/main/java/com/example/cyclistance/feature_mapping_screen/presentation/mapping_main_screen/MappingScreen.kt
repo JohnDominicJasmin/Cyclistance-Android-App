@@ -24,7 +24,6 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import androidx.test.core.app.ActivityScenario.launch
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
@@ -58,10 +57,7 @@ import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.locationcomponent.location2
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import com.example.cyclistance.R as Resource
@@ -232,7 +228,7 @@ fun MappingScreen(
     LaunchedEffect(key1 = true) {
 
         with(mappingViewModel) {
-            onEvent(event = MappingEvent.GetUsers)
+            onEvent(event = MappingEvent.LoadUsers)
             onEvent(event = MappingEvent.SubscribeToLocationUpdates)
 
             eventFlow.collectLatest { event ->

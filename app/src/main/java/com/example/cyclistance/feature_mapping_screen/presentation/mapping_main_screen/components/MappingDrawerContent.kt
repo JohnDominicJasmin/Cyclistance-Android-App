@@ -17,13 +17,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import coil.compose.AsyncImage
 import com.example.cyclistance.R
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
 @Composable
 fun MappingDrawerContent(
+    state: MappingState = MappingState(),
     onClickSettings: () -> Unit = {},
     onClickChat: () -> Unit = {},
     onClickRescueRequest: () -> Unit = {},
@@ -48,9 +51,8 @@ fun MappingDrawerContent(
                 horizontalAlignment = Alignment.CenterHorizontally) {
 
 
-                Image(
-                    painter = painterResource(R.drawable.person_image),
-                    contentDescription = "Profile_Screen",
+                AsyncImage(
+                    model = state.photoUrl, contentDescription = "User Profile Image",
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(105.dp)
@@ -62,7 +64,7 @@ fun MappingDrawerContent(
                 )
 
                 Text(
-                    text = "John Doe",
+                    text = state.name,
                     color = MaterialTheme.colors.onSecondary,
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(top = 7.dp, bottom = 10.dp))
@@ -132,7 +134,7 @@ fun MappingDrawerContentPreview() {
         MappingDrawerContent(
             onClickSettings = {},
             onClickChat = {},
-            onClickSignOut = {}
+            onClickSignOut = {},
         )
     }
 }
