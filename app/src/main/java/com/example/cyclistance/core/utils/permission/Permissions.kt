@@ -6,7 +6,7 @@ import android.widget.Toast
 import com.google.accompanist.permissions.*
 
 @OptIn(ExperimentalPermissionsApi::class)
-fun MultiplePermissionsState.requestPermission(
+inline fun MultiplePermissionsState.requestPermission(
     context: Context,
     rationalMessage: String,
     onGranted: () -> Unit) {
@@ -27,7 +27,7 @@ fun MultiplePermissionsState.requestPermission(
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
-fun PermissionState.requestPermission(
+inline fun PermissionState.requestPermission(
     context: Context,
     rationalMessage: String,
     onGranted: () -> Unit) {

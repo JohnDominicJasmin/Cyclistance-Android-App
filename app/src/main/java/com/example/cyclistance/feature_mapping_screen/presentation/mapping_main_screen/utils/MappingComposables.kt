@@ -24,9 +24,9 @@ import com.mapbox.maps.plugin.logo.logo
 import com.mapbox.maps.plugin.scalebar.scalebar
 
 @Composable
-fun ComposableLifecycle(
+inline fun ComposableLifecycle(
     lifeCycleOwner: LifecycleOwner = LocalLifecycleOwner.current,
-    onEvent: (LifecycleOwner, Lifecycle.Event) -> Unit
+    crossinline onEvent: (LifecycleOwner, Lifecycle.Event) -> Unit
 ) {
     DisposableEffect(lifeCycleOwner) {
         val observer = LifecycleEventObserver { source: LifecycleOwner, event: Lifecycle.Event ->

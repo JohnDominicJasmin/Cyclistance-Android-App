@@ -9,8 +9,11 @@ import timber.log.Timber
 import java.io.IOException
 
 @WorkerThread
-fun Geocoder.getAddress(latitude: Double,longitude: Double, onCallbackAddress: (List<Address>) -> Unit) {
-    
+inline fun Geocoder.getAddress(
+    latitude: Double,
+    longitude: Double,
+    crossinline onCallbackAddress: (List<Address>) -> Unit) {
+
     try {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
