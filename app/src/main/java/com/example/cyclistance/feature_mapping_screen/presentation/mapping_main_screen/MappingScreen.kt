@@ -12,8 +12,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ScaffoldState
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -25,6 +24,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.test.core.app.ActivityScenario.launch
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
@@ -58,12 +58,16 @@ import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.locationcomponent.location2
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import com.example.cyclistance.R as Resource
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @ExperimentalPermissionsApi
 @Composable
 fun MappingScreen(
@@ -82,6 +86,10 @@ fun MappingScreen(
     val mapboxMap = remember {
         mapView.getMapboxMap()
     }
+
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Expanded)
+    )
 
 
 
@@ -186,28 +194,36 @@ fun MappingScreen(
         }
     }
 
-    LaunchedEffect(key1 = state.drawableImages.userDrawableImage){
+    LaunchedEffect(key1 = state.drawableImages.userDrawableImage) {
         mapView.location2.apply {
 
 
-            if(state.drawableImages.userDrawableImage != null){
+            if (state.drawableImages.userDrawableImage != null) {
 
                 locationPuck = LocationPuck2D(
-                    bearingImage = ContextCompat.getDrawable(context, Resource.drawable.ic_bearing_image_large),
+                    bearingImage = ContextCompat.getDrawable(
+                        context,
+                        Resource.drawable.ic_bearing_image_large),
                     topImage = state.drawableImages.userDrawableImage,
-                    shadowImage = ContextCompat.getDrawable(context, com.mapbox.maps.R.drawable.mapbox_user_icon_shadow)
+                    shadowImage = ContextCompat.getDrawable(
+                        context,
+                        com.mapbox.maps.R.drawable.mapbox_user_icon_shadow)
                 )
 
                 return@apply
             }
 
             locationPuck = LocationPuck2D(
-                bearingImage = ContextCompat.getDrawable(context, Resource.drawable.ic_bearing_image_small),
-                topImage = ContextCompat.getDrawable(context, Resource.drawable.ic_location_top_image_small),
-                shadowImage = ContextCompat.getDrawable(context, com.mapbox.maps.R.drawable.mapbox_user_icon_shadow)
+                bearingImage = ContextCompat.getDrawable(
+                    context,
+                    Resource.drawable.ic_bearing_image_small),
+                topImage = ContextCompat.getDrawable(
+                    context,
+                    Resource.drawable.ic_location_top_image_small),
+                shadowImage = ContextCompat.getDrawable(
+                    context,
+                    com.mapbox.maps.R.drawable.mapbox_user_icon_shadow)
             )
-
-
 
 
         }
@@ -290,20 +306,28 @@ fun MappingScreen(
         mapboxMap = mapboxMap,
         mapView = mapView,
         onClickCancelSearchButton = {
-            //todo: update user profile to searching = false and show search assistance button
-        }
+
+            coroutineScope.launch{
+                bottomSheetScaffoldState.bottomSheetState.collapse()
+            }.invokeOnCompletion {
+                mappingViewModel.onEvent(event = MappingEvent.CancelSearchAssistance)
+            }
+
+        },
+        bottomSheetScaffoldState = bottomSheetScaffoldState,
     )
 
 }
 
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun MappingScreenPreview() {
     val context = LocalContext.current
     val mapView = rememberMapView(context = context)
-
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Expanded))
     val mapboxMap = remember {
         mapView.getMapboxMap()
     }
@@ -313,22 +337,24 @@ fun MappingScreenPreview() {
         MappingScreen(
             modifier = Modifier,
             isDarkTheme = true,
-            state = MappingState(),
+            state = MappingState(bottomSheetType = "search_assistance", findAssistanceButtonVisible = false),
             onClickNoInternetRetryButton = {},
             onClickSearchButton = {},
             onClickLocateUserButton = {},
             mapView = mapView,
-            mapboxMap = mapboxMap
+            mapboxMap = mapboxMap,
+            bottomSheetScaffoldState = bottomSheetScaffoldState
         )
     }
 }
 
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun MappingScreen(
     modifier: Modifier,
     isDarkTheme: Boolean,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
     state: MappingState,
     mapView: MapView,
     mapboxMap: MapboxMap,
@@ -341,27 +367,29 @@ fun MappingScreen(
     onClickCancelSearchButton: () -> Unit = { },
     onClickCallButton: () -> Unit = {},
     onClickChatButton: () -> Unit = {},
-    onClickCancelButton: () -> Unit = {},
-
-
-    ) {
+    onClickCancelButton: () -> Unit = {}) {
 
     val configuration = LocalConfiguration.current
-    MappingBottomSheet(
-        isDarkTheme = isDarkTheme,
-        bottomSheetType = state.bottomSheetType,
-        onClickRescueArrivedButton = onClickRescueArrivedButton,
-        onClickReachedDestinationButton = onClickReachedDestinationButton,
-        onClickCancelSearchButton = onClickCancelSearchButton,
-        onClickCallButton = onClickCallButton,
-        onClickChatButton = onClickChatButton,
-        onClickCancelButton = onClickCancelButton) {
 
-        ConstraintLayout(
-            modifier = modifier
-                .fillMaxSize()) {
 
-            val (mapScreen, searchButton, circularProgressbar, noInternetScreen, locateButton) = createRefs()
+    ConstraintLayout(
+        modifier = modifier
+            .fillMaxSize()) {
+
+        val (mapScreen, searchButton, circularProgressbar, noInternetScreen, locateButton) = createRefs()
+
+
+
+        MappingBottomSheet(
+            isDarkTheme = isDarkTheme,
+            bottomSheetType = state.bottomSheetType,
+            onClickRescueArrivedButton = onClickRescueArrivedButton,
+            onClickReachedDestinationButton = onClickReachedDestinationButton,
+            onClickCancelSearchButton = onClickCancelSearchButton,
+            onClickCallButton = onClickCallButton,
+            onClickChatButton = onClickChatButton,
+            onClickCancelButton = onClickCancelButton,
+            bottomSheetScaffoldState = bottomSheetScaffoldState) {
 
             MappingMapsScreen(
                 state = state,
@@ -376,6 +404,9 @@ fun MappingScreen(
                 mapView = mapView,
                 mapboxMap = mapboxMap
             )
+
+        }
+
 
             LocateUserButton(
                 modifier = Modifier
@@ -397,7 +428,7 @@ fun MappingScreen(
                     height = Dimension.value(45.dp)
                     width = Dimension.wrapContent
                 }, onClickSearchButton = onClickSearchButton,
-                buttonVisible = state.findAssistanceButtonVisible
+                state = state
             )
 
             if (state.isLoading) {
@@ -423,12 +454,10 @@ fun MappingScreen(
                     },
                     onClickRetryButton = onClickNoInternetRetryButton)
             }
-        }
 
     }
-
-
 }
+
 
 
 
