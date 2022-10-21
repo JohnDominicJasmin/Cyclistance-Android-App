@@ -9,6 +9,7 @@ import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.TextStyle
@@ -18,7 +19,6 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileState
 import com.example.cyclistance.theme.*
@@ -54,7 +54,7 @@ fun TextFieldInputArea(
 
         TextFieldCreator(label = "Phone Number", errorMessage = state.phoneNumberErrorMessage, ) {
 
-            Row {
+            Row(verticalAlignment = Alignment.CenterVertically) {
 
                 Text(
                     text = "+63 | ",

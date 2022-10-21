@@ -24,13 +24,15 @@ class UpdatePhoneNumberUseCase(private val repository: AuthRepository<AuthCreden
             throw MappingExceptions.PhoneNumberException("Phone number must not contain special characters.")
         }
 
+        if(!userPhoneNumber.startsWith(prefix = "9")){
+            throw MappingExceptions.PhoneNumberException("Phone number must start with 9")
+        }
+
         if(!userPhoneNumber.isPhoneNumberLongEnough()){
             throw MappingExceptions.PhoneNumberException("Phone number is invalid")
         }
 
-        if(!userPhoneNumber.startsWith(prefix = "9")){
-            throw MappingExceptions.PhoneNumberException("Phone number must start with 9")
-        }
+
 
         repository.updatePhoneNumber(phoneNumber)
     }
