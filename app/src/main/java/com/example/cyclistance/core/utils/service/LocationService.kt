@@ -19,6 +19,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.*
+import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -74,7 +75,7 @@ class LocationService(
         locationClient.getLocationUpdates()
             .distinctUntilChanged()
             .catch {
-                it.printStackTrace()
+                Timber.e("Start Service: ${it.message}")
             }.onEach { location ->
                 address.emit(location)
             }.launchIn(serviceScope)
