@@ -30,18 +30,15 @@ class EditProfileViewModel @Inject constructor(
     private var imageUri: Uri? = null
 
     private fun getName(): String {
-        return authUseCase.getNameUseCase().takeIf { !it.isNullOrEmpty() }
-               ?: throw MappingExceptions.NameException()
-
+        return authUseCase.getNameUseCase()
     }
 
     private fun getPhotoUrl(): String {
         return authUseCase.getPhotoUrlUseCase()
-               ?: IMAGE_PLACEHOLDER_URL
     }
 
     private suspend fun getPhoneNumber(): String =
-        authUseCase.getPhoneNumberUseCase().ifEmpty { throw MappingExceptions.PhoneNumberException() }
+        authUseCase.getPhoneNumberUseCase()
 
 
     fun onEvent(event: EditProfileEvent) {

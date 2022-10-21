@@ -5,7 +5,6 @@ import android.location.Geocoder
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
-import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.INTERVAL_UPDATE_USERS
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.ConfirmationDetails
@@ -50,7 +49,11 @@ class MappingViewModel @Inject constructor(
             is MappingEvent.CancelSearchAssistance -> {
                 cancelSearchAssistance()
             }
-            is MappingEvent.GetUsers -> {
+            is MappingEvent.LoadUserProfile -> {
+                loadUserProfile()
+            }
+
+            is MappingEvent.LoadUsers -> {
                 getNearbyUsers()
                 getUserDrawableImage()
             }
@@ -67,7 +70,7 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.SignOut -> {
-              signOutAccount()
+                signOutAccount()
             }
             is MappingEvent.SubscribeToLocationUpdates -> {
                 subscribeToLocationUpdates()
@@ -80,9 +83,44 @@ class MappingViewModel @Inject constructor(
             is MappingEvent.ChangeBottomSheet -> {
                 _state.update { it.copy(bottomSheetType = event.bottomSheetType) }
             }
+        }
+    }
 
+    private fun loadUserProfile() {
+        viewModelScope.launch(Dispatchers.IO) {
+            loadName()
+            loadPhoto()
+        }
+    }
 
+    private suspend fun loadName() {
+        coroutineScope {
+            runCatching {
+                getName()
+            }.onSuccess { name ->
 
+                _state.update {
+                    it.copy(name = name)
+                }
+
+            }.onFailure {
+                Timber.e("Load Name ${it.message}")
+            }
+        }
+
+    }
+
+    private suspend fun loadPhoto() {
+        coroutineScope {
+            runCatching {
+                getPhotoUrl()
+            }.onSuccess { photoUrl ->
+                _state.update {
+                    it.copy(photoUrl = photoUrl)
+                }
+            }.onFailure {
+                Timber.e("Load Photo ${it.message}")
+            }
         }
     }
 
@@ -113,7 +151,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun getUserDrawableImage(){
+    private fun getUserDrawableImage() {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 mappingUseCase.imageUrlToDrawableUseCase(getPhotoUrl())
@@ -148,8 +186,8 @@ class MappingViewModel @Inject constructor(
             runCatching {
 
                 mappingUseCase.getUserLocationUseCase().collect { location ->
-                    withContext(Dispatchers.Default){
-                        geocoder.getAddress(location.latitude, location.longitude){ addresses ->
+                    withContext(Dispatchers.Default) {
+                        geocoder.getAddress(location.latitude, location.longitude) { addresses ->
                             address = addresses
                         }
                     }
@@ -264,22 +302,14 @@ class MappingViewModel @Inject constructor(
     }
 
 
-
     private fun getId(): String? = authUseCase.getIdUseCase()
 
-    private fun getName(): String = authUseCase.getNameUseCase().takeIf { !it.isNullOrEmpty() }
-                                    ?: throw MappingExceptions.NameException()
+    private fun getName(): String = authUseCase.getNameUseCase()
 
     private suspend fun getPhoneNumber(): String =
-        authUseCase.getPhoneNumberUseCase().takeIf { !it.isNullOrEmpty() }
-        ?: throw MappingExceptions.PhoneNumberException()
+        authUseCase.getPhoneNumberUseCase()
 
-    private fun getPhotoUrl(): String {
-        return authUseCase.getPhotoUrlUseCase() ?: IMAGE_PLACEHOLDER_URL
-    }
-
-
-
+    private fun getPhotoUrl() = authUseCase.getPhotoUrlUseCase()
 
 
 }
