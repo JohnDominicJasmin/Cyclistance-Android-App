@@ -13,10 +13,10 @@ class UpdateProfileUseCase(private val repository: AuthRepository<AuthCredential
         if(name.isEmpty()){
            throw MappingExceptions.NameException()
         }
-        if(containsNumeric(name) || containsSpecialCharacters(name)){
+        if(name.containsNumeric() || name.containsSpecialCharacters()){
             throw MappingExceptions.NameException("Name must not contain Numbers or Special Characters.")
         }
-        if(!numberOfCharactersEnough(name)){
+        if(!name.numberOfCharactersEnough()){
             throw MappingExceptions.NameException("Name is too short.")
         }
         repository.updateProfile(photoUri, name)

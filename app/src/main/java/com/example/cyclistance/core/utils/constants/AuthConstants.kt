@@ -3,6 +3,7 @@ package com.example.cyclistance.core.utils.constants
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object AuthConstants {
+    const val PHONE_NUMBER_NUMBER_OF_CHARACTERS: Int = 10
     const val REGEX_NUMBER_VALUE="[0-9]"
     const val REGEX_SPECIAL_CHARACTERS_VALUE = "[!#$%&*()_+=|<>?{}\\[\\]~]"
     const val PASSWORD_MINIMUM_NUMBER_OF_CHARACTERS = 8

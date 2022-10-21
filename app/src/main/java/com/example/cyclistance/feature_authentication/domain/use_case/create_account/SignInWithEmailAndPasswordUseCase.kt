@@ -15,22 +15,23 @@ class SignInWithEmailAndPasswordUseCase(
 
     suspend operator fun invoke(authModel: AuthModel):Boolean {
 
+        val email = authModel.email.trim()
+        val password = authModel.password.trim()
+
         return when {
-            authModel.email.trim().isEmpty() ->
+            email.isEmpty() ->
                 throw AuthExceptions.EmailException(message = context.getString(R.string.fieldLeftBlankMessage))
 
-            !isEmailValid(authModel.email.trim()) ->
+            !password.isEmailValid() ->
                 throw AuthExceptions.EmailException(message = context.getString(R.string.emailIsInvalidMessage))
 
-            authModel.password.trim().isEmpty() ->
+            password.isEmpty() ->
                 throw AuthExceptions.PasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
 
             !context.hasInternetConnection() ->
                 throw AuthExceptions.NetworkException(message = context.getString(R.string.no_internet_message))
 
-            else -> repository.signInWithEmailAndPassword(
-                authModel.email.trim(),
-                authModel.password.trim())
+            else -> repository.signInWithEmailAndPassword(email, password)
         }
     }
 }

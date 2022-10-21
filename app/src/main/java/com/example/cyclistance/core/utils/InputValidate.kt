@@ -9,23 +9,28 @@ import java.util.regex.Pattern
 
 object InputValidate {
 
-    fun containsNumeric(input: String): Boolean {
-        return Pattern.compile(REGEX_NUMBER_VALUE).matcher(input).find()
+    fun String.containsNumeric(): Boolean {
+        return Pattern.compile(REGEX_NUMBER_VALUE).matcher(this).find()
     }
-     fun containsSpecialCharacters(input: String): Boolean {
-        return Pattern.compile(REGEX_SPECIAL_CHARACTERS_VALUE).matcher(input).find()
+     fun String.containsSpecialCharacters(): Boolean {
+        return Pattern.compile(REGEX_SPECIAL_CHARACTERS_VALUE).matcher(this).find()
     }
-    fun numberOfCharactersEnough(input: String): Boolean {
-        return input.toCharArray().size >= MINIMUM_NUMBER_OF_CHARACTERS
+    fun String.numberOfCharactersEnough(): Boolean {
+        return this.toCharArray().size >= MINIMUM_NUMBER_OF_CHARACTERS
+    }
+    fun String.isDigit() = all { it.isDigit() }
+
+    fun String.isPhoneNumberLongEnough(): Boolean {
+        return toCharArray().size == AuthConstants.PHONE_NUMBER_NUMBER_OF_CHARACTERS
     }
 
-    fun isEmailValid(email: String) = Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    fun isPasswordStrong(password: String): Boolean {
-        return isPasswordLongEnough(password) &&
-               (containsNumeric(password) ||
-                containsSpecialCharacters(password))
+    fun String.isEmailValid() = Patterns.EMAIL_ADDRESS.matcher(this).matches()
+    fun String.isPasswordStrong(): Boolean {
+        return isPasswordLongEnough() &&
+               (containsNumeric() ||
+                containsSpecialCharacters())
     }
 
-     private fun isPasswordLongEnough(password:String) =
-         password.toCharArray().size >= AuthConstants.PASSWORD_MINIMUM_NUMBER_OF_CHARACTERS
+     private fun String.isPasswordLongEnough() =
+         this.toCharArray().size >= AuthConstants.PASSWORD_MINIMUM_NUMBER_OF_CHARACTERS
 }

@@ -17,33 +17,35 @@ class CreateWithEmailAndPasswordUseCase(
 
     suspend operator fun invoke(authModel: AuthModel): Boolean {
 
+        val email = authModel.email.trim()
+        val password = authModel.password.trim()
+        val confirmPassword = authModel.confirmPassword.trim()
+
+
         return when {
 
-            authModel.email.trim().isEmpty() ->
+            email.isEmpty() ->
                 throw AuthExceptions.EmailException(message = context.getString(R.string.fieldLeftBlankMessage))
 
-            !isEmailValid(authModel.email.trim()) ->
+            !email.isEmailValid() ->
                 throw AuthExceptions.EmailException(message = context.getString(R.string.emailIsInvalidMessage))
 
-            authModel.password.trim().isEmpty() ->
+            password.isEmpty() ->
                 throw AuthExceptions.PasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
 
-            authModel.confirmPassword.trim().isEmpty() ->
+            confirmPassword.isEmpty() ->
                 throw AuthExceptions.ConfirmPasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
 
-            authModel.password.trim() !=
-                    authModel.confirmPassword.trim() ->
+            password != confirmPassword ->
                 throw AuthExceptions.ConfirmPasswordException(message = context.getString(R.string.passwordIsNotMatchMessage))
 
-            !isPasswordStrong(authModel.confirmPassword.trim()) ->
+            !confirmPassword.isPasswordStrong() ->
                 throw AuthExceptions.ConfirmPasswordException(message = context.getString(R.string.passwordIsWeakMessage))
 
             !context.hasInternetConnection() ->
                 throw AuthExceptions.NetworkException(message = context.getString(R.string.no_internet_message))
 
-            else -> repository.createUserWithEmailAndPassword(
-                authModel.email.trim(),
-                authModel.password.trim())
+            else -> repository.createUserWithEmailAndPassword(email, password)
         }
     }
 
