@@ -2,34 +2,43 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun SearchAssistanceButton(onClickSearchButton: () -> Unit, modifier: Modifier, enabled: Boolean) {
+fun SearchAssistanceButton(onClickSearchButton: () -> Unit, modifier: Modifier, enabled: Boolean, buttonVisible: Boolean = true) {
 
+    if(buttonVisible) {
 
-    Button(
-        enabled = enabled,
-        onClick = onClickSearchButton,
-        shape = RoundedCornerShape(12.dp),
-        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
-        modifier = modifier) {
-        Text(
-            text = "Search Assistance",
-            color = MaterialTheme.colors.onPrimary,
-            style = MaterialTheme.typography.button,
-            modifier = Modifier.padding(
-                top = 4.dp,
-                bottom = 4.dp,
-                start = 12.dp,
-                end = 12.dp)
-        )
+        Button(
+            enabled = enabled,
+            onClick = onClickSearchButton,
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
+            modifier = modifier) {
+
+            Icon(
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search Assistance",
+                tint = MaterialTheme.colors.onPrimary
+            )
+
+            Text(
+                text = "Search Assistance",
+                color = MaterialTheme.colors.onPrimary,
+                style = MaterialTheme.typography.button,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(
+                    top = 4.dp,
+                    bottom = 4.dp,
+                    start = 12.dp,
+                    end = 12.dp)
+            )
+        }
     }
-
 }

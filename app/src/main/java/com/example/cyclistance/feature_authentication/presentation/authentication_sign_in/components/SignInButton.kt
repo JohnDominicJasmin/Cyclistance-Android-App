@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
@@ -38,7 +39,7 @@ fun SignInButton(enabled: Boolean, onClickSignInButton: () -> Unit) {
                 disabledContentColor = MaterialTheme.colors.onPrimary),
             shape = RoundedCornerShape(12.dp)
         ) {
-            Text(text = "Sign In", fontSize = 16.sp)
+            Text(text = "Sign In", fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
     }
 

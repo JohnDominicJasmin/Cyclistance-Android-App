@@ -395,6 +395,7 @@ fun MappingScreen(
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
                     height = Dimension.value(45.dp)
+                    width = Dimension.wrapContent
                 }, onClickSearchButton = onClickSearchButton,
                 buttonVisible = state.findAssistanceButtonVisible
             )

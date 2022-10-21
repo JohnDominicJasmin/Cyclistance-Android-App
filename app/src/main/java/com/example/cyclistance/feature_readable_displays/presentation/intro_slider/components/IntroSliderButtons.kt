@@ -47,7 +47,8 @@ fun IntroSliderButtons(text:String,
                 text = text,
                 color = MaterialTheme.colors.onPrimary,
                 fontSize = 16.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Bold
 
             )
         }

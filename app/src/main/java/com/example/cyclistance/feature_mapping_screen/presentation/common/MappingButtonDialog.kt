@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.theme.Black300
@@ -62,7 +63,9 @@ fun MappingButtonNavigation(
                     text = positiveButtonText,
                     color = MaterialTheme.colors.onPrimary,
                     style = MaterialTheme.typography.button,
-                    textAlign = TextAlign.Center)
+                    textAlign = TextAlign.Center,
+                    fontWeight = FontWeight.Bold
+                )
             }
 
 
