@@ -2,3 +2,7 @@
 14:46:23.104 [main] INFO com.firebase.server.forge.App$ - Listening at localhost:9000
 14:47:22.884 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - cyclistance-cc715-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 161ms, init: 0ms
 14:47:22.957 [NamespaceSystem-blocking-namespace-operation-dispatcher-7:cyclistance-cc715-default-rtdb$-1960385801:] INFO com.firebase.core.namespace.StateManager - Namespace cyclistance-cc715-default-rtdb status Active to Active
+00:38:30.401 [Thread-0] INFO com.firebase.server.forge.App$ - Attempting graceful shutdown.
+00:38:30.449 [NamespaceSystem-akka.actor.default-dispatcher-15] INFO com.firebase.core.namespace.Terminator$Terminator - 1 actors left to terminate: cyclistance-cc715-default-rtdb
+00:38:30.530 [NamespaceSystem-akka.actor.default-dispatcher-15] INFO com.firebase.core.namespace.NamespaceActor - stopped namespace actor for cyclistance-cc715-default-rtdb
+00:38:30.560 [Thread-0] INFO com.firebase.server.forge.App$ - Graceful shutdown complete.
