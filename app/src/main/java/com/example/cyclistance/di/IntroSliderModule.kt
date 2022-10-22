@@ -5,13 +5,11 @@ import com.example.cyclistance.feature_readable_displays.data.repository.IntroSl
 import com.example.cyclistance.feature_readable_displays.domain.repository.IntroSliderRepository
 import com.example.cyclistance.feature_readable_displays.domain.use_case.IntroSliderUseCase
 import com.example.cyclistance.feature_readable_displays.domain.use_case.completed_intro_slider.CompletedIntroSliderUseCase
-import com.example.cyclistance.feature_readable_displays.domain.use_case.read_intro_slider.ReadIntroSliderStateUseCase
+import com.example.cyclistance.feature_readable_displays.domain.use_case.read_intro_slider.UserCompletedWalkThroughUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.android.scopes.ViewModelScoped
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -32,7 +30,7 @@ object IntroSliderModule {
     fun provideIntroSliderUseCase(repository: IntroSliderRepository):IntroSliderUseCase
         = IntroSliderUseCase(
         completedIntroSliderUseCase = CompletedIntroSliderUseCase(repository),
-        readIntroSliderUseCase = ReadIntroSliderStateUseCase(repository))
+        readIntroSliderUseCase = UserCompletedWalkThroughUseCase(repository))
 
 
 }

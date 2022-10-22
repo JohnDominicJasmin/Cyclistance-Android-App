@@ -1,9 +1,9 @@
 package com.example.cyclistance.feature_readable_displays.domain.use_case
 
 import com.example.cyclistance.feature_readable_displays.domain.use_case.completed_intro_slider.CompletedIntroSliderUseCase
-import com.example.cyclistance.feature_readable_displays.domain.use_case.read_intro_slider.ReadIntroSliderStateUseCase
+import com.example.cyclistance.feature_readable_displays.domain.use_case.read_intro_slider.UserCompletedWalkThroughUseCase
 
 data class IntroSliderUseCase(
-    val readIntroSliderUseCase: ReadIntroSliderStateUseCase,
+    val readIntroSliderUseCase: UserCompletedWalkThroughUseCase,
     val completedIntroSliderUseCase: CompletedIntroSliderUseCase
 )
