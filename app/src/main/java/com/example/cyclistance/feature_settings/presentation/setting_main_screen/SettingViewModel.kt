@@ -28,15 +28,16 @@ class SettingViewModel @Inject constructor(
     }
 
     private fun loadTheme(){
+
         viewModelScope.launch {
             runCatching {
-                settingUseCase.isDarkThemeUseCase()
-            }.onSuccess { result ->
-                _state.update { it.copy(isDarkTheme = result.first()) }
-                savedStateHandle[SETTING_VM_STATE_KEY] = state.value
-
+                settingUseCase.isDarkThemeUseCase().collect { isDarkTheme ->
+                    _state.update { it.copy(isDarkTheme = isDarkTheme) }
+                    savedStateHandle[SETTING_VM_STATE_KEY] = state.value
+                }
             }.onFailure {
                 Timber.e("Dark Theme DataStore Reading Failed: ${it.localizedMessage}")
+
             }
         }
     }
@@ -52,7 +53,7 @@ class SettingViewModel @Inject constructor(
 
     private fun toggleTheme() {
         viewModelScope.launch {
-            kotlin.runCatching {
+            runCatching {
                 settingUseCase.toggleThemeUseCase()
             }.onFailure { exception ->
                 Timber.e(exception.message)

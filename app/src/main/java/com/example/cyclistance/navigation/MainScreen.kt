@@ -26,7 +26,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -40,11 +39,12 @@ fun MainScreen(
     val navController = rememberNavController()
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val isDarkTheme by settingViewModel.isDarkTheme.collectAsState(initial = false)
     val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
     val editProfileState by editProfileViewModel.state.collectAsState()
     val mappingState by mappingViewModel.state.collectAsState()
+    val settingState by settingViewModel.state.collectAsState()
+
 
     LaunchedEffect(key1 = true) {
         mappingViewModel.onEvent(event = MappingEvent.LoadUserProfile)
@@ -61,7 +61,7 @@ fun MainScreen(
 
 
 
-    CyclistanceTheme(darkTheme = isDarkTheme) {
+    CyclistanceTheme(darkTheme = settingState.isDarkTheme) {
 
         Scaffold(
             drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
@@ -111,7 +111,7 @@ fun MainScreen(
             NavGraph(
                 navController = navController,
                 paddingValues = paddingValues,
-                isDarkTheme = isDarkTheme,
+                isDarkTheme = settingState.isDarkTheme,
                 editProfileViewModel = editProfileViewModel,
                 scaffoldState = scaffoldState,
                 onToggleTheme = {
@@ -120,6 +120,7 @@ fun MainScreen(
             )
         }
     }
+
 }
 
 @Composable
