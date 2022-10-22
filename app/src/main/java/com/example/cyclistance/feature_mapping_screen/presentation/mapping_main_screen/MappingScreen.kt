@@ -76,6 +76,7 @@ fun MappingScreen(
 
     val context = LocalContext.current
     val state by mappingViewModel.state.collectAsState()
+    val userDrawableImage by mappingViewModel.userDrawableImage
     val coroutineScope = rememberCoroutineScope()
     val mapView = rememberMapView(context = context)
 
@@ -190,17 +191,17 @@ fun MappingScreen(
         }
     }
 
-    LaunchedEffect(key1 = state.drawableImages.userDrawableImage) {
+    LaunchedEffect(key1 = userDrawableImage) {
         mapView.location2.apply {
 
 
-            if (state.drawableImages.userDrawableImage != null) {
+            if (userDrawableImage != null) {
 
                 locationPuck = LocationPuck2D(
                     bearingImage = ContextCompat.getDrawable(
                         context,
                         Resource.drawable.ic_bearing_image_large),
-                    topImage = state.drawableImages.userDrawableImage,
+                    topImage = userDrawableImage,
                     shadowImage = ContextCompat.getDrawable(
                         context,
                         com.mapbox.maps.R.drawable.mapbox_user_icon_shadow)

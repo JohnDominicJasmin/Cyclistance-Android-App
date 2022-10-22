@@ -1,7 +1,11 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
+import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -40,6 +44,9 @@ class MappingViewModel @Inject constructor(
 
     private val _eventFlow: MutableSharedFlow<MappingUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingUiEvent> = _eventFlow.asSharedFlow()
+
+    private val _userDrawableImage: MutableState<Drawable?> = mutableStateOf(null)
+    val userDrawableImage: State<Drawable?> = _userDrawableImage
 
     private var address: List<Address> = savedStateHandle[MAPPING_ADDRESSES_KEY] ?: emptyList()
 
@@ -165,7 +172,7 @@ class MappingViewModel @Inject constructor(
             runCatching {
                 mappingUseCase.imageUrlToDrawableUseCase(getPhotoUrl())
             }.onSuccess { drawableImage ->
-                _state.update { it.copy(drawableImages = DrawableImages(userDrawableImage = drawableImage)) }
+                _userDrawableImage.value = drawableImage
             }.onFailure {
                 Timber.v("GET USER DRAWABLE IMAGE: ${it.message}")
             }
