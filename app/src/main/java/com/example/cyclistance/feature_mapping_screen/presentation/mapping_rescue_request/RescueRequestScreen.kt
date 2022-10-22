@@ -21,43 +21,58 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 val sampleCardState = listOf(
 
-     CardModel(name = "John Doe",
+     CardModel(
+
+         id = "001",
+         name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6km away"),
 
-     CardModel(name = "John Doe",
+     CardModel(
+         id = "002",
+         name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "2.9km away"),
 
-     CardModel(name = "John Doe",
+     CardModel(
+         id = "003",
+         name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "2.9km away"),
 
-     CardModel(name = "John Doe",
+     CardModel(
+         id = "004",
+         name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "1.9km away"),
 
-     CardModel(name = "John Doe",
+     CardModel(
+         id = "005",
+         name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "6.2km away"),
 
-     CardModel(name = "John Doe",
+     CardModel(
+         id = "006",
+         name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
          distance = "10km away"),
 
-     CardModel(name = "John Doe",
+     CardModel(
+         id = "007",
+         name = "John Doe",
          profileImage = "",
          estimatedTimeTravel = "5-7 Mins",
          address = "Manila, Philippines",
