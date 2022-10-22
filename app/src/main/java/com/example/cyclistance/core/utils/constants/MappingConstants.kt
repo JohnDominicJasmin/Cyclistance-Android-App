@@ -37,5 +37,7 @@ object MappingConstants {
     const val ACTION_START = "start"
     const val ACTION_STOP = "stop"
 
-
+    const val CONFIRM_DETAILS_VM_STATE_KEY = "confirm_details_vm_state_key"
+    const val MAPPING_VM_STATE_KEY = "mapping_vm_state_key"
+    const val MAPPING_ADDRESSES_KEY = "mapping_addresses_key"
 }

@@ -1,9 +1,11 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
 
 import android.net.Uri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
+import com.example.cyclistance.core.utils.constants.SettingConstants.EDIT_PROFILE_VM_IMAGE_URI_KEY
+import com.example.cyclistance.core.utils.constants.SettingConstants.EDIT_PROFILE_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
@@ -18,27 +20,17 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val settingUseCase: SettingUseCase,
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
-    private val _state = MutableStateFlow(EditProfileState())
+    private val _state = MutableStateFlow(savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] ?: EditProfileState())
     val state = _state.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<EditProfileUiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private var imageUri: Uri? = null
-
-    private fun getName(): String {
-        return authUseCase.getNameUseCase()
-    }
-
-    private fun getPhotoUrl(): String {
-        return authUseCase.getPhotoUrlUseCase()
-    }
-
-    private suspend fun getPhoneNumber(): String =
-        authUseCase.getPhoneNumberUseCase()
+    private var imageUri: Uri? = savedStateHandle[EDIT_PROFILE_VM_IMAGE_URI_KEY]
 
 
     fun onEvent(event: EditProfileEvent) {
@@ -48,11 +40,7 @@ class EditProfileViewModel @Inject constructor(
                 updateUserProfile()
             }
             is EditProfileEvent.EnterPhoneNumber -> {
-                _state.update {
-                    it.copy(
-                        phoneNumber = event.phoneNumber,
-                        phoneNumberErrorMessage = "")
-                }
+                _state.update { it.copy(phoneNumber = event.phoneNumber, phoneNumberErrorMessage = "") }
 
             }
             is EditProfileEvent.EnterName -> {
@@ -60,6 +48,7 @@ class EditProfileViewModel @Inject constructor(
             }
             is EditProfileEvent.SelectImageUri -> {
                 imageUri = event.uri
+                savedStateHandle[EDIT_PROFILE_VM_IMAGE_URI_KEY] = event.uri
             }
             is EditProfileEvent.SelectBitmapPicture -> {
                 _state.update { it.copy(imageBitmap = ImageBitmap(event.bitmap)) }
@@ -77,8 +66,10 @@ class EditProfileViewModel @Inject constructor(
             is EditProfileEvent.SaveImageToGallery -> {
                 saveImageToGallery()
             }
-
         }
+        savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
+
+
     }
 
     private fun saveImageToGallery() {
@@ -88,11 +79,13 @@ class EditProfileViewModel @Inject constructor(
                     settingUseCase.saveImageToGalleryUseCase(bitmap)
                 }.onSuccess { uri ->
                     imageUri = uri
+                    savedStateHandle[EDIT_PROFILE_VM_IMAGE_URI_KEY] = uri
                 }.onFailure {
                     Timber.e("Saving Image to Gallery: ${it.message}")
                 }
             }
         }
+
     }
 
     private fun loadPhoto() {
@@ -111,6 +104,7 @@ class EditProfileViewModel @Inject constructor(
                 }
             }
         }
+        savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
     private fun loadName() {
@@ -124,7 +118,6 @@ class EditProfileViewModel @Inject constructor(
                         isLoading = true
                     )
                 }
-
             }.onSuccess {
                 _state.update { it.copy(isLoading = false) }
             }.onFailure { exception ->
@@ -136,6 +129,7 @@ class EditProfileViewModel @Inject constructor(
 
             }
         }
+        savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
     private fun loadPhoneNumber() {
@@ -157,9 +151,10 @@ class EditProfileViewModel @Inject constructor(
                         isLoading = false,
                         phoneNumberErrorMessage = exception.message!!)
                 }
-
             }
         }
+
+        savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
     private fun updateUserProfile() {
@@ -209,5 +204,14 @@ class EditProfileViewModel @Inject constructor(
 
             }
         }
+        savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
+
+
+
+
+    private fun getName() = authUseCase.getNameUseCase()
+    private fun getPhotoUrl() = authUseCase.getPhotoUrlUseCase()
+    private suspend fun getPhoneNumber() = authUseCase.getPhoneNumberUseCase()
+
 }

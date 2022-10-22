@@ -2,10 +2,13 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.location.Address
 import android.location.Geocoder
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.INTERVAL_UPDATE_USERS
+import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_ADDRESSES_KEY
+import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.ConfirmationDetails
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Location
@@ -24,6 +27,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MappingViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase,
     private val geocoder: Geocoder,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
@@ -31,13 +35,13 @@ class MappingViewModel @Inject constructor(
     private var getUsersJob: Job? = null
     private var locationUpdatesFlow: Job? = null
 
-    private val _state: MutableStateFlow<MappingState> = MutableStateFlow(MappingState())
+    private val _state: MutableStateFlow<MappingState> = MutableStateFlow(savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState())
     val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<MappingUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingUiEvent> = _eventFlow.asSharedFlow()
 
-    private var address: List<Address> = emptyList()
+    private var address: List<Address> = savedStateHandle[MAPPING_ADDRESSES_KEY] ?: emptyList()
 
 
     fun onEvent(event: MappingEvent) {
@@ -84,12 +88,15 @@ class MappingViewModel @Inject constructor(
                 _state.update { it.copy(bottomSheetType = event.bottomSheetType) }
             }
         }
+        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
     private fun loadUserProfile() {
         viewModelScope.launch(Dispatchers.IO) {
             loadName()
             loadPhoto()
+        }.invokeOnCompletion {
+            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
     }
 
@@ -148,6 +155,8 @@ class MappingViewModel @Inject constructor(
                 _state.update { it.copy(isLoading = false) }
                 handleException(exception)
             }
+        }.invokeOnCompletion {
+            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
     }
 
@@ -160,6 +169,8 @@ class MappingViewModel @Inject constructor(
             }.onFailure {
                 Timber.v("GET USER DRAWABLE IMAGE: ${it.message}")
             }
+        }.invokeOnCompletion {
+            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
     }
 
@@ -171,6 +182,7 @@ class MappingViewModel @Inject constructor(
                 runCatching {
                     mappingUseCase.getUsersUseCase().collect { users ->
                         _state.update { it.copy(nearbyCyclists = NearbyCyclists(activeUsers = users)) }
+                        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                     }
                 }.onFailure {
                     Timber.e("ERROR GETTING USERS: ${it.message}")
@@ -178,6 +190,7 @@ class MappingViewModel @Inject constructor(
                 delay(INTERVAL_UPDATE_USERS)
             }
         }
+
     }
 
     private fun subscribeToLocationUpdates() {
@@ -189,6 +202,8 @@ class MappingViewModel @Inject constructor(
                     withContext(Dispatchers.Default) {
                         geocoder.getAddress(location.latitude, location.longitude) { addresses ->
                             address = addresses
+                            savedStateHandle[MAPPING_ADDRESSES_KEY] = addresses
+
                         }
                     }
 
@@ -198,6 +213,8 @@ class MappingViewModel @Inject constructor(
                             longitude = location.longitude.takeIf { it != 0.0 } ?: DEFAULT_LATITUDE,
                         )
                     }
+                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+
                 }
             }.onSuccess {
                 Timber.i("SUCCESS SUBSCRIBING TO LOCATION UPDATES")
@@ -221,6 +238,8 @@ class MappingViewModel @Inject constructor(
             }.onFailure {
                 Timber.e("Error Sign out account: ${it.message}")
             }
+        }.invokeOnCompletion {
+            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
     }
 
@@ -248,6 +267,8 @@ class MappingViewModel @Inject constructor(
             }
             _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
 
+        }.invokeOnCompletion {
+            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
 
     }
@@ -268,6 +289,7 @@ class MappingViewModel @Inject constructor(
             }
 
         }
+        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
 

@@ -1,7 +1,9 @@
 package com.example.cyclistance.feature_readable_displays.presentation.splash_screen
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.utils.constants.ReadableConstants.SPLASH_SCREEN_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_readable_displays.domain.use_case.IntroSliderUseCase
 import com.example.cyclistance.navigation.Screens
@@ -15,48 +17,40 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SplashScreenViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val introSliderUseCase: IntroSliderUseCase,
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
-    private val _state: MutableStateFlow<SplashScreenState> = MutableStateFlow(SplashScreenState())
+    private val _state: MutableStateFlow<SplashScreenState> = MutableStateFlow(savedStateHandle[SPLASH_SCREEN_VM_STATE_KEY] ?: SplashScreenState())
     val state = _state.asStateFlow()
 
-
     init {
-        isUserCompletedWalkThrough()
+        getStartingDestination()
     }
 
-
-    private fun isUserCompletedWalkThrough() {
+    private fun getStartingDestination() {
 
         viewModelScope.launch {
             runCatching {
 
                 introSliderUseCase.readIntroSliderUseCase().collect { userCompletedWalkThrough ->
-                    if (userCompletedWalkThrough) {
 
-                        if (isUserSignedIn()) {
-
-                            _state.update {
-                                it.copy(navigationStartingDestination = Screens.MappingScreen.route)
-                            }
-
-                            return@collect
-                        }
-                        _state.update {
-                            it.copy(navigationStartingDestination = Screens.SignInScreen.route)
-                        }
-
-                    } else {
-                        _state.update {
-                            it.copy(navigationStartingDestination = Screens.IntroSliderScreen.route)
-                        }
+                    if(!userCompletedWalkThrough){
+                        _state.update { it.copy(navigationStartingDestination = Screens.IntroSliderScreen.route) }
+                        return@collect
                     }
+                    if (isUserSignedIn()) {
+                        _state.update { it.copy(navigationStartingDestination = Screens.MappingScreen.route) }
+                        return@collect
+                    }
+                    _state.update { it.copy(navigationStartingDestination = Screens.SignInScreen.route) }
                 }
 
             }.onFailure {
                 Timber.e("IntroSlider DataStore Reading Failed: ${it.localizedMessage}")
             }
+        }.invokeOnCompletion {
+            savedStateHandle[SPLASH_SCREEN_VM_STATE_KEY] = state.value
         }
 
     }

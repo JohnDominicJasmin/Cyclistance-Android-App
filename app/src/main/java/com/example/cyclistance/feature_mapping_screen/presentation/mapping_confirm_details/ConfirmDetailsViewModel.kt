@@ -1,7 +1,9 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.utils.constants.MappingConstants.CONFIRM_DETAILS_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.ConfirmationDetails
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Status
@@ -19,17 +21,16 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ConfirmDetailsViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
-    private val _state: MutableStateFlow<ConfirmDetailsState> =
-        MutableStateFlow(ConfirmDetailsState())
+    private val _state: MutableStateFlow<ConfirmDetailsState> = MutableStateFlow(savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] ?: ConfirmDetailsState())
     val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<ConfirmDetailsUiEvent> = MutableSharedFlow()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private fun getId(): String? = authUseCase.getIdUseCase()
 
 
     init {
@@ -44,6 +45,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                 mappingUseCase.getBikeTypeUseCase().first()
             }.onSuccess { bikeType ->
                 _state.update { it.copy(bikeType = bikeType ?: "") }
+                savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
             }.onFailure { exception ->
                 Timber.e(exception.message)
             }
@@ -56,6 +58,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                 mappingUseCase.getAddressUseCase().first()
             }.onSuccess { address ->
                 _state.update { it.copy(address = address) }
+                savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
             }.onFailure { exception ->
                 Timber.e(exception.message)
             }
@@ -88,8 +91,8 @@ class ConfirmDetailsViewModel @Inject constructor(
                         descriptionErrorMessage = "")
                 }
             }
-
         }
+        savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
     }
 
 
@@ -130,6 +133,8 @@ class ConfirmDetailsViewModel @Inject constructor(
         }.onFailure { exception ->
             _state.update { it.copy(isLoading = false) }
             handleException(exception)
+        }.also {
+            savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
         }
     }
 
@@ -150,8 +155,11 @@ class ConfirmDetailsViewModel @Inject constructor(
             is MappingExceptions.DescriptionException -> {
                 _state.update { it.copy(descriptionErrorMessage = exception.message!!) }
             }
-
-
         }
+        savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
     }
+
+    private fun getId(): String? = authUseCase.getIdUseCase()
+
+
 }

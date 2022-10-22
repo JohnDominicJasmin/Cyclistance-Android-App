@@ -1,8 +1,10 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_email
 
 import android.os.CountDownTimer
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.ViewModel
+import com.example.cyclistance.core.utils.constants.AuthConstants.EMAIL_AUTH_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.AuthConstants.ONE_SECOND_TO_MILLIS
 import com.example.cyclistance.core.utils.constants.AuthConstants.REFRESH_EMAIL_INTERVAL
 import com.example.cyclistance.core.utils.constants.AuthConstants.TIMER_COUNTS
@@ -17,13 +19,14 @@ import javax.inject.Inject
 import io.github.farhanroy.composeawesomedialog.R as R1
 @HiltViewModel
 class EmailAuthViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
     private lateinit var verificationTimer: CountDownTimer
     private var job: Job? = null
 
 
-    private val _state: MutableStateFlow<EmailAuthState> = MutableStateFlow(EmailAuthState())
+    private val _state: MutableStateFlow<EmailAuthState> = MutableStateFlow(savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] ?: EmailAuthState())
     val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<EmailAuthUiEvent> = MutableSharedFlow()
@@ -32,6 +35,7 @@ class EmailAuthViewModel @Inject constructor(
 
     init{
         _state.update { it.copy(savedAccountEmail = authUseCase.getEmailUseCase() ?: "") }
+        savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
     }
 
     fun onEvent(event: EmailAuthEvent) {
@@ -68,6 +72,7 @@ class EmailAuthViewModel @Inject constructor(
                 _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
             }
         }
+        savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
     }
 
 
@@ -80,6 +85,7 @@ class EmailAuthViewModel @Inject constructor(
         }.onFailure {
             _state.update { it.copy(isLoading = false) }
         }
+        savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
     }
 
     private suspend fun showVerifyEmailResult(emailIsVerified: Boolean) {
@@ -108,6 +114,7 @@ class EmailAuthViewModel @Inject constructor(
                 authUseCase.reloadEmailUseCase()
             }.onSuccess { isEmailReloaded ->
                 _state.update { it.copy(isLoading = false) }
+                savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
                 if (isEmailReloaded) {
                     verifyEmail()
                 } else {
@@ -123,6 +130,7 @@ class EmailAuthViewModel @Inject constructor(
                         Timber.e("${this.javaClass.name}: ${exception.message}")
                     }
                 }
+                savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
             }
         }
     }
@@ -130,16 +138,19 @@ class EmailAuthViewModel @Inject constructor(
 
     private fun startTimer() {
         _state.update { it.copy(isTimerRunning = true) }
+        savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
         verificationTimer = object : CountDownTimer(TIMER_COUNTS, ONE_SECOND_TO_MILLIS) {
             override fun onTick(millisUntilFinished: Long) {
                 val timeLeft = millisUntilFinished / ONE_SECOND_TO_MILLIS
                 _state.update { it.copy(secondsLeft = timeLeft.toInt()) }
+                savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
                 Timber.d("TimeLeft is $timeLeft")
             }
 
             override fun onFinish() {
                 stopTimer()
                 _state.update { it.copy(isTimerRunning = false) }
+                savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
             }
         }.start()
 
@@ -184,12 +195,13 @@ class EmailAuthViewModel @Inject constructor(
                             alertDialogModel = AlertDialogModel(
                                 title = "Error",
                                 description = "Sorry, something went wrong. Please try again.",
-                                icon = R1.raw.error
-                            )
-                        )
+                                icon = R1.raw.error))
                     }
                 }
+
             }
+        }.invokeOnCompletion {
+            savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
         }
     }
 

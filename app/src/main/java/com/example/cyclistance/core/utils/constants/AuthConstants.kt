@@ -18,4 +18,8 @@ object AuthConstants {
     const val IMAGE_SMALL_SIZE = "=s96-c"
     const val IMAGE_LARGE_SIZE = "=s400-c"
 
+
+    const val EMAIL_AUTH_VM_STATE_KEY = "email_auth_vm_state_key"
+    const val SIGN_IN_VM_STATE_KEY = "sign_in_vm_state_key"
+    const val SIGN_UP_VM_STATE_KEY = "sign_up_vm_state_key"
 }

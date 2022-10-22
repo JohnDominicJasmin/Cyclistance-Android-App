@@ -1,7 +1,9 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_UP_VM_STATE_KEY
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
@@ -14,9 +16,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
-    private val _state: MutableStateFlow<SignUpState> = MutableStateFlow(SignUpState())
+    private val _state: MutableStateFlow<SignUpState> = MutableStateFlow(savedStateHandle[SIGN_UP_VM_STATE_KEY] ?: SignUpState())
     val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<SignUpUiEvent> = MutableSharedFlow()
@@ -29,22 +32,14 @@ class SignUpViewModel @Inject constructor(
                 savedAccountEmail = authUseCase.getEmailUseCase() ?: "",
             )
         }
+        savedStateHandle[SIGN_UP_VM_STATE_KEY] = state.value
 
     }
 
     fun onEvent(event: SignUpEvent) {
         when (event) {
             is SignUpEvent.SignUp -> {
-                with(state.value) {
-                    viewModelScope.launch {
-                        createUserWithEmailAndPassword(
-                            authModel = AuthModel(
-                                email = email.trim(),
-                                password = password.trim(),
-                                confirmPassword = confirmPassword.trim()
-                            ))
-                    }
-                }
+                signUp()
             }
             is SignUpEvent.DismissNoInternetScreen -> {
                 _state.update { it.copy(hasInternet = true) }
@@ -75,23 +70,35 @@ class SignUpViewModel @Inject constructor(
 
 
         }
+        savedStateHandle[SIGN_UP_VM_STATE_KEY] = state.value
     }
 
 
-    private suspend fun createUserWithEmailAndPassword(authModel: AuthModel) {
-        runCatching {
-            _state.update { it.copy(isLoading = true) }
-            authUseCase.createWithEmailAndPasswordUseCase(authModel)
-        }.onSuccess { isAccountCreated ->
-            _state.update { it.copy(isLoading = false) }
-            if (isAccountCreated) {
-                _eventFlow.emit(SignUpUiEvent.ShowEmailAuthScreen)
-            } else {
-                _eventFlow.emit(SignUpUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
+    private fun signUp() {
+        viewModelScope.launch {
+            runCatching {
+                _state.update { it.copy(isLoading = true) }
+                with(state.value) {
+                    authUseCase.createWithEmailAndPasswordUseCase(
+                        authModel = AuthModel(
+                            email = email.trim(),
+                            password = password.trim(),
+                            confirmPassword = confirmPassword.trim()
+                        ))
+                }
+            }.onSuccess { isAccountCreated ->
+                _state.update { it.copy(isLoading = false) }
+                if (isAccountCreated) {
+                    _eventFlow.emit(SignUpUiEvent.ShowEmailAuthScreen)
+                } else {
+                    _eventFlow.emit(SignUpUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
+                }
+            }.onFailure { exception ->
+                _state.update { it.copy(isLoading = false) }
+                handleException(exception)
             }
-        }.onFailure { exception ->
-            _state.update { it.copy(isLoading = false) }
-            handleException(exception)
+        }.invokeOnCompletion {
+            savedStateHandle[SIGN_UP_VM_STATE_KEY] = state.value
         }
     }
 
@@ -129,9 +136,8 @@ class SignUpViewModel @Inject constructor(
             else -> {
                 Timber.e("${this@SignUpViewModel.javaClass.name}: ${exception.message}")
             }
-
         }
+        savedStateHandle[SIGN_UP_VM_STATE_KEY] = state.value
     }
-
 
 }

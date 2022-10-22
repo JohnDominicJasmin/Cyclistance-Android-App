@@ -1,9 +1,11 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in
 
 import android.content.Intent
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNECTION_FAILURE
+import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_IN_VM_STATE_KEY
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
@@ -28,12 +30,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase) : ViewModel(), ActivityResultCallbackI {
 
     private var job: Job? = null
     private var callbackManager = CallbackManager.Factory.create()
 
-    private val _state: MutableStateFlow<SignInState> = MutableStateFlow(SignInState())
+    private val _state: MutableStateFlow<SignInState> = MutableStateFlow(savedStateHandle[SIGN_IN_VM_STATE_KEY] ?: SignInState())
     val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<SignInUiEvent> = MutableSharedFlow()
@@ -74,15 +77,7 @@ class SignInViewModel @Inject constructor(
             }
 
             is SignInEvent.SignInDefault -> {
-
-                with(state.value) {
-                    viewModelScope.launch {
-                        signInDefault(
-                            authModel = AuthModel(
-                                email = email.trim(),
-                                password = password.trim()))
-                    }
-                }
+                signInDefault()
             }
             is SignInEvent.EnterEmail -> {
                 _state.update { it.copy(email = event.email, emailErrorMessage = "") }
@@ -95,25 +90,35 @@ class SignInViewModel @Inject constructor(
             }
 
         }
+        savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
     }
 
 
-    private suspend fun signInDefault(authModel: AuthModel) {
+    private fun signInDefault() {
 
-        runCatching {
-            _state.update { it.copy(isLoading = true) }
-            authUseCase.signInWithEmailAndPasswordUseCase(authModel)
+        viewModelScope.launch {
+            runCatching {
+                _state.update { it.copy(isLoading = true) }
+                with(state.value) {
+                    authUseCase.signInWithEmailAndPasswordUseCase(
+                        authModel = AuthModel(
+                            email = email.trim(),
+                            password = password.trim()))
+                }
 
-        }.onSuccess { isSignedIn ->
-            _state.update { it.copy(isLoading = false) }
-            if (isSignedIn) {
-                _eventFlow.emit(SignInUiEvent.RefreshEmail)
-            } else {
-                _eventFlow.emit(SignInUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
+            }.onSuccess { isSignedIn ->
+                _state.update { it.copy(isLoading = false) }
+                if (isSignedIn) {
+                    _eventFlow.emit(SignInUiEvent.RefreshEmail)
+                } else {
+                    _eventFlow.emit(SignInUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
+                }
+            }.onFailure { exception ->
+                _state.update { it.copy(isLoading = false) }
+                handleException(exception)
             }
-        }.onFailure { exception ->
-            _state.update { it.copy(isLoading = false) }
-            handleException(exception)
+        }.invokeOnCompletion {
+            savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
         }
     }
 
@@ -122,8 +127,7 @@ class SignInViewModel @Inject constructor(
     private fun signInWithCredential(authCredential: AuthCredential) {
         job?.cancel()
         job = viewModelScope.launch {
-            kotlin.runCatching {
-
+            runCatching {
                 _state.update { it.copy(isLoading = true) }
                 authUseCase.signInWithCredentialUseCase(authCredential)
             }.onSuccess { isSuccess ->
@@ -135,7 +139,12 @@ class SignInViewModel @Inject constructor(
                 _state.update { it.copy(isLoading = false) }
                 handleException(exception)
             }
+        }.apply {
+            invokeOnCompletion {
+                savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
+            }
         }
+
     }
 
     private fun handleException(exception: Throwable){
@@ -182,6 +191,7 @@ class SignInViewModel @Inject constructor(
                 Timber.e("${this@SignInViewModel.javaClass.name}: ${exception.message}")
             }
         }
+        savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
     }
 
     private fun registerFacebookSignInCallback() {
@@ -191,10 +201,12 @@ class SignInViewModel @Inject constructor(
                 override fun onSuccess(result: LoginResult) {
                     _state.update { it.copy(isLoading = true) }
                     signInWithCredential(authCredential = FacebookAuthProvider.getCredential(result.accessToken.token))
+                    savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
                 }
 
                 override fun onCancel() {
                     _state.update { it.copy(isLoading = false) }
+                    savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
                     Timber.e("facebook:onCancel")
                 }
 
@@ -202,6 +214,8 @@ class SignInViewModel @Inject constructor(
                     _state.update { it.copy(isLoading = false) }
                     viewModelScope.launch {
                         handleFacebookSignInException(error)
+                    }.invokeOnCompletion {
+                        savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
                     }
                 }
             }
