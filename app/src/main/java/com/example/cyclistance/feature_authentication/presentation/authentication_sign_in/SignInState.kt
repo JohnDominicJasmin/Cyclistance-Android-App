@@ -1,8 +1,12 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in
 
+import android.os.Parcelable
 import androidx.compose.runtime.Stable
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
+import kotlinx.parcelize.Parcelize
+
 @Stable
+@Parcelize
 data class SignInState(
     val email: String = "",
     val password: String = "",
@@ -13,4 +17,4 @@ data class SignInState(
     val alertDialogModel: AlertDialogModel = AlertDialogModel(),
     val hasInternet: Boolean = true
 
-    )
+) : Parcelable

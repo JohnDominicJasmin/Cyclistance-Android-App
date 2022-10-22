@@ -1,6 +1,10 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
+
+@Parcelize
 data class ConfirmDetailsState(
     val bikeType: String = "",
     val bikeTypeErrorMessage: String = "",
@@ -11,4 +15,4 @@ data class ConfirmDetailsState(
     val address: String = "",
     val hasInternet: Boolean = true
 
-)
+):Parcelable

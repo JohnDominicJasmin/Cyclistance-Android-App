@@ -5,11 +5,13 @@ plugins {
     id 'kotlin-kapt'
     id("dagger.hilt.android.plugin")
     id 'com.google.gms.google-services'
+    id "kotlin-parcelize"
 }
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.android.application'
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'com.google.firebase.crashlytics'
+apply plugin: "kotlin-parcelize"
 android {
     compileSdk 33
 

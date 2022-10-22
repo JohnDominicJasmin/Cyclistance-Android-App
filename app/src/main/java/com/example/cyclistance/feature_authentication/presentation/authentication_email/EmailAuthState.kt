@@ -1,9 +1,12 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_email
 
+import android.os.Parcelable
 import androidx.compose.runtime.Stable
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
+import kotlinx.parcelize.Parcelize
 
 @Stable
+@Parcelize
 data class EmailAuthState(
     val secondsLeft: Int = 0,
     val isTimerRunning: Boolean = false,
@@ -12,4 +15,4 @@ data class EmailAuthState(
     val alertDialogModel: AlertDialogModel = AlertDialogModel(),
     val savedAccountEmail: String = "",
     val hasInternet: Boolean = true
-    )
+    ):Parcelable
