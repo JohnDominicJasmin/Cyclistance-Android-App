@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.theme.Black440
@@ -61,6 +62,9 @@ fun MappingDrawerContent(
                             color = MaterialTheme.colors.primary,
                             shape = CircleShape),
                     contentScale = ContentScale.Crop,
+                    placeholder = rememberAsyncImagePainter(model = R.drawable.ic_empty_profile_placeholder_large),
+                    error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
+                    fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large)
                 )
 
                 Text(
