@@ -1,13 +1,13 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components
 
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.Lifecycle
+import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.ComposableLifecycle
@@ -18,21 +18,12 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.Style
+import com.mapbox.maps.plugin.annotation.annotations
+import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
+import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.locationcomponent.location2
 import timber.log.Timber
 
-
-val locations = listOf(
-    Point.fromLngLat(120.984222,14.599512),
-    Point.fromLngLat(121.252176,14.628978),
-    Point.fromLngLat(121.429968, 14.208007),
-    Point.fromLngLat(121.269195, 13.823594),
-    Point.fromLngLat(121.747392, 14.044194),
-    Point.fromLngLat(125.037057, 6.523497),
-    Point.fromLngLat(125.043330, 6.531999),
-    Point.fromLngLat(125.224905, 6.887962),
-    Point.fromLngLat(125.283468, 7.118415),
-)
 
 
 
@@ -54,9 +45,37 @@ fun MappingMapsScreen(
     val pulsingEnabled by derivedStateOf {
         state.isSearchingForAssistance.and(locationPermissionState?.allPermissionsGranted == true)
     }
+    val annotationApi = remember(mapView) { mapView.annotations }
+    val pointAnnotationManager = remember(annotationApi) { annotationApi.createPointAnnotationManager() }
+    val pointAnnotationOptions = remember (true) { PointAnnotationOptions()
+        .withIconImage(AppCompatResources.getDrawable(context, com.mapbox.maps.R.drawable.mapbox_user_icon)?.toBitmap() ?: return) }
+
+
+
+    val nearbyCyclists by derivedStateOf {
+        state.nearbyCyclists.activeUsers
+    }
+
+    LaunchedEffect(key1 = nearbyCyclists){
+        nearbyCyclists.forEach {
+            val latitude = it.location?.lat?.toDouble()
+            val longitude = it.location?.lng?.toDouble()
+
+
+            pointAnnotationOptions.withPoint(Point.fromLngLat(longitude ?: return@forEach, latitude ?: return@forEach))
+            pointAnnotationManager.create(pointAnnotationOptions)
+        }
+    }
 
     LaunchedEffect(key1 = pulsingEnabled){
         mapView.location2.pulsingEnabled = pulsingEnabled
+    }
+
+    val mapStyle by derivedStateOf {
+        if (isDarkTheme) Style.DARK else Style.OUTDOORS
+    }
+    LaunchedEffect(key1 = mapStyle){
+        mapboxMap.loadStyleUri(mapStyle)
     }
 
     ComposableLifecycle { _, event ->
@@ -65,17 +84,6 @@ fun MappingMapsScreen(
             Lifecycle.Event.ON_CREATE -> {
                 Timber.v("Lifecycle Event: ON_CREATE")
 
-
-                mapboxMap.loadStyleUri(if (isDarkTheme) Style.DARK else Style.OUTDOORS)
-
-                /*    locations.forEach {
-                        val annotationApi = mapView.annotations
-                        val pointAnnotationManager = annotationApi.createPointAnnotationManager()
-                        val pointAnnotationOptions = mapUiComponents.pointAnnotationOptions
-                            .withPoint(it)
-                            .withIconImage(AppCompatResources.getDrawable(context, R.drawable.ic_arrow)?.toBitmap() ?: return@forEach)
-                        pointAnnotationManager.create(pointAnnotationOptions)
-                    }*/
             }
 
             Lifecycle.Event.ON_START -> {
