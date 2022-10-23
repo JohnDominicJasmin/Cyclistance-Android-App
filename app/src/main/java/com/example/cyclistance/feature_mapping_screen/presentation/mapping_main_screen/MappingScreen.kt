@@ -69,7 +69,7 @@ import com.example.cyclistance.R as Resource
 fun MappingScreen(
     typeBottomSheet: String = "",
     isDarkTheme: Boolean,
-    mappingViewModel: MappingViewModel = hiltViewModel(),
+    mappingViewModel: MappingViewModel,
     paddingValues: PaddingValues,
     scaffoldState: ScaffoldState,
     navController: NavController) {

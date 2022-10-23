@@ -113,6 +113,7 @@ fun MainScreen(
                 paddingValues = paddingValues,
                 isDarkTheme = settingState.isDarkTheme,
                 editProfileViewModel = editProfileViewModel,
+                mappingViewModel = mappingViewModel,
                 scaffoldState = scaffoldState,
                 onToggleTheme = {
                     settingViewModel.onEvent(event = SettingEvent.ToggleTheme)

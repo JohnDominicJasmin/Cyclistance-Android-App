@@ -14,6 +14,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_cancellation.components.jb.CancellationReasonScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details.ConfirmDetailsScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingScreen
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_rescue_request.RescueRequestScreen
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.IntroSliderScreen
 import com.example.cyclistance.feature_readable_displays.presentation.splash_screen.SplashScreen
@@ -30,6 +31,7 @@ fun NavGraph(
     navController: NavHostController,
     paddingValues: PaddingValues,
     editProfileViewModel: EditProfileViewModel,
+    mappingViewModel: MappingViewModel,
     isDarkTheme: Boolean,
     scaffoldState: ScaffoldState,
     onToggleTheme: () -> Unit
@@ -77,7 +79,8 @@ fun NavGraph(
                     isDarkTheme = isDarkTheme,
                     navController = navController,
                     scaffoldState = scaffoldState,
-                    paddingValues = paddingValues)
+                    paddingValues = paddingValues,
+                    mappingViewModel = mappingViewModel)
             }
         }
 
