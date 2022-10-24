@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
@@ -22,6 +23,7 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.theme.Black440
+import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
@@ -88,16 +90,14 @@ fun MappingDrawerContent(
 
             DrawerContentButtonItem(
                 modifier = Modifier
-                    .background(Color.Transparent)
                     .fillMaxWidth()
                     .wrapContentHeight(),
-                iconId = R.drawable.ic_baseline_settings_24,
+                iconId = R.drawable.ic_setting,
                 buttonText = "Settings",
                 onClick = onClickSettings)
 
             DrawerContentButtonItem(
                 modifier = Modifier
-                    .background(Color.Transparent)
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_baseline_chat_bubble_outline_24,
@@ -106,16 +106,14 @@ fun MappingDrawerContent(
 
             DrawerContentButtonItem(
                 modifier = Modifier
-                    .background(Color.Transparent)
                     .fillMaxWidth()
                     .wrapContentHeight(),
-                iconId = R.drawable.rescue_request,
+                iconId = R.drawable.ic_rescue_request,
                 buttonText = "Rescue Request",
                 onClick = onClickRescueRequest)
 
             DrawerContentButtonItem(
                 modifier = Modifier
-                    .background(Color.Transparent)
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_group_35,
@@ -152,6 +150,7 @@ private fun DrawerContentButtonItem(
 
 
     TextButton(
+        colors = ButtonDefaults.textButtonColors(contentColor = Black450),
         onClick = onClick,
         modifier = modifier) {
 
