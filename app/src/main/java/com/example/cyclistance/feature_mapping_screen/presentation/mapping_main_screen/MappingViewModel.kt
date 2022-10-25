@@ -1,15 +1,20 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
+import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP_ICON_HEIGHT
+import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP_ICON_WIDTH
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
+import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.INTERVAL_UPDATE_USERS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_ADDRESSES_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
@@ -21,11 +26,13 @@ import com.example.cyclistance.feature_mapping_screen.data.remote.dto.UserAssist
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.createMockUsers
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getAddress
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getFullAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import okhttp3.internal.toImmutableList
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -48,9 +55,13 @@ class MappingViewModel @Inject constructor(
     private val _userDrawableImage: MutableState<Drawable?> = mutableStateOf(null)
     val userDrawableImage: State<Drawable?> = _userDrawableImage
 
-    private var address: List<Address> = savedStateHandle[MAPPING_ADDRESSES_KEY] ?: emptyList()
+    private var address: List<Address> = emptyList()
+    private val _cyclists: MutableList<Pair<User, Bitmap?>> = mutableListOf()
 
 
+    init{
+        createMockUpUsers()
+    }
     fun onEvent(event: MappingEvent) {
         when (event) {
 
@@ -188,8 +199,13 @@ class MappingViewModel @Inject constructor(
             while (this.isActive) {
                 runCatching {
                     mappingUseCase.getUsersUseCase().collect { users ->
-                        _state.update { it.copy(nearbyCyclists = NearbyCyclists(activeUsers = users)) }
-                        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+
+                        users.forEachIndexed { index, user ->
+                            val bitmapProfile = mappingUseCase.imageUrlToDrawableUseCase(user.profilePictureUrl ?: IMAGE_PLACEHOLDER_URL)
+                            _cyclists.add(index = index, element = Pair(user, bitmapProfile.toBitmap(width = CYCLIST_MAP_ICON_HEIGHT, height = CYCLIST_MAP_ICON_WIDTH)))
+                        }
+                        _state.update { it.copy(nearbyCyclists = NearbyCyclists(activeUsers = _cyclists.toSet().toList().toImmutableList())) }
+
                     }
                 }.onFailure {
                     Timber.e("ERROR GETTING USERS: ${it.message}")
@@ -312,15 +328,26 @@ class MappingViewModel @Inject constructor(
                     profilePictureUrl = getPhotoUrl(),
                     contactNumber = getPhoneNumber(),
                     location = Location(
-                        lat = latitude.toString(),
-                        lng = longitude.toString()),
+                        lat = latitude,
+                        lng = longitude),
                     userAssistance = UserAssistance(
                         status = Status(started = true)
                     ),
-                    userNeededHelp = false,
                 ))
 
             mappingUseCase.updateAddressUseCase(currentAddress)
+        }
+    }
+
+    private fun createMockUpUsers(){
+        viewModelScope.launch {
+            runCatching {
+                mappingUseCase.createMockUsers()
+            }.onSuccess {
+                Timber.v("CREATED MOCK USERS!")
+            }.onFailure {
+                Timber.e("FAILED TO CREATE MOCK USERS: ${it.message}")
+            }
         }
     }
 
