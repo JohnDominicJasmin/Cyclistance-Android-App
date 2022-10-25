@@ -1,12 +1,8 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils
 
-import android.widget.Toast
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Location
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
-import com.mapbox.geojson.Point
-
-
 
 
 val users = listOf(
@@ -14,7 +10,7 @@ val users = listOf(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
         id = "1",
-        location = Location(lat = 14.599512.toString(), lng = 120.984222.toString()),
+        location = Location(lat = 14.599512, lng = 120.984222),
         name = "John Doe",
         userNeededHelp = true,
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK9gqFKRn28xKHD1CAbEevdzsLmsv5yQkGnQ&usqp=CAU",

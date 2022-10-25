@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Location(
     @SerializedName("lat")
-    val lat: String = "",
+    val lat: Double = 0.0,
     @SerializedName("lng")
-    val lng: String = ""
+    val lng: Double = 0.0
 ):Parcelable
