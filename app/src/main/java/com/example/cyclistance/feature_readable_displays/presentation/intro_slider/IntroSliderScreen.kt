@@ -5,8 +5,7 @@ package com.example.cyclistance.feature_readable_displays.presentation.intro_sli
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,8 +31,18 @@ fun IntroSliderScreen(
     paddingValues: PaddingValues,
     navController: NavController) {
 
+    val introSliderState by introSliderViewModel.state.collectAsState()
+
+
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
+
+    if(introSliderState.navigationStartingDestination != Screens.IntroSliderScreen.route){
+        LaunchedEffect(key1 = true){
+            navController.navigateScreenInclusively(introSliderState.navigationStartingDestination, Screens.IntroSliderScreen.route)
+        }
+        return
+    }
 
     IntroSlider(modifier = Modifier
         .fillMaxSize()
