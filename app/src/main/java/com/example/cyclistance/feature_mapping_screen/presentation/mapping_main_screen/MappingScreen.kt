@@ -22,7 +22,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.core.content.ContextCompat
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
@@ -397,7 +396,7 @@ fun MappingScreen(
                     bottom.linkTo(parent.bottom)
                 },
                 isDarkTheme = isDarkTheme,
-                locationPermissionState = locationPermissionState,
+                locationPermissionsState = locationPermissionState,
                 mapView = mapView,
                 mapboxMap = mapboxMap
             )

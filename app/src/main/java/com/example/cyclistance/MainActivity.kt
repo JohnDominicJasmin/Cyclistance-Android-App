@@ -28,14 +28,13 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        setTheme(R.style.Theme_Cyclistance)
         sdkInitialize(applicationContext);
         AppEventsLogger.activateApp(application);
 
-        if(savedInstanceState == null) {
-            setContent {
-                CompositionLocalProvider(LocalActivityResultCallbackManager provides callbackManager) {
-                    MainScreen()
-                }
+        setContent {
+            CompositionLocalProvider(LocalActivityResultCallbackManager provides callbackManager) {
+                MainScreen()
             }
         }
     }
