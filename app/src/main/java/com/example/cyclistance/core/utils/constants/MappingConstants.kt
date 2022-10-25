@@ -25,7 +25,7 @@ object MappingConstants {
 
     const val LOCATION_UPDATES_INTERVAL: Long = 10000L
     const val FASTEST_LOCATION_UPDATES_INTERVAL: Long = 7000L
-    const val INTERVAL_UPDATE_USERS = 5000L
+    const val INTERVAL_UPDATE_USERS = 15000L
 
     val BIKE_TYPE_KEY = stringPreferencesKey("bike_type")
     val ADDRESS_KEY = stringPreferencesKey("address")
@@ -40,4 +40,6 @@ object MappingConstants {
     const val CONFIRM_DETAILS_VM_STATE_KEY = "confirm_details_vm_state_key"
     const val MAPPING_VM_STATE_KEY = "mapping_vm_state_key"
     const val MAPPING_ADDRESSES_KEY = "mapping_addresses_key"
+    const val CYCLIST_MAP_ICON_HEIGHT = 88
+    const val CYCLIST_MAP_ICON_WIDTH = 88
 }
