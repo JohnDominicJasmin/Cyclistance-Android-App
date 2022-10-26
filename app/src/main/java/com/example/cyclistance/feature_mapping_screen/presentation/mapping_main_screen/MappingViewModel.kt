@@ -54,12 +54,11 @@ class MappingViewModel @Inject constructor(
 
     private val _userDrawableImage: MutableState<Drawable?> = mutableStateOf(null)
     val userDrawableImage: State<Drawable?> = _userDrawableImage
-
-    private var address: List<Address> = emptyList()
-    private val _cyclists: MutableList<Pair<User, Bitmap?>> = mutableListOf()
-
+    private val nearbyCyclistsSnapShot: MutableList<Pair<User, Bitmap?>> = mutableListOf()
+    private val rescueRespondentsSnapShot: MutableList<User> = mutableListOf()
 
     init{
+        // TODO: Remove this when the backend is ready
         createMockUpUsers()
     }
     fun onEvent(event: MappingEvent) {
@@ -195,17 +194,13 @@ class MappingViewModel @Inject constructor(
 
     private fun getNearbyUsers() {
         getUsersJob?.cancel()
-        getUsersJob = viewModelScope.launch(Dispatchers.IO) {
+        getUsersJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
             while (this.isActive) {
                 runCatching {
-                    mappingUseCase.getUsersUseCase().collect { users ->
-
-                        users.forEachIndexed { index, user ->
-                            val bitmapProfile = mappingUseCase.imageUrlToDrawableUseCase(user.profilePictureUrl ?: IMAGE_PLACEHOLDER_URL)
-                            _cyclists.add(index = index, element = Pair(user, bitmapProfile.toBitmap(width = CYCLIST_MAP_ICON_HEIGHT, height = CYCLIST_MAP_ICON_WIDTH)))
-                        }
-                        _state.update { it.copy(nearbyCyclists = NearbyCyclists(activeUsers = _cyclists.toSet().toList().toImmutableList())) }
-
+                    mappingUseCase.getUsersUseCase().distinctUntilChanged().collect { users: List<User> ->
+                        users.getUser()
+                        users.getUsers()
+                        users.getUserRescueRespondents()
                     }
                 }.onFailure {
                     Timber.e("ERROR GETTING USERS: ${it.message}")
@@ -213,7 +208,50 @@ class MappingViewModel @Inject constructor(
                 delay(INTERVAL_UPDATE_USERS)
             }
         }
+    }
 
+    private fun List<User>.getUser() {
+
+        val user = this.find {
+            // TODO: Change id later
+            it.id == "1"
+        } ?: User()
+
+        _state.update { it.copy(user = user) }
+
+
+    }
+
+    private fun List<User>.getUserRescueRespondents() {
+        val user = state.value.user
+
+        user.rescueRequest.respondents.forEachIndexed { index, respondent ->
+            this.find { usersOnMap ->
+                respondent.clientId == usersOnMap.id
+            }?.let{ user ->
+                rescueRespondentsSnapShot.add(index = index, element = user)
+            }
+        }
+        _state.update {
+            it.copy(rescueRequestRespondents = RescueRequestRespondents(respondents = rescueRespondentsSnapShot.toSet().toList().toImmutableList()))
+        }
+        removeRescueRespondentsSnapShot()
+    }
+    private suspend fun List<User>.getUsers(){
+        this.forEachIndexed { index, user ->
+            val bitmapProfile = mappingUseCase.imageUrlToDrawableUseCase(user.profilePictureUrl ?: IMAGE_PLACEHOLDER_URL)
+            nearbyCyclistsSnapShot.add(index = index, element = Pair(user, bitmapProfile.toBitmap(width = CYCLIST_MAP_ICON_HEIGHT, height = CYCLIST_MAP_ICON_WIDTH)))
+        }
+        _state.update { it.copy(nearbyCyclists = NearbyCyclists(activeUsers = nearbyCyclistsSnapShot.toSet().toList().toImmutableList())) }
+        removeCyclistSnapShot()
+    }
+
+    private fun removeRescueRespondentsSnapShot(){
+        rescueRespondentsSnapShot.clear()
+    }
+
+    private fun removeCyclistSnapShot(){
+        nearbyCyclistsSnapShot.clear()
     }
 
     private fun subscribeToLocationUpdates() {
@@ -224,9 +262,8 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getUserLocationUseCase().collect { location ->
                     withContext(Dispatchers.Default) {
                         geocoder.getAddress(location.latitude, location.longitude) { addresses ->
-                            address = addresses
+                            _state.update { it.copy(userAddress = UserAddress(addresses.lastOrNull())) }
                             savedStateHandle[MAPPING_ADDRESSES_KEY] = addresses
-
                         }
                     }
 
@@ -239,8 +276,6 @@ class MappingViewModel @Inject constructor(
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
 
                 }
-            }.onSuccess {
-                Timber.i("SUCCESS SUBSCRIBING TO LOCATION UPDATES")
             }.onFailure {
                 Timber.e("Error Location Updates: ${it.message}")
             }
@@ -268,23 +303,21 @@ class MappingViewModel @Inject constructor(
 
     private fun uploadUserProfile() {
         viewModelScope.launch(Dispatchers.IO) {
-            if (address.isNotEmpty()) {
-
-                address.forEach { address ->
-                    runCatching {
-                        _state.update { it.copy(isLoading = true) }
-                        createUser(address)
-                    }.onSuccess {
-                        _state.update {
-                            it.copy(
-                                isLoading = false,
-                                findAssistanceButtonVisible = false)
-                        }
-                        _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
-                    }.onFailure { exception ->
-                        _state.update { it.copy(isLoading = false) }
-                        handleException(exception)
+            val address = state.value.userAddress.address
+            if (address != null) {
+                runCatching {
+                    _state.update { it.copy(isLoading = true) }
+                    createUser(address)
+                }.onSuccess {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            findAssistanceButtonVisible = false)
                     }
+                    _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
+                }.onFailure { exception ->
+                    _state.update { it.copy(isLoading = false) }
+                    handleException(exception)
                 }
                 return@launch
             }
@@ -316,7 +349,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private suspend inline fun createUser(address: Address) {
+    private suspend fun createUser(address: Address) {
         with(address) {
             val currentAddress = this.getFullAddress()
             _state.update { it.copy(currentAddress = currentAddress) }
@@ -369,4 +402,3 @@ class MappingViewModel @Inject constructor(
 
 
 }
-
