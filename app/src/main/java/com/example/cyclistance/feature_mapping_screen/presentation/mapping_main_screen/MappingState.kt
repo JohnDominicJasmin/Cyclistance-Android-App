@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
 import android.graphics.Bitmap
+import android.location.Address
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
@@ -9,6 +10,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LON
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Location
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import kotlinx.parcelize.Parcelize
+import java.util.*
 
 
 @Parcelize
@@ -18,6 +20,19 @@ data class NearbyCyclists(
     val activeUsers: List<Pair<User, Bitmap?>> = emptyList(),
 ):Parcelable
 
+@Parcelize
+@Immutable
+@Stable
+data class RescueRequestRespondents(
+    val respondents: List<User> = emptyList(),
+):Parcelable
+
+@Parcelize
+@Immutable
+@Stable
+data class UserAddress(
+    val address: Address? = null
+):Parcelable
 
 
 @Parcelize
@@ -31,9 +46,17 @@ data class MappingState(
     val hasInternet: Boolean = true,
     val bottomSheetType: String = "",
     val isSearchingForAssistance: Boolean = false,
-    val nearbyCyclists: NearbyCyclists = NearbyCyclists(),
+
     val latitude: Double = DEFAULT_LATITUDE,
     val longitude: Double = DEFAULT_LONGITUDE,
     val name: String = "-----",
     val photoUrl : String = "",
+
+    val nearbyCyclists: NearbyCyclists = NearbyCyclists(),
+    val user: User = User(),
+    val rescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
+    val userAddress: UserAddress = UserAddress(),
+
+
+
 ):Parcelable
