@@ -1,10 +1,13 @@
 package com.example.cyclistance.navigation
 
+import android.content.Intent
+import android.content.Intent.ACTION_MAIN
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
+import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -13,8 +16,8 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingUiEvent
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.DefaultTopBar
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.TitleTopAppBar
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingDrawerContent
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.TitleTopAppBar
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.TopAppBarCreator
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
@@ -37,7 +40,7 @@ fun MainScreen(
 
 
     val navController = rememberNavController()
-
+    val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
@@ -97,6 +100,13 @@ fun MainScreen(
                         coroutineScope.launch {
                             scaffoldState.drawerState.close()
                         }
+                        Intent(ACTION_MAIN).apply {
+                            flags = Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS or Intent.FLAG_ACTIVITY_NEW_TASK
+                            addCategory(Intent.CATEGORY_APP_MESSAGING)
+                        }.also {
+                            context.startActivity(it)
+                        }
+
                     },
                     onClickSignOut = {
                         coroutineScope.launch {
