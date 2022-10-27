@@ -151,8 +151,10 @@ fun MappingScreen(
         }
     }
 
-    val userLocationAvailable by derivedStateOf {
-        locationPermissionsState.allPermissionsGranted.and(state.latitude != DEFAULT_LATITUDE && state.longitude != DEFAULT_LONGITUDE)
+    val userLocationAvailable by remember(locationPermissionsState.allPermissionsGranted, state.latitude, state.longitude) {
+        derivedStateOf {
+            locationPermissionsState.allPermissionsGranted.and(state.latitude != DEFAULT_LATITUDE && state.longitude != DEFAULT_LONGITUDE)
+        }
     }
 
     val locateUser =

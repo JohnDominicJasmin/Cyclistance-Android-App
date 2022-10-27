@@ -45,16 +45,18 @@ fun MappingMapsScreen(
     val context = LocalContext.current
 
 
-    val nearbyCyclists by derivedStateOf {
-        state.nearbyCyclists.activeUsers
+    val nearbyCyclists by remember(key1= state.nearbyCyclists.activeUsers) {
+        derivedStateOf { state.nearbyCyclists.activeUsers }
     }
-    val pulsingEnabled by derivedStateOf {
-        state.isSearchingForAssistance.and(locationPermissionsState?.allPermissionsGranted == true)
+    val pulsingEnabled by remember(state.isSearchingForAssistance, locationPermissionsState?.allPermissionsGranted) {
+        derivedStateOf {
+            state.isSearchingForAssistance.and(locationPermissionsState?.allPermissionsGranted == true)
+        }
     }
     val annotationApi = remember(mapView) { mapView.annotations }
     val pointAnnotationManager = remember(annotationApi) { annotationApi.createPointAnnotationManager() }
 
-    LaunchedEffect(key1 = nearbyCyclists.size){
+    LaunchedEffect(key1 = nearbyCyclists){
         nearbyCyclists.forEach {
             val (user, bitmapProfileImage) = it
             val location = user.location
@@ -76,8 +78,10 @@ fun MappingMapsScreen(
         mapView.location2.pulsingEnabled = pulsingEnabled
     }
 
-    val mapStyle by derivedStateOf {
-        if (isDarkTheme) Style.DARK else Style.OUTDOORS
+    val mapStyle by remember(isDarkTheme){
+        derivedStateOf {
+            if (isDarkTheme) Style.DARK else Style.OUTDOORS
+        }
     }
 
     LaunchedEffect(key1 = mapStyle){
