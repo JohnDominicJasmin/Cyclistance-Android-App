@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_rescue_request.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,20 +16,21 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
 import com.example.cyclistance.feature_mapping_screen.presentation.common.MappingButtonNavigation
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_rescue_request.sampleCardState
-import com.example.cyclistance.theme.*
-
-
+import com.example.cyclistance.theme.Black450
 
 
 @Composable
-fun RequestItem(modifier: Modifier, cardState: CardModel) {
+fun RequestItem(
+    modifier: Modifier,
+    cardState: CardModel,
+    onClickCancelButton: () -> Unit,
+    onClickConfirmButton: () -> Unit) {
 
     Card(
         modifier = modifier,
@@ -44,14 +44,13 @@ fun RequestItem(modifier: Modifier, cardState: CardModel) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(15.dp)) {
 
-                Image(
-                    painter = painterResource(R.drawable.person_image),
+                AsyncImage(
+                    model = cardState.profileImageUrl,
                     contentDescription = "User Picture",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(60.dp)
-                        .clip(CircleShape)
-                )
+                        .clip(CircleShape))
 
                 Text(textAlign = TextAlign.Start,
                     text = buildAnnotatedString {
@@ -69,7 +68,7 @@ fun RequestItem(modifier: Modifier, cardState: CardModel) {
                                 color = Black450,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium)) {
-                            append(cardState.distance)
+                            append(cardState.distance ?: "----")
                         }
                     })
                 Spacer(modifier = Modifier.weight(weight = 0.3f))
@@ -90,7 +89,7 @@ fun RequestItem(modifier: Modifier, cardState: CardModel) {
                                 color = Black450,
                                 fontSize = 12.sp,
                                 fontWeight = FontWeight.Medium)) {
-                            append(cardState.estimatedTimeTravel)
+                            append(cardState.estimatedTimeTravel ?: "----")
                         }
 
                     })
@@ -118,7 +117,7 @@ fun RequestItem(modifier: Modifier, cardState: CardModel) {
                     contentDescription = "Address Icon",
                     tint = Color.Unspecified,
                 )
-                Text(text = cardState.address, color = MaterialTheme.colors.onSurface)
+                Text(text = cardState.address ?: "----", color = MaterialTheme.colors.onSurface)
             }
 
             MappingButtonNavigation(
@@ -128,18 +127,15 @@ fun RequestItem(modifier: Modifier, cardState: CardModel) {
                     .align(alignment = Alignment.CenterHorizontally),
                 negativeButtonText = "Decline",
                 positiveButtonText = "Accept",
-                onClickCancelButton = {
-
-                },
-                onClickConfirmButton = {
-
-                })
+                onClickCancelButton = onClickCancelButton,
+                onClickConfirmButton = onClickConfirmButton)
 
         }
     }
 
 }
 
+/*
 @Preview
 @Composable
 fun RequestItemPreview() {
@@ -150,6 +146,7 @@ fun RequestItemPreview() {
                 modifier = Modifier
                     .fillMaxWidth(fraction = 0.9f)
                     .wrapContentHeight(),
-                cardState = sampleCardState[0])
+                cardState = Card)
         }
 }
+*/
