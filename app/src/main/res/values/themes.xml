@@ -2,7 +2,9 @@
 <resources>
 
     <style name="Theme.Cyclistance" parent="Theme.MaterialComponents.Light.NoActionBar">
+
         <item name="android:windowBackground">@drawable/ic_splash</item>
+        <item name="android:statusBarColor">#333333</item>
     </style>
     
 
