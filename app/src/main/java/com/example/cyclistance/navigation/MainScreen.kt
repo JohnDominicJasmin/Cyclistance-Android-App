@@ -86,15 +86,18 @@ fun MainScreen(
                     onClickSettings = {
                         coroutineScope.launch {
                             scaffoldState.drawerState.close()
-                            navController.navigateScreen(
-                                Screens.SettingScreen.route,
-                                Screens.MappingScreen.route)
                         }
+                        navController.navigateScreen(
+                            Screens.SettingScreen.route,
+                            Screens.MappingScreen.route)
                     },
                     onClickRescueRequest = {
                         coroutineScope.launch {
                             scaffoldState.drawerState.close()
                         }
+                        navController.navigateScreen(
+                            Screens.RescueRequestScreen.route,
+                            Screens.MappingScreen.route)
                     },
                     onClickChat = {
                         coroutineScope.launch {
