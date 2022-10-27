@@ -20,3 +20,14 @@ fun UserDto.toUser():User{
     )
 }
 }
+
+fun User.toCardModel(): CardModel{
+    return CardModel(
+        id = this.id,
+        name = this.name,
+        profileImageUrl = this.profilePictureUrl,
+        distance = "0.5km",
+        estimatedTimeTravel = "5 mins",
+        address = this.address
+    )
+}
