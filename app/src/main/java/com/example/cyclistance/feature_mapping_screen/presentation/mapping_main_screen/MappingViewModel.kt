@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
-import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
@@ -16,7 +15,8 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.INTERVAL_UPDATE_USERS
-import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_ADDRESSES_KEY
+import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_NEARBY_CYCLIST_SNAPSHOT
+import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_RESCUE_RESPONDENTS_SNAPSHOT
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.ConfirmationDetails
@@ -54,8 +54,9 @@ class MappingViewModel @Inject constructor(
 
     private val _userDrawableImage: MutableState<Drawable?> = mutableStateOf(null)
     val userDrawableImage: State<Drawable?> = _userDrawableImage
-    private val nearbyCyclistsSnapShot: MutableList<Pair<User, Bitmap?>> = mutableListOf()
-    private val rescueRespondentsSnapShot: MutableList<User> = mutableListOf()
+
+    private val nearbyCyclistSnapShot: MutableList<Cyclist> = savedStateHandle[MAPPING_NEARBY_CYCLIST_SNAPSHOT] ?: mutableListOf()
+    private val rescueRespondentsSnapShot: MutableList<User> = savedStateHandle[MAPPING_RESCUE_RESPONDENTS_SNAPSHOT] ?: mutableListOf()
 
     init{
         // TODO: Remove this when the backend is ready
@@ -201,11 +202,13 @@ class MappingViewModel @Inject constructor(
                         users.getUser()
                         users.getUsers()
                         users.getUserRescueRespondents()
+                        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                     }
                 }.onFailure {
                     Timber.e("ERROR GETTING USERS: ${it.message}")
                 }
                 delay(INTERVAL_UPDATE_USERS)
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }
         }
     }
@@ -219,7 +222,6 @@ class MappingViewModel @Inject constructor(
 
         _state.update { it.copy(user = user) }
 
-
     }
 
     private fun List<User>.getUserRescueRespondents() {
@@ -230,6 +232,7 @@ class MappingViewModel @Inject constructor(
                 respondent.clientId == usersOnMap.id
             }?.let{ user ->
                 rescueRespondentsSnapShot.add(index = index, element = user)
+                savedStateHandle[MAPPING_RESCUE_RESPONDENTS_SNAPSHOT] = rescueRespondentsSnapShot
             }
         }
         _state.update {
@@ -240,18 +243,21 @@ class MappingViewModel @Inject constructor(
     private suspend fun List<User>.getUsers(){
         this.forEachIndexed { index, user ->
             val bitmapProfile = mappingUseCase.imageUrlToDrawableUseCase(user.profilePictureUrl ?: IMAGE_PLACEHOLDER_URL)
-            nearbyCyclistsSnapShot.add(index = index, element = Pair(user, bitmapProfile.toBitmap(width = CYCLIST_MAP_ICON_HEIGHT, height = CYCLIST_MAP_ICON_WIDTH)))
+            nearbyCyclistSnapShot.add(index = index, element = Cyclist(user, bitmapProfile.toBitmap(width = CYCLIST_MAP_ICON_HEIGHT, height = CYCLIST_MAP_ICON_WIDTH)))
+            savedStateHandle[MAPPING_NEARBY_CYCLIST_SNAPSHOT] = nearbyCyclistSnapShot
         }
-        _state.update { it.copy(nearbyCyclists = NearbyCyclists(activeUsers = nearbyCyclistsSnapShot.toSet().toList().toImmutableList())) }
+        _state.update { it.copy(nearbyCyclists = NearbyCyclists(activeUsers = nearbyCyclistSnapShot.toSet().toList().toImmutableList())) }
         removeCyclistSnapShot()
     }
 
     private fun removeRescueRespondentsSnapShot(){
         rescueRespondentsSnapShot.clear()
+        savedStateHandle[MAPPING_RESCUE_RESPONDENTS_SNAPSHOT] = rescueRespondentsSnapShot
     }
 
     private fun removeCyclistSnapShot(){
-        nearbyCyclistsSnapShot.clear()
+        nearbyCyclistSnapShot.clear()
+        savedStateHandle[MAPPING_NEARBY_CYCLIST_SNAPSHOT] = nearbyCyclistSnapShot
     }
 
     private fun subscribeToLocationUpdates() {
@@ -263,7 +269,6 @@ class MappingViewModel @Inject constructor(
                     withContext(Dispatchers.Default) {
                         geocoder.getAddress(location.latitude, location.longitude) { addresses ->
                             _state.update { it.copy(userAddress = UserAddress(addresses.lastOrNull())) }
-                            savedStateHandle[MAPPING_ADDRESSES_KEY] = addresses
                         }
                     }
 
