@@ -91,7 +91,9 @@ fun NavGraph(
         }
 
         composable(Screens.RescueRequestScreen.route) {
-            RescueRequestScreen(paddingValues = paddingValues)
+            RescueRequestScreen(
+                paddingValues = paddingValues,
+                mappingViewModel = mappingViewModel)
         }
 
         composable(Screens.ChangePasswordScreen.route) {

@@ -7,6 +7,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
+import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import kotlinx.parcelize.Parcelize
 
@@ -16,31 +17,29 @@ import kotlinx.parcelize.Parcelize
 data class Cyclist(
     val user: User = User(),
     val profileImageBitmap: Bitmap? = null,
-):Parcelable
+) : Parcelable
 
 @Parcelize
 @Immutable
 @Stable
 data class NearbyCyclists(
     val activeUsers: List<Cyclist> = emptyList(),
-):Parcelable
-
-
+) : Parcelable
 
 
 @Parcelize
 @Immutable
 @Stable
 data class RescueRequestRespondents(
-    val respondents: List<User> = emptyList(),
-):Parcelable
+    val respondents: List<CardModel> = emptyList(),
+) : Parcelable
 
 @Parcelize
 @Immutable
 @Stable
 data class UserAddress(
     val address: Address? = null
-):Parcelable
+) : Parcelable
 
 
 @Parcelize
@@ -58,7 +57,7 @@ data class MappingState(
     val latitude: Double = DEFAULT_LATITUDE,
     val longitude: Double = DEFAULT_LONGITUDE,
     val name: String = "-----",
-    val photoUrl : String = "",
+    val photoUrl: String = "",
 
     val nearbyCyclists: NearbyCyclists = NearbyCyclists(),
     val user: User = User(),
@@ -66,5 +65,4 @@ data class MappingState(
     val userAddress: UserAddress = UserAddress(),
 
 
-
-):Parcelable
+    ) : Parcelable

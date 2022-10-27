@@ -19,11 +19,13 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_NEA
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_RESCUE_RESPONDENTS_SNAPSHOT
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
+import com.example.cyclistance.feature_mapping_screen.data.mapper.toCardModel
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.ConfirmationDetails
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Location
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Status
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.UserAssistance
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.createMockUsers
@@ -56,7 +58,7 @@ class MappingViewModel @Inject constructor(
     val userDrawableImage: State<Drawable?> = _userDrawableImage
 
     private val nearbyCyclistSnapShot: MutableList<Cyclist> = savedStateHandle[MAPPING_NEARBY_CYCLIST_SNAPSHOT] ?: mutableListOf()
-    private val rescueRespondentsSnapShot: MutableList<User> = savedStateHandle[MAPPING_RESCUE_RESPONDENTS_SNAPSHOT] ?: mutableListOf()
+    private val rescueRespondentsSnapShot: MutableList<CardModel> = savedStateHandle[MAPPING_RESCUE_RESPONDENTS_SNAPSHOT] ?: mutableListOf()
 
     init{
         // TODO: Remove this when the backend is ready
@@ -231,7 +233,7 @@ class MappingViewModel @Inject constructor(
             this.find { usersOnMap ->
                 respondent.clientId == usersOnMap.id
             }?.let{ user ->
-                rescueRespondentsSnapShot.add(index = index, element = user)
+                rescueRespondentsSnapShot.add(index = index, element = user.toCardModel())
                 savedStateHandle[MAPPING_RESCUE_RESPONDENTS_SNAPSHOT] = rescueRespondentsSnapShot
             }
         }
@@ -240,6 +242,7 @@ class MappingViewModel @Inject constructor(
         }
         removeRescueRespondentsSnapShot()
     }
+
     private suspend fun List<User>.getUsers(){
         this.forEachIndexed { index, user ->
             val bitmapProfile = mappingUseCase.imageUrlToDrawableUseCase(user.profilePictureUrl ?: IMAGE_PLACEHOLDER_URL)
@@ -352,7 +355,6 @@ class MappingViewModel @Inject constructor(
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
-
 
     private suspend fun createUser(address: Address) {
         with(address) {
