@@ -1,6 +1,6 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils
 
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Location
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.*
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 
@@ -12,9 +12,36 @@ val users = listOf(
         id = "1",
         location = Location(lat = 14.599512, lng = 120.984222),
         name = "John Doe",
-        userNeededHelp = true,
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK9gqFKRn28xKHD1CAbEevdzsLmsv5yQkGnQ&usqp=CAU",
-    ),
+        rescueRequest = RescueRequest(
+            listOf(
+                Respondent(
+                    clientId = "2",
+                    requestAccepted = false
+                ),
+                Respondent(
+                    clientId = "3",
+                    requestAccepted = false
+                ),
+                Respondent(
+                    clientId = "4",
+                    requestAccepted = false
+                )
+            )
+        ),
+        userAssistance = UserAssistance(
+            confirmationDetails = ConfirmationDetails(
+                bikeType = "Road Bike",
+                description = "Flat tire",
+                message = "I need help with my flat tire",
+            ),
+            status = Status(
+                started = true,
+                ongoing = true
+            )
+        ),
+        userNeededHelp = true),
+
     User(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
@@ -57,8 +84,8 @@ val users = listOf(
         contactNumber = "1234567890",
         id = "6",
         location = Location(lat = 6.523497, lng = 125.037057),
-        name = "Jane Doe",
-        profilePictureUrl = "https://i.imgur.com/1ZtYi9X.png",
+        name = "Jeniffer",
+        profilePictureUrl = "https://www.harleytherapy.co.uk/counselling/wp-content/uploads/16297800391_5c6e812832.jpg",
     ),
 
     User(
@@ -66,8 +93,8 @@ val users = listOf(
         contactNumber = "1234567890",
         id = "7",
         location = Location(lat = 6.531999, lng = 125.043330),
-        name = "John Doe",
-        profilePictureUrl = "https://i.imgur.com/1ZtYi9X.png",
+        name = "Mark",
+        profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDwnb8KCy8eejkddV5FaKsBcm1uDznQhInOQ&usqp=CAU",
     ),
 
     User(
@@ -75,8 +102,8 @@ val users = listOf(
         contactNumber = "1234567890",
         id = "8",
         location = Location(lat = 6.887962, lng = 125.224905),
-        name = "Jane Doe",
-        profilePictureUrl = "https://i.imgur.com/1ZtYi9X.png",
+        name = "Alex",
+        profilePictureUrl = "https://thumbs.dreamstime.com/b/young-indian-man-having-fun-doing-video-call-outdoor-home-garden-mobile-phone-happy-person-using-technology-trends-tech-181375754.jpg",
     ),
 
     User(
@@ -84,8 +111,8 @@ val users = listOf(
         contactNumber = "1234567890",
         id = "9",
         location = Location(lat = 7.118415, lng = 125.283468),
-        name = "John Doe",
-        profilePictureUrl = "https://i.imgur.com/1ZtYi9X.png",
+        name = "John Dominic",
+        profilePictureUrl = "https://www.commonwealthfund.org/sites/default/files/images/___media_upload_young_adults_individual_mandate_exemption_could_lead_to_more_uninsurance.jpg",
     ),
 
 )
