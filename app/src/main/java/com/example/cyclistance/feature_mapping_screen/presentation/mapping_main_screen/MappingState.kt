@@ -7,18 +7,26 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Location
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import kotlinx.parcelize.Parcelize
-import java.util.*
 
+@Parcelize
+@Immutable
+@Stable
+data class Cyclist(
+    val user: User = User(),
+    val profileImageBitmap: Bitmap? = null,
+):Parcelable
 
 @Parcelize
 @Immutable
 @Stable
 data class NearbyCyclists(
-    val activeUsers: List<Pair<User, Bitmap?>> = emptyList(),
+    val activeUsers: List<Cyclist> = emptyList(),
 ):Parcelable
+
+
+
 
 @Parcelize
 @Immutable
