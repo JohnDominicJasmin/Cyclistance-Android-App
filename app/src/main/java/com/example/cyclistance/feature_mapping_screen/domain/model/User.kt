@@ -1,9 +1,10 @@
 package com.example.cyclistance.feature_mapping_screen.domain.model
 
 import android.os.Parcelable
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Location
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.RescueRequest
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.UserAssistance
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Location
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.RescueRequest
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Transaction
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserAssistance
 import kotlinx.parcelize.Parcelize
 @Parcelize
 data class User(
@@ -13,7 +14,7 @@ data class User(
     val location: Location? = null,
     val name: String? = null,
     val profilePictureUrl: String? = null,
-    val rescueRequest: RescueRequest = RescueRequest(),
-    val userAssistance: UserAssistance = UserAssistance(),
-    val userNeededHelp: Boolean = false
+    val rescueRequest: RescueRequest? = null,
+    val transaction: Transaction? = null,
+    val userAssistance: UserAssistance? = null,
 ):Parcelable

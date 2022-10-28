@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping_screen.data.remote.dto
+package com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction
 
 
 import android.os.Parcelable

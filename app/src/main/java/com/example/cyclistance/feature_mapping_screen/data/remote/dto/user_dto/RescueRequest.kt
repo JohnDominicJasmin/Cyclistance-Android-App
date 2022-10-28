@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping_screen.data.remote.dto
+package com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto
 
 
 import android.os.Parcelable
@@ -10,5 +10,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class RescueRequest(
     @SerializedName("respondents")
-    val respondents: List<Respondent> = emptyList()
+    val respondents: List<Respondent> = listOf()
 ):Parcelable

@@ -1,10 +1,13 @@
-package com.example.cyclistance.feature_mapping_screen.data.remote.dto
+package com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto
 
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import kotlinx.parcelize.Parcelize
 
 @Keep
+@Parcelize
 data class UserDto(
     @SerializedName("address")
     val address: String?,
@@ -19,9 +22,9 @@ data class UserDto(
     @SerializedName("profile_picture_url")
     val profilePictureUrl: String?,
     @SerializedName("rescue_request")
-    val rescueRequest: RescueRequest = RescueRequest(),
+    val rescueRequest: RescueRequest?,
+    @SerializedName("transaction")
+    val transaction: Transaction?,
     @SerializedName("user_assistance")
-    val userAssistance: UserAssistance = UserAssistance(),
-    @SerializedName("user_needed_help")
-    val userNeededHelp: Boolean = false
-)
+    val userAssistance: UserAssistance?
+):Parcelable

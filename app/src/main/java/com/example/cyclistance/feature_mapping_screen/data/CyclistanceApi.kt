@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping_screen.data
 
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.*
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserDto
 import retrofit2.http.*
 
 interface CyclistanceApi {

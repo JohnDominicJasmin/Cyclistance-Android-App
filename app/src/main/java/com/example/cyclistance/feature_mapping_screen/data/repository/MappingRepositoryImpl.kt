@@ -15,7 +15,7 @@ import com.example.cyclistance.core.utils.getData
 import com.example.cyclistance.core.utils.service.LocationService
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUser
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.UserDto
+import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUserDto
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
@@ -32,9 +32,6 @@ class MappingRepositoryImpl(
     val imageRequestBuilder: ImageRequest.Builder,
     private val api: CyclistanceApi,
     val context: Context) : MappingRepository {
-
-
-
 
 
     private var dataStore = context.dataStore
@@ -70,44 +67,16 @@ class MappingRepositoryImpl(
             api.getUsers().map { it.toUser() }
         }
 
-    //todo: Add Mapper
     override suspend fun createUser(user: User) =
         handleException {
-            with(user) {
-                api.createUser(
-                    userDto = UserDto(
-                        address = this.address,
-                        id = this.id,
-                        location = this.location,
-                        name = this.name,
-                        userNeededHelp = this.userNeededHelp,
-                        userAssistance = this.userAssistance,
-                        profilePictureUrl = this.profilePictureUrl,
-                        contactNumber = this.contactNumber,
-                        rescueRequest = this.rescueRequest
-                    ))
-            }
+                api.createUser(userDto = user.toUserDto())
         }
 
-    //todo: remove this id later
     override suspend fun updateUser(itemId: String, user: User) =
         handleException {
-            with(user) {
                 api.updateUser(
                     itemId = itemId,
-                    userDto = UserDto(
-                        address = this.address,
-                        id = this.id,
-                        location = this.location,
-                        name = this.name,
-                        userNeededHelp = this.userNeededHelp,
-                        userAssistance = this.userAssistance,
-                        profilePictureUrl = this.profilePictureUrl,
-                        contactNumber = this.contactNumber,
-                        rescueRequest = this.rescueRequest
-                    ))
-
-            }
+                    userDto = user.toUserDto())
         }
 
     override suspend fun deleteUser(id: String) =

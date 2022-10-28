@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping_screen.data.remote.dto
+package com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto
 
 
 import android.os.Parcelable
@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-data class ConfirmationDetails(
+data class ConfirmationDetail(
     @SerializedName("bike_type")
     val bikeType: String = "",
     @SerializedName("description")
