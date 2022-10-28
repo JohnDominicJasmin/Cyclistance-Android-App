@@ -15,8 +15,6 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.INTERVAL_UPDATE_USERS
-import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_NEARBY_CYCLIST_SNAPSHOT
-import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_RESCUE_RESPONDENTS_SNAPSHOT
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.mapper.toCardModel
@@ -57,8 +55,7 @@ class MappingViewModel @Inject constructor(
     private val _userDrawableImage: MutableState<Drawable?> = mutableStateOf(null)
     val userDrawableImage: State<Drawable?> = _userDrawableImage
 
-    private val nearbyCyclistSnapShot: MutableList<Cyclist> = savedStateHandle[MAPPING_NEARBY_CYCLIST_SNAPSHOT] ?: mutableListOf()
-    private val rescueRespondentsSnapShot: MutableList<CardModel> = savedStateHandle[MAPPING_RESCUE_RESPONDENTS_SNAPSHOT] ?: mutableListOf()
+
 
     init{
         // TODO: Remove this when the backend is ready
@@ -70,6 +67,16 @@ class MappingViewModel @Inject constructor(
             is MappingEvent.SearchAssistance -> {
                 uploadUserProfile()
             }
+
+            is MappingEvent.DeclineRescueRequest -> {
+
+
+            }
+
+            is MappingEvent.AcceptRescueRequest -> {
+
+            }
+
             is MappingEvent.CancelSearchAssistance -> {
                 cancelSearchAssistance()
             }
@@ -228,40 +235,32 @@ class MappingViewModel @Inject constructor(
 
     private fun List<User>.getUserRescueRespondents() {
         val user = state.value.user
-
+        val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
         user.rescueRequest.respondents.forEachIndexed { index, respondent ->
             this.find { usersOnMap ->
                 respondent.clientId == usersOnMap.id
             }?.let{ user ->
                 rescueRespondentsSnapShot.add(index = index, element = user.toCardModel())
-                savedStateHandle[MAPPING_RESCUE_RESPONDENTS_SNAPSHOT] = rescueRespondentsSnapShot
             }
         }
         _state.update {
             it.copy(rescueRequestRespondents = RescueRequestRespondents(respondents = rescueRespondentsSnapShot.toSet().toList().toImmutableList()))
         }
-        removeRescueRespondentsSnapShot()
+        rescueRespondentsSnapShot.clear()
     }
 
     private suspend fun List<User>.getUsers(){
+        val nearbyCyclistSnapShot: MutableList<Cyclist> =  mutableListOf()
         this.forEachIndexed { index, user ->
             val bitmapProfile = mappingUseCase.imageUrlToDrawableUseCase(user.profilePictureUrl ?: IMAGE_PLACEHOLDER_URL)
             nearbyCyclistSnapShot.add(index = index, element = Cyclist(user, bitmapProfile.toBitmap(width = CYCLIST_MAP_ICON_HEIGHT, height = CYCLIST_MAP_ICON_WIDTH)))
-            savedStateHandle[MAPPING_NEARBY_CYCLIST_SNAPSHOT] = nearbyCyclistSnapShot
         }
         _state.update { it.copy(nearbyCyclists = NearbyCyclists(activeUsers = nearbyCyclistSnapShot.toSet().toList().toImmutableList())) }
-        removeCyclistSnapShot()
-    }
-
-    private fun removeRescueRespondentsSnapShot(){
-        rescueRespondentsSnapShot.clear()
-        savedStateHandle[MAPPING_RESCUE_RESPONDENTS_SNAPSHOT] = rescueRespondentsSnapShot
-    }
-
-    private fun removeCyclistSnapShot(){
         nearbyCyclistSnapShot.clear()
-        savedStateHandle[MAPPING_NEARBY_CYCLIST_SNAPSHOT] = nearbyCyclistSnapShot
     }
+
+
+
 
     private fun subscribeToLocationUpdates() {
         locationUpdatesFlow?.cancel()
