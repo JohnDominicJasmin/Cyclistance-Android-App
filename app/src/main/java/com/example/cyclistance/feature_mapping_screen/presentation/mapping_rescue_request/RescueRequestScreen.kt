@@ -31,7 +31,13 @@ fun RescueRequestScreen(paddingValues: PaddingValues, mappingViewModel: MappingV
     RescueRequestScreen(
         modifier = Modifier
             .padding(paddingValues = paddingValues),
-        mappingState = mappingState
+        mappingState = mappingState,
+        onClickCancelButton = {
+            mappingViewModel.onEvent(MappingEvent.DeclineRescueRequest(it))
+        },
+        onClickConfirmButton = {
+
+        }
     )
 }
 
@@ -39,9 +45,12 @@ fun RescueRequestScreen(paddingValues: PaddingValues, mappingViewModel: MappingV
 @Composable
 fun RescueRequestScreen(
     modifier: Modifier = Modifier,
-    mappingState: MappingState = MappingState()) {
+    mappingState: MappingState = MappingState(),
+    onClickCancelButton: (CardModel) -> Unit = {},
+    onClickConfirmButton: () -> Unit = {},
+) {
 
-    val activeUsers = remember(mappingState.rescueRequestRespondents.respondents.size) {
+    val respondents = remember(mappingState.rescueRequestRespondents.respondents.size) {
         mappingState.rescueRequestRespondents.respondents
     }
 
@@ -55,7 +64,7 @@ fun RescueRequestScreen(
 
 
         Text(
-            text = "${activeUsers.size} NEW REQUEST",
+            text = "${respondents.size} NEW REQUEST",
             color = MaterialTheme.colors.onBackground,
             style = TextStyle(letterSpacing = 4.sp, fontWeight = FontWeight.Bold, fontSize = 16.sp),
             modifier = Modifier.padding(vertical = 12.dp),
@@ -71,18 +80,17 @@ fun RescueRequestScreen(
                 .fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally) {
 
-            items(items = activeUsers, key = { it.id ?: "-1" }) { requestItem ->
+            items(items = respondents, key = { it.id ?: "-1" }) { respondent ->
                 RequestItem(
                     modifier = Modifier
                         .padding(start = 4.dp, end = 4.dp, top = 6.dp, bottom = 6.dp)
 
                         .fillMaxWidth(fraction = 0.95f)
-                        .wrapContentHeight(), cardState = requestItem, onClickCancelButton = {
-                        /*todo: Add action*/
+                        .wrapContentHeight(), cardState = respondent,
+                    onClickCancelButton = {
+                        onClickCancelButton(respondent)
                     },
-                    onClickConfirmButton = {
-                        /*todo: Add action*/
-                    }
+                    onClickConfirmButton = onClickConfirmButton
                 )
             }
 
