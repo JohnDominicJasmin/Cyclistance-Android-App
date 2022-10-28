@@ -70,6 +70,7 @@ class MappingRepositoryImpl(
             api.getUsers().map { it.toUser() }
         }
 
+    //todo: Add Mapper
     override suspend fun createUser(user: User) =
         handleException {
             with(user) {
@@ -88,6 +89,7 @@ class MappingRepositoryImpl(
             }
         }
 
+    //todo: remove this id later
     override suspend fun updateUser(itemId: String, user: User) =
         handleException {
             with(user) {
@@ -101,7 +103,8 @@ class MappingRepositoryImpl(
                         userNeededHelp = this.userNeededHelp,
                         userAssistance = this.userAssistance,
                         profilePictureUrl = this.profilePictureUrl,
-                        contactNumber = this.contactNumber
+                        contactNumber = this.contactNumber,
+                        rescueRequest = this.rescueRequest
                     ))
 
             }
