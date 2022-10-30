@@ -14,6 +14,11 @@ interface MappingRepository {
     suspend fun updateUser(itemId: String, user: User)
     suspend fun deleteUser(id: String)
 
+    suspend fun getRescueTransactionById(userId: String): RescueTransaction
+    suspend fun createRescueTransaction(rescueTransaction: RescueTransaction)
+    suspend fun updateRescueTransaction(itemId: String, rescueTransaction: RescueTransaction)
+    suspend fun deleteRescueTransaction(id: String)
+
     fun getBikeType(): Flow<String>
     suspend fun updateBikeType(bikeType: String)
 

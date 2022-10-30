@@ -6,6 +6,10 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.Up
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.GetBikeTypeUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.UpdateBikeTypeUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.image.ImageUrlToDrawableUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.UpdateRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
 
 data class MappingUseCase(
@@ -17,6 +21,11 @@ data class MappingUseCase(
     val createUserUseCase: CreateUserUseCase,
     val deleteUserUseCase: DeleteUserUseCase,
     val updateUserUseCase: UpdateUserUseCase,
+
+    val getRescueTransactionByIdUseCase: GetRescueTransactionByIdUseCase,
+    val createRescueTransactionUseCase: CreateRescueTransactionUseCase,
+    val updateRescueTransactionUseCase: UpdateRescueTransactionUseCase,
+    val deleteRescueTransactionUseCase: DeleteRescueTransactionUseCase,
 
     val getUserLocationUseCase: GetUserLocationUseCase,
 

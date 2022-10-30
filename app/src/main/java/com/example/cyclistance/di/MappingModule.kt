@@ -19,6 +19,10 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.UpdateBikeTypeUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.image.ImageUrlToDrawableUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.GetUserLocationUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.UpdateRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
 import com.google.gson.GsonBuilder
 import dagger.Module
@@ -66,11 +70,19 @@ object MappingModule {
     @Singleton
     fun provideMappingUseCase(repository: MappingRepository): MappingUseCase {
         return MappingUseCase(
+
             getUsersUseCase = GetUsersUseCase(repository),
             getUserByIdUseCase = GetUserByIdUseCase(repository),
             createUserUseCase = CreateUserUseCase(repository),
             deleteUserUseCase = DeleteUserUseCase(repository),
             updateUserUseCase = UpdateUserUseCase(repository),
+
+            getRescueTransactionByIdUseCase = GetRescueTransactionByIdUseCase(repository),
+            createRescueTransactionUseCase = CreateRescueTransactionUseCase(repository),
+            updateRescueTransactionUseCase = UpdateRescueTransactionUseCase(repository),
+            deleteRescueTransactionUseCase = DeleteRescueTransactionUseCase(repository),
+
+
             getUserLocationUseCase = GetUserLocationUseCase(repository),
             getBikeTypeUseCase = GetBikeTypeUseCase(repository),
             updateBikeTypeUseCase = UpdateBikeTypeUseCase(repository),

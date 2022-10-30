@@ -14,9 +14,12 @@ import com.example.cyclistance.core.utils.editData
 import com.example.cyclistance.core.utils.getData
 import com.example.cyclistance.core.utils.service.LocationService
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
+import com.example.cyclistance.feature_mapping_screen.data.mapper.RescueTransactionMapper.toRescueTransaction
+import com.example.cyclistance.feature_mapping_screen.data.mapper.RescueTransactionMapper.toRescueTransactionDto
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUser
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUserDto
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransaction
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 import kotlinx.coroutines.Dispatchers
@@ -97,6 +100,31 @@ class MappingRepositoryImpl(
                 val imageResult = context.imageLoader.execute(request)
                 imageResult.drawable!!
             }
+        }
+    }
+
+    override suspend fun getRescueTransactionById(userId: String): RescueTransaction =
+        handleException {
+            api.getRescueTransactionById(userId).toRescueTransaction()
+        }
+
+    override suspend fun createRescueTransaction(rescueTransaction: RescueTransaction) =
+        handleException {
+            api.createRescueTransaction(rescueTransaction.toRescueTransactionDto())
+        }
+
+    override suspend fun updateRescueTransaction(
+        itemId: String,
+        rescueTransaction: RescueTransaction) {
+
+        api.updateRescueTransaction(
+            itemId = itemId,
+            rescueTransactionDto = rescueTransaction.toRescueTransactionDto())
+    }
+
+    override suspend fun deleteRescueTransaction(id: String) {
+        handleException {
+            api.deleteRescueTransaction(id)
         }
     }
 }
