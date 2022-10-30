@@ -4,7 +4,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransac
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 
 class UpdateRescueTransactionUseCase(private val repository: MappingRepository) {
-    suspend operator fun invoke(id:String, rescueTransaction: RescueTransaction) {
-        repository.updateRescueTransaction(id, rescueTransaction)
+    suspend operator fun invoke(id:String, rescueTransaction: RescueTransaction): RescueTransaction {
+      return repository.updateRescueTransaction(id, rescueTransaction)
     }
 }

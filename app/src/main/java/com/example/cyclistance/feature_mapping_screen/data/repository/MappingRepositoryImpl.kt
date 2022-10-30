@@ -75,12 +75,13 @@ class MappingRepositoryImpl(
                 api.createUser(userDto = user.toUserDto())
         }
 
-    override suspend fun updateUser(itemId: String, user: User) =
-        handleException {
-                api.updateUser(
-                    itemId = itemId,
-                    userDto = user.toUserDto())
+    override suspend fun updateUser(itemId: String, user: User): User {
+        return handleException {
+            api.updateUser(
+                itemId = itemId,
+                userDto = user.toUserDto()).toUser()
         }
+    }
 
     override suspend fun deleteUser(id: String) =
         handleException {
@@ -115,11 +116,12 @@ class MappingRepositoryImpl(
 
     override suspend fun updateRescueTransaction(
         itemId: String,
-        rescueTransaction: RescueTransaction) {
+        rescueTransaction: RescueTransaction): RescueTransaction {
 
-        api.updateRescueTransaction(
+        return api.updateRescueTransaction(
             itemId = itemId,
-            rescueTransactionDto = rescueTransaction.toRescueTransactionDto())
+            rescueTransactionDto = rescueTransaction.toRescueTransactionDto()).toRescueTransaction()
+
     }
 
     override suspend fun deleteRescueTransaction(id: String) {
