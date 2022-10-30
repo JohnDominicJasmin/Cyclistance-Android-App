@@ -5,9 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.CONFIRM_DETAILS_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.ConfirmationDetails
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Status
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.UserAssistance
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.ConfirmationDetail
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserAssistance
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
@@ -109,15 +108,16 @@ class ConfirmDetailsViewModel @Inject constructor(
                 mappingUseCase.updateUserUseCase(
                     itemId = getId() ?: return,
                     user = User(
-                        userNeededHelp = true,
                         address = address.trim(),
                         userAssistance = UserAssistance(
-                            confirmationDetails = ConfirmationDetails(
+                            confirmationDetail = ConfirmationDetail(
                                 bikeType = bikeType,
                                 description = description,
                                 message = message.trim()),
-                            status = Status(started = true, searching = true)
-                        )
+                          needHelp = true
+                        ),
+
+
                     )).also {
 
                     mappingUseCase.updateAddressUseCase(address = confirmDetailsState.address)

@@ -17,11 +17,10 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACE
 import com.example.cyclistance.core.utils.constants.MappingConstants.INTERVAL_UPDATE_USERS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_mapping_screen.data.mapper.toCardModel
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.ConfirmationDetails
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Location
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.Status
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.UserAssistance
+import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toCardModel
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.ConfirmationDetail
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Location
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserAssistance
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
@@ -165,10 +164,9 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.updateUserUseCase(
                     itemId = getId() ?: return@launch,
                     user = User(
-                        userNeededHelp = false,
                         userAssistance = UserAssistance(
-                            confirmationDetails = ConfirmationDetails(),
-                            status = Status(searching = false, started = false)))
+                            needHelp = false,
+                            confirmationDetail = ConfirmationDetail()))
                 )
 
             }.onSuccess {
@@ -236,7 +234,7 @@ class MappingViewModel @Inject constructor(
     private fun List<User>.getUserRescueRespondents() {
         val user = state.value.user
         val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
-        user.rescueRequest.respondents.forEachIndexed { index, respondent ->
+        user.rescueRequest?.respondents?.forEachIndexed { index, respondent ->
             this.find { usersOnMap ->
                 respondent.clientId == usersOnMap.id
             }?.let{ user ->
@@ -367,11 +365,8 @@ class MappingViewModel @Inject constructor(
                     profilePictureUrl = getPhotoUrl(),
                     contactNumber = getPhoneNumber(),
                     location = Location(
-                        lat = latitude,
-                        lng = longitude),
-                    userAssistance = UserAssistance(
-                        status = Status(started = true)
-                    ),
+                        latitude = latitude,
+                        longitude = longitude),
                 ))
 
             mappingUseCase.updateAddressUseCase(currentAddress)

@@ -60,9 +60,9 @@ fun MappingMapsScreen(
         nearbyCyclists.forEach {
             val (user, bitmapProfileImage) = it
             val location = user.location
-            val latitude = location?.lat
-            val longitude = location?.lng
-            val iconImage = if (user.userNeededHelp) AppCompatResources.getDrawable(
+            val latitude = location?.latitude
+            val longitude = location?.longitude
+            val iconImage = if (user.userAssistance?.needHelp == true) AppCompatResources.getDrawable(
                     context,
                     R.drawable.ic_emergency)
                     ?.toBitmap(width = CYCLIST_MAP_ICON_WIDTH, height = CYCLIST_MAP_ICON_HEIGHT) else bitmapProfileImage!!
