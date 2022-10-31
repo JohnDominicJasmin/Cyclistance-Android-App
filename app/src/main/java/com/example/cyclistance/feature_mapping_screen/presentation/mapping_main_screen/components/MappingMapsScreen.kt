@@ -13,7 +13,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP
 import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP_ICON_WIDTH
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.ComposableLifecycle
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startServiceIntentAction
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startLocationServiceIntentAction
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.mapbox.geojson.Point
@@ -114,7 +114,7 @@ fun MappingMapsScreen(
 
             Lifecycle.Event.ON_DESTROY -> {
                 Timber.v("Lifecycle Event: ON_DESTROY")
-                context.startServiceIntentAction(intentAction = MappingConstants.ACTION_STOP)
+                context.startLocationServiceIntentAction(intentAction = MappingConstants.ACTION_STOP)
 
             }
 
