@@ -117,9 +117,11 @@ class MappingRepositoryImpl(
         itemId: String,
         rescueTransaction: RescueTransaction) {
 
-        api.updateRescueTransaction(
-            itemId = itemId,
-            rescueTransactionDto = rescueTransaction.toRescueTransactionDto())
+        handleException {
+            api.updateRescueTransaction(
+                itemId = itemId,
+                rescueTransactionDto = rescueTransaction.toRescueTransactionDto())
+        }
     }
 
     override suspend fun deleteRescueTransaction(id: String) {
@@ -136,7 +138,7 @@ private inline fun <T> handleException(action: () -> T): T {
     return try {
         action()
     } catch (e: HttpException) {
-        throw MappingExceptions.UnexpectedErrorException(message = e.message())
+        throw MappingExceptions.UnexpectedErrorException(message = e.message ?: "Unexpected Error")
     } catch (e: IOException) {
         Timber.e("Exception is ${e.message}")
         throw MappingExceptions.NetworkExceptions()
