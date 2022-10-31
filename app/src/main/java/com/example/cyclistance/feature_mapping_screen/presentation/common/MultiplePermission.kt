@@ -13,7 +13,7 @@ fun RequestMultiplePermissions(
     multiplePermissionsState: MultiplePermissionsState,
     deniedMessage: String = "Give this app a permission to proceed.",
     rationaleMessage: String = "To use this app's functionalities, you need to give us the permission.",
-    onPermissionGranted:  () -> Unit
+    onPermissionGranted:  () -> Unit = {}
 ) {
 
     HandleRequests(
@@ -40,9 +40,11 @@ private fun HandleRequests(
     onPermissionGranted: () -> Unit
 ) {
     var shouldShowRationale by remember { mutableStateOf(false) }
-    val result = multiplePermissionsState.permissions.all {
-        shouldShowRationale = it.status.shouldShowRationale
-        it.status == PermissionStatus.Granted
+    val result = remember(multiplePermissionsState.permissions) {
+        multiplePermissionsState.permissions.all {
+            shouldShowRationale = it.status.shouldShowRationale
+            it.status == PermissionStatus.Granted
+        }
     }
     if (result) {
         onPermissionGranted()

@@ -46,7 +46,7 @@ object ConnectionStatus {
 
      fun Context.checkLocationSetting(
         onDisabled: (IntentSenderRequest) -> Unit,
-        onEnabled: () -> Unit
+        onEnabled: () -> Unit = {}
     ) {
 
         val locationRequest = LocationRequest.create().apply {
