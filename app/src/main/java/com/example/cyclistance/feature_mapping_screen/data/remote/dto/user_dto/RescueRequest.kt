@@ -10,5 +10,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class RescueRequest(
     @SerializedName("respondents")
-    val respondents: List<Respondent> = listOf()
+    val respondents: List<Respondent> = emptyList()
 ):Parcelable
