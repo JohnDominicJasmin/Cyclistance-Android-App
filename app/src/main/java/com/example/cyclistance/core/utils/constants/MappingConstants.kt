@@ -25,7 +25,7 @@ object MappingConstants {
 
     const val LOCATION_UPDATES_INTERVAL: Long = 10000L
     const val FASTEST_LOCATION_UPDATES_INTERVAL: Long = 7000L
-    const val INTERVAL_UPDATE_USERS = 5000L
+    const val INTERVAL_UPDATE_USERS = 12000L
 
     val BIKE_TYPE_KEY = stringPreferencesKey("bike_type")
     val ADDRESS_KEY = stringPreferencesKey("address")
