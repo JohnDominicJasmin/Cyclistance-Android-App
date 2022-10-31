@@ -11,6 +11,7 @@ sealed class MappingEvent {
     object StopPinging: MappingEvent()
     object LoadUsers: MappingEvent()
     object LoadUserProfile: MappingEvent()
+    object PostLocation: MappingEvent()
     data class ChangeBottomSheet(val bottomSheetType: String): MappingEvent()
     object SubscribeToLocationUpdates: MappingEvent()
     object UnsubscribeToLocationUpdates: MappingEvent()

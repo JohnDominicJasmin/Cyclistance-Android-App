@@ -55,11 +55,11 @@ class MappingViewModel @Inject constructor(
     val userDrawableImage: State<Drawable?> = _userDrawableImage
 
 
-
-    init{
+    init {
         // TODO: Remove this when the backend is ready
         createMockUpUsers()
     }
+
     fun onEvent(event: MappingEvent) {
         when (event) {
 
@@ -67,13 +67,16 @@ class MappingViewModel @Inject constructor(
                 uploadUserProfile()
             }
 
+            is MappingEvent.PostLocation -> {
+                postLocation()
+            }
+
             is MappingEvent.DeclineRescueRequest -> {
-
-
+                /*todo*/
             }
 
             is MappingEvent.AcceptRescueRequest -> {
-
+                /*todo*/
             }
 
             is MappingEvent.CancelSearchAssistance -> {
@@ -116,6 +119,25 @@ class MappingViewModel @Inject constructor(
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
+
+    private fun postLocation(){
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                mappingUseCase.createUserUseCase(
+                    user = User(
+                        id = getId(),
+                        location = Location(
+                            latitude = state.value.latitude,
+                            longitude = state.value.longitude,
+                        ), profilePictureUrl = state.value.photoUrl))
+            }.onSuccess {
+                Timber.v("Successfully posted location")
+            }.onFailure {
+                Timber.v("Failed to post location")
+            }
+        }
+    }
+
 
     private fun loadUserProfile() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -162,7 +184,7 @@ class MappingViewModel @Inject constructor(
             runCatching {
                 _state.update { it.copy(isLoading = true) }
                 mappingUseCase.updateUserUseCase(
-                    itemId = getId() ?: return@launch,
+                    itemId = getId(),
                     user = User(
                         userAssistance = UserAssistance(
                             needHelp = false,
@@ -205,12 +227,13 @@ class MappingViewModel @Inject constructor(
         getUsersJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
             while (this.isActive) {
                 runCatching {
-                    mappingUseCase.getUsersUseCase().distinctUntilChanged().collect { users: List<User> ->
-                        users.getUser()
-                        users.getUsers()
-                        users.getUserRescueRespondents()
-                        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                    }
+                    mappingUseCase.getUsersUseCase().distinctUntilChanged()
+                        .collect { users: List<User> ->
+                            users.getUser()
+                            users.getUsers()
+                            users.getUserRescueRespondents()
+                            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                        }
                 }.onFailure {
                     Timber.e("ERROR GETTING USERS: ${it.message}")
                 }
@@ -237,27 +260,38 @@ class MappingViewModel @Inject constructor(
         user.rescueRequest?.respondents?.forEachIndexed { index, respondent ->
             this.find { usersOnMap ->
                 respondent.clientId == usersOnMap.id
-            }?.let{ user ->
+            }?.let { user ->
                 rescueRespondentsSnapShot.add(index = index, element = user.toCardModel())
             }
         }
         _state.update {
-            it.copy(rescueRequestRespondents = RescueRequestRespondents(respondents = rescueRespondentsSnapShot.toSet().toList().toImmutableList()))
+            it.copy(
+                rescueRequestRespondents = RescueRequestRespondents(
+                    respondents = rescueRespondentsSnapShot.toSet().toList().toImmutableList()))
         }
         rescueRespondentsSnapShot.clear()
     }
 
-    private suspend fun List<User>.getUsers(){
-        val nearbyCyclistSnapShot: MutableList<Cyclist> =  mutableListOf()
+    private suspend fun List<User>.getUsers() {
+        val nearbyCyclistSnapShot: MutableList<Cyclist> = mutableListOf()
         this.forEachIndexed { index, user ->
-            val bitmapProfile = mappingUseCase.imageUrlToDrawableUseCase(user.profilePictureUrl ?: IMAGE_PLACEHOLDER_URL)
-            nearbyCyclistSnapShot.add(index = index, element = Cyclist(user, bitmapProfile.toBitmap(width = CYCLIST_MAP_ICON_HEIGHT, height = CYCLIST_MAP_ICON_WIDTH)))
+            val bitmapProfile = mappingUseCase.imageUrlToDrawableUseCase(
+                user.profilePictureUrl ?: IMAGE_PLACEHOLDER_URL)
+            nearbyCyclistSnapShot.add(
+                index = index,
+                element = Cyclist(
+                    user,
+                    bitmapProfile.toBitmap(
+                        width = CYCLIST_MAP_ICON_HEIGHT,
+                        height = CYCLIST_MAP_ICON_WIDTH)))
         }
-        _state.update { it.copy(nearbyCyclists = NearbyCyclists(activeUsers = nearbyCyclistSnapShot.toSet().toList().toImmutableList())) }
+        _state.update {
+            it.copy(
+                nearbyCyclists = NearbyCyclists(
+                    activeUsers = nearbyCyclistSnapShot.toSet().toList().toImmutableList()))
+        }
         nearbyCyclistSnapShot.clear()
     }
-
-
 
 
     private fun subscribeToLocationUpdates() {
@@ -336,13 +370,15 @@ class MappingViewModel @Inject constructor(
 
     private suspend inline fun handleException(exception: Throwable) {
         when (exception) {
+
             is MappingExceptions.NetworkExceptions -> {
                 _state.update { it.copy(hasInternet = false) }
             }
-            is MappingExceptions.UnexpectedErrorException -> {
+
+            is MappingExceptions.UnexpectedErrorException, is MappingExceptions.UserException -> {
                 _eventFlow.emit(
                     MappingUiEvent.ShowToastMessage(
-                        message = exception.message ?: "",
+                        message = exception.message ?: "Unexpected error occurred."
                     ))
             }
             is MappingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
@@ -357,9 +393,9 @@ class MappingViewModel @Inject constructor(
         with(address) {
             val currentAddress = this.getFullAddress()
             _state.update { it.copy(currentAddress = currentAddress) }
-            mappingUseCase.createUserUseCase(
+            mappingUseCase.updateUserUseCase(
+                itemId = getId(),
                 user = User(
-                    id = getId() ?: return,
                     name = getName(),
                     address = currentAddress,
                     profilePictureUrl = getPhotoUrl(),
@@ -373,7 +409,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun createMockUpUsers(){
+    private fun createMockUpUsers() {
         viewModelScope.launch {
             runCatching {
                 mappingUseCase.createMockUsers()
@@ -392,7 +428,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun getId(): String? = authUseCase.getIdUseCase()
+    private fun getId(): String = authUseCase.getIdUseCase()
 
     private fun getName(): String = authUseCase.getNameUseCase()
 
