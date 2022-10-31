@@ -18,7 +18,7 @@ interface CyclistanceApi {
     suspend fun createUser(@Body userDto: UserDto)
 
     @PATCH("/api/v1/update-user/{user_id}")
-    suspend fun updateUser(@Path("user_id") itemId: String, @Body userDto: UserDto): UserDto
+    suspend fun updateUser(@Path("user_id") itemId: String, @Body userDto: UserDto)
 
     @DELETE("/api/v1/delete-user/{user_id}")
     suspend fun deleteUser(@Path("user_id") itemId: String)
@@ -33,7 +33,7 @@ interface CyclistanceApi {
     suspend fun createRescueTransaction(@Body rescueTransactionDto: RescueTransactionDto)
 
     @PATCH("/api/v1/update-rescue-transaction/{rescue_transaction_id}")
-    suspend fun updateRescueTransaction(@Path("rescue_transaction_id") itemId: String, @Body rescueTransactionDto: RescueTransactionDto): RescueTransactionDto
+    suspend fun updateRescueTransaction(@Path("rescue_transaction_id") itemId: String, @Body rescueTransactionDto: RescueTransactionDto)
 
     @DELETE("/api/v1/delete-rescue-transaction/{rescue_transaction_id}")
     suspend fun deleteRescueTransaction(@Path("rescue_transaction_id") itemId: String)
