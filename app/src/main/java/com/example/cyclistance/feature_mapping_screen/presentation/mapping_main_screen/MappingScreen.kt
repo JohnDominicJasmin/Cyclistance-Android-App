@@ -39,7 +39,7 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingMapsScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapView
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startServiceIntentAction
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startLocationServiceIntentAction
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
@@ -91,12 +91,6 @@ fun MappingScreen(
 
 
 
-    LaunchedEffect(key1 = typeBottomSheet) {
-        if (typeBottomSheet.isNotEmpty()) {
-            mappingViewModel.onEvent(event = MappingEvent.StartPinging)
-        }
-        mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(typeBottomSheet))
-    }
 
     BackHandler(enabled = true, onBack = {
         coroutineScope.launch {
@@ -123,11 +117,15 @@ fun MappingScreen(
                 Manifest.permission.ACCESS_COARSE_LOCATION))
     }
 
+
+    RequestMultiplePermissions(
+        multiplePermissionsState = locationPermissionsState)
+
     val settingResultRequest = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
     ) { activityResult ->
         if (activityResult.resultCode == RESULT_OK) {
-            context.startServiceIntentAction()
+            context.startLocationServiceIntentAction()
             Timber.d("GPS Setting Request Accepted")
             return@rememberLauncherForActivityResult
         }
@@ -180,16 +178,33 @@ fun MappingScreen(
         }
 
 
+    LaunchedEffect(key1 = typeBottomSheet) {
+        if (typeBottomSheet.isNotEmpty()) {
+            mappingViewModel.onEvent(event = MappingEvent.StartPinging)
+        }
+        mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(typeBottomSheet))
+    }
+
     LaunchedEffect(key1 = userLocationAvailable) {
         locateUser(DEFAULT_MAP_ZOOM_LEVEL)
     }
 
+    LaunchedEffect(key1 = userLocationAvailable, key2 = context.hasInternetConnection()) {
+        mappingViewModel.onEvent(event = MappingEvent.PostLocation)
+    }
 
 
     LaunchedEffect(key1 = locationPermissionsState.allPermissionsGranted) {
-        if (locationPermissionsState.allPermissionsGranted) {
-            context.startServiceIntentAction()
+        if (!locationPermissionsState.allPermissionsGranted) {
+          return@LaunchedEffect
         }
+
+        if (!context.hasGPSConnection()) {
+            context.checkLocationSetting(onDisabled = settingResultRequest::launch)
+        }
+
+        context.startLocationServiceIntentAction()
+
     }
 
     LaunchedEffect(key1 = userDrawableImage) {
@@ -264,16 +279,6 @@ fun MappingScreen(
     }
 
 
-    RequestMultiplePermissions(
-        multiplePermissionsState = locationPermissionsState, onPermissionGranted = {
-            if (!context.hasGPSConnection()) {
-                context.checkLocationSetting(
-                    onDisabled = settingResultRequest::launch,
-                    onEnabled = {
-                        context.startServiceIntentAction()
-                    })
-            }
-        })
 
 
     MappingScreen(
@@ -289,23 +294,33 @@ fun MappingScreen(
             locationPermissionsState.requestPermission(
                 context = context,
                 rationalMessage = "Location permission is not yet granted.") {
-                context.startServiceIntentAction()
+                context.startLocationServiceIntentAction()
                 postProfile()
             }
         },
         locationPermissionState = locationPermissionsState,
         onClickLocateUserButton = {
+
             locationPermissionsState.requestPermission(
                 context = context,
-                rationalMessage = "Location permission is not yet granted.") {
-                locateUser(LOCATE_USER_ZOOM_LEVEL)
-            }
+                rationalMessage = "Location permission is not yet granted.",
+                onGranted = {
+
+                    if (!context.hasGPSConnection()) {
+                        context.checkLocationSetting(
+                            onDisabled = settingResultRequest::launch)
+                    }
+                    locateUser(DEFAULT_MAP_ZOOM_LEVEL)
+
+                })
+
+
         },
         mapboxMap = mapboxMap,
         mapView = mapView,
         onClickCancelSearchButton = {
 
-            coroutineScope.launch{
+            coroutineScope.launch {
                 bottomSheetScaffoldState.bottomSheetState.collapse()
             }.invokeOnCompletion {
                 mappingViewModel.onEvent(event = MappingEvent.CancelSearchAssistance)
