@@ -404,7 +404,8 @@ private fun RoundedButtonItem(
 @Composable
 fun BottomSheetRescuerArrivedPreview() {
     val isDarkTheme = true
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = rememberBottomSheetState(
+        initialValue =BottomSheetValue.Expanded))
     CyclistanceTheme(isDarkTheme) {
         BottomSheetRescueArrived(
             isDarkTheme = isDarkTheme,
@@ -418,7 +419,8 @@ fun BottomSheetRescuerArrivedPreview() {
 @Composable
 fun DestinationReachedBottomSheetPreview() {
     val isDarkTheme = true
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = rememberBottomSheetState(
+        initialValue =BottomSheetValue.Expanded))
     CyclistanceTheme(isDarkTheme) {
         BottomSheetReachedDestination(
             isDarkTheme = isDarkTheme,
@@ -434,7 +436,9 @@ fun DestinationReachedBottomSheetPreview() {
 @Composable
 fun SearchingAssistancePreview() {
     val isDarkTheme = true
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = rememberBottomSheetState(
+        initialValue =BottomSheetValue.Expanded))
+
     CyclistanceTheme(isDarkTheme) {
         BottomSheetSearchingAssistance(
             isDarkTheme = isDarkTheme,
@@ -448,7 +452,8 @@ fun SearchingAssistancePreview() {
 @Preview(showSystemUi = true, showBackground = true)
 @Composable
 fun OnGoingRescueBottomSheetPreview() {
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState()
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = rememberBottomSheetState(
+        initialValue =BottomSheetValue.Expanded))
     CyclistanceTheme(true) {
         BottomSheetOnGoingRescue(
             estimatedTimeRemaining = "2mins",
