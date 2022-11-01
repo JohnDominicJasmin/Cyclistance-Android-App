@@ -2,14 +2,16 @@ package com.example.cyclistance.feature_authentication.presentation.common
 
 import android.os.Build
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import coil.ImageLoader
-import coil.compose.rememberImagePainter
+import coil.compose.rememberAsyncImagePainter
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
-import coil.size.OriginalSize
+import coil.request.ImageRequest
+import coil.size.Size
 
 @Composable
 fun AnimatedImage(imageId:Int, modifier : Modifier) {
@@ -24,16 +26,14 @@ fun AnimatedImage(imageId:Int, modifier : Modifier) {
         }.build()
 
 
-
     Image(
-        painter = rememberImagePainter(
-            imageLoader = imageLoader,
-            data = imageId,
-            builder = {
-                size(OriginalSize)
-            }
+        painter = rememberAsyncImagePainter(
+            ImageRequest.Builder(context).data(data = imageId).apply(block = {
+                size(Size.ORIGINAL)
+            }).build(), imageLoader = imageLoader
         ),
         contentDescription = null,
-        modifier = modifier
+        modifier = modifier.fillMaxWidth(),
     )
 }
+
