@@ -16,6 +16,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LAT
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.INTERVAL_UPDATE_USERS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
+import com.example.cyclistance.core.utils.constants.MappingConstants.NOT_FOUND
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toCardModel
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.ConfirmationDetail
@@ -57,7 +58,7 @@ class MappingViewModel @Inject constructor(
 
     init {
         // TODO: Remove this when the backend is ready
-        createMockUpUsers()
+//        createMockUpUsers()
     }
 
     fun onEvent(event: MappingEvent) {
@@ -200,7 +201,7 @@ class MappingViewModel @Inject constructor(
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
-                handleException(exception)
+                exception.handleException()
             }
         }.invokeOnCompletion {
             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
@@ -344,20 +345,7 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             val address = state.value.userAddress.address
             if (address != null) {
-                runCatching {
-                    _state.update { it.copy(isLoading = true) }
-                    createUser(address)
-                }.onSuccess {
-                    _state.update {
-                        it.copy(
-                            isLoading = false,
-                            findAssistanceButtonVisible = false)
-                    }
-                    _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
-                }.onFailure { exception ->
-                    _state.update { it.copy(isLoading = false) }
-                    handleException(exception)
-                }
+                uploadProfile(address)
                 return@launch
             }
             _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
@@ -368,8 +356,66 @@ class MappingViewModel @Inject constructor(
 
     }
 
-    private suspend inline fun handleException(exception: Throwable) {
-        when (exception) {
+    private suspend fun uploadProfile(address: Address) {
+        coroutineScope {
+            var user: User? = null
+            runCatching {
+                val currentAddress = address.getFullAddress()
+                _state.update { it.copy(currentAddress = currentAddress, isLoading = true) }
+                user = User(
+                    id = getId(),
+                    name = getName(),
+                    address = currentAddress,
+                    profilePictureUrl = getPhotoUrl(),
+                    contactNumber = getPhoneNumber(),
+                    location = Location(
+                        latitude = address.latitude,
+                        longitude = address.longitude),
+                )
+
+                mappingUseCase.updateUserUseCase(itemId = getId(),user = user!!)
+                mappingUseCase.updateAddressUseCase(currentAddress)
+            }.onSuccess {
+                _state.update { it.copy(isLoading = false, findAssistanceButtonVisible = false) }
+                _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
+            }.onFailure { exception ->
+                exception.handleUploadProfileException(user)
+            }
+        }
+    }
+    private suspend fun Throwable.handleUploadProfileException(user:User?){
+        if(userNotFound()){
+            user?.createUser()
+            return
+        }
+        _state.update { it.copy(isLoading = false) }
+        handleException()
+    }
+
+    private fun Throwable.userNotFound(): Boolean {
+        return this.message!!.contains(NOT_FOUND, ignoreCase = false)
+    }
+
+
+    private suspend fun User.createUser(){
+        coroutineScope {
+            runCatching {
+                mappingUseCase.createUserUseCase(
+                    user = this@createUser
+                )
+            }.onSuccess {
+                _state.update { it.copy(isLoading = false, findAssistanceButtonVisible = false) }
+                _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
+            }.onFailure { exception ->
+                _state.update { it.copy(isLoading = false) }
+                exception.handleException()
+
+            }
+        }
+    }
+
+    private suspend fun Throwable.handleException() {
+        when (this) {
 
             is MappingExceptions.NetworkExceptions -> {
                 _state.update { it.copy(hasInternet = false) }
@@ -378,7 +424,7 @@ class MappingViewModel @Inject constructor(
             is MappingExceptions.UnexpectedErrorException, is MappingExceptions.UserException -> {
                 _eventFlow.emit(
                     MappingUiEvent.ShowToastMessage(
-                        message = exception.message ?: "Unexpected error occurred."
+                        message = this.message ?: "Unexpected error occurred."
                     ))
             }
             is MappingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
@@ -389,25 +435,7 @@ class MappingViewModel @Inject constructor(
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
-    private suspend fun createUser(address: Address) {
-        with(address) {
-            val currentAddress = this.getFullAddress()
-            _state.update { it.copy(currentAddress = currentAddress) }
-            mappingUseCase.updateUserUseCase(
-                itemId = getId(),
-                user = User(
-                    name = getName(),
-                    address = currentAddress,
-                    profilePictureUrl = getPhotoUrl(),
-                    contactNumber = getPhoneNumber(),
-                    location = Location(
-                        latitude = latitude,
-                        longitude = longitude),
-                ))
 
-            mappingUseCase.updateAddressUseCase(currentAddress)
-        }
-    }
 
     private fun createMockUpUsers() {
         viewModelScope.launch {
