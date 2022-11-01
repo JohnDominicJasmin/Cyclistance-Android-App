@@ -58,7 +58,7 @@ fun RequestItem(
                         withStyle(
                             style = SpanStyle(
                                 color = MaterialTheme.colors.onSurface,
-                                fontSize = 14.sp,
+                                fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold)) {
                             append("${cardState.name}\n")
                         }
@@ -66,7 +66,7 @@ fun RequestItem(
                         withStyle(
                             style = SpanStyle(
                                 color = Black450,
-                                fontSize = 12.sp,
+                                fontSize = 14.sp,
                                 fontWeight = FontWeight.Medium)) {
                             append(cardState.distance ?: "----")
                         }
@@ -79,7 +79,7 @@ fun RequestItem(
                         withStyle(
                             style = SpanStyle(
                                 color = MaterialTheme.colors.onSurface,
-                                fontSize = 14.sp,
+                                fontSize = 16.sp,
                                 fontWeight = FontWeight.SemiBold)) {
                             append("ETA\n")
                         }
@@ -87,7 +87,7 @@ fun RequestItem(
                         withStyle(
                             style = SpanStyle(
                                 color = Black450,
-                                fontSize = 12.sp,
+                                fontSize = 14.sp,
                                 fontWeight = FontWeight.Medium)) {
                             append(cardState.estimatedTimeTravel ?: "----")
                         }
