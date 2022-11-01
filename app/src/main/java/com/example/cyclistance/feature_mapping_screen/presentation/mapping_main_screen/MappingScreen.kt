@@ -27,7 +27,6 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAM
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_MAP_ZOOM_LEVEL
-import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
 import com.example.cyclistance.core.utils.location.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
@@ -187,9 +186,6 @@ fun MappingScreen(
 
     LaunchedEffect(key1 = userLocationAvailable) {
         locateUser(DEFAULT_MAP_ZOOM_LEVEL)
-    }
-
-    LaunchedEffect(key1 = userLocationAvailable, key2 = context.hasInternetConnection()) {
         mappingViewModel.onEvent(event = MappingEvent.PostLocation)
     }
 

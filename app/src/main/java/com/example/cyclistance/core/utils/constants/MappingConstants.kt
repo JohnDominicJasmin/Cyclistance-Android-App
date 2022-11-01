@@ -41,4 +41,5 @@ object MappingConstants {
     const val MAPPING_VM_STATE_KEY = "mapping_vm_state_key"
     const val CYCLIST_MAP_ICON_HEIGHT = 88
     const val CYCLIST_MAP_ICON_WIDTH = 88
+    const val NOT_FOUND = "HTTP 404"
 }
