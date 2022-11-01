@@ -67,9 +67,7 @@ class ConfirmDetailsViewModel @Inject constructor(
     fun onEvent(event: ConfirmDetailsEvent) {
         when (event) {
             is ConfirmDetailsEvent.ConfirmUpdate -> {
-                viewModelScope.launch {
                     updateUser(state.value)
-                }
             }
             is ConfirmDetailsEvent.DismissNoInternetScreen -> {
                 _state.update { it.copy(hasInternet = true) }
@@ -95,46 +93,48 @@ class ConfirmDetailsViewModel @Inject constructor(
     }
 
 
-    private suspend fun updateUser(confirmDetailsState: ConfirmDetailsState) {
-        runCatching {
-            with(confirmDetailsState) {
-                _state.update { it.copy(isLoading = true) }
-                if (bikeType.isEmpty()){
-                    throw MappingExceptions.BikeTypeException()
+    private fun updateUser(confirmDetailsState: ConfirmDetailsState) {
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                with(confirmDetailsState) {
+                    _state.update { it.copy(isLoading = true) }
+                    if (bikeType.isEmpty()) {
+                        throw MappingExceptions.BikeTypeException()
+                    }
+                    if (description.isEmpty()) {
+                        throw MappingExceptions.DescriptionException()
+                    }
+                    mappingUseCase.updateUserUseCase(
+                        itemId = getId() ?: return@runCatching ,
+                        user = User(
+                            address = address.trim(),
+                            userAssistance = UserAssistance(
+                                confirmationDetail = ConfirmationDetail(
+                                    bikeType = bikeType,
+                                    description = description,
+                                    message = message.trim()),
+                                needHelp = true
+                            ),
+
+
+                            )).also {
+
+                        mappingUseCase.updateAddressUseCase(address = confirmDetailsState.address)
+                        mappingUseCase.updateBikeTypeUseCase(bikeType = confirmDetailsState.bikeType)
+                    }
+
                 }
-                if(description.isEmpty()){
-                    throw MappingExceptions.DescriptionException()
-                }
-                mappingUseCase.updateUserUseCase(
-                    itemId = getId() ?: return,
-                    user = User(
-                        address = address.trim(),
-                        userAssistance = UserAssistance(
-                            confirmationDetail = ConfirmationDetail(
-                                bikeType = bikeType,
-                                description = description,
-                                message = message.trim()),
-                          needHelp = true
-                        ),
 
+            }.onSuccess {
+                _state.update { it.copy(isLoading = false) }
+                _eventFlow.emit(value = ConfirmDetailsUiEvent.ShowMappingScreen)
 
-                    )).also {
-
-                    mappingUseCase.updateAddressUseCase(address = confirmDetailsState.address)
-                    mappingUseCase.updateBikeTypeUseCase(bikeType = confirmDetailsState.bikeType)
-                }
-
+            }.onFailure { exception ->
+                _state.update { it.copy(isLoading = false) }
+                handleException(exception)
+            }.also {
+                savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
             }
-
-        }.onSuccess {
-            _state.update { it.copy(isLoading = false) }
-            _eventFlow.emit(value = ConfirmDetailsUiEvent.ShowMappingScreen)
-
-        }.onFailure { exception ->
-            _state.update { it.copy(isLoading = false) }
-            handleException(exception)
-        }.also {
-            savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
         }
     }
 
@@ -146,7 +146,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                         message = exception.message ?: "",
                     ))
             }
-            is MappingExceptions.NetworkExceptions -> {
+            is MappingExceptions.NetworkException -> {
                 _state.update { it.copy(hasInternet = false) }
             }
             is MappingExceptions.BikeTypeException -> {
