@@ -19,9 +19,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_
 import com.example.cyclistance.core.utils.constants.MappingConstants.NOT_FOUND
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toCardModel
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.ConfirmationDetail
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Location
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserAssistance
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
@@ -58,7 +56,7 @@ class MappingViewModel @Inject constructor(
 
     init {
         // TODO: Remove this when the backend is ready
-//        createMockUpUsers()
+        createMockUpUsers()
     }
 
     fun onEvent(event: MappingEvent) {
@@ -130,7 +128,15 @@ class MappingViewModel @Inject constructor(
                         location = Location(
                             latitude = state.value.latitude,
                             longitude = state.value.longitude,
-                        ), profilePictureUrl = state.value.photoUrl))
+                        ),
+                        profilePictureUrl = state.value.photoUrl,
+                        address = "",
+                        contactNumber = "",
+                        name = "",
+                        rescueRequest = RescueRequest(),
+                        transaction = Transaction(),
+                        userAssistance = UserAssistance(),
+                        ))
             }.onSuccess {
                 Timber.v("Successfully posted location")
             }.onFailure {
