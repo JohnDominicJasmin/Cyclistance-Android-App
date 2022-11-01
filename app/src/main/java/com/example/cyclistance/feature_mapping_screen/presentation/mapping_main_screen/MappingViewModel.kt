@@ -19,6 +19,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_
 import com.example.cyclistance.core.utils.constants.MappingConstants.NOT_FOUND
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toCardModel
+import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toRespondent
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
@@ -71,7 +72,7 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.DeclineRescueRequest -> {
-                /*todo*/
+                declineRescueRequest(event.cardModel)
             }
 
             is MappingEvent.AcceptRescueRequest -> {
@@ -119,6 +120,39 @@ class MappingViewModel @Inject constructor(
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
+
+    private fun declineRescueRequest(cardModel: CardModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                val updateState = _state.updateAndGet { it.copy(rescueRequestRespondents = RescueRequestRespondents(state.value.rescueRequestRespondents.respondents.toMutableList().apply {
+                    remove(element = cardModel)
+                }))}
+                mappingUseCase.updateUserUseCase(
+                    itemId = getId(),
+                    user = User(
+                        rescueRequest = RescueRequest(respondents = updateState.rescueRequestRespondents.respondents.map { it.toRespondent() })
+                    )
+                )
+            }.onSuccess {
+                Timber.d("Successfully updated user")
+            }.onFailure {
+                Timber.d("Failed to update user: ${it.message}")
+                it.handleDeclineRescueRequest()
+            }
+        }
+    }
+
+    private suspend fun Throwable.handleDeclineRescueRequest(){
+        when(this){
+            is MappingExceptions.NetworkException -> {
+                _eventFlow.emit(MappingUiEvent.ShowToastMessage("No internet connection"))
+            }
+            else -> {
+                Timber.d("Failed to update user")
+            }
+        }
+    }
+
     private fun postLocation(){
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
@@ -140,7 +174,7 @@ class MappingViewModel @Inject constructor(
             }.onSuccess {
                 Timber.v("Successfully posted location")
             }.onFailure {
-                Timber.v("Failed to post location")
+                Timber.v("Failed to post location: ${it.message}")
             }
         }
     }
@@ -185,6 +219,7 @@ class MappingViewModel @Inject constructor(
             }
         }
     }
+
 
     private fun cancelSearchAssistance() {
         viewModelScope.launch(Dispatchers.IO) {
@@ -253,8 +288,7 @@ class MappingViewModel @Inject constructor(
     private fun List<User>.getUser() {
 
         val user = this.find {
-            // TODO: Change id later
-            it.id == "1"
+            it.id == getId()
         } ?: User()
 
         _state.update { it.copy(user = user) }
@@ -423,7 +457,7 @@ class MappingViewModel @Inject constructor(
     private suspend fun Throwable.handleException() {
         when (this) {
 
-            is MappingExceptions.NetworkExceptions -> {
+            is MappingExceptions.NetworkException -> {
                 _state.update { it.copy(hasInternet = false) }
             }
 

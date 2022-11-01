@@ -47,7 +47,7 @@ fun RescueRequestScreen(
     modifier: Modifier = Modifier,
     mappingState: MappingState = MappingState(),
     onClickCancelButton: (CardModel) -> Unit = {},
-    onClickConfirmButton: () -> Unit = {},
+    onClickConfirmButton: (CardModel) -> Unit = {},
 ) {
 
     val respondents = remember(mappingState.rescueRequestRespondents.respondents.size) {
@@ -90,7 +90,9 @@ fun RescueRequestScreen(
                     onClickCancelButton = {
                         onClickCancelButton(respondent)
                     },
-                    onClickConfirmButton = onClickConfirmButton
+                    onClickConfirmButton = {
+                        onClickConfirmButton(respondent)
+                    }
                 )
             }
 
@@ -164,7 +166,7 @@ fun PreviewRescueRequest() {
                         ),
 
 
-                    )
+                        )
                 )
             ))
     }
