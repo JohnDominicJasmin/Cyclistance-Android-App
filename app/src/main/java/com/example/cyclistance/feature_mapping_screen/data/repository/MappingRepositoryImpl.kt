@@ -141,6 +141,6 @@ private inline fun <T> handleException(action: () -> T): T {
         throw MappingExceptions.UnexpectedErrorException(message = e.message ?: "Unexpected Error")
     } catch (e: IOException) {
         Timber.e("Exception is ${e.message}")
-        throw MappingExceptions.NetworkExceptions()
+        throw MappingExceptions.NetworkException()
     }
 }
