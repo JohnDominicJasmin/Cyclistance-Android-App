@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.*
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.RescueRequestRespondents
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_rescue_request.components.RequestItem
 import com.example.cyclistance.theme.CyclistanceTheme
 

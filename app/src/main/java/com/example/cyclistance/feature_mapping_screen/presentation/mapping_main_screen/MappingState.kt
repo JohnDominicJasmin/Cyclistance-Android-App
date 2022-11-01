@@ -1,46 +1,15 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
-import android.graphics.Bitmap
-import android.location.Address
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
-import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.NearbyCyclists
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.RescueRequestRespondents
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.UserAddress
 import kotlinx.parcelize.Parcelize
-
-@Parcelize
-@Immutable
-@Stable
-data class Cyclist(
-    val user: User = User(),
-    val profileImageBitmap: Bitmap? = null,
-) : Parcelable
-
-@Parcelize
-@Immutable
-@Stable
-data class NearbyCyclists(
-    val activeUsers: List<Cyclist> = emptyList(),
-) : Parcelable
-
-
-@Parcelize
-@Immutable
-@Stable
-data class RescueRequestRespondents(
-    val respondents: List<CardModel> = emptyList(),
-) : Parcelable
-
-@Parcelize
-@Immutable
-@Stable
-data class UserAddress(
-    val address: Address? = null
-) : Parcelable
-
 
 @Parcelize
 @Immutable

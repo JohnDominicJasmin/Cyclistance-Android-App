@@ -25,9 +25,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingE
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.createMockUsers
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getAddress
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getFullAddress
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
