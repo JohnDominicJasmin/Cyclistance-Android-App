@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_mapping_screen.data.mapper
 
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Respondent
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping_screen.domain.model.*
 
@@ -43,6 +44,12 @@ object UserMapper {
             distance = "0.5km", //todo: compute later
             estimatedTimeTravel = "5 mins",
             address = this.address
+        )
+    }
+
+    fun CardModel.toRespondent():Respondent{
+        return Respondent(
+            clientId = this.id ?: "-1"
         )
     }
 }
