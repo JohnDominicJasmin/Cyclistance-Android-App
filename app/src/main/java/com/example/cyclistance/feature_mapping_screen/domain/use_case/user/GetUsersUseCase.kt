@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class GetUsersUseCase(private val repository: MappingRepository) {
-    operator fun invoke(): Flow<List<User>> = flow{
+    operator fun invoke(): Flow<User> = flow{
         emit(repository.getUsers())
     }
 }

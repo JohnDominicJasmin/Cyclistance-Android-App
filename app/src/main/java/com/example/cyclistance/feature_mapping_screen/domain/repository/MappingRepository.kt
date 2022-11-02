@@ -1,17 +1,15 @@
 package com.example.cyclistance.feature_mapping_screen.domain.repository
 
 import android.graphics.drawable.Drawable
-import android.location.Address
 import android.location.Location
-import androidx.annotation.DrawableRes
 import com.example.cyclistance.feature_mapping_screen.domain.model.*
 import kotlinx.coroutines.flow.Flow
 
 interface MappingRepository {
-    suspend fun getUserById(userId: String): User
-    suspend fun getUsers(): List<User>
-    suspend fun createUser(user: User)
-    suspend fun updateUser(itemId: String, user: User)
+    suspend fun getUserById(userId: String): UserItem
+    suspend fun getUsers(): User
+    suspend fun createUser(userItem: UserItem)
+    suspend fun updateUser(itemId: String, userItem: UserItem)
     suspend fun deleteUser(id: String)
 
     suspend fun getRescueTransactionById(userId: String): RescueTransaction

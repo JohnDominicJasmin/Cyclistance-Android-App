@@ -5,7 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
-import com.example.cyclistance.feature_mapping_screen.domain.model.User
+import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.NearbyCyclists
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.RescueRequestRespondents
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.UserAddress
@@ -24,7 +24,7 @@ data class MappingState(
 
 
 
-    val user: User = User(),
+    val user: UserItem = UserItem(),
     val rescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
     val userAddress: UserAddress = UserAddress(),
     val currentAddress: String = "",

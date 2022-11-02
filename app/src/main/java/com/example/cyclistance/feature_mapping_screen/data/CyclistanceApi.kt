@@ -3,22 +3,23 @@ package com.example.cyclistance.feature_mapping_screen.data
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.*
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.RescueTransactionDto
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserDto
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserItemDto
 import retrofit2.http.*
 
 interface CyclistanceApi {
 
 
     @GET("/api/v1/get-user-by-id/{user_id}")
-    suspend fun getUserById(@Path("user_id") userId: String): UserDto
+    suspend fun getUserById(@Path("user_id") userId: String): UserItemDto
 
     @GET("/api/v1/get-users")
-    suspend fun getUsers(): List<UserDto>
+    suspend fun getUsers(): UserDto
 
     @POST("/api/v1/create-user")
-    suspend fun createUser(@Body userDto: UserDto)
+    suspend fun createUser(@Body userItemDto: UserItemDto)
 
     @PATCH("/api/v1/update-user/{user_id}")
-    suspend fun updateUser(@Path("user_id") itemId: String, @Body userDto: UserDto)
+    suspend fun updateUser(@Path("user_id") itemId: String, @Body userItemDto: UserItemDto)
 
     @DELETE("/api/v1/delete-user/{user_id}")
     suspend fun deleteUser(@Path("user_id") itemId: String)

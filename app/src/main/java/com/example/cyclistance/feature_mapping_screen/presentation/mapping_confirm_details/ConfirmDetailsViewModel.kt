@@ -8,7 +8,7 @@ import com.example.cyclistance.feature_authentication.domain.use_case.Authentica
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.ConfirmationDetail
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserAssistance
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping_screen.domain.model.User
+import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -106,7 +106,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                     }
                     mappingUseCase.updateUserUseCase(
                         itemId = getId() ?: return@runCatching ,
-                        user = User(
+                        userItem = UserItem(
                             address = address.trim(),
                             userAssistance = UserAssistance(
                                 confirmationDetail = ConfirmationDetail(

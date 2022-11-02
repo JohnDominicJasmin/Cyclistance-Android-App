@@ -1,13 +1,12 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils
 
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.*
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.*
-import com.example.cyclistance.feature_mapping_screen.domain.model.User
+import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 
 
-val users = listOf(
-    User(
+val userItems = listOf(
+    UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
         id = "rvxrTiQQy4qKCZxQ29vJ3xSDC9JK",
@@ -31,7 +30,7 @@ val users = listOf(
         ),
         transaction = Transaction()),
 
-    User(
+    UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
         id = "2",
@@ -43,7 +42,7 @@ val users = listOf(
         transaction = Transaction()),
 
 
-    User(
+    UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
         id = "3",
@@ -54,7 +53,7 @@ val users = listOf(
         rescueRequest = RescueRequest(),
         transaction = Transaction(),
     ),
-    User(
+    UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
         id = "4",
@@ -66,7 +65,7 @@ val users = listOf(
         transaction = Transaction(),
     ),
 
-    User(
+    UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
         id = "5",
@@ -78,7 +77,7 @@ val users = listOf(
         userAssistance = UserAssistance(),
     ),
 
-    User(
+    UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
         id = "6",
@@ -90,7 +89,7 @@ val users = listOf(
         userAssistance = UserAssistance(),
     ),
 
-    User(
+    UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
         id = "7",
@@ -102,7 +101,7 @@ val users = listOf(
         userAssistance = UserAssistance(),
     ),
 
-    User(
+    UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
         id = "8",
@@ -114,7 +113,7 @@ val users = listOf(
         userAssistance = UserAssistance(),
     ),
 
-    User(
+    UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
         id = "9",
@@ -129,7 +128,7 @@ val users = listOf(
 )
 
 suspend fun MappingUseCase.createMockUsers(){
-    users.forEach {
+    userItems.forEach {
         createUserUseCase(it)
     }
 }

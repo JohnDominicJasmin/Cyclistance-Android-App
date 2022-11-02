@@ -17,10 +17,12 @@ import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping_screen.data.mapper.RescueTransactionMapper.toRescueTransactionDto
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUser
-import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUserDto
+import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUserItem
+import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUserItemDto
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransaction
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
+import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -56,30 +58,30 @@ class MappingRepositoryImpl(
         dataStore.editData(ADDRESS_KEY, address)
     }
 
-    override suspend fun getUserById(userId: String): User =
+    override suspend fun getUserById(userId: String): UserItem =
         handleException {
-            api.getUserById(userId).toUser()
+            api.getUserById(userId).toUserItem()
         }
 
     override fun getUserLocation(): Flow<Location> {
         return LocationService.address
     }
 
-    override suspend fun getUsers(): List<User> =
+    override suspend fun getUsers(): User =
         handleException {
-            api.getUsers().map { it.toUser() }
+            api.getUsers().toUser()
         }
 
-    override suspend fun createUser(user: User) =
+    override suspend fun createUser(userItem: UserItem) =
         handleException {
-                api.createUser(userDto = user.toUserDto())
+                api.createUser(userItemDto = userItem.toUserItemDto())
         }
 
-    override suspend fun updateUser(itemId: String, user: User) =
+    override suspend fun updateUser(itemId: String, userItem: UserItem) =
         handleException {
                 api.updateUser(
                     itemId = itemId,
-                    userDto = user.toUserDto())
+                    userItemDto = userItem.toUserItemDto())
         }
 
     override suspend fun deleteUser(id: String) =
