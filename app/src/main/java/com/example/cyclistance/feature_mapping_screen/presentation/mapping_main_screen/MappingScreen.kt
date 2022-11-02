@@ -241,7 +241,9 @@ fun MappingScreen(
     LaunchedEffect(key1 = true) {
 
         with(mappingViewModel) {
-            onEvent(event = MappingEvent.LoadUsers)
+
+            onEvent(event = MappingEvent.LoadUserImageLocationPuck)
+            onEvent(event = MappingEvent.SubscribeToNearbyUsersChanges)
             onEvent(event = MappingEvent.SubscribeToLocationUpdates)
 
             eventFlow.collectLatest { event ->
