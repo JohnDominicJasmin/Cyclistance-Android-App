@@ -18,20 +18,28 @@ data class MappingState(
 
     val isLoading: Boolean = false,
     val findAssistanceButtonVisible: Boolean = true,
-    val currentAddress: String = "",
     val hasInternet: Boolean = true,
     val bottomSheetType: String = "",
     val isSearchingForAssistance: Boolean = false,
 
+
+
+    val user: User = User(),
+    val rescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
+    val userAddress: UserAddress = UserAddress(),
+    val currentAddress: String = "",
     val latitude: Double = DEFAULT_LATITUDE,
     val longitude: Double = DEFAULT_LONGITUDE,
     val name: String = "-----",
     val photoUrl: String = "",
 
+
+
+
+
+
     val nearbyCyclists: NearbyCyclists = NearbyCyclists(),
-    val user: User = User(),
-    val rescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
-    val userAddress: UserAddress = UserAddress(),
+
 
 
     ) : Parcelable
