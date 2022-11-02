@@ -4,9 +4,9 @@ import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_tra
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.Status
 
 data class RescueTransaction(
-    val id: String = "",
-    val cancellation: Cancellation = Cancellation(),
-    val rescueeId: String = "",
-    val rescuerId: String = "",
-    val status: Status = Status()
+    val id: String? = null,
+    val cancellation: Cancellation? = null,
+    val rescueeId: String? = null,
+    val rescuerId: String? = null,
+    val status: Status? = null
 )

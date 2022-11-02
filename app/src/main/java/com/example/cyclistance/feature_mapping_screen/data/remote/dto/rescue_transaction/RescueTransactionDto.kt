@@ -10,13 +10,13 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class RescueTransactionDto(
     @SerializedName("cancellation")
-    val cancellation: Cancellation = Cancellation(),
+    val cancellation: Cancellation?,
     @SerializedName("id")
-    val id: String = "",
+    val id: String?,
     @SerializedName("rescuee_id")
-    val rescueeId: String = "",
+    val rescueeId: String?,
     @SerializedName("rescuer_id")
-    val rescuerId: String = "",
+    val rescuerId: String?,
     @SerializedName("status")
-    val status: Status = Status()
+    val status: Status?
 ):Parcelable
