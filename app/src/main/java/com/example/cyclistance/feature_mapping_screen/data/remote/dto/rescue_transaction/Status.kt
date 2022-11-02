@@ -13,8 +13,6 @@ data class Status(
     val finished: Boolean = false,
     @SerializedName("ongoing")
     val ongoing: Boolean = false,
-    @SerializedName("searching")
-    val searching: Boolean = false,
     @SerializedName("started")
     val started: Boolean = false
 ):Parcelable
