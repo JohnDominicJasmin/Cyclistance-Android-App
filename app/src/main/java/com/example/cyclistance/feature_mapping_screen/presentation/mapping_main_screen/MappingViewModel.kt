@@ -16,14 +16,14 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LAT
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.INTERVAL_UPDATE_USERS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
-import com.example.cyclistance.core.utils.constants.MappingConstants.NOT_FOUND
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toCardModel
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toRespondent
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
-import com.example.cyclistance.feature_mapping_screen.domain.model.User
+import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransaction
+import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -66,7 +66,8 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.PostLocation -> {
-                postLocation()
+                /*todo remove when backend is ready*/
+//                postLocation()
             }
 
             is MappingEvent.DeclineRescueRequest -> {
@@ -84,8 +85,13 @@ class MappingViewModel @Inject constructor(
                 loadUserProfile()
             }
 
-            is MappingEvent.LoadUsers -> {
-                getNearbyUsers()
+            is MappingEvent.SubscribeToNearbyUsersChanges -> {
+                subscribeToNearbyUsersChanges()
+            }
+            is MappingEvent.UnsubscribeToNearbyUsersChanges -> {
+                unSubscribeToNearbyUsersChanges()
+            }
+            is MappingEvent.LoadUserImageLocationPuck -> {
                 getUserDrawableImage()
             }
             is MappingEvent.StartPinging -> {
@@ -118,23 +124,48 @@ class MappingViewModel @Inject constructor(
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
+    private fun unSubscribeToNearbyUsersChanges() {
+        getUsersJob?.cancel()
+    }
+
+//    todo: after finishing the rescue then do this whole process again
+    private fun acceptRescueRequest(cardModel: CardModel){
+        viewModelScope.launch {
+            runCatching {
+             mappingUseCase.getUserByIdUseCase(id = cardModel.id!!)
+            }.onSuccess { user ->
+                val transactionId = user.transaction?.transactionId
+                if(transactionId.isNullOrEmpty()){
+                    Timber.v("Transaction id is null or empty")
+                    return@onSuccess
+                }
+                Timber.v("Transaction is on process.")
+
+
+            }.onFailure {
+                it.handleException()
+            }
+
+
+        }
+    }
 
     private fun declineRescueRequest(cardModel: CardModel) {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
-                val updateState = _state.updateAndGet { it.copy(rescueRequestRespondents = RescueRequestRespondents(state.value.rescueRequestRespondents.respondents.toMutableList().apply {
+                val updatedState = _state.updateAndGet { it.copy(rescueRequestRespondents = RescueRequestRespondents(state.value.rescueRequestRespondents.respondents.toMutableList().apply {
                     remove(element = cardModel)
                 }))}
                 mappingUseCase.updateUserUseCase(
                     itemId = getId(),
-                    user = User(
-                        rescueRequest = RescueRequest(respondents = updateState.rescueRequestRespondents.respondents.map { it.toRespondent() })
+                    userItem = UserItem(
+                        rescueRequest = RescueRequest(respondents = updatedState.rescueRequestRespondents.respondents.map { it.toRespondent() })
                     )
                 )
             }.onSuccess {
-                Timber.d("Successfully updated user")
+                Timber.v("Successfully updated user")
             }.onFailure {
-                Timber.d("Failed to update user: ${it.message}")
+                Timber.e("Failed to update user: ${it.message}")
                 it.handleDeclineRescueRequest()
             }
         }
@@ -151,11 +182,18 @@ class MappingViewModel @Inject constructor(
         }
     }
 
+    private fun createRescueTransaction(r: RescueTransaction){
+        viewModelScope.launch {
+            runCatching {
+                mappingUseCase.createRescueTransactionUseCase(r)
+            }
+        }
+    }
     private fun postLocation(){
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 mappingUseCase.createUserUseCase(
-                    user = User(
+                    user = UserItem(
                         id = getId(),
                         location = Location(
                             latitude = state.value.latitude,
@@ -172,7 +210,7 @@ class MappingViewModel @Inject constructor(
             }.onSuccess {
                 Timber.v("Successfully posted location")
             }.onFailure {
-                Timber.v("Failed to post location: ${it.message}")
+                Timber.e("Failed to post location: ${it.message}")
             }
         }
     }
@@ -225,7 +263,7 @@ class MappingViewModel @Inject constructor(
                 _state.update { it.copy(isLoading = true) }
                 mappingUseCase.updateUserUseCase(
                     itemId = getId(),
-                    user = User(
+                    userItem = UserItem(
                         userAssistance = UserAssistance(
                             needHelp = false,
                             confirmationDetail = ConfirmationDetail()))
@@ -239,6 +277,7 @@ class MappingViewModel @Inject constructor(
                         findAssistanceButtonVisible = true)
                 }
             }.onFailure { exception ->
+                Timber.e("Failed to cancel search assistance: ${exception.message}")
                 _state.update { it.copy(isLoading = false) }
                 exception.handleException()
             }
@@ -254,7 +293,7 @@ class MappingViewModel @Inject constructor(
             }.onSuccess { drawableImage ->
                 _userDrawableImage.value = drawableImage
             }.onFailure {
-                Timber.v("GET USER DRAWABLE IMAGE: ${it.message}")
+                Timber.e("GET USER DRAWABLE IMAGE: ${it.message}")
             }
         }.invokeOnCompletion {
             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
@@ -262,16 +301,16 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun getNearbyUsers() {
+    private fun subscribeToNearbyUsersChanges() {
         getUsersJob?.cancel()
         getUsersJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
             while (this.isActive) {
                 runCatching {
                     mappingUseCase.getUsersUseCase().distinctUntilChanged()
-                        .collect { users: List<User> ->
-                            users.getUser()
-                            users.getUsers()
-                            users.getUserRescueRespondents()
+                        .collect {
+                            it.users.getUser()
+                            it.users.getUsers()
+                            it.users.getUserRescueRespondents()
                             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                         }
                 }.onFailure {
@@ -283,17 +322,14 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun List<User>.getUser() {
-
+    private fun List<UserItem>.getUser() {
         val user = this.find {
             it.id == getId()
-        } ?: User()
-
+        } ?: UserItem()
         _state.update { it.copy(user = user) }
-
     }
 
-    private fun List<User>.getUserRescueRespondents() {
+    private fun List<UserItem>.getUserRescueRespondents() {
         val user = state.value.user
         val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
         user.rescueRequest?.respondents?.forEachIndexed { index, respondent ->
@@ -311,7 +347,7 @@ class MappingViewModel @Inject constructor(
         rescueRespondentsSnapShot.clear()
     }
 
-    private suspend fun List<User>.getUsers() {
+    private suspend fun List<UserItem>.getUsers() {
         val nearbyCyclistSnapShot: MutableList<Cyclist> = mutableListOf()
         this.forEachIndexed { index, user ->
             val bitmapProfile = mappingUseCase.imageUrlToDrawableUseCase(
@@ -360,7 +396,6 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-
     private fun unSubscribeToLocationUpdates() {
         locationUpdatesFlow?.cancel()
     }
@@ -396,11 +431,11 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun uploadProfile(address: Address) {
         coroutineScope {
-            var user: User? = null
+            var user: UserItem? = null
             runCatching {
                 val currentAddress = address.getFullAddress()
                 _state.update { it.copy(currentAddress = currentAddress, isLoading = true) }
-                user = User(
+                user = UserItem(
                     id = getId(),
                     name = getName(),
                     address = currentAddress,
@@ -410,44 +445,15 @@ class MappingViewModel @Inject constructor(
                         latitude = address.latitude,
                         longitude = address.longitude),
                 )
-
-                mappingUseCase.updateUserUseCase(itemId = getId(),user = user!!)
+                mappingUseCase.updateUserUseCase(itemId = getId(), userItem = user!!)
                 mappingUseCase.updateAddressUseCase(currentAddress)
             }.onSuccess {
                 _state.update { it.copy(isLoading = false, findAssistanceButtonVisible = false) }
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
             }.onFailure { exception ->
-                exception.handleUploadProfileException(user)
-            }
-        }
-    }
-    private suspend fun Throwable.handleUploadProfileException(user:User?){
-        if(userNotFound()){
-            user?.createUser()
-            return
-        }
-        _state.update { it.copy(isLoading = false) }
-        handleException()
-    }
-
-    private fun Throwable.userNotFound(): Boolean {
-        return this.message!!.contains(NOT_FOUND, ignoreCase = false)
-    }
-
-
-    private suspend fun User.createUser(){
-        coroutineScope {
-            runCatching {
-                mappingUseCase.createUserUseCase(
-                    user = this@createUser
-                )
-            }.onSuccess {
-                _state.update { it.copy(isLoading = false, findAssistanceButtonVisible = false) }
-                _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
-            }.onFailure { exception ->
+                Timber.e("Error uploading profile: ${exception.message}")
                 _state.update { it.copy(isLoading = false) }
                 exception.handleException()
-
             }
         }
     }
