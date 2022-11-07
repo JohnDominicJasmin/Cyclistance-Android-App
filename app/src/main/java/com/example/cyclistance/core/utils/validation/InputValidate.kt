@@ -1,4 +1,4 @@
-package com.example.cyclistance.core.utils
+package com.example.cyclistance.core.utils.validation
 
 import android.util.Patterns
 import com.example.cyclistance.core.utils.constants.AuthConstants

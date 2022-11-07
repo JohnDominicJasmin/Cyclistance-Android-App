@@ -8,8 +8,8 @@ import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNE
 import com.example.cyclistance.core.utils.constants.AuthConstants.IMAGE_LARGE_SIZE
 import com.example.cyclistance.core.utils.constants.AuthConstants.IMAGE_SMALL_SIZE
 import com.example.cyclistance.core.utils.constants.AuthConstants.USER_NOT_FOUND
-import com.example.cyclistance.core.utils.editData
-import com.example.cyclistance.core.utils.getData
+import com.example.cyclistance.core.utils.extension.editData
+import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_mapping_screen.data.repository.dataStore
