@@ -1,8 +1,8 @@
 package com.example.cyclistance.feature_authentication.domain.use_case.create_account
 
-import com.example.cyclistance.core.utils.InputValidate.containsSpecialCharacters
-import com.example.cyclistance.core.utils.InputValidate.isDigit
-import com.example.cyclistance.core.utils.InputValidate.isPhoneNumberLongEnough
+import com.example.cyclistance.core.utils.validation.InputValidate.containsSpecialCharacters
+import com.example.cyclistance.core.utils.validation.InputValidate.isDigit
+import com.example.cyclistance.core.utils.validation.InputValidate.isPhoneNumberLongEnough
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.google.firebase.auth.AuthCredential

@@ -10,8 +10,8 @@ import coil.imageLoader
 import coil.request.ImageRequest
 import com.example.cyclistance.core.utils.constants.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_KEY
-import com.example.cyclistance.core.utils.editData
-import com.example.cyclistance.core.utils.getData
+import com.example.cyclistance.core.utils.extension.editData
+import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.core.utils.service.LocationService
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.mapper.RescueTransactionMapper.toRescueTransaction

@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_mapping_screen.domain.use_case.address
 
-import com.example.cyclistance.core.utils.InputValidate
-import com.example.cyclistance.core.utils.InputValidate.numberOfCharactersEnough
+import com.example.cyclistance.core.utils.validation.InputValidate.numberOfCharactersEnough
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 

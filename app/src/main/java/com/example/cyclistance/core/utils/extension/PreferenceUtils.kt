@@ -1,4 +1,4 @@
-package com.example.cyclistance.core.utils
+package com.example.cyclistance.core.utils.extension
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
