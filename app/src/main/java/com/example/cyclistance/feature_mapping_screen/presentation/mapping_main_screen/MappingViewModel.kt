@@ -14,15 +14,17 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP
 import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP_ICON_WIDTH
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
-import com.example.cyclistance.core.utils.constants.MappingConstants.INTERVAL_UPDATE_USERS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toCardModel
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toRespondent
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.*
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.ConfirmationDetail
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Location
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.RescueRequest
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserAssistance
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
-import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransaction
+import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransactionItem
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
@@ -66,8 +68,7 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.PostLocation -> {
-                /*todo remove when backend is ready*/
-//                postLocation()
+                postLocation()
             }
 
             is MappingEvent.DeclineRescueRequest -> {
@@ -75,7 +76,6 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.AcceptRescueRequest -> {
-                /*todo*/
             }
 
             is MappingEvent.CancelSearchAssistance -> {
@@ -146,7 +146,6 @@ class MappingViewModel @Inject constructor(
                 it.handleException()
             }
 
-
         }
     }
 
@@ -156,14 +155,15 @@ class MappingViewModel @Inject constructor(
                 val updatedState = _state.updateAndGet { it.copy(rescueRequestRespondents = RescueRequestRespondents(state.value.rescueRequestRespondents.respondents.toMutableList().apply {
                     remove(element = cardModel)
                 }))}
-                mappingUseCase.updateUserUseCase(
-                    itemId = getId(),
-                    userItem = UserItem(
+                mappingUseCase.createUserUseCase(
+                    user = UserItem(
+                        id = getId(),
                         rescueRequest = RescueRequest(respondents = updatedState.rescueRequestRespondents.respondents.map { it.toRespondent() })
                     )
                 )
             }.onSuccess {
                 Timber.v("Successfully updated user")
+                mappingUseCase.broadcastUserUseCase()
             }.onFailure {
                 Timber.e("Failed to update user: ${it.message}")
                 it.handleDeclineRescueRequest()
@@ -182,7 +182,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun createRescueTransaction(r: RescueTransaction){
+    private fun createRescueTransaction(r: RescueTransactionItem){
         viewModelScope.launch {
             runCatching {
                 mappingUseCase.createRescueTransactionUseCase(r)
@@ -199,16 +199,10 @@ class MappingViewModel @Inject constructor(
                             latitude = state.value.latitude,
                             longitude = state.value.longitude,
                         ),
-                        profilePictureUrl = state.value.photoUrl,
-                        address = "",
-                        contactNumber = "",
-                        name = "",
-                        rescueRequest = RescueRequest(),
-                        transaction = Transaction(),
-                        userAssistance = UserAssistance(),
-                        ))
+                        profilePictureUrl = state.value.photoUrl))
             }.onSuccess {
                 Timber.v("Successfully posted location")
+                mappingUseCase.broadcastUserUseCase()
             }.onFailure {
                 Timber.e("Failed to post location: ${it.message}")
             }
@@ -261,9 +255,9 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 _state.update { it.copy(isLoading = true) }
-                mappingUseCase.updateUserUseCase(
-                    itemId = getId(),
-                    userItem = UserItem(
+                mappingUseCase.createUserUseCase(
+                    user = UserItem(
+                        id = getId(),
                         userAssistance = UserAssistance(
                             needHelp = false,
                             confirmationDetail = ConfirmationDetail()))
@@ -276,6 +270,7 @@ class MappingViewModel @Inject constructor(
                         isLoading = false,
                         findAssistanceButtonVisible = true)
                 }
+                mappingUseCase.broadcastUserUseCase()
             }.onFailure { exception ->
                 Timber.e("Failed to cancel search assistance: ${exception.message}")
                 _state.update { it.copy(isLoading = false) }
@@ -304,21 +299,16 @@ class MappingViewModel @Inject constructor(
     private fun subscribeToNearbyUsersChanges() {
         getUsersJob?.cancel()
         getUsersJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
-            while (this.isActive) {
                 runCatching {
-                    mappingUseCase.getUsersUseCase().distinctUntilChanged()
+                    mappingUseCase.getUserUpdatesUseCase().distinctUntilChanged()
                         .collect {
                             it.users.getUser()
                             it.users.getUsers()
-                            it.users.getUserRescueRespondents()
                             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                         }
                 }.onFailure {
                     Timber.e("ERROR GETTING USERS: ${it.message}")
                 }
-                delay(INTERVAL_UPDATE_USERS)
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-            }
         }
     }
 
@@ -327,6 +317,7 @@ class MappingViewModel @Inject constructor(
             it.id == getId()
         } ?: UserItem()
         _state.update { it.copy(user = user) }
+        getUserRescueRespondents()
     }
 
     private fun List<UserItem>.getUserRescueRespondents() {
@@ -340,8 +331,7 @@ class MappingViewModel @Inject constructor(
             }
         }
         _state.update {
-            it.copy(
-                rescueRequestRespondents = RescueRequestRespondents(
+            it.copy(rescueRequestRespondents = RescueRequestRespondents(
                     respondents = rescueRespondentsSnapShot.toSet().toList().toImmutableList()))
         }
         rescueRespondentsSnapShot.clear()
@@ -354,9 +344,7 @@ class MappingViewModel @Inject constructor(
                 user.profilePictureUrl ?: IMAGE_PLACEHOLDER_URL)
             nearbyCyclistSnapShot.add(
                 index = index,
-                element = Cyclist(
-                    user,
-                    bitmapProfile.toBitmap(
+                element = Cyclist(user, bitmapProfile.toBitmap(
                         width = CYCLIST_MAP_ICON_HEIGHT,
                         height = CYCLIST_MAP_ICON_WIDTH)))
         }
@@ -375,11 +363,9 @@ class MappingViewModel @Inject constructor(
             runCatching {
 
                 mappingUseCase.getUserLocationUseCase().collect { location ->
-                    withContext(Dispatchers.Default) {
                         geocoder.getAddress(location.latitude, location.longitude) { addresses ->
                             _state.update { it.copy(userAddress = UserAddress(addresses.lastOrNull())) }
                         }
-                    }
 
                     _state.update { state ->
                         state.copy(
@@ -431,11 +417,10 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun uploadProfile(address: Address) {
         coroutineScope {
-            var user: UserItem? = null
             runCatching {
                 val currentAddress = address.getFullAddress()
                 _state.update { it.copy(currentAddress = currentAddress, isLoading = true) }
-                user = UserItem(
+                mappingUseCase.createUserUseCase(user = UserItem(
                     id = getId(),
                     name = getName(),
                     address = currentAddress,
@@ -443,13 +428,14 @@ class MappingViewModel @Inject constructor(
                     contactNumber = getPhoneNumber(),
                     location = Location(
                         latitude = address.latitude,
-                        longitude = address.longitude),
-                )
-                mappingUseCase.updateUserUseCase(itemId = getId(), userItem = user!!)
+                        longitude = address.longitude)))
                 mappingUseCase.updateAddressUseCase(currentAddress)
+
             }.onSuccess {
                 _state.update { it.copy(isLoading = false, findAssistanceButtonVisible = false) }
+                mappingUseCase.broadcastUserUseCase()
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
+
             }.onFailure { exception ->
                 Timber.e("Error uploading profile: ${exception.message}")
                 _state.update { it.copy(isLoading = false) }
@@ -487,6 +473,7 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.createMockUsers()
             }.onSuccess {
                 Timber.v("CREATED MOCK USERS!")
+                mappingUseCase.broadcastUserUseCase()
             }.onFailure {
                 Timber.e("FAILED TO CREATE MOCK USERS: ${it.message}")
             }
