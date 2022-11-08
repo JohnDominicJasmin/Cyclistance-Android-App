@@ -9,7 +9,7 @@ val userItems = listOf(
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
-        id = "rvxrTiQQy4qKCZxQ29vJ3xSDC9JK",
+        id = "1",
         location = Location(latitude = 14.599512, longitude = 120.984222),
         name = "John Doe",
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK9gqFKRn28xKHD1CAbEevdzsLmsv5yQkGnQ&usqp=CAU",
@@ -28,7 +28,7 @@ val userItems = listOf(
                 message = "I need help with my flat tire",
             ),
         ),
-        transaction = Transaction()),
+        ),
 
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
@@ -36,9 +36,16 @@ val userItems = listOf(
         id = "2",
         location = Location(latitude = 14.628978, longitude = 121.252176),
         name = "Jane Doe",
-        userAssistance = UserAssistance(needHelp = true),
         profilePictureUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
         rescueRequest = RescueRequest(),
+        userAssistance = UserAssistance(
+            needHelp = true,
+            confirmationDetail = ConfirmationDetail(
+                bikeType = "Road Bike",
+                description = "Flat tire",
+                message = "I need help with my flat tire",
+            ),
+        ),
         transaction = Transaction()),
 
 
