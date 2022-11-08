@@ -67,7 +67,7 @@ class ConfirmDetailsViewModel @Inject constructor(
     fun onEvent(event: ConfirmDetailsEvent) {
         when (event) {
             is ConfirmDetailsEvent.ConfirmUpdate -> {
-                    updateUser(state.value)
+                updateUser()
             }
             is ConfirmDetailsEvent.DismissNoInternetScreen -> {
                 _state.update { it.copy(hasInternet = true) }
@@ -93,10 +93,11 @@ class ConfirmDetailsViewModel @Inject constructor(
     }
 
 
-    private fun updateUser(confirmDetailsState: ConfirmDetailsState) {
+    private fun updateUser() {
+
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
-                with(confirmDetailsState) {
+                with(state.value) {
                     _state.update { it.copy(isLoading = true) }
                     if (bikeType.isEmpty()) {
                         throw MappingExceptions.BikeTypeException()
@@ -106,7 +107,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                     }
                     mappingUseCase.createUserUseCase(
                         user = UserItem(
-                            id = getId() ?: return@runCatching ,
+                            id = getId(),
                             address = address.trim(),
                             userAssistance = UserAssistance(
                                 confirmationDetail = ConfirmationDetail(
@@ -119,11 +120,11 @@ class ConfirmDetailsViewModel @Inject constructor(
 
                             )).also {
 
-                        mappingUseCase.updateAddressUseCase(address = confirmDetailsState.address)
-                        mappingUseCase.updateBikeTypeUseCase(bikeType = confirmDetailsState.bikeType)
+                        mappingUseCase.updateAddressUseCase(address = address)
+                        mappingUseCase.updateBikeTypeUseCase(bikeType = bikeType)
                     }
-
                 }
+
 
             }.onSuccess {
                 _state.update { it.copy(isLoading = false) }
@@ -141,7 +142,7 @@ class ConfirmDetailsViewModel @Inject constructor(
 
     private suspend fun handleException(exception: Throwable) {
         when (exception) {
-            is MappingExceptions.UnexpectedErrorException -> {
+            is MappingExceptions.UnexpectedErrorException, is MappingExceptions.UserException -> {
                 _eventFlow.emit(
                     ConfirmDetailsUiEvent.ShowToastMessage(
                         message = exception.message ?: "",
@@ -160,7 +161,7 @@ class ConfirmDetailsViewModel @Inject constructor(
         savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
     }
 
-    private fun getId(): String? = authUseCase.getIdUseCase()
+    private fun getId(): String = authUseCase.getIdUseCase()
 
 
 }
