@@ -12,12 +12,10 @@ interface MappingRepository {
     suspend fun getUserById(userId: String): UserItem
     suspend fun getUsers(): User
     suspend fun createUser(userItem: UserItem)
-    suspend fun updateUser(itemId: String, userItem: UserItem)
     suspend fun deleteUser(id: String)
 
     suspend fun getRescueTransactionById(userId: String): RescueTransactionItem
     suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem)
-    suspend fun updateRescueTransaction(itemId: String, rescueTransaction: RescueTransactionItem)
     suspend fun deleteRescueTransaction(id: String)
 
 

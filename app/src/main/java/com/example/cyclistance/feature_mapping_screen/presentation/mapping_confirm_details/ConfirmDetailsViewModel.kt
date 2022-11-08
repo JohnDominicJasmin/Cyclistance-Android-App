@@ -104,9 +104,9 @@ class ConfirmDetailsViewModel @Inject constructor(
                     if (description.isEmpty()) {
                         throw MappingExceptions.DescriptionException()
                     }
-                    mappingUseCase.updateUserUseCase(
-                        itemId = getId() ?: return@runCatching ,
-                        userItem = UserItem(
+                    mappingUseCase.createUserUseCase(
+                        user = UserItem(
+                            id = getId() ?: return@runCatching ,
                             address = address.trim(),
                             userAssistance = UserAssistance(
                                 confirmationDetail = ConfirmationDetail(
@@ -128,6 +128,7 @@ class ConfirmDetailsViewModel @Inject constructor(
             }.onSuccess {
                 _state.update { it.copy(isLoading = false) }
                 _eventFlow.emit(value = ConfirmDetailsUiEvent.ShowMappingScreen)
+                mappingUseCase.broadcastUserUseCase()
 
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }

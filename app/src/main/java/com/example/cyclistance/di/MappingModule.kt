@@ -24,7 +24,6 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.G
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.UpdateRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.BroadcastUserUseCase
@@ -103,11 +102,9 @@ object MappingModule {
             getUserByIdUseCase = GetUserByIdUseCase(repository),
             createUserUseCase = CreateUserUseCase(repository),
             deleteUserUseCase = DeleteUserUseCase(repository),
-            updateUserUseCase = UpdateUserUseCase(repository),
 
             getRescueTransactionByIdUseCase = GetRescueTransactionByIdUseCase(repository),
             createRescueTransactionUseCase = CreateRescueTransactionUseCase(repository),
-            updateRescueTransactionUseCase = UpdateRescueTransactionUseCase(repository),
             deleteRescueTransactionUseCase = DeleteRescueTransactionUseCase(repository),
 
 

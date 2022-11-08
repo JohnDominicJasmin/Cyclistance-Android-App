@@ -9,8 +9,10 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.G
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.UpdateRescueTransactionUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.CreateUserUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.DeleteUserUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.GetUserByIdUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.GetUsersUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.BroadcastUserUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.GetRescueTransactionUpdatesUseCase
@@ -24,11 +26,9 @@ data class MappingUseCase(
     val getUsersUseCase: GetUsersUseCase,
     val createUserUseCase: CreateUserUseCase,
     val deleteUserUseCase: DeleteUserUseCase,
-    val updateUserUseCase: UpdateUserUseCase,
 
     val getRescueTransactionByIdUseCase: GetRescueTransactionByIdUseCase,
     val createRescueTransactionUseCase: CreateRescueTransactionUseCase,
-    val updateRescueTransactionUseCase: UpdateRescueTransactionUseCase,
     val deleteRescueTransactionUseCase: DeleteRescueTransactionUseCase,
 
     val getUserLocationUseCase: GetUserLocationUseCase,
