@@ -51,8 +51,8 @@ fun RescueRequestScreen(
     onClickConfirmButton: (CardModel) -> Unit = {},
 ) {
 
-    val respondents = remember(mappingState.rescueRequestRespondents.respondents.size) {
-        mappingState.rescueRequestRespondents.respondents
+    val respondents = remember(mappingState.userRescueRequestRespondents.respondents.size) {
+        mappingState.userRescueRequestRespondents.respondents
     }
 
 
@@ -110,7 +110,7 @@ fun PreviewRescueRequest() {
             modifier = Modifier
                 .padding(PaddingValues(all = 0.dp)),
             mappingState = MappingState(
-                rescueRequestRespondents = RescueRequestRespondents(
+                userRescueRequestRespondents = RescueRequestRespondents(
                     respondents = listOf(
                         CardModel(
                             id = "2",

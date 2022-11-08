@@ -25,7 +25,7 @@ data class MappingState(
 
 
     val user: UserItem = UserItem(),
-    val rescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
+    val userRescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
     val userAddress: UserAddress = UserAddress(),
     val currentAddress: String = "",
     val latitude: Double = DEFAULT_LATITUDE,
