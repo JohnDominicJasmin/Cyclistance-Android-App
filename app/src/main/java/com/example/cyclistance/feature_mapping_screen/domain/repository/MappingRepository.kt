@@ -2,7 +2,10 @@ package com.example.cyclistance.feature_mapping_screen.domain.repository
 
 import android.graphics.drawable.Drawable
 import android.location.Location
-import com.example.cyclistance.feature_mapping_screen.domain.model.*
+import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransaction
+import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransactionItem
+import com.example.cyclistance.feature_mapping_screen.domain.model.User
+import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import kotlinx.coroutines.flow.Flow
 
 interface MappingRepository {
@@ -12,10 +15,11 @@ interface MappingRepository {
     suspend fun updateUser(itemId: String, userItem: UserItem)
     suspend fun deleteUser(id: String)
 
-    suspend fun getRescueTransactionById(userId: String): RescueTransaction
-    suspend fun createRescueTransaction(rescueTransaction: RescueTransaction)
-    suspend fun updateRescueTransaction(itemId: String, rescueTransaction: RescueTransaction)
+    suspend fun getRescueTransactionById(userId: String): RescueTransactionItem
+    suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem)
+    suspend fun updateRescueTransaction(itemId: String, rescueTransaction: RescueTransactionItem)
     suspend fun deleteRescueTransaction(id: String)
+
 
     fun getBikeType(): Flow<String>
     suspend fun updateBikeType(bikeType: String)
@@ -27,5 +31,8 @@ interface MappingRepository {
 
     suspend fun imageUrlToDrawable(imageUrl: String): Drawable
 
-
+    fun getUserUpdates():Flow<User>
+    fun broadCastUser()
+    fun broadCastRescueTransaction()
+    fun getRescueTransactionUpdates(): Flow<RescueTransaction>
 }

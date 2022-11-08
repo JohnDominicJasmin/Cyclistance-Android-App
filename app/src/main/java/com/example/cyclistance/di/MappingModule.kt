@@ -9,6 +9,8 @@ import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.websockets.RescueTransactionWebSocketClient
+import com.example.cyclistance.core.utils.websockets.UserWebSocketClient
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
@@ -24,12 +26,18 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_tra
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.UpdateRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.BroadcastRescueTransactionUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.BroadcastUserUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.GetRescueTransactionUpdatesUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.GetUserUpdatesUseCase
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.socket.client.IO
+import io.socket.client.Socket
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -38,31 +46,51 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object MappingModule {
 
+
+    @Provides
+    @Singleton
+    fun getBaseUrl(@ApplicationContext context: Context): String{
+        return context.getString(if (BuildConfig.DEBUG) R.string.CyclistanceApiBaseUrlLocal else R.string.CyclistanceApiBaseUrl)
+    }
+
     @Provides
     @Singleton
     fun provideCyclistanceApi(@ApplicationContext context: Context): CyclistanceApi {
 
         val gson = GsonBuilder().serializeNulls().create()
 
-        val url = if (BuildConfig.DEBUG) R.string.CyclistanceApiBaseUrlLocal else R.string.CyclistanceApiBaseUrl
         return Retrofit.Builder()
-            .baseUrl(context.getString(url))
+            .baseUrl(getBaseUrl(context))
             .addConverterFactory(GsonConverterFactory.create(gson))
             .build()
             .create(CyclistanceApi::class.java)
 
     }
 
+
+    @Provides
+    @Singleton
+    fun provideIOSocket(@ApplicationContext context: Context): Socket =
+        IO.socket(getBaseUrl(context))
+
+
     @Provides
     @Singleton
     fun provideCyclistanceRepository(
         imageRequestBuilder: ImageRequest.Builder,
+        socket: Socket,
         @ApplicationContext context: Context,
         api: CyclistanceApi): MappingRepository {
+
+        val userWebSocketClient = UserWebSocketClient(socket)
+        val rescueTransactionWebSocketClient = RescueTransactionWebSocketClient(socket)
+
         return MappingRepositoryImpl(
             imageRequestBuilder = imageRequestBuilder,
             api = api,
-            context = context)
+            context = context,
+            rescueTransactionClient = rescueTransactionWebSocketClient,
+            userClient = userWebSocketClient)
     }
 
 
@@ -88,7 +116,11 @@ object MappingModule {
             updateBikeTypeUseCase = UpdateBikeTypeUseCase(repository),
             getAddressUseCase = GetAddressUseCase(repository),
             updateAddressUseCase = UpdateAddressUseCase(repository),
-            imageUrlToDrawableUseCase = ImageUrlToDrawableUseCase(repository)
+            imageUrlToDrawableUseCase = ImageUrlToDrawableUseCase(repository),
+            broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(repository),
+            broadcastUserUseCase = BroadcastUserUseCase(repository),
+            getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(repository),
+            getUserUpdatesUseCase = GetUserUpdatesUseCase(repository)
         )
     }
 

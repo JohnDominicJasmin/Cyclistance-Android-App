@@ -13,6 +13,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_K
 import com.example.cyclistance.core.utils.extension.editData
 import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.core.utils.service.LocationService
+import com.example.cyclistance.core.utils.websockets.WebSocketClient
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping_screen.data.mapper.RescueTransactionMapper.toRescueTransactionDto
@@ -21,6 +22,7 @@ import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toU
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUserItemDto
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransaction
+import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransactionItem
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
@@ -34,6 +36,8 @@ import java.io.IOException
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
 
 class MappingRepositoryImpl(
+    val rescueTransactionClient: WebSocketClient<RescueTransaction>,
+    val userClient: WebSocketClient<User>,
     val imageRequestBuilder: ImageRequest.Builder,
     private val api: CyclistanceApi,
     val context: Context) : MappingRepository {
@@ -105,19 +109,19 @@ class MappingRepositoryImpl(
         }
     }
 
-    override suspend fun getRescueTransactionById(userId: String): RescueTransaction =
+    override suspend fun getRescueTransactionById(userId: String): RescueTransactionItem =
         handleException {
             api.getRescueTransactionById(userId).toRescueTransaction()
         }
 
-    override suspend fun createRescueTransaction(rescueTransaction: RescueTransaction) =
+    override suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem) =
         handleException {
             api.createRescueTransaction(rescueTransaction.toRescueTransactionDto())
         }
 
     override suspend fun updateRescueTransaction(
         itemId: String,
-        rescueTransaction: RescueTransaction) {
+        rescueTransaction: RescueTransactionItem) {
 
         handleException {
             api.updateRescueTransaction(
@@ -131,6 +135,23 @@ class MappingRepositoryImpl(
             api.deleteRescueTransaction(id)
         }
     }
+
+    override fun getUserUpdates(): Flow<User> {
+        return userClient.getResult()
+    }
+
+    override fun broadCastUser() {
+        userClient.broadCastEvent()
+    }
+
+    override fun broadCastRescueTransaction() {
+        rescueTransactionClient.broadCastEvent()
+    }
+
+    override fun getRescueTransactionUpdates(): Flow<RescueTransaction> {
+        return rescueTransactionClient.getResult()
+    }
+
 }
 
 
