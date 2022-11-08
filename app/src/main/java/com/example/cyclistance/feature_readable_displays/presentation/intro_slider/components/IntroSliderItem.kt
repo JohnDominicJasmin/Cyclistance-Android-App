@@ -12,6 +12,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -66,8 +67,8 @@ fun IntroSliderItem(
 
                     Text(
                         text = introSliderItems[page].description,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Normal,
+                        fontSize = 13.sp,
+                        fontWeight = FontWeight.Normal, lineHeight = 14.sp,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colors.onBackground,
                     modifier = Modifier.fillMaxWidth(0.76f))
@@ -102,7 +103,7 @@ fun PagerIndicator(pagerState: PagerState,modifier: Modifier) {
 }
 
 @OptIn(ExperimentalPagerApi::class)
-@Preview
+@Preview(device = Devices.PIXEL)
 @Composable
 fun IntroSliderItemPreview() {
     IntroSliderItem(PagerState(currentPage = 0))

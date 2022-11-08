@@ -11,21 +11,18 @@ sealed class IntroSliderScreenItem(
     object LiveLocation : IntroSliderScreenItem(
         image = R.drawable.ic_live_location,
         title = "Live Location Updates",
-        description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. \n" +
-                "numquam blanditiis harum Quo neque error repudiandae fuga? Ipsa laudantium "
+        description = "You can now share your Live Location with someone. Use Live Location to coordinate meetups and ensure the safety of everyone."
     )
 
     object HelpAndRescue : IntroSliderScreenItem(
         image = R.drawable.ic_help_and_rescue,
         title = "Help and Rescue",
-        description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. \n" +
-                "numquam blanditiis harum Quo neque error repudiandae fuga? Ipsa laudantium "
+        description = "You can now search for cyclists who need your help and support. Keep in mind that safety is our top priority."
     )
 
     object RealTimeMessaging : IntroSliderScreenItem(
         image = R.drawable.ic_real_time_messaging,
         title = "Real time messaging",
-        description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. \n" +
-                "numquam blanditiis harum Quo neque error repudiandae fuga? Ipsa laudantium "
+        description = "Your messages can now be delivered in real time. Remember to review their specific details before taking action."
     )
 }
