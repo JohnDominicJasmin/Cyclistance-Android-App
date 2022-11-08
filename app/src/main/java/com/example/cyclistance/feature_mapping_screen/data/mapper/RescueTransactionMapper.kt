@@ -1,11 +1,11 @@
 package com.example.cyclistance.feature_mapping_screen.data.mapper
 
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.RescueTransactionDto
-import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransaction
+import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransactionItem
 
 object RescueTransactionMapper {
-    fun RescueTransactionDto.toRescueTransaction():RescueTransaction {
-        return RescueTransaction(
+    fun RescueTransactionDto.toRescueTransaction():RescueTransactionItem {
+        return RescueTransactionItem(
             id = this.id,
             cancellation = this.cancellation,
             rescueeId = this.rescueeId,
@@ -14,7 +14,7 @@ object RescueTransactionMapper {
         )
     }
 
-    fun RescueTransaction.toRescueTransactionDto():RescueTransactionDto{
+    fun RescueTransactionItem.toRescueTransactionDto():RescueTransactionDto{
         return RescueTransactionDto(
             id = this.id,
             cancellation = this.cancellation,
