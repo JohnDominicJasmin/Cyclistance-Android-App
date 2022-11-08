@@ -43,7 +43,8 @@ class MappingViewModel @Inject constructor(
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
     private var getUsersJob: Job? = null
-    private var locationUpdatesFlow: Job? = null
+    private var locationUpdatesJob: Job? = null
+    private var getRescueTransactionJob: Job? = null
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState())
     val state = _state.asStateFlow()
@@ -85,12 +86,7 @@ class MappingViewModel @Inject constructor(
                 loadUserProfile()
             }
 
-            is MappingEvent.SubscribeToNearbyUsersChanges -> {
-                subscribeToNearbyUsersChanges()
-            }
-            is MappingEvent.UnsubscribeToNearbyUsersChanges -> {
-                unSubscribeToNearbyUsersChanges()
-            }
+
             is MappingEvent.LoadUserImageLocationPuck -> {
                 getUserDrawableImage()
             }
@@ -102,13 +98,14 @@ class MappingViewModel @Inject constructor(
                 _state.update { it.copy(isSearchingForAssistance = false) }
             }
 
-            is MappingEvent.DismissNoInternetScreen -> {
-                _state.update { it.copy(hasInternet = true) }
+            is MappingEvent.SubscribeToRescueTransactionChanges -> {
+                subscribeToNearbyRescueTransaction()
             }
 
-            is MappingEvent.SignOut -> {
-                signOutAccount()
+            is MappingEvent.UnsubscribeToRescueTransactionChanges -> {
+                unSubscribeToNearbyRescueTransaction()
             }
+
             is MappingEvent.SubscribeToLocationUpdates -> {
                 subscribeToLocationUpdates()
             }
@@ -117,6 +114,22 @@ class MappingViewModel @Inject constructor(
                 unSubscribeToLocationUpdates()
             }
 
+            is MappingEvent.SubscribeToNearbyUsersChanges -> {
+                subscribeToNearbyUsersChanges()
+            }
+            is MappingEvent.UnsubscribeToNearbyUsersChanges -> {
+                unSubscribeToNearbyUsersChanges()
+            }
+
+            is MappingEvent.DismissNoInternetScreen -> {
+                _state.update { it.copy(hasInternet = true) }
+            }
+
+            is MappingEvent.SignOut -> {
+                signOutAccount()
+            }
+
+
             is MappingEvent.ChangeBottomSheet -> {
                 _state.update { it.copy(bottomSheetType = event.bottomSheetType) }
             }
@@ -124,11 +137,29 @@ class MappingViewModel @Inject constructor(
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
+    private fun subscribeToNearbyRescueTransaction(){
+        getRescueTransactionJob?.cancel()
+        getRescueTransactionJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+            runCatching {
+                mappingUseCase.getRescueTransactionUpdatesUseCase().distinctUntilChanged()
+                    .collect{
+//                    todo: filter what rescue transaction needed
+                }
+                mappingUseCase.broadcastRescueTransactionUseCase()
+            }.onFailure {
+                Timber.e("ERROR GETTING USERS: ${it.message}")
+            }
+        }
+    }
+
+    private fun unSubscribeToNearbyRescueTransaction(){
+        getRescueTransactionJob?.cancel()
+    }
+
     private fun unSubscribeToNearbyUsersChanges() {
         getUsersJob?.cancel()
     }
 
-//    todo: after finishing the rescue then do this whole process again
     private fun acceptRescueRequest(cardModel: CardModel){
         viewModelScope.launch {
             runCatching {
@@ -152,7 +183,8 @@ class MappingViewModel @Inject constructor(
     private fun declineRescueRequest(cardModel: CardModel) {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
-                val updatedState = _state.updateAndGet { it.copy(rescueRequestRespondents = RescueRequestRespondents(state.value.rescueRequestRespondents.respondents.toMutableList().apply {
+                val rescueRespondents = state.value.rescueRequestRespondents.respondents
+                val updatedState = _state.updateAndGet { it.copy(rescueRequestRespondents = RescueRequestRespondents(rescueRespondents.toMutableList().apply {
                     remove(element = cardModel)
                 }))}
                 mappingUseCase.createUserUseCase(
@@ -266,7 +298,6 @@ class MappingViewModel @Inject constructor(
             }.onSuccess {
                 _state.update {
                     it.copy(
-                        isSearchingForAssistance = false,
                         isLoading = false,
                         findAssistanceButtonVisible = true)
                 }
@@ -306,6 +337,8 @@ class MappingViewModel @Inject constructor(
                             it.users.getUsers()
                             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                         }
+                    mappingUseCase.broadcastUserUseCase()
+
                 }.onFailure {
                     Timber.e("ERROR GETTING USERS: ${it.message}")
                 }
@@ -358,8 +391,8 @@ class MappingViewModel @Inject constructor(
 
 
     private fun subscribeToLocationUpdates() {
-        locationUpdatesFlow?.cancel()
-        locationUpdatesFlow = viewModelScope.launch(Dispatchers.IO) {
+        locationUpdatesJob?.cancel()
+        locationUpdatesJob = viewModelScope.launch(Dispatchers.IO) {
             runCatching {
 
                 mappingUseCase.getUserLocationUseCase().collect { location ->
@@ -383,7 +416,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun unSubscribeToLocationUpdates() {
-        locationUpdatesFlow?.cancel()
+        locationUpdatesJob?.cancel()
     }
 
     private fun signOutAccount() {
@@ -483,6 +516,8 @@ class MappingViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         onEvent(event = MappingEvent.UnsubscribeToLocationUpdates)
+        onEvent(event = MappingEvent.UnsubscribeToNearbyUsersChanges)
+        onEvent(event = MappingEvent.UnsubscribeToRescueTransactionChanges)
         onEvent(event = MappingEvent.StopPinging)
     }
 

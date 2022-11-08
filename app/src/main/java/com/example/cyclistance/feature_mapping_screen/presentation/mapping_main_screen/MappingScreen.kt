@@ -180,8 +180,9 @@ fun MappingScreen(
     LaunchedEffect(key1 = typeBottomSheet) {
         if (typeBottomSheet.isNotEmpty()) {
             mappingViewModel.onEvent(event = MappingEvent.StartPinging)
+            mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(typeBottomSheet))
         }
-        mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(typeBottomSheet))
+
     }
 
     LaunchedEffect(key1 = userLocationAvailable) {
@@ -245,6 +246,7 @@ fun MappingScreen(
             onEvent(event = MappingEvent.LoadUserImageLocationPuck)
             onEvent(event = MappingEvent.SubscribeToNearbyUsersChanges)
             onEvent(event = MappingEvent.SubscribeToLocationUpdates)
+            onEvent(event = MappingEvent.SubscribeToRescueTransactionChanges)
 
             eventFlow.collectLatest { event ->
                 when (event) {
@@ -322,6 +324,7 @@ fun MappingScreen(
                 bottomSheetScaffoldState.bottomSheetState.collapse()
             }.invokeOnCompletion {
                 mappingViewModel.onEvent(event = MappingEvent.CancelSearchAssistance)
+                mappingViewModel.onEvent(event = MappingEvent.StopPinging)
             }
 
         },

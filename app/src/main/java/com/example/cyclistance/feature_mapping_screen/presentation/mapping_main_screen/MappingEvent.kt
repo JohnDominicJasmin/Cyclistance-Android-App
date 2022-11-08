@@ -21,4 +21,7 @@ sealed class MappingEvent {
     object CancelSearchAssistance: MappingEvent()
     data class DeclineRescueRequest(val cardModel: CardModel): MappingEvent()
     data class AcceptRescueRequest(val cardModel: CardModel): MappingEvent()
+    object SubscribeToRescueTransactionChanges: MappingEvent()
+    object UnsubscribeToRescueTransactionChanges: MappingEvent()
+
 }
