@@ -351,7 +351,7 @@ fun MappingScreenPreview() {
         MappingScreen(
             modifier = Modifier,
             isDarkTheme = true,
-            state = MappingState(bottomSheetType = BottomSheetType.SearchAssistance.type, findAssistanceButtonVisible = false),
+            state = MappingState(bottomSheetType = BottomSheetType.SearchAssistance.type, searchAssistanceButtonVisible = false),
             onClickNoInternetRetryButton = {},
             onClickSearchButton = {},
             onClickLocateUserButton = {},

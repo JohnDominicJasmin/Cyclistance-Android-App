@@ -17,7 +17,7 @@ import kotlinx.parcelize.Parcelize
 data class MappingState(
 
     val isLoading: Boolean = false,
-    val findAssistanceButtonVisible: Boolean = true,
+    val searchAssistanceButtonVisible: Boolean = true,
     val hasInternet: Boolean = true,
     val bottomSheetType: String = "",
     val isSearchingForAssistance: Boolean = false,

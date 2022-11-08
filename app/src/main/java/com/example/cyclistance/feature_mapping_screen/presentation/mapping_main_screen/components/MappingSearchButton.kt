@@ -14,7 +14,7 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 @Composable
 fun SearchAssistanceButton(onClickSearchButton: () -> Unit, modifier: Modifier, enabled: Boolean, state: MappingState) {
 
-    if(state.findAssistanceButtonVisible) {
+    if(state.searchAssistanceButtonVisible) {
 
         Button(
             enabled = enabled,
