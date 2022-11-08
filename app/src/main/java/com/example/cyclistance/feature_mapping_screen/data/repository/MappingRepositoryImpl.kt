@@ -126,7 +126,7 @@ class MappingRepositoryImpl(
         handleException {
             api.updateRescueTransaction(
                 itemId = itemId,
-                rescueTransactionDto = rescueTransaction.toRescueTransactionDto())
+                rescueTransactionItemDto = rescueTransaction.toRescueTransactionDto())
         }
     }
 
