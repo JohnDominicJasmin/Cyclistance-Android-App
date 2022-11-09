@@ -9,7 +9,7 @@ val userItems = listOf(
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
-        id = "1",
+        id = "rvxrTiQQy4qKCZxQ29vJ3xSDC9JK",
         location = Location(latitude = 14.599512, longitude = 120.984222),
         name = "John Doe",
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK9gqFKRn28xKHD1CAbEevdzsLmsv5yQkGnQ&usqp=CAU",
@@ -45,8 +45,7 @@ val userItems = listOf(
                 description = "Flat tire",
                 message = "I need help with my flat tire",
             ),
-        ),
-        transaction = Transaction()),
+        )),
 
 
     UserItem(
@@ -57,8 +56,6 @@ val userItems = listOf(
         name = "John Doe",
         userAssistance = UserAssistance(needHelp = true),
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSv9zzOmzF32TNcQ2O93T21Serg2aJj5O-1hrQdZiE6ITGiKLsW4rjgVpX-asQYXa4iVeA&usqp=CAU",
-        rescueRequest = RescueRequest(),
-        transaction = Transaction(),
     ),
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
@@ -68,8 +65,6 @@ val userItems = listOf(
         name = "Jane Doe",
         userAssistance = UserAssistance(needHelp = true),
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8E4cPH6JfDvMMFNuu_M3LC2gXHX-pE0ieN3yt4TF8qDsdVZrXU0wa18WgljS9cvMXAzk&usqp=CAU",
-        rescueRequest = RescueRequest(),
-        transaction = Transaction(),
     ),
 
     UserItem(
@@ -79,9 +74,6 @@ val userItems = listOf(
         location = Location(latitude = 14.044194, longitude = 121.747392),
         name = "John Doe",
         profilePictureUrl = "https://www.erlanger.org/find-a-doctor/media/PhysicianPhotos/Carbone_1436.jpg",
-        rescueRequest = RescueRequest(),
-        transaction = Transaction(),
-        userAssistance = UserAssistance(),
     ),
 
     UserItem(
@@ -91,9 +83,6 @@ val userItems = listOf(
         location = Location(latitude = 6.523497, longitude = 125.037057),
         name = "Jeniffer",
         profilePictureUrl = "https://www.harleytherapy.co.uk/counselling/wp-content/uploads/16297800391_5c6e812832.jpg",
-        rescueRequest = RescueRequest(),
-        transaction = Transaction(),
-        userAssistance = UserAssistance(),
     ),
 
     UserItem(
@@ -103,9 +92,6 @@ val userItems = listOf(
         location = Location(latitude = 6.531999, longitude = 125.043330),
         name = "Mark",
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDwnb8KCy8eejkddV5FaKsBcm1uDznQhInOQ&usqp=CAU",
-        rescueRequest = RescueRequest(),
-        transaction = Transaction(),
-        userAssistance = UserAssistance(),
     ),
 
     UserItem(
@@ -115,9 +101,6 @@ val userItems = listOf(
         location = Location(latitude = 6.887962, longitude = 125.224905),
         name = "Alex",
         profilePictureUrl = "https://thumbs.dreamstime.com/b/young-indian-man-having-fun-doing-video-call-outdoor-home-garden-mobile-phone-happy-person-using-technology-trends-tech-181375754.jpg",
-        rescueRequest = RescueRequest(),
-        transaction = Transaction(),
-        userAssistance = UserAssistance(),
     ),
 
     UserItem(
@@ -127,9 +110,6 @@ val userItems = listOf(
         location = Location(latitude = 7.118415, longitude = 125.283468),
         name = "John Dominic",
         profilePictureUrl = "https://www.commonwealthfund.org/sites/default/files/images/___media_upload_young_adults_individual_mandate_exemption_could_lead_to_more_uninsurance.jpg",
-        rescueRequest = RescueRequest(),
-        transaction = Transaction(),
-        userAssistance = UserAssistance(),
     ),
 
 )
