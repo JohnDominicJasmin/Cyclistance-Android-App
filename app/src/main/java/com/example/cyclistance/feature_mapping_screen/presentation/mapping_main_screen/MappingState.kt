@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.NearbyCyclists
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.RescueRequestRespondents
@@ -23,7 +24,7 @@ data class MappingState(
     val isSearchingForAssistance: Boolean = false,
 
 
-
+    val alertDialogModel: AlertDialogModel = AlertDialogModel(),
     val user: UserItem = UserItem(),
     val userRescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
     val userAddress: UserAddress = UserAddress(),
