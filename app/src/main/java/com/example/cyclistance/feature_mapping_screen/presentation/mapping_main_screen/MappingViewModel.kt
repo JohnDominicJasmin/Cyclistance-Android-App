@@ -69,7 +69,7 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.PostLocation -> {
-                postLocation()
+//                postLocation() todo: remove this later
             }
 
             is MappingEvent.DeclineRescueRequest -> {
