@@ -18,6 +18,7 @@ sealed class MappingEvent {
     object SubscribeToLocationUpdates: MappingEvent()
     object UnsubscribeToLocationUpdates: MappingEvent()
     object DismissNoInternetScreen: MappingEvent()
+    object DismissAlertDialog: MappingEvent()
     object CancelSearchAssistance: MappingEvent()
     data class DeclineRescueRequest(val cardModel: CardModel): MappingEvent()
     data class AcceptRescueRequest(val cardModel: CardModel): MappingEvent()
