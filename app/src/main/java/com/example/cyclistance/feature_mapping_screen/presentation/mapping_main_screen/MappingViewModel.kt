@@ -233,14 +233,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun createRescueTransaction(r: RescueTransactionItem){
-        viewModelScope.launch {
-            runCatching {
-                mappingUseCase.createRescueTransactionUseCase(r)
-            }
-        }
-    }
-    private fun postLocation(){
+    private fun postLocation() {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 mappingUseCase.createUserUseCase(
