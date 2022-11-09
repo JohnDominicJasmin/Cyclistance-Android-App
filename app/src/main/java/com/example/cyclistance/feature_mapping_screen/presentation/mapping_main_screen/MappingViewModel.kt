@@ -77,6 +77,7 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.AcceptRescueRequest -> {
+                acceptRescueRequest(event.cardModel)
             }
 
             is MappingEvent.CancelSearchAssistance -> {
