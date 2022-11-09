@@ -126,6 +126,10 @@ class MappingViewModel @Inject constructor(
                 _state.update { it.copy(hasInternet = true) }
             }
 
+            is MappingEvent.DismissAlertDialog -> {
+                _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
+            }
+
             is MappingEvent.SignOut -> {
                 signOutAccount()
             }
