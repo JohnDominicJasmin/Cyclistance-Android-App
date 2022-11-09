@@ -8,10 +8,7 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -132,19 +129,21 @@ fun MappingScreen(
 
     }
 
-    val postProfile = {
-        if (!context.hasGPSConnection()) {
-            context.checkLocationSetting(
-                onDisabled = settingResultRequest::launch,
-                onEnabled = {
-                    mappingViewModel.onEvent(
-                        event = MappingEvent.SearchAssistance)
+    val postProfile = remember {
+        {
+            if (!context.hasGPSConnection()) {
+                context.checkLocationSetting(
+                    onDisabled = settingResultRequest::launch,
+                    onEnabled = {
+                        mappingViewModel.onEvent(
+                            event = MappingEvent.SearchAssistance)
 
-                })
-        } else {
-            mappingViewModel.onEvent(
-                event = MappingEvent.SearchAssistance)
+                    })
+            } else {
+                mappingViewModel.onEvent(
+                    event = MappingEvent.SearchAssistance)
 
+            }
         }
     }
 
@@ -153,6 +152,23 @@ fun MappingScreen(
             locationPermissionsState.allPermissionsGranted.and(state.latitude != DEFAULT_LATITUDE && state.longitude != DEFAULT_LONGITUDE)
         }
     }
+    val onClickNoInternetRetryButton = remember {
+        {
+            if (context.hasInternetConnection()) {
+                mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetScreen)
+            }
+        }
+    }
+
+    val onClickSearchButton = remember {{
+        locationPermissionsState.requestPermission(
+            context = context,
+            rationalMessage = "Location permission is not yet granted.") {
+            context.startLocationServiceIntentAction()
+            postProfile()
+        }
+    }}
+
 
     val locateUser =
         remember(Unit) {
@@ -175,6 +191,33 @@ fun MappingScreen(
                 }
             }
         }
+
+    val onClickLocateUserButton = remember {{
+
+        locationPermissionsState.requestPermission(
+            context = context,
+            rationalMessage = "Location permission is not yet granted.",
+            onGranted = {
+
+                if (!context.hasGPSConnection()) {
+                    context.checkLocationSetting(
+                        onDisabled = settingResultRequest::launch)
+                }
+                locateUser(DEFAULT_MAP_ZOOM_LEVEL)
+
+            })
+
+    }}
+
+    val onClickCancelSearchButton = remember {{
+        coroutineScope.launch {
+            bottomSheetScaffoldState.bottomSheetState.collapse()
+        }.invokeOnCompletion {
+            mappingViewModel.onEvent(event = MappingEvent.CancelSearchAssistance)
+            mappingViewModel.onEvent(event = MappingEvent.StopPinging)
+        }
+        Unit
+    }}
 
 
     LaunchedEffect(key1 = typeBottomSheet) {
@@ -281,53 +324,18 @@ fun MappingScreen(
 
 
 
+
     MappingScreen(
         modifier = Modifier.padding(paddingValues),
         isDarkTheme = isDarkTheme,
         state = state,
-        onClickNoInternetRetryButton = {
-            if (context.hasInternetConnection()) {
-                mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetScreen)
-            }
-        },
-        onClickSearchButton = {
-            locationPermissionsState.requestPermission(
-                context = context,
-                rationalMessage = "Location permission is not yet granted.") {
-                context.startLocationServiceIntentAction()
-                postProfile()
-            }
-        },
+        onClickNoInternetRetryButton = onClickNoInternetRetryButton,
+        onClickSearchButton = onClickSearchButton,
         locationPermissionState = locationPermissionsState,
-        onClickLocateUserButton = {
-
-            locationPermissionsState.requestPermission(
-                context = context,
-                rationalMessage = "Location permission is not yet granted.",
-                onGranted = {
-
-                    if (!context.hasGPSConnection()) {
-                        context.checkLocationSetting(
-                            onDisabled = settingResultRequest::launch)
-                    }
-                    locateUser(DEFAULT_MAP_ZOOM_LEVEL)
-
-                })
-
-
-        },
+        onClickLocateUserButton = onClickLocateUserButton,
         mapboxMap = mapboxMap,
         mapView = mapView,
-        onClickCancelSearchButton = {
-
-            coroutineScope.launch {
-                bottomSheetScaffoldState.bottomSheetState.collapse()
-            }.invokeOnCompletion {
-                mappingViewModel.onEvent(event = MappingEvent.CancelSearchAssistance)
-                mappingViewModel.onEvent(event = MappingEvent.StopPinging)
-            }
-
-        },
+        onClickCancelSearchButton = onClickCancelSearchButton,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
     )
 
@@ -378,7 +386,7 @@ fun MappingScreen(
     onClickSearchButton: () -> Unit = {},
     onClickRescueArrivedButton: () -> Unit = {},
     onClickReachedDestinationButton: () -> Unit = {},
-    onClickCancelSearchButton: () -> Unit = { },
+    onClickCancelSearchButton: () -> Unit = {},
     onClickCallButton: () -> Unit = {},
     onClickChatButton: () -> Unit = {},
     onClickCancelButton: () -> Unit = {}) {
