@@ -300,7 +300,7 @@ class MappingViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         isLoading = false,
-                        findAssistanceButtonVisible = true)
+                        searchAssistanceButtonVisible = true)
                 }
                 mappingUseCase.broadcastUserUseCase()
             }.onFailure { exception ->
@@ -466,7 +466,7 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.updateAddressUseCase(currentAddress)
 
             }.onSuccess {
-                _state.update { it.copy(isLoading = false, findAssistanceButtonVisible = false) }
+                _state.update { it.copy(isLoading = false, searchAssistanceButtonVisible = false) }
                 mappingUseCase.broadcastUserUseCase()
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
 
