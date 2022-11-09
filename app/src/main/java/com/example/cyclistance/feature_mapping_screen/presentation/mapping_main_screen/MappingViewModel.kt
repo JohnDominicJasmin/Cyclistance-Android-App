@@ -346,26 +346,33 @@ class MappingViewModel @Inject constructor(
         }
     }
 
+    private fun NearbyCyclists.findUser(id: String): UserItem {
+        return this.activeUsers.find {
+            it.user.id == id
+        }?.user ?: UserItem()
+
+    }
+
+    private fun List<UserItem>.findUser(id: String): UserItem {
+        return this.find { it.id == id } ?: UserItem()
+    }
+
     private fun List<UserItem>.getUser() {
-        val user = this.find {
-            it.id == getId()
-        } ?: UserItem()
+        val user = findUser(id = getId())
         _state.update { it.copy(user = user) }
         getUserRescueRespondents()
     }
 
     private fun List<UserItem>.getUserRescueRespondents() {
-        val user = state.value.user
+        val stateUser = state.value.user
         val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
-        user.rescueRequest?.respondents?.forEachIndexed { index, respondent ->
-            this.find { usersOnMap ->
-                respondent.clientId == usersOnMap.id
-            }?.let { user ->
-                rescueRespondentsSnapShot.add(index = index, element = user.toCardModel())
-            }
+        stateUser.rescueRequest?.respondents?.forEachIndexed { index, respondent ->
+            val user = findUser(id = respondent.clientId)
+            rescueRespondentsSnapShot.add(index = index, element = user.toCardModel())
         }
         _state.update {
-            it.copy(rescueRequestRespondents = RescueRequestRespondents(
+            it.copy(
+                userRescueRequestRespondents = RescueRequestRespondents(
                     respondents = rescueRespondentsSnapShot.toSet().toList().toImmutableList()))
         }
         rescueRespondentsSnapShot.clear()
