@@ -142,14 +142,14 @@ class MappingViewModel @Inject constructor(
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
-    private fun subscribeToNearbyRescueTransaction(){
+    private fun subscribeToNearbyRescueTransaction() {
         getRescueTransactionJob?.cancel()
         getRescueTransactionJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
             runCatching {
                 mappingUseCase.getRescueTransactionUpdatesUseCase().distinctUntilChanged()
-                    .collect{
+                    .collect {
 //                    todo: filter what rescue transaction needed
-                }
+                    }
                 mappingUseCase.broadcastRescueTransactionUseCase()
             }.onFailure {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
@@ -157,7 +157,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun unSubscribeToNearbyRescueTransaction(){
+    private fun unSubscribeToNearbyRescueTransaction() {
         getRescueTransactionJob?.cancel()
     }
 
@@ -185,17 +185,31 @@ class MappingViewModel @Inject constructor(
         }
     }
 
+
+    private suspend fun String.assignTransaction(role: String, id: String?) {
+        mappingUseCase.createUserUseCase(
+            user = UserItem(
+                id = id, userAssistance = UserAssistance(needHelp = false),
+                transaction = Transaction(role = role, transactionId = this),
+                rescueRequest = RescueRequest()
+            )
+        )
+    }
+
     private fun declineRescueRequest(cardModel: CardModel) {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
-                val rescueRespondents = state.value.rescueRequestRespondents.respondents
-                val updatedState = _state.updateAndGet { it.copy(rescueRequestRespondents = RescueRequestRespondents(rescueRespondents.toMutableList().apply {
-                    remove(element = cardModel)
-                }))}
+                val rescueRespondents = state.value.userRescueRequestRespondents.respondents
+                val updatedState = _state.updateAndGet {
+                    it.copy(userRescueRequestRespondents = RescueRequestRespondents(
+                            rescueRespondents.toMutableList().apply {
+                                remove(element = cardModel)
+                            }))
+                }
                 mappingUseCase.createUserUseCase(
                     user = UserItem(
                         id = getId(),
-                        rescueRequest = RescueRequest(respondents = updatedState.rescueRequestRespondents.respondents.map { it.toRespondent() })
+                        rescueRequest = RescueRequest(respondents = updatedState.userRescueRequestRespondents.respondents.map { it.toRespondent() })
                     )
                 )
             }.onSuccess {
@@ -208,8 +222,8 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun Throwable.handleDeclineRescueRequest(){
-        when(this){
+    private suspend fun Throwable.handleDeclineRescueRequest() {
+        when (this) {
             is MappingExceptions.NetworkException -> {
                 _eventFlow.emit(MappingUiEvent.ShowToastMessage("No internet connection"))
             }
@@ -335,18 +349,18 @@ class MappingViewModel @Inject constructor(
     private fun subscribeToNearbyUsersChanges() {
         getUsersJob?.cancel()
         getUsersJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
-                runCatching {
-                    mappingUseCase.getUserUpdatesUseCase().distinctUntilChanged()
-                        .collect {
-                            it.users.getUser()
-                            it.users.getUsers()
-                            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                        }
-                    mappingUseCase.broadcastUserUseCase()
+            runCatching {
+                mappingUseCase.getUserUpdatesUseCase().distinctUntilChanged()
+                    .collect {
+                        it.users.getUser()
+                        it.users.getUsers()
+                        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                    }
+                mappingUseCase.broadcastUserUseCase()
 
-                }.onFailure {
-                    Timber.e("ERROR GETTING USERS: ${it.message}")
-                }
+            }.onFailure {
+                Timber.e("ERROR GETTING USERS: ${it.message}")
+            }
         }
     }
 
@@ -389,7 +403,8 @@ class MappingViewModel @Inject constructor(
                 user.profilePictureUrl ?: IMAGE_PLACEHOLDER_URL)
             nearbyCyclistSnapShot.add(
                 index = index,
-                element = Cyclist(user, bitmapProfile.toBitmap(
+                element = Cyclist(
+                    user, bitmapProfile.toBitmap(
                         width = CYCLIST_MAP_ICON_HEIGHT,
                         height = CYCLIST_MAP_ICON_WIDTH)))
         }
@@ -408,9 +423,9 @@ class MappingViewModel @Inject constructor(
             runCatching {
 
                 mappingUseCase.getUserLocationUseCase().collect { location ->
-                        geocoder.getAddress(location.latitude, location.longitude) { addresses ->
-                            _state.update { it.copy(userAddress = UserAddress(addresses.lastOrNull())) }
-                        }
+                    geocoder.getAddress(location.latitude, location.longitude) { addresses ->
+                        _state.update { it.copy(userAddress = UserAddress(addresses.lastOrNull())) }
+                    }
 
                     _state.update { state ->
                         state.copy(
@@ -465,15 +480,16 @@ class MappingViewModel @Inject constructor(
             runCatching {
                 val currentAddress = address.getFullAddress()
                 _state.update { it.copy(currentAddress = currentAddress, isLoading = true) }
-                mappingUseCase.createUserUseCase(user = UserItem(
-                    id = getId(),
-                    name = getName(),
-                    address = currentAddress,
-                    profilePictureUrl = getPhotoUrl(),
-                    contactNumber = getPhoneNumber(),
-                    location = Location(
-                        latitude = address.latitude,
-                        longitude = address.longitude)))
+                mappingUseCase.createUserUseCase(
+                    user = UserItem(
+                        id = getId(),
+                        name = getName(),
+                        address = currentAddress,
+                        profilePictureUrl = getPhotoUrl(),
+                        contactNumber = getPhoneNumber(),
+                        location = Location(
+                            latitude = address.latitude,
+                            longitude = address.longitude)))
                 mappingUseCase.updateAddressUseCase(currentAddress)
 
             }.onSuccess {
