@@ -15,20 +15,21 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toCardModel
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toRespondent
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.ConfirmationDetail
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Location
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.RescueRequest
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserAssistance
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.Status
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
 import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransactionItem
+import com.example.cyclistance.feature_mapping_screen.domain.model.Role
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.farhanroy.composeawesomedialog.R
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import okhttp3.internal.toImmutableList
@@ -149,12 +150,13 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getRescueTransactionUpdatesUseCase().distinctUntilChanged()
                     .collect {
 //                    todo: filter what rescue transaction needed
+                        Timber.v("COLLECTING RESCUE TRANSACTIONS")
                     }
-                mappingUseCase.broadcastRescueTransactionUseCase()
             }.onFailure {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
             }
         }
+        mappingUseCase.broadcastRescueTransactionUseCase()
     }
 
     private fun unSubscribeToNearbyRescueTransaction() {
@@ -165,17 +167,51 @@ class MappingViewModel @Inject constructor(
         getUsersJob?.cancel()
     }
 
-    private fun acceptRescueRequest(cardModel: CardModel){
-        viewModelScope.launch {
+    private fun acceptRescueRequest(cardModel: CardModel) {
+        viewModelScope.launch(Dispatchers.IO) {
+
+            val user = state.value.user
+            val userHasCurrentTransaction = (user.transaction ?: Transaction()).transactionId.isNotEmpty()
+
+            val rescuer = state.value.nearbyCyclists.findUser(cardModel.id!!)
+            val rescuerHasCurrentTransaction = (rescuer.transaction ?: Transaction()).transactionId.isNotEmpty()
+
+            val transactionId = user.id + rescuer.id + System.currentTimeMillis().toString().takeLast(5)
+
+            if (userHasCurrentTransaction) {
+                cannotRequestRescuee()
+                return@launch
+            }
+
+            if (rescuerHasCurrentTransaction) {
+                cannotRequestRescuer()
+                return@launch
+            }
+
             runCatching {
-             mappingUseCase.getUserByIdUseCase(id = cardModel.id!!)
-            }.onSuccess { user ->
-                val transactionId = user.transaction?.transactionId
-                if(transactionId.isNullOrEmpty()){
-                    Timber.v("Transaction id is null or empty")
-                    return@onSuccess
+
+                mappingUseCase.createRescueTransactionUseCase(
+                    rescueTransaction = RescueTransactionItem(
+                        id = transactionId,
+                        rescuerId = rescuer.id,
+                        rescueeId = user.id,
+                        status = Status(started = true, ongoing = true)))
+
+            }.onSuccess {
+
+                Timber.v("ACCEPT_RESCUE_REQUEST RESCUE REQUEST: Created Rescue Transaction")
+                mappingUseCase.broadcastRescueTransactionUseCase()
+                runCatching {
+
+                    transactionId.assignTransaction(role = Role.RESCUEE.name.lowercase(), id = user.id)
+                    transactionId.assignTransaction(role = Role.RESCUER.name.lowercase(), id = rescuer.id)
+
+                }.onSuccess {
+                    Timber.v("ACCEPT_RESCUE_REQUEST ASSIGN TRANSACTION TO BOTH USERS: Transaction Assigned")
+                    mappingUseCase.broadcastUserUseCase()
+                }.onFailure {
+                    it.handleException()
                 }
-                Timber.v("Transaction is on process.")
 
 
             }.onFailure {
@@ -185,6 +221,20 @@ class MappingViewModel @Inject constructor(
         }
     }
 
+    private fun cannotRequestRescuee(){
+        _state.update { it.copy(alertDialogModel = AlertDialogModel(
+            title = "Cannot Request",
+            description = "You can only have one transaction at a time",
+            icon = R.raw.error
+        )) }
+    }
+ private fun cannotRequestRescuer(){
+        _state.update { it.copy(alertDialogModel = AlertDialogModel(
+            title = "Cannot Request",
+            description = "The rescuer is currently in a transaction",
+            icon = R.raw.error
+        )) }
+    }
 
     private suspend fun String.assignTransaction(role: String, id: String?) {
         mappingUseCase.createUserUseCase(
@@ -349,12 +399,11 @@ class MappingViewModel @Inject constructor(
                         it.users.getUsers()
                         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                     }
-                mappingUseCase.broadcastUserUseCase()
-
             }.onFailure {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
             }
         }
+        mappingUseCase.broadcastUserUseCase()
     }
 
     private fun NearbyCyclists.findUser(id: String): UserItem {
