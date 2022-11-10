@@ -16,5 +16,6 @@ sealed class EditProfileEvent {
     data class SelectImageUri(val uri: Uri?): EditProfileEvent()
     data class SelectBitmapPicture(val bitmap: Bitmap?): EditProfileEvent()
     object SaveImageToGallery: EditProfileEvent()
+    object OnClickGalleryButton : EditProfileEvent()
 
 }

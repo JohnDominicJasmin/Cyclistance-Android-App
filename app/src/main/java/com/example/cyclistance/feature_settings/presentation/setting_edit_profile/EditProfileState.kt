@@ -1,9 +1,9 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
 
 import android.graphics.Bitmap
+import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -23,5 +23,6 @@ data class EditProfileState(
     val nameErrorMessage: String = "",
     val phoneNumberErrorMessage: String = "",
     val isLoading: Boolean = false,
+    val galleryButtonClick: Boolean = false,
     val imageBitmap: ImageBitmap = ImageBitmap()
     ):Parcelable

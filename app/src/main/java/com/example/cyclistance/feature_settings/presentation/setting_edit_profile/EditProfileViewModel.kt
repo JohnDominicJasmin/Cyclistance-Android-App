@@ -39,6 +39,10 @@ class EditProfileViewModel @Inject constructor(
             is EditProfileEvent.Save -> {
                 updateUserProfile()
             }
+            is EditProfileEvent.OnClickGalleryButton -> {
+                _state.update { it.copy(galleryButtonClick = !state.value.galleryButtonClick) }
+            }
+
             is EditProfileEvent.EnterPhoneNumber -> {
                 _state.update { it.copy(phoneNumber = event.phoneNumber, phoneNumberErrorMessage = "") }
 
