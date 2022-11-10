@@ -47,19 +47,25 @@ fun RescueRequestScreen(paddingValues: PaddingValues, mappingViewModel: MappingV
         }
     }
 
+    val onClickCancelButton = remember {{ cardModel: CardModel ->
+        mappingViewModel.onEvent(MappingEvent.DeclineRescueRequest(cardModel))
+    }}
+
+    val onClickConfirmButton = remember{{ cardModel: CardModel ->
+        mappingViewModel.onEvent(MappingEvent.AcceptRescueRequest(cardModel))
+    }}
+
+    val onDismissAlertDialog = remember{{
+        mappingViewModel.onEvent(MappingEvent.DismissAlertDialog)
+    }}
+
     RescueRequestScreen(
         modifier = Modifier
             .padding(paddingValues = paddingValues),
         mappingState = mappingState,
-        onClickCancelButton = {
-            mappingViewModel.onEvent(MappingEvent.DeclineRescueRequest(it))
-        },
-        onClickConfirmButton = {
-            mappingViewModel.onEvent(MappingEvent.AcceptRescueRequest(it))
-        },
-        onDismissAlertDialog = {
-            mappingViewModel.onEvent(MappingEvent.DismissAlertDialog)
-        }
+        onClickCancelButton = onClickCancelButton,
+        onClickConfirmButton = onClickConfirmButton,
+        onDismissAlertDialog = onDismissAlertDialog
     )
 }
 

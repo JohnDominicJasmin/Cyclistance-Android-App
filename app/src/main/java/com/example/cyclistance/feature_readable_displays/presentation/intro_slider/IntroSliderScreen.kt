@@ -36,38 +36,48 @@ fun IntroSliderScreen(
 
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
+    val navigationDestinationChange = remember(introSliderState.navigationStartingDestination,){
+            introSliderState.navigationStartingDestination != Screens.IntroSliderScreen.route
+    }
 
-    if(introSliderState.navigationStartingDestination != Screens.IntroSliderScreen.route){
+    if(navigationDestinationChange){
         LaunchedEffect(key1 = true){
             navController.navigateScreenInclusively(introSliderState.navigationStartingDestination, Screens.IntroSliderScreen.route)
         }
         return
     }
 
-    IntroSlider(modifier = Modifier
-        .fillMaxSize()
-        .padding(paddingValues),
-        pagerState = pagerState,
-        onClickSkipButton = {
+    val onClickSkipButton = remember{
+        {
             introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
             navController.navigateScreenInclusively(
                 Screens.SignInScreen.route,
                 Screens.IntroSliderScreen.route)
-        },
-        onClickNextButton = {
-            if (pagerState.currentPage != 2) {
-                scope.launch {
-                    pagerState.animateScrollToPage(
-                        page = pagerState.currentPage + 1
-                    )
-                }
-            } else {
-                introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
-                navController.navigateScreenInclusively(
-                    Screens.SignInScreen.route,
-                    Screens.IntroSliderScreen.route)
+        }
+    }
+    val onClickNextButton = remember(pagerState.currentPage){{
+        if (pagerState.currentPage != 2) {
+            scope.launch {
+                pagerState.animateScrollToPage(
+                    page = pagerState.currentPage + 1
+                )
             }
-        })
+        } else {
+            introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
+            navController.navigateScreenInclusively(
+                Screens.SignInScreen.route,
+                Screens.IntroSliderScreen.route)
+        }
+        Unit
+    }}
+
+
+    IntroSlider(modifier = Modifier
+        .fillMaxSize()
+        .padding(paddingValues),
+        pagerState = pagerState,
+        onClickSkipButton = onClickSkipButton,
+        onClickNextButton = onClickNextButton)
 
 }
 
@@ -106,7 +116,9 @@ private fun IntroSlider(
 
             IntroSliderItem(pagerState = pagerState)
 
-            val isOnLastPage = pagerState.currentPage == 2
+            val isOnLastPage = remember(pagerState.currentPage){
+                pagerState.currentPage == 2
+            }
 
             IntroSliderButtons(
                 text = if (isOnLastPage) "Let's get Started!" else "Next",

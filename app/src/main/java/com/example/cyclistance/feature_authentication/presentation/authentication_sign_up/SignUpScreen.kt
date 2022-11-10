@@ -26,6 +26,7 @@ import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.*
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
+import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
@@ -44,13 +45,49 @@ fun SignUpScreen(
 
     val context = LocalContext.current
 
-    val signUpAccount = {
-        val isUserCreatedNewAccount = signUpState.email != signUpState.savedAccountEmail
-        if (signUpState.hasAccountSignedIn && isUserCreatedNewAccount) {
-            signUpViewModel.onEvent(SignUpEvent.SignOut)
+    val signUpAccount = remember(key1 = signUpState.email, key2 = signUpState.email, key3 = signUpState.hasAccountSignedIn) {
+        {
+            val isUserCreatedNewAccount = signUpState.email != signUpState.savedAccountEmail
+            if (signUpState.hasAccountSignedIn && isUserCreatedNewAccount) {
+                signUpViewModel.onEvent(SignUpEvent.SignOut)
+            }
+            signUpViewModel.onEvent(SignUpEvent.SignUp)
         }
-        signUpViewModel.onEvent(SignUpEvent.SignUp)
     }
+
+    val onDismissAlertDialog = remember{{
+        signUpViewModel.onEvent(SignUpEvent.DismissAlertDialog)
+    }}
+
+    val onDoneKeyboardAction = remember<KeyboardActionScope.() -> Unit> {{
+        signUpAccount()
+        focusManager.clearFocus()
+    }}
+    val onValueChangeEmail = remember{{ email:String ->
+        signUpViewModel.onEvent(SignUpEvent.EnterEmail(email))
+    }}
+    val onValueChangePassword = remember{{password: String ->
+        signUpViewModel.onEvent(SignUpEvent.EnterPassword(password))
+    }}
+    val onValueChangeConfirmPassword = remember { { confirmPassword: String ->
+        signUpViewModel.onEvent(SignUpEvent.EnterConfirmPassword(confirmPassword))
+    }}
+    val onClickPasswordVisibility = remember{{
+        signUpViewModel.onEvent(SignUpEvent.TogglePasswordVisibility)
+    }}
+    val onClickSignUpButton = remember{{
+        signUpAccount()
+    }}
+    val onClickSignUpText = remember{{
+        navController.navigateScreenInclusively(
+            Screens.SignInScreen.route,
+            Screens.SignUpScreen.route)
+    }}
+    val onClickRetryButton = remember{{
+        if (context.hasInternetConnection()) {
+            signUpViewModel.onEvent(event = SignUpEvent.DismissNoInternetScreen)
+        }
+    }}
 
 
     LaunchedEffect(key1 = true) {
@@ -78,40 +115,15 @@ fun SignUpScreen(
         modifier = Modifier.padding(paddingValues),
         focusRequester = focusRequester,
         signUpState = signUpState,
-        onDismissAlertDialog = {
-            signUpViewModel.onEvent(SignUpEvent.DismissAlertDialog)
-        },
-        keyboardActionOnDone = {
-            signUpAccount()
-            focusManager.clearFocus()
-        },
-        onValueChangeEmail = { email ->
-            signUpViewModel.onEvent(SignUpEvent.EnterEmail(email))
-        },
-        onValueChangePassword = { password ->
-            signUpViewModel.onEvent(SignUpEvent.EnterPassword(password))
-        },
-        onValueChangeConfirmPassword = { confirmPassword ->
-            signUpViewModel.onEvent(SignUpEvent.EnterConfirmPassword(confirmPassword))
-        },
-        onClickPasswordVisibility = {
-            signUpViewModel.onEvent(SignUpEvent.TogglePasswordVisibility)
-        },
-        onClickSignUpButton = {
-            signUpAccount()
-        },
-        onClickSignUpText = {
-            navController.navigateScreenInclusively(
-                Screens.SignInScreen.route,
-                Screens.SignUpScreen.route)
-        },
-        onClickRetryButton = {
-            if (context.hasInternetConnection()) {
-                signUpViewModel.onEvent(event = SignUpEvent.DismissNoInternetScreen)
-            }
-        }
-
-
+        onDismissAlertDialog = onDismissAlertDialog,
+        keyboardActionOnDone = onDoneKeyboardAction,
+        onValueChangeEmail = onValueChangeEmail,
+        onValueChangePassword = onValueChangePassword,
+        onValueChangeConfirmPassword = onValueChangeConfirmPassword,
+        onClickPasswordVisibility = onClickPasswordVisibility,
+        onClickSignUpButton = onClickSignUpButton,
+        onClickSignUpText = onClickSignUpText,
+        onClickRetryButton = onClickRetryButton
     )
 }
 
@@ -170,7 +182,9 @@ fun SignUpScreen(
             topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
             bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId)
 
-        if (signUpState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
+
+
+        if (signUpState.alertDialogModel.visible()) {
             AlertDialog(
                 alertDialog = signUpState.alertDialogModel,
                 onDismissRequest = onDismissAlertDialog)

@@ -1,9 +1,11 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details
 
 import android.widget.Toast
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -18,8 +20,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants.SEARCH_BOTTOM_SHEET
+import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_mapping_screen.presentation.common.AdditionalMessage
 import com.example.cyclistance.feature_mapping_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details.components.AddressTextField
@@ -28,7 +30,8 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confi
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
-import com.example.cyclistance.theme.*
+import com.example.cyclistance.theme.Black440
+import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -57,41 +60,42 @@ fun ConfirmDetailsScreen(
         }
     }
 
-    CoinDetailScreen(modifier = Modifier.padding(paddingValues), state = state,
 
-        onValueChangeAddress = { address ->
-            viewModel.onEvent(event = ConfirmDetailsEvent.EnterAddress(address))
-        },
-        onValueChangeMessage = { message ->
-            viewModel.onEvent(event = ConfirmDetailsEvent.EnterMessage(message))
-        },
-        onClickBikeType = { bikeType ->
-            viewModel.onEvent(event = ConfirmDetailsEvent.SelectBikeType(bikeType))
-        },
-        onClickDescriptionButton = { description ->
-            viewModel.onEvent(event = ConfirmDetailsEvent.SelectDescription(description))
-        },
-        onClickCancelButton = {
+    val onValueChangeAddress = remember {{ address: String ->
+        viewModel.onEvent(event = ConfirmDetailsEvent.EnterAddress(address))
+    }}
+    val onValueChangeMessage = remember {{ message: String ->
+        viewModel.onEvent(event = ConfirmDetailsEvent.EnterMessage(message))
+    }}
+    val onClickBikeType = remember {{ bikeType: String ->
+        viewModel.onEvent(event = ConfirmDetailsEvent.SelectBikeType(bikeType))
+    }}
+    val onClickDescriptionButton = remember {{ description: String ->
+        viewModel.onEvent(event = ConfirmDetailsEvent.SelectDescription(description))
+    }}
+    val onClickCancelButton = remember {{
             navController.popBackStack()
-        },
-        onClickConfirmButton = {
+            Unit
+    }}
+    val onClickConfirmButton = remember {{
             viewModel.onEvent(event = ConfirmDetailsEvent.ConfirmUpdate)
-        },
-        onClickRetryButton = {
+    }}
+    val onClickRetryButton = remember {{
             if (context.hasInternetConnection()) {
                 viewModel.onEvent(event = ConfirmDetailsEvent.DismissNoInternetScreen)
             }
-        })
+    }}
+
+    CoinDetailScreen(modifier = Modifier.padding(paddingValues),
+        state = state,
+        onValueChangeAddress = onValueChangeAddress,
+        onValueChangeMessage = onValueChangeMessage,
+        onClickBikeType = onClickBikeType,
+        onClickDescriptionButton = onClickDescriptionButton,
+        onClickConfirmButton = onClickConfirmButton,
+        onClickCancelButton = onClickCancelButton,
+        onClickRetryButton = onClickRetryButton)
 }
-
-
-
-
-
-
-
-
-
 
 
 @Preview
@@ -101,13 +105,6 @@ fun CoinDetailScreenPreview() {
         CoinDetailScreen(modifier = Modifier, state = ConfirmDetailsState())
     }
 }
-
-
-
-
-
-
-
 
 
 @Composable
@@ -184,7 +181,7 @@ fun CoinDetailScreen(
                 errorMessage = state.descriptionErrorMessage,
                 onClickButton = onClickDescriptionButton,
                 state = state,
-                )
+            )
 
             AdditionalMessage(
                 modifier = Modifier
@@ -224,8 +221,8 @@ fun CoinDetailScreen(
                     },
                 onClickCancelButton = onClickCancelButton,
                 onClickConfirmButton = onClickConfirmButton,
-            negativeButtonEnabled = !state.isLoading,
-            positiveButtonEnabled = !state.isLoading)
+                negativeButtonEnabled = !state.isLoading,
+                positiveButtonEnabled = !state.isLoading)
 
 
             if (state.isLoading) {

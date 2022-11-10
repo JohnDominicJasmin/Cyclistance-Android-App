@@ -27,6 +27,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthVerifyEmailButton
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.emailAuthConstraints
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
@@ -53,6 +54,33 @@ fun EmailAuthScreen(
         }
     }
 
+    val onDismissAlertDialog = remember{{
+        emailAuthViewModel.onEvent(EmailAuthEvent.DismissAlertDialog)
+    }}
+
+    val onClickVerifyButton = remember {{
+        runCatching {
+            startActivity(context, intent, null)
+        }.onFailure {
+            Toast.makeText(context, "No email app detected.", Toast.LENGTH_LONG).show()
+        }
+        Unit
+    }}
+
+    val onClickResendButton = remember {{
+        emailAuthViewModel.apply {
+            onEvent(EmailAuthEvent.ResendButtonClick)
+            onEvent(EmailAuthEvent.StartTimer)
+            onEvent(EmailAuthEvent.SendEmailVerification)
+        }
+        Unit
+    }}
+
+    val onClickRetryButton = remember {{
+        if (context.hasInternetConnection()) {
+            emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
+        }
+    }}
 
 
 
@@ -90,28 +118,10 @@ fun EmailAuthScreen(
         modifier = Modifier.padding(paddingValues),
         emailAuthState = emailAuthState,
         isDarkTheme = isDarkTheme,
-        onDismissAlertDialog = {
-            emailAuthViewModel.onEvent(EmailAuthEvent.DismissAlertDialog)
-        },
-        onClickVerifyButton = {
-            runCatching {
-                startActivity(context, intent, null)
-            }.onFailure {
-                Toast.makeText(context, "No email app detected.", Toast.LENGTH_LONG).show()
-            }
-        },
-        onClickResendButton = {
-            emailAuthViewModel.apply {
-                onEvent(EmailAuthEvent.ResendButtonClick)
-                onEvent(EmailAuthEvent.StartTimer)
-                onEvent(EmailAuthEvent.SendEmailVerification)
-            }
-        },
-        onClickRetryButton = {
-            if (context.hasInternetConnection()) {
-                emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
-            }
-        })
+        onDismissAlertDialog = onDismissAlertDialog,
+        onClickVerifyButton = onClickVerifyButton,
+        onClickResendButton = onClickResendButton,
+        onClickRetryButton = onClickRetryButton)
 
 }
 
@@ -166,7 +176,8 @@ fun EmailAuthScreen(
 
             EmailAuthTextStatus(email = emailAuthState.savedAccountEmail)
 
-            if (emailAuthState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
+
+            if (emailAuthState.alertDialogModel.visible()) {
                 AlertDialog(
                     alertDialog = emailAuthState.alertDialogModel,
                     onDismissRequest = onDismissAlertDialog

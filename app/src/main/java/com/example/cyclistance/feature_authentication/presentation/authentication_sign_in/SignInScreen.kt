@@ -36,6 +36,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.*
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
+import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
@@ -66,11 +67,7 @@ fun SignInScreen(
             val account: GoogleSignInAccount? = task?.getResult(ApiException::class.java)
             account?.let {
                 scope.launch {
-                    signInViewModel.onEvent(
-                        event = SignInEvent.SignInGoogle(
-                            authCredential = GoogleAuthProvider.getCredential(
-                                account.idToken,
-                                null)))
+                    signInViewModel.onEvent(event = SignInEvent.SignInGoogle( authCredential = GoogleAuthProvider.getCredential(account.idToken, null)))
                 }
             }
         } catch (e: ApiException) {
@@ -133,48 +130,61 @@ fun SignInScreen(
     }
 
 
+    val onDismissAlertDialog = remember{{
+        signInViewModel.onEvent(SignInEvent.DismissAlertDialog)
+    }}
+    val onDoneKeyboardAction = remember<KeyboardActionScope.() -> Unit>{{
+        signInViewModel.onEvent(SignInEvent.SignInDefault)
+        focusManager.clearFocus()
+    }}
+    val onValueChangeEmail = remember<(String) -> Unit>{{
+        signInViewModel.onEvent(event = SignInEvent.EnterEmail(it))
+    }}
+    val onValueChangePassword = remember<(String) -> Unit>{{
+        signInViewModel.onEvent(event = SignInEvent.EnterPassword(it))
+    }}
+    val onClickPasswordVisibility = remember {{
+        signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility)
+    }}
+    val onClickFacebookButton = remember {{
+        signInViewModel.onEvent(SignInEvent.SignInFacebook(activity = context.findActivity()))
+    }}
+    val onClickGoogleButton = remember{{
+        scope.launch {
+            authResultLauncher.launch(GOOGLE_SIGN_IN_REQUEST_CODE)
+        }
+        Unit
+    }}
+    val onClickSignInButton = remember{{
+        signInViewModel.onEvent(SignInEvent.SignInDefault)
+    }}
+    val onClickSignInText = remember {{
+        navController.navigateScreen(Screens.SignUpScreen.route, Screens.SignInScreen.route)
+    } }
+    val onClickRetryButton = remember{{
+        if (context.hasInternetConnection()) {
+            emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
+            signInViewModel.onEvent(event = SignInEvent.DismissNoInternetScreen)
+        }
+    }}
+
+
 
     SignInScreen(
         modifier = Modifier.padding(paddingValues),
         signInState = signInState,
         emailAuthState = emailAuthState,
         focusRequester = focusRequester,
-        onDismissAlertDialog = {
-            signInViewModel.onEvent(SignInEvent.DismissAlertDialog)
-        },
-        keyboardActionOnDone = {
-            signInViewModel.onEvent(SignInEvent.SignInDefault)
-            focusManager.clearFocus()
-        },
-        onValueChangeEmail = {
-            signInViewModel.onEvent(event = SignInEvent.EnterEmail(it))
-        },
-        onValueChangePassword = {
-            signInViewModel.onEvent(event = SignInEvent.EnterPassword(it))
-        },
-        onClickPasswordVisibility = {
-            signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility)
-        },
-        onClickFacebookButton = {
-            signInViewModel.onEvent(SignInEvent.SignInFacebook(activity = context.findActivity()))
-        },
-        onClickGoogleButton = {
-            scope.launch {
-                authResultLauncher.launch(GOOGLE_SIGN_IN_REQUEST_CODE)
-            }
-        },
-        onClickSignInButton = {
-            signInViewModel.onEvent(SignInEvent.SignInDefault)
-        },
-        onClickSignInText = {
-            navController.navigateScreen(Screens.SignUpScreen.route, Screens.SignInScreen.route)
-        },
-        onClickRetryButton = {
-            if (context.hasInternetConnection()) {
-                emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
-                signInViewModel.onEvent(event = SignInEvent.DismissNoInternetScreen)
-            }
-        })
+        onDismissAlertDialog = onDismissAlertDialog,
+        keyboardActionOnDone = onDoneKeyboardAction,
+        onValueChangeEmail = onValueChangeEmail,
+        onValueChangePassword = onValueChangePassword,
+        onClickPasswordVisibility = onClickPasswordVisibility,
+        onClickFacebookButton = onClickFacebookButton,
+        onClickGoogleButton = onClickGoogleButton,
+        onClickSignInButton = onClickSignInButton,
+        onClickSignInText = onClickSignInText,
+        onClickRetryButton = onClickRetryButton)
 }
 
 @Preview
@@ -227,7 +237,7 @@ fun SignInScreen(
 
         SignUpTextArea()
 
-        if (signInState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }) {
+        if (signInState.alertDialogModel.visible()) {
             AlertDialog(
                 alertDialog = signInState.alertDialogModel,
                 onDismissRequest = onDismissAlertDialog)
@@ -246,25 +256,32 @@ fun SignInScreen(
             onValueChangePassword = onValueChangePassword,
             onClickPasswordVisibility = onClickPasswordVisibility
         )
-        val isEnabled = !(signInState.isLoading || emailAuthState.isLoading)
+
+        val isLoading = remember(signInState.isLoading, emailAuthState.isLoading) {
+            (signInState.isLoading || emailAuthState.isLoading)
+        }
+
+        val hasInternet = remember(emailAuthState.hasInternet, signInState.hasInternet){
+            emailAuthState.hasInternet || signInState.hasInternet
+        }
 
         SignInGoogleAndFacebookSection(
             onClickFacebookButton = onClickFacebookButton,
             onClickGoogleButton = onClickGoogleButton,
-            enabled = isEnabled
+            enabled = !isLoading
         )
 
-        SignInButton(onClickSignInButton = onClickSignInButton, enabled = isEnabled )
+        SignInButton(onClickSignInButton = onClickSignInButton, enabled = !isLoading )
 
+        SignInClickableText(onClickSignInText = onClickSignInText, enabled = !isLoading)
 
-        SignInClickableText(onClickSignInText = onClickSignInText, enabled = isEnabled)
-
-        if (signInState.isLoading || emailAuthState.isLoading) {
+        if (isLoading) {
             CircularProgressIndicator(
                 modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
             )
         }
-        if (!emailAuthState.hasInternet || !signInState.hasInternet) {
+
+        if (!hasInternet) {
             NoInternetScreen(
                 modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
                 onClickRetryButton = onClickRetryButton)

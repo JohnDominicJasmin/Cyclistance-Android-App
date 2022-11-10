@@ -9,7 +9,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingEvent
@@ -42,7 +41,8 @@ fun MainScreen(
     val navController = rememberNavController()
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
+    val scaffoldState =
+        rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
     val editProfileState by editProfileViewModel.state.collectAsState()
     val mappingState by mappingViewModel.state.collectAsState()
@@ -62,7 +62,52 @@ fun MainScreen(
         }
     }
 
+    val onClickSaveProfile = remember(scaffoldState.drawerState){{
+        editProfileViewModel.onEvent(EditProfileEvent.Save)
+    }}
+    val onClickSettings = remember{{
+        coroutineScope.launch {
+            scaffoldState.drawerState.close()
+        }
+        navController.navigateScreen(
+            Screens.SettingScreen.route,
+            Screens.MappingScreen.route)
+    }}
+    val onClickRescueRequest = remember(scaffoldState.drawerState){{
+        coroutineScope.launch {
+            scaffoldState.drawerState.close()
+        }
+        navController.navigateScreen(
+            Screens.RescueRequestScreen.route,
+            Screens.MappingScreen.route)
+    }}
+    val onClickChat = remember{{
+        coroutineScope.launch {
+            scaffoldState.drawerState.close()
+        }
+        Intent(ACTION_MAIN).apply {
+            flags =
+                Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS or Intent.FLAG_ACTIVITY_NEW_TASK
+            addCategory(Intent.CATEGORY_APP_MESSAGING)
+        }.also {
+            context.startActivity(it)
+        }
+        Unit
+    }}
+    val onClickSignOut = remember{{
+        coroutineScope.launch {
+            scaffoldState.drawerState.close()
+        }
+        mappingViewModel.onEvent(event = MappingEvent.SignOut)
 
+    }}
+    val onToggleTheme = remember{{
+        settingViewModel.onEvent(event = SettingEvent.ToggleTheme)
+    }}
+    val onClickTopBarIcon = remember{{
+        navController.popBackStack()
+        Unit
+    }}
 
     CyclistanceTheme(darkTheme = settingState.isDarkTheme) {
 
@@ -71,53 +116,20 @@ fun MainScreen(
             scaffoldState = scaffoldState,
             topBar = {
                 TopAppBar(
-                    navController = navController,
                     scaffoldState = scaffoldState,
                     route = navBackStackEntry?.destination?.route,
                     coroutineScope = coroutineScope,
-                    onClickSaveProfile = {
-                        editProfileViewModel.onEvent(EditProfileEvent.Save)
-                    },
-                editProfileSaveButtonEnabled = editProfileState.isUserInformationChanges())
+                    onClickSaveProfile = onClickSaveProfile,
+                    editProfileSaveButtonEnabled = editProfileState.isUserInformationChanges(),
+                    onClickTopBarIcon = onClickTopBarIcon)
             },
             drawerContent = {
                 MappingDrawerContent(
                     state = mappingState,
-                    onClickSettings = {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                        }
-                        navController.navigateScreen(
-                            Screens.SettingScreen.route,
-                            Screens.MappingScreen.route)
-                    },
-                    onClickRescueRequest = {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                        }
-                        navController.navigateScreen(
-                            Screens.RescueRequestScreen.route,
-                            Screens.MappingScreen.route)
-                    },
-                    onClickChat = {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                        }
-                        Intent(ACTION_MAIN).apply {
-                            flags = Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS or Intent.FLAG_ACTIVITY_NEW_TASK
-                            addCategory(Intent.CATEGORY_APP_MESSAGING)
-                        }.also {
-                            context.startActivity(it)
-                        }
-
-                    },
-                    onClickSignOut = {
-                        coroutineScope.launch {
-                            scaffoldState.drawerState.close()
-                        }
-                        mappingViewModel.onEvent(event = MappingEvent.SignOut)
-
-                    }
+                    onClickSettings = onClickSettings,
+                    onClickRescueRequest = onClickRescueRequest,
+                    onClickChat = onClickChat,
+                    onClickSignOut = onClickSignOut
                 )
             },
         ) { paddingValues ->
@@ -128,9 +140,7 @@ fun MainScreen(
                 editProfileViewModel = editProfileViewModel,
                 mappingViewModel = mappingViewModel,
                 scaffoldState = scaffoldState,
-                onToggleTheme = {
-                    settingViewModel.onEvent(event = SettingEvent.ToggleTheme)
-                }
+                onToggleTheme = onToggleTheme
             )
         }
     }
@@ -139,7 +149,7 @@ fun MainScreen(
 
 @Composable
 fun TopAppBar(
-    navController: NavController,
+    onClickTopBarIcon: () -> Unit,
     scaffoldState: ScaffoldState,
     coroutineScope: CoroutineScope,
     onClickSaveProfile: () -> Unit,
@@ -158,42 +168,44 @@ fun TopAppBar(
         }
 
         Screens.CancellationScreen.route -> {
-            TopAppBarCreator(icon = Icons.Default.ArrowBack, onClickIcon = {
-                navController.popBackStack()
-            }, topAppBarTitle = {
-                TitleTopAppBar(title = "Cancellation Reason")
-            })
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickTopBarIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Cancellation Reason")
+                })
         }
 
         Screens.ConfirmDetailsScreen.route -> {
-            TopAppBarCreator(icon = Icons.Default.ArrowBack, onClickIcon = {
-                navController.popBackStack()
-            }, topAppBarTitle = {
-                TitleTopAppBar(
-                    title = "Confirmation Details")
-            })
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickTopBarIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(
+                        title = "Confirmation Details")
+                })
         }
 
 
         Screens.RescueRequestScreen.route -> {
-            TopAppBarCreator(icon = Icons.Default.ArrowBack, onClickIcon = {
-                navController.popBackStack()
-            }, topAppBarTitle = {
-                TitleTopAppBar(title = "Rescue Requests")
-            })
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickTopBarIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Rescue Requests")
+                })
         }
         Screens.ChangePasswordScreen.route -> {
-            TopAppBarCreator(icon = Icons.Default.ArrowBack, onClickIcon = {
-                navController.popBackStack()
-            }, topAppBarTitle = {
-                TitleTopAppBar(title = "Change Password")
-            })
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickTopBarIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Change Password")
+                })
         }
         Screens.EditProfileScreen.route -> {
             TopAppBarCreator(
-                icon = Icons.Default.Close, onClickIcon = {
-                    navController.popBackStack()
-                }, topAppBarTitle = {
+                icon = Icons.Default.Close, onClickIcon = onClickTopBarIcon, topAppBarTitle = {
                     TitleTopAppBar(
                         title = "Edit Profile",
                         confirmationText = "Save",
@@ -202,11 +214,12 @@ fun TopAppBar(
                 })
         }
         Screens.SettingScreen.route -> {
-            TopAppBarCreator(icon = Icons.Default.ArrowBack, onClickIcon = {
-                navController.popBackStack()
-            }, topAppBarTitle = {
-                TitleTopAppBar(title = "Setting Screen")
-            })
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickTopBarIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Setting Screen")
+                })
         }
 
 

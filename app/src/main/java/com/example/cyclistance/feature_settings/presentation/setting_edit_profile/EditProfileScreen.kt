@@ -19,7 +19,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -55,7 +54,6 @@ fun EditProfileScreen(
 ) {
 
     val state by editProfileViewModel.state.collectAsState()
-    val (isGalleryButtonClick, onClickGalleryButton) = rememberSaveable { mutableStateOf(false) }
 
 
     val context = LocalContext.current
@@ -99,7 +97,7 @@ fun EditProfileScreen(
             permissions = listOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)) { permissionGranted ->
-            if (isGalleryButtonClick && permissionGranted.values.all { it }) {
+            if (state.galleryButtonClick && permissionGranted.values.all { it }) {
                 openGalleryResultLauncher.launch("image/*")
             }
         }
@@ -141,54 +139,55 @@ fun EditProfileScreen(
     }
 
 
+    val onClickGalleryButton = remember{{
+        editProfileViewModel.onEvent(event = EditProfileEvent.OnClickGalleryButton)
+        accessStoragePermissionState.requestPermission(
+            context = context,
+            rationalMessage = "Storage permission is not yet granted.") {
+            openGalleryResultLauncher.launch("image/*")
+        }
+
+    }}
+
+    val onClickCameraButton = remember{{
+        openCameraPermissionState.requestPermission(
+            context = context,
+            rationalMessage = "Camera permission is not yet granted.") {
+            openCameraResultLauncher.launch()
+        }
+    }}
+    val onValueChangeName = remember{{ name: String ->
+        editProfileViewModel.onEvent(
+            event = EditProfileEvent.EnterName(name = name))
+    }}
+    val onValueChangePhoneNumber = remember{{ phoneNumber: String ->
+        editProfileViewModel.onEvent(
+            event = EditProfileEvent.EnterPhoneNumber(phoneNumber = phoneNumber))
+    }}
+    val keyboardActions = remember{ KeyboardActions(onDone = {
+        editProfileViewModel.onEvent(event = EditProfileEvent.Save)
+    })}
+    val onClickCancelButton = remember {{
+        navController.popBackStack()
+        Unit
+    }}
+    val onClickConfirmButton = remember {{
+        editProfileViewModel.onEvent(event = EditProfileEvent.Save)
+    }}
 
     EditProfileScreen(
         modifier = Modifier
             .padding(paddingValues),
         photoUrl = state.imageBitmap.bitmap?.asImageBitmap() ?: state.photoUrl,
 
-        onClickGalleryButton = {
-
-            onClickGalleryButton(!isGalleryButtonClick)
-
-            accessStoragePermissionState.requestPermission(
-                context = context,
-                rationalMessage = "Storage permission is not yet granted.") {
-                openGalleryResultLauncher.launch("image/*")
-            }
-
-
-        },
-
-        onClickCameraButton = {
-
-            openCameraPermissionState.requestPermission(
-                context = context,
-                rationalMessage = "Camera permission is not yet granted.") {
-                openCameraResultLauncher.launch()
-            }
-
-        },
+        onClickGalleryButton = onClickGalleryButton,
+        onClickCameraButton = onClickCameraButton,
         state = state,
-        onValueChangeName = { name ->
-            editProfileViewModel.onEvent(
-                event = EditProfileEvent.EnterName(name = name))
-
-        },
-        onValueChangePhoneNumber = { phoneNumber ->
-            editProfileViewModel.onEvent(
-                event = EditProfileEvent.EnterPhoneNumber(phoneNumber = phoneNumber))
-
-        },
-        keyboardActions = KeyboardActions(onDone = {
-            editProfileViewModel.onEvent(event = EditProfileEvent.Save)
-        }),
-        onClickCancelButton = {
-            navController.popBackStack()
-        },
-        onClickConfirmButton = {
-            editProfileViewModel.onEvent(event = EditProfileEvent.Save)
-        })
+        onValueChangeName = onValueChangeName,
+        onValueChangePhoneNumber = onValueChangePhoneNumber,
+        keyboardActions = keyboardActions,
+        onClickCancelButton = onClickCancelButton,
+        onClickConfirmButton = onClickConfirmButton)
 
 }
 
@@ -222,7 +221,7 @@ fun EditProfileScreen(
 
     val scope = rememberCoroutineScope()
     val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-    val toggleBottomSheet = {
+    val toggleBottomSheet = remember(bottomSheetScaffoldState, state.isLoading) {{
         scope.launch {
             if (!state.isLoading) {
                 with(bottomSheetScaffoldState) {
@@ -230,7 +229,7 @@ fun EditProfileScreen(
                 }
             }
         }
-    }
+    }}
 
 
 
