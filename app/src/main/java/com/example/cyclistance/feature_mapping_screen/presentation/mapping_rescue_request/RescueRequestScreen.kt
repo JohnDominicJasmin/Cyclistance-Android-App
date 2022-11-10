@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
+import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
@@ -83,13 +84,9 @@ fun RescueRequestScreen(
         mappingState.userRescueRequestRespondents.respondents
     }
 
-    val alertDialogVisible by remember(key1 = mappingState.alertDialogModel.title, key2 = mappingState.alertDialogModel.description) {
-        derivedStateOf {
-            mappingState.alertDialogModel.run { title.isNotEmpty() || description.isNotEmpty() }
-        }
-    }
 
-    if(alertDialogVisible){
+
+    if(mappingState.alertDialogModel.visible()){
         AlertDialog(alertDialog = mappingState.alertDialogModel, onDismissRequest = onDismissAlertDialog)
     }
 
