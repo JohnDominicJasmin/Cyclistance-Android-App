@@ -35,7 +35,7 @@ val userItems = listOf(
         contactNumber = "1234567890",
         id = "2",
         location = Location(latitude = 14.628978, longitude = 121.252176),
-        name = "Jane Doe",
+        name = "Jane Dominic",
         profilePictureUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
         rescueRequest = RescueRequest(),
         userAssistance = UserAssistance(
@@ -45,7 +45,7 @@ val userItems = listOf(
                 description = "Flat tire",
                 message = "I need help with my flat tire",
             ),
-        )),
+        ), transaction = Transaction(role = "rescuer", transactionId = "oinun98naksxnaiu2")),
 
 
     UserItem(
