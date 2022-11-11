@@ -3,7 +3,9 @@ package com.example.cyclistance.feature_mapping_screen.data.mapper
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Respondent
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserItemDto
-import com.example.cyclistance.feature_mapping_screen.domain.model.*
+import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
+import com.example.cyclistance.feature_mapping_screen.domain.model.User
+import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 
 object UserMapper {
 
@@ -46,13 +48,13 @@ object UserMapper {
 
 
 
-    fun UserItem.toCardModel(): CardModel {
+    fun UserItem.toCardModel(distance: String, eta: String): CardModel {
         return CardModel(
             id = this.id,
             name = this.name,
             profileImageUrl = this.profilePictureUrl,
-            distance = "0.5km", //todo: compute later
-            estimatedTimeTravel = "5 mins",
+            distance = distance,
+            estimatedTimeTravel = eta,
             address = this.address
         )
     }

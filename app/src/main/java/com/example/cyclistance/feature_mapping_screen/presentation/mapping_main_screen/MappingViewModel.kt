@@ -434,7 +434,11 @@ class MappingViewModel @Inject constructor(
         val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
         stateUser.rescueRequest?.respondents?.forEachIndexed { index, respondent ->
             val user = findUser(id = respondent.clientId)
-            rescueRespondentsSnapShot.add(index = index, element = user.toCardModel())
+            val distance = SimpleLocation.calculateDistance(
+                SimpleLocation.Point(stateUser.location!!.latitude, stateUser.location.longitude),
+                SimpleLocation.Point(user.location!!.latitude, user.location.longitude))
+            val formattedETA = getETA(distanceMeters = distance, averageSpeedKm = MOUNTAIN_BIKE_AVERAGE_SPEED_KM)
+            rescueRespondentsSnapShot.add(index = index, element = user.toCardModel(distance = distance.distanceFormat(), eta = formattedETA))
         }
         _state.update {
             it.copy(
