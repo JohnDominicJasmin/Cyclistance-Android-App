@@ -5,6 +5,8 @@ import com.example.cyclistance.core.utils.validation.InputValidate.containsSpeci
 import com.example.cyclistance.core.utils.validation.InputValidate.isDigit
 import com.example.cyclistance.core.utils.validation.InputValidate.isPhoneNumberLongEnough
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.distanceFormat
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getETA
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getFullAddress
 import org.junit.Assert
 import org.junit.Test
@@ -55,9 +57,18 @@ class UnitTest {
     }
 
 
+    @Test
+    fun getETATest(){
+        val result = getETA(distanceMeters = 1710.23, averageSpeedKm = 20.0)
+        Assert.assertEquals("5 mins", result)
+    }
 
-
-
+    @Test
+    fun distanceFormatTest(){
+        val distance = 1000.0
+        val res = distance.distanceFormat()
+       Assert.assertEquals(res, "1.00 km")
+    }
 
     private fun getNameUseCase(): String? {
         return ""
