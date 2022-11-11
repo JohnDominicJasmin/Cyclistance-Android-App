@@ -43,4 +43,5 @@ object MappingConstants {
     const val CYCLIST_MAP_ICON_WIDTH = 88
     const val BROADCAST_USERS = "broadcast_users"
     const val BROADCAST_RESCUE_TRANSACTION = "broadcast_rescue_transaction"
+    const val DEFAULT_BIKE_AVERAGE_SPEED_KM = 24.5
 }

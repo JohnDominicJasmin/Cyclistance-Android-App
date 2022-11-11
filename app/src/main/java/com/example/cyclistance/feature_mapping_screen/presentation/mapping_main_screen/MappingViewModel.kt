@@ -430,19 +430,18 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun List<UserItem>.getUserRescueRespondents() {
-        val stateUser = state.value.user
+        val user = state.value.user
         val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
-        stateUser.rescueRequest?.respondents?.forEachIndexed { index, respondent ->
-            val user = findUser(id = respondent.clientId)
+        user.rescueRequest?.respondents?.forEachIndexed { index, respondent ->
+            val userRespondent = findUser(id = respondent.clientId)
             val distance = SimpleLocation.calculateDistance(
-                SimpleLocation.Point(stateUser.location!!.latitude, stateUser.location.longitude),
-                SimpleLocation.Point(user.location!!.latitude, user.location.longitude))
-            val formattedETA = getETA(distanceMeters = distance, averageSpeedKm = MOUNTAIN_BIKE_AVERAGE_SPEED_KM)
-            rescueRespondentsSnapShot.add(index = index, element = user.toCardModel(distance = distance.distanceFormat(), eta = formattedETA))
+                SimpleLocation.Point(user.location!!.latitude, user.location.longitude),
+                SimpleLocation.Point(userRespondent.location!!.latitude, userRespondent.location.longitude))
+            val formattedETA = getETA(distanceMeters = distance, averageSpeedKm = DEFAULT_BIKE_AVERAGE_SPEED_KM)
+            rescueRespondentsSnapShot.add(index = index, element = userRespondent.toCardModel(distance = distance.distanceFormat(), eta = formattedETA))
         }
         _state.update {
-            it.copy(
-                userRescueRequestRespondents = RescueRequestRespondents(
+            it.copy(userRescueRequestRespondents = RescueRequestRespondents(
                     respondents = rescueRespondentsSnapShot.toSet().toList().toImmutableList()))
         }
         rescueRespondentsSnapShot.clear()
