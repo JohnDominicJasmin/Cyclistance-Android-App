@@ -22,24 +22,20 @@ data class MappingState(
     val hasInternet: Boolean = true,
     val bottomSheetType: String = "",
     val isSearchingForAssistance: Boolean = false,
-
-
     val alertDialogModel: AlertDialogModel = AlertDialogModel(),
+
     val user: UserItem = UserItem(),
     val userRescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
     val userAddress: UserAddress = UserAddress(),
+
     val currentAddress: String = "",
     val latitude: Double = DEFAULT_LATITUDE,
     val longitude: Double = DEFAULT_LONGITUDE,
     val name: String = "-----",
     val photoUrl: String = "",
 
-
-
-
-
-
     val nearbyCyclists: NearbyCyclists = NearbyCyclists(),
+    val rescuer: UserItem = UserItem(),
 
 
 

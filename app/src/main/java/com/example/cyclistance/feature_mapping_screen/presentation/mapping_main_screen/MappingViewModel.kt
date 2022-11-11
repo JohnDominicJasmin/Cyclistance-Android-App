@@ -12,10 +12,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP_ICON_HEIGHT
 import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP_ICON_WIDTH
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_BIKE_AVERAGE_SPEED_KM
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
-import com.example.cyclistance.core.utils.constants.MappingConstants.MOUNTAIN_BIKE_AVERAGE_SPEED_KM
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toCardModel
@@ -210,6 +210,7 @@ class MappingViewModel @Inject constructor(
 
                 }.onSuccess {
                     Timber.v("ACCEPT_RESCUE_REQUEST ASSIGN TRANSACTION TO BOTH USERS: Transaction Assigned")
+                    _state.update { it.copy(rescuer = rescuer) }
                     mappingUseCase.broadcastUserUseCase()
                 }.onFailure {
                     it.handleException()
