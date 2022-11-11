@@ -9,8 +9,6 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.Lifecycle
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP_ICON_HEIGHT
-import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP_ICON_WIDTH
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.ComposableLifecycle
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startLocationServiceIntentAction
@@ -57,7 +55,7 @@ fun MappingMapsScreen(
     val pointAnnotationManager = remember(annotationApi) { annotationApi.createPointAnnotationManager() }
 
     LaunchedEffect(key1 = nearbyCyclists){
-        nearbyCyclists.forEach {
+        nearbyCyclists.filter{ it.user.id != state.user.id }.forEach {
             val (user, bitmapProfileImage) = it
             val location = user.location
             val latitude = location?.latitude
@@ -65,7 +63,7 @@ fun MappingMapsScreen(
             val iconImage = if (user.userAssistance?.needHelp == true) AppCompatResources.getDrawable(
                     context,
                     R.drawable.ic_emergency)
-                    ?.toBitmap(width = CYCLIST_MAP_ICON_WIDTH, height = CYCLIST_MAP_ICON_HEIGHT) else bitmapProfileImage!!
+                    ?.toBitmap(width = 120, height = 120) else bitmapProfileImage!!
 
             val pointAnnotationOptions =  PointAnnotationOptions()
                 .withIconImage(iconImage!!)
