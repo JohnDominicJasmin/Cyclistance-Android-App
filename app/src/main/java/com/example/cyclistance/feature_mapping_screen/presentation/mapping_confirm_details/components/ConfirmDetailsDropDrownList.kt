@@ -20,15 +20,29 @@ import com.example.cyclistance.feature_authentication.presentation.common.ErrorM
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
+sealed class BikeType(
+    val type : String,
+) {
+    object RoadBike : BikeType(type = "Road Bike")
+    object MountainBike : BikeType(type = "Mountain Bike")
+    object FatBike : BikeType(type = "Fat Bike")
+    object TouringBike : BikeType(type ="Touring Bike")
+    object FixedGear : BikeType(type = "Fixed Gear")
+    object BMX : BikeType(type = "BMX")
+    object JapaneseBike : BikeType(type = "Japanese Bike")
+
+}
+
 
 private val bikeList = listOf(
-    "Road Bike",
-    "Mountain Bike",
-    "Fat Bike",
-    "Touring Bike",
-    "Fixed Gear/ Track Bike",
-    "BMX",
-    "Japanese Bike")
+    BikeType.RoadBike,
+    BikeType.MountainBike,
+    BikeType.FatBike,
+    BikeType.TouringBike,
+    BikeType.FixedGear,
+    BikeType.BMX,
+    BikeType.JapaneseBike
+)
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -104,11 +118,11 @@ fun DropDownBikeList(
                 bikeList.forEach { selectionOption ->
                     DropdownMenuItem(
                         onClick = {
-                            onClickItem(selectionOption)
+                            onClickItem(selectionOption.type)
                             expanded = false
                         }, modifier = Modifier.fillMaxWidth()) {
                         Text(
-                            text = selectionOption,
+                            text = selectionOption.type,
                             color = MaterialTheme.colors.onSecondary,
                             style = MaterialTheme.typography.subtitle2)
                     }
