@@ -1,6 +1,7 @@
 package com.example.cyclistance
 
 import com.example.cyclistance.address.MockAddress
+import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.validation.InputValidate.containsSpecialCharacters
 import com.example.cyclistance.core.utils.validation.InputValidate.isDigit
 import com.example.cyclistance.core.utils.validation.InputValidate.isPhoneNumberLongEnough
@@ -59,7 +60,7 @@ class UnitTest {
 
     @Test
     fun getETATest(){
-        val result = getETA(distanceMeters = 1710.23, averageSpeedKm = 20.0)
+        val result = getETA(distanceMeters = 1710.23, averageSpeedKm = MappingConstants.DEFAULT_BIKE_AVERAGE_SPEED_KM)
         Assert.assertEquals("5 mins", result)
     }
 
