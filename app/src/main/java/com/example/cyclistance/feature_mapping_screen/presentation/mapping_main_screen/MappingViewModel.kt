@@ -15,6 +15,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
+import com.example.cyclistance.core.utils.constants.MappingConstants.MOUNTAIN_BIKE_AVERAGE_SPEED_KM
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toCardModel
@@ -29,6 +30,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
+import im.delight.android.location.SimpleLocation
 import io.github.farhanroy.composeawesomedialog.R
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -179,17 +181,17 @@ class MappingViewModel @Inject constructor(
             val transactionId = user.id + rescuer.id + System.currentTimeMillis().toString().takeLast(5)
 
             if (userHasCurrentTransaction) {
-                cannotRequestRescuee()
+                rescueeCannotRequest()
                 return@launch
             }
 
             if (rescuerHasCurrentTransaction) {
-                cannotRequestRescuer()
+                rescuerCannotRequest()
                 return@launch
             }
 
             runCatching {
-
+                _state.update { it.copy(isLoading = true) }
                 mappingUseCase.createRescueTransactionUseCase(
                     rescueTransaction = RescueTransactionItem(
                         id = transactionId,
@@ -217,21 +219,23 @@ class MappingViewModel @Inject constructor(
             }.onFailure {
                 it.handleException()
             }
+            _state.update { it.copy(isLoading = false) }
+            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
 
         }
     }
 
-    private fun cannotRequestRescuee(){
+    private fun rescueeCannotRequest(){
         _state.update { it.copy(alertDialogModel = AlertDialogModel(
             title = "Cannot Request",
             description = "You can only have one transaction at a time",
             icon = R.raw.error
         )) }
     }
- private fun cannotRequestRescuer(){
+ private fun rescuerCannotRequest(){
         _state.update { it.copy(alertDialogModel = AlertDialogModel(
             title = "Cannot Request",
-            description = "The rescuer is currently in a transaction",
+            description = "Unfortunately the Rescuer is currently in a transaction.",
             icon = R.raw.error
         )) }
     }
@@ -254,7 +258,7 @@ class MappingViewModel @Inject constructor(
                     it.copy(userRescueRequestRespondents = RescueRequestRespondents(
                             rescueRespondents.toMutableList().apply {
                                 remove(element = cardModel)
-                            }))
+                            }), isLoading = true)
                 }
                 mappingUseCase.createUserUseCase(
                     user = UserItem(
@@ -263,12 +267,13 @@ class MappingViewModel @Inject constructor(
                     )
                 )
             }.onSuccess {
-                Timber.v("Successfully updated user")
                 mappingUseCase.broadcastUserUseCase()
             }.onFailure {
-                Timber.e("Failed to update user: ${it.message}")
                 it.handleDeclineRescueRequest()
             }
+            _state.update { it.copy(isLoading = false) }
+            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+
         }
     }
 
@@ -297,6 +302,7 @@ class MappingViewModel @Inject constructor(
             }.onSuccess {
                 Timber.v("Successfully posted location")
                 mappingUseCase.broadcastUserUseCase()
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }.onFailure {
                 Timber.e("Failed to post location: ${it.message}")
             }
@@ -360,18 +366,18 @@ class MappingViewModel @Inject constructor(
             }.onSuccess {
                 _state.update {
                     it.copy(
-                        isLoading = false,
                         searchAssistanceButtonVisible = true)
                 }
                 mappingUseCase.broadcastUserUseCase()
             }.onFailure { exception ->
                 Timber.e("Failed to cancel search assistance: ${exception.message}")
-                _state.update { it.copy(isLoading = false) }
                 exception.handleException()
             }
         }.invokeOnCompletion {
             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
+        _state.update { it.copy(isLoading = false) }
+
     }
 
     private fun getUserDrawableImage() {
@@ -491,12 +497,14 @@ class MappingViewModel @Inject constructor(
     private fun signOutAccount() {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
+                _state.update { it.copy(isLoading = true) }
                 authUseCase.signOutUseCase()
             }.onSuccess {
                 _eventFlow.emit(value = MappingUiEvent.ShowSignInScreen)
             }.onFailure {
                 Timber.e("Error Sign out account: ${it.message}")
             }
+            _state.update { it.copy(isLoading = false) }
         }.invokeOnCompletion {
             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
