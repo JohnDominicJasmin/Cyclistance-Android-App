@@ -148,17 +148,15 @@ class MappingViewModel @Inject constructor(
     private fun subscribeToNearbyRescueTransaction() {
         getRescueTransactionJob?.cancel()
         getRescueTransactionJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
-            runCatching {
-                mappingUseCase.getRescueTransactionUpdatesUseCase().distinctUntilChanged()
-                    .collect {
+            mappingUseCase.getRescueTransactionUpdatesUseCase().distinctUntilChanged()
+                .catch {
+                    Timber.e("ERROR GETTING USERS: ${it.message}")
+                }.collect {
 //                    todo: filter what rescue transaction needed
-                        Timber.v("COLLECTING RESCUE TRANSACTIONS")
-                    }
-            }.onFailure {
-                Timber.e("ERROR GETTING USERS: ${it.message}")
-            }
+                    Timber.v("COLLECTING RESCUE TRANSACTIONS")
+                }
+            mappingUseCase.broadcastRescueTransactionUseCase()
         }
-        mappingUseCase.broadcastRescueTransactionUseCase()
     }
 
     private fun unSubscribeToNearbyRescueTransaction() {
@@ -233,7 +231,7 @@ class MappingViewModel @Inject constructor(
             icon = R.raw.error
         )) }
     }
- private fun rescuerCannotRequest(){
+    private fun rescuerCannotRequest(){
         _state.update { it.copy(alertDialogModel = AlertDialogModel(
             title = "Cannot Request",
             description = "Unfortunately the Rescuer is currently in a transaction.",
@@ -365,20 +363,15 @@ class MappingViewModel @Inject constructor(
                 )
 
             }.onSuccess {
-                _state.update {
-                    it.copy(
-                        searchAssistanceButtonVisible = true)
-                }
+                _state.update { it.copy(searchAssistanceButtonVisible = true) }
                 mappingUseCase.broadcastUserUseCase()
             }.onFailure { exception ->
                 Timber.e("Failed to cancel search assistance: ${exception.message}")
                 exception.handleException()
             }
-        }.invokeOnCompletion {
+            _state.update { it.copy(isLoading = false) }
             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
-        _state.update { it.copy(isLoading = false) }
-
     }
 
     private fun getUserDrawableImage() {
@@ -395,22 +388,19 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-
     private fun subscribeToNearbyUsersChanges() {
         getUsersJob?.cancel()
         getUsersJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
-            runCatching {
-                mappingUseCase.getUserUpdatesUseCase().distinctUntilChanged()
-                    .collect {
-                        it.users.getUser()
-                        it.users.getUsers()
-                        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                    }
-            }.onFailure {
+            mappingUseCase.getUserUpdatesUseCase().distinctUntilChanged()
+            .catch {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
+            }.collect {
+                it.users.getUser()
+                it.users.getUsers()
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }
+            mappingUseCase.broadcastUserUseCase()
         }
-        mappingUseCase.broadcastUserUseCase()
     }
 
     private fun NearbyCyclists.findUser(id: String): UserItem {
@@ -468,12 +458,10 @@ class MappingViewModel @Inject constructor(
         nearbyCyclistSnapShot.clear()
     }
 
-
     private fun subscribeToLocationUpdates() {
         locationUpdatesJob?.cancel()
         locationUpdatesJob = viewModelScope.launch(Dispatchers.IO) {
             runCatching {
-
                 mappingUseCase.getUserLocationUseCase().collect { location ->
                     geocoder.getAddress(location.latitude, location.longitude) { addresses ->
                         _state.update { it.copy(userAddress = UserAddress(addresses.lastOrNull())) }
@@ -526,7 +514,6 @@ class MappingViewModel @Inject constructor(
         }.invokeOnCompletion {
             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
-
     }
 
     private suspend fun uploadProfile(address: Address) {
@@ -580,8 +567,6 @@ class MappingViewModel @Inject constructor(
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
-
-
     private fun createMockUpUsers() {
         viewModelScope.launch {
             runCatching {
@@ -602,7 +587,6 @@ class MappingViewModel @Inject constructor(
         onEvent(event = MappingEvent.UnsubscribeToRescueTransactionChanges)
         onEvent(event = MappingEvent.StopPinging)
     }
-
 
     private fun getId(): String = authUseCase.getIdUseCase()
 
