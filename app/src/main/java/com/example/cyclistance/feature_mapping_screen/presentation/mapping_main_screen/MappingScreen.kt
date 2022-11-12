@@ -24,6 +24,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAM
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_MAP_ZOOM_LEVEL
+import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
 import com.example.cyclistance.core.utils.location.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
@@ -75,8 +76,10 @@ fun MappingScreen(
     val coroutineScope = rememberCoroutineScope()
     val mapView = rememberMapView(context = context)
 
-    val mapboxMap = remember {
-        mapView.getMapboxMap()
+    val mapboxMap by remember {
+        lazy {
+            mapView.getMapboxMap()
+        }
     }
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
@@ -203,7 +206,7 @@ fun MappingScreen(
                     context.checkLocationSetting(
                         onDisabled = settingResultRequest::launch)
                 }
-                locateUser(DEFAULT_MAP_ZOOM_LEVEL)
+                locateUser(LOCATE_USER_ZOOM_LEVEL)
 
             })
 
