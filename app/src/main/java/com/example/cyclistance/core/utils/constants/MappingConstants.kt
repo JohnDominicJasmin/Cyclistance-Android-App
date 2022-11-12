@@ -1,7 +1,6 @@
 package com.example.cyclistance.core.utils.constants
 
 import androidx.datastore.preferences.core.stringPreferencesKey
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.BottomSheetType
 
 object MappingConstants {
     const val MAX_ZOOM_LEVEL_MAPS = 20.00
@@ -29,7 +28,7 @@ object MappingConstants {
 
     val BIKE_TYPE_KEY = stringPreferencesKey("bike_type")
     val ADDRESS_KEY = stringPreferencesKey("address")
-    val SEARCH_BOTTOM_SHEET = BottomSheetType.SearchAssistance.type
+
 
     const val LOCATION_NAME = "cyclistance-location"
     const val LOCATION_SERVICE_CHANNEL_ID = "cyclistance-location-channel-id"

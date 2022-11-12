@@ -20,13 +20,13 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.cyclistance.core.utils.constants.MappingConstants.SEARCH_BOTTOM_SHEET
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_mapping_screen.presentation.common.AdditionalMessage
 import com.example.cyclistance.feature_mapping_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details.components.AddressTextField
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details.components.ButtonDescriptionDetails
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details.components.DropDownBikeList
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.BottomSheetType
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
@@ -48,7 +48,7 @@ fun ConfirmDetailsScreen(
             when (event) {
                 is ConfirmDetailsUiEvent.ShowMappingScreen -> {
                     navController.navigateScreenInclusively(
-                        destination = Screens.MappingScreen.route + "?bottomSheetType=$SEARCH_BOTTOM_SHEET",
+                        destination = Screens.MappingScreen.route + "?bottomSheetType=${BottomSheetType.SearchAssistance.type}",
                         popUpToDestination = Screens.ConfirmDetailsScreen.route)
                 }
 
