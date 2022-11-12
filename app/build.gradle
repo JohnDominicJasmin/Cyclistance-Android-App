@@ -224,6 +224,8 @@ dependencies {
     //SimpleLocation
     implementation 'com.github.delight-im:Android-SimpleLocation:v1.1.0'
 
+    //mapbox navigation sdk
+    implementation "com.mapbox.navigation:android:2.7.0"
 
 }
 
