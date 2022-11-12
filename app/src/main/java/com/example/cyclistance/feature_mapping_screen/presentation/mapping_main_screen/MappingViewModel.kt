@@ -198,23 +198,7 @@ class MappingViewModel @Inject constructor(
                         status = Status(started = true, ongoing = true)))
 
             }.onSuccess {
-
-                Timber.v("ACCEPT_RESCUE_REQUEST RESCUE REQUEST: Created Rescue Transaction")
-                mappingUseCase.broadcastRescueTransactionUseCase()
-                runCatching {
-
-                    transactionId.assignTransaction(role = Role.RESCUEE.name.lowercase(), id = user.id)
-                    transactionId.assignTransaction(role = Role.RESCUER.name.lowercase(), id = rescuer.id)
-
-                }.onSuccess {
-                    Timber.v("ACCEPT_RESCUE_REQUEST ASSIGN TRANSACTION TO BOTH USERS: Transaction Assigned")
-                    _state.update { it.copy(rescuer = rescuer) }
-                    mappingUseCase.broadcastUserUseCase()
-                }.onFailure {
-                    it.handleException()
-                }
-
-
+                assignTransaction(user, rescuer, transactionId)
             }.onFailure {
                 it.handleException()
             }
@@ -224,6 +208,24 @@ class MappingViewModel @Inject constructor(
         }
     }
 
+    private suspend fun assignTransaction(user: UserItem, rescuer: UserItem, transactionId: String){
+        Timber.v("ACCEPT_RESCUE_REQUEST RESCUE REQUEST: Created Rescue Transaction")
+        mappingUseCase.broadcastRescueTransactionUseCase()
+        runCatching {
+
+            transactionId.assignTransaction(role = Role.RESCUEE.name.lowercase(), id = user.id)
+            transactionId.assignTransaction(role = Role.RESCUER.name.lowercase(), id = rescuer.id)
+
+        }.onSuccess {
+            Timber.v("ACCEPT_RESCUE_REQUEST ASSIGN TRANSACTION TO BOTH USERS: Transaction Assigned")
+            _state.update { it.copy(rescuer = rescuer, searchAssistanceButtonVisible = false) }
+            _eventFlow.emit(value = MappingUiEvent.ShowMappingScreen)
+            mappingUseCase.broadcastUserUseCase()
+        }.onFailure {
+            it.handleException()
+        }
+
+    }
     private fun rescueeCannotRequest(){
         _state.update { it.copy(alertDialogModel = AlertDialogModel(
             title = "Cannot Request",

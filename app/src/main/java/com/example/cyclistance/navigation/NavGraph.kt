@@ -2,7 +2,7 @@ package com.example.cyclistance.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.ScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -92,6 +92,7 @@ fun NavGraph(
 
         composable(Screens.RescueRequestScreen.route) {
             RescueRequestScreen(
+                navController = navController,
                 paddingValues = paddingValues,
                 mappingViewModel = mappingViewModel)
         }
