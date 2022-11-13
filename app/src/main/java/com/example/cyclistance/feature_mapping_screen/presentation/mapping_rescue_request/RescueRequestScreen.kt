@@ -132,7 +132,13 @@ fun RescueRequestScreen(
                 )
             }
 
+            }
         }
+
+        if(mappingState.isLoading) {
+            CircularProgressIndicator()
+        }
+
     }
 }
 
