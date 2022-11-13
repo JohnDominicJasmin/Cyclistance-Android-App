@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
@@ -17,32 +18,42 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
+import androidx.navigation.NavHostController
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingEvent
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingUiEvent
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingViewModel
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.*
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.RescueRequestRespondents
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_rescue_request.components.RequestItem
+import com.example.cyclistance.navigation.Screens
+import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.flow.collectLatest
 
 
 @Composable
-fun RescueRequestScreen(paddingValues: PaddingValues, mappingViewModel: MappingViewModel) {
+fun RescueRequestScreen(
+    navController: NavHostController,
+    paddingValues: PaddingValues,
+    mappingViewModel: MappingViewModel) {
+
+
     val mappingState by mappingViewModel.state.collectAsState()
     val context = LocalContext.current
 
 
-    LaunchedEffect(key1 = true){
+    LaunchedEffect(key1 = true) {
         mappingViewModel.eventFlow.collectLatest { event ->
-            when(event){
+            when (event) {
                 is MappingUiEvent.ShowToastMessage -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
+                is MappingUiEvent.ShowMappingScreen -> {
+                    navController.navigateScreenInclusively(
+                        destination = Screens.MappingScreen.route + "?bottomSheetType=${BottomSheetType.OnGoingRescue.type}",
+                        popUpToDestination = Screens.RescueRequestScreen.route)
+                }
+
                 else -> {}
             }
         }
@@ -153,7 +164,7 @@ fun PreviewRescueRequest() {
             modifier = Modifier
                 .padding(PaddingValues(all = 0.dp)),
             mappingState = MappingState(
-                alertDialogModel = AlertDialogModel(title = "Title", description = "Description", icon = io.github.farhanroy.composeawesomedialog.R.raw.success),
+                isLoading = true,
                 userRescueRequestRespondents = RescueRequestRespondents(
                     respondents = listOf(
                         CardModel(
