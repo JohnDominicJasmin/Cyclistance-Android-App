@@ -74,7 +74,7 @@ fun MappingScreen(
     val state by mappingViewModel.state.collectAsState()
     val userDrawableImage by mappingViewModel.userDrawableImage
     val coroutineScope = rememberCoroutineScope()
-    val mapView = rememberMapView(context = context)
+    val mapView by rememberMapView(context = context)
 
     val mapboxMap by remember {
         lazy {
@@ -350,7 +350,7 @@ fun MappingScreen(
 @Composable
 fun MappingScreenPreview() {
     val context = LocalContext.current
-    val mapView = rememberMapView(context = context)
+    val mapView by rememberMapView(context = context)
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Expanded))
     val mapboxMap = remember {
