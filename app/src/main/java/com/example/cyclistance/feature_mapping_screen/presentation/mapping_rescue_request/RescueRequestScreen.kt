@@ -90,47 +90,49 @@ fun RescueRequestScreen(
         AlertDialog(alertDialog = mappingState.alertDialogModel, onDismissRequest = onDismissAlertDialog)
     }
 
+    Box( modifier = modifier
+        .fillMaxSize()
+        .background(MaterialTheme.colors.background),
+    contentAlignment = Alignment.Center) {
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-
-
-        Text(
-            text = "${respondents.size} NEW REQUEST",
-            color = MaterialTheme.colors.onBackground,
-            style = TextStyle(letterSpacing = 4.sp, fontWeight = FontWeight.Bold, fontSize = 16.sp),
-            modifier = Modifier.padding(vertical = 12.dp),
-            textAlign = TextAlign.Center,
-
-            )
+        Column(modifier = Modifier.fillMaxSize(),horizontalAlignment = Alignment.CenterHorizontally) {
 
 
-        LazyColumn(
-            modifier = Modifier
-                .padding(bottom = 4.dp)
-                .weight(0.85f)
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = "${respondents.size} NEW REQUEST",
+                color = MaterialTheme.colors.onBackground,
+                style = TextStyle(
+                    letterSpacing = 4.sp,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 16.sp),
+                modifier = Modifier.padding(vertical = 12.dp),
+                textAlign = TextAlign.Center,
 
-            items(items = respondents, key = { it.id ?: "-1" }) { respondent ->
-                RequestItem(
-                    modifier = Modifier
-                        .padding(start = 4.dp, end = 4.dp, top = 6.dp, bottom = 6.dp)
-
-                        .fillMaxWidth(fraction = 0.95f)
-                        .wrapContentHeight(), cardState = respondent,
-                    onClickCancelButton = {
-                        onClickCancelButton(respondent)
-                    },
-                    onClickConfirmButton = {
-                        onClickConfirmButton(respondent)
-                    }
                 )
-            }
+
+
+            LazyColumn(
+                modifier = Modifier
+                    .padding(bottom = 4.dp)
+                    .weight(0.85f)
+                    .fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally) {
+
+                items(items = respondents, key = { it.id ?: "-1" }) { respondent ->
+                    RequestItem(
+                        modifier = Modifier
+                            .padding(start = 4.dp, end = 4.dp, top = 6.dp, bottom = 6.dp)
+
+                            .fillMaxWidth(fraction = 0.95f)
+                            .wrapContentHeight(), cardState = respondent,
+                        onClickCancelButton = {
+                            onClickCancelButton(respondent)
+                        },
+                        onClickConfirmButton = {
+                            onClickConfirmButton(respondent)
+                        }
+                    )
+                }
 
             }
         }
