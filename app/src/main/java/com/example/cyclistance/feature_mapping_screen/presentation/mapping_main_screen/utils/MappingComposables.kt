@@ -44,6 +44,7 @@ inline fun ComposableLifecycle(
 
 @Composable
 fun rememberMapView(context: Context) = remember {
+    lazy {
         MapView(
             context,
             mapInitOptions = MapInitOptions(
@@ -81,11 +82,12 @@ fun rememberMapView(context: Context) = remember {
                 )
 
                 showAccuracyRing = true
-                pulsingColor = ContextCompat.getColor(context,R.color.ThemeColor)
+                pulsingColor = ContextCompat.getColor(context, R.color.ThemeColor)
                 puckBearingEnabled = false
                 pulsingMaxRadius = 120.0f
                 puckBearingSource = PuckBearingSource.HEADING
 
             }
         }
+    }
     }
