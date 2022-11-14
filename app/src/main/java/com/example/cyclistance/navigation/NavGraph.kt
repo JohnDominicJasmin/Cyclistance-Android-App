@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -133,12 +134,12 @@ fun NavController.navigateScreenInclusively(
 
 }
 
-fun NavController.navigateScreen(destination: String, popUpToDestination: String) {
+fun NavController.navigateScreen(destination: String) {
     navigate(destination) {
-        popUpTo(popUpToDestination) {
+        popUpTo(graph.findStartDestination().id) {
             saveState = true
         }
-        restoreState = true
         launchSingleTop = true
+        restoreState = true
     }
 }

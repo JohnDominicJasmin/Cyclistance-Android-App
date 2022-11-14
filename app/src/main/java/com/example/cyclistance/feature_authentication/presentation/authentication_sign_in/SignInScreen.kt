@@ -159,7 +159,7 @@ fun SignInScreen(
         signInViewModel.onEvent(SignInEvent.SignInDefault)
     }}
     val onClickSignInText = remember {{
-        navController.navigateScreen(Screens.SignUpScreen.route, Screens.SignInScreen.route)
+        navController.navigateScreen(Screens.SignUpScreen.route)
     } }
     val onClickRetryButton = remember{{
         if (context.hasInternetConnection()) {

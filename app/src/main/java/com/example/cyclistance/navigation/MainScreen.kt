@@ -28,6 +28,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -41,6 +42,9 @@ fun MainScreen(
     val navController = rememberNavController()
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
+    LaunchedEffect(key1 = navBackStackEntry){
+        Timber.v("BACKSTACK ENTRY: ${navBackStackEntry?.destination?.route}")
+    }
     val scaffoldState =
         rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
@@ -70,16 +74,14 @@ fun MainScreen(
             scaffoldState.drawerState.close()
         }
         navController.navigateScreen(
-            Screens.SettingScreen.route,
-            Screens.MappingScreen.route)
+            Screens.SettingScreen.route)
     }}
     val onClickRescueRequest = remember(scaffoldState.drawerState){{
         coroutineScope.launch {
             scaffoldState.drawerState.close()
         }
         navController.navigateScreen(
-            Screens.RescueRequestScreen.route,
-            Screens.MappingScreen.route)
+            Screens.RescueRequestScreen.route)
     }}
     val onClickChat = remember{{
         coroutineScope.launch {
@@ -105,8 +107,7 @@ fun MainScreen(
         settingViewModel.onEvent(event = SettingEvent.ToggleTheme)
     }}
     val onClickTopBarIcon = remember{{
-        navController.popBackStack()
-        Unit
+        navController.navigateScreen(Screens.MappingScreen.route)
     }}
 
     CyclistanceTheme(darkTheme = settingState.isDarkTheme) {

@@ -47,7 +47,6 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapView
-import com.mapbox.maps.MapboxMap
 import com.mapbox.maps.ResourceOptions
 import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.plugin.LocationPuck2D
@@ -227,16 +226,19 @@ fun MappingScreen(
 
 
     LaunchedEffect(key1 = typeBottomSheet) {
-        if (typeBottomSheet.isNotEmpty()) {
+
+        if (typeBottomSheet == BottomSheetType.SearchAssistance.type){
             mappingViewModel.onEvent(event = MappingEvent.StartPinging)
-            mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(typeBottomSheet))
         }
+
+        mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(typeBottomSheet))
+
 
     }
 
     LaunchedEffect(key1 = userLocationAvailable) {
-        locateUser(DEFAULT_MAP_ZOOM_LEVEL)
-        mappingViewModel.onEvent(event = MappingEvent.PostLocation)
+            locateUser(DEFAULT_MAP_ZOOM_LEVEL)
+            mappingViewModel.onEvent(event = MappingEvent.PostLocation)
     }
 
 
@@ -253,9 +255,8 @@ fun MappingScreen(
 
     }
 
-    LaunchedEffect(key1 = userDrawableImage) {
+    LaunchedEffect(key1 = userDrawableImage, mapView) {
         mapView.location2.apply {
-
 
             if (userDrawableImage != null) {
 
@@ -305,14 +306,12 @@ fun MappingScreen(
 
                     is MappingUiEvent.ShowConfirmDetailsScreen -> {
                         navController.navigateScreen(
-                            Screens.ConfirmDetailsScreen.route,
-                            Screens.MappingScreen.route)
+                            Screens.ConfirmDetailsScreen.route)
                     }
 
                     is MappingUiEvent.ShowEditProfileScreen -> {
                         navController.navigateScreen(
-                            Screens.EditProfileScreen.route,
-                            Screens.MappingScreen.route)
+                            Screens.EditProfileScreen.route)
                     }
 
                     is MappingUiEvent.ShowSignInScreen -> {
@@ -338,7 +337,6 @@ fun MappingScreen(
         onClickSearchButton = onClickSearchButton,
         locationPermissionState = locationPermissionsState,
         onClickLocateUserButton = onClickLocateUserButton,
-        mapboxMap = mapView.getMapboxMap(), //todo: remove later
         mapView = mapView,
         onClickCancelSearchButton = onClickCancelSearchButton,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
@@ -366,9 +364,7 @@ fun MappingScreenPreview() {
     }
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Expanded))
-    val mapboxMap = remember {
-        mapView.getMapboxMap()
-    }
+
 
     CyclistanceTheme(true) {
 
@@ -380,7 +376,6 @@ fun MappingScreenPreview() {
             onClickSearchButton = {},
             onClickLocateUserButton = {},
             mapView = mapView,
-            mapboxMap = mapboxMap,
             bottomSheetScaffoldState = bottomSheetScaffoldState
         )
     }
@@ -395,7 +390,6 @@ fun MappingScreen(
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     state: MappingState,
     mapView: MapView,
-    mapboxMap: MapboxMap,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     onClickNoInternetRetryButton: () -> Unit = {},
     onClickLocateUserButton: () -> Unit = {},
@@ -442,7 +436,6 @@ fun MappingScreen(
                 isDarkTheme = isDarkTheme,
                 locationPermissionsState = locationPermissionState,
                 mapsMapView  = mapView,
-                mapsMapboxMap = mapboxMap,
                 onInitializeMapView = onInitializeMapView,
             )
 

@@ -26,7 +26,7 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.RescueRequestRespondents
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_rescue_request.components.RequestItem
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.navigation.navigateScreenInclusively
+import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.flow.collectLatest
 
@@ -49,9 +49,8 @@ fun RescueRequestScreen(
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
                 is MappingUiEvent.ShowMappingScreen -> {
-                    navController.navigateScreenInclusively(
-                        destination = Screens.MappingScreen.route + "?bottomSheetType=${BottomSheetType.OnGoingRescue.type}",
-                        popUpToDestination = Screens.RescueRequestScreen.route)
+                    navController.navigateScreen(
+                        destination = Screens.MappingScreen.route + "?bottomSheetType=${BottomSheetType.OnGoingRescue.type}")
                 }
 
                 else -> {}

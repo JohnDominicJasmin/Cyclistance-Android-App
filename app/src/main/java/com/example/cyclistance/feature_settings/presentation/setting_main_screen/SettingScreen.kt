@@ -3,7 +3,7 @@ package com.example.cyclistance.feature_settings.presentation.setting_main_scree
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,7 +60,7 @@ fun SettingScreen(
 
             SectionTitle(iconId = R.drawable.ic_baseline_person_24, title = "Account")
             SettingsButtonItem(buttonText = "Edit Profile", onClick = {
-                navController.navigateScreen(Screens.EditProfileScreen.route, Screens.SettingScreen.route)
+                navController.navigateScreen(Screens.EditProfileScreen.route)
             })
 
         }
