@@ -16,6 +16,7 @@ import androidx.lifecycle.*
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.BUTTON_ANIMATION_DURATION
+import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
 import com.example.cyclistance.databinding.ActivityMappingBinding
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
@@ -25,18 +26,21 @@ import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
 import com.mapbox.geojson.Point
-import com.mapbox.maps.EdgeInsets
-import com.mapbox.maps.MapView
-import com.mapbox.maps.MapboxMap
-import com.mapbox.maps.Style
+import com.mapbox.maps.*
+import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.plugin.LocationPuck2D
+import com.mapbox.maps.plugin.PuckBearingSource
+import com.mapbox.maps.plugin.animation.MapAnimationOptions
 import com.mapbox.maps.plugin.animation.camera
+import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.gestures.gestures
-import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.locationcomponent.location2
+import com.mapbox.maps.plugin.logo.logo
+import com.mapbox.maps.plugin.scalebar.scalebar
 import com.mapbox.navigation.base.TimeFormat
 import com.mapbox.navigation.base.extensions.applyDefaultNavigationOptions
 import com.mapbox.navigation.base.extensions.applyLanguageAndVoiceUnitOptions
@@ -75,8 +79,9 @@ import timber.log.Timber
 fun MappingMapsScreen(
     state: MappingState,
     isDarkTheme: Boolean,
-    _mapView: MapView,
-    _mapboxMap: MapboxMap,
+    mapsMapView: MapView,
+    mapsMapboxMap: MapboxMap,
+    onInitializeMapView: (MapView) -> Unit,
     locationPermissionsState: MultiplePermissionsState?,
     modifier: Modifier) {
 
@@ -92,7 +97,7 @@ fun MappingMapsScreen(
             state.isSearchingForAssistance.and(locationPermissionsState?.allPermissionsGranted == true)
         }
     }
-    val annotationApi = remember(_mapView) { _mapView.annotations }
+    val annotationApi = remember(mapsMapView) { mapsMapView.annotations }
     val pointAnnotationManager = remember(annotationApi) { annotationApi.createPointAnnotationManager() }
 
     LaunchedEffect(key1 = nearbyCyclists){
@@ -112,7 +117,7 @@ fun MappingMapsScreen(
     }
 
     LaunchedEffect(key1 = pulsingEnabled){
-        _mapView.location2.pulsingEnabled = pulsingEnabled
+        mapsMapView.location2.pulsingEnabled = pulsingEnabled
     }
 
     val mapStyle by remember(isDarkTheme){
@@ -122,45 +127,9 @@ fun MappingMapsScreen(
     }
 
     LaunchedEffect(key1 = mapStyle){
-        _mapboxMap.loadStyleUri(mapStyle)
+        mapsMapboxMap.loadStyleUri(mapStyle)
     }
 
-    ComposableLifecycle { _, event ->
-        when (event) {
-
-            Lifecycle.Event.ON_CREATE -> {
-                Timber.v("Lifecycle Event: ON_CREATE")
-
-            }
-
-            Lifecycle.Event.ON_START -> {
-
-                _mapView.onStart()
-            }
-
-            Lifecycle.Event.ON_RESUME -> {
-
-            }
-
-            Lifecycle.Event.ON_PAUSE -> {
-
-            }
-
-            Lifecycle.Event.ON_STOP -> {
-
-                _mapView.onStop()
-            }
-
-            Lifecycle.Event.ON_DESTROY -> {
-                Timber.v("Lifecycle Event: ON_DESTROY")
-                context.startLocationServiceIntentAction(intentAction = MappingConstants.ACTION_STOP)
-
-            }
-
-
-            else -> {}
-        }
-    }
 
 
 
@@ -385,19 +354,44 @@ fun MappingMapsScreen(
             LifecycleEventObserver { _, event ->
                 when (event) {
                     Lifecycle.Event.ON_CREATE -> {
-                        mapboxMap = mapView.getMapboxMap()
-                        mapView.apply {
 
+                        mapboxMap = mapView.getMapboxMap().apply {
+                            setBounds(
+                                CameraBoundsOptions.Builder()
+                                    .minZoom(MappingConstants.MIN_ZOOM_LEVEL_MAPS)
+                                    .maxZoom(MappingConstants.MAX_ZOOM_LEVEL_MAPS)
+                                    .build())
                         }
-                        mapView.location.apply {
-                            this.locationPuck = LocationPuck2D(
-                                bearingImage = ContextCompat.getDrawable(
-                                    parentContext,
-                                    com.mapbox.navigation.R.drawable.mapbox_navigation_puck_icon
+                        mapView.apply {
+                            scalebar.enabled = false
+                            logo.enabled = false
+                            attribution.enabled = false
+
+                            location2.apply {
+
+                                locationPuck = LocationPuck2D(
+                                    bearingImage = ContextCompat.getDrawable(
+                                        parentContext,
+                                        com.mapbox.navigation.R.drawable.mapbox_navigation_puck_icon
+                                    ),
+                                    topImage = ContextCompat.getDrawable(
+                                        parentContext,
+                                        com.mapbox.maps.R.drawable.mapbox_mylocation_icon_default
+                                    ),
+                                    shadowImage = ContextCompat.getDrawable(
+                                        parentContext,
+                                        com.mapbox.maps.R.drawable.mapbox_user_icon_shadow
+                                    )
                                 )
-                            )
-                            setLocationProvider(navigationLocationProvider)
-                            enabled = true
+
+                                showAccuracyRing = true
+                                pulsingColor = ContextCompat.getColor(parentContext, R.color.ThemeColor)
+                                puckBearingEnabled = false
+                                pulsingMaxRadius = 120.0f
+                                puckBearingSource = PuckBearingSource.HEADING
+                                setLocationProvider(navigationLocationProvider)
+                                enabled = true
+                            }
                         }
                         mapboxNavigation = if (MapboxNavigationProvider.isCreated()) {
                             MapboxNavigationProvider.retrieve()
@@ -476,7 +470,17 @@ fun MappingMapsScreen(
                             Style.MAPBOX_STREETS
                         ) {
                             mapView.gestures.addOnMapLongClickListener { point ->
-                                findRoute(point)
+//                                findRoute(point)
+                                mapView.getMapboxMap().flyTo(
+                                cameraOptions {
+                                    center(point)
+                                    zoom(LOCATE_USER_ZOOM_LEVEL)
+                                    bearing(0.0)
+                                },
+                                MapAnimationOptions.mapAnimationOptions {
+                                    duration(MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION)
+                                }
+                            )
                                 true
                             }
                         }
@@ -496,8 +500,7 @@ fun MappingMapsScreen(
                         soundButton.unmute()
 
                         mapboxNavigation.startTripSession()
-
-
+                        onInitializeMapView(mapView)
                     }
 
 

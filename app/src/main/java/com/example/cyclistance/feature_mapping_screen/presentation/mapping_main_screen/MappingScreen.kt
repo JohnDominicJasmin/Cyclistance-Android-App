@@ -35,7 +35,6 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingMapsScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapView
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startLocationServiceIntentAction
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
@@ -46,8 +45,10 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.mapbox.geojson.Point
+import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapView
 import com.mapbox.maps.MapboxMap
+import com.mapbox.maps.ResourceOptions
 import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
@@ -74,18 +75,20 @@ fun MappingScreen(
     val state by mappingViewModel.state.collectAsState()
     val userDrawableImage by mappingViewModel.userDrawableImage
     val coroutineScope = rememberCoroutineScope()
-    val mapView by rememberMapView(context = context)
+    var mapView by remember{ mutableStateOf(MapView(context = context, mapInitOptions = MapInitOptions(
+        context,
+        resourceOptions = ResourceOptions
+            .Builder()
+            .accessToken(context.getString(com.example.cyclistance.R.string.MapsDownloadToken)).build()))) }
 
-    val mapboxMap by remember {
-        lazy {
-            mapView.getMapboxMap()
-        }
-    }
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Expanded)
     )
 
+    val onInitializeMapView = remember{{ mv: MapView ->
+        mapView = mv
+    }}
 
 
 
@@ -174,14 +177,14 @@ fun MappingScreen(
 
 
     val locateUser =
-        remember(Unit) {
+        remember(mapView) {
             { zoomLevel: Double ->
                 if (userLocationAvailable) {
                     mapView.location2.apply {
                         enabled = true
                     }
                     val point = Point.fromLngLat(state.longitude, state.latitude)
-                    mapboxMap.flyTo(
+                    mapView.getMapboxMap().flyTo(
                         cameraOptions {
                             center(point)
                             zoom(zoomLevel)
@@ -317,8 +320,7 @@ fun MappingScreen(
                             Screens.SignInScreen.route,
                             Screens.MappingScreen.route)
                     }
-
-
+                    else -> {}
                 }
             }
         }
@@ -336,10 +338,12 @@ fun MappingScreen(
         onClickSearchButton = onClickSearchButton,
         locationPermissionState = locationPermissionsState,
         onClickLocateUserButton = onClickLocateUserButton,
-        mapboxMap = mapboxMap,
+        mapboxMap = mapView.getMapboxMap(), //todo: remove later
         mapView = mapView,
         onClickCancelSearchButton = onClickCancelSearchButton,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
+        onInitializeMapView = onInitializeMapView,
+
     )
 
 }
@@ -350,7 +354,16 @@ fun MappingScreen(
 @Composable
 fun MappingScreenPreview() {
     val context = LocalContext.current
-    val mapView by rememberMapView(context = context)
+    val mapView by remember {
+        mutableStateOf(
+            MapView(
+                context, mapInitOptions = MapInitOptions(
+                    context,
+                    resourceOptions = ResourceOptions
+                        .Builder()
+                        .accessToken(context.getString(com.example.cyclistance.R.string.MapsDownloadToken))
+                        .build())))
+    }
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Expanded))
     val mapboxMap = remember {
@@ -392,7 +405,9 @@ fun MappingScreen(
     onClickCancelSearchButton: () -> Unit = {},
     onClickCallButton: () -> Unit = {},
     onClickChatButton: () -> Unit = {},
-    onClickCancelButton: () -> Unit = {}) {
+    onClickCancelButton: () -> Unit = {},
+    onInitializeMapView: (MapView) -> Unit = {},
+    ) {
 
     val configuration = LocalConfiguration.current
 
@@ -426,8 +441,9 @@ fun MappingScreen(
                 },
                 isDarkTheme = isDarkTheme,
                 locationPermissionsState = locationPermissionState,
-                mapView = mapView,
-                mapboxMap = mapboxMap
+                mapsMapView  = mapView,
+                mapsMapboxMap = mapboxMap,
+                onInitializeMapView = onInitializeMapView,
             )
 
         }
