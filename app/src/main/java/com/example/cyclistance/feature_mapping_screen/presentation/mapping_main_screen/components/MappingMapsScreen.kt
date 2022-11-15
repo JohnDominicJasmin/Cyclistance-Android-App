@@ -182,8 +182,6 @@ fun MappingMapsScreen(
         val setRouteAndStartNavigation = { routes: List<DirectionsRoute> ->
             mapboxNavigation.setRoutes(routes)
 
-
-
             soundButton.visibility = View.VISIBLE
             routeOverview.visibility = View.VISIBLE
             tripProgressCard.visibility = View.VISIBLE
@@ -191,55 +189,7 @@ fun MappingMapsScreen(
             navigationCamera.requestNavigationCameraToOverview()
         }
 
-        val findRoute = { destination: Point ->
-            val originLocation = navigationLocationProvider.lastLocation
-            val originPoint = originLocation?.let { location ->
-                Point.fromLngLat(location.longitude, location.latitude)
-            }
 
-            mapboxNavigation.requestRoutes(
-                RouteOptions.builder()
-                    .applyDefaultNavigationOptions()
-                    .applyLanguageAndVoiceUnitOptions(parentContext)
-                    .coordinatesList(listOf(originPoint, destination))
-
-                    .bearingsList(
-                        listOf(
-                            originLocation?.bearing?.toDouble()?.let {
-                                Bearing.builder()
-                                    .angle(it)
-                                    .degrees(45.0)
-                                    .build()
-                            },
-                            null
-                        )
-                    )
-                    .layersList(listOf(mapboxNavigation.getZLevel(), null))
-                    .build(),
-                object : RouterCallback {
-                    override fun onRoutesReady(
-                        routes: List<DirectionsRoute>,
-                        routerOrigin: RouterOrigin
-                    ) {
-                        setRouteAndStartNavigation(routes)
-                    }
-
-                    override fun onFailure(
-                        reasons: List<RouterFailure>,
-                        routeOptions: RouteOptions
-                    ) {
-                        Timber.e("Route request failed")
-                    }
-
-                    override fun onCanceled(
-                        routeOptions: RouteOptions,
-                        routerOrigin: RouterOrigin) {
-
-                        Timber.e("Route request canceled")
-                    }
-                }
-            )
-        }
 
 
 
@@ -344,44 +294,7 @@ fun MappingMapsScreen(
                                     .build())
                         }
                         mapView.apply {
-                            scalebar.enabled = false
-                            logo.enabled = false
-                            attribution.enabled = false
-
-                            location2.apply {
-
-                                locationPuck = LocationPuck2D(
-                                    bearingImage = ContextCompat.getDrawable(
-                                        parentContext,
-                                        com.mapbox.navigation.R.drawable.mapbox_navigation_puck_icon
-                                    ),
-                                    topImage = ContextCompat.getDrawable(
-                                        parentContext,
-                                        com.mapbox.maps.R.drawable.mapbox_mylocation_icon_default
-                                    ),
-                                    shadowImage = ContextCompat.getDrawable(
-                                        parentContext,
-                                        com.mapbox.maps.R.drawable.mapbox_user_icon_shadow
-                                    )
-                                )
-
-                                showAccuracyRing = true
-                                pulsingColor = ContextCompat.getColor(parentContext, R.color.ThemeColor)
-                                puckBearingEnabled = false
-                                pulsingMaxRadius = 120.0f
-                                puckBearingSource = PuckBearingSource.HEADING
-                                setLocationProvider(navigationLocationProvider)
-                                enabled = true
-                            }
-                        }
-                        mapboxNavigation = if (MapboxNavigationProvider.isCreated()) {
-                            MapboxNavigationProvider.retrieve()
-                        } else {
-                            MapboxNavigationProvider.create(
-                                NavigationOptions.Builder(parentContext.applicationContext)
-                                    .accessToken(parentContext.getString(R.string.MapsDownloadToken))
-                                    .build()
-                            )
+                            setDefaultSettings(parentContext, navigationLocationProvider)
                         }
 
 
@@ -451,17 +364,17 @@ fun MappingMapsScreen(
                             if (isDarkTheme) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY
                         ) {
                             mapView.gestures.addOnMapLongClickListener { point ->
-//                                findRoute(point)
-                                mapView.getMapboxMap().flyTo(
-                                cameraOptions {
-                                    center(point)
-                                    zoom(LOCATE_USER_ZOOM_LEVEL)
-                                    bearing(0.0)
-                                },
-                                MapAnimationOptions.mapAnimationOptions {
-                                    duration(MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION)
+
+                                val originLocation = navigationLocationProvider.lastLocation
+                                val originPoint = originLocation?.let { location ->
+                                    Point.fromLngLat(location.longitude, location.latitude)
                                 }
-                            )
+                                mapboxNavigation.findRoute(
+                                    parentContext = parentContext,
+                                    destinationPoint = point,
+                                    originPoint = originPoint!!) {
+                                    setRouteAndStartNavigation(it)
+                                }
                                 true
                             }
                         }
