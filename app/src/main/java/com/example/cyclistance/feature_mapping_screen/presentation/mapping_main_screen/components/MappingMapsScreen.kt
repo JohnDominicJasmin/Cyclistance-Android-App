@@ -116,22 +116,9 @@ fun MappingMapsScreen(
         }
     }
 
-    LaunchedEffect(key1 = pulsingEnabled){
+    LaunchedEffect(key1 = pulsingEnabled, mapsMapView){
         mapsMapView.location2.pulsingEnabled = pulsingEnabled
     }
-
-    val mapStyle by remember(isDarkTheme){
-        derivedStateOf {
-            if (isDarkTheme) Style.DARK else Style.OUTDOORS
-        }
-    }
-
-    LaunchedEffect(key1 = mapStyle){
-        mapsMapboxMap.loadStyleUri(mapStyle)
-    }
-
-
-
 
     AndroidViewBinding(factory = ActivityMappingBinding::inflate, modifier = modifier){
         val parentContext = this.root.context
@@ -467,7 +454,7 @@ fun MappingMapsScreen(
                         routeArrowView = MapboxRouteArrowView(routeArrowOptions)
 
                         mapboxMap.loadStyleUri(
-                            Style.MAPBOX_STREETS
+                            if (isDarkTheme) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY
                         ) {
                             mapView.gestures.addOnMapLongClickListener { point ->
 //                                findRoute(point)
