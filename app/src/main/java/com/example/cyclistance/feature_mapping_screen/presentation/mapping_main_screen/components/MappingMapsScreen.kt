@@ -83,6 +83,7 @@ fun MappingMapsScreen(
     mapsMapboxMap: MapboxMap,
     onInitializeMapView: (MapView) -> Unit,
     locationPermissionsState: MultiplePermissionsState?,
+    onChangeCameraState: (Point, Double) -> Unit,
     modifier: Modifier) {
 
 
@@ -496,8 +497,11 @@ fun MappingMapsScreen(
                     }
                     Lifecycle.Event.ON_PAUSE -> {
                         Timber.v("Lifecycle Event: ON_PAUSE")
+                        val cameraState = mapboxMap.cameraState
+                        onChangeCameraState(cameraState.center, cameraState.zoom)
                     }
                     Lifecycle.Event.ON_STOP -> {
+                        Timber.v("Lifecycle Event: ON_STOP")
                         mapboxNavigation.unregisterRoutesObserver(routesObserver)
                         mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
                         mapboxNavigation.unregisterLocationObserver(locationObserver)
