@@ -244,7 +244,7 @@ fun MappingMapsScreen(
 
 
         val locationObserver = object : LocationObserver {
-            var firstLocationUpdateReceived = false
+
 
             override fun onNewRawLocation(rawLocation: Location) {
             }
@@ -260,14 +260,7 @@ fun MappingMapsScreen(
                 viewportDataSource.evaluate()
 
 
-                if (!firstLocationUpdateReceived) {
-                    firstLocationUpdateReceived = true
-                    navigationCamera.requestNavigationCameraToOverview(
-                        stateTransitionOptions = NavigationCameraTransitionOptions.Builder()
-                            .maxDuration(0) // instant transition
-                            .build()
-                    )
-                }
+
             }
         }
 
