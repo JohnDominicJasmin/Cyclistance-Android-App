@@ -438,7 +438,7 @@ fun MappingMapsScreen(
 
 
                         val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(parentContext)
-                            .withRouteLineBelowLayerId("road-label")
+                            .withRouteLineBelowLayerId(LOCATION_INDICATOR_LAYER)
                             .build()
                         routeLineApi = MapboxRouteLineApi(mapboxRouteLineOptions)
                         routeLineView = MapboxRouteLineView(mapboxRouteLineOptions)
