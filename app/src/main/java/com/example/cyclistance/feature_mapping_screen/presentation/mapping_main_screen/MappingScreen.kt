@@ -24,6 +24,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAM
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_MAP_ZOOM_LEVEL
+import com.example.cyclistance.core.utils.constants.MappingConstants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
 import com.example.cyclistance.core.utils.location.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasGPSConnection
@@ -35,6 +36,7 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingMapsScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapboxNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startLocationServiceIntentAction
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
@@ -53,6 +55,7 @@ import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.locationcomponent.location2
+import com.mapbox.navigation.core.MapboxNavigation
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -80,6 +83,7 @@ fun MappingScreen(
             .Builder()
             .accessToken(context.getString(com.example.cyclistance.R.string.MapsDownloadToken)).build()))) }
 
+    val mapboxNavigation = rememberMapboxNavigation(parentContext = context)
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Expanded)
@@ -177,12 +181,12 @@ fun MappingScreen(
 
     val locateUser =
         remember(mapView) {
-            { zoomLevel: Double ->
+            { zoomLevel: Double, point: Point, cameraAnimationDuration: Long  ->
                 if (userLocationAvailable) {
                     mapView.location2.apply {
                         enabled = true
                     }
-                    val point = Point.fromLngLat(state.longitude, state.latitude)
+
                     mapView.getMapboxMap().flyTo(
                         cameraOptions {
                             center(point)
@@ -190,7 +194,7 @@ fun MappingScreen(
                             bearing(0.0)
                         },
                         mapAnimationOptions {
-                            duration(DEFAULT_CAMERA_ANIMATION_DURATION)
+                            duration(cameraAnimationDuration)
                         }
                     )
                 }
@@ -198,20 +202,17 @@ fun MappingScreen(
         }
 
     val onClickLocateUserButton = remember {{
-
         locationPermissionsState.requestPermission(
             context = context,
             rationalMessage = "Location permission is not yet granted.",
             onGranted = {
-
                 if (!context.hasGPSConnection()) {
                     context.checkLocationSetting(
                         onDisabled = settingResultRequest::launch)
                 }
-                locateUser(LOCATE_USER_ZOOM_LEVEL)
-
+                val point = Point.fromLngLat(state.longitude, state.latitude)
+                locateUser(LOCATE_USER_ZOOM_LEVEL, point, DEFAULT_CAMERA_ANIMATION_DURATION)
             })
-
     }}
 
     val onClickCancelSearchButton = remember {{
@@ -222,6 +223,10 @@ fun MappingScreen(
             mappingViewModel.onEvent(event = MappingEvent.StopPinging)
         }
         Unit
+    }}
+
+    val onChangeCameraState = remember{{ cameraPosition: Point, zoom: Double ->
+        mappingViewModel.onEvent(event = MappingEvent.ChangeCameraState(cameraPosition, zoom))
     }}
 
 
@@ -237,7 +242,10 @@ fun MappingScreen(
     }
 
     LaunchedEffect(key1 = userLocationAvailable) {
-            locateUser(DEFAULT_MAP_ZOOM_LEVEL)
+            val cameraState = state.cameraState
+            val point = cameraState.cameraPosition ?: Point.fromLngLat(state.longitude, state.latitude)
+            val zoomLevel = cameraState.cameraZoom ?: DEFAULT_MAP_ZOOM_LEVEL
+            locateUser(zoomLevel, point, FAST_CAMERA_ANIMATION_DURATION)
             mappingViewModel.onEvent(event = MappingEvent.PostLocation)
     }
 
@@ -341,6 +349,9 @@ fun MappingScreen(
         onClickCancelSearchButton = onClickCancelSearchButton,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         onInitializeMapView = onInitializeMapView,
+        onChangeCameraState = onChangeCameraState,
+        mapboxNavigation = mapboxNavigation,
+
 
     )
 
@@ -390,6 +401,7 @@ fun MappingScreen(
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     state: MappingState,
     mapView: MapView,
+    mapboxNavigation: MapboxNavigation? = null,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     onClickNoInternetRetryButton: () -> Unit = {},
     onClickLocateUserButton: () -> Unit = {},
@@ -401,6 +413,7 @@ fun MappingScreen(
     onClickChatButton: () -> Unit = {},
     onClickCancelButton: () -> Unit = {},
     onInitializeMapView: (MapView) -> Unit = {},
+    onChangeCameraState: (Point, Double) -> Unit = {_,_->},
     ) {
 
     val configuration = LocalConfiguration.current
@@ -437,6 +450,8 @@ fun MappingScreen(
                 locationPermissionsState = locationPermissionState,
                 mapsMapView  = mapView,
                 onInitializeMapView = onInitializeMapView,
+                onChangeCameraState = onChangeCameraState,
+                mapboxNavigation = mapboxNavigation!!
             )
 
         }

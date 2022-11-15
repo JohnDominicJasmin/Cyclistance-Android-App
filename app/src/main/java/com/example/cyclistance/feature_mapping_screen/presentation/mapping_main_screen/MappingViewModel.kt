@@ -71,6 +71,17 @@ class MappingViewModel @Inject constructor(
                 uploadUserProfile()
             }
 
+            is MappingEvent.ChangeCameraState -> {
+                _state.update {
+                    it.copy(
+                        cameraState = CameraState(
+                            cameraPosition = event.cameraPosition,
+                            cameraZoom = event.cameraZoomLevel))
+                }
+            }
+
+
+
             is MappingEvent.PostLocation -> {
 //                postLocation() todo: remove this later
             }

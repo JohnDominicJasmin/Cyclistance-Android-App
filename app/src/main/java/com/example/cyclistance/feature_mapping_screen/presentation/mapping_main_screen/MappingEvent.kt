@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
+import com.mapbox.geojson.Point
 
 
 sealed class MappingEvent {
@@ -24,5 +25,6 @@ sealed class MappingEvent {
     data class AcceptRescueRequest(val cardModel: CardModel): MappingEvent()
     object SubscribeToRescueTransactionChanges: MappingEvent()
     object UnsubscribeToRescueTransactionChanges: MappingEvent()
+    data class ChangeCameraState(val cameraPosition: Point, val cameraZoomLevel: Double): MappingEvent()
 
 }

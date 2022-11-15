@@ -7,6 +7,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LAT
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CameraState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.NearbyCyclists
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.RescueRequestRespondents
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.UserAddress
@@ -34,6 +35,7 @@ data class MappingState(
     val name: String = "-----",
     val photoUrl: String = "",
 
+    val cameraState: CameraState = CameraState(),
     val nearbyCyclists: NearbyCyclists = NearbyCyclists(),
     val rescuer: UserItem = UserItem(),
 
