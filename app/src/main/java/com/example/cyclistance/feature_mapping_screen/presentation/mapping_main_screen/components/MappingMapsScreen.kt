@@ -160,8 +160,8 @@ fun MappingMapsScreen(
             routeOverview.visibility = View.INVISIBLE
             tripProgressCard.visibility = View.INVISIBLE
         }
-        val setRouteAndStartNavigation = { routes: List<DirectionsRoute> ->
-            mapboxNavigation.setRoutes(routes)
+        val setRouteAndStartNavigation = { routes: List<NavigationRoute> ->
+            mapboxNavigation.setNavigationRoutes(routes)
 
             soundButton.visibility = View.VISIBLE
             routeOverview.visibility = View.VISIBLE
