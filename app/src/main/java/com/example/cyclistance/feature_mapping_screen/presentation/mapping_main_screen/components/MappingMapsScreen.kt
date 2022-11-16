@@ -335,8 +335,10 @@ fun MappingMapsScreen(
 
 
                         val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(parentContext)
-                            .withRouteLineBelowLayerId(LOCATION_INDICATOR_LAYER)
+                            .displayRestrictedRoadSections(true)
+                            .withRouteLineBelowLayerId(MappingConstants.ROAD_LABEL_NAVIGATION)
                             .build()
+
                         routeLineApi = MapboxRouteLineApi(mapboxRouteLineOptions)
                         routeLineView = MapboxRouteLineView(mapboxRouteLineOptions)
 
@@ -344,7 +346,7 @@ fun MappingMapsScreen(
                         routeArrowView = MapboxRouteArrowView(routeArrowOptions)
 
                         mapboxMap.loadStyleUri(
-                            if (isDarkTheme) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY
+                            if (isDarkTheme) NavigationStyles.NAVIGATION_NIGHT_STYLE else NavigationStyles.NAVIGATION_DAY_STYLE
                         ) {
                             mapView.gestures.addOnMapLongClickListener { point ->
 
