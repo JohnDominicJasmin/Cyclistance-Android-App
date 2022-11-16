@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
 import android.os.Parcelable
+import android.view.View
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
@@ -26,6 +27,7 @@ data class MappingState(
     val alertDialogModel: AlertDialogModel = AlertDialogModel(),
 
     val user: UserItem = UserItem(),
+    val rescuer: UserItem = UserItem(),
     val userRescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
     val userAddress: UserAddress = UserAddress(),
 
@@ -37,7 +39,13 @@ data class MappingState(
 
     val cameraState: CameraState = CameraState(),
     val nearbyCyclists: NearbyCyclists = NearbyCyclists(),
-    val rescuer: UserItem = UserItem(),
+
+    val tripProgressCardVisibility:Int = View.INVISIBLE,
+    val maneuverViewVisibility:Int = View.INVISIBLE,
+    val soundButtonVisibility: Int = View.INVISIBLE,
+    val routeOverViewVisibility: Int = View.INVISIBLE,
+    val recenterButtonVisibility: Int = View.INVISIBLE,
+
 
 
 
