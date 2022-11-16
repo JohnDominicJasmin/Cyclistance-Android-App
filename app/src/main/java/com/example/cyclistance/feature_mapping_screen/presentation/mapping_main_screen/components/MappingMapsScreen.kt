@@ -83,7 +83,7 @@ fun MappingMapsScreen(
     val annotationApi = remember(mapsMapView) { mapsMapView.annotations }
     val pointAnnotationManager = remember(annotationApi) { annotationApi.createPointAnnotationManager() }
 
-    LaunchedEffect(key1 = nearbyCyclists){
+    LaunchedEffect( key1 = nearbyCyclists, key2 = mapsMapView){
         nearbyCyclists.filter{ it.user.id != state.user.id }.forEach {
             val (user, bitmapProfileImage) = it
             val location = user.location
