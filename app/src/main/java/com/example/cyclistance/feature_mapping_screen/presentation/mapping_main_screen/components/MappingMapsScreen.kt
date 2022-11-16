@@ -217,7 +217,6 @@ fun MappingMapsScreen(
                     ).show()
                 },
                 {
-                    maneuverView.visibility = View.VISIBLE
                     maneuverView.renderManeuvers(maneuvers)
                 }
             )
