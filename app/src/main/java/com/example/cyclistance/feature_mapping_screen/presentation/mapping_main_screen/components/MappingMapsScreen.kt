@@ -26,7 +26,6 @@ import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
-import com.mapbox.maps.plugin.gestures.gestures
 import com.mapbox.maps.plugin.locationcomponent.location2
 import com.mapbox.navigation.base.TimeFormat
 import com.mapbox.navigation.base.formatter.DistanceFormatterOptions
@@ -338,22 +337,7 @@ fun MappingMapsScreen(
 
                         mapboxMap.loadStyleUri(
                             if (isDarkTheme) NavigationStyles.NAVIGATION_NIGHT_STYLE else NavigationStyles.NAVIGATION_DAY_STYLE
-                        ) {
-                            mapView.gestures.addOnMapLongClickListener { point ->
-
-                                val originLocation = navigationLocationProvider.lastLocation
-                                val originPoint = originLocation?.let { location ->
-                                    Point.fromLngLat(location.longitude, location.latitude)
-                                }
-                                mapboxNavigation.findRoute(
-                                    parentContext = parentContext,
-                                    destinationPoint = point,
-                                    originPoint = originPoint!!) {
-                                    setRouteAndStartNavigation(it)
-                                }
-                                true
-                            }
-                        }
+                        )
 
                         stop.setOnClickListener {
                             clearRouteAndStopNavigation()
@@ -371,6 +355,12 @@ fun MappingMapsScreen(
 
                         mapboxNavigation.startTripSession()
                         onInitializeMapView(mapView)
+
+                        tripProgressCard.visibility = state.tripProgressCardVisibility
+                        maneuverView.visibility = state.maneuverViewVisibility
+                        soundButton.visibility = state.soundButtonVisibility
+                        routeOverview.visibility = state.routeOverviewVisibility
+                        recenter.visibility = state.recenterButtonVisibility
                     }
 
 
