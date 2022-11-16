@@ -3,6 +3,7 @@ package com.example.cyclistance.core.utils.constants
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object MappingConstants {
+    const val ROAD_LABEL_NAVIGATION = "road-label-navigation"
     const val MAX_ZOOM_LEVEL_MAPS = 20.00
     const val MIN_ZOOM_LEVEL_MAPS = 3.00
 
