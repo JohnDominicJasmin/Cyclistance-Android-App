@@ -310,7 +310,10 @@ fun MappingMapsScreen(
                         val distanceFormatterOptions = mapboxNavigation.navigationOptions.distanceFormatterOptions
 
                         maneuverApi = MapboxManeuverApi(
-                            MapboxDistanceFormatter(distanceFormatterOptions)
+                            MapboxDistanceFormatter(
+                                DistanceFormatterOptions.Builder(context)
+                                .unitType(UnitType.METRIC)
+                                .build())
                         )
 
                         tripProgressApi = MapboxTripProgressApi(
