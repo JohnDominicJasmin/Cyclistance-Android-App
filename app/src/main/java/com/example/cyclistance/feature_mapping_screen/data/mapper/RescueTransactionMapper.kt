@@ -12,7 +12,8 @@ object RescueTransactionMapper {
             cancellation = this.cancellation,
             rescueeId = this.rescueeId,
             rescuerId = this.rescuerId,
-            status = this.status
+            status = this.status,
+            route = this.route
         )
     }
 
@@ -22,7 +23,8 @@ object RescueTransactionMapper {
             cancellation = this.cancellation,
             rescueeId = this.rescueeId,
             rescuerId = this.rescuerId,
-            status = this.status
+            status = this.status,
+            route = this.route
         )
     }
 

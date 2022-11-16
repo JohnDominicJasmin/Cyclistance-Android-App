@@ -18,5 +18,7 @@ data class RescueTransactionItemDto(
     @SerializedName("rescuer_id")
     val rescuerId: String?,
     @SerializedName("status")
-    val status: Status?
+    val status: Status?,
+    @SerializedName("route")
+    val route: Route?
 ):Parcelable
