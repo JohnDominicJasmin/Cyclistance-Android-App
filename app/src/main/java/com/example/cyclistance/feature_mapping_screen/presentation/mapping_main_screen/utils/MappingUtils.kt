@@ -12,7 +12,6 @@ import androidx.core.content.ContextCompat
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.service.LocationService
 import com.mapbox.api.directions.v5.models.Bearing
-import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.directions.v5.models.RouteOptions
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
@@ -24,7 +23,8 @@ import com.mapbox.maps.plugin.scalebar.scalebar
 import com.mapbox.navigation.base.extensions.applyDefaultNavigationOptions
 import com.mapbox.navigation.base.extensions.applyLanguageAndVoiceUnitOptions
 import com.mapbox.navigation.base.options.NavigationOptions
-import com.mapbox.navigation.base.route.RouterCallback
+import com.mapbox.navigation.base.route.NavigationRoute
+import com.mapbox.navigation.base.route.NavigationRouterCallback
 import com.mapbox.navigation.base.route.RouterFailure
 import com.mapbox.navigation.base.route.RouterOrigin
 import com.mapbox.navigation.core.MapboxNavigation
@@ -78,7 +78,11 @@ inline fun MapboxNavigation.findRoute(
     parentContext: Context,
     originPoint: Point,
     destinationPoint: Point,
-    crossinline onSuccess: (List<DirectionsRoute>) -> Unit){
+    crossinline onSuccess: (List<NavigationRoute>) -> Unit){
+
+    if(getNavigationRoutes().isNotEmpty()) {
+        setNavigationRoutes(listOf())
+    }
 
     requestRoutes(
         RouteOptions.builder()
@@ -97,9 +101,9 @@ inline fun MapboxNavigation.findRoute(
             )
             .layersList(listOf(getZLevel(), null))
             .build(),
-        object : RouterCallback {
+        object : NavigationRouterCallback {
             override fun onRoutesReady(
-                routes: List<DirectionsRoute>,
+                routes: List<NavigationRoute>,
                 routerOrigin: RouterOrigin
             ) {
                 onSuccess(routes)
