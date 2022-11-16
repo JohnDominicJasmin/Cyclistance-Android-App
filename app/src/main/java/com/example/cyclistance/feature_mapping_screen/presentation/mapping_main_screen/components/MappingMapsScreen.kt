@@ -287,15 +287,6 @@ fun MappingMapsScreen(
                         mapView.camera.addCameraAnimationsLifecycleListener(
                             NavigationBasicGesturesHandler(navigationCamera)
                         )
-                        navigationCamera.registerNavigationCameraStateChangeObserver { navigationCameraState ->
-                            when (navigationCameraState) {
-                                NavigationCameraState.TRANSITION_TO_FOLLOWING,
-                                NavigationCameraState.FOLLOWING -> recenter.visibility = View.INVISIBLE
-                                NavigationCameraState.TRANSITION_TO_OVERVIEW,
-                                NavigationCameraState.OVERVIEW,
-                                NavigationCameraState.IDLE -> recenter.visibility = View.VISIBLE
-                            }
-                        }
                         if (parentContext.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
                             viewportDataSource.overviewPadding = landscapeOverviewPadding
                         } else {
