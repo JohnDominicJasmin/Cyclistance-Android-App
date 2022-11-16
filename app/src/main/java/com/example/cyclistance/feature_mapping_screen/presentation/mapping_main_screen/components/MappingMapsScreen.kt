@@ -153,7 +153,7 @@ fun MappingMapsScreen(
 
 
         val clearRouteAndStopNavigation = {
-            mapboxNavigation.setRoutes(listOf())
+            mapboxNavigation.setNavigationRoutes(listOf())
 
             soundButton.visibility = View.INVISIBLE
             maneuverView.visibility = View.INVISIBLE
