@@ -36,6 +36,7 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingMapsScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.findRoute
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapboxNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startLocationServiceIntentAction
 import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
@@ -297,8 +298,24 @@ fun MappingScreen(
         }
     }
 
-    LaunchedEffect(key1 = true) {
 
+    LaunchedEffect(key1 = true) {
+        val rescuee = state.user
+        mappingViewModel.eventFlow.collect{ event ->
+            when(event){
+                is MappingUiEvent.ShowRouteLine -> {
+                    mapboxNavigation.findRoute(
+                        context,
+                        originPoint = event.origin,
+                        destinationPoint = Point.fromLngLat(rescuee.location!!.longitude, rescuee.location.latitude),
+                        mapboxNavigation::setNavigationRoutes)
+                }
+            }
+        }
+
+    }
+
+    LaunchedEffect(key1 = true) {
         with(mappingViewModel) {
 
             onEvent(event = MappingEvent.LoadUserImageLocationPuck)
@@ -306,29 +323,35 @@ fun MappingScreen(
             onEvent(event = MappingEvent.SubscribeToLocationUpdates)
             onEvent(event = MappingEvent.SubscribeToRescueTransactionChanges)
 
-            eventFlow.collectLatest { event ->
-                when (event) {
-                    is MappingUiEvent.ShowToastMessage -> {
-                        Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                    }
+        }
+    }
 
-                    is MappingUiEvent.ShowConfirmDetailsScreen -> {
-                        navController.navigateScreen(
-                            Screens.ConfirmDetailsScreen.route)
-                    }
 
-                    is MappingUiEvent.ShowEditProfileScreen -> {
-                        navController.navigateScreen(
-                            Screens.EditProfileScreen.route)
-                    }
+    LaunchedEffect(key1 = true) {
 
-                    is MappingUiEvent.ShowSignInScreen -> {
-                        navController.navigateScreenInclusively(
-                            Screens.SignInScreen.route,
-                            Screens.MappingScreen.route)
-                    }
-                    else -> {}
+        mappingViewModel.eventFlow.collectLatest{ event ->
+            when (event) {
+                is MappingUiEvent.ShowToastMessage -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
+
+                is MappingUiEvent.ShowConfirmDetailsScreen -> {
+                    navController.navigateScreen(
+                        Screens.ConfirmDetailsScreen.route)
+                }
+
+                is MappingUiEvent.ShowEditProfileScreen -> {
+                    navController.navigateScreen(
+                        Screens.EditProfileScreen.route)
+                }
+
+                is MappingUiEvent.ShowSignInScreen -> {
+                    navController.navigateScreenInclusively(
+                        Screens.SignInScreen.route,
+                        Screens.MappingScreen.route)
+                }
+
+                else -> {}
             }
         }
     }

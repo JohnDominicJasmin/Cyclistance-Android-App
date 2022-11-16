@@ -29,6 +29,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.model.Role
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
+import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.delight.android.location.SimpleLocation
 import io.github.farhanroy.composeawesomedialog.R
@@ -83,7 +84,7 @@ class MappingViewModel @Inject constructor(
 
 
             is MappingEvent.PostLocation -> {
-//                postLocation() todo: remove this later
+//                postLocation() todo remove this on release
             }
 
             is MappingEvent.DeclineRescueRequest -> {
@@ -210,17 +211,17 @@ class MappingViewModel @Inject constructor(
 
             }.onSuccess {
                 assignTransaction(user, rescuer, transactionId)
-            }.onFailure {
-                it.handleException()
+            }.onFailure { exception ->
+                _state.update { it.copy(isLoading = false) }
+                exception.handleException()
             }
-            _state.update { it.copy(isLoading = false) }
+
             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
 
         }
     }
 
     private suspend fun assignTransaction(user: UserItem, rescuer: UserItem, transactionId: String){
-        Timber.v("ACCEPT_RESCUE_REQUEST RESCUE REQUEST: Created Rescue Transaction")
         mappingUseCase.broadcastRescueTransactionUseCase()
         runCatching {
 
@@ -228,15 +229,49 @@ class MappingViewModel @Inject constructor(
             transactionId.assignTransaction(role = Role.RESCUER.name.lowercase(), id = rescuer.id)
 
         }.onSuccess {
-            Timber.v("ACCEPT_RESCUE_REQUEST ASSIGN TRANSACTION TO BOTH USERS: Transaction Assigned")
+
             _state.update { it.copy(rescuer = rescuer, searchAssistanceButtonVisible = false) }
             _eventFlow.emit(value = MappingUiEvent.ShowMappingScreen)
             mappingUseCase.broadcastUserUseCase()
-        }.onFailure {
-            it.handleException()
+            delay(500)
+            showRescueRouteLine()
+            _state.update { it.copy(isLoading = false) }
+        }.onFailure { exception ->
+            _state.update { it.copy(isLoading = false) }
+            exception.handleException()
         }
 
     }
+
+    private suspend fun showRescueRouteLine(){
+
+        val rescuer = state.value.rescuer
+        val rescuee = state.value.user
+
+        if(rescuer.id == null){
+            return
+        }
+
+        if(rescuer.location == null){
+            _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Can't reach Rescuer"))
+            return
+        }
+
+        if(rescuee.location == null){
+            _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Location not found"))
+            return
+        }
+
+        _eventFlow.emit(
+            value = MappingUiEvent.ShowRouteLine(
+                origin = Point.fromLngLat(
+                    rescuer.location.longitude,
+                    rescuer.location.latitude)))
+
+
+    }
+
+
     private fun rescueeCannotRequest(){
         _state.update { it.copy(alertDialogModel = AlertDialogModel(
             title = "Cannot Request",
@@ -574,6 +609,10 @@ class MappingViewModel @Inject constructor(
             }
             is MappingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
                 _eventFlow.emit(MappingUiEvent.ShowEditProfileScreen)
+            }
+
+            else ->{
+                Timber.e("Error HandleException: ${this.message}")
             }
 
         }
