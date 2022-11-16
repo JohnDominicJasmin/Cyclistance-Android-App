@@ -62,7 +62,7 @@ fun MappingMapsScreen(
     state: MappingState,
     isDarkTheme: Boolean,
     mapsMapView: MapView,
-    mapsMapboxMap: MapboxMap,
+    mapboxNavigation: MapboxNavigation,
     onInitializeMapView: (MapView) -> Unit,
     locationPermissionsState: MultiplePermissionsState?,
     onChangeCameraState: (Point, Double) -> Unit,
@@ -106,7 +106,6 @@ fun MappingMapsScreen(
     AndroidViewBinding(factory = ActivityMappingBinding::inflate, modifier = modifier){
         val parentContext = this.root.context
         lateinit var mapboxMap: MapboxMap
-        lateinit var mapboxNavigation: MapboxNavigation
         lateinit var navigationCamera: NavigationCamera
         lateinit var viewportDataSource: MapboxNavigationViewportDataSource
         val pixelDensity = Resources.getSystem().displayMetrics.density
