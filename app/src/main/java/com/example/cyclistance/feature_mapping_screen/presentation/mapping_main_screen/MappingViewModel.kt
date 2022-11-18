@@ -20,6 +20,7 @@ import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogMode
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toCardModel
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toRespondent
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.Route
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.Status
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
@@ -80,8 +81,6 @@ class MappingViewModel @Inject constructor(
                             cameraZoom = event.cameraZoomLevel))
                 }
             }
-
-
 
             is MappingEvent.PostLocation -> {
 //                postLocation() todo remove this on release
@@ -180,7 +179,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun acceptRescueRequest(cardModel: CardModel) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
 
             val user = state.value.user
             val userHasCurrentTransaction = (user.transaction ?: Transaction()).transactionId.isNotEmpty()
@@ -189,6 +188,17 @@ class MappingViewModel @Inject constructor(
             val rescuerHasCurrentTransaction = (rescuer.transaction ?: Transaction()).transactionId.isNotEmpty()
 
             val transactionId = user.id + rescuer.id + System.currentTimeMillis().toString().takeLast(5)
+
+            if(rescuer.location == null){
+                _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Can't reach Rescuer"))
+                return@launch
+            }
+
+            if(user.location == null){
+                _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Location not found"))
+                return@launch
+            }
+
 
             if (userHasCurrentTransaction) {
                 rescueeCannotRequest()
@@ -207,9 +217,19 @@ class MappingViewModel @Inject constructor(
                         id = transactionId,
                         rescuerId = rescuer.id,
                         rescueeId = user.id,
-                        status = Status(started = true, ongoing = true)))
+                        status = Status(started = true, ongoing = true),
+                        route = Route(
+                           startingLocation = Location(
+                               latitude = rescuer.location.latitude,
+                               longitude = rescuer.location.longitude
+                           ),
+                            destinationLocation = Location(
+                                latitude = user.location.latitude,
+                                longitude = user.location.longitude)
+                        )))
 
             }.onSuccess {
+                mappingUseCase.broadcastRescueTransactionUseCase()
                 assignTransaction(user, rescuer, transactionId)
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
@@ -222,7 +242,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private suspend fun assignTransaction(user: UserItem, rescuer: UserItem, transactionId: String){
-        mappingUseCase.broadcastRescueTransactionUseCase()
+
         runCatching {
 
             transactionId.assignTransaction(role = Role.RESCUEE.name.lowercase(), id = user.id)
@@ -231,8 +251,8 @@ class MappingViewModel @Inject constructor(
         }.onSuccess {
 
             _state.update { it.copy(rescuer = rescuer, searchAssistanceButtonVisible = false) }
-            _eventFlow.emit(value = MappingUiEvent.ShowMappingScreen)
             mappingUseCase.broadcastUserUseCase()
+            _eventFlow.emit(value = MappingUiEvent.ShowMappingScreen)
             delay(500)
             showRescueRouteLine()
             _state.update { it.copy(isLoading = false) }
@@ -246,26 +266,11 @@ class MappingViewModel @Inject constructor(
     private suspend fun showRescueRouteLine(){
 
         val rescuer = state.value.rescuer
-        val rescuee = state.value.user
-
-        if(rescuer.id == null){
-            return
-        }
-
-        if(rescuer.location == null){
-            _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Can't reach Rescuer"))
-            return
-        }
-
-        if(rescuee.location == null){
-            _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Location not found"))
-            return
-        }
 
         _eventFlow.emit(
             value = MappingUiEvent.ShowRouteLine(
                 origin = Point.fromLngLat(
-                    rescuer.location.longitude,
+                    rescuer.location!!.longitude,
                     rescuer.location.latitude)))
 
 
