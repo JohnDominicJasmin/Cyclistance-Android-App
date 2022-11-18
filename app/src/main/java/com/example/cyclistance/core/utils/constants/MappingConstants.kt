@@ -17,7 +17,7 @@ object MappingConstants {
     const val DEFAULT_LONGITUDE = 121.7740
 
     const val DEFAULT_CAMERA_ANIMATION_DURATION = 700L
-    const val FAST_CAMERA_ANIMATION_DURATION = 1L
+    const val FAST_CAMERA_ANIMATION_DURATION = 0L
 
     const val CHARACTER_LIMIT = 110
     const val IMAGE_PLACEHOLDER_URL = "https://raw.githubusercontent.com/JohnDominicJasmin/JohnDominicJasmin/main/ic_empty_profile_placeholder.jpg"
