@@ -43,7 +43,7 @@ data class MappingState(
     val tripProgressCardVisibility:Int = View.INVISIBLE,
     val maneuverViewVisibility:Int = View.INVISIBLE,
     val soundButtonVisibility: Int = View.INVISIBLE,
-    val routeOverViewVisibility: Int = View.INVISIBLE,
+    val routeOverviewVisibility: Int = View.INVISIBLE,
     val recenterButtonVisibility: Int = View.INVISIBLE,
 
 
