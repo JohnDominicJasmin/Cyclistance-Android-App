@@ -1,11 +1,7 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
-import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -57,8 +53,6 @@ class MappingViewModel @Inject constructor(
     private val _eventFlow: MutableSharedFlow<MappingUiEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingUiEvent> = _eventFlow.asSharedFlow()
 
-    private val _userDrawableImage: MutableState<Drawable?> = mutableStateOf(null)
-    val userDrawableImage: State<Drawable?> = _userDrawableImage
 
 
     init {
@@ -82,10 +76,6 @@ class MappingViewModel @Inject constructor(
                 }
             }
 
-            is MappingEvent.PostLocation -> {
-//                postLocation() todo remove this on release
-            }
-
             is MappingEvent.DeclineRescueRequest -> {
                 declineRescueRequest(event.cardModel)
             }
@@ -101,10 +91,6 @@ class MappingViewModel @Inject constructor(
                 loadUserProfile()
             }
 
-
-            is MappingEvent.LoadUserImageLocationPuck -> {
-                getUserDrawableImage()
-            }
             is MappingEvent.StartPinging -> {
                 _state.update { it.copy(isSearchingForAssistance = true) }
             }
@@ -340,26 +326,6 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun postLocation() {
-        viewModelScope.launch(Dispatchers.IO) {
-            runCatching {
-                mappingUseCase.createUserUseCase(
-                    user = UserItem(
-                        id = getId(),
-                        location = Location(
-                            latitude = state.value.latitude,
-                            longitude = state.value.longitude,
-                        ),
-                        profilePictureUrl = state.value.photoUrl))
-            }.onSuccess {
-                Timber.v("Successfully posted location")
-                mappingUseCase.broadcastUserUseCase()
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-            }.onFailure {
-                Timber.e("Failed to post location: ${it.message}")
-            }
-        }
-    }
 
 
     private fun loadUserProfile() {
@@ -427,19 +393,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun getUserDrawableImage() {
-        viewModelScope.launch(Dispatchers.IO) {
-            runCatching {
-                mappingUseCase.imageUrlToDrawableUseCase(getPhotoUrl())
-            }.onSuccess { drawableImage ->
-                _userDrawableImage.value = drawableImage
-            }.onFailure {
-                Timber.e("GET USER DRAWABLE IMAGE: ${it.message}")
-            }
-        }.invokeOnCompletion {
-            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-        }
-    }
+
 
     private fun subscribeToNearbyUsersChanges() {
         getUsersJob?.cancel()
