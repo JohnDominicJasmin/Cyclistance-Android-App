@@ -23,7 +23,6 @@ import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
-import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_MAP_ZOOM_LEVEL
 import com.example.cyclistance.core.utils.constants.MappingConstants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
 import com.example.cyclistance.core.utils.location.ConnectionStatus.checkLocationSetting
@@ -76,7 +75,6 @@ fun MappingScreen(
 
     val context = LocalContext.current
     val state by mappingViewModel.state.collectAsState()
-    val userDrawableImage by mappingViewModel.userDrawableImage
     val coroutineScope = rememberCoroutineScope()
     var mapView by remember{ mutableStateOf(MapView(context = context, mapInitOptions = MapInitOptions(
         context,
@@ -242,12 +240,11 @@ fun MappingScreen(
 
     }
 
-    LaunchedEffect(key1 = userLocationAvailable) {
-            val cameraState = state.cameraState
-            val point = cameraState.cameraPosition ?: Point.fromLngLat(state.longitude, state.latitude)
-            val zoomLevel = cameraState.cameraZoom ?: DEFAULT_MAP_ZOOM_LEVEL
-            locateUser(zoomLevel, point, FAST_CAMERA_ANIMATION_DURATION)
-            mappingViewModel.onEvent(event = MappingEvent.PostLocation)
+    LaunchedEffect(key1 = userLocationAvailable, key2 = mapView) {
+
+        with(state.cameraState) {
+            locateUser(cameraZoom, cameraPosition, FAST_CAMERA_ANIMATION_DURATION)
+        }
     }
 
 
@@ -264,23 +261,8 @@ fun MappingScreen(
 
     }
 
-    LaunchedEffect(key1 = userDrawableImage, mapView) {
+    LaunchedEffect(key1 = mapView) {
         mapView.location2.apply {
-
-            if (userDrawableImage != null) {
-
-                locationPuck = LocationPuck2D(
-                    bearingImage = ContextCompat.getDrawable(
-                        context,
-                        Resource.drawable.ic_bearing_image_large),
-                    topImage = userDrawableImage,
-                    shadowImage = ContextCompat.getDrawable(
-                        context,
-                        com.mapbox.maps.R.drawable.mapbox_user_icon_shadow)
-                )
-
-                return@apply
-            }
 
             locationPuck = LocationPuck2D(
                 bearingImage = ContextCompat.getDrawable(
@@ -318,7 +300,6 @@ fun MappingScreen(
     LaunchedEffect(key1 = true) {
         with(mappingViewModel) {
 
-            onEvent(event = MappingEvent.LoadUserImageLocationPuck)
             onEvent(event = MappingEvent.SubscribeToNearbyUsersChanges)
             onEvent(event = MappingEvent.SubscribeToLocationUpdates)
             onEvent(event = MappingEvent.SubscribeToRescueTransactionChanges)

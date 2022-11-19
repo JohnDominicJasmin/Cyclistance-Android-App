@@ -84,17 +84,14 @@ fun MappingMapsScreen(
     val pointAnnotationManager = remember(annotationApi) { annotationApi.createPointAnnotationManager() }
 
     LaunchedEffect( key1 = nearbyCyclists, key2 = mapsMapView){
-        nearbyCyclists.filter{ it.user.id != state.user.id }.forEach {
-            val (user, bitmapProfileImage) = it
-            val location = user.location
-            val iconImage = if (user.userAssistance?.needHelp == true) AppCompatResources.getDrawable(
-                    context,
-                    R.drawable.ic_emergency)
-                    ?.toBitmap(width = 120, height = 120) else bitmapProfileImage!!
-
+        nearbyCyclists.filter{ it.user.id != state.user.id }.filter{
+            it.user.userAssistance?.needHelp == true
+        }.forEach {
+            val location = it.user.location
+            val iconImage = AppCompatResources.getDrawable(context, R.drawable.ic_emergency)?.toBitmap(width = 120, height = 120)
             val pointAnnotationOptions =  PointAnnotationOptions()
-                .withIconImage(iconImage!!)
-            pointAnnotationOptions.withPoint(Point.fromLngLat(location?.longitude ?: return@forEach, location.latitude))
+            .withIconImage(iconImage!!)
+            .withPoint(Point.fromLngLat(location?.longitude ?: return@forEach, location.latitude))
             pointAnnotationManager.create(pointAnnotationOptions)
         }
     }
