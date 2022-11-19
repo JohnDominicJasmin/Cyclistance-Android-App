@@ -4,7 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -37,10 +37,10 @@ fun ButtonDescriptionDetails(
     val hasError = errorMessage.isNotEmpty()
     val buttonOptions = listOf(
         ButtonDescriptionModel(buttonText = "Injury", icon = R.drawable.ic_injury),
-        ButtonDescriptionModel(buttonText = "Frame Snap", icon = R.drawable.ic_broken_frame),
-        ButtonDescriptionModel(buttonText = "Accident", icon = R.drawable.ic_accident),
-        ButtonDescriptionModel(buttonText = "Chain Snap", icon = R.drawable.ic__670665_200),
-        ButtonDescriptionModel(buttonText = "Flat tire", icon = R.drawable.ic_flat_tire),
+        ButtonDescriptionModel(buttonText = "Broken Frame", icon = R.drawable.ic_broken_frame),
+        ButtonDescriptionModel(buttonText = "Incident", icon = R.drawable.ic_accident),
+        ButtonDescriptionModel(buttonText = "Broken Chain", icon = R.drawable.ic__670665_200),
+        ButtonDescriptionModel(buttonText = "Flat tires", icon = R.drawable.ic_flat_tire),
         ButtonDescriptionModel(buttonText = "Faulty Brakes", icon = R.drawable.ic_faulty_brakes)
     )
 
