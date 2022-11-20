@@ -341,10 +341,9 @@ fun AnimatedDrawableResIcon(modifier: Modifier, @DrawableRes resId: Int) {
 }
 
 @Composable
-private fun AnimatedRawResIcon(modifier: Modifier, @RawRes resId: Int) {
+fun AnimatedRawResIcon(modifier: Modifier, @RawRes resId: Int) {
 
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(resId))
-    rememberLottieComposition(spec = LottieCompositionSpec.RawRes(resId))
     val progress by animateLottieCompositionAsState(composition)
     LottieAnimation(
         composition,
