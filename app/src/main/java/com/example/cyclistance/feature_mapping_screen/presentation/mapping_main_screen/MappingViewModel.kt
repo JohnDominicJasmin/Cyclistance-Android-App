@@ -2,15 +2,11 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.location.Address
 import android.location.Geocoder
-import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP_ICON_HEIGHT
-import com.example.cyclistance.core.utils.constants.MappingConstants.CYCLIST_MAP_ICON_WIDTH
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_BIKE_AVERAGE_SPEED_KM
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
-import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
@@ -20,10 +16,7 @@ import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_tra
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.Status
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
-import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransactionItem
-import com.example.cyclistance.feature_mapping_screen.domain.model.Role
-import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
+import com.example.cyclistance.feature_mapping_screen.domain.model.*
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
 import com.mapbox.geojson.Point
@@ -58,7 +51,22 @@ class MappingViewModel @Inject constructor(
     init {
         // TODO: Remove this when the backend is ready
         createMockUpUsers()
+        getUsers()
     }
+
+    private fun getUsers(){
+        viewModelScope.launch {
+            mappingUseCase.getUsersUseCase().distinctUntilChanged()
+                .catch {
+                    it.handleException()
+                }.collect {
+                    it.getUser()
+                    it.getUsers()
+                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                }
+        }
+    }
+
 
     fun onEvent(event: MappingEvent) {
         when (event) {
@@ -150,6 +158,7 @@ class MappingViewModel @Inject constructor(
                     Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
                 }.collect {
 //                    todo: filter what rescue transaction needed
+                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                     Timber.v("COLLECTING RESCUE TRANSACTIONS")
                 }
         }
@@ -184,7 +193,6 @@ class MappingViewModel @Inject constructor(
                 return@launch
             }
 
-
             if (userHasCurrentTransaction) {
                 rescueeCannotRequest()
                 return@launch
@@ -196,8 +204,8 @@ class MappingViewModel @Inject constructor(
             }
 
             runCatching {
-                _state.update { it.copy(isLoading = true) }
-                mappingUseCase.createRescueTransactionUseCase(
+            _state.update { it.copy(isLoading = true) }
+            mappingUseCase.createRescueTransactionUseCase(
                     rescueTransaction = RescueTransactionItem(
                         id = transactionId,
                         rescuerId = rescuer.id,
@@ -249,7 +257,6 @@ class MappingViewModel @Inject constructor(
     }
 
     private suspend fun showRescueRouteLine(){
-
         val rescuer = state.value.rescuer
 
         _eventFlow.emit(
@@ -257,8 +264,6 @@ class MappingViewModel @Inject constructor(
                 origin = Point.fromLngLat(
                     rescuer.location!!.longitude,
                     rescuer.location.latitude)))
-
-
     }
 
 
