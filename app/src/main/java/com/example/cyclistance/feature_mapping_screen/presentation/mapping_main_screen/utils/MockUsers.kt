@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils
 
+import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
@@ -24,7 +25,7 @@ val userItems = listOf(
             needHelp = true,
             confirmationDetail = ConfirmationDetail(
                 bikeType = "Road Bike",
-                description = "Flat tire",
+                description = MappingConstants.FLAT_TIRES_TEXT,
                 message = "I need help with my flat tire",
             ),
         ),
@@ -42,7 +43,7 @@ val userItems = listOf(
             needHelp = true,
             confirmationDetail = ConfirmationDetail(
                 bikeType = "Road Bike",
-                description = "Flat tire",
+                description = MappingConstants.BROKEN_CHAIN_TEXT,
                 message = "I need help with my flat tire",
             ),
         ), transaction = Transaction(role = "rescuer", transactionId = "oinun98naksxnaiu2")),
@@ -54,7 +55,14 @@ val userItems = listOf(
         id = "3",
         location = Location(latitude = 14.090421127354372, longitude = 121.14870941179073),
         name = "John Doe",
-        userAssistance = UserAssistance(needHelp = true),
+        userAssistance = UserAssistance(
+            needHelp = true,
+            confirmationDetail = ConfirmationDetail(
+                bikeType = "Road Bike",
+                description = MappingConstants.FAULTY_BRAKES_TEXT,
+                message = "I need help with my flat tire",
+            ),
+        ),
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSv9zzOmzF32TNcQ2O93T21Serg2aJj5O-1hrQdZiE6ITGiKLsW4rjgVpX-asQYXa4iVeA&usqp=CAU",
     ),
     UserItem(
@@ -63,7 +71,14 @@ val userItems = listOf(
         id = "4",
         location = Location(latitude = 14.096044763009578, longitude = 121.13918029795505),
         name = "Jane Doe",
-        userAssistance = UserAssistance(needHelp = true),
+        userAssistance = UserAssistance(
+            needHelp = true,
+            confirmationDetail = ConfirmationDetail(
+                bikeType = "Road Bike",
+                description = MappingConstants.INJURY_TEXT,
+                message = "I need help with my flat tire",
+            ),
+        ),
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT8E4cPH6JfDvMMFNuu_M3LC2gXHX-pE0ieN3yt4TF8qDsdVZrXU0wa18WgljS9cvMXAzk&usqp=CAU",
     ),
 
@@ -74,6 +89,14 @@ val userItems = listOf(
         location = Location(latitude = 14.044194, longitude = 121.747392),
         name = "John Doe",
         profilePictureUrl = "https://www.erlanger.org/find-a-doctor/media/PhysicianPhotos/Carbone_1436.jpg",
+        userAssistance = UserAssistance(
+            needHelp = true,
+            confirmationDetail = ConfirmationDetail(
+                bikeType = "Road Bike",
+                description = MappingConstants.BROKEN_FRAME_TEXT,
+                message = "I need help with my flat tire",
+            ),
+        ),
     ),
 
     UserItem(
@@ -83,6 +106,14 @@ val userItems = listOf(
         location = Location(latitude = 6.523497, longitude = 125.037057),
         name = "Jeniffer",
         profilePictureUrl = "https://www.harleytherapy.co.uk/counselling/wp-content/uploads/16297800391_5c6e812832.jpg",
+        userAssistance = UserAssistance(
+            needHelp = true,
+            confirmationDetail = ConfirmationDetail(
+                bikeType = "Road Bike",
+                description = MappingConstants.INCIDENT_TEXT,
+                message = "I need help with my flat tire",
+            ),
+        ),
     ),
 
     UserItem(
