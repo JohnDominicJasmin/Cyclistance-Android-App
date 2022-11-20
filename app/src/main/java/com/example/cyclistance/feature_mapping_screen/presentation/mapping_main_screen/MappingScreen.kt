@@ -34,7 +34,7 @@ import com.example.cyclistance.feature_mapping_screen.presentation.common.Reques
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.LocateUserButton
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingMapsScreen
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.SearchAssistanceButton
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.RequestHelpButton
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.findRoute
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapboxNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startLocationServiceIntentAction
@@ -472,7 +472,7 @@ fun MappingScreen(
                 onClick = onClickLocateUserButton
             )
 
-            SearchAssistanceButton(
+            RequestHelpButton(
                 enabled = !state.isLoading,
                 modifier = Modifier.constrainAs(searchButton) {
                     bottom.linkTo(parent.bottom, margin = 15.dp)
