@@ -43,6 +43,7 @@ android {
             resValue("string", "DefaultWebClientId", localProperties.getProperty("DEFAULT_WEB_CLIENT_ID"))
             resValue("string", "CyclistanceApiBaseUrl", localProperties.getProperty("CYCLISTANCE_API_BASE_URL"))
             resValue("string", "CyclistanceApiBaseUrlLocal", localProperties.getProperty("CYCLISTANCE_API_BASE_URL_LOCAL"))
+            resValue("string", "IpAddress", localProperties.getProperty("IP_ADDRESS"))
         }
         release {
             minifyEnabled true
