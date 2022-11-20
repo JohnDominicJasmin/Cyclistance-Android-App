@@ -2,15 +2,19 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
 import android.os.Build
 import androidx.annotation.WorkerThread
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.core.content.ContextCompat
+import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.service.LocationService
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserAssistance
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.RouteOptions
 import com.mapbox.geojson.Point
@@ -181,5 +185,34 @@ fun rememberMapboxNavigation(parentContext: Context):MapboxNavigation{
                     .build()
             )
         }
+    }
+}
+fun UserAssistance.getMapIconImageDescription(context: Context): Drawable? {
+    return when(this.confirmationDetail.description){
+        MappingConstants.INJURY_TEXT -> {
+            AppCompatResources.getDrawable(context, R.drawable.ic_injury_em)
+        }
+
+        MappingConstants.BROKEN_FRAME_TEXT -> {
+            AppCompatResources.getDrawable(context, R.drawable.ic_broken_frame_em)
+        }
+
+        MappingConstants.INCIDENT_TEXT -> {
+            AppCompatResources.getDrawable(context, R.drawable.ic_incident_em)
+        }
+
+        MappingConstants.BROKEN_CHAIN_TEXT -> {
+            AppCompatResources.getDrawable(context, R.drawable.ic_broken_chain_em)
+        }
+
+        MappingConstants.FLAT_TIRES_TEXT -> {
+            AppCompatResources.getDrawable(context, R.drawable.ic_flat_tire_em)
+        }
+
+        MappingConstants.FAULTY_BRAKES_TEXT -> {
+            AppCompatResources.getDrawable(context, R.drawable.ic_faulty_brakes_em)
+        }
+
+        else -> null
     }
 }
