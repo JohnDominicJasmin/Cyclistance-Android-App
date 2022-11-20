@@ -147,12 +147,11 @@ class MappingViewModel @Inject constructor(
         getRescueTransactionJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
             mappingUseCase.getRescueTransactionUpdatesUseCase().distinctUntilChanged()
                 .catch {
-                    Timber.e("ERROR GETTING USERS: ${it.message}")
+                    Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
                 }.collect {
 //                    todo: filter what rescue transaction needed
                     Timber.v("COLLECTING RESCUE TRANSACTIONS")
                 }
-            mappingUseCase.broadcastRescueTransactionUseCase()
         }
     }
 
@@ -406,7 +405,6 @@ class MappingViewModel @Inject constructor(
                 it.users.getUsers()
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }
-            mappingUseCase.broadcastUserUseCase()
         }
     }
 
@@ -468,8 +466,10 @@ class MappingViewModel @Inject constructor(
     private fun subscribeToLocationUpdates() {
         locationUpdatesJob?.cancel()
         locationUpdatesJob = viewModelScope.launch(Dispatchers.IO) {
-            runCatching {
-                mappingUseCase.getUserLocationUseCase().collect { location ->
+            mappingUseCase.getUserLocationUseCase()
+                .catch {
+                    Timber.e("Error Location Updates: ${it.message}")
+                }.collect { location ->
                     geocoder.getAddress(location.latitude, location.longitude) { addresses ->
                         _state.update { it.copy(userAddress = UserAddress(addresses.lastOrNull())) }
                     }
@@ -481,12 +481,8 @@ class MappingViewModel @Inject constructor(
                         )
                     }
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-
                 }
-            }.onFailure {
-                Timber.e("Error Location Updates: ${it.message}")
             }
-        }
     }
 
     private fun unSubscribeToLocationUpdates() {
