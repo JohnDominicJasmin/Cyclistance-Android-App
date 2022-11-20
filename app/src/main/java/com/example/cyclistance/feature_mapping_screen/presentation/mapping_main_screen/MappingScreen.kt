@@ -261,7 +261,7 @@ fun MappingScreen(
 
     }
 
-    LaunchedEffect(key1 = mapView) {
+    LaunchedEffect(key1 = mapView, key2 = userLocationAvailable) {
         mapView.location2.apply {
 
             locationPuck = LocationPuck2D(
