@@ -7,9 +7,9 @@ import androidx.compose.runtime.Stable
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
+import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CameraState
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.NearbyCyclists
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.RescueRequestRespondents
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.UserAddress
 import kotlinx.parcelize.Parcelize
@@ -38,7 +38,7 @@ data class MappingState(
     val photoUrl: String = "",
 
     val cameraState: CameraState = CameraState(),
-    val nearbyCyclists: NearbyCyclists = NearbyCyclists(),
+    val nearbyCyclists: User = User(),
 
     val tripProgressCardVisibility:Int = View.INVISIBLE,
     val maneuverViewVisibility:Int = View.INVISIBLE,

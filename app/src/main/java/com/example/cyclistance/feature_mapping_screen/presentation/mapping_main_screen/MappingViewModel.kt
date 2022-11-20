@@ -398,34 +398,30 @@ class MappingViewModel @Inject constructor(
         getUsersJob?.cancel()
         getUsersJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
             mappingUseCase.getUserUpdatesUseCase().distinctUntilChanged()
-            .catch {
-                Timber.e("ERROR GETTING USERS: ${it.message}")
-            }.collect {
-                it.users.getUser()
-                it.users.getUsers()
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-            }
+                .catch {
+                    Timber.e("ERROR GETTING USERS: ${it.message}")
+                    it.handleException()
+                }.collect {
+                    it.getUser()
+                    it.getUsers()
+                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                }
         }
     }
-
-    private fun NearbyCyclists.findUser(id: String): UserItem {
-        return this.activeUsers.find {
-            it.user.id == id
-        }?.user ?: UserItem()
+    private fun User.findUser(id: String): UserItem {
+        return this.users.find {
+            it.id == id
+        } ?: UserItem()
 
     }
 
-    private fun List<UserItem>.findUser(id: String): UserItem {
-        return this.find { it.id == id } ?: UserItem()
-    }
-
-    private fun List<UserItem>.getUser() {
+    private fun User.getUser() {
         val user = findUser(id = getId())
         _state.update { it.copy(user = user) }
         getUserRescueRespondents()
     }
 
-    private fun List<UserItem>.getUserRescueRespondents() {
+    private fun User.getUserRescueRespondents() {
         val user = state.value.user
         val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
         user.rescueRequest?.respondents?.forEachIndexed { index, respondent ->
@@ -438,29 +434,13 @@ class MappingViewModel @Inject constructor(
         }
         _state.update {
             it.copy(userRescueRequestRespondents = RescueRequestRespondents(
-                    respondents = rescueRespondentsSnapShot.toSet().toList().toImmutableList()))
+                    respondents = rescueRespondentsSnapShot.distinct().toImmutableList()))
         }
         rescueRespondentsSnapShot.clear()
     }
 
-    private suspend fun List<UserItem>.getUsers() {
-        val nearbyCyclistSnapShot: MutableList<Cyclist> = mutableListOf()
-        this.forEachIndexed { index, user ->
-            val bitmapProfile = mappingUseCase.imageUrlToDrawableUseCase(
-                user.profilePictureUrl ?: IMAGE_PLACEHOLDER_URL)
-            nearbyCyclistSnapShot.add(
-                index = index,
-                element = Cyclist(
-                    user, bitmapProfile.toBitmap(
-                        width = CYCLIST_MAP_ICON_HEIGHT,
-                        height = CYCLIST_MAP_ICON_WIDTH)))
-        }
-        _state.update {
-            it.copy(
-                nearbyCyclists = NearbyCyclists(
-                    activeUsers = nearbyCyclistSnapShot.toSet().toList().toImmutableList()))
-        }
-        nearbyCyclistSnapShot.clear()
+    private fun User.getUsers() {
+        _state.update { it.copy(nearbyCyclists = this) }
     }
 
     private fun subscribeToLocationUpdates() {

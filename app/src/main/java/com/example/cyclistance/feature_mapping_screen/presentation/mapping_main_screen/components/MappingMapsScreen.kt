@@ -70,8 +70,8 @@ fun MappingMapsScreen(
     val context = LocalContext.current
 
 
-    val nearbyCyclists by remember(key1= state.nearbyCyclists.activeUsers.size) {
-        derivedStateOf { state.nearbyCyclists.activeUsers }
+    val nearbyCyclists by remember(key1= state.nearbyCyclists.users.size) {
+        derivedStateOf { state.nearbyCyclists.users }
     }
     val pulsingEnabled by remember(state.isSearchingForAssistance, locationPermissionsState?.allPermissionsGranted) {
         derivedStateOf {
@@ -82,12 +82,11 @@ fun MappingMapsScreen(
     val pointAnnotationManager = remember(annotationApi) { annotationApi.createPointAnnotationManager() }
 
     LaunchedEffect( key1 = nearbyCyclists, key2 = mapsMapView){
-        nearbyCyclists.filter{ it.user.id != state.user.id }.filter{
-            it.user.userAssistance?.needHelp == true
-        }.forEach {
-            val user = it.user
+        nearbyCyclists.filter{ it.id != state.user.id }.filter{
+            it.userAssistance?.needHelp == true
+        }.forEach { user ->
             val location = user.location
-            val iconImage = user.userAssistance?.getMapIconImageDescription(context)?.toBitmap(width = 135, height = 135)
+            val iconImage = user.userAssistance?.getMapIconImageDescription(context)?.toBitmap(width = 130, height = 130)
             val pointAnnotationOptions =  PointAnnotationOptions()
             .withIconImage(iconImage!!)
             .withPoint(Point.fromLngLat(location?.longitude ?: return@forEach, location.latitude))
