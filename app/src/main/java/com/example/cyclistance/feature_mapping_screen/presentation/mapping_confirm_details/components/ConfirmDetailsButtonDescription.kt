@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -18,6 +19,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.constants.MappingConstants.BROKEN_CHAIN_TEXT
+import com.example.cyclistance.core.utils.constants.MappingConstants.BROKEN_FRAME_TEXT
+import com.example.cyclistance.core.utils.constants.MappingConstants.FAULTY_BRAKES_TEXT
+import com.example.cyclistance.core.utils.constants.MappingConstants.FLAT_TIRES_TEXT
+import com.example.cyclistance.core.utils.constants.MappingConstants.INCIDENT_TEXT
+import com.example.cyclistance.core.utils.constants.MappingConstants.INJURY_TEXT
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
 import com.example.cyclistance.feature_mapping_screen.domain.model.ButtonDescriptionModel
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details.ConfirmDetailsState
@@ -34,22 +41,26 @@ fun ButtonDescriptionDetails(
     selectedOption: String,
     state: ConfirmDetailsState ,
     onClickButton: (String) -> Unit) {
-    val hasError = errorMessage.isNotEmpty()
-    val buttonOptions = listOf(
-        ButtonDescriptionModel(buttonText = "Injury", icon = R.drawable.ic_injury),
-        ButtonDescriptionModel(buttonText = "Broken Frame", icon = R.drawable.ic_broken_frame),
-        ButtonDescriptionModel(buttonText = "Incident", icon = R.drawable.ic_accident),
-        ButtonDescriptionModel(buttonText = "Broken Chain", icon = R.drawable.ic__670665_200),
-        ButtonDescriptionModel(buttonText = "Flat tires", icon = R.drawable.ic_flat_tire),
-        ButtonDescriptionModel(buttonText = "Faulty Brakes", icon = R.drawable.ic_faulty_brakes)
-    )
+
+    val hasError = remember(errorMessage){ errorMessage.isNotEmpty() }
+
+    val buttonOptions =
+        remember {
+            listOf(
+                ButtonDescriptionModel(buttonText = INJURY_TEXT, icon = R.drawable.ic_injury),
+                ButtonDescriptionModel(buttonText = BROKEN_FRAME_TEXT, icon = R.drawable.ic_broken_frame),
+                ButtonDescriptionModel(buttonText = INCIDENT_TEXT, icon = R.drawable.ic_accident),
+                ButtonDescriptionModel(buttonText = BROKEN_CHAIN_TEXT, icon = R.drawable.ic_broken_chain),
+                ButtonDescriptionModel(buttonText = FLAT_TIRES_TEXT, icon = R.drawable.ic_flat_tire),
+                ButtonDescriptionModel(buttonText = FAULTY_BRAKES_TEXT, icon = R.drawable.ic_faulty_brakes)
+            )
+        }
 
 
 
 
 
     Column(modifier = modifier) {
-
 
         Text(
             text = "Description",

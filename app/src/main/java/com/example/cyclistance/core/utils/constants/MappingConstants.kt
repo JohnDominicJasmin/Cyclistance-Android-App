@@ -47,4 +47,11 @@ object MappingConstants {
     const val DEFAULT_BIKE_AVERAGE_SPEED_KM = 24.5
     const val BUTTON_ANIMATION_DURATION = 1500L
 
+    const val INJURY_TEXT = "Injury"
+    const val BROKEN_FRAME_TEXT  = "Broken Frame"
+    const val INCIDENT_TEXT = "Incident"
+    const val BROKEN_CHAIN_TEXT = "Broken Chain"
+    const val FLAT_TIRES_TEXT = "Flat tires"
+    const val FAULTY_BRAKES_TEXT = "Faulty Brakes"
+
 }
