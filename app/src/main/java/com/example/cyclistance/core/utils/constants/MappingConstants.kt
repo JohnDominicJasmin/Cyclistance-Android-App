@@ -54,4 +54,9 @@ object MappingConstants {
     const val FLAT_TIRES_TEXT = "Flat tires"
     const val FAULTY_BRAKES_TEXT = "Faulty Brakes"
 
+
+
+    const val HEADER_CACHE_CONTROL = "Cache-Control"
+    const val HEADER_PRAGMA = "Pragma"
+
 }
