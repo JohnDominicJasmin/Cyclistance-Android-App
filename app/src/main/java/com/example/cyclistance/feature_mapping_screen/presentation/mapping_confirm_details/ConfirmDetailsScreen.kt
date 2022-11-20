@@ -7,8 +7,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -198,16 +201,30 @@ fun CoinDetailScreen(
                 enabled = !state.isLoading
             )
 
-            Text(
-                text = "This will send a request to nearby bikers.",
-                color = Black440,
-                style = MaterialTheme.typography.caption,
+            Row(
                 modifier = Modifier.constrainAs(noteText) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     bottom.linkTo(buttonNavButtonSection.top)
-                }
-            )
+                },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+
+                Icon(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = "Info icon",
+                    tint = Black440,
+                    modifier = Modifier.size(22.dp).padding(end = 2.dp)
+
+                    )
+
+                Text(
+                    text = "Your location will be shared with Rescuer",
+                    color = Black440,
+                    style = MaterialTheme.typography.caption,
+
+                    )
+            }
 
             MappingButtonNavigation(
                 modifier = Modifier
