@@ -223,24 +223,31 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
                             )
                         }
 
-                        Divider(
+
+                        val hasMessage = remember(banner.message){
+                            banner.message.isNotEmpty()
+                        }
+
+                        if(hasMessage){
+
+                            Divider(
                             color = Black450,
                             modifier = Modifier.padding(top = 8.dp, bottom = 8.dp))
 
+                            Text(
+                                text = "Message:",
+                                fontSize = MaterialTheme.typography.subtitle1.fontSize,
+                                fontWeight = FontWeight.Normal,
+                                color = Black440
+                            )
+                            Text(
+                                text = banner.message,
+                                fontSize = MaterialTheme.typography.subtitle1.fontSize,
+                                fontWeight = FontWeight.SemiBold,
+                                color = MaterialTheme.colors.onSurface,
+                            )
+                        }
 
-
-                        Text(
-                            text = "Message:",
-                            fontSize = MaterialTheme.typography.subtitle1.fontSize,
-                            fontWeight = FontWeight.Normal,
-                            color = Black440
-                        )
-                        Text(
-                            text = banner.message,
-                            fontSize = MaterialTheme.typography.subtitle1.fontSize,
-                            fontWeight = FontWeight.SemiBold,
-                            color = MaterialTheme.colors.onSurface,
-                        )
                     }
                 }
 
@@ -273,7 +280,7 @@ fun MappingExpandableBannerPreview() {
                 distanceRemaining = "7.0km",
                 timeRemaining = "2mins",
                 address = "Taal Batangas",
-                message = "Lorem ipsum dolor sit amet, consectetur adipis consectetur adipis adipis consectetur adipis adipis adipis adip",
+                message = "",
                 bikeType = "Road Bike",
 
                 )
