@@ -5,12 +5,14 @@ import android.content.res.Resources
 import android.location.Location
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.*
+import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.BUTTON_ANIMATION_DURATION
 import com.example.cyclistance.databinding.ActivityMappingBinding
@@ -82,16 +84,35 @@ fun MappingMapsScreen(
     val pointAnnotationManager = remember(annotationApi) { annotationApi.createPointAnnotationManager() }
 
     LaunchedEffect( key1 = nearbyCyclists, key2 = mapsMapView){
-        nearbyCyclists.filter{ it.id != state.user.id }.filter{
-            it.userAssistance?.needHelp == true
-        }.forEach { user ->
-            val location = user.location
-            val iconImage = user.userAssistance?.getMapIconImageDescription(context)?.toBitmap(width = 130, height = 130)
-            val pointAnnotationOptions =  PointAnnotationOptions()
-            .withIconImage(iconImage!!)
-            .withPoint(Point.fromLngLat(location?.longitude ?: return@forEach, location.latitude))
-            pointAnnotationManager.create(pointAnnotationOptions)
-        }
+        nearbyCyclists
+            .filter {
+                it.id != state.user.id
+            }.forEach { cyclist ->
+                val location = cyclist.location
+                val cyclistAssistance = cyclist.userAssistance
+                val iconImage = if(cyclistAssistance?.needHelp == true) {
+                    cyclistAssistance.getMapIconImageDescription(context)
+                        ?.toBitmap(width = 130, height = 130)
+                }else if (cyclistAssistance?.needHelp == false && cyclist.id == state.rescuer.id) {
+                    AppCompatResources.getDrawable(context, R.drawable.ic_navigation_map_icon)
+                        ?.toBitmap(width = 80, height = 80)
+                } else{
+                    null
+                }
+
+                iconImage?.let{
+                    val pointAnnotationOptions = PointAnnotationOptions()
+                        .withIconImage(it)
+                        .withPoint(
+                            Point.fromLngLat(
+                                location?.longitude ?: return@forEach,
+                                location.latitude))
+                    pointAnnotationManager.create(pointAnnotationOptions)
+                }
+
+
+            }
+
     }
 
     LaunchedEffect(key1 = pulsingEnabled, mapsMapView){
