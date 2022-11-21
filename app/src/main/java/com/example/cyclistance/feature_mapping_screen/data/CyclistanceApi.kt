@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping_screen.data
 
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.*
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.RescueTransactionDto
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.RescueTransactionItemDto
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserItemDto
@@ -26,6 +27,9 @@ interface CyclistanceApi {
 
     @GET("/api/v1/get-rescue-transaction-by-id/{rescue_transaction_id}")
     suspend fun getRescueTransactionById(userId: String): RescueTransactionItemDto
+
+    @GET("/api/v1/get-rescue-transactions")
+    suspend fun getRescueTransactions(): RescueTransactionDto
 
     @POST("/api/v1/create-rescue-transaction")
     suspend fun createRescueTransaction(@Body rescueTransactionItemDto: RescueTransactionItemDto)
