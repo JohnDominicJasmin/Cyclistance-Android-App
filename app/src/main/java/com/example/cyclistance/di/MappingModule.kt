@@ -11,9 +11,9 @@ import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
-import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
-import com.example.cyclistance.core.utils.websockets.RescueTransactionWebSocketClient
-import com.example.cyclistance.core.utils.websockets.UserWebSocketClient
+import com.example.cyclistance.feature_mapping_screen.domain.location.ConnectionStatus.hasInternetConnection
+import com.example.cyclistance.feature_mapping_screen.domain.websockets.RescueTransactionWebSocketClient
+import com.example.cyclistance.feature_mapping_screen.domain.websockets.UserWebSocketClient
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository

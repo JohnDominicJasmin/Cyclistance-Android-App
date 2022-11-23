@@ -1,4 +1,4 @@
-package com.example.cyclistance.core.utils.websockets
+package com.example.cyclistance.feature_mapping_screen.domain.websockets
 
 import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_RESCUE_TRANSACTION
 import com.example.cyclistance.feature_mapping_screen.data.mapper.RescueTransactionMapper.toRescueTransaction

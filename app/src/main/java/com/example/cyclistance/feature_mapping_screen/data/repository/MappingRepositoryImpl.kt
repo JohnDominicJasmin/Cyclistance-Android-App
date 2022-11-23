@@ -13,7 +13,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_K
 import com.example.cyclistance.core.utils.extension.editData
 import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.core.utils.service.LocationService
-import com.example.cyclistance.core.utils.websockets.WebSocketClient
+import com.example.cyclistance.feature_mapping_screen.domain.websockets.WebSocketClient
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping_screen.data.mapper.RescueTransactionMapper.toRescueTransactionDto

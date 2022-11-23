@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.core.app.NotificationCompat
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.core.utils.location.DefaultLocationClient
-import com.example.cyclistance.core.utils.location.LocationClient
+import com.example.cyclistance.feature_mapping_screen.domain.location.DefaultLocationClient
+import com.example.cyclistance.feature_mapping_screen.domain.location.LocationClient
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.Priority

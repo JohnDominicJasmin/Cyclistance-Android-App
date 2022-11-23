@@ -1,4 +1,4 @@
-package com.example.cyclistance.core.utils.location
+package com.example.cyclistance.feature_mapping_screen.domain.location
 
 import android.Manifest
 import android.content.Context

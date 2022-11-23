@@ -4,7 +4,7 @@ import android.content.Context
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.validation.InputValidate.isPasswordStrong
 import com.example.cyclistance.core.utils.validation.InputValidate.isEmailValid
-import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
+import com.example.cyclistance.feature_mapping_screen.domain.location.ConnectionStatus.hasInternetConnection
 
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel

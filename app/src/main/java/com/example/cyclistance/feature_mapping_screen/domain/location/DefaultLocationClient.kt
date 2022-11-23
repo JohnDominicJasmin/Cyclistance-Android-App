@@ -1,4 +1,4 @@
-package com.example.cyclistance.core.utils.location
+package com.example.cyclistance.feature_mapping_screen.domain.location
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class DefaultLocationClient(
     private val locationRequest: LocationRequest,
-    val context: Context):LocationClient {
+    val context: Context): LocationClient {
 
     private val fusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(context)
