@@ -181,14 +181,15 @@ class MappingViewModel @Inject constructor(
             val rescuer = state.value.nearbyCyclists.findUser(cardModel.id!!)
             val rescuerHasCurrentTransaction = (rescuer.transaction ?: Transaction()).transactionId.isNotEmpty()
 
-            val transactionId = user.id + rescuer.id + System.currentTimeMillis().toString().takeLast(5)
+            val transactionId =
+                user.id + rescuer.id + System.currentTimeMillis().toString().takeLast(5)
 
-            if(rescuer.location == null){
+            if (rescuer.location == null) {
                 _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Can't reach Rescuer"))
                 return@launch
             }
 
-            if(user.location == null){
+            if (user.location == null) {
                 _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Location not found"))
                 return@launch
             }
@@ -269,19 +270,26 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun rescueeCannotRequest(){
-        _state.update { it.copy(alertDialogModel = AlertDialogModel(
-            title = "Cannot Request",
-            description = "You can only have one transaction at a time",
-            icon = R.raw.error
-        )) }
+    private fun rescueeCannotRequest() {
+        _state.update {
+            it.copy(
+                alertDialogModel = AlertDialogModel(
+                    title = "Cannot Request",
+                    description = "You can only have one transaction at a time",
+                    icon = R.raw.error
+                ))
+        }
     }
-    private fun rescuerCannotRequest(){
-        _state.update { it.copy(alertDialogModel = AlertDialogModel(
-            title = "Cannot Request",
-            description = "Unfortunately the Rescuer is currently in a transaction.",
-            icon = R.raw.error
-        )) }
+
+    private fun rescuerCannotRequest() {
+        _state.update {
+            it.copy(
+                alertDialogModel = AlertDialogModel(
+                    title = "Cannot Request",
+                    description = "Unfortunately the Rescuer is currently in a transaction.",
+                    icon = R.raw.error
+                ))
+        }
     }
 
     private suspend fun String.assignTransaction(role: String, id: String?) {
