@@ -20,16 +20,7 @@ val userItems = listOf(
                 Respondent(clientId = "3"),
                 Respondent(clientId = "4")
             )
-        ),
-        userAssistance = UserAssistance(
-            needHelp = true,
-            confirmationDetail = ConfirmationDetail(
-                bikeType = "Road Bike",
-                description = MappingConstants.FLAT_TIRES_TEXT,
-                message = "I need help with my flat tire",
-            ),
-        ),
-        ),
+        )),
 
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
@@ -40,7 +31,7 @@ val userItems = listOf(
         profilePictureUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
         rescueRequest = RescueRequest(),
         userAssistance = UserAssistance(
-            needHelp = true,
+            needHelp = false,
             confirmationDetail = ConfirmationDetail(
                 bikeType = "Road Bike",
                 description = MappingConstants.BROKEN_CHAIN_TEXT,
@@ -72,7 +63,7 @@ val userItems = listOf(
         location = Location(latitude = 14.096044763009578, longitude = 121.13918029795505),
         name = "Jane Doe",
         userAssistance = UserAssistance(
-            needHelp = true,
+            needHelp = false,
             confirmationDetail = ConfirmationDetail(
                 bikeType = "Road Bike",
                 description = MappingConstants.INJURY_TEXT,
@@ -90,7 +81,7 @@ val userItems = listOf(
         name = "John Doe",
         profilePictureUrl = "https://www.erlanger.org/find-a-doctor/media/PhysicianPhotos/Carbone_1436.jpg",
         userAssistance = UserAssistance(
-            needHelp = true,
+            needHelp = false,
             confirmationDetail = ConfirmationDetail(
                 bikeType = "Road Bike",
                 description = MappingConstants.BROKEN_FRAME_TEXT,
@@ -106,14 +97,6 @@ val userItems = listOf(
         location = Location(latitude = 6.523497, longitude = 125.037057),
         name = "Jeniffer",
         profilePictureUrl = "https://www.harleytherapy.co.uk/counselling/wp-content/uploads/16297800391_5c6e812832.jpg",
-        userAssistance = UserAssistance(
-            needHelp = true,
-            confirmationDetail = ConfirmationDetail(
-                bikeType = "Road Bike",
-                description = MappingConstants.INCIDENT_TEXT,
-                message = "I need help with my flat tire",
-            ),
-        ),
     ),
 
     UserItem(
