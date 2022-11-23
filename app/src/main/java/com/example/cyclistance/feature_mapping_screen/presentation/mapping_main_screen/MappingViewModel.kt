@@ -204,28 +204,30 @@ class MappingViewModel @Inject constructor(
             }
 
             runCatching {
-            _state.update { it.copy(isLoading = true) }
-            mappingUseCase.createRescueTransactionUseCase(
-                    rescueTransaction = RescueTransactionItem(
-                        id = transactionId,
-                        rescuerId = rescuer.id,
-                        rescueeId = user.id,
-                        status = Status(started = true, ongoing = true),
-                        route = Route(
-                           startingLocation = Location(
-                               latitude = rescuer.location.latitude,
-                               longitude = rescuer.location.longitude
-                           ),
-                            destinationLocation = Location(
-                                latitude = user.location.latitude,
-                                longitude = user.location.longitude)
-                        )))
+                startLoading()
 
-            }.onSuccess {
+                RescueTransactionItem(
+                    id = transactionId,
+                    rescuerId = rescuer.id,
+                    rescueeId = user.id,
+                    status = Status(started = true, ongoing = true),
+                    route = Route(
+                        startingLocation = Location(
+                            latitude = rescuer.location.latitude,
+                            longitude = rescuer.location.longitude
+                        ),
+                        destinationLocation = Location(
+                            latitude = user.location.latitude,
+                            longitude = user.location.longitude)
+                    )).apply {
+                    mappingUseCase.createRescueTransactionUseCase(rescueTransaction = this)
+                }
+
+            }.onSuccess { rescueTransaction ->
                 mappingUseCase.broadcastRescueTransactionUseCase()
-                assignTransaction(user, rescuer, transactionId)
+                assignTransaction(rescueTransaction,user, rescuer, transactionId)
             }.onFailure { exception ->
-                _state.update { it.copy(isLoading = false) }
+                finishLoading()
                 exception.handleException()
             }
 
@@ -234,7 +236,11 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun assignTransaction(user: UserItem, rescuer: UserItem, transactionId: String){
+    private suspend fun assignTransaction(
+        rescueTransaction: RescueTransactionItem,
+        user: UserItem,
+        rescuer: UserItem,
+        transactionId: String) {
 
         runCatching {
 
@@ -242,8 +248,8 @@ class MappingViewModel @Inject constructor(
             transactionId.assignTransaction(role = Role.RESCUER.name.lowercase(), id = rescuer.id)
 
         }.onSuccess {
-
             _state.update { it.copy(rescuer = rescuer, searchAssistanceButtonVisible = false) }
+            _state.update { it.copy(rescueTransaction = rescueTransaction) }
             mappingUseCase.broadcastUserUseCase()
             _eventFlow.emit(value = MappingUiEvent.ShowMappingScreen)
             finishLoading()
