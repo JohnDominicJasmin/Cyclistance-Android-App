@@ -151,10 +151,6 @@ class MappingViewModel @Inject constructor(
                 unSubscribeToNearbyUsersChanges()
             }
 
-            is MappingEvent.DismissNoInternetScreen -> {
-                _state.update { it.copy(hasInternet = true) }
-            }
-
             is MappingEvent.DismissAlertDialog -> {
                 _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
             }
