@@ -20,15 +20,14 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
+import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthResendButton
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthTextStatus
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthVerifyEmailButton
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.emailAuthConstraints
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.visible
-import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -76,12 +75,6 @@ fun EmailAuthScreen(
         Unit
     }}
 
-    val onClickRetryButton = remember {{
-        if (context.hasInternetConnection()) {
-            emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
-        }
-    }}
-
 
 
     LaunchedEffect(key1 = true) {
@@ -120,8 +113,7 @@ fun EmailAuthScreen(
         isDarkTheme = isDarkTheme,
         onDismissAlertDialog = onDismissAlertDialog,
         onClickVerifyButton = onClickVerifyButton,
-        onClickResendButton = onClickResendButton,
-        onClickRetryButton = onClickRetryButton)
+        onClickResendButton = onClickResendButton)
 
 }
 
@@ -133,6 +125,7 @@ fun EmailAuthScreenPreview() {
             isDarkTheme = true, emailAuthState = EmailAuthState(
                 savedAccountEmail = "johndoe@gmail.com",
                 isTimerRunning = true, secondsLeft = 10,
+                hasInternet = false
             ))
     }
 
@@ -147,7 +140,7 @@ fun EmailAuthScreen(
     onDismissAlertDialog: () -> Unit = {},
     onClickVerifyButton: () -> Unit = {},
     onClickResendButton: () -> Unit = {},
-    onClickRetryButton: () -> Unit = {},
+    onDismissDialog: () -> Unit = {},
 ) {
 
     Column(
@@ -206,9 +199,7 @@ fun EmailAuthScreen(
                 onClickResendButton = onClickResendButton)
 
             if (!emailAuthState.hasInternet) {
-                NoInternetScreen(
-                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                    onClickRetryButton = onClickRetryButton)
+                NoInternetDialog(onDismiss = onDismissDialog, modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),)
             }
 
         }

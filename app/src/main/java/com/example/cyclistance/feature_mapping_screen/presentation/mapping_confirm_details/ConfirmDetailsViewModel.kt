@@ -69,9 +69,6 @@ class ConfirmDetailsViewModel @Inject constructor(
             is ConfirmDetailsEvent.ConfirmUpdate -> {
                 updateUser()
             }
-            is ConfirmDetailsEvent.DismissNoInternetScreen -> {
-                _state.update { it.copy(hasInternet = true) }
-            }
             is ConfirmDetailsEvent.EnterAddress -> {
                 _state.update { it.copy(address = event.address) }
             }

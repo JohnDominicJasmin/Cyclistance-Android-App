@@ -23,14 +23,13 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
+import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_mapping_screen.presentation.common.AdditionalMessage
 import com.example.cyclistance.feature_mapping_screen.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details.components.AddressTextField
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details.components.ButtonDescriptionDetails
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details.components.DropDownBikeList
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.BottomSheetType
-import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.Black440
@@ -83,11 +82,6 @@ fun ConfirmDetailsScreen(
     val onClickConfirmButton = remember {{
             viewModel.onEvent(event = ConfirmDetailsEvent.ConfirmUpdate)
     }}
-    val onClickRetryButton = remember {{
-            if (context.hasInternetConnection()) {
-                viewModel.onEvent(event = ConfirmDetailsEvent.DismissNoInternetScreen)
-            }
-    }}
 
     CoinDetailScreen(modifier = Modifier.padding(paddingValues),
         state = state,
@@ -96,8 +90,7 @@ fun ConfirmDetailsScreen(
         onClickBikeType = onClickBikeType,
         onClickDescriptionButton = onClickDescriptionButton,
         onClickConfirmButton = onClickConfirmButton,
-        onClickCancelButton = onClickCancelButton,
-        onClickRetryButton = onClickRetryButton)
+        onClickCancelButton = onClickCancelButton)
 }
 
 
@@ -120,7 +113,7 @@ fun CoinDetailScreen(
     onValueChangeMessage: (String) -> Unit = {},
     onClickCancelButton: () -> Unit = {},
     onClickConfirmButton: () -> Unit = {},
-    onClickRetryButton: () -> Unit = {},
+    onDismissNoInternetDialog: () -> Unit = {},
 
     ) {
 
@@ -214,7 +207,9 @@ fun CoinDetailScreen(
                     imageVector = Icons.Filled.Info,
                     contentDescription = "Info icon",
                     tint = Black440,
-                    modifier = Modifier.size(22.dp).padding(end = 2.dp)
+                    modifier = Modifier
+                        .size(22.dp)
+                        .padding(end = 2.dp)
 
                     )
 
@@ -255,16 +250,13 @@ fun CoinDetailScreen(
                 )
             }
             if (!state.hasInternet) {
-                NoInternetScreen(
-                    modifier = Modifier.constrainAs(noInternetScreen) {
-                        top.linkTo(parent.top)
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        centerTo(parent)
-                        width = Dimension.matchParent
-                        height = Dimension.matchParent
-                    }, onClickRetryButton = onClickRetryButton)
+                NoInternetDialog(onDismiss = onDismissNoInternetDialog, modifier = Modifier.constrainAs(noInternetScreen) {
+                    bottom.linkTo(parent.bottom)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    width = Dimension.matchParent
+                    height = Dimension.wrapContent})
+
             }
         }
 

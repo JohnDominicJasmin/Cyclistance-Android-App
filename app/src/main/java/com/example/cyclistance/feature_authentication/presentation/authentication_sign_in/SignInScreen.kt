@@ -24,8 +24,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
-import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
+import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.domain.util.AuthResult
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
@@ -37,7 +37,6 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.visible
-import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.navigation.navigateScreenInclusively
@@ -161,12 +160,6 @@ fun SignInScreen(
     val onClickSignInText = remember {{
         navController.navigateScreen(Screens.SignUpScreen.route)
     } }
-    val onClickRetryButton = remember{{
-        if (context.hasInternetConnection()) {
-            emailAuthViewModel.onEvent(event = EmailAuthEvent.DismissNoInternetScreen)
-            signInViewModel.onEvent(event = SignInEvent.DismissNoInternetScreen)
-        }
-    }}
 
 
 
@@ -184,7 +177,7 @@ fun SignInScreen(
         onClickGoogleButton = onClickGoogleButton,
         onClickSignInButton = onClickSignInButton,
         onClickSignInText = onClickSignInText,
-        onClickRetryButton = onClickRetryButton)
+    )
 }
 
 @Preview
@@ -211,7 +204,7 @@ fun SignInScreen(
     onClickGoogleButton: () -> Unit = {},
     onClickSignInButton: () -> Unit = {},
     onClickSignInText: () -> Unit = {},
-    onClickRetryButton: () -> Unit = {}
+    onDismissNoInternetDialog: () -> Unit = {}
 
 ) {
 
@@ -282,9 +275,9 @@ fun SignInScreen(
         }
 
         if (!hasInternet) {
-            NoInternetScreen(
-                modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                onClickRetryButton = onClickRetryButton)
+            NoInternetDialog(
+                onDismiss = onDismissNoInternetDialog,
+            modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId))
 
         }
 

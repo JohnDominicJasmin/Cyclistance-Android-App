@@ -10,6 +10,5 @@ sealed class SignInEvent{
     data class EnterEmail(val email: String) : SignInEvent()
     data class EnterPassword(val password: String) : SignInEvent()
     object TogglePasswordVisibility: SignInEvent()
-    object DismissNoInternetScreen: SignInEvent()
     object DismissAlertDialog : SignInEvent()
 }

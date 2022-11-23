@@ -21,13 +21,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
+import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.*
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.visible
-import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -83,11 +82,6 @@ fun SignUpScreen(
             Screens.SignInScreen.route,
             Screens.SignUpScreen.route)
     }}
-    val onClickRetryButton = remember{{
-        if (context.hasInternetConnection()) {
-            signUpViewModel.onEvent(event = SignUpEvent.DismissNoInternetScreen)
-        }
-    }}
 
 
     LaunchedEffect(key1 = true) {
@@ -123,7 +117,6 @@ fun SignUpScreen(
         onClickPasswordVisibility = onClickPasswordVisibility,
         onClickSignUpButton = onClickSignUpButton,
         onClickSignUpText = onClickSignUpText,
-        onClickRetryButton = onClickRetryButton
     )
 }
 
@@ -132,7 +125,7 @@ fun SignUpScreen(
 @Composable
 fun SignUpScreenPreview() {
     CyclistanceTheme(true) {
-        SignUpScreen()
+        SignUpScreen(signUpState = SignUpState(hasInternet = false))
     }
 
 }
@@ -151,7 +144,7 @@ fun SignUpScreen(
     onClickPasswordVisibility: () -> Unit = {},
     onClickSignUpButton: () -> Unit = {},
     onClickSignUpText: () -> Unit = {},
-    onClickRetryButton: () -> Unit = {}
+    onDismissNoInternetDialog: () -> Unit = {}
 ) {
 
 
@@ -210,9 +203,7 @@ fun SignUpScreen(
         }
 
         if (!signUpState.hasInternet) {
-            NoInternetScreen(
-                modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                onClickRetryButton = onClickRetryButton)
+            NoInternetDialog(onDismiss = onDismissNoInternetDialog,  modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),)
         }
 
 

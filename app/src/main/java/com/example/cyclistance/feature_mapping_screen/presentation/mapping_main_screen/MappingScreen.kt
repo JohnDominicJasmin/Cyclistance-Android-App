@@ -160,13 +160,6 @@ fun MappingScreen(
             locationPermissionsState.allPermissionsGranted.and(state.latitude != DEFAULT_LATITUDE && state.longitude != DEFAULT_LONGITUDE)
         }
     }
-    val onClickNoInternetRetryButton = remember {
-        {
-            if (context.hasInternetConnection()) {
-                mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetScreen)
-            }
-        }
-    }
 
     val onClickSearchButton = remember {{
         locationPermissionsState.requestPermission(
@@ -495,17 +488,14 @@ fun MappingScreen(
             }
 
             if (!state.hasInternet) {
-                NoInternetScreen(
-                    modifier = Modifier.constrainAs(noInternetScreen) {
-                        top.linkTo(parent.top)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                        centerTo(parent)
-                        width = Dimension.matchParent
-                        height = Dimension.matchParent
-                    },
-                    onClickRetryButton = onClickNoInternetRetryButton)
+                NoInternetDialog(onDismiss = onDismissNoInternetDialog, modifier = Modifier.constrainAs(noInternetScreen) {
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom)
+                    width = Dimension.matchParent
+                    height = Dimension.wrapContent
+                })
+
             }
 
     }

@@ -2,8 +2,8 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 
 import android.os.CountDownTimer
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.AuthConstants.EMAIL_AUTH_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.AuthConstants.ONE_SECOND_TO_MILLIS
 import com.example.cyclistance.core.utils.constants.AuthConstants.REFRESH_EMAIL_INTERVAL
@@ -46,9 +46,6 @@ class EmailAuthViewModel @Inject constructor(
                 }
             }
 
-            is EmailAuthEvent.DismissNoInternetScreen -> {
-                _state.update { it.copy(hasInternet = true) }
-            }
 
             is EmailAuthEvent.SendEmailVerification -> {
                 sendEmailVerification()

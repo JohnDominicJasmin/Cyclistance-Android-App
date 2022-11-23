@@ -65,9 +65,7 @@ class SignInViewModel @Inject constructor(
                 }
             }
 
-            is SignInEvent.DismissNoInternetScreen -> {
-             _state.update { it.copy(hasInternet = true) }
-            }
+
             is SignInEvent.DismissAlertDialog -> {
                 _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
             }

@@ -50,13 +50,11 @@ val signUpConstraints = ConstraintSet {
     }
 
     constrain(noInternetScreen){
-        top.linkTo(parent.top)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         bottom.linkTo(parent.bottom)
-        this.centerTo(parent)
         width = Dimension.matchParent
-        height = Dimension.matchParent
+        height = Dimension.wrapContent
     }
 
 
