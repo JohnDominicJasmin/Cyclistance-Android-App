@@ -7,6 +7,8 @@ import androidx.compose.runtime.Stable
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
+import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransaction
+import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransactionItem
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CameraState
@@ -25,11 +27,17 @@ data class MappingState(
     val bottomSheetType: String = "",
     val isSearchingForAssistance: Boolean = false,
     val alertDialogModel: AlertDialogModel = AlertDialogModel(),
+    val cameraState: CameraState = CameraState(),
+
 
     val user: UserItem = UserItem(),
-    val rescuer: UserItem = UserItem(),
     val userRescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
     val userAddress: UserAddress = UserAddress(),
+    val rescueTransaction: RescueTransactionItem = RescueTransactionItem(),
+
+
+    val rescuer: UserItem = UserItem(),
+
 
     val currentAddress: String = "",
     val latitude: Double = DEFAULT_LATITUDE,
@@ -37,8 +45,10 @@ data class MappingState(
     val name: String = "-----",
     val photoUrl: String = "",
 
-    val cameraState: CameraState = CameraState(),
+
     val nearbyCyclists: User = User(),
+    val rescueTransactions: RescueTransaction = RescueTransaction(),
+
 
     val tripProgressCardVisibility:Int = View.INVISIBLE,
     val maneuverViewVisibility:Int = View.INVISIBLE,
