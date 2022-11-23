@@ -51,17 +51,38 @@ class MappingViewModel @Inject constructor(
     init {
         // TODO: Remove this when the backend is ready
         createMockUpUsers()
-        getUsers()
+        loadData()
     }
 
-    private fun getUsers(){
-        viewModelScope.launch {
+    private fun loadData() {
+        viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+            getUsers()
+            getRescueTransactions()
+        }
+    }
+
+
+    private suspend fun getUsers() {
+        coroutineScope {
             mappingUseCase.getUsersUseCase().distinctUntilChanged()
                 .catch {
                     it.handleException()
                 }.collect {
                     it.getUser()
                     it.getUsers()
+                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                }
+        }
+    }
+
+    private suspend fun getRescueTransactions() {
+        coroutineScope {
+            mappingUseCase.getRescueTransactionsUseCase().distinctUntilChanged()
+                .catch {
+                    it.handleException()
+                }.collect {
+                    it.getUserRescueTransaction()
+                    it.getRescueTransactions()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
         }
@@ -148,6 +169,18 @@ class MappingViewModel @Inject constructor(
             }
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+    }
+
+    private fun RescueTransaction.getRescueTransactions(){
+        _state.update { it.copy(rescueTransactions = this) }
+    }
+
+    private fun RescueTransaction.getUserRescueTransaction(){
+        val transactionId = state.value.user.transaction?.transactionId
+        val rescueTransaction = transactionId?.let { findRescueTransaction(it) }
+        rescueTransaction?.let {
+            _state.update { it.copy(rescueTransaction = rescueTransaction) }
+        }
     }
 
     private fun subscribeToNearbyRescueTransaction() {
@@ -429,6 +462,12 @@ class MappingViewModel @Inject constructor(
             it.id == id
         } ?: UserItem()
 
+    }
+
+    private fun RescueTransaction.findRescueTransaction(id: String): RescueTransactionItem {
+        return this.rescueTransactions.find {
+            it.id == id
+        } ?: RescueTransactionItem()
     }
 
     private fun User.getUser() {
