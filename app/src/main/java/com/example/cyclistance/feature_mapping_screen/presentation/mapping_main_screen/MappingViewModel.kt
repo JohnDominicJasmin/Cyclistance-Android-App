@@ -246,24 +246,20 @@ class MappingViewModel @Inject constructor(
             _state.update { it.copy(rescuer = rescuer, searchAssistanceButtonVisible = false) }
             mappingUseCase.broadcastUserUseCase()
             _eventFlow.emit(value = MappingUiEvent.ShowMappingScreen)
-            delay(500)
-            showRescueRouteLine()
-            _state.update { it.copy(isLoading = false) }
+            finishLoading()
         }.onFailure { exception ->
-            _state.update { it.copy(isLoading = false) }
+            finishLoading()
             exception.handleException()
         }
 
     }
 
-    private suspend fun showRescueRouteLine(){
-        val rescuer = state.value.rescuer
+    private fun startLoading() {
+        _state.update { it.copy(isLoading = true) }
+    }
 
-        _eventFlow.emit(
-            value = MappingUiEvent.ShowRouteLine(
-                origin = Point.fromLngLat(
-                    rescuer.location!!.longitude,
-                    rescuer.location.latitude)))
+    private fun finishLoading() {
+        _state.update { it.copy(isLoading = false) }
     }
 
 
@@ -298,10 +294,11 @@ class MappingViewModel @Inject constructor(
                 val rescueRespondents = state.value.userRescueRequestRespondents.respondents
                 val updatedState = _state.updateAndGet {
                     it.copy(userRescueRequestRespondents = RescueRequestRespondents(
-                            rescueRespondents.toMutableList().apply {
-                                remove(element = cardModel)
-                            }), isLoading = true)
+                        rescueRespondents.toMutableList().apply {
+                            remove(element = cardModel)
+                        }))
                 }
+                startLoading()
                 mappingUseCase.createUserUseCase(
                     user = UserItem(
                         id = getId(),
@@ -313,7 +310,7 @@ class MappingViewModel @Inject constructor(
             }.onFailure {
                 it.handleDeclineRescueRequest()
             }
-            _state.update { it.copy(isLoading = false) }
+            finishLoading()
             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
 
         }
@@ -376,7 +373,7 @@ class MappingViewModel @Inject constructor(
     private fun cancelSearchAssistance() {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
-                _state.update { it.copy(isLoading = true) }
+                startLoading()
                 mappingUseCase.createUserUseCase(
                     user = UserItem(
                         id = getId(),
@@ -392,7 +389,7 @@ class MappingViewModel @Inject constructor(
                 Timber.e("Failed to cancel search assistance: ${exception.message}")
                 exception.handleException()
             }
-            _state.update { it.copy(isLoading = false) }
+            finishLoading()
             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
     }
@@ -477,14 +474,14 @@ class MappingViewModel @Inject constructor(
     private fun signOutAccount() {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
-                _state.update { it.copy(isLoading = true) }
+                startLoading()
                 authUseCase.signOutUseCase()
             }.onSuccess {
                 _eventFlow.emit(value = MappingUiEvent.ShowSignInScreen)
             }.onFailure {
                 Timber.e("Error Sign out account: ${it.message}")
             }
-            _state.update { it.copy(isLoading = false) }
+            finishLoading()
         }.invokeOnCompletion {
             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
@@ -508,7 +505,8 @@ class MappingViewModel @Inject constructor(
         coroutineScope {
             runCatching {
                 val currentAddress = address.getFullAddress()
-                _state.update { it.copy(currentAddress = currentAddress, isLoading = true) }
+                _state.update { it.copy(currentAddress = currentAddress) }
+                startLoading()
                 mappingUseCase.createUserUseCase(
                     user = UserItem(
                         id = getId(),
@@ -522,13 +520,14 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.updateAddressUseCase(currentAddress)
 
             }.onSuccess {
-                _state.update { it.copy(isLoading = false, searchAssistanceButtonVisible = false) }
+                finishLoading()
+                _state.update { it.copy(searchAssistanceButtonVisible = false) }
                 mappingUseCase.broadcastUserUseCase()
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
 
             }.onFailure { exception ->
                 Timber.e("Error uploading profile: ${exception.message}")
-                _state.update { it.copy(isLoading = false) }
+                finishLoading()
                 exception.handleException()
             }
         }
@@ -551,7 +550,7 @@ class MappingViewModel @Inject constructor(
                 _eventFlow.emit(MappingUiEvent.ShowEditProfileScreen)
             }
 
-            else ->{
+            else -> {
                 Timber.e("Error HandleException: ${this.message}")
             }
 
@@ -560,7 +559,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun createMockUpUsers() {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 mappingUseCase.createMockUsers()
             }.onSuccess {
