@@ -48,7 +48,7 @@ object UserMapper {
 
 
 
-    fun UserItem.toCardModel(distance: String, eta: String): CardModel {
+    fun UserItem.toCardModel(distance: String = "---", eta: String = "---"): CardModel {
         return CardModel(
             id = this.id,
             name = this.name,
