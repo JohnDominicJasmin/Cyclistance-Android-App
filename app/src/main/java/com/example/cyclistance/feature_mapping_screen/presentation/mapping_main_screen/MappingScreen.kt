@@ -27,8 +27,8 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.FAST_CAMERA
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
 import com.example.cyclistance.core.utils.location.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.location.ConnectionStatus.hasGPSConnection
-import com.example.cyclistance.core.utils.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.permission.requestPermission
+import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.LocateUserButton
@@ -38,7 +38,6 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.findRoute
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapboxNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startLocationServiceIntentAction
-import com.example.cyclistance.feature_no_internet.presentation.NoInternetScreen
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.navigation.navigateScreenInclusively
@@ -274,22 +273,21 @@ fun MappingScreen(
     }
 
 
-    LaunchedEffect(key1 = true) {
-        val rescuee = state.user
-        mappingViewModel.eventFlow.collect{ event ->
-            when(event){
-                is MappingUiEvent.ShowRouteLine -> {
-                    mapboxNavigation.findRoute(
-                        context,
-                        originPoint = event.origin,
-                        destinationPoint = Point.fromLngLat(rescuee.location!!.longitude, rescuee.location.latitude),
-                        mapboxNavigation::setNavigationRoutes)
-                }
+
+    LaunchedEffect(key1 = state.rescueTransaction){
+        val transactionRoute = state.rescueTransaction.route
+        val startingLocation = transactionRoute?.startingLocation
+        val destinationLocation = transactionRoute?.destinationLocation
+
+        startingLocation?.let {
+            destinationLocation?.let {
+                mapboxNavigation.findRoute(context,
+                    originPoint = Point.fromLngLat(startingLocation.longitude, startingLocation.latitude),
+                    destinationPoint = Point.fromLngLat(destinationLocation.longitude, destinationLocation.latitude),
+                    mapboxNavigation::setNavigationRoutes)
             }
         }
-
     }
-
     LaunchedEffect(key1 = true) {
         with(mappingViewModel) {
 
@@ -338,7 +336,6 @@ fun MappingScreen(
         modifier = Modifier.padding(paddingValues),
         isDarkTheme = isDarkTheme,
         state = state,
-        onClickNoInternetRetryButton = onClickNoInternetRetryButton,
         onClickSearchButton = onClickSearchButton,
         locationPermissionState = locationPermissionsState,
         onClickLocateUserButton = onClickLocateUserButton,
@@ -380,7 +377,6 @@ fun MappingScreenPreview() {
             modifier = Modifier,
             isDarkTheme = true,
             state = MappingState(bottomSheetType = BottomSheetType.SearchAssistance.type, searchAssistanceButtonVisible = false),
-            onClickNoInternetRetryButton = {},
             onClickSearchButton = {},
             onClickLocateUserButton = {},
             mapView = mapView,
@@ -400,7 +396,6 @@ fun MappingScreen(
     mapView: MapView,
     mapboxNavigation: MapboxNavigation? = null,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
-    onClickNoInternetRetryButton: () -> Unit = {},
     onClickLocateUserButton: () -> Unit = {},
     onClickSearchButton: () -> Unit = {},
     onClickRescueArrivedButton: () -> Unit = {},
@@ -411,6 +406,7 @@ fun MappingScreen(
     onClickCancelButton: () -> Unit = {},
     onInitializeMapView: (MapView) -> Unit = {},
     onChangeCameraState: (Point, Double) -> Unit = {_,_->},
+    onDismissNoInternetDialog: () -> Unit = {},
     ) {
 
     val configuration = LocalConfiguration.current
