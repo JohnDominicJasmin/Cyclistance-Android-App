@@ -7,7 +7,8 @@
       "port": 9099
     },
     "database": {
-      "port": 9000
+      "host" : "localhost",
+      "port": 3103
     },
     "ui": {
       "enabled": true
