@@ -1,7 +1,5 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
-import com.mapbox.geojson.Point
-
 
 sealed class BottomSheetType(val type: String = ""){
     object RescuerArrived: BottomSheetType(type = "rescuer_arrived")
@@ -16,7 +14,6 @@ sealed class MappingUiEvent{
     object ShowSignInScreen: MappingUiEvent()
     object ShowMappingScreen: MappingUiEvent()
     data class ShowToastMessage(val message: String): MappingUiEvent()
-    data class ShowRouteLine(val origin: Point): MappingUiEvent()
 
 
 }
