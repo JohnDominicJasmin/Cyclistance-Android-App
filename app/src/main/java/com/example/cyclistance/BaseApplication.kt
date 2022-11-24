@@ -3,6 +3,7 @@ package com.example.cyclistance
 import android.app.Application
 import coil.ImageLoader
 import coil.ImageLoaderFactory
+import com.example.cyclistance.core.utils.network_observer.NetworkConnectivityChecker
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 import javax.inject.Inject
@@ -16,7 +17,7 @@ class BaseApplication: Application(), ImageLoaderFactory {
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
-
+        NetworkConnectivityChecker.init(this.applicationContext)
     }
 
     override fun newImageLoader(): ImageLoader {

@@ -2,15 +2,34 @@ package com.example.cyclistance.navigation
 
 import android.content.Intent
 import android.content.Intent.ACTION_MAIN
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.cyclistance.core.utils.network_observer.NetworkConnectivityChecker
+import com.example.cyclistance.core.utils.composable_utils.ComposableLifecycle
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingUiEvent
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingViewModel
@@ -41,14 +60,33 @@ fun MainScreen(
     val navController = rememberNavController()
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val scaffoldState =
-        rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
+    val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
+    var internetAvailable by rememberSaveable { mutableStateOf(true) }
+    var internetCameBack by rememberSaveable { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val editProfileState by editProfileViewModel.state.collectAsState()
     val mappingState by mappingViewModel.state.collectAsState()
     val settingState by settingViewModel.state.collectAsState()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
+    ComposableLifecycle{ _, event ->
+        when(event){
+            Lifecycle.Event.ON_CREATE -> {
+                NetworkConnectivityChecker.observe(lifecycleOwner){ isConnected ->
+                    isConnected?.let{
+                        internetAvailable = isConnected
+                    }
+                }
+            }
 
+            Lifecycle.Event.ON_RESUME -> {
+                NetworkConnectivityChecker.checkForConnection()
+            }
+
+            else -> {}
+        }
+
+    }
     LaunchedEffect(key1 = true) {
         mappingViewModel.onEvent(event = MappingEvent.LoadUserProfile)
         mappingViewModel.eventFlow.collectLatest { event ->
@@ -112,13 +150,18 @@ fun MainScreen(
             drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
             scaffoldState = scaffoldState,
             topBar = {
-                TopAppBar(
-                    scaffoldState = scaffoldState,
-                    route = navBackStackEntry?.destination?.route,
-                    coroutineScope = coroutineScope,
-                    onClickSaveProfile = onClickSaveProfile,
-                    editProfileSaveButtonEnabled = editProfileState.isUserInformationChanges(),
-                    onClickTopBarIcon = onClickTopBarIcon)
+                Column() {
+
+
+                    TopAppBar(
+                        scaffoldState = scaffoldState,
+                        route = navBackStackEntry?.destination?.route,
+                        coroutineScope = coroutineScope,
+                        onClickSaveProfile = onClickSaveProfile,
+                        editProfileSaveButtonEnabled = editProfileState.isUserInformationChanges(),
+                        onClickTopBarIcon = onClickTopBarIcon)
+                        NoInternetStatusBar(internetAvailable)
+                }
             },
             drawerContent = {
                 MappingDrawerContent(
@@ -146,79 +189,111 @@ fun MainScreen(
 
 @Composable
 fun TopAppBar(
-    onClickTopBarIcon: () -> Unit,
-    scaffoldState: ScaffoldState,
-    coroutineScope: CoroutineScope,
-    onClickSaveProfile: () -> Unit,
+    onClickTopBarIcon: () -> Unit = {},
+    scaffoldState: ScaffoldState = rememberScaffoldState(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    onClickSaveProfile: () -> Unit = {},
     editProfileSaveButtonEnabled: Boolean = false,
     route: String?) {
 
+        when (route) {
+            Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}" -> {
 
-    when (route) {
-        Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}" -> {
-
-            DefaultTopBar(onClickIcon = {
-                coroutineScope.launch {
-                    scaffoldState.drawerState.open()
-                }
-            })
-        }
-
-        Screens.CancellationScreen.route -> {
-            TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
-                onClickIcon = onClickTopBarIcon,
-                topAppBarTitle = {
-                    TitleTopAppBar(title = "Cancellation Reason")
+                DefaultTopBar(onClickIcon = {
+                    coroutineScope.launch {
+                        scaffoldState.drawerState.open()
+                    }
                 })
-        }
+            }
 
-        Screens.ConfirmDetailsScreen.route -> {
-            TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
-                onClickIcon = onClickTopBarIcon,
-                topAppBarTitle = {
-                    TitleTopAppBar(
-                        title = "Confirmation Details")
-                })
-        }
+            Screens.CancellationScreen.route -> {
+                TopAppBarCreator(
+                    icon = Icons.Default.ArrowBack,
+                    onClickIcon = onClickTopBarIcon,
+                    topAppBarTitle = {
+                        TitleTopAppBar(title = "Cancellation Reason")
+                    })
+            }
 
-
-        Screens.RescueRequestScreen.route -> {
-            TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
-                onClickIcon = onClickTopBarIcon,
-                topAppBarTitle = {
-                    TitleTopAppBar(title = "Rescue Requests")
-                })
-        }
-        Screens.ChangePasswordScreen.route -> {
-            TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
-                onClickIcon = onClickTopBarIcon,
-                topAppBarTitle = {
-                    TitleTopAppBar(title = "Change Password")
-                })
-        }
-        Screens.EditProfileScreen.route -> {
-            TopAppBarCreator(
-                icon = Icons.Default.Close, onClickIcon = onClickTopBarIcon, topAppBarTitle = {
-                    TitleTopAppBar(
-                        title = "Edit Profile",
-                        confirmationText = "Save",
-                        confirmationTextEnable = editProfileSaveButtonEnabled,
-                        onClickConfirmation = onClickSaveProfile)
-                })
-        }
-        Screens.SettingScreen.route -> {
-            TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
-                onClickIcon = onClickTopBarIcon,
-                topAppBarTitle = {
-                    TitleTopAppBar(title = "Setting Screen")
-                })
-        }
+            Screens.ConfirmDetailsScreen.route -> {
+                TopAppBarCreator(
+                    icon = Icons.Default.ArrowBack,
+                    onClickIcon = onClickTopBarIcon,
+                    topAppBarTitle = {
+                        TitleTopAppBar(
+                            title = "Confirmation Details")
+                    })
+            }
 
 
+            Screens.RescueRequestScreen.route -> {
+                TopAppBarCreator(
+                    icon = Icons.Default.ArrowBack,
+                    onClickIcon = onClickTopBarIcon,
+                    topAppBarTitle = {
+                        TitleTopAppBar(title = "Rescue Requests")
+                    })
+            }
+            Screens.ChangePasswordScreen.route -> {
+                TopAppBarCreator(
+                    icon = Icons.Default.ArrowBack,
+                    onClickIcon = onClickTopBarIcon,
+                    topAppBarTitle = {
+                        TitleTopAppBar(title = "Change Password")
+                    })
+            }
+            Screens.EditProfileScreen.route -> {
+                TopAppBarCreator(
+                    icon = Icons.Default.Close, onClickIcon = onClickTopBarIcon, topAppBarTitle = {
+                        TitleTopAppBar(
+                            title = "Edit Profile",
+                            confirmationText = "Save",
+                            confirmationTextEnable = editProfileSaveButtonEnabled,
+                            onClickConfirmation = onClickSaveProfile)
+                    })
+            }
+            Screens.SettingScreen.route -> {
+                TopAppBarCreator(
+                    icon = Icons.Default.ArrowBack,
+                    onClickIcon = onClickTopBarIcon,
+                    topAppBarTitle = {
+                        TitleTopAppBar(title = "Setting Screen")
+                    })
+            }
+        }
+
+}
+
+
+@Composable
+fun NoInternetStatusBar(internetAvailable: Boolean) {
+    AnimatedVisibility(
+        visible = internetAvailable.not(),
+        enter = slideInVertically(),
+        exit = slideOutVertically()) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .background(MaterialTheme.colors.background)
+                .fillMaxWidth()) {
+
+            Text(
+                text = "No Connection",
+                color = Color.White,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(vertical = 2.5.dp))
+        }
+    }
+
+}
+
+
+
+@Preview
+@Composable
+fun TopAppBarPreview() {
+    CyclistanceTheme(true) {
+        TopAppBar(route = Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}")
     }
 }
+
