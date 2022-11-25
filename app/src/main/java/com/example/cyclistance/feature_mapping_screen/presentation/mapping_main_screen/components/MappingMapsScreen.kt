@@ -95,7 +95,7 @@ fun MappingMapsScreen(
                         ?.toBitmap(width = 130, height = 130)
                 }else if (cyclistAssistance?.needHelp == false && cyclist.id == state.rescuer.id) {
                     AppCompatResources.getDrawable(context, R.drawable.ic_navigation_map_icon)
-                        ?.toBitmap(width = 80, height = 80)
+                        ?.toBitmap(width = 90, height = 90)
                 } else{
                     null
                 }
