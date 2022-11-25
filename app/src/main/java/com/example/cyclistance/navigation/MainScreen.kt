@@ -28,8 +28,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.cyclistance.core.utils.network_observer.NetworkConnectivityChecker
 import com.example.cyclistance.core.utils.composable_utils.ComposableLifecycle
+import com.example.cyclistance.core.utils.network_observer.NetworkConnectivityChecker
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingUiEvent
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingViewModel
@@ -150,9 +150,7 @@ fun MainScreen(
             drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
             scaffoldState = scaffoldState,
             topBar = {
-                Column() {
-
-
+                Column {
                     TopAppBar(
                         scaffoldState = scaffoldState,
                         route = navBackStackEntry?.destination?.route,
