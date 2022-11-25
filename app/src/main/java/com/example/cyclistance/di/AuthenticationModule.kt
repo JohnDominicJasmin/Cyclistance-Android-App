@@ -2,7 +2,6 @@ package com.example.cyclistance.di
 
 import android.content.Context
 import com.example.cyclistance.BuildConfig
-import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.data.repository.AuthRepositoryImpl
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
@@ -30,7 +29,7 @@ import javax.inject.Singleton
     fun provideFirebaseAuth(@ApplicationContext context: Context):FirebaseAuth{
         return FirebaseAuth.getInstance().apply{
             if(BuildConfig.DEBUG){
-                useEmulator(context.getString(R.string.IpAddress), 3030)
+                useEmulator("10.0.2.2", 9099)
             }
         }
     }
