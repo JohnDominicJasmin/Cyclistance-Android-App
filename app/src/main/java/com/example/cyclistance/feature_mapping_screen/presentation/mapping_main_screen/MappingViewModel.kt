@@ -174,7 +174,7 @@ class MappingViewModel @Inject constructor(
         val transactionId = state.value.user.transaction?.transactionId
         val rescueTransaction = transactionId?.let { findRescueTransaction(it) }
         rescueTransaction?.let {
-            _state.update { it.copy(rescueTransaction = rescueTransaction) }
+            _state.update { it.copy(userRescueTransaction = rescueTransaction) }
         }
     }
 
@@ -278,9 +278,10 @@ class MappingViewModel @Inject constructor(
 
         }.onSuccess {
             _state.update { it.copy(rescuer = rescuer, searchAssistanceButtonVisible = false) }
-            _state.update { it.copy(rescueTransaction = rescueTransaction) }
             mappingUseCase.broadcastUserUseCase()
             _eventFlow.emit(value = MappingUiEvent.ShowMappingScreen)
+            delay(500)
+            _state.update { it.copy(userRescueTransaction = rescueTransaction) }
             finishLoading()
         }.onFailure { exception ->
             finishLoading()
@@ -466,9 +467,16 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun User.getUser() {
-        val user = findUser(id = getId())
-        _state.update { it.copy(user = user) }
-        getUserRescueRespondents()
+        runCatching {
+            getId()
+        }.onSuccess { id ->
+            val user = findUser(id = id)
+            _state.update { it.copy(user = user) }
+            getUserRescueRespondents()
+        }.onFailure {
+            Timber.e("Failed to get User ID")
+        }
+
     }
 
     private fun User.getUserRescueRespondents() {

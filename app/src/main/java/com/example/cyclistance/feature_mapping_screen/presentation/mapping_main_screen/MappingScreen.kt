@@ -274,8 +274,8 @@ fun MappingScreen(
 
 
 
-    LaunchedEffect(key1 = state.rescueTransaction){
-        val transactionRoute = state.rescueTransaction.route
+    LaunchedEffect(key1 = state.userRescueTransaction){
+        val transactionRoute = state.userRescueTransaction.route
         val startingLocation = transactionRoute?.startingLocation
         val destinationLocation = transactionRoute?.destinationLocation
 

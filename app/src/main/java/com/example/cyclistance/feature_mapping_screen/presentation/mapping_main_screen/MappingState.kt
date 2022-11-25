@@ -28,15 +28,27 @@ data class MappingState(
     val isSearchingForAssistance: Boolean = false,
     val alertDialogModel: AlertDialogModel = AlertDialogModel(),
     val cameraState: CameraState = CameraState(),
+    val tripProgressCardVisibility:Int = View.INVISIBLE,
+    val maneuverViewVisibility:Int = View.INVISIBLE,
+    val soundButtonVisibility: Int = View.INVISIBLE,
+    val routeOverviewVisibility: Int = View.INVISIBLE,
+    val recenterButtonVisibility: Int = View.INVISIBLE,
+
+
 
 
     val user: UserItem = UserItem(),
     val userRescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
     val userAddress: UserAddress = UserAddress(),
-    val rescueTransaction: RescueTransactionItem = RescueTransactionItem(),
+    val userRescueTransaction: RescueTransactionItem = RescueTransactionItem(),
+
+
+
 
 
     val rescuer: UserItem = UserItem(),
+
+
 
 
     val currentAddress: String = "",
@@ -46,15 +58,13 @@ data class MappingState(
     val photoUrl: String = "",
 
 
+
     val nearbyCyclists: User = User(),
     val rescueTransactions: RescueTransaction = RescueTransaction(),
 
 
-    val tripProgressCardVisibility:Int = View.INVISIBLE,
-    val maneuverViewVisibility:Int = View.INVISIBLE,
-    val soundButtonVisibility: Int = View.INVISIBLE,
-    val routeOverviewVisibility: Int = View.INVISIBLE,
-    val recenterButtonVisibility: Int = View.INVISIBLE,
+
+
 
 
 
