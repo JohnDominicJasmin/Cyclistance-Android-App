@@ -25,11 +25,11 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LAT
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
-import com.example.cyclistance.feature_mapping_screen.domain.location.ConnectionStatus.checkLocationSetting
-import com.example.cyclistance.feature_mapping_screen.domain.location.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.core.utils.permission.requestPermission
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
+import com.example.cyclistance.feature_mapping_screen.domain.location.ConnectionStatus.checkLocationSetting
+import com.example.cyclistance.feature_mapping_screen.domain.location.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.LocateUserButton
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
@@ -52,9 +52,12 @@ import com.mapbox.maps.ResourceOptions
 import com.mapbox.maps.dsl.cameraOptions
 import com.mapbox.maps.plugin.LocationPuck2D
 import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
+import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.animation.flyTo
 import com.mapbox.maps.plugin.locationcomponent.location2
 import com.mapbox.navigation.core.MapboxNavigation
+import com.mapbox.navigation.ui.maps.camera.NavigationCamera
+import com.mapbox.navigation.ui.maps.camera.data.MapboxNavigationViewportDataSource
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -81,6 +84,13 @@ fun MappingScreen(
             .Builder()
             .accessToken(context.getString(com.example.cyclistance.R.string.MapsDownloadToken)).build()))) }
 
+    var navigationCamera by remember {
+        mutableStateOf(
+            NavigationCamera(
+                mapboxMap = mapView.getMapboxMap(),
+                viewportDataSource = MapboxNavigationViewportDataSource(mapView.getMapboxMap()), cameraPlugin = mapView.camera))
+    }
+
     val mapboxNavigation = rememberMapboxNavigation(parentContext = context)
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
@@ -89,6 +99,10 @@ fun MappingScreen(
 
     val onInitializeMapView = remember{{ mv: MapView ->
         mapView = mv
+    }}
+
+    val onInitializeNavigationCamera = remember{{ nc: NavigationCamera ->
+        navigationCamera = nc
     }}
 
 
@@ -283,8 +297,10 @@ fun MappingScreen(
             destinationLocation?.let {
                 mapboxNavigation.findRoute(context,
                     originPoint = Point.fromLngLat(startingLocation.longitude, startingLocation.latitude),
-                    destinationPoint = Point.fromLngLat(destinationLocation.longitude, destinationLocation.latitude),
-                    mapboxNavigation::setNavigationRoutes)
+                    destinationPoint = Point.fromLngLat(destinationLocation.longitude, destinationLocation.latitude)){
+                    mapboxNavigation.setNavigationRoutes(it)
+                    navigationCamera.requestNavigationCameraToOverview()
+                }
             }
         }
     }
@@ -345,6 +361,7 @@ fun MappingScreen(
         onInitializeMapView = onInitializeMapView,
         onChangeCameraState = onChangeCameraState,
         mapboxNavigation = mapboxNavigation,
+        onInitializeNavigationCamera = onInitializeNavigationCamera
 
 
     )
@@ -405,6 +422,7 @@ fun MappingScreen(
     onClickChatButton: () -> Unit = {},
     onClickCancelButton: () -> Unit = {},
     onInitializeMapView: (MapView) -> Unit = {},
+    onInitializeNavigationCamera: (NavigationCamera) -> Unit = {},
     onChangeCameraState: (Point, Double) -> Unit = {_,_->},
     onDismissNoInternetDialog: () -> Unit = {},
     ) {
@@ -444,7 +462,8 @@ fun MappingScreen(
                 mapsMapView  = mapView,
                 onInitializeMapView = onInitializeMapView,
                 onChangeCameraState = onChangeCameraState,
-                mapboxNavigation = mapboxNavigation!!
+                mapboxNavigation = mapboxNavigation!!,
+                onInitializeNavigationCamera = onInitializeNavigationCamera
             )
 
         }

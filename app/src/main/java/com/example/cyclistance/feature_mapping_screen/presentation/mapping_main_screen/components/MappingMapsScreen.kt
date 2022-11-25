@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.location.Location
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -64,6 +63,7 @@ fun MappingMapsScreen(
     mapsMapView: MapView,
     mapboxNavigation: MapboxNavigation,
     onInitializeMapView: (MapView) -> Unit,
+    onInitializeNavigationCamera: (NavigationCamera) -> Unit,
     locationPermissionsState: MultiplePermissionsState?,
     onChangeCameraState: (Point, Double) -> Unit,
     modifier: Modifier) {
@@ -370,7 +370,9 @@ fun MappingMapsScreen(
                         soundButton.unmute()
 
                         mapboxNavigation.startTripSession()
+
                         onInitializeMapView(mapView)
+                        onInitializeNavigationCamera(navigationCamera)
 
                         tripProgressCard.visibility = state.tripProgressCardVisibility
                         maneuverView.visibility = state.maneuverViewVisibility
