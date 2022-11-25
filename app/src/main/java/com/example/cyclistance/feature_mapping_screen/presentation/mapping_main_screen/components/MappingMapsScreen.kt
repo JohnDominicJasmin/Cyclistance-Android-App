@@ -225,11 +225,7 @@ fun MappingMapsScreen(
             val maneuvers = maneuverApi.getManeuvers(routeProgress)
             maneuvers.fold(
                 { error ->
-                    Toast.makeText(
-                        parentContext,
-                        error.errorMessage,
-                        Toast.LENGTH_SHORT
-                    ).show()
+                 Timber.e(error.errorMessage)
                 },
                 {
                     maneuverView.renderManeuvers(maneuvers)
