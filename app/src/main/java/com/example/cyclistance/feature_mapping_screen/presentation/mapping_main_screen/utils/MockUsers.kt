@@ -3,15 +3,15 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.MappingUseCase
 
 
 val userItems = listOf(
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
-        id = "rvxrTiQQy4qKCZxQ29vJ3xSDC9JK",
-        location = Location(latitude =  14.08516, longitude = 121.15263),
+        id = "rfvjsRvsFuOUbidG1tdmVrCC8vOm",
+        location = Location(latitude =  14.0874, longitude = 121.1517),
         name = "John Doe",
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK9gqFKRn28xKHD1CAbEevdzsLmsv5yQkGnQ&usqp=CAU",
         rescueRequest = RescueRequest(
