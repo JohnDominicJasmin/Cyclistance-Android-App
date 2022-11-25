@@ -4,5 +4,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface WebSocketClient<T> {
     fun getResult(): Flow<T>
-    fun broadCastEvent()
+    fun broadCastEvent(t: T? = null)
 }

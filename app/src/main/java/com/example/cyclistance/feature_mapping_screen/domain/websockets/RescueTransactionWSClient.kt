@@ -12,12 +12,12 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
 
-class RescueTransactionWebSocketClient(
+class RescueTransactionWSClient(
     private val socket: Socket
 ): WebSocketClient<RescueTransaction> {
 
 
-    override fun broadCastEvent() {
+    override fun broadCastEvent(t: RescueTransaction?) {
         socket.emit(BROADCAST_RESCUE_TRANSACTION)
     }
 

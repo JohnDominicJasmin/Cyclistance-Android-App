@@ -12,12 +12,12 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class UserWebSocketClient(
+class UserWSClient(
     private val socket: Socket
 ): WebSocketClient<User> {
 
 
-    override fun broadCastEvent() {
+    override fun broadCastEvent(t: User?) {
         socket.emit(BROADCAST_USERS)
     }
 
