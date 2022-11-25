@@ -1,13 +1,10 @@
 package com.example.cyclistance.feature_mapping_screen.domain.location
 
-import android.Manifest
 import android.content.Context
 import android.content.IntentSender
-import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.ConnectivityManager
 import androidx.activity.result.IntentSenderRequest
-import androidx.core.content.ContextCompat
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
@@ -28,20 +25,6 @@ object ConnectionStatus {
                 LocationManager.NETWORK_PROVIDER)
         }
 
-
-
-
-
-    fun Context.hasLocationPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED &&
-               ContextCompat.checkSelfPermission(
-                   this,
-                   Manifest.permission.ACCESS_FINE_LOCATION
-               ) == PackageManager.PERMISSION_GRANTED
-    }
 
 
      fun Context.checkLocationSetting(
