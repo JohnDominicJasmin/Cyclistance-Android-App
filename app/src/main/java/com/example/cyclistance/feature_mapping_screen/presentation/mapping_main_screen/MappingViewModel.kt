@@ -17,7 +17,7 @@ import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_tra
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.*
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.delight.android.location.SimpleLocation

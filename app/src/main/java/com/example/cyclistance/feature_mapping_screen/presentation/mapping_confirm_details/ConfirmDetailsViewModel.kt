@@ -9,7 +9,7 @@ import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.C
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserAssistance
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.MappingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
