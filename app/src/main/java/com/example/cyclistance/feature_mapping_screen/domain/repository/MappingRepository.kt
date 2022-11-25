@@ -2,10 +2,7 @@ package com.example.cyclistance.feature_mapping_screen.domain.repository
 
 import android.graphics.drawable.Drawable
 import android.location.Location
-import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransaction
-import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransactionItem
-import com.example.cyclistance.feature_mapping_screen.domain.model.User
-import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
+import com.example.cyclistance.feature_mapping_screen.domain.model.*
 import kotlinx.coroutines.flow.Flow
 
 interface MappingRepository {
@@ -31,7 +28,11 @@ interface MappingRepository {
     suspend fun imageUrlToDrawable(imageUrl: String): Drawable
 
     fun getUserUpdates():Flow<User>
-    fun broadCastUser()
-    fun broadCastRescueTransaction()
     fun getRescueTransactionUpdates(): Flow<RescueTransaction>
+    fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel>
+    fun broadcastUser()
+    fun broadcastRescueTransaction()
+    fun broadcastLocation(locationModel: LiveLocationWSModel)
+
+
 }

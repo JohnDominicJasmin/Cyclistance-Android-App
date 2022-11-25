@@ -13,7 +13,6 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_K
 import com.example.cyclistance.core.utils.extension.editData
 import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.core.utils.service.LocationService
-import com.example.cyclistance.feature_mapping_screen.domain.websockets.WebSocketClient
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping_screen.data.mapper.RescueTransactionMapper.toRescueTransactionDto
@@ -21,11 +20,9 @@ import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toU
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUserItem
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUserItemDto
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransaction
-import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransactionItem
-import com.example.cyclistance.feature_mapping_screen.domain.model.User
-import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
+import com.example.cyclistance.feature_mapping_screen.domain.model.*
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
+import com.example.cyclistance.feature_mapping_screen.domain.websockets.WebSocketClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -38,6 +35,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "pr
 class MappingRepositoryImpl(
     val rescueTransactionClient: WebSocketClient<RescueTransaction>,
     val userClient: WebSocketClient<User>,
+    val liveLocation: WebSocketClient<LiveLocationWSModel>,
     val imageRequestBuilder: ImageRequest.Builder,
     private val api: CyclistanceApi,
     val context: Context) : MappingRepository {
@@ -45,6 +43,14 @@ class MappingRepositoryImpl(
 
     private var dataStore = context.dataStore
 
+
+    override fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {
+        return liveLocation.getResult()
+    }
+
+    override fun broadcastLocation(locationModel: LiveLocationWSModel) {
+        liveLocation.broadCastEvent(locationModel)
+    }
 
     override fun getBikeType(): Flow<String> {
         return dataStore.getData(key = BIKE_TYPE_KEY, defaultValue = "")
@@ -130,11 +136,11 @@ class MappingRepositoryImpl(
         return userClient.getResult()
     }
 
-    override fun broadCastUser() {
+    override fun broadcastUser() {
         userClient.broadCastEvent()
     }
 
-    override fun broadCastRescueTransaction() {
+    override fun broadcastRescueTransaction() {
         rescueTransactionClient.broadCastEvent()
     }
 

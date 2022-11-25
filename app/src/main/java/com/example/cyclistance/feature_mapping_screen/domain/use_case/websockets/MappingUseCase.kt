@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping_screen.domain.use_case
+package com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets
 
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.GetAddressUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.UpdateAddressUseCase
@@ -14,10 +14,12 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.Creat
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.DeleteUserUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.GetUserByIdUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.GetUsersUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.BroadcastRescueTransactionUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.BroadcastUserUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.GetRescueTransactionUpdatesUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.GetUserUpdatesUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.GetTransactionLocationUpdateUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.BroadcastUserUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.GetUserUpdatesUseCase
 
 data class MappingUseCase(
 
@@ -45,8 +47,9 @@ data class MappingUseCase(
 
     val broadcastRescueTransactionUseCase: BroadcastRescueTransactionUseCase,
     val broadcastUserUseCase: BroadcastUserUseCase,
+    val broadcastTransactionUseCase: BroadcastTransactionLocationUseCase,
     val getRescueTransactionUpdatesUseCase: GetRescueTransactionUpdatesUseCase,
-    val getUserUpdatesUseCase: GetUserUpdatesUseCase
+    val getUserUpdatesUseCase: GetUserUpdatesUseCase,
+    val getTransactionLocationUpdateUseCase: GetTransactionLocationUpdateUseCase
 
-
-)
+    )

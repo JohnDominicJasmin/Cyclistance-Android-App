@@ -11,13 +11,10 @@ import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
-import com.example.cyclistance.feature_mapping_screen.domain.location.ConnectionStatus.hasInternetConnection
-import com.example.cyclistance.feature_mapping_screen.domain.websockets.RescueTransactionWebSocketClient
-import com.example.cyclistance.feature_mapping_screen.domain.websockets.UserWebSocketClient
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.repository.MappingRepositoryImpl
+import com.example.cyclistance.feature_mapping_screen.domain.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.GetAddressUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.UpdateAddressUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.GetBikeTypeUseCase
@@ -29,10 +26,16 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_tra
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionsUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.BroadcastRescueTransactionUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.BroadcastUserUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.GetRescueTransactionUpdatesUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.GetUserUpdatesUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.MappingUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.GetTransactionLocationUpdateUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.BroadcastUserUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.GetUserUpdatesUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.websockets.RescueTransactionWSClient
+import com.example.cyclistance.feature_mapping_screen.domain.websockets.TransactionLiveLocationWSClient
+import com.example.cyclistance.feature_mapping_screen.domain.websockets.UserWSClient
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -92,15 +95,16 @@ object MappingModule {
         @ApplicationContext context: Context,
         api: CyclistanceApi): MappingRepository {
 
-        val userWebSocketClient = UserWebSocketClient(socket)
-        val rescueTransactionWebSocketClient = RescueTransactionWebSocketClient(socket)
-
+        val userWSClient = UserWSClient(socket)
+        val rescueTransactionWSClient = RescueTransactionWSClient(socket)
+        val liveLocation = TransactionLiveLocationWSClient(socket)
         return MappingRepositoryImpl(
             imageRequestBuilder = imageRequestBuilder,
             api = api,
             context = context,
-            rescueTransactionClient = rescueTransactionWebSocketClient,
-            userClient = userWebSocketClient)
+            rescueTransactionClient = rescueTransactionWSClient,
+            userClient = userWSClient,
+            liveLocation = liveLocation)
     }
 
 
@@ -129,7 +133,9 @@ object MappingModule {
             broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(repository),
             broadcastUserUseCase = BroadcastUserUseCase(repository),
             getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(repository),
-            getUserUpdatesUseCase = GetUserUpdatesUseCase(repository)
+            getUserUpdatesUseCase = GetUserUpdatesUseCase(repository),
+            broadcastTransactionUseCase = BroadcastTransactionLocationUseCase(repository),
+            getTransactionLocationUpdateUseCase = GetTransactionLocationUpdateUseCase(repository)
         )
     }
 
