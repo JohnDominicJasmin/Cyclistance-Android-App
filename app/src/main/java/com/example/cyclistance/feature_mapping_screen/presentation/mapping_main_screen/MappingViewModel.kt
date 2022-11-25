@@ -373,7 +373,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun loadUserProfile() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
             loadName()
             loadPhoto()
         }.invokeOnCompletion {
