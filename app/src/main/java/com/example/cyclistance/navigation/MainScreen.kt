@@ -62,7 +62,6 @@ fun MainScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
     var internetAvailable by rememberSaveable { mutableStateOf(true) }
-    var internetCameBack by rememberSaveable { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val editProfileState by editProfileViewModel.state.collectAsState()
     val mappingState by mappingViewModel.state.collectAsState()
