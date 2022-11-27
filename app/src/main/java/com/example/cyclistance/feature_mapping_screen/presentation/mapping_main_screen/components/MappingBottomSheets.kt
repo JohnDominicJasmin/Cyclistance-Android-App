@@ -159,6 +159,7 @@ fun BottomSheetOnGoingRescue(
                     .align(Alignment.CenterHorizontally),
                 shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp), elevation = 14.dp) {
 
+
                 ConstraintLayout(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -168,7 +169,11 @@ fun BottomSheetOnGoingRescue(
 
                     val estimatedTimeArrival = remember(estimatedTimeRemaining){
                         derivedStateOf {
-                            "Estimated time of arrival: $estimatedTimeRemaining"
+                            if (estimatedTimeRemaining.isNotEmpty()) {
+                                "Estimated time of arrival: $estimatedTimeRemaining"
+                            } else {
+                                "Calculating estimated time of arrival..."
+                            }
                         }
                     }
 

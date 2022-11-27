@@ -4,13 +4,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.BottomSheetType
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MappingBottomSheet(
     isDarkTheme: Boolean,
-    bottomSheetType: String,
-    estimatedTimeRemaining: String = "",
+    state: MappingState,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     onClickRescueArrivedButton: () -> Unit,
     onClickReachedDestinationButton: () -> Unit,
@@ -22,7 +22,7 @@ fun MappingBottomSheet(
 ) {
 
 
-    when (bottomSheetType) {
+    when (state.bottomSheetType) {
         BottomSheetType.RescuerArrived.type -> {
             BottomSheetRescueArrived(
                 isDarkTheme = isDarkTheme,
@@ -51,7 +51,7 @@ fun MappingBottomSheet(
 
         BottomSheetType.OnGoingRescue.type -> {
             BottomSheetOnGoingRescue(
-                estimatedTimeRemaining = estimatedTimeRemaining,
+                estimatedTimeRemaining = state.rescuerETA,
                 content = content,
                 onClickCallButton = onClickCallButton,
                 onClickChatButton = onClickChatButton,

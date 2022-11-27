@@ -441,7 +441,7 @@ fun MappingScreen(
 
         MappingBottomSheet(
             isDarkTheme = isDarkTheme,
-            bottomSheetType = state.bottomSheetType,
+            state = state,
             onClickRescueArrivedButton = onClickRescueArrivedButton,
             onClickReachedDestinationButton = onClickReachedDestinationButton,
             onClickCancelSearchButton = onClickCancelSearchButton,
