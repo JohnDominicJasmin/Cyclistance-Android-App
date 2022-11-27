@@ -10,7 +10,7 @@ val userItems = listOf(
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
-        id = "rfvjsRvsFuOUbidG1tdmVrCC8vOm",
+        id = "rnJVccRj7CEzvhYov9sdxMaLEUrD",
         location = Location(latitude =  14.0874, longitude = 121.1517),
         name = "John Doe",
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK9gqFKRn28xKHD1CAbEevdzsLmsv5yQkGnQ&usqp=CAU",
@@ -31,7 +31,7 @@ val userItems = listOf(
         profilePictureUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
         rescueRequest = RescueRequest(),
         userAssistance = UserAssistance(
-            needHelp = false,
+            needHelp = true,
             confirmationDetail = ConfirmationDetail(
                 bikeType = "Road Bike",
                 description = MappingConstants.BROKEN_CHAIN_TEXT,
@@ -63,7 +63,7 @@ val userItems = listOf(
         location = Location(latitude = 14.096044763009578, longitude = 121.13918029795505),
         name = "Jane Doe",
         userAssistance = UserAssistance(
-            needHelp = false,
+            needHelp = true,
             confirmationDetail = ConfirmationDetail(
                 bikeType = "Road Bike",
                 description = MappingConstants.INJURY_TEXT,
@@ -81,7 +81,7 @@ val userItems = listOf(
         name = "John Doe",
         profilePictureUrl = "https://www.erlanger.org/find-a-doctor/media/PhysicianPhotos/Carbone_1436.jpg",
         userAssistance = UserAssistance(
-            needHelp = false,
+            needHelp = true,
             confirmationDetail = ConfirmationDetail(
                 bikeType = "Road Bike",
                 description = MappingConstants.BROKEN_FRAME_TEXT,
