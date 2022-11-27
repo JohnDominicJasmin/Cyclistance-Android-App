@@ -16,6 +16,8 @@ sealed class MappingEvent {
     data class ChangeBottomSheet(val bottomSheetType: String): MappingEvent()
     object SubscribeToLocationUpdates: MappingEvent()
     object UnsubscribeToLocationUpdates: MappingEvent()
+    object SubscribeToTransactionLocationUpdates: MappingEvent()
+    object UnSubscribeToTransactionLocationUpdates: MappingEvent()
     object DismissAlertDialog: MappingEvent()
     object CancelSearchAssistance: MappingEvent()
     data class DeclineRescueRequest(val cardModel: CardModel): MappingEvent()
