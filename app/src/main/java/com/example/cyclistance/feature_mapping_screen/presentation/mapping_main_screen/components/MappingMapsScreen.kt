@@ -72,7 +72,7 @@ fun MappingMapsScreen(
     val context = LocalContext.current
 
 
-    val nearbyCyclists by remember(key1= state.nearbyCyclists.users.size) {
+    val nearbyCyclists by remember(key1= state.nearbyCyclists.users) {
         derivedStateOf { state.nearbyCyclists.users }
     }
     val pulsingEnabled by remember(state.isSearchingForAssistance, locationPermissionsState?.allPermissionsGranted) {
@@ -81,39 +81,54 @@ fun MappingMapsScreen(
         }
     }
     val annotationApi = remember(mapsMapView) { mapsMapView.annotations }
-    val pointAnnotationManager = remember(annotationApi) { annotationApi.createPointAnnotationManager() }
+    val pointAnnotationManager = remember(annotationApi) { annotationApi.createPointAnnotationManager().apply{
+        iconAllowOverlap = false
+        iconIgnorePlacement = false
+        textAllowOverlap = false
+    }}
 
-    LaunchedEffect( key1 = nearbyCyclists, key2 = mapsMapView){
-        nearbyCyclists
-            .filter {
-                it.id != state.user.id
-            }.forEach { cyclist ->
-                val location = cyclist.location
-                val cyclistAssistance = cyclist.userAssistance
-                val iconImage = if(cyclistAssistance?.needHelp == true) {
-                    cyclistAssistance.getMapIconImageDescription(context)
-                        ?.toBitmap(width = 130, height = 130)
-                }else if (cyclistAssistance?.needHelp == false && cyclist.id == state.rescuer.id) {
-                    AppCompatResources.getDrawable(context, R.drawable.ic_navigation_map_icon)
-                        ?.toBitmap(width = 90, height = 90)
-                } else{
-                    null
+    LaunchedEffect( key1 = nearbyCyclists, key2 = mapsMapView, key3 = state.userRescueTransaction){
+
+        if (state.userRescueTransaction == null) {
+            pointAnnotationManager.deleteAll()
+            nearbyCyclists
+                .filter {
+                    it.id != state.user.id
+                }.filter {
+                    it.userAssistance?.needHelp == true
+                }.forEach { cyclist ->
+                    val location = cyclist.location
+                    val cyclistAssistance = cyclist.userAssistance
+                    val iconImage = cyclistAssistance?.getMapIconImageDescription(context)?.toBitmap(width = 130, height = 130)
+                    iconImage?.let {
+                        val pointAnnotationOptions = PointAnnotationOptions()
+                            .withIconImage(it)
+                            .withPoint(Point.fromLngLat(location?.longitude ?: return@forEach, location.latitude))
+                        pointAnnotationManager.create(pointAnnotationOptions)
+                    }
                 }
-
-                iconImage?.let{
-                    val pointAnnotationOptions = PointAnnotationOptions()
-                        .withIconImage(it)
-                        .withPoint(
-                            Point.fromLngLat(
-                                location?.longitude ?: return@forEach,
-                                location.latitude))
-                    pointAnnotationManager.create(pointAnnotationOptions)
-                }
+        }
+    }
 
 
-            }
+    LaunchedEffect(key1 = mapsMapView, key2 = state.transactionLocation, key3 = state.userRescueTransaction){
+
+        val location = state.transactionLocation ?: state.rescuer.location
+        val hasTransactionLocationChanges = state.userRescueTransaction != null && location != null
+
+        if(hasTransactionLocationChanges) {
+            val pointAnnotationOptions = PointAnnotationOptions()
+                .withIconImage(AppCompatResources.getDrawable(context, R.drawable.ic_navigation_map_icon)
+                    ?.toBitmap(width = 90, height = 90)!!)
+                .withPoint(Point.fromLngLat(location!!.longitude, location.latitude))
+
+            pointAnnotationManager.deleteAll()
+            pointAnnotationManager.create(pointAnnotationOptions)
+        }
 
     }
+
+
 
     LaunchedEffect(key1 = pulsingEnabled, mapsMapView){
         mapsMapView.location2.pulsingEnabled = pulsingEnabled
