@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -136,6 +138,7 @@ fun BottomSheetSearchingAssistance(
 }
 
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomSheetOnGoingRescue(
     bottomSheetScaffoldState: BottomSheetScaffoldState,
@@ -163,10 +166,14 @@ fun BottomSheetOnGoingRescue(
 
                     val (timeRemaining, roundedButtonSection) = createRefs()
 
-
+                    val estimatedTimeArrival = remember(estimatedTimeRemaining){
+                        derivedStateOf {
+                            "Estimated time of arrival: $estimatedTimeRemaining"
+                        }
+                    }
 
                     Text(
-                        text = "Estimated time of arrival: $estimatedTimeRemaining",
+                        text = estimatedTimeArrival.value,
                         color = MaterialTheme.colors.onSurface,
                         style = MaterialTheme.typography.subtitle2,
                         modifier = Modifier.constrainAs(timeRemaining) {
@@ -216,6 +223,7 @@ fun BottomSheetOnGoingRescue(
 
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomSheetRescueArrived(
     isDarkTheme: Boolean,
