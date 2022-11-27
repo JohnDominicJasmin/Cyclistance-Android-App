@@ -28,7 +28,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_tra
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.GetTransactionLocationUpdateUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.BroadcastUserUseCase
@@ -134,8 +134,8 @@ object MappingModule {
             broadcastUserUseCase = BroadcastUserUseCase(repository),
             getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(repository),
             getUserUpdatesUseCase = GetUserUpdatesUseCase(repository),
-            broadcastTransactionUseCase = BroadcastTransactionLocationUseCase(repository),
-            getTransactionLocationUpdateUseCase = GetTransactionLocationUpdateUseCase(repository)
+            broadcastTransactionLocationUseCase = BroadcastTransactionLocationUseCase(repository),
+            getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(repository)
         )
     }
 

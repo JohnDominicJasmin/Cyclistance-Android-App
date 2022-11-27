@@ -15,7 +15,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.Delet
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.GetUserByIdUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.GetUsersUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.GetTransactionLocationUpdateUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.BroadcastUserUseCase
@@ -47,9 +47,9 @@ data class MappingUseCase(
 
     val broadcastRescueTransactionUseCase: BroadcastRescueTransactionUseCase,
     val broadcastUserUseCase: BroadcastUserUseCase,
-    val broadcastTransactionUseCase: BroadcastTransactionLocationUseCase,
+    val broadcastTransactionLocationUseCase: BroadcastTransactionLocationUseCase,
     val getRescueTransactionUpdatesUseCase: GetRescueTransactionUpdatesUseCase,
     val getUserUpdatesUseCase: GetUserUpdatesUseCase,
-    val getTransactionLocationUpdateUseCase: GetTransactionLocationUpdateUseCase
+    val getTransactionLocationUpdatesUseCase: GetTransactionLocationUpdatesUseCase
 
     )

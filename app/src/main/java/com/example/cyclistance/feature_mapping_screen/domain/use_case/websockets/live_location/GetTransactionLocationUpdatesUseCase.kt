@@ -2,6 +2,6 @@ package com.example.cyclistance.feature_mapping_screen.domain.use_case.websocket
 
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 
-class GetTransactionLocationUpdateUseCase(private val repository: MappingRepository) {
+class GetTransactionLocationUpdatesUseCase(private val repository: MappingRepository) {
     operator fun invoke() = repository.getTransactionLocationUpdates()
 }
