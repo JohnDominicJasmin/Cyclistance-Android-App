@@ -7,7 +7,7 @@ import com.example.cyclistance.core.utils.validation.InputValidate.isDigit
 import com.example.cyclistance.core.utils.validation.InputValidate.isPhoneNumberLongEnough
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.distanceFormat
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getETA
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getCalculatedETA
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getFullAddress
 import org.junit.Assert
 import org.junit.Test
@@ -60,7 +60,7 @@ class UnitTest {
 
     @Test
     fun getETATest(){
-        val result = getETA(distanceMeters = 1710.23, averageSpeedKm = MappingConstants.DEFAULT_BIKE_AVERAGE_SPEED_KM)
+        val result = getCalculatedETA(distanceMeters = 1710.23, averageSpeedKm = MappingConstants.DEFAULT_BIKE_AVERAGE_SPEED_KM)
         Assert.assertEquals("5 mins", result)
     }
 

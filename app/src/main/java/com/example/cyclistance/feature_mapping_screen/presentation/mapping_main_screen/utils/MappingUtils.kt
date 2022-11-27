@@ -142,7 +142,7 @@ fun Double.distanceFormat(): String {
     }
 }
 
-fun getETA(distanceMeters: Double, averageSpeedKm: Double = MappingConstants.DEFAULT_BIKE_AVERAGE_SPEED_KM): String {
+fun getCalculatedETA(distanceMeters: Double, averageSpeedKm: Double = MappingConstants.DEFAULT_BIKE_AVERAGE_SPEED_KM): String {
     val distanceToKm = distanceMeters / 1000
     if(distanceToKm <= 0.0){
         return "0 min"
