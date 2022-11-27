@@ -7,7 +7,7 @@ import androidx.compose.runtime.Stable
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
-import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransaction
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Location
 import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransactionItem
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
@@ -28,45 +28,32 @@ data class MappingState(
     val isSearchingForAssistance: Boolean = false,
     val alertDialogModel: AlertDialogModel = AlertDialogModel(),
     val cameraState: CameraState = CameraState(),
-    val tripProgressCardVisibility:Int = View.INVISIBLE,
-    val maneuverViewVisibility:Int = View.INVISIBLE,
+    val tripProgressCardVisibility: Int = View.INVISIBLE,
+    val maneuverViewVisibility: Int = View.INVISIBLE,
     val soundButtonVisibility: Int = View.INVISIBLE,
     val routeOverviewVisibility: Int = View.INVISIBLE,
     val recenterButtonVisibility: Int = View.INVISIBLE,
 
 
-
-
     val user: UserItem = UserItem(),
     val userRescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
     val userAddress: UserAddress = UserAddress(),
-    val userRescueTransaction: RescueTransactionItem = RescueTransactionItem(),
+    val userRescueTransaction: RescueTransactionItem? = null,
 
-
-
-
-
+    val userLocation: Location = Location(
+        latitude = DEFAULT_LATITUDE,
+        longitude = DEFAULT_LONGITUDE
+    ),
     val rescuer: UserItem = UserItem(),
 
-
-
-
+    val transactionLocation: Location? = null,
+    val rescuerETA: String = "",
     val currentAddress: String = "",
-    val latitude: Double = DEFAULT_LATITUDE,
-    val longitude: Double = DEFAULT_LONGITUDE,
     val name: String = "-----",
     val photoUrl: String = "",
 
 
-
     val nearbyCyclists: User = User(),
-    val rescueTransactions: RescueTransaction = RescueTransaction(),
-
-
-
-
-
-
 
 
     ) : Parcelable

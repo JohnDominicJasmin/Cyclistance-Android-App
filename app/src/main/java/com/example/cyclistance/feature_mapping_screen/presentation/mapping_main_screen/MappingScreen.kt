@@ -168,9 +168,9 @@ fun MappingScreen(
         }
     }
 
-    val userLocationAvailable by remember(locationPermissionsState.allPermissionsGranted, state.latitude, state.longitude) {
+    val userLocationAvailable by remember(locationPermissionsState.allPermissionsGranted, state.userLocation.latitude, state.userLocation.longitude) {
         derivedStateOf {
-            locationPermissionsState.allPermissionsGranted.and(state.latitude != DEFAULT_LATITUDE && state.longitude != DEFAULT_LONGITUDE)
+            locationPermissionsState.allPermissionsGranted.and(state.userLocation.latitude != DEFAULT_LATITUDE && state.userLocation.longitude != DEFAULT_LONGITUDE)
         }
     }
 
@@ -215,7 +215,7 @@ fun MappingScreen(
                     context.checkLocationSetting(
                         onDisabled = settingResultRequest::launch)
                 }
-                val point = Point.fromLngLat(state.longitude, state.latitude)
+                val point = Point.fromLngLat(state.userLocation.longitude, state.userLocation.latitude)
                 locateUser(LOCATE_USER_ZOOM_LEVEL, point, DEFAULT_CAMERA_ANIMATION_DURATION)
             })
     }}
@@ -289,7 +289,7 @@ fun MappingScreen(
 
 
     LaunchedEffect(key1 = state.userRescueTransaction){
-        val transactionRoute = state.userRescueTransaction.route
+        val transactionRoute = state.userRescueTransaction?.route
         val startingLocation = transactionRoute?.startingLocation
         val destinationLocation = transactionRoute?.destinationLocation
 
