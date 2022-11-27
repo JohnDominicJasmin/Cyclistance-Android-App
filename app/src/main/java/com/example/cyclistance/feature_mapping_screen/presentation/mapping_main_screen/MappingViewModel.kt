@@ -5,8 +5,8 @@ import android.location.Geocoder
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_BIKE_AVERAGE_SPEED_KM
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
@@ -35,9 +35,10 @@ class MappingViewModel @Inject constructor(
     private val geocoder: Geocoder,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
-    private var getUsersJob: Job? = null
+    private var getUsersUpdatesJob: Job? = null
     private var locationUpdatesJob: Job? = null
-    private var getRescueTransactionJob: Job? = null
+    private var getRescueTransactionUpdatesJob: Job? = null
+    private var getTransactionLocationUpdatesJob: Job? = null
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState())
     val state = _state.asStateFlow()
@@ -48,45 +49,76 @@ class MappingViewModel @Inject constructor(
 
 
     init {
-        // TODO: Remove this when the backend is ready
-        createMockUpUsers()
         loadData()
     }
 
     private fun loadData() {
         viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
-            getUsers()
-            getRescueTransactions()
+            // TODO: Remove this when the backend is ready
+            createMockUpUsers()
+            loadUsers()
+            loadRescueTransaction()
+            loadRescuer()
+        }
+
+    }
+
+    private suspend fun loadRescuer(){
+        coroutineScope {
+           val user = state.value.nearbyCyclists
+           user.getRescuer()
         }
     }
 
+    private fun User.getRescuer(rescueTransactionItem: RescueTransactionItem? = null){
 
-    private suspend fun getUsers() {
+        val rescueTransaction = rescueTransactionItem ?: state.value.userRescueTransaction
+
+        rescueTransaction?.rescuerId?.let { rescuerId ->
+            val rescuer = findUser(rescuerId)
+            _state.update { it.copy(rescuer = rescuer) }
+        }
+    }
+
+    private fun updateRescuer(rescueTransactionItem: RescueTransactionItem){
+        val nearbyCyclist = state.value.nearbyCyclists
+        nearbyCyclist.getRescuer(rescueTransactionItem)
+    }
+
+    private suspend fun loadUsers() {
         coroutineScope {
             mappingUseCase.getUsersUseCase().distinctUntilChanged()
                 .catch {
                     it.handleException()
                 }.collect {
                     it.getUser()
-                    it.getUsers()
+                    it.loadUsers()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
         }
     }
 
-    private suspend fun getRescueTransactions() {
+
+    private suspend fun loadRescueTransaction() {
         coroutineScope {
             mappingUseCase.getRescueTransactionsUseCase().distinctUntilChanged()
                 .catch {
                     it.handleException()
                 }.collect {
                     it.getUserRescueTransaction()
-                    it.getRescueTransactions()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
         }
     }
 
+    private fun RescueTransaction.getUserRescueTransaction(){
+        val transactionId = state.value.user.transaction?.transactionId
+        val rescueTransaction = transactionId?.let { findRescueTransaction(it) }
+        rescueTransaction?.let { transaction ->
+            _state.update { it.copy(userRescueTransaction = transaction) }
+            updateRescuer(transaction)
+        }
+    }
 
     fun onEvent(event: MappingEvent) {
         when (event) {
@@ -127,12 +159,17 @@ class MappingViewModel @Inject constructor(
                 _state.update { it.copy(isSearchingForAssistance = false) }
             }
 
-            is MappingEvent.SubscribeToRescueTransactionChanges -> {
-                subscribeToNearbyRescueTransaction()
+
+
+            is MappingEvent.SubscribeToRescueTransactionUpdates -> {
+                subscribeToRescueTransactionUpdates()
             }
 
-            is MappingEvent.UnsubscribeToRescueTransactionChanges -> {
-                unSubscribeToNearbyRescueTransaction()
+            is MappingEvent.UnsubscribeToRescueTransactionUpdates -> {
+                unSubscribeToRescueTransactionUpdates()
+            }
+            is MappingEvent.SubscribeToNearbyUsersUpdates -> {
+                subscribeToNearbyUsersChanges()
             }
             is MappingEvent.UnsubscribeToNearbyUsersUpdates -> {
                 unSubscribeToNearbyUsersChanges()
@@ -176,38 +213,57 @@ class MappingViewModel @Inject constructor(
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
-    private fun RescueTransaction.getRescueTransactions(){
-        _state.update { it.copy(rescueTransactions = this) }
+    private fun subscribeToTransactionLocationUpdates(){
+        getTransactionLocationUpdatesJob?.cancel()
+        getTransactionLocationUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+            mappingUseCase.getTransactionLocationUpdatesUseCase().distinctUntilChanged()
+                .catch {
+                    it.handleException()
+                }.collect { liveLocation ->
+                    updateTransactionLocation(liveLocation)
+                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                }
+        }
     }
+    private fun updateTransactionLocation(liveLocation: LiveLocationWSModel){
 
-    private fun RescueTransaction.getUserRescueTransaction(){
-        val transactionId = state.value.user.transaction?.transactionId
-        val rescueTransaction = transactionId?.let { findRescueTransaction(it) }
-        rescueTransaction?.let {
-            _state.update { it.copy(userRescueTransaction = rescueTransaction) }
+        val userLocation = state.value.userLocation
+        val start = SimpleLocation.Point(liveLocation.latitude, liveLocation.longitude)
+        val end = SimpleLocation.Point(userLocation.latitude, userLocation.longitude)
+        val distance = SimpleLocation.calculateDistance(start, end)
+        _state.update {
+            it.copy(
+                rescuerETA = getETA(distance),
+                transactionLocation = Location(
+                    latitude = liveLocation.latitude,
+                    longitude = liveLocation.longitude))
         }
     }
 
-    private fun subscribeToNearbyRescueTransaction() {
-        getRescueTransactionJob?.cancel()
-        getRescueTransactionJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+    private fun unSubscribeToTransactionLocationUpdates(){
+        getTransactionLocationUpdatesJob?.cancel()
+    }
+
+    private fun subscribeToRescueTransactionUpdates() {
+        getRescueTransactionUpdatesJob?.cancel()
+        getRescueTransactionUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
             mappingUseCase.getRescueTransactionUpdatesUseCase().distinctUntilChanged()
                 .catch {
                     Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
                 }.collect {
-//                    todo: filter what rescue transaction needed
+                    it.getUserRescueTransaction()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                     Timber.v("COLLECTING RESCUE TRANSACTIONS")
                 }
         }
     }
 
-    private fun unSubscribeToNearbyRescueTransaction() {
-        getRescueTransactionJob?.cancel()
+    private fun unSubscribeToRescueTransactionUpdates() {
+        getRescueTransactionUpdatesJob?.cancel()
     }
 
     private fun unSubscribeToNearbyUsersChanges() {
-        getUsersJob?.cancel()
+        getUsersUpdatesJob?.cancel()
     }
 
     private fun acceptRescueRequest(cardModel: CardModel) {
@@ -287,11 +343,14 @@ class MappingViewModel @Inject constructor(
             transactionId.assignTransaction(role = Role.RESCUER.name.lowercase(), id = rescuer.id)
 
         }.onSuccess {
-            _state.update { it.copy(rescuer = rescuer, searchAssistanceButtonVisible = false) }
             mappingUseCase.broadcastUserUseCase()
             _eventFlow.emit(value = MappingUiEvent.ShowMappingScreen)
             delay(500)
-            _state.update { it.copy(userRescueTransaction = rescueTransaction) }
+            _state.update {
+                it.copy(userRescueTransaction = rescueTransaction,
+                    rescuer = rescuer,
+                    searchAssistanceButtonVisible = false)
+            }
             finishLoading()
         }.onFailure { exception ->
             finishLoading()
@@ -450,15 +509,16 @@ class MappingViewModel @Inject constructor(
 
 
     private fun subscribeToNearbyUsersChanges() {
-        getUsersJob?.cancel()
-        getUsersJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+        getUsersUpdatesJob?.cancel()
+        getUsersUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
             mappingUseCase.getUserUpdatesUseCase().distinctUntilChanged()
                 .catch {
                     Timber.e("ERROR GETTING USERS: ${it.message}")
                     it.handleException()
                 }.collect {
                     it.getUser()
-                    it.getUsers()
+                    it.loadUsers()
+                    it.getRescuer()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
         }
@@ -482,26 +542,25 @@ class MappingViewModel @Inject constructor(
         }.onSuccess { id ->
             val user = findUser(id = id)
             _state.update { it.copy(user = user) }
-            getUserRescueRespondents()
+            user.getUserRescueRespondents(this)
         }.onFailure {
             Timber.e("Failed to get User ID")
         }
 
     }
 
-    private fun User.getUserRescueRespondents() {
-        val user = state.value.user
+    private fun UserItem.getUserRescueRespondents(user: User) {
         val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
-        user.rescueRequest?.respondents?.forEachIndexed { index, respondent ->
-            val userRespondent = findUser(id = respondent.clientId)
-            val distance = user.location?.let { start ->
+        rescueRequest?.respondents?.forEachIndexed { index, respondent ->
+            val userRespondent = user.findUser(id = respondent.clientId)
+            val distance = location?.let { start ->
                 userRespondent.location?.let { end ->
                     SimpleLocation.calculateDistance(start.latitude, start.longitude, end.latitude, end.longitude)
                 }
             }
 
             distance?.let{
-                val formattedETA = getETA(distanceMeters = distance, averageSpeedKm = DEFAULT_BIKE_AVERAGE_SPEED_KM)
+                val formattedETA = getETA(distanceMeters = distance)
                 rescueRespondentsSnapShot.add(index = index, element = userRespondent.toCardModel(distance = distance.distanceFormat(), eta = formattedETA))
             }
 
@@ -513,7 +572,7 @@ class MappingViewModel @Inject constructor(
         rescueRespondentsSnapShot.clear()
     }
 
-    private fun User.getUsers() {
+    private fun User.loadUsers() {
         _state.update { it.copy(nearbyCyclists = this) }
     }
 
@@ -524,21 +583,36 @@ class MappingViewModel @Inject constructor(
                 .catch {
                     Timber.e("Error Location Updates: ${it.message}")
                 }.collect { location ->
+                    val rescueTransaction = state.value.userRescueTransaction
+                    rescueTransaction?.broadCastLocationToTransaction(location)
                     geocoder.getAddress(location.latitude, location.longitude) { addresses ->
                         _state.update { it.copy(userAddress = UserAddress(addresses.lastOrNull())) }
                     }
-
-                    _state.update { state ->
-                        state.copy(
-                            latitude = location.latitude.takeIf { it != 0.0 } ?: DEFAULT_LATITUDE,
-                            longitude = location.longitude.takeIf { it != 0.0 } ?: DEFAULT_LATITUDE,
-                        )
-                    }
+                    updateLocation(location)
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
             }
     }
 
+    private fun updateLocation(location: android.location.Location){
+        _state.update { state ->
+            state.copy(
+                userLocation = Location(
+                latitude = location.latitude.takeIf { it != 0.0 } ?: DEFAULT_LATITUDE,
+                longitude = location.longitude.takeIf { it != 0.0 } ?: DEFAULT_LONGITUDE,
+                )
+            )
+        }
+    }
+    private fun RescueTransactionItem.broadCastLocationToTransaction(location: android.location.Location){
+        id?.let{ id ->
+            mappingUseCase.broadcastTransactionLocationUseCase(
+                LiveLocationWSModel(
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                    room = id))
+        }
+    }
     private fun unSubscribeToLocationUpdates() {
         locationUpdatesJob?.cancel()
     }
@@ -630,8 +704,7 @@ class MappingViewModel @Inject constructor(
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
-    private fun createMockUpUsers() {
-        viewModelScope.launch(Dispatchers.IO) {
+    private suspend fun createMockUpUsers() {
             runCatching {
                 mappingUseCase.createMockUsers()
             }.onSuccess {
