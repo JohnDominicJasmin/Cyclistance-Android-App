@@ -307,9 +307,10 @@ fun MappingScreen(
     LaunchedEffect(key1 = true) {
         with(mappingViewModel) {
 
-            onEvent(event = MappingEvent.SubscribeToNearbyUsersChanges)
+            onEvent(event = MappingEvent.SubscribeToNearbyUsersUpdates)
+            onEvent(event = MappingEvent.SubscribeToTransactionLocationUpdates)
             onEvent(event = MappingEvent.SubscribeToLocationUpdates)
-            onEvent(event = MappingEvent.SubscribeToRescueTransactionChanges)
+            onEvent(event = MappingEvent.SubscribeToRescueTransactionUpdates)
 
         }
     }
