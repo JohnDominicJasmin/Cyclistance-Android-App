@@ -134,6 +134,12 @@ class MappingViewModel @Inject constructor(
             is MappingEvent.UnsubscribeToRescueTransactionChanges -> {
                 unSubscribeToNearbyRescueTransaction()
             }
+            is MappingEvent.UnsubscribeToNearbyUsersUpdates -> {
+                unSubscribeToNearbyUsersChanges()
+            }
+
+
+
 
             is MappingEvent.SubscribeToLocationUpdates -> {
                 subscribeToLocationUpdates()
@@ -143,12 +149,16 @@ class MappingViewModel @Inject constructor(
                 unSubscribeToLocationUpdates()
             }
 
-            is MappingEvent.SubscribeToNearbyUsersChanges -> {
-                subscribeToNearbyUsersChanges()
+
+            is MappingEvent.SubscribeToTransactionLocationUpdates -> {
+                subscribeToTransactionLocationUpdates()
             }
-            is MappingEvent.UnsubscribeToNearbyUsersChanges -> {
-                unSubscribeToNearbyUsersChanges()
+
+            is MappingEvent.UnSubscribeToTransactionLocationUpdates -> {
+                unSubscribeToTransactionLocationUpdates()
             }
+
+
 
             is MappingEvent.DismissAlertDialog -> {
                 _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
@@ -630,14 +640,14 @@ class MappingViewModel @Inject constructor(
             }.onFailure {
                 Timber.e("FAILED TO CREATE MOCK USERS: ${it.message}")
             }
-        }
     }
 
     override fun onCleared() {
         super.onCleared()
         onEvent(event = MappingEvent.UnsubscribeToLocationUpdates)
-        onEvent(event = MappingEvent.UnsubscribeToNearbyUsersChanges)
-        onEvent(event = MappingEvent.UnsubscribeToRescueTransactionChanges)
+        onEvent(event = MappingEvent.UnsubscribeToNearbyUsersUpdates)
+        onEvent(event = MappingEvent.UnsubscribeToRescueTransactionUpdates)
+        onEvent(event = MappingEvent.UnSubscribeToTransactionLocationUpdates)
         onEvent(event = MappingEvent.StopPinging)
     }
 

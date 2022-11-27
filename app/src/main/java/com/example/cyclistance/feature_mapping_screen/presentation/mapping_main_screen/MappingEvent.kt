@@ -10,8 +10,8 @@ sealed class MappingEvent {
     object SignOut: MappingEvent()
     object StartPinging: MappingEvent()
     object StopPinging: MappingEvent()
-    object SubscribeToNearbyUsersChanges: MappingEvent()
-    object UnsubscribeToNearbyUsersChanges: MappingEvent()
+    object SubscribeToNearbyUsersUpdates: MappingEvent()
+    object UnsubscribeToNearbyUsersUpdates: MappingEvent()
     object LoadUserProfile: MappingEvent()
     data class ChangeBottomSheet(val bottomSheetType: String): MappingEvent()
     object SubscribeToLocationUpdates: MappingEvent()
@@ -20,8 +20,8 @@ sealed class MappingEvent {
     object CancelSearchAssistance: MappingEvent()
     data class DeclineRescueRequest(val cardModel: CardModel): MappingEvent()
     data class AcceptRescueRequest(val cardModel: CardModel): MappingEvent()
-    object SubscribeToRescueTransactionChanges: MappingEvent()
-    object UnsubscribeToRescueTransactionChanges: MappingEvent()
+    object SubscribeToRescueTransactionUpdates: MappingEvent()
+    object UnsubscribeToRescueTransactionUpdates: MappingEvent()
     data class ChangeCameraState(val cameraPosition: Point, val cameraZoomLevel: Double): MappingEvent()
 
 }
