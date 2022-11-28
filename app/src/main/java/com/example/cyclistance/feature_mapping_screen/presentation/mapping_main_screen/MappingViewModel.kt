@@ -137,6 +137,10 @@ class MappingViewModel @Inject constructor(
                 uploadUserProfile()
             }
 
+            is MappingEvent.LoadData -> {
+                loadData()
+            }
+
             is MappingEvent.ChangeCameraState -> {
                 _state.update {
                     it.copy(
