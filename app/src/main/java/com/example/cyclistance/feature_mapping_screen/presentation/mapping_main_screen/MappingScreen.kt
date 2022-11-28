@@ -25,6 +25,8 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LAT
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
+import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUEE_TYPE
+import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUER_TYPE
 import com.example.cyclistance.core.utils.permission.requestPermission
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.domain.util.findActivity

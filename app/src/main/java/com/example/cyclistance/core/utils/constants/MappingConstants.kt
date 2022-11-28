@@ -53,4 +53,6 @@ object MappingConstants {
     const val HEADER_CACHE_CONTROL = "Cache-Control"
     const val HEADER_PRAGMA = "Pragma"
 
+    const val SELECTION_RESCUER_TYPE = "rescuer_type"
+    const val SELECTION_RESCUEE_TYPE = "rescuee_type"
 }
