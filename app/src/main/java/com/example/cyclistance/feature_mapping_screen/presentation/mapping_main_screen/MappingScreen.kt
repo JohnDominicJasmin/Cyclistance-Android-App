@@ -187,12 +187,26 @@ fun MappingScreen(
         }
     }}
 
+    val locationPuck2D = remember{
+        LocationPuck2D(
+            bearingImage = ContextCompat.getDrawable(
+                context,
+                Resource.drawable.ic_bearing_image_small),
+            topImage = ContextCompat.getDrawable(
+                context,
+                Resource.drawable.ic_location_top_image_small),
+            shadowImage = ContextCompat.getDrawable(
+                context,
+                com.mapbox.maps.R.drawable.mapbox_user_icon_shadow)
+        )
+    }
 
     val locateUser =
         remember(mapView) {
             { zoomLevel: Double, point: Point, cameraAnimationDuration: Long  ->
                 if (userLocationAvailable) {
                     mapView.location2.apply {
+                        locationPuck = locationPuck2D
                         enabled = true
                     }
 
@@ -274,17 +288,8 @@ fun MappingScreen(
     LaunchedEffect(key1 = mapView, key2 = userLocationAvailable) {
         mapView.location2.apply {
 
-            locationPuck = LocationPuck2D(
-                bearingImage = ContextCompat.getDrawable(
-                    context,
-                    Resource.drawable.ic_bearing_image_small),
-                topImage = ContextCompat.getDrawable(
-                    context,
-                    Resource.drawable.ic_location_top_image_small),
-                shadowImage = ContextCompat.getDrawable(
-                    context,
-                    com.mapbox.maps.R.drawable.mapbox_user_icon_shadow)
-            )
+            locationPuck = locationPuck2D
+            enabled = true
 
 
         }
