@@ -3,20 +3,12 @@ package com.example.cyclistance.feature_mapping_screen.domain.location
 import android.content.Context
 import android.content.IntentSender
 import android.location.LocationManager
-import android.net.ConnectivityManager
 import androidx.activity.result.IntentSenderRequest
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
 
 object ConnectionStatus {
-
-
-    @Suppress("Deprecation")
-    fun Context.hasInternetConnection(): Boolean =
-        (getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager).activeNetworkInfo.let {networkInfo->
-            networkInfo?.isConnected == true && networkInfo.isAvailable
-        }
 
 
     fun Context.hasGPSConnection(): Boolean =

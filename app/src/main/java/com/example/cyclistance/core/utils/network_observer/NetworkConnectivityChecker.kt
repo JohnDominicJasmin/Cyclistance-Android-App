@@ -25,7 +25,7 @@ object NetworkConnectivityChecker : SingleLiveEvent<Boolean>() {
     }
 
     fun checkForConnection() {
-        value = networkConnectivityUtil.isConnected()
+        value = networkConnectivityUtil.hasInternet()
     }
 
     fun init(context: Context) {
@@ -53,12 +53,12 @@ object NetworkConnectivityChecker : SingleLiveEvent<Boolean>() {
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
-            notifyObservers(networkConnectivityUtil.isConnected())
+            notifyObservers(networkConnectivityUtil.hasInternet())
             super.onAvailable(network)
         }
 
         override fun onLost(network: Network) {
-            notifyObservers(networkConnectivityUtil.isConnected())
+            notifyObservers(networkConnectivityUtil.hasInternet())
             super.onLost(network)
         }
     }

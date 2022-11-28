@@ -28,6 +28,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 @ExperimentalPermissionsApi
 @Composable
 fun NavGraph(
+    hasInternetConnection: Boolean,
     navController: NavHostController,
     paddingValues: PaddingValues,
     editProfileViewModel: EditProfileViewModel,
@@ -39,22 +40,23 @@ fun NavGraph(
     NavHost(navController = navController, startDestination = Screens.IntroSliderScreen.route) {
 
         composable(Screens.IntroSliderScreen.route) {
-            IntroSliderScreen(navController = navController, paddingValues = paddingValues)
+            IntroSliderScreen(navController = navController, paddingValues = paddingValues, hasInternetConnection = hasInternetConnection)
         }
 
         composable(Screens.SignInScreen.route) {
-            SignInScreen(navController = navController, paddingValues = paddingValues)
+            SignInScreen(navController = navController, paddingValues = paddingValues, hasInternetConnection = hasInternetConnection)
         }
 
         composable(Screens.SignUpScreen.route) {
-            SignUpScreen(navController = navController, paddingValues = paddingValues)
+            SignUpScreen(navController = navController, paddingValues = paddingValues, hasInternetConnection = hasInternetConnection)
         }
 
         composable(Screens.EmailAuthScreen.route) {
             EmailAuthScreen(
                 isDarkTheme = isDarkTheme,
                 navController = navController,
-                paddingValues = paddingValues)
+                paddingValues = paddingValues,
+                hasInternetConnection = hasInternetConnection)
         }
 
 
@@ -69,6 +71,7 @@ fun NavGraph(
 
             it.arguments?.getString("bottomSheetType")?.let { bottomSheetType ->
                 MappingScreen(
+                    hasInternetConnection = hasInternetConnection,
                     typeBottomSheet = bottomSheetType,
                     isDarkTheme = isDarkTheme,
                     navController = navController,
@@ -87,12 +90,14 @@ fun NavGraph(
         composable(Screens.ConfirmDetailsScreen.route) {
 
             ConfirmDetailsScreen(
+                hasInternetConnection = hasInternetConnection,
                 navController = navController,
                 paddingValues = paddingValues)
         }
 
         composable(Screens.RescueRequestScreen.route) {
             RescueRequestScreen(
+                hasInternetConnection = hasInternetConnection,
                 navController = navController,
                 paddingValues = paddingValues,
                 mappingViewModel = mappingViewModel)
@@ -104,6 +109,7 @@ fun NavGraph(
 
         composable(Screens.EditProfileScreen.route) {
             EditProfileScreen(
+                hasInternetConnection = hasInternetConnection,
                 navController = navController,
                 paddingValues = paddingValues,
                 editProfileViewModel = editProfileViewModel)
@@ -111,6 +117,7 @@ fun NavGraph(
 
         composable(Screens.SettingScreen.route) {
             SettingScreen(
+                hasInternetConnection = hasInternetConnection,
                 isDarkTheme = isDarkTheme,
                 onToggleTheme = onToggleTheme,
                 navController = navController,

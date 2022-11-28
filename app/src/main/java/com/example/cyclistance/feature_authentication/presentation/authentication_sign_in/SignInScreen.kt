@@ -50,6 +50,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SignInScreen(
+    hasInternetConnection: Boolean,
     signInViewModel: SignInViewModel = hiltViewModel(),
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel(),
     paddingValues: PaddingValues,

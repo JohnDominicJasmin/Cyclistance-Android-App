@@ -68,6 +68,7 @@ import com.example.cyclistance.R as Resource
 @ExperimentalPermissionsApi
 @Composable
 fun MappingScreen(
+    hasInternetConnection : Boolean,
     typeBottomSheet: String = "",
     isDarkTheme: Boolean,
     mappingViewModel: MappingViewModel,
@@ -108,6 +109,9 @@ fun MappingScreen(
 
 
 
+    LaunchedEffect(key1= hasInternetConnection){
+        Timber.v("hasInternetConnection: $hasInternetConnection")
+    }
 
     BackHandler(enabled = true, onBack = {
         coroutineScope.launch {

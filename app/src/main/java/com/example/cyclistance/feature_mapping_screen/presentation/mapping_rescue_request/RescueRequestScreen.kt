@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun RescueRequestScreen(
+    hasInternetConnection: Boolean,
     navController: NavHostController,
     paddingValues: PaddingValues,
     mappingViewModel: MappingViewModel) {

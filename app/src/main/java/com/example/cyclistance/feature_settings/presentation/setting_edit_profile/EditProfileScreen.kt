@@ -48,6 +48,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun EditProfileScreen(
+    hasInternetConnection: Boolean,
     editProfileViewModel: EditProfileViewModel,
     navController: NavController,
     paddingValues: PaddingValues

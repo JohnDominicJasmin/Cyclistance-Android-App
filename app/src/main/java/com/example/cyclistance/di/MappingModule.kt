@@ -11,9 +11,9 @@ import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
+import com.example.cyclistance.core.utils.network_observer.NetworkConnectivityUtil
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.repository.MappingRepositoryImpl
-import com.example.cyclistance.feature_mapping_screen.domain.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.GetAddressUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.UpdateAddressUseCase
@@ -24,7 +24,6 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.G
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionsUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
@@ -119,7 +118,6 @@ object MappingModule {
             deleteUserUseCase = DeleteUserUseCase(repository),
 
             getRescueTransactionByIdUseCase = GetRescueTransactionByIdUseCase(repository),
-            getRescueTransactionsUseCase = GetRescueTransactionsUseCase(repository),
             createRescueTransactionUseCase = CreateRescueTransactionUseCase(repository),
             deleteRescueTransactionUseCase = DeleteRescueTransactionUseCase(repository),
 
@@ -182,7 +180,7 @@ object MappingModule {
     fun providesOkhttpClient(@ApplicationContext context: Context): OkHttpClient {
         val interceptor  = Interceptor { chain ->
             var request = chain.request()
-            if (!context.hasInternetConnection()) {
+            if (!NetworkConnectivityUtil(context).hasInternet()) {
                 val cacheControl = CacheControl.Builder()
                     .maxStale(1, TimeUnit.DAYS)
                     .build()

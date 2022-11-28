@@ -27,6 +27,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun IntroSliderScreen(
+    hasInternetConnection: Boolean,
     introSliderViewModel: IntroSliderViewModel = hiltViewModel(),
     paddingValues: PaddingValues,
     navController: NavController) {
