@@ -44,29 +44,52 @@ fun RadioButtonsSection(modifier : Modifier) {
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally) {
 
-        rescuerCancellationReasons.forEach { text ->
-            Row(
-                Modifier
-                    .wrapContentHeight()
-                    .fillMaxWidth()
-                    .selectable(
-                        selected = (text == selectedOption),
-                        onClick = { onOptionSelected(text) })
-                , horizontalArrangement = Arrangement.Start, verticalAlignment = Alignment.CenterVertically) {
+        val selectionType =
+            remember(cancellationType) { (if (cancellationType == SELECTION_RESCUEE_TYPE) rescueeCancellationReasons else rescuerCancellationReasons) }
 
-
-                RadioButton(
-                    selected = (text == selectedOption),
-                    onClick = { onOptionSelected(text) },
-                    colors = RadioButtonDefaults.colors(selectedColor = MaterialTheme.colors.primary, unselectedColor = Black450)
-                )
-                Text(
-                    text = text,
-                    modifier = Modifier.padding(start = 8.dp),
-                    color = MaterialTheme.colors.onBackground
-                )
-            }
+        selectionType.forEach { text ->
+            SelectionButton(selectionText = text, selectedOption = selectedOption, onOptionSelected = onOptionSelected)
         }
     }
 
+}
+
+@Preview
+@Composable
+fun SelectionButtonPreview() {
+    CyclistanceTheme(true) {
+        SelectionButton(selectionText = "Need to modify rescue details (description, message and address).", selectedOption = "Change of mind", onOptionSelected = {})
+    }
+}
+
+@Composable
+private fun SelectionButton(
+    selectionText: String,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit) {
+
+    Row(
+        Modifier
+            .wrapContentHeight()
+            .fillMaxWidth()
+            .selectable(
+                selected = (selectionText == selectedOption),
+                onClick = { onOptionSelected(selectionText) }),
+        horizontalArrangement = Arrangement.Start,
+        verticalAlignment = Alignment.CenterVertically) {
+
+
+        RadioButton(
+            selected = (selectionText == selectedOption),
+            onClick = { onOptionSelected(selectionText) },
+            colors = RadioButtonDefaults.colors(
+                selectedColor = MaterialTheme.colors.primary,
+                unselectedColor = Black450)
+        )
+        Text(
+            text = selectionText,
+            modifier = Modifier.padding(start = 8.dp, end = 4.dp),
+            color = MaterialTheme.colors.onBackground,
+        )
+    }
 }
