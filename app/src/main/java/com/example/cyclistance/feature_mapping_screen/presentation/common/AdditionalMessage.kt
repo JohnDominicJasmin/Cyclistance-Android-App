@@ -2,8 +2,13 @@ package com.example.cyclistance.feature_mapping_screen.presentation.common
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -18,6 +23,7 @@ import com.example.cyclistance.theme.Black500
 
 @Composable
 fun AdditionalMessage(
+    text: String = "Message",
     modifier: Modifier,
     message: String,
     enabled: Boolean,
@@ -28,10 +34,10 @@ fun AdditionalMessage(
 
 
         Text(
-            text = "Message",
+            text = text,
             color = MaterialTheme.colors.onBackground,
-            style = MaterialTheme.typography.h6,
-            fontWeight = FontWeight.SemiBold,
+            style = MaterialTheme.typography.subtitle1,
+            fontWeight = FontWeight.Normal,
             modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))
 
 

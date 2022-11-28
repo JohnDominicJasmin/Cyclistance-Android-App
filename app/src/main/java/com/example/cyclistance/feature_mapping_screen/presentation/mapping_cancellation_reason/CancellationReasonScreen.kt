@@ -38,6 +38,7 @@ fun CancellationReasonScreen(paddingValues: PaddingValues) {
             })
 
         AdditionalMessage(
+            text = "Additional comments:",
             modifier = Modifier
                 .constrainAs(additionalMessageSection) {
                     top.linkTo(radioButtonsSection.bottom, margin = 15.dp)
