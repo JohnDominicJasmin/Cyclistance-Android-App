@@ -109,8 +109,11 @@ fun MappingScreen(
 
 
 
-    LaunchedEffect(key1= hasInternetConnection){
-        Timber.v("hasInternetConnection: $hasInternetConnection")
+    LaunchedEffect(key1 = hasInternetConnection){
+        val dataHaveBeenLoaded = state.user.id != null
+        if(hasInternetConnection && dataHaveBeenLoaded.not()){
+            mappingViewModel.onEvent(MappingEvent.LoadData)
+        }
     }
 
     BackHandler(enabled = true, onBack = {
