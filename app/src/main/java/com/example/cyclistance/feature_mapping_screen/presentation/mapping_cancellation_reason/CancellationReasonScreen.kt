@@ -17,7 +17,10 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 
 @Composable
-fun CancellationReasonScreen(paddingValues: PaddingValues) {
+fun CancellationReasonScreen(
+    cancellationType: String = MappingConstants.SELECTION_RESCUEE_TYPE,
+    paddingValues: PaddingValues) {
+
     ConstraintLayout(
         modifier = Modifier
             .fillMaxSize()
@@ -35,7 +38,7 @@ fun CancellationReasonScreen(paddingValues: PaddingValues) {
                 start.linkTo(parent.start)
                 width = Dimension.fillToConstraints
                 height = Dimension.wrapContent
-            })
+            }, cancellationType = cancellationType)
 
         AdditionalMessage(
             text = "Additional comments:",
@@ -80,7 +83,9 @@ fun CancellationReasonScreen(paddingValues: PaddingValues) {
 @Composable
 fun CancellationReasonPreview() {
     CyclistanceTheme(true) {
-        CancellationReasonScreen(paddingValues = PaddingValues())
+        CancellationReasonScreen(
+            paddingValues = PaddingValues(),
+            cancellationType = SELECTION_RESCUER_TYPE)
     }
 }
 

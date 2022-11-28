@@ -9,10 +9,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUEE_TYPE
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpScreen
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_cancellation.components.jb.CancellationReasonScreen
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_cancellation_reason.CancellationReasonScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details.ConfirmDetailsScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingViewModel
@@ -82,8 +83,13 @@ fun NavGraph(
         }
 
 
-        composable(Screens.CancellationScreen.route) {
-            CancellationReasonScreen(paddingValues = paddingValues)
+        composable(
+            "${Screens.CancellationScreen.route}/{cancellationType}",
+            arguments = listOf(navArgument("cancellationType") { defaultValue = SELECTION_RESCUEE_TYPE })) {
+
+            it.arguments?.getString("cancellationType")?.let { cancellationType ->
+                CancellationReasonScreen(paddingValues = paddingValues, cancellationType = cancellationType)
+            }
         }
 
 

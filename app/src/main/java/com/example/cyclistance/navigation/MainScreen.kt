@@ -193,6 +193,7 @@ fun TopAppBar(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     onClickSaveProfile: () -> Unit = {},
     editProfileSaveButtonEnabled: Boolean = false,
+
     route: String?) {
 
         when (route) {
@@ -205,7 +206,7 @@ fun TopAppBar(
                 })
             }
 
-            Screens.CancellationScreen.route -> {
+            "${Screens.CancellationScreen.route}/{cancellationType}" -> {
                 TopAppBarCreator(
                     icon = Icons.Default.ArrowBack,
                     onClickIcon = onClickTopBarIcon,
