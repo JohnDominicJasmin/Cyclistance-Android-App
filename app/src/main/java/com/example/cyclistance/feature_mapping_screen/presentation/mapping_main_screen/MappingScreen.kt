@@ -257,6 +257,12 @@ fun MappingScreen(
         mappingViewModel.onEvent(event = MappingEvent.ChangeCameraState(cameraPosition, zoom))
     }}
 
+    val onClickCancelRescueTransactionButton = remember(state.rescuer) {{
+        val selectionType = if (state.rescuer.id != null) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
+        navController.navigateScreen(destination = "${Screens.CancellationScreen.route}/$selectionType")
+
+    }}
+
 
     LaunchedEffect(key1 = typeBottomSheet) {
 
@@ -275,7 +281,6 @@ fun MappingScreen(
             locateUser(cameraZoom, cameraPosition, FAST_CAMERA_ANIMATION_DURATION)
         }
     }
-
 
     LaunchedEffect(key1 = locationPermissionsState.allPermissionsGranted) {
         if (!locationPermissionsState.allPermissionsGranted) {
@@ -365,9 +370,8 @@ fun MappingScreen(
         onInitializeMapView = onInitializeMapView,
         onChangeCameraState = onChangeCameraState,
         mapboxNavigation = mapboxNavigation,
-        onInitializeNavigationCamera = onInitializeNavigationCamera
-
-
+        onInitializeNavigationCamera = onInitializeNavigationCamera,
+        onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton
     )
 
 }
