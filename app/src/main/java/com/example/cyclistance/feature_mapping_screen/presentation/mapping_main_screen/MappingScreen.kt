@@ -426,9 +426,9 @@ fun MappingScreen(
     onClickRescueArrivedButton: () -> Unit = {},
     onClickReachedDestinationButton: () -> Unit = {},
     onClickCancelSearchButton: () -> Unit = {},
-    onClickCallButton: () -> Unit = {},
-    onClickChatButton: () -> Unit = {},
-    onClickCancelButton: () -> Unit = {},
+    onClickCallRescueTransactionButton: () -> Unit = {},
+    onClickChatRescueTransactionButton: () -> Unit = {},
+    onClickCancelRescueTransactionButton: () -> Unit = {},
     onInitializeMapView: (MapView) -> Unit = {},
     onInitializeNavigationCamera: (NavigationCamera) -> Unit = {},
     onChangeCameraState: (Point, Double) -> Unit = {_,_->},
@@ -452,9 +452,9 @@ fun MappingScreen(
             onClickRescueArrivedButton = onClickRescueArrivedButton,
             onClickReachedDestinationButton = onClickReachedDestinationButton,
             onClickCancelSearchButton = onClickCancelSearchButton,
-            onClickCallButton = onClickCallButton,
-            onClickChatButton = onClickChatButton,
-            onClickCancelButton = onClickCancelButton,
+            onClickCallRescueTransactionButton = onClickCallRescueTransactionButton,
+            onClickChatRescueTransactionButton = onClickChatRescueTransactionButton,
+            onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton,
             bottomSheetScaffoldState = bottomSheetScaffoldState) {
 
             MappingMapsScreen(

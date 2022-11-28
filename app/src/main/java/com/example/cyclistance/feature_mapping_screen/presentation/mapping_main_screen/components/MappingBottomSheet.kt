@@ -15,9 +15,9 @@ fun MappingBottomSheet(
     onClickRescueArrivedButton: () -> Unit,
     onClickReachedDestinationButton: () -> Unit,
     onClickCancelSearchButton: () -> Unit,
-    onClickCallButton: () -> Unit,
-    onClickChatButton: () -> Unit,
-    onClickCancelButton: () -> Unit,
+    onClickCallRescueTransactionButton: () -> Unit,
+    onClickChatRescueTransactionButton: () -> Unit,
+    onClickCancelRescueTransactionButton: () -> Unit,
     content: @Composable (PaddingValues) -> Unit,
 ) {
 
@@ -53,9 +53,9 @@ fun MappingBottomSheet(
             BottomSheetOnGoingRescue(
                 estimatedTimeRemaining = state.rescuerETA,
                 content = content,
-                onClickCallButton = onClickCallButton,
-                onClickChatButton = onClickChatButton,
-                onClickCancelButton = onClickCancelButton,
+                onClickCallButton = onClickCallRescueTransactionButton,
+                onClickChatButton = onClickChatRescueTransactionButton,
+                onClickCancelButton = onClickCancelRescueTransactionButton,
                 bottomSheetScaffoldState = bottomSheetScaffoldState)
         }
 
