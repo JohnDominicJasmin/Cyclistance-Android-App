@@ -15,10 +15,10 @@ import androidx.compose.ui.unit.dp
 import com.example.cyclistance.theme.Black450
 
 
-val clientCancellationReasons = listOf(
+val rescueeCancellationReasons = listOf(
     "Change of mind",
     "Rescue time is too long",
-    "Modifying existing rescue details (description, message and address).",
+    "Need to modify rescue details (description, message and address).",
     "Not responsive to my questions.",
     "Problem already fixed.",
     "Other")
@@ -27,9 +27,10 @@ val rescuerCancellationReasons = listOf(
     "Change of mind",
     "Decided to rescue someone",
     "Location is hard to reach",
-    "Not responsive to my questions.",
+    "Not responsive to my questions",
     "I didn't receive enough information",
-    "Problem already fixed.",
+    "Job wasn't in the scope of the original request",
+    "Problem already fixed",
     "Other")
 
 
