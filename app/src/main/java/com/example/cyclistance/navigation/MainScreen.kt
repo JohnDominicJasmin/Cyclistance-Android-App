@@ -18,7 +18,6 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,7 +41,9 @@ import com.example.cyclistance.feature_settings.presentation.setting_edit_profil
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.utils.isUserInformationChanges
 import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingEvent
 import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingViewModel
+import com.example.cyclistance.theme.Black900
 import com.example.cyclistance.theme.CyclistanceTheme
+import com.example.cyclistance.theme.White50
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -171,6 +172,7 @@ fun MainScreen(
             },
         ) { paddingValues ->
             NavGraph(
+                hasInternetConnection = internetAvailable,
                 navController = navController,
                 paddingValues = paddingValues,
                 isDarkTheme = settingState.isDarkTheme,
@@ -271,14 +273,14 @@ fun NoInternetStatusBar(internetAvailable: Boolean) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
-                .background(MaterialTheme.colors.background)
+                .background(Black900)
                 .fillMaxWidth()) {
 
             Text(
                 text = "No Connection",
-                color = Color.White,
-                fontSize = 14.sp,
-                modifier = Modifier.padding(vertical = 2.5.dp))
+                color = White50,
+                fontSize = 13.sp,
+                modifier = Modifier.padding(vertical = 1.5.dp))
         }
     }
 
