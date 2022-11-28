@@ -41,7 +41,7 @@ val rescuerCancellationReasons = listOf(
 @Composable
 fun RadioButtonsSection(modifier : Modifier, cancellationType: String = SELECTION_RESCUEE_TYPE) {
 
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(rescuerCancellationReasons[0]) }
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf("") }
 
     Column(
         modifier = modifier,
