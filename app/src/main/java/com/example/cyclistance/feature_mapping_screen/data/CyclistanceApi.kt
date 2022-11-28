@@ -23,9 +23,8 @@ interface CyclistanceApi {
 
 
 
-
     @GET("/api/v1/get-rescue-transaction-by-id/{rescue_transaction_id}")
-    suspend fun getRescueTransactionById(userId: String): RescueTransactionItemDto
+    suspend fun getRescueTransactionById(@Path("rescue_transaction_id") userId: String): RescueTransactionItemDto
 
     @POST("/api/v1/create-rescue-transaction")
     suspend fun createRescueTransaction(@Body rescueTransactionItemDto: RescueTransactionItemDto)
