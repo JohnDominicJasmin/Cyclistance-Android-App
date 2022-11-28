@@ -732,27 +732,15 @@ class MappingViewModel @Inject constructor(
     }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
     private suspend fun createMockUpUsers() {
-            runCatching {
-                mappingUseCase.createMockUsers()
-            }.onSuccess {
-                Timber.v("CREATED MOCK USERS!")
-                mappingUseCase.broadcastUserUseCase()
-            }.onFailure {
-                Timber.e("FAILED TO CREATE MOCK USERS: ${it.message}")
-            }
+        runCatching {
+            mappingUseCase.createMockUsers()
+        }.onSuccess {
+            Timber.v("CREATED MOCK USERS!")
+            mappingUseCase.broadcastUserUseCase()
+        }.onFailure {
+            Timber.e("FAILED TO CREATE MOCK USERS: ${it.message}")
+        }
     }
 
 
