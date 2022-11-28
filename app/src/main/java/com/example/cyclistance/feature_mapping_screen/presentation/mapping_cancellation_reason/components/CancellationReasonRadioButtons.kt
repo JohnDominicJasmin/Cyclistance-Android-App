@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping_screen.presentation.mapping_cancellation.components.jb
+package com.example.cyclistance.feature_mapping_screen.presentation.mapping_cancellation_reason.components
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
@@ -11,8 +11,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUEE_TYPE
 import com.example.cyclistance.theme.Black450
+import com.example.cyclistance.theme.CyclistanceTheme
 
 
 val rescueeCancellationReasons = listOf(
