@@ -113,11 +113,6 @@ class MappingRepositoryImpl(
             api.getRescueTransactionById(userId).toRescueTransaction()
         }
 
-    override suspend fun getRescueTransactions() =
-        handleException {
-            api.getRescueTransactions().toRescueTransaction()
-        }
-
 
     override suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem) =
         handleException {

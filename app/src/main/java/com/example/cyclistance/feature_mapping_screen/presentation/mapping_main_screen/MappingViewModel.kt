@@ -101,15 +101,18 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun loadRescueTransaction() {
         coroutineScope {
-            mappingUseCase.getRescueTransactionsUseCase().distinctUntilChanged()
-                .catch {
-                    it.handleException()
-                }.collect {
-                    it.getUserRescueTransaction()
-                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                }
+            runCatching {
+                val transactionId = state.value.user.transaction?.transactionId
+                transactionId?.let { mappingUseCase.getRescueTransactionByIdUseCase(it) }
+            }.onSuccess { rescueTransaction ->
+                _state.update { it.copy(userRescueTransaction = rescueTransaction) }
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+            }.onFailure {
+                it.handleException()
+            }
         }
     }
+
 
     private fun RescueTransaction.getUserRescueTransaction(){
         val transactionId = state.value.user.transaction?.transactionId

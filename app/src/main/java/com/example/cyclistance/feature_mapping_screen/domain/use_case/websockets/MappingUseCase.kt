@@ -9,7 +9,6 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.G
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionsUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.CreateUserUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.DeleteUserUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.GetUserByIdUseCase
@@ -31,7 +30,6 @@ data class MappingUseCase(
     val deleteUserUseCase: DeleteUserUseCase,
 
     val getRescueTransactionByIdUseCase: GetRescueTransactionByIdUseCase,
-    val getRescueTransactionsUseCase: GetRescueTransactionsUseCase,
     val createRescueTransactionUseCase: CreateRescueTransactionUseCase,
     val deleteRescueTransactionUseCase: DeleteRescueTransactionUseCase,
 
