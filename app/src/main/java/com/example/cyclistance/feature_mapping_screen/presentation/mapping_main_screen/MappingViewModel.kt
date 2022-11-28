@@ -49,7 +49,14 @@ class MappingViewModel @Inject constructor(
 
 
     init {
-        loadData()
+        observeDataChanges()
+    }
+
+    private fun observeDataChanges(){
+        subscribeToLocationUpdates()
+        subscribeToNearbyUsersChanges()
+        subscribeToRescueTransactionUpdates()
+        subscribeToTransactionLocationUpdates()
     }
 
     private fun loadData() {
@@ -161,44 +168,6 @@ class MappingViewModel @Inject constructor(
             is MappingEvent.StopPinging -> {
                 _state.update { it.copy(isSearchingForAssistance = false) }
             }
-
-
-
-            is MappingEvent.SubscribeToRescueTransactionUpdates -> {
-                subscribeToRescueTransactionUpdates()
-            }
-
-            is MappingEvent.UnsubscribeToRescueTransactionUpdates -> {
-                unSubscribeToRescueTransactionUpdates()
-            }
-            is MappingEvent.SubscribeToNearbyUsersUpdates -> {
-                subscribeToNearbyUsersChanges()
-            }
-            is MappingEvent.UnsubscribeToNearbyUsersUpdates -> {
-                unSubscribeToNearbyUsersChanges()
-            }
-
-
-
-
-            is MappingEvent.SubscribeToLocationUpdates -> {
-                subscribeToLocationUpdates()
-            }
-
-            is MappingEvent.UnsubscribeToLocationUpdates -> {
-                unSubscribeToLocationUpdates()
-            }
-
-
-            is MappingEvent.SubscribeToTransactionLocationUpdates -> {
-                subscribeToTransactionLocationUpdates()
-            }
-
-            is MappingEvent.UnSubscribeToTransactionLocationUpdates -> {
-                unSubscribeToTransactionLocationUpdates()
-            }
-
-
 
             is MappingEvent.DismissAlertDialog -> {
                 _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
@@ -804,10 +773,10 @@ class MappingViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        onEvent(event = MappingEvent.UnsubscribeToLocationUpdates)
-        onEvent(event = MappingEvent.UnsubscribeToNearbyUsersUpdates)
-        onEvent(event = MappingEvent.UnsubscribeToRescueTransactionUpdates)
-        onEvent(event = MappingEvent.UnSubscribeToTransactionLocationUpdates)
+        unSubscribeToLocationUpdates()
+        unSubscribeToNearbyUsersChanges()
+        unSubscribeToRescueTransactionUpdates()
+        unSubscribeToTransactionLocationUpdates()
         onEvent(event = MappingEvent.StopPinging)
     }
 

@@ -313,17 +313,6 @@ fun MappingScreen(
             }
         }
     }
-    LaunchedEffect(key1 = true) {
-        with(mappingViewModel) {
-
-            onEvent(event = MappingEvent.SubscribeToNearbyUsersUpdates)
-            onEvent(event = MappingEvent.SubscribeToTransactionLocationUpdates)
-            onEvent(event = MappingEvent.SubscribeToLocationUpdates)
-            onEvent(event = MappingEvent.SubscribeToRescueTransactionUpdates)
-
-        }
-    }
-
 
     LaunchedEffect(key1 = true) {
 
