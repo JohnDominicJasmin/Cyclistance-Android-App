@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping_screen.domain.location
+package com.example.cyclistance.feature_mapping_screen.data.location
 
 import android.content.Context
 import android.content.IntentSender

@@ -1,9 +1,10 @@
-package com.example.cyclistance.feature_mapping_screen.domain.websockets
+package com.example.cyclistance.feature_mapping_screen.data.websockets
 
 import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_RESCUE_TRANSACTION
 import com.example.cyclistance.feature_mapping_screen.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.RescueTransactionDto
 import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransaction
+import com.example.cyclistance.feature_mapping_screen.domain.websockets.WebSocketClient
 import com.google.gson.Gson
 import io.socket.client.Socket
 import io.socket.emitter.Emitter

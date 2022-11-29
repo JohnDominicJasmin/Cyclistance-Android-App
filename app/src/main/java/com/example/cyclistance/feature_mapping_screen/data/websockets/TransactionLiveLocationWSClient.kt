@@ -1,6 +1,7 @@
-package com.example.cyclistance.feature_mapping_screen.domain.websockets
+package com.example.cyclistance.feature_mapping_screen.data.websockets
 
 import com.example.cyclistance.feature_mapping_screen.domain.model.LiveLocationWSModel
+import com.example.cyclistance.feature_mapping_screen.domain.websockets.WebSocketClient
 import com.google.gson.Gson
 import io.socket.client.Socket
 import io.socket.emitter.Emitter

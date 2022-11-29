@@ -1,10 +1,11 @@
-package com.example.cyclistance.feature_mapping_screen.domain.websockets
+package com.example.cyclistance.feature_mapping_screen.data.websockets
 
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_USERS
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUser
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping_screen.domain.model.User
+import com.example.cyclistance.feature_mapping_screen.domain.websockets.WebSocketClient
 import com.google.gson.Gson
 import io.socket.client.Socket
 import io.socket.emitter.Emitter

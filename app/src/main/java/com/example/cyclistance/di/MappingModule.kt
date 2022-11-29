@@ -32,9 +32,9 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.BroadcastUserUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.GetUserUpdatesUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.websockets.RescueTransactionWSClient
-import com.example.cyclistance.feature_mapping_screen.domain.websockets.TransactionLiveLocationWSClient
-import com.example.cyclistance.feature_mapping_screen.domain.websockets.UserWSClient
+import com.example.cyclistance.feature_mapping_screen.data.websockets.RescueTransactionWSClient
+import com.example.cyclistance.feature_mapping_screen.data.websockets.TransactionLiveLocationWSClient
+import com.example.cyclistance.feature_mapping_screen.data.websockets.UserWSClient
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
