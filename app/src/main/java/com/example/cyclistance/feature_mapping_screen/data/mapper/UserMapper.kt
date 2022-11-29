@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_mapping_screen.data.mapper
 
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Respondent
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserItemDto
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
@@ -59,11 +58,7 @@ object UserMapper {
         )
     }
 
-    fun CardModel.toRespondent():Respondent{
-        return Respondent(
-            clientId = this.id ?: "-1"
-        )
-    }
+
 
 
 
