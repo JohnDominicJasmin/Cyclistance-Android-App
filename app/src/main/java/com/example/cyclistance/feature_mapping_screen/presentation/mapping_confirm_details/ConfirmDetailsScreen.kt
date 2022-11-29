@@ -72,16 +72,19 @@ fun ConfirmDetailsScreen(
     }}
     val onClickBikeType = remember {{ bikeType: String ->
         viewModel.onEvent(event = ConfirmDetailsEvent.SelectBikeType(bikeType))
+        viewModel.onEvent(event = ConfirmDetailsEvent.ClearBikeTypeErrorMessage)
+
     }}
     val onClickDescriptionButton = remember {{ description: String ->
         viewModel.onEvent(event = ConfirmDetailsEvent.SelectDescription(description))
+        viewModel.onEvent(event = ConfirmDetailsEvent.ClearDescriptionErrorMessage)
     }}
     val onClickCancelButton = remember {{
             navController.popBackStack()
             Unit
     }}
     val onClickConfirmButton = remember {{
-            viewModel.onEvent(event = ConfirmDetailsEvent.ConfirmUpdate)
+            viewModel.onEvent(event = ConfirmDetailsEvent.ConfirmDetails)
     }}
 
     CoinDetailScreen(modifier = Modifier.padding(paddingValues),

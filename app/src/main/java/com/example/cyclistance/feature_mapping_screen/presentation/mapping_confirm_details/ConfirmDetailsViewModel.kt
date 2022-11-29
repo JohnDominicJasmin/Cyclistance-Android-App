@@ -9,7 +9,7 @@ import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.C
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserAssistance
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.MappingUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -66,24 +66,26 @@ class ConfirmDetailsViewModel @Inject constructor(
 
     fun onEvent(event: ConfirmDetailsEvent) {
         when (event) {
-            is ConfirmDetailsEvent.ConfirmUpdate -> {
+            is ConfirmDetailsEvent.ConfirmDetails -> {
                 updateUser()
             }
             is ConfirmDetailsEvent.EnterAddress -> {
                 _state.update { it.copy(address = event.address) }
             }
             is ConfirmDetailsEvent.SelectBikeType -> {
-                _state.update { it.copy(bikeType = event.bikeType, bikeTypeErrorMessage = "") }
+                _state.update { it.copy(bikeType = event.bikeType) }
+            }
+            is ConfirmDetailsEvent.ClearBikeTypeErrorMessage -> {
+                _state.update { it.copy(bikeTypeErrorMessage = "") }
+            }
+            is ConfirmDetailsEvent.ClearDescriptionErrorMessage -> {
+                _state.update { it.copy(descriptionErrorMessage = "") }
             }
             is ConfirmDetailsEvent.EnterMessage -> {
                 _state.update { it.copy(message = event.message) }
             }
             is ConfirmDetailsEvent.SelectDescription -> {
-                _state.update {
-                    it.copy(
-                        description = event.description,
-                        descriptionErrorMessage = "")
-                }
+                _state.update { it.copy(description = event.description) }
             }
         }
         savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
