@@ -23,6 +23,20 @@ interface CyclistanceApi {
 
 
 
+
+
+    @DELETE("/api/v1/delete-rescue-respondent/{user_id}/{respondent_id}")
+    suspend fun deleteRescueRespondent(@Path("user_id") userId: String, @Path("respondent_id") respondentId: String)
+
+    @POST("/api/v1/add-rescue-respondent/{user_id}/{respondent_id}")
+    suspend fun addRescueRespondent(@Path("user_id") userId: String, @Path("respondent_id") respondentId: String)
+
+    @DELETE("/api/v1/delete-all-respondents/{user_id}")
+    suspend fun deleteAllRespondents(@Path("user_id") userId: String)
+
+
+
+
     @GET("/api/v1/get-rescue-transaction-by-id/{rescue_transaction_id}")
     suspend fun getRescueTransactionById(@Path("rescue_transaction_id") userId: String): RescueTransactionItemDto
 

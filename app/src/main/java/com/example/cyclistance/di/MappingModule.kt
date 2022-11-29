@@ -14,7 +14,11 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAG
 import com.example.cyclistance.core.utils.network_observer.NetworkConnectivityUtil
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping_screen.data.repository.MappingRepositoryImpl
+import com.example.cyclistance.feature_mapping_screen.data.websockets.RescueTransactionWSClient
+import com.example.cyclistance.feature_mapping_screen.data.websockets.TransactionLiveLocationWSClient
+import com.example.cyclistance.feature_mapping_screen.data.websockets.UserWSClient
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.GetAddressUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.UpdateAddressUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.GetBikeTypeUseCase
@@ -25,16 +29,12 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_tra
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.BroadcastUserUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.GetUserUpdatesUseCase
-import com.example.cyclistance.feature_mapping_screen.data.websockets.RescueTransactionWSClient
-import com.example.cyclistance.feature_mapping_screen.data.websockets.TransactionLiveLocationWSClient
-import com.example.cyclistance.feature_mapping_screen.data.websockets.UserWSClient
 import com.google.gson.GsonBuilder
 import dagger.Module
 import dagger.Provides
@@ -109,7 +109,7 @@ object MappingModule {
 
     @Provides
     @Singleton
-    fun provideMappingUseCase(repository: MappingRepository): MappingUseCase {
+    fun provideMappingUseCase(repository: MappingRepository, @ApplicationContext context: Context): MappingUseCase {
         return MappingUseCase(
 
             getUsersUseCase = GetUsersUseCase(repository),
@@ -128,12 +128,15 @@ object MappingModule {
             getAddressUseCase = GetAddressUseCase(repository),
             updateAddressUseCase = UpdateAddressUseCase(repository),
             imageUrlToDrawableUseCase = ImageUrlToDrawableUseCase(repository),
-            broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(repository),
-            broadcastUserUseCase = BroadcastUserUseCase(repository),
+            broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(repository, context),
+            broadcastUserUseCase = BroadcastUserUseCase(repository, context),
             getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(repository),
             getUserUpdatesUseCase = GetUserUpdatesUseCase(repository),
-            broadcastTransactionLocationUseCase = BroadcastTransactionLocationUseCase(repository),
-            getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(repository)
+            broadcastTransactionLocationUseCase = BroadcastTransactionLocationUseCase(repository, context),
+            getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(repository),
+            deleteRescueRespondentUseCase = DeleteRescueRespondentUseCase(repository),
+            addRescueRespondentUseCase = AddRescueRespondentUseCase(repository),
+            deleteAllRespondentsUseCase = DeleteAllRespondentsUseCase(repository),
         )
     }
 

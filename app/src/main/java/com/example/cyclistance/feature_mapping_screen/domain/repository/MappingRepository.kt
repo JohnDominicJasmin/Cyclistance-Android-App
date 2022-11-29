@@ -11,6 +11,12 @@ interface MappingRepository {
     suspend fun createUser(userItem: UserItem)
     suspend fun deleteUser(id: String)
 
+
+    suspend fun deleteRescueRespondent(userId: String, respondentId: String)
+    suspend fun addRescueRespondent(userId: String, respondentId: String)
+    suspend fun deleteAllRespondents(userId: String)
+
+
     suspend fun getRescueTransactionById(userId: String): RescueTransactionItem
     suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem)
     suspend fun deleteRescueTransaction(id: String)

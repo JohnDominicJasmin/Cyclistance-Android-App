@@ -143,6 +143,23 @@ class MappingRepositoryImpl(
         return rescueTransactionClient.getResult()
     }
 
+    override suspend fun deleteRescueRespondent(userId: String, respondentId: String) {
+        handleException {
+            api.deleteRescueRespondent(userId, respondentId)
+        }
+    }
+
+    override suspend fun addRescueRespondent(userId: String, respondentId: String) {
+        handleException {
+            api.addRescueRespondent(userId, respondentId)
+        }
+    }
+
+    override suspend fun deleteAllRespondents(userId: String) {
+        handleException {
+            api.deleteAllRespondents(userId)
+        }
+    }
 }
 
 

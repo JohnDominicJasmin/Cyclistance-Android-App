@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets
+package com.example.cyclistance.feature_mapping_screen.domain.use_case
 
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.GetAddressUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.UpdateAddressUseCase
@@ -9,10 +9,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.G
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.CreateUserUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.DeleteUserUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.GetUserByIdUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.GetUsersUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
@@ -28,6 +25,9 @@ data class MappingUseCase(
     val getUsersUseCase: GetUsersUseCase,
     val createUserUseCase: CreateUserUseCase,
     val deleteUserUseCase: DeleteUserUseCase,
+    val deleteRescueRespondentUseCase: DeleteRescueRespondentUseCase,
+    val addRescueRespondentUseCase: AddRescueRespondentUseCase,
+    val deleteAllRespondentsUseCase: DeleteAllRespondentsUseCase,
 
     val getRescueTransactionByIdUseCase: GetRescueTransactionByIdUseCase,
     val createRescueTransactionUseCase: CreateRescueTransactionUseCase,
