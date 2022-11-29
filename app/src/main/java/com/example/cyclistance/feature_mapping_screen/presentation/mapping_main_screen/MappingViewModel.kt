@@ -282,7 +282,7 @@ class MappingViewModel @Inject constructor(
                 }
 
             }.onSuccess { rescueTransaction ->
-                mappingUseCase.broadcastRescueTransactionUseCase()
+                broadcastRescueTransaction()
                 assignTransaction(rescueTransaction,user, rescuer, transactionId)
             }.onFailure { exception ->
                 finishLoading()
@@ -291,6 +291,22 @@ class MappingViewModel @Inject constructor(
 
             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
 
+        }
+    }
+
+    private suspend fun broadcastRescueTransaction(){
+        runCatching {
+            mappingUseCase.broadcastRescueTransactionUseCase()
+        }.onFailure {
+           it.handleException()
+        }
+    }
+
+    private suspend fun broadcastUser(){
+        runCatching {
+            mappingUseCase.broadcastUserUseCase()
+        }.onFailure {
+            it.handleException()
         }
     }
 
@@ -306,7 +322,7 @@ class MappingViewModel @Inject constructor(
             transactionId.assignTransaction(role = Role.RESCUER.name.lowercase(), id = rescuer.id)
 
         }.onSuccess {
-            mappingUseCase.broadcastUserUseCase()
+            broadcastUser()
             _eventFlow.emit(value = MappingUiEvent.ShowMappingScreen)
             delay(500)
             val userLocation = state.value.userLocation
@@ -440,7 +456,7 @@ class MappingViewModel @Inject constructor(
 
             }.onSuccess {
                 _state.update { it.copy(searchAssistanceButtonVisible = true) }
-                mappingUseCase.broadcastUserUseCase()
+                broadcastUser()
             }.onFailure { exception ->
                 Timber.e("Failed to cancel search assistance: ${exception.message}")
                 exception.handleException()
@@ -519,12 +535,18 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun RescueTransactionItem.broadCastLocationToTransaction(location: android.location.Location){
-        id?.let{ id ->
-            mappingUseCase.broadcastTransactionLocationUseCase(
-                LiveLocationWSModel(
-                    latitude = location.latitude,
-                    longitude = location.longitude,
-                    room = id))
+        runCatching {
+
+            id?.let { id ->
+                mappingUseCase.broadcastTransactionLocationUseCase(
+                    LiveLocationWSModel(
+                        latitude = location.latitude,
+                        longitude = location.longitude,
+                        room = id))
+            }
+
+        }.onFailure {
+            Timber.v("Broadcasting location to transaction failed: ${it.message}")
         }
     }
 
@@ -615,6 +637,8 @@ class MappingViewModel @Inject constructor(
                         }))
                 }
                 startLoading()
+
+                // TODO: Change this later 
                 mappingUseCase.createUserUseCase(
                     user = UserItem(
                         id = getId(),
@@ -622,7 +646,7 @@ class MappingViewModel @Inject constructor(
                     )
                 )
             }.onSuccess {
-                mappingUseCase.broadcastUserUseCase()
+                broadcastUser()
             }.onFailure {
                 it.handleDeclineRescueRequest()
             }
@@ -687,7 +711,7 @@ class MappingViewModel @Inject constructor(
             }.onSuccess {
                 finishLoading()
                 _state.update { it.copy(searchAssistanceButtonVisible = false) }
-                mappingUseCase.broadcastUserUseCase()
+                broadcastUser()
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
 
             }.onFailure { exception ->
@@ -741,7 +765,7 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.createMockUsers()
         }.onSuccess {
             Timber.v("CREATED MOCK USERS!")
-            mappingUseCase.broadcastUserUseCase()
+            broadcastUser()
         }.onFailure {
             Timber.e("FAILED TO CREATE MOCK USERS: ${it.message}")
         }

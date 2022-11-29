@@ -126,33 +126,41 @@ class ConfirmDetailsViewModel @Inject constructor(
             }.onSuccess {
                 _state.update { it.copy(isLoading = false) }
                 _eventFlow.emit(value = ConfirmDetailsUiEvent.ShowMappingScreen)
-                mappingUseCase.broadcastUserUseCase()
+                broadcastUser()
 
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
-                handleException(exception)
+                exception.handleException()
             }.also {
                 savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
             }
         }
     }
 
-    private suspend fun handleException(exception: Throwable) {
-        when (exception) {
+    private suspend fun broadcastUser() {
+        runCatching {
+            mappingUseCase.broadcastUserUseCase()
+        }.onFailure {
+            it.handleException()
+        }
+    }
+
+    private suspend fun Throwable.handleException() {
+        when (this) {
             is MappingExceptions.UnexpectedErrorException, is MappingExceptions.UserException -> {
                 _eventFlow.emit(
                     ConfirmDetailsUiEvent.ShowToastMessage(
-                        message = exception.message ?: "",
+                        message = this.message ?: "",
                     ))
             }
             is MappingExceptions.NetworkException -> {
                 _state.update { it.copy(hasInternet = false) }
             }
             is MappingExceptions.BikeTypeException -> {
-                _state.update { it.copy(bikeTypeErrorMessage = exception.message!!) }
+                _state.update { it.copy(bikeTypeErrorMessage = this.message!!) }
             }
             is MappingExceptions.DescriptionException -> {
-                _state.update { it.copy(descriptionErrorMessage = exception.message!!) }
+                _state.update { it.copy(descriptionErrorMessage = this.message!!) }
             }
         }
         savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
