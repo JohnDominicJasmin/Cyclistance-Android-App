@@ -11,13 +11,12 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toCardModel
-import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toRespondent
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.Route
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.Status
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.*
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.MappingUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.delight.android.location.SimpleLocation
@@ -629,21 +628,18 @@ class MappingViewModel @Inject constructor(
     private fun declineRescueRequest(cardModel: CardModel) {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
+                startLoading()
                 val rescueRespondents = state.value.userRescueRequestRespondents.respondents
-                val updatedState = _state.updateAndGet {
+                _state.update {
                     it.copy(userRescueRequestRespondents = RescueRequestRespondents(
                         rescueRespondents.toMutableList().apply {
                             remove(element = cardModel)
                         }))
                 }
-                startLoading()
 
-                // TODO: Change this later 
-                mappingUseCase.createUserUseCase(
-                    user = UserItem(
-                        id = getId(),
-                        rescueRequest = RescueRequest(respondents = updatedState.userRescueRequestRespondents.respondents.map { it.toRespondent() })
-                    )
+                mappingUseCase.deleteRescueRespondentUseCase(
+                    userId = getId(),
+                    respondentId = cardModel.id!!
                 )
             }.onSuccess {
                 broadcastUser()
