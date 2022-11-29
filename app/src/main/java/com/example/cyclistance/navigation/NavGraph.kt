@@ -84,8 +84,11 @@ fun NavGraph(
 
 
         composable(
-            "${Screens.CancellationScreen.route}/{cancellationType}",
-            arguments = listOf(navArgument("cancellationType") { defaultValue = SELECTION_RESCUEE_TYPE })) {
+            "${Screens.CancellationScreen.route}/{cancellationType}/{transactionId}",
+            arguments = listOf(
+                navArgument("cancellationType") { defaultValue = SELECTION_RESCUEE_TYPE },
+                navArgument("transactionId"){} ,
+                )) {
 
             it.arguments?.getString("cancellationType")?.let { cancellationType ->
                 CancellationReasonScreen(paddingValues = paddingValues, cancellationType = cancellationType)
