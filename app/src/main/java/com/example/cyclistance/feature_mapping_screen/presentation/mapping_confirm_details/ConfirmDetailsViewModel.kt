@@ -43,7 +43,7 @@ class ConfirmDetailsViewModel @Inject constructor(
             runCatching {
                 mappingUseCase.getBikeTypeUseCase().first()
             }.onSuccess { bikeType ->
-                _state.update { it.copy(bikeType = bikeType ?: "") }
+                _state.update { it.copy(bikeType = bikeType) }
                 savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
             }.onFailure { exception ->
                 Timber.e(exception.message)
@@ -68,6 +68,9 @@ class ConfirmDetailsViewModel @Inject constructor(
         when (event) {
             is ConfirmDetailsEvent.ConfirmDetails -> {
                 updateUser()
+            }
+            is ConfirmDetailsEvent.DismissNoInternetDialog -> {
+                _state.update { it.copy(hasInternet = true) }
             }
             is ConfirmDetailsEvent.EnterAddress -> {
                 _state.update { it.copy(address = event.address) }
@@ -126,9 +129,10 @@ class ConfirmDetailsViewModel @Inject constructor(
 
 
             }.onSuccess {
+                broadcastUser()
                 _state.update { it.copy(isLoading = false) }
                 _eventFlow.emit(value = ConfirmDetailsUiEvent.ShowMappingScreen)
-                broadcastUser()
+
 
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
