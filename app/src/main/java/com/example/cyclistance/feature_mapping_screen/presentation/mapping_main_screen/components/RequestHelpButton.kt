@@ -55,7 +55,7 @@ fun RequestHelpButtonPreview() {
 
     CyclistanceTheme(true) {
         RequestHelpButton(
-            onClickSearchButton = { /*TODO*/ },
+            onClickSearchButton = {  },
             modifier = Modifier,
             enabled = true,
             state = MappingState())
