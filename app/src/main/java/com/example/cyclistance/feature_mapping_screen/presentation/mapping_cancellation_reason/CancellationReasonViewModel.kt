@@ -59,7 +59,7 @@ class CancellationReasonViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 _state.update { it.copy(isLoading = true) }
-                mappingUseCase.createRescueTransactionUseCase(
+                mappingUseCase.confirmCancellationUseCase(
                     rescueTransaction = RescueTransactionItem(
                         id = _transactionId,
                         cancellation = Cancellation(

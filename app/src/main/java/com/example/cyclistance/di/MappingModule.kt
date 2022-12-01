@@ -25,6 +25,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.UpdateBikeTypeUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.image.ImageUrlToDrawableUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.GetUserLocationUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
@@ -137,6 +138,8 @@ object MappingModule {
             deleteRescueRespondentUseCase = DeleteRescueRespondentUseCase(repository),
             addRescueRespondentUseCase = AddRescueRespondentUseCase(repository),
             deleteAllRespondentsUseCase = DeleteAllRespondentsUseCase(repository),
+            confirmDetailsUseCase = ConfirmDetailsUseCase(repository),
+            confirmCancellationUseCase = ConfirmCancellationUseCase(repository),
         )
     }
 
