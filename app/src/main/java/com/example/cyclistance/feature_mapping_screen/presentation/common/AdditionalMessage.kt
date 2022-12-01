@@ -27,7 +27,7 @@ fun AdditionalMessage(
     modifier: Modifier,
     message: String,
     enabled: Boolean,
-    onValueChange: (String) -> Unit) {
+    onChangeValueMessage: (String) -> Unit) {
     Column(modifier = modifier) {
 
 
@@ -68,7 +68,7 @@ fun AdditionalMessage(
                     onValueChange = { newText ->
                         if (newText.length <= CHARACTER_LIMIT) {
                             numberOfCharacters.value = newText.length
-                            onValueChange(newText)
+                            onChangeValueMessage(newText)
                         }
                     },
                     shape = RoundedCornerShape(12.dp),

@@ -195,7 +195,7 @@ fun CoinDetailScreen(
 
                     },
                 message = state.message,
-                onValueChange = onValueChangeMessage,
+                onChangeValueMessage = onValueChangeMessage,
                 enabled = !state.isLoading
             )
 
