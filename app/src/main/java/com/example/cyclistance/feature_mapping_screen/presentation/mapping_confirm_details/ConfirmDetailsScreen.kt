@@ -31,7 +31,7 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confi
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_confirm_details.components.DropDownBikeList
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.BottomSheetType
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.navigation.navigateScreenInclusively
+import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.flow.collectLatest
@@ -50,9 +50,7 @@ fun ConfirmDetailsScreen(
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is ConfirmDetailsUiEvent.ShowMappingScreen -> {
-                    navController.navigateScreenInclusively(
-                        destination = Screens.MappingScreen.route + "?bottomSheetType=${BottomSheetType.SearchAssistance.type}",
-                        popUpToDestination = Screens.ConfirmDetailsScreen.route)
+                    navController.navigateScreen(Screens.MappingScreen.route + "?bottomSheetType=${BottomSheetType.SearchAssistance.type}")
                 }
 
                 is ConfirmDetailsUiEvent.ShowToastMessage -> {
@@ -80,8 +78,7 @@ fun ConfirmDetailsScreen(
         viewModel.onEvent(event = ConfirmDetailsEvent.ClearDescriptionErrorMessage)
     }}
     val onClickCancelButton = remember {{
-            navController.popBackStack()
-            Unit
+        navController.navigateScreen(Screens.MappingScreen.route)
     }}
     val onClickConfirmButton = remember {{
             viewModel.onEvent(event = ConfirmDetailsEvent.ConfirmDetails)
