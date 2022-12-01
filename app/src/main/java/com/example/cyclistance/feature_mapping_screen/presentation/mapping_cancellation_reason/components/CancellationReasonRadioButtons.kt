@@ -7,7 +7,6 @@ import androidx.compose.material.RadioButton
 import androidx.compose.material.RadioButtonDefaults
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,11 +36,13 @@ val rescuerCancellationReasons = listOf(
     "Other")
 
 
-
 @Composable
-fun RadioButtonsSection(modifier : Modifier, cancellationType: String = SELECTION_RESCUEE_TYPE) {
+fun RadioButtonsSection(
+    modifier: Modifier,
+    cancellationType: String = SELECTION_RESCUEE_TYPE,
+    selectedOption: String,
+    onSelectReason: (String) -> Unit) {
 
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf("") }
 
     Column(
         modifier = modifier,
@@ -50,9 +51,11 @@ fun RadioButtonsSection(modifier : Modifier, cancellationType: String = SELECTIO
 
         val selectionType =
             remember(cancellationType) { (if (cancellationType == SELECTION_RESCUEE_TYPE) rescueeCancellationReasons else rescuerCancellationReasons) }
-
         selectionType.forEach { text ->
-            SelectionButton(selectionText = text, selectedOption = selectedOption, onOptionSelected = onOptionSelected)
+            SelectionButton(
+                selectionText = text,
+                selectedOption = selectedOption,
+                onOptionSelected = onSelectReason)
         }
     }
 
@@ -62,7 +65,10 @@ fun RadioButtonsSection(modifier : Modifier, cancellationType: String = SELECTIO
 @Composable
 fun SelectionButtonPreview() {
     CyclistanceTheme(true) {
-        SelectionButton(selectionText = "Need to modify rescue details (description, message and address).", selectedOption = "Change of mind", onOptionSelected = {})
+        SelectionButton(
+            selectionText = "Need to modify rescue details (description, message and address).",
+            selectedOption = "Change of mind",
+            onOptionSelected = {})
     }
 }
 

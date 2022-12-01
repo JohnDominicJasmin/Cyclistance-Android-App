@@ -91,7 +91,11 @@ fun NavGraph(
                 )) {
 
             it.arguments?.getString("cancellationType")?.let { cancellationType ->
-                CancellationReasonScreen(paddingValues = paddingValues, cancellationType = cancellationType)
+                CancellationReasonScreen(
+                    hasInternetConnection = hasInternetConnection,
+                    navController = navController,
+                    paddingValues = paddingValues,
+                    cancellationType = cancellationType)
             }
         }
 
