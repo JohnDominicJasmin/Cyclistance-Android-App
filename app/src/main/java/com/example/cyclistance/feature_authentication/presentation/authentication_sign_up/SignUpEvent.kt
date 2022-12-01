@@ -9,6 +9,6 @@ sealed class SignUpEvent{
     data class EnterEmail(val email: String): SignUpEvent()
     data class EnterPassword(val password: String): SignUpEvent()
     data class EnterConfirmPassword(val confirmPassword: String): SignUpEvent()
-
+    object DismissNoInternetDialog: SignUpEvent()
 
 }

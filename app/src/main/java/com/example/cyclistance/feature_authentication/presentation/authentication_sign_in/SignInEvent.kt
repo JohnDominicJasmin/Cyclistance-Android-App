@@ -11,4 +11,5 @@ sealed class SignInEvent{
     data class EnterPassword(val password: String) : SignInEvent()
     object TogglePasswordVisibility: SignInEvent()
     object DismissAlertDialog : SignInEvent()
+    object DismissNoInternetDialog: SignInEvent()
 }

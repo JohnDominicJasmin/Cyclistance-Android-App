@@ -13,6 +13,7 @@ sealed class MappingEvent {
     object LoadUserProfile: MappingEvent()
     data class ChangeBottomSheet(val bottomSheetType: String): MappingEvent()
     object DismissAlertDialog: MappingEvent()
+    object DismissNoInternetDialog: MappingEvent()
     object CancelSearchAssistance: MappingEvent()
     data class DeclineRescueRequest(val cardModel: CardModel): MappingEvent()
     data class AcceptRescueRequest(val cardModel: CardModel): MappingEvent()

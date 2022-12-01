@@ -42,6 +42,10 @@ class SignUpViewModel @Inject constructor(
                 signUp()
             }
 
+            is SignUpEvent.DismissNoInternetDialog -> {
+                _state.update { it.copy(hasInternet = true) }
+            }
+
             is SignUpEvent.EnterEmail -> {
                 _state.update { it.copy(email = event.email, emailErrorMessage = "") }
             }

@@ -83,7 +83,9 @@ fun SignUpScreen(
             Screens.SignInScreen.route,
             Screens.SignUpScreen.route)
     }}
-
+    val onDismissNoInternetDialog = remember{{
+        signUpViewModel.onEvent(SignUpEvent.DismissNoInternetDialog)
+    }}
 
     LaunchedEffect(key1 = true) {
         focusRequester.requestFocus()
@@ -111,6 +113,7 @@ fun SignUpScreen(
         focusRequester = focusRequester,
         signUpState = signUpState,
         onDismissAlertDialog = onDismissAlertDialog,
+        onDismissNoInternetDialog = onDismissNoInternetDialog,
         keyboardActionOnDone = onDoneKeyboardAction,
         onValueChangeEmail = onValueChangeEmail,
         onValueChangePassword = onValueChangePassword,

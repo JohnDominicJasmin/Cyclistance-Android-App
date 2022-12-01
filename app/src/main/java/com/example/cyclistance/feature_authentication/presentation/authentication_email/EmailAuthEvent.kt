@@ -8,5 +8,6 @@ sealed class EmailAuthEvent{
     object StartTimer: EmailAuthEvent()
     object SubscribeEmailVerification: EmailAuthEvent()
     object DismissAlertDialog: EmailAuthEvent()
+    object DismissNoInternetDialog: EmailAuthEvent()
 
 }

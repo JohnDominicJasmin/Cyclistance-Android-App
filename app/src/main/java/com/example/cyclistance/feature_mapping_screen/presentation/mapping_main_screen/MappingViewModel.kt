@@ -136,6 +136,10 @@ class MappingViewModel @Inject constructor(
                 uploadUserProfile()
             }
 
+            is MappingEvent.DismissNoInternetDialog -> {
+                _state.update { it.copy(hasInternet = true) }
+            }
+
             is MappingEvent.LoadData -> {
                 loadData()
             }

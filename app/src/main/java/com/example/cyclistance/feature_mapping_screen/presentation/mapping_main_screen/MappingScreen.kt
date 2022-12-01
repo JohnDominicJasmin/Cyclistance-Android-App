@@ -264,6 +264,10 @@ fun MappingScreen(
 
     }}
 
+    val onDismissNoInternetDialog = remember{{ ->
+        mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetDialog)
+    }}
+
 
     LaunchedEffect(key1 = typeBottomSheet) {
 
@@ -372,7 +376,8 @@ fun MappingScreen(
         onChangeCameraState = onChangeCameraState,
         mapboxNavigation = mapboxNavigation,
         onInitializeNavigationCamera = onInitializeNavigationCamera,
-        onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton
+        onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton,
+        onDismissNoInternetDialog = onDismissNoInternetDialog
     )
 
 }

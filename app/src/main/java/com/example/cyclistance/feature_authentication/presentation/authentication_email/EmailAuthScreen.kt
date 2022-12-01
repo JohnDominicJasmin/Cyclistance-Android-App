@@ -76,6 +76,10 @@ fun EmailAuthScreen(
         Unit
     }}
 
+    val onDismissNoInternetDialog = remember{{
+        emailAuthViewModel.onEvent(EmailAuthEvent.DismissNoInternetDialog)
+    }}
+
 
 
     LaunchedEffect(key1 = true) {
@@ -113,6 +117,7 @@ fun EmailAuthScreen(
         emailAuthState = emailAuthState,
         isDarkTheme = isDarkTheme,
         onDismissAlertDialog = onDismissAlertDialog,
+        onDismissNoInternetDialog = onDismissNoInternetDialog,
         onClickVerifyButton = onClickVerifyButton,
         onClickResendButton = onClickResendButton)
 
@@ -141,7 +146,7 @@ fun EmailAuthScreen(
     onDismissAlertDialog: () -> Unit = {},
     onClickVerifyButton: () -> Unit = {},
     onClickResendButton: () -> Unit = {},
-    onDismissDialog: () -> Unit = {},
+    onDismissNoInternetDialog: () -> Unit = {},
 ) {
 
     Column(
@@ -200,7 +205,7 @@ fun EmailAuthScreen(
                 onClickResendButton = onClickResendButton)
 
             if (!emailAuthState.hasInternet) {
-                NoInternetDialog(onDismiss = onDismissDialog, modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),)
+                NoInternetDialog(onDismiss = onDismissNoInternetDialog, modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),)
             }
 
         }

@@ -45,6 +45,10 @@ class EmailAuthViewModel @Inject constructor(
                     reloadEmail()
                 }
             }
+            
+            is EmailAuthEvent.DismissNoInternetDialog -> {
+                _state.update { it.copy(hasInternet = true) }
+            }
 
 
             is EmailAuthEvent.SendEmailVerification -> {

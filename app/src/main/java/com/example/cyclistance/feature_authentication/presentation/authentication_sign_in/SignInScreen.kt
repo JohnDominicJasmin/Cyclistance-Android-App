@@ -161,7 +161,10 @@ fun SignInScreen(
     val onClickSignInText = remember {{
         navController.navigateScreen(Screens.SignUpScreen.route)
     } }
-
+    val onDismissNoInternetDialog = remember{{
+        signInViewModel.onEvent(SignInEvent.DismissNoInternetDialog)
+        emailAuthViewModel.onEvent(EmailAuthEvent.DismissNoInternetDialog)
+    }}
 
 
     SignInScreen(
@@ -170,6 +173,7 @@ fun SignInScreen(
         emailAuthState = emailAuthState,
         focusRequester = focusRequester,
         onDismissAlertDialog = onDismissAlertDialog,
+        onDismissNoInternetDialog = onDismissNoInternetDialog,
         keyboardActionOnDone = onDoneKeyboardAction,
         onValueChangeEmail = onValueChangeEmail,
         onValueChangePassword = onValueChangePassword,
@@ -256,7 +260,7 @@ fun SignInScreen(
         }
 
         val hasInternet = remember(emailAuthState.hasInternet, signInState.hasInternet){
-            emailAuthState.hasInternet || signInState.hasInternet
+            emailAuthState.hasInternet && signInState.hasInternet
         }
 
         SignInGoogleAndFacebookSection(
@@ -276,8 +280,7 @@ fun SignInScreen(
         }
 
         if (!hasInternet) {
-            NoInternetDialog(
-                onDismiss = onDismissNoInternetDialog,
+            NoInternetDialog(onDismiss = onDismissNoInternetDialog,
             modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId))
 
         }

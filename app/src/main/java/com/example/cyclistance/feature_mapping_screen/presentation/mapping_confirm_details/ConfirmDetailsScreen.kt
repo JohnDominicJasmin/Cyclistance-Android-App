@@ -86,6 +86,9 @@ fun ConfirmDetailsScreen(
     val onClickConfirmButton = remember {{
             viewModel.onEvent(event = ConfirmDetailsEvent.ConfirmDetails)
     }}
+    val onDismissNoInternetDialog = remember{ {
+            viewModel.onEvent(event = ConfirmDetailsEvent.DismissNoInternetDialog)
+    }}
 
     CoinDetailScreen(modifier = Modifier.padding(paddingValues),
         state = state,
@@ -94,7 +97,8 @@ fun ConfirmDetailsScreen(
         onClickBikeType = onClickBikeType,
         onClickDescriptionButton = onClickDescriptionButton,
         onClickConfirmButton = onClickConfirmButton,
-        onClickCancelButton = onClickCancelButton)
+        onClickCancelButton = onClickCancelButton,
+        onDismissNoInternetDialog = onDismissNoInternetDialog)
 }
 
 
