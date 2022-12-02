@@ -540,13 +540,19 @@ class MappingViewModel @Inject constructor(
     private fun RescueTransactionItem.broadCastLocationToTransaction(location: android.location.Location){
         runCatching {
 
-            id?.let { id ->
-                mappingUseCase.broadcastTransactionLocationUseCase(
-                    LiveLocationWSModel(
-                        latitude = location.latitude,
-                        longitude = location.longitude,
-                        room = id))
+            if (this.id.isNullOrEmpty()) {
+                return
             }
+
+            if(this.cancellation?.rescueCancelled == true){
+                return
+            }
+
+            mappingUseCase.broadcastTransactionLocationUseCase(
+                LiveLocationWSModel(
+                    latitude = location.latitude,
+                    longitude = location.longitude,
+                    room = this.id))
 
         }.onFailure {
             Timber.v("Broadcasting location to transaction failed: ${it.message}")
