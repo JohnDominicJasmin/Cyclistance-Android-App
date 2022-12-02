@@ -393,7 +393,9 @@ fun MappingMapsScreen(
 
                         soundButton.unmute()
 
-                        mapboxNavigation.startTripSession()
+                        if(locationPermissionsState?.allPermissionsGranted == true) {
+                            mapboxNavigation.startTripSession()
+                        }
 
                         onInitializeMapView(mapView)
                         onInitializeNavigationCamera(navigationCamera)
