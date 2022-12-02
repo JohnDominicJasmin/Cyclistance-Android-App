@@ -328,20 +328,24 @@ class MappingViewModel @Inject constructor(
             broadcastUser()
             _eventFlow.emit(value = MappingUiEvent.ShowMappingScreen)
             delay(500)
-            val userLocation = state.value.userLocation
-            val estimatedTimeArrival = rescuer.location?.let { getEstimatedTimeArrival(startingLocation = it, endLocation = userLocation) }
-            _state.update {
-                it.copy(userRescueTransaction = rescueTransaction,
-                    rescuerETA = estimatedTimeArrival ?: "",
-                    rescuer = rescuer,
-                    searchAssistanceButtonVisible = false)
-            }
+            updateTransactionETA(rescuer, rescueTransaction)
             finishLoading()
         }.onFailure { exception ->
             finishLoading()
             exception.handleException()
         }
 
+    }
+
+    private fun updateTransactionETA(rescuer: UserItem,rescueTransaction: RescueTransactionItem ){
+        val userLocation = state.value.userLocation
+        val estimatedTimeArrival = rescuer.location?.let { getEstimatedTimeArrival(startingLocation = it, endLocation = userLocation) }
+        _state.update {
+            it.copy(userRescueTransaction = rescueTransaction,
+                rescuerETA = estimatedTimeArrival ?: "",
+                rescuer = rescuer,
+                searchAssistanceButtonVisible = false)
+        }
     }
 
     private fun startLoading() {
