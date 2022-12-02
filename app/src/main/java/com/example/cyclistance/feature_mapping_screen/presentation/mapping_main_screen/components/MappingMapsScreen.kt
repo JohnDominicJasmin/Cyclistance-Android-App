@@ -15,6 +15,7 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.BUTTON_ANIMATION_DURATION
 import com.example.cyclistance.databinding.ActivityMappingBinding
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.Cancellation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -89,42 +90,54 @@ fun MappingMapsScreen(
 
     LaunchedEffect( key1 = nearbyCyclists, key2 = mapsMapView, key3 = state.userRescueTransaction){
 
-        if (state.userRescueTransaction == null) {
-            pointAnnotationManager.deleteAll()
-            nearbyCyclists
-                .filter {
-                    it.id != state.user.id
-                }.filter {
-                    it.userAssistance?.needHelp == true
-                }.forEach { cyclist ->
-                    val location = cyclist.location
-                    val cyclistAssistance = cyclist.userAssistance
-                    val iconImage = cyclistAssistance?.getMapIconImageDescription(context)?.toBitmap(width = 130, height = 130)
-                    iconImage?.let {
-                        val pointAnnotationOptions = PointAnnotationOptions()
-                            .withIconImage(it)
-                            .withPoint(Point.fromLngLat(location?.longitude ?: return@forEach, location.latitude))
-                        pointAnnotationManager.create(pointAnnotationOptions)
-                    }
-                }
+        val transactionCancelled = (state.userRescueTransaction?.cancellation ?: Cancellation()).rescueCancelled
+        val transactionId = state.userRescueTransaction?.id
+
+        if(transactionCancelled.not() && transactionId.isNullOrEmpty().not()){
+            return@LaunchedEffect
         }
+
+        pointAnnotationManager.deleteAll()
+        nearbyCyclists
+            .filter {
+                it.id != state.user.id
+            }.filter {
+                it.userAssistance?.needHelp == true
+            }.forEach { cyclist ->
+                val location = cyclist.location
+                val cyclistAssistance = cyclist.userAssistance
+                val iconImage = cyclistAssistance?.getMapIconImageDescription(context)
+                    ?.toBitmap(width = 100, height = 100)
+                iconImage?.let {
+                    val pointAnnotationOptions = PointAnnotationOptions()
+                        .withIconImage(it)
+                        .withPoint(
+                            Point.fromLngLat(
+                                location?.longitude ?: return@forEach,
+                                location.latitude))
+                    pointAnnotationManager.create(pointAnnotationOptions)
+                }
+            }
     }
 
 
     LaunchedEffect(key1 = mapsMapView, key2 = state.transactionLocation, key3 = state.userRescueTransaction){
-
+        val rescueCancelled = (state.userRescueTransaction?.cancellation ?: Cancellation()).rescueCancelled
         val location = state.transactionLocation ?: state.rescuer.location
         val hasTransactionLocationChanges = state.userRescueTransaction != null && location != null
 
-        if(hasTransactionLocationChanges) {
-            val pointAnnotationOptions = PointAnnotationOptions()
-                .withIconImage(AppCompatResources.getDrawable(context, R.drawable.ic_navigation_map_icon)
-                    ?.toBitmap(width = 90, height = 90)!!)
-                .withPoint(Point.fromLngLat(location!!.longitude, location.latitude))
-
-            pointAnnotationManager.deleteAll()
-            pointAnnotationManager.create(pointAnnotationOptions)
+        if(rescueCancelled || hasTransactionLocationChanges.not()){
+            return@LaunchedEffect
         }
+
+        val pointAnnotationOptions = PointAnnotationOptions()
+            .withIconImage(
+                AppCompatResources.getDrawable(context, R.drawable.ic_navigation_map_icon)
+                    ?.toBitmap(width = 90, height = 90)!!)
+            .withPoint(Point.fromLngLat(location!!.longitude, location.latitude))
+
+        pointAnnotationManager.deleteAll()
+        pointAnnotationManager.create(pointAnnotationOptions)
 
     }
 
