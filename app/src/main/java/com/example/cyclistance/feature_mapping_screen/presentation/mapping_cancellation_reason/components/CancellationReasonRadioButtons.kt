@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUEE_TYPE
+import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
 import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -41,13 +42,15 @@ fun RadioButtonsSection(
     modifier: Modifier,
     cancellationType: String = SELECTION_RESCUEE_TYPE,
     selectedOption: String,
+    errorMessage: String,
     onSelectReason: (String) -> Unit) {
 
+    val hasError = remember(errorMessage){ errorMessage.isNotEmpty() }
 
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+        horizontalAlignment = Alignment.Start) {
 
         val selectionType =
             remember(cancellationType) { (if (cancellationType == SELECTION_RESCUEE_TYPE) rescueeCancellationReasons else rescuerCancellationReasons) }
@@ -57,6 +60,15 @@ fun RadioButtonsSection(
                 selectedOption = selectedOption,
                 onOptionSelected = onSelectReason)
         }
+
+        if (hasError) {
+            ErrorMessage(
+                errorMessage = errorMessage,
+                modifier = Modifier
+                    .padding(vertical = 10.dp, horizontal = 1.2.dp)
+                    .padding(start = 14.dp))
+        }
+
     }
 
 }

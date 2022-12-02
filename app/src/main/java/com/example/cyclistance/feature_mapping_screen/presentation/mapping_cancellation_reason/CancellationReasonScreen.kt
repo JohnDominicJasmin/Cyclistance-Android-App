@@ -113,6 +113,7 @@ fun CancellationReasonScreen(
                 height = Dimension.wrapContent
             }, cancellationType = cancellationType,
             selectedOption = state.selectedReason,
+            errorMessage = state.reasonErrorMessage,
             onSelectReason = onSelectReason)
 
         AdditionalMessage(
@@ -180,7 +181,7 @@ fun CancellationReasonScreen(
 fun CancellationReasonPreview() {
 
     CyclistanceTheme(true) {
-        CancellationReasonScreen(modifier = Modifier .fillMaxSize())
+        CancellationReasonScreen(modifier = Modifier .fillMaxSize(), state = CancellationReasonState(reasonErrorMessage = "Sample Error MEssage"))
     }
 }
 
