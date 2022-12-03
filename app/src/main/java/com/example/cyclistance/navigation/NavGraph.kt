@@ -10,6 +10,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUEE_TYPE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_SHEET_TYPE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_ID
+import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpScreen
@@ -64,13 +68,13 @@ fun NavGraph(
 
 
         composable(
-            Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}",
-            arguments = listOf(navArgument("bottomSheetType") {
+            Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE={$BOTTOM_SHEET_TYPE}",
+            arguments = listOf(navArgument(BOTTOM_SHEET_TYPE) {
                 defaultValue = ""
             })
         ) {
 
-            it.arguments?.getString("bottomSheetType")?.let { bottomSheetType ->
+            it.arguments?.getString(BOTTOM_SHEET_TYPE)?.let { bottomSheetType ->
                 MappingScreen(
                     hasInternetConnection = hasInternetConnection,
                     typeBottomSheet = bottomSheetType,
@@ -84,13 +88,13 @@ fun NavGraph(
 
 
         composable(
-            "${Screens.CancellationScreen.route}/{cancellationType}/{transactionId}/{clientId}",
+            "${Screens.CancellationScreen.route}/{$CANCELLATION_TYPE}/{$TRANSACTION_ID}/{$CLIENT_ID}",
             arguments = listOf(
-                navArgument("cancellationType") { defaultValue = SELECTION_RESCUEE_TYPE },
-                navArgument("transactionId"){},
-                navArgument("clientId"){})) {
+                navArgument(CANCELLATION_TYPE) { defaultValue = SELECTION_RESCUEE_TYPE },
+                navArgument(TRANSACTION_ID){},
+                navArgument(CLIENT_ID){})) {
 
-            it.arguments?.getString("cancellationType")?.let { cancellationType ->
+            it.arguments?.getString(CANCELLATION_TYPE)?.let { cancellationType ->
                 CancellationReasonScreen(
                     hasInternetConnection = hasInternetConnection,
                     navController = navController,

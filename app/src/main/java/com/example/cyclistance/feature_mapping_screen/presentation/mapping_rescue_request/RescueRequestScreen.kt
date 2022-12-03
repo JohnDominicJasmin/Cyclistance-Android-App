@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_SHEET_TYPE
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
@@ -51,7 +52,7 @@ fun RescueRequestScreen(
                 }
                 is MappingUiEvent.ShowMappingScreen -> {
                     navController.navigateScreen(
-                        destination = Screens.MappingScreen.route + "?bottomSheetType=${BottomSheetType.OnGoingRescue.type}")
+                        destination = Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE=${BottomSheetType.OnGoingRescue.type}")
                 }
 
                 else -> {}

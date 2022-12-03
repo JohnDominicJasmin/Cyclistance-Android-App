@@ -25,6 +25,10 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_SHEET_TYPE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_ID
+import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
 import com.example.cyclistance.core.utils.network_observer.ConnectivityObserver
 import com.example.cyclistance.core.utils.network_observer.NetworkConnectivityObserver
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingEvent
@@ -180,7 +184,7 @@ fun TopAppBar(
     route: String?) {
 
         when (route) {
-            Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}" -> {
+            Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE={$BOTTOM_SHEET_TYPE}" -> {
 
                 DefaultTopBar(onClickIcon = {
                     coroutineScope.launch {
@@ -189,7 +193,7 @@ fun TopAppBar(
                 })
             }
 
-            "${Screens.CancellationScreen.route}/{cancellationType}/{transactionId}/{clientId}" -> {
+            "${Screens.CancellationScreen.route}/{$CANCELLATION_TYPE}/{$TRANSACTION_ID}/{$CLIENT_ID}" -> {
                 TopAppBarCreator(
                     icon = Icons.Default.ArrowBack,
                     onClickIcon = onClickTopBarIcon,
@@ -291,7 +295,7 @@ fun NoInternetStatusBar(status: ConnectivityObserver.Status) {
 @Composable
 fun TopAppBarPreview() {
     CyclistanceTheme(true) {
-        TopAppBar(route = Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}")
+        TopAppBar(route = Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE={$BOTTOM_SHEET_TYPE}")
     }
 }
 
