@@ -76,7 +76,7 @@ fun ButtonDescriptionDetails(
             modifier = Modifier.fillMaxWidth()) {
 
             buttonOptions.forEach {
-                SetupButtonDescriptionItem(
+                ButtonDescriptionItem(
                     enabled = !state.isLoading,
                     selectedState = it.buttonText == selectedOption,
                     image = it.icon,
@@ -102,7 +102,7 @@ fun ButtonDescriptionDetails(
 
 
 @Composable
-fun SetupButtonDescriptionItem(
+fun ButtonDescriptionItem(
     selectedState: Boolean,
     image: Int,
     description: String,
