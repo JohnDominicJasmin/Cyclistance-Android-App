@@ -37,7 +37,6 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingMapsScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.RequestHelpButton
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.findRoute
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapboxNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startLocationServiceIntentAction
 import com.example.cyclistance.navigation.Screens
@@ -260,7 +259,9 @@ fun MappingScreen(
     val onClickCancelRescueTransactionButton = remember(state.rescuer) {{
         val transactionId = state.userRescueTransaction?.id
         val selectionType = if (state.rescuer.id != null) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
-        navController.navigateScreen(destination = "${Screens.CancellationScreen.route}/$selectionType/$transactionId")
+        val clientId = state.rescuer.id ?: state.rescuee.id
+
+        navController.navigateScreen(destination = "${Screens.CancellationScreen.route}/$selectionType/$transactionId/$clientId")
 
     }}
 
@@ -312,22 +313,6 @@ fun MappingScreen(
 
 
 
-    LaunchedEffect(key1 = state.userRescueTransaction){
-        val transactionRoute = state.userRescueTransaction?.route
-        val startingLocation = transactionRoute?.startingLocation
-        val destinationLocation = transactionRoute?.destinationLocation
-
-        startingLocation?.let {
-            destinationLocation?.let {
-                mapboxNavigation.findRoute(context,
-                    originPoint = Point.fromLngLat(startingLocation.longitude, startingLocation.latitude),
-                    destinationPoint = Point.fromLngLat(destinationLocation.longitude, destinationLocation.latitude)){
-                    mapboxNavigation.setNavigationRoutes(it)
-                    navigationCamera.requestNavigationCameraToOverview()
-                }
-            }
-        }
-    }
 
     LaunchedEffect(key1 = true) {
 
@@ -377,7 +362,8 @@ fun MappingScreen(
         mapboxNavigation = mapboxNavigation,
         onInitializeNavigationCamera = onInitializeNavigationCamera,
         onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton,
-        onDismissNoInternetDialog = onDismissNoInternetDialog
+        onDismissNoInternetDialog = onDismissNoInternetDialog,
+        navigationCamera = navigationCamera
     )
 
 }
@@ -426,6 +412,7 @@ fun MappingScreen(
     state: MappingState,
     mapView: MapView,
     mapboxNavigation: MapboxNavigation? = null,
+    navigationCamera: NavigationCamera? = null,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     onClickLocateUserButton: () -> Unit = {},
     onClickSearchButton: () -> Unit = {},
@@ -477,7 +464,8 @@ fun MappingScreen(
                 onInitializeMapView = onInitializeMapView,
                 onChangeCameraState = onChangeCameraState,
                 mapboxNavigation = mapboxNavigation!!,
-                onInitializeNavigationCamera = onInitializeNavigationCamera
+                onInitializeNavigationCamera = onInitializeNavigationCamera,
+                navigationCamera = navigationCamera!!,
             )
 
         }

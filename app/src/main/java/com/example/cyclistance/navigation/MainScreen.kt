@@ -206,7 +206,7 @@ fun TopAppBar(
                 })
             }
 
-            "${Screens.CancellationScreen.route}/{cancellationType}/{transactionId}" -> {
+            "${Screens.CancellationScreen.route}/{cancellationType}/{transactionId}/{clientId}" -> {
                 TopAppBarCreator(
                     icon = Icons.Default.ArrowBack,
                     onClickIcon = onClickTopBarIcon,
