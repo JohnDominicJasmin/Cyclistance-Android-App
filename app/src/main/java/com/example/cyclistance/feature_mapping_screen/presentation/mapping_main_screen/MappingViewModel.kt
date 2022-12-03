@@ -123,8 +123,8 @@ class MappingViewModel @Inject constructor(
     private fun RescueTransaction.getUserRescueTransaction(){
         val transactionId = state.value.user.transaction?.transactionId
         val rescueTransaction = transactionId?.let { findRescueTransaction(it) }
+        _state.update { it.copy(userRescueTransaction = rescueTransaction) }
         rescueTransaction?.let { transaction ->
-            _state.update { it.copy(userRescueTransaction = transaction) }
             updateRescuer(transaction)
         }
     }
