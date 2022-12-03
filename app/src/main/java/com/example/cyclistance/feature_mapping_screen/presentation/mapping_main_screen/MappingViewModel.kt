@@ -64,31 +64,39 @@ class MappingViewModel @Inject constructor(
             createMockUpUsers()
             loadUsers()
             loadRescueTransaction()
-            loadRescuer()
+            loadClient()
         }
 
     }
 
-    private suspend fun loadRescuer(){
+    private suspend fun loadClient(){
         coroutineScope {
            val user = state.value.nearbyCyclists
-           user.getRescuer()
+           user.getClient()
         }
     }
 
-    private fun User.getRescuer(rescueTransactionItem: RescueTransactionItem? = null){
+    private fun User.getClient(rescueTransactionItem: RescueTransactionItem? = null){
 
         val rescueTransaction = rescueTransactionItem ?: state.value.userRescueTransaction
+        val role = state.value.user.transaction?.role
 
-        rescueTransaction?.rescuerId?.let { rescuerId ->
-            val rescuer = findUser(rescuerId)
-            _state.update { it.copy(rescuer = rescuer) }
+        if(role.equals(Role.RESCUEE.name) ){
+            rescueTransaction?.rescuerId?.let { rescuerId ->
+                _state.update { it.copy(rescuer = findUser(rescuerId), rescuee = null) }
+            }
+            return
         }
+
+        rescueTransaction?.rescueeId?.let { rescueeId ->
+            _state.update { it.copy(rescuee = findUser(rescueeId), rescuer = null) }
+        }
+
     }
 
-    private fun updateRescuer(rescueTransactionItem: RescueTransactionItem){
+    private fun updateClient(rescueTransactionItem: RescueTransactionItem){
         val nearbyCyclist = state.value.nearbyCyclists
-        nearbyCyclist.getRescuer(rescueTransactionItem)
+        nearbyCyclist.getClient(rescueTransactionItem)
     }
 
     private suspend fun loadUsers() {
@@ -125,7 +133,7 @@ class MappingViewModel @Inject constructor(
         val rescueTransaction = transactionId?.let { findRescueTransaction(it) }
         _state.update { it.copy(userRescueTransaction = rescueTransaction) }
         rescueTransaction?.let { transaction ->
-            updateRescuer(transaction)
+            updateClient(transaction)
         }
     }
 
@@ -618,7 +626,7 @@ class MappingViewModel @Inject constructor(
                 }.collect {
                     it.getUser()
                     it.loadUsers()
-                    it.getRescuer()
+                    it.getClient()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
         }
