@@ -260,8 +260,8 @@ fun MappingScreen(
 
     val onClickCancelRescueTransactionButton = remember(state.rescuer) {{
         val transactionId = state.userRescueTransaction?.id
-        val selectionType = if (state.rescuer.id != null) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
-        val clientId = state.rescuer.id ?: state.rescuee.id
+        val selectionType = if (state.rescuer?.id != null) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
+        val clientId = state.rescuer?.id ?: state.rescuee?.id
 
         navController.navigateScreen(destination = "${Screens.CancellationScreen.route}/$selectionType/$transactionId/$clientId")
 

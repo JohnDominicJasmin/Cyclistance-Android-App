@@ -119,8 +119,8 @@ fun MappingMapsScreen(
             }
     }
 
-    val clientLocation = remember(state.transactionLocation, state.rescuer.location){
-        state.transactionLocation ?: state.rescuer.location
+    val clientLocation = remember(state.transactionLocation, state.rescuer?.location){
+        state.transactionLocation ?: state.rescuer?.location
     }
     val hasTransactionLocationChanges by remember(clientLocation, state.userRescueTransaction?.route){
         derivedStateOf {

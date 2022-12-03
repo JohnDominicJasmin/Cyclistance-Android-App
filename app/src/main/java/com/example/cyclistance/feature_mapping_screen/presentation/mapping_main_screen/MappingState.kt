@@ -44,8 +44,8 @@ data class MappingState(
         latitude = DEFAULT_LATITUDE,
         longitude = DEFAULT_LONGITUDE
     ),
-    val rescuer: UserItem = UserItem(),
-    val rescuee: UserItem = UserItem(),
+    val rescuer: UserItem? = null,
+    val rescuee: UserItem? = null,
 
     val transactionLocation: Location? = null,
     val rescuerETA: String = "",
