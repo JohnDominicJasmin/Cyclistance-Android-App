@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -24,11 +23,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.cyclistance.core.utils.composable_utils.ComposableLifecycle
-import com.example.cyclistance.core.utils.network_observer.NetworkConnectivityChecker
+import com.example.cyclistance.core.utils.network_observer.ConnectivityObserver
+import com.example.cyclistance.core.utils.network_observer.NetworkConnectivityObserver
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingUiEvent
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingViewModel
@@ -57,36 +55,21 @@ fun MainScreen(
     editProfileViewModel: EditProfileViewModel = hiltViewModel()
 ) {
 
-
     val navController = rememberNavController()
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
-    var internetAvailable by rememberSaveable { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
     val editProfileState by editProfileViewModel.state.collectAsState()
     val mappingState by mappingViewModel.state.collectAsState()
     val settingState by settingViewModel.state.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
+    val connectivityObserver = remember { NetworkConnectivityObserver(context.applicationContext) }
+    val internetStatus by connectivityObserver.observe().collectAsState(
+        initial = ConnectivityObserver.Status.Unavailable
+    )
 
-    ComposableLifecycle{ _, event ->
-        when(event){
-            Lifecycle.Event.ON_CREATE -> {
-                NetworkConnectivityChecker.observe(lifecycleOwner){ isConnected ->
-                    isConnected?.let{
-                        internetAvailable = isConnected
-                    }
-                }
-            }
 
-            Lifecycle.Event.ON_RESUME -> {
-                NetworkConnectivityChecker.checkForConnection()
-            }
-
-            else -> {}
-        }
-
-    }
     LaunchedEffect(key1 = true) {
         mappingViewModel.onEvent(event = MappingEvent.LoadUserProfile)
         mappingViewModel.eventFlow.collectLatest { event ->
@@ -158,7 +141,7 @@ fun MainScreen(
                         onClickSaveProfile = onClickSaveProfile,
                         editProfileSaveButtonEnabled = editProfileState.isUserInformationChanges(),
                         onClickTopBarIcon = onClickTopBarIcon)
-                        NoInternetStatusBar(internetAvailable)
+                        NoInternetStatusBar(internetStatus)
                 }
             },
             drawerContent = {
@@ -172,7 +155,7 @@ fun MainScreen(
             },
         ) { paddingValues ->
             NavGraph(
-                hasInternetConnection = internetAvailable,
+                hasInternetConnection = internetStatus == ConnectivityObserver.Status.Available,
                 navController = navController,
                 paddingValues = paddingValues,
                 isDarkTheme = settingState.isDarkTheme,
@@ -266,9 +249,20 @@ fun TopAppBar(
 
 
 @Composable
-fun NoInternetStatusBar(internetAvailable: Boolean) {
+fun NoInternetStatusBar(status: ConnectivityObserver.Status) {
+
+    val connectionText = remember(status) {
+        when (status) {
+            ConnectivityObserver.Status.Unavailable -> "Network Unavailable"
+            ConnectivityObserver.Status.Lost,  -> "No Internet Connection"
+            ConnectivityObserver.Status.Losing -> "Connecting..."
+            else -> null
+
+        }
+    }
+
     AnimatedVisibility(
-        visible = internetAvailable.not(),
+        visible = status == ConnectivityObserver.Status.Lost || status == ConnectivityObserver.Status.Unavailable,
         enter = slideInVertically(),
         exit = slideOutVertically()) {
         Box(
@@ -277,11 +271,15 @@ fun NoInternetStatusBar(internetAvailable: Boolean) {
                 .background(Black900)
                 .fillMaxWidth()) {
 
-            Text(
-                text = "No Connection",
-                color = White50,
-                fontSize = 13.sp,
-                modifier = Modifier.padding(vertical = 1.5.dp))
+
+            connectionText?.let {
+                Text(
+                    text = connectionText,
+                    color = White50,
+                    fontSize = 13.sp,
+                    modifier = Modifier.padding(vertical = 1.5.dp))
+            }
+
         }
     }
 
