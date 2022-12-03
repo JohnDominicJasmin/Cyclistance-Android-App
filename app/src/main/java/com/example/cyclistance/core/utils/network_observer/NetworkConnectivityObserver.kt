@@ -22,7 +22,6 @@ class NetworkConnectivityObserver(
             val callback = object : ConnectivityManager.NetworkCallback() {
                 override fun onAvailable(network: Network) {
                     super.onAvailable(network)
-                    //todo implement later
                     val status = if (networkConnectivityUtil.hasInternet()) ConnectivityObserver.Status.Available else ConnectivityObserver.Status.Lost
                     launch { send(status) }
                 }
