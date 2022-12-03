@@ -15,7 +15,6 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.BUTTON_ANIMATION_DURATION
 import com.example.cyclistance.databinding.ActivityMappingBinding
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.Cancellation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -62,6 +61,8 @@ fun MappingMapsScreen(
     state: MappingState,
     isDarkTheme: Boolean,
     mapsMapView: MapView,
+    hasTransaction: Boolean,
+    isRescueCancelled: Boolean,
     mapboxNavigation: MapboxNavigation,
     onInitializeMapView: (MapView) -> Unit,
     onInitializeNavigationCamera: (NavigationCamera) -> Unit,
@@ -88,12 +89,10 @@ fun MappingMapsScreen(
         textAllowOverlap = false
     }}
 
-    LaunchedEffect( key1 = nearbyCyclists, key2 = mapsMapView, key3 = state.userRescueTransaction){
 
-        val transactionCancelled = (state.userRescueTransaction?.cancellation ?: Cancellation()).rescueCancelled
-        val transactionId = state.userRescueTransaction?.id
+    LaunchedEffect(key1 = nearbyCyclists, key2 = mapsMapView, key3 = hasTransaction){
 
-        if(transactionCancelled.not() && transactionId.isNullOrEmpty().not()){
+        if(isRescueCancelled.not() && hasTransaction){
             return@LaunchedEffect
         }
 
@@ -120,13 +119,26 @@ fun MappingMapsScreen(
             }
     }
 
+    val clientLocation = remember(state.transactionLocation, state.rescuer.location){
+        state.transactionLocation ?: state.rescuer.location
+    }
+    val hasTransactionLocationChanges by remember(clientLocation, state.userRescueTransaction?.route){
+        derivedStateOf {
+            state.userRescueTransaction?.route != null && clientLocation != null
+        }
+    }
 
-    LaunchedEffect(key1 = mapsMapView, key2 = state.transactionLocation, key3 = state.userRescueTransaction){
-        val rescueCancelled = (state.userRescueTransaction?.cancellation ?: Cancellation()).rescueCancelled
-        val location = state.transactionLocation ?: state.rescuer.location
-        val hasTransactionLocationChanges = state.userRescueTransaction != null && location != null
+    LaunchedEffect(key1 = mapsMapView, key2 = hasTransactionLocationChanges, key3 = isRescueCancelled){
 
-        if(rescueCancelled || hasTransactionLocationChanges.not()){
+        if(hasTransactionLocationChanges.not()){
+            return@LaunchedEffect
+        }
+
+        if(hasTransaction.not()){
+            return@LaunchedEffect
+        }
+
+        if(isRescueCancelled){
             return@LaunchedEffect
         }
 
@@ -134,13 +146,12 @@ fun MappingMapsScreen(
             .withIconImage(
                 AppCompatResources.getDrawable(context, R.drawable.ic_navigation_map_icon)
                     ?.toBitmap(width = 90, height = 90)!!)
-            .withPoint(Point.fromLngLat(location!!.longitude, location.latitude))
+            .withPoint(Point.fromLngLat(clientLocation!!.longitude, clientLocation.latitude))
 
         pointAnnotationManager.deleteAll()
         pointAnnotationManager.create(pointAnnotationOptions)
 
     }
-
 
 
     LaunchedEffect(key1 = pulsingEnabled, mapsMapView){

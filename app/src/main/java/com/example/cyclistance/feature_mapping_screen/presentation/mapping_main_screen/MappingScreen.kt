@@ -32,11 +32,13 @@ import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialo
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionStatus.hasGPSConnection
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.Cancellation
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.LocateUserButton
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingMapsScreen
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.RequestHelpButton
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.findRoute
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapboxNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startLocationServiceIntentAction
 import com.example.cyclistance.navigation.Screens
@@ -269,6 +271,16 @@ fun MappingScreen(
         mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetDialog)
     }}
 
+    val hasTransaction = remember(key1 = state.userRescueTransaction?.cancellation, key2 = state.user) {
+        val transaction = state.userRescueTransaction
+        val rescueTransactionId = state.userRescueTransaction?.id ?: ""
+        val userTransactionId = state.user.transaction?.transactionId ?: ""
+        transaction != null  && rescueTransactionId.isNotEmpty() && userTransactionId.isNotEmpty()
+    }
+
+    val isRescueCancelled = remember(state.userRescueTransaction?.cancellation){
+        (state.userRescueTransaction?.cancellation ?: Cancellation()).rescueCancelled
+    }
 
     LaunchedEffect(key1 = typeBottomSheet) {
 
@@ -311,7 +323,27 @@ fun MappingScreen(
         }
     }
 
+    LaunchedEffect(key1 = state.userRescueTransaction?.route, key2 = hasTransaction, key3 = isRescueCancelled){
+        val transactionRoute = state.userRescueTransaction?.route
+        val startingLocation = transactionRoute?.startingLocation
+        val destinationLocation = transactionRoute?.destinationLocation
 
+        if (hasTransaction.not() && isRescueCancelled) {
+            mapboxNavigation.setNavigationRoutes(listOf())
+            return@LaunchedEffect
+        }
+
+        startingLocation?.let {
+            destinationLocation?.let {
+                mapboxNavigation.findRoute(context, originPoint = Point.fromLngLat(startingLocation.longitude, startingLocation.latitude),
+                    destinationPoint = Point.fromLngLat(destinationLocation.longitude, destinationLocation.latitude)) {
+
+                    mapboxNavigation.setNavigationRoutes(it)
+                    navigationCamera.requestNavigationCameraToOverview()
+                }
+            }
+        }
+    }
 
 
     LaunchedEffect(key1 = true) {
@@ -363,7 +395,8 @@ fun MappingScreen(
         onInitializeNavigationCamera = onInitializeNavigationCamera,
         onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton,
         onDismissNoInternetDialog = onDismissNoInternetDialog,
-        navigationCamera = navigationCamera
+        hasTransaction = hasTransaction,
+        isRescueCancelled = isRescueCancelled,
     )
 
 }
@@ -397,7 +430,7 @@ fun MappingScreenPreview() {
             onClickSearchButton = {},
             onClickLocateUserButton = {},
             mapView = mapView,
-            bottomSheetScaffoldState = bottomSheetScaffoldState
+            bottomSheetScaffoldState = bottomSheetScaffoldState,
         )
     }
 }
@@ -412,7 +445,8 @@ fun MappingScreen(
     state: MappingState,
     mapView: MapView,
     mapboxNavigation: MapboxNavigation? = null,
-    navigationCamera: NavigationCamera? = null,
+    hasTransaction: Boolean = false,
+    isRescueCancelled: Boolean = false,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     onClickLocateUserButton: () -> Unit = {},
     onClickSearchButton: () -> Unit = {},
@@ -460,15 +494,15 @@ fun MappingScreen(
                 },
                 isDarkTheme = isDarkTheme,
                 locationPermissionsState = locationPermissionState,
-                mapsMapView  = mapView,
+                mapsMapView = mapView,
                 onInitializeMapView = onInitializeMapView,
                 onChangeCameraState = onChangeCameraState,
                 mapboxNavigation = mapboxNavigation!!,
                 onInitializeNavigationCamera = onInitializeNavigationCamera,
-                navigationCamera = navigationCamera!!,
+                hasTransaction = hasTransaction,
+                isRescueCancelled = isRescueCancelled
             )
 
-        }
 
 
             LocateUserButton(
@@ -505,16 +539,19 @@ fun MappingScreen(
             }
 
             if (!state.hasInternet) {
-                NoInternetDialog(onDismiss = onDismissNoInternetDialog, modifier = Modifier.constrainAs(noInternetScreen) {
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    bottom.linkTo(parent.bottom)
-                    width = Dimension.matchParent
-                    height = Dimension.wrapContent
-                })
+                NoInternetDialog(
+                    onDismiss = onDismissNoInternetDialog,
+                    modifier = Modifier.constrainAs(noInternetScreen) {
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                        bottom.linkTo(parent.bottom)
+                        width = Dimension.matchParent
+                        height = Dimension.wrapContent
+                    })
 
             }
 
+        }
     }
 }
 
