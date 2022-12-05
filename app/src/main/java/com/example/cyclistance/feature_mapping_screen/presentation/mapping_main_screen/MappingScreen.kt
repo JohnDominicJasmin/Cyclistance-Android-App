@@ -2,6 +2,9 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.Manifest
 import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION_CODES.Q
 import android.widget.Toast
@@ -48,6 +51,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 import com.mapbox.geojson.Point
 import com.mapbox.maps.MapInitOptions
 import com.mapbox.maps.MapView
@@ -282,6 +286,49 @@ fun MappingScreen(
         (state.userRescueTransaction?.cancellation ?: Cancellation()).rescueCancelled
     }
 
+    val clientPhoneNumber = remember(state.rescuee, state.rescuer){
+        val client = state.rescuee ?: state.rescuer
+        client?.contactNumber
+    }
+
+    val callClient = remember(clientPhoneNumber){{
+        val intent = Intent(Intent.ACTION_CALL)
+
+        intent.data = Uri.parse("tel:$clientPhoneNumber")
+        intent.flags = FLAG_ACTIVITY_NEW_TASK
+        context.startActivity(intent)
+    }}
+    val callPhonePermissionState = rememberPermissionState(permission = Manifest.permission.CALL_PHONE){ permissionGranted ->
+        if(permissionGranted){
+            callClient()
+        }
+    }
+    val onClickChatRescueTransactionButton = remember(clientPhoneNumber){{
+        val intent = Intent(Intent.ACTION_SENDTO)
+        intent.flags = FLAG_ACTIVITY_NEW_TASK
+        intent.data = Uri.parse("smsto:$clientPhoneNumber")
+        context.startActivity(intent)
+    }}
+
+    val onClickCallRescueTransactionButton = remember(clientPhoneNumber) {{
+       callPhonePermissionState.requestPermission(context = context, rationalMessage = "Phone call permission is not yet granted."){
+           callClient()
+       }
+
+    }}
+
+
+
+
+
+
+
+
+
+
+
+
+
     LaunchedEffect(key1 = typeBottomSheet) {
 
         if (typeBottomSheet == BottomSheetType.SearchAssistance.type){
@@ -397,6 +444,8 @@ fun MappingScreen(
         onDismissNoInternetDialog = onDismissNoInternetDialog,
         hasTransaction = hasTransaction,
         isRescueCancelled = isRescueCancelled,
+        onClickCallRescueTransactionButton = onClickCallRescueTransactionButton,
+        onClickChatRescueTransactionButton = onClickChatRescueTransactionButton,
     )
 
 }
