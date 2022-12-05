@@ -10,7 +10,7 @@ val userItems = listOf(
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
-        id = "75kBHI4QZrYxlGGH9eCbY4yfLU72",
+        id = "8gm6NsOC5jL51px63Hc3qocti9As",
         location = Location(latitude =  14.0874, longitude = 121.1517),
         name = "John Doe",
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK9gqFKRn28xKHD1CAbEevdzsLmsv5yQkGnQ&usqp=CAU",
@@ -24,7 +24,7 @@ val userItems = listOf(
 
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
-        contactNumber = "1234567890",
+        contactNumber = "92398512908",
         id = "2",
         location = Location(latitude = 14.079426870239514, longitude = 121.15672703265659),
         name = "Jane Dominic",
@@ -42,7 +42,7 @@ val userItems = listOf(
 
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
-        contactNumber = "1234567890",
+        contactNumber = "2845182739",
         id = "3",
         location = Location(latitude = 14.090421127354372, longitude = 121.14870941179073),
         name = "John Doe",
@@ -58,7 +58,7 @@ val userItems = listOf(
     ),
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
-        contactNumber = "1234567890",
+        contactNumber = "2367238327",
         id = "4",
         location = Location(latitude = 14.096044763009578, longitude = 121.13918029795505),
         name = "Jane Doe",
