@@ -42,7 +42,7 @@ fun RequestHelpButton(onClickSearchButton: () -> Unit, modifier: Modifier = Modi
 
             Icon(
                 imageVector = Icons.Default.KeyboardArrowRight,
-                contentDescription = "Search Assistance",
+                contentDescription = "Request Help",
                 tint = MaterialTheme.colors.onPrimary,
             )
         }
