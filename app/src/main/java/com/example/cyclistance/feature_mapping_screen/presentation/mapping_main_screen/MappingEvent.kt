@@ -18,6 +18,7 @@ sealed class MappingEvent {
     data class DeclineRescueRequest(val cardModel: CardModel): MappingEvent()
     data class AcceptRescueRequest(val cardModel: CardModel): MappingEvent()
     object LoadData: MappingEvent()
+    object RemovedRescueTransaction: MappingEvent()
     data class ChangeCameraState(val cameraPosition: Point, val cameraZoomLevel: Double): MappingEvent()
 
 }
