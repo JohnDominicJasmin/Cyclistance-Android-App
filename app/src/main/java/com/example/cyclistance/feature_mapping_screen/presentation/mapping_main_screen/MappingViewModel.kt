@@ -144,6 +144,10 @@ class MappingViewModel @Inject constructor(
                 uploadUserProfile()
             }
 
+            MappingEvent.RemovedRescueTransaction -> {
+                removeAssignedTransaction()
+            }
+
             is MappingEvent.DismissNoInternetDialog -> {
                 _state.update { it.copy(hasInternet = true) }
             }
@@ -198,6 +202,34 @@ class MappingViewModel @Inject constructor(
             }
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+    }
+    private suspend fun String.removeAssignedTransaction(){
+        mappingUseCase.createUserUseCase(
+            user = UserItem(
+                id = this,
+                transaction = Transaction(),
+                userAssistance = UserAssistance(needHelp = false),
+                rescueRequest = RescueRequest()))
+    }
+
+    private val clientId = state.value.rescuer?.id ?: state.value.rescuee?.id
+
+    private fun removeAssignedTransaction(){
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                getId().removeAssignedTransaction()
+                clientId?.removeAssignedTransaction()
+            }.onSuccess {
+                broadcastUser()
+                broadcastRescueTransaction()
+                delay(500)
+                finishLoading()
+            }.onFailure { exception ->
+                finishLoading()
+                exception.handleException()
+            }
+        }
+
     }
 
     private fun subscribeToTransactionLocationUpdates(){
