@@ -81,7 +81,7 @@ class MappingViewModel @Inject constructor(
         val rescueTransaction = rescueTransactionItem ?: state.value.userRescueTransaction
         val role = state.value.user.transaction?.role
 
-        if(role.equals(Role.RESCUEE.name) ){
+        if(role == Role.RESCUEE.name.lowercase()){
             rescueTransaction?.rescuerId?.let { rescuerId ->
                 _state.update { it.copy(rescuer = findUser(rescuerId), rescuee = null) }
             }
