@@ -35,12 +35,9 @@ import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialo
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionStatus.hasGPSConnection
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.Cancellation
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.LocateUserButton
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingBottomSheet
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.MappingMapsScreen
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.RequestHelpButton
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.*
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CancelledRescueModel
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.findRoute
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapboxNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startLocationServiceIntentAction
@@ -75,7 +72,7 @@ import com.example.cyclistance.R as Resource
 @ExperimentalPermissionsApi
 @Composable
 fun MappingScreen(
-    hasInternetConnection : Boolean,
+    hasInternetConnection: Boolean,
     typeBottomSheet: String = "",
     isDarkTheme: Boolean,
     mappingViewModel: MappingViewModel,
@@ -96,7 +93,8 @@ fun MappingScreen(
         mutableStateOf(
             NavigationCamera(
                 mapboxMap = mapView.getMapboxMap(),
-                viewportDataSource = MapboxNavigationViewportDataSource(mapView.getMapboxMap()), cameraPlugin = mapView.camera))
+                viewportDataSource = MapboxNavigationViewportDataSource(mapView.getMapboxMap()),
+                cameraPlugin = mapView.camera))
     }
 
     val mapboxNavigation = rememberMapboxNavigation(parentContext = context)
@@ -116,9 +114,9 @@ fun MappingScreen(
 
 
 
-    LaunchedEffect(key1 = hasInternetConnection){
+    LaunchedEffect(key1 = hasInternetConnection) {
         val dataHaveBeenLoaded = state.user.id != null
-        if(hasInternetConnection && dataHaveBeenLoaded.not()){
+        if (hasInternetConnection && dataHaveBeenLoaded.not()) {
             mappingViewModel.onEvent(MappingEvent.LoadData)
         }
     }
@@ -267,9 +265,10 @@ fun MappingScreen(
         val selectionType = if (state.rescuer?.id != null) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
         val clientId = state.rescuer?.id ?: state.rescuee?.id
 
-        navController.navigateScreen(destination = "${Screens.CancellationScreen.route}/$selectionType/$transactionId/$clientId")
+            navController.navigateScreen(destination = "${Screens.CancellationScreen.route}/$selectionType/$transactionId/$clientId")
 
-    }}
+        }
+    }
 
     val onDismissNoInternetDialog = remember{{ ->
         mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetDialog)
@@ -286,7 +285,7 @@ fun MappingScreen(
         (state.userRescueTransaction?.cancellation ?: Cancellation()).rescueCancelled
     }
 
-    val clientPhoneNumber = remember(state.rescuee, state.rescuer){
+    val clientPhoneNumber = remember(state.rescuee, state.rescuer) {
         val client = state.rescuee ?: state.rescuer
         client?.contactNumber
     }
@@ -311,10 +310,16 @@ fun MappingScreen(
     }}
 
     val onClickCallRescueTransactionButton = remember(clientPhoneNumber) {{
-       callPhonePermissionState.requestPermission(context = context, rationalMessage = "Phone call permission is not yet granted."){
-           callClient()
-       }
+            callPhonePermissionState.requestPermission(
+                context = context,
+                rationalMessage = "Phone call permission is not yet granted.") {
+                callClient()
+            }
+    }}
 
+
+    val onClickOkButtonCancelledRescue = remember{{
+      mappingViewModel.onEvent(event = MappingEvent.RemovedRescueTransaction)
     }}
 
 
@@ -331,7 +336,7 @@ fun MappingScreen(
 
     LaunchedEffect(key1 = typeBottomSheet) {
 
-        if (typeBottomSheet == BottomSheetType.SearchAssistance.type){
+        if (typeBottomSheet == BottomSheetType.SearchAssistance.type) {
             mappingViewModel.onEvent(event = MappingEvent.StartPinging)
         }
 
@@ -446,6 +451,7 @@ fun MappingScreen(
         isRescueCancelled = isRescueCancelled,
         onClickCallRescueTransactionButton = onClickCallRescueTransactionButton,
         onClickChatRescueTransactionButton = onClickChatRescueTransactionButton,
+        onClickOkButtonCancelledRescue = onClickOkButtonCancelledRescue
     )
 
 }
@@ -475,7 +481,9 @@ fun MappingScreenPreview() {
         MappingScreen(
             modifier = Modifier,
             isDarkTheme = true,
-            state = MappingState(bottomSheetType = BottomSheetType.SearchAssistance.type, searchAssistanceButtonVisible = false),
+            state = MappingState(
+                bottomSheetType = BottomSheetType.SearchAssistance.type,
+                searchAssistanceButtonVisible = false),
             onClickSearchButton = {},
             onClickLocateUserButton = {},
             mapView = mapView,
@@ -508,9 +516,9 @@ fun MappingScreen(
     onClickOkButtonCancelledRescue: () -> Unit = {},
     onInitializeMapView: (MapView) -> Unit = {},
     onInitializeNavigationCamera: (NavigationCamera) -> Unit = {},
-    onChangeCameraState: (Point, Double) -> Unit = {_,_->},
+    onChangeCameraState: (Point, Double) -> Unit = { _, _ -> },
     onDismissNoInternetDialog: () -> Unit = {},
-    ) {
+) {
 
     val configuration = LocalConfiguration.current
 
