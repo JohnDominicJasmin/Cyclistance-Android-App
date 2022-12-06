@@ -281,8 +281,7 @@ class MappingViewModel @Inject constructor(
             val rescuer = state.value.nearbyCyclists.findUser(cardModel.id!!)
             val rescuerHasCurrentTransaction = (rescuer.transaction ?: Transaction()).transactionId.isNotEmpty()
 
-            val transactionId =
-                user.id + rescuer.id + System.currentTimeMillis().toString().takeLast(5)
+            val transactionId = getTransactionId(rescuer)
 
             if (rescuer.location == null) {
                 _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Can't reach Rescuer"))
@@ -337,6 +336,10 @@ class MappingViewModel @Inject constructor(
         }
     }
 
+    private fun getTransactionId(rescuer: UserItem):String{
+        val user = state.value.user
+        return user.id?.take(3) + rescuer.id?.take(3) + System.currentTimeMillis().toString().takeLast(4)
+    }
     private suspend fun broadcastRescueTransaction(){
         runCatching {
             mappingUseCase.broadcastRescueTransactionUseCase()
