@@ -174,7 +174,7 @@ fun CancellationDetails(cancelledRescueModel: CancelledRescueModel, onClickOkBut
             DetailsItem(itemTitle = "Reason: ", itemValue = cancelledRescueModel.reason)
         }
 
-        cancelledRescueModel.message?.let {
+        cancelledRescueModel.message?.takeIf { it.isNotEmpty() }?.let {
             DetailsItem(itemTitle = "Message: ", itemValue = cancelledRescueModel.message)
         }
 
