@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
+import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toCardModel
@@ -239,37 +240,62 @@ class MappingViewModel @Inject constructor(
                 .catch {
                     it.handleException()
                 }.collect { liveLocation ->
-                    updateTransactionLocation(liveLocation)
+                    liveLocation.updateTransactionLocation()
+                    liveLocation.updateTransactionETA()
+                    liveLocation.updateTransactionDistance()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
         }
     }
-    private fun updateTransactionLocation(liveLocation: LiveLocationWSModel){
 
-        val userLocation = state.value.userLocation
-        val eta = getEstimatedTimeArrival(startingLocation = Location(
-            latitude = liveLocation.latitude,
-            longitude = liveLocation.longitude), endLocation = userLocation)
+    private suspend fun LiveLocationWSModel.updateTransactionDistance() {
+        coroutineScope {
+            val rescueTransaction = state.value.userLocation
+            val role = state.value.user.transaction?.role
 
-        _state.update {
-            it.copy(
-                rescuerETA = eta,
-                transactionLocation = Location(
-                    latitude = liveLocation.latitude,
-                    longitude = liveLocation.longitude))
+            rescueTransaction.let { transaction ->
+
+                val distance = async { getCalculatedDistance(
+                    startingLocation = Location(latitude, longitude),
+                    endLocation = Location(transaction.latitude, transaction.longitude)).toInt() }
+
+                if (distance.await() >= NEAREST_METERS) {
+                    return@let
+                }
+
+                updateRoleBottomSheet(role)
+
+            }
         }
     }
 
-    private fun getEstimatedTimeArrival(startingLocation: Location, endLocation: Location):String{
-        val distance = getCalculatedDistance(startingLocation, endLocation)
-        return getCalculatedETA(distance)
+    private fun updateRoleBottomSheet(role: String?){
+
+        val bottomSheetType = if(role == Role.RESCUEE.name.lowercase()) {
+            BottomSheetType.RescuerArrived.type
+        }else{
+            BottomSheetType.DestinationReached.type
+        }
+
+        _state.update { it.copy(bottomSheetType = bottomSheetType) }
     }
 
-    private fun getCalculatedDistance(startingLocation: Location, endLocation: Location): Double{
-        val start = SimpleLocation.Point(startingLocation.latitude, startingLocation.longitude)
-        val end = SimpleLocation.Point(endLocation.latitude, endLocation.longitude)
-        return SimpleLocation.calculateDistance(start, end)
+    private fun LiveLocationWSModel.updateTransactionLocation() {
+        _state.update {
+            it.copy(transactionLocation = Location(
+                    latitude = this.latitude,
+                    longitude = this.longitude))
+        }
     }
+
+    private fun LiveLocationWSModel.updateTransactionETA(){
+        val userLocation = state.value.userLocation
+        val eta = getEstimatedTimeArrival(startingLocation = Location(
+            latitude = this.latitude,
+            longitude = this.longitude), endLocation = userLocation)
+        _state.update { it.copy(rescuerETA = eta) }
+    }
+
 
 
     private fun acceptRescueRequest(cardModel: CardModel) {
