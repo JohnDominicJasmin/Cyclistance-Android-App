@@ -15,21 +15,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_SHEET_TYPE
-import com.example.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
-import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_ID
-import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
-import com.example.cyclistance.core.utils.network_observer.ConnectivityObserver
-import com.example.cyclistance.core.utils.network_observer.NetworkConnectivityObserver
+import com.example.cyclistance.core.utils.composable_utils.ComposableLifecycle
+import com.example.cyclistance.core.utils.network_observer.NetworkConnectivityChecker
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingUiEvent
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingViewModel
@@ -58,20 +57,36 @@ fun MainScreen(
     editProfileViewModel: EditProfileViewModel = hiltViewModel()
 ) {
 
+
     val navController = rememberNavController()
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
+    var internetAvailable by rememberSaveable { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
     val editProfileState by editProfileViewModel.state.collectAsState()
     val mappingState by mappingViewModel.state.collectAsState()
     val settingState by settingViewModel.state.collectAsState()
-    val connectivityObserver = remember { NetworkConnectivityObserver(context.applicationContext) }
-    val internetStatus by connectivityObserver.observe().collectAsState(
-        initial = ConnectivityObserver.Status.Available
-    )
+    val lifecycleOwner = LocalLifecycleOwner.current
 
+    ComposableLifecycle{ _, event ->
+        when(event){
+            Lifecycle.Event.ON_CREATE -> {
+                NetworkConnectivityChecker.observe(lifecycleOwner){ isConnected ->
+                    isConnected?.let{
+                        internetAvailable = isConnected
+                    }
+                }
+            }
 
+            Lifecycle.Event.ON_RESUME -> {
+                NetworkConnectivityChecker.checkForConnection()
+            }
+
+            else -> {}
+        }
+
+    }
     LaunchedEffect(key1 = true) {
         mappingViewModel.onEvent(event = MappingEvent.LoadUserProfile)
         mappingViewModel.eventFlow.collectLatest { event ->
@@ -143,7 +158,7 @@ fun MainScreen(
                         onClickSaveProfile = onClickSaveProfile,
                         editProfileSaveButtonEnabled = editProfileState.isUserInformationChanges(),
                         onClickTopBarIcon = onClickTopBarIcon)
-                        NoInternetStatusBar(internetStatus)
+                        NoInternetStatusBar(internetAvailable)
                 }
             },
             drawerContent = {
@@ -157,7 +172,7 @@ fun MainScreen(
             },
         ) { paddingValues ->
             NavGraph(
-                hasInternetConnection = internetStatus == ConnectivityObserver.Status.Available,
+                hasInternetConnection = internetAvailable,
                 navController = navController,
                 paddingValues = paddingValues,
                 isDarkTheme = settingState.isDarkTheme,
@@ -182,7 +197,7 @@ fun TopAppBar(
     route: String?) {
 
         when (route) {
-            Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE={$BOTTOM_SHEET_TYPE}" -> {
+            Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}" -> {
 
                 DefaultTopBar(onClickIcon = {
                     coroutineScope.launch {
@@ -191,7 +206,7 @@ fun TopAppBar(
                 })
             }
 
-            "${Screens.CancellationScreen.route}/{$CANCELLATION_TYPE}/{$TRANSACTION_ID}/{$CLIENT_ID}" -> {
+            "${Screens.CancellationScreen.route}/{cancellationType}/{transactionId}/{clientId}" -> {
                 TopAppBarCreator(
                     icon = Icons.Default.ArrowBack,
                     onClickIcon = onClickTopBarIcon,
@@ -251,20 +266,9 @@ fun TopAppBar(
 
 
 @Composable
-fun NoInternetStatusBar(status: ConnectivityObserver.Status) {
-
-    val connectionText = remember(status) {
-        when (status) {
-            ConnectivityObserver.Status.Unavailable -> "Network Unavailable"
-            ConnectivityObserver.Status.Lost,  -> "No Internet Connection"
-            ConnectivityObserver.Status.Losing -> "Connecting..."
-            else -> null
-
-        }
-    }
-
+fun NoInternetStatusBar(internetAvailable: Boolean) {
     AnimatedVisibility(
-        visible = status == ConnectivityObserver.Status.Lost || status == ConnectivityObserver.Status.Unavailable,
+        visible = internetAvailable.not(),
         enter = slideInVertically(),
         exit = slideOutVertically()) {
         Box(
@@ -273,15 +277,11 @@ fun NoInternetStatusBar(status: ConnectivityObserver.Status) {
                 .background(Black900)
                 .fillMaxWidth()) {
 
-
-            connectionText?.let {
-                Text(
-                    text = connectionText,
-                    color = White50,
-                    fontSize = 13.sp,
-                    modifier = Modifier.padding(vertical = 1.5.dp))
-            }
-
+            Text(
+                text = "No Connection",
+                color = White50,
+                fontSize = 13.sp,
+                modifier = Modifier.padding(vertical = 1.5.dp))
         }
     }
 
@@ -293,7 +293,7 @@ fun NoInternetStatusBar(status: ConnectivityObserver.Status) {
 @Composable
 fun TopAppBarPreview() {
     CyclistanceTheme(true) {
-        TopAppBar(route = Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE={$BOTTOM_SHEET_TYPE}")
+        TopAppBar(route = Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}")
     }
 }
 
