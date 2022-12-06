@@ -152,9 +152,9 @@ fun CancellationDetails(cancelledRescueModel: CancelledRescueModel, onClickOkBut
     ) {
 
         Text(
-            modifier = Modifier.padding(top = 12.dp),
+            modifier = Modifier.padding(top = 12.dp, bottom = 6.dp),
             text = "Cancellation Details",
-            color = Color.White,
+            color = MaterialTheme.colors.onSurface,
             fontSize = 16.sp,
             fontWeight = FontWeight.Medium)
 
