@@ -274,15 +274,15 @@ fun MappingScreen(
         mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetDialog)
     }}
 
-    val hasTransaction = remember(key1 = state.userRescueTransaction?.cancellation, key2 = state.user) {
+    val hasTransaction = remember(key1 = state.userRescueTransaction, key2 = state.user.transaction) {
         val transaction = state.userRescueTransaction
         val rescueTransactionId = state.userRescueTransaction?.id ?: ""
         val userTransactionId = state.user.transaction?.transactionId ?: ""
         transaction != null  && rescueTransactionId.isNotEmpty() && userTransactionId.isNotEmpty()
     }
 
-    val isRescueCancelled = remember(state.userRescueTransaction?.cancellation){
-        (state.userRescueTransaction?.cancellation ?: Cancellation()).rescueCancelled
+    val isRescueCancelled = remember(state.userRescueTransaction?.cancellation?.rescueCancelled) {
+            (state.userRescueTransaction?.cancellation)?.rescueCancelled ?: false
     }
 
     val clientPhoneNumber = remember(state.rescuee, state.rescuer) {

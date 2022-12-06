@@ -74,7 +74,7 @@ fun MappingMapsScreen(
     val context = LocalContext.current
 
 
-    val nearbyCyclists by remember(key1= state.nearbyCyclists.users) {
+    val nearbyCyclists by remember(key1= state.nearbyCyclists.users.size) {
         derivedStateOf { state.nearbyCyclists.users }
     }
     val pulsingEnabled by remember(state.isSearchingForAssistance, locationPermissionsState?.allPermissionsGranted) {
@@ -90,7 +90,7 @@ fun MappingMapsScreen(
     }}
 
 
-    LaunchedEffect(key1 = nearbyCyclists, key2 = mapsMapView, key3 = hasTransaction){
+    LaunchedEffect(key1 = nearbyCyclists, key2 = mapsMapView){
 
         if(isRescueCancelled.not() && hasTransaction){
             return@LaunchedEffect
@@ -119,16 +119,14 @@ fun MappingMapsScreen(
             }
     }
 
-    val clientLocation = remember(state.transactionLocation, state.rescuer?.location){
+    val rescuerLocation = remember(state.transactionLocation, state.rescuer?.location){
         state.transactionLocation ?: state.rescuer?.location
     }
-    val hasTransactionLocationChanges by remember(clientLocation, state.userRescueTransaction?.route){
-        derivedStateOf {
-            state.userRescueTransaction?.route != null && clientLocation != null
-        }
+    val hasTransactionLocationChanges = remember(rescuerLocation){
+        rescuerLocation != null
     }
 
-    LaunchedEffect(key1 = mapsMapView, key2 = hasTransactionLocationChanges, key3 = isRescueCancelled){
+    LaunchedEffect(key1 = mapsMapView, key2 = hasTransactionLocationChanges){
 
         if(hasTransactionLocationChanges.not()){
             return@LaunchedEffect
@@ -146,7 +144,7 @@ fun MappingMapsScreen(
             .withIconImage(
                 AppCompatResources.getDrawable(context, R.drawable.ic_navigation_map_icon)
                     ?.toBitmap(width = 90, height = 90)!!)
-            .withPoint(Point.fromLngLat(clientLocation!!.longitude, clientLocation.latitude))
+            .withPoint(Point.fromLngLat(rescuerLocation!!.longitude, rescuerLocation.latitude))
 
         pointAnnotationManager.deleteAll()
         pointAnnotationManager.create(pointAnnotationOptions)
