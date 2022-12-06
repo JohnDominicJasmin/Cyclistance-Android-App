@@ -97,7 +97,7 @@ fun BottomSheetOnGoingRescue(
                         RoundedButtonItem(
                             backgroundColor = Red900,
                             contentColor = Color.White,
-                            imageId = R.drawable.ic_cancel,
+                            imageId = R.drawable.ic_cancel_1,
                             buttonSubtitle = "Cancel", onClick = onClickCancelButton)
                     }
                 }
