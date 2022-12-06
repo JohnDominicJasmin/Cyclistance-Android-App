@@ -71,6 +71,7 @@ class CancellationReasonViewModel @Inject constructor(
                                 message = state.value.message
                             ),
                             idCancelledBy = getId(),
+                            nameCancelledBy = getName(),
                             rescueCancelled = true,
                         ),
                         status = Status(),
@@ -80,9 +81,9 @@ class CancellationReasonViewModel @Inject constructor(
 
             }.onSuccess {
                 broadcastRescueTransaction()
-                _eventFlow.emit(value = CancellationReasonUiEvent.ShowMappingScreen)
                 delay(500)
                 finishLoading()
+                _eventFlow.emit(value = CancellationReasonUiEvent.ShowMappingScreen)
             }.onFailure { exception ->
                 finishLoading()
                 exception.handleException()
@@ -109,13 +110,7 @@ class CancellationReasonViewModel @Inject constructor(
             it.handleException()
         }
     }
-    private suspend fun broadcastUser(){
-        runCatching {
-            mappingUseCase.broadcastUserUseCase()
-        }.onFailure {
-            it.handleException()
-        }
-    }
+
 
 
     private suspend fun Throwable.handleException() {
@@ -138,5 +133,6 @@ class CancellationReasonViewModel @Inject constructor(
         savedStateHandle[CANCELLATION_VM_STATE_KEY] = state.value
     }
     private fun getId() = authUseCase.getIdUseCase()
+    private fun getName() = authUseCase.getNameUseCase()
 
 }
