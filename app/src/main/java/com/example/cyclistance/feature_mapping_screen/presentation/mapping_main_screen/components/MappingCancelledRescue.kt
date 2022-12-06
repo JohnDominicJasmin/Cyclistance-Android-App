@@ -30,7 +30,7 @@ fun MappingCancelledRescue(
     modifier: Modifier = Modifier,
     cancelledRescueModel: CancelledRescueModel = CancelledRescueModel(),
     onClickOkButton: () -> Unit,
-    onDismiss: () -> Unit,
+    onDismiss: () -> Unit = {},
 
     ) {
     Dialog(
