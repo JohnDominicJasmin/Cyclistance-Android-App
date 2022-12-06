@@ -18,7 +18,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,10 +66,9 @@ fun MainScreen(
     val editProfileState by editProfileViewModel.state.collectAsState()
     val mappingState by mappingViewModel.state.collectAsState()
     val settingState by settingViewModel.state.collectAsState()
-    val lifecycleOwner = LocalLifecycleOwner.current
     val connectivityObserver = remember { NetworkConnectivityObserver(context.applicationContext) }
     val internetStatus by connectivityObserver.observe().collectAsState(
-        initial = ConnectivityObserver.Status.Unavailable
+        initial = ConnectivityObserver.Status.Available
     )
 
 
