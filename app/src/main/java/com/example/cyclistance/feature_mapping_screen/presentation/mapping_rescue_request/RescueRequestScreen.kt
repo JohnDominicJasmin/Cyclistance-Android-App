@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_SHEET_TYPE
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
+import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.*
@@ -71,6 +72,9 @@ fun RescueRequestScreen(
     val onDismissAlertDialog = remember{{
         mappingViewModel.onEvent(MappingEvent.DismissAlertDialog)
     }}
+    val onDismissNoInternetDialog = remember{{ ->
+        mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetDialog)
+    }}
 
     RescueRequestScreen(
         modifier = Modifier
@@ -78,7 +82,8 @@ fun RescueRequestScreen(
         mappingState = mappingState,
         onClickCancelButton = onClickCancelButton,
         onClickConfirmButton = onClickConfirmButton,
-        onDismissAlertDialog = onDismissAlertDialog
+        onDismissAlertDialog = onDismissAlertDialog,
+        onDismissNoInternetDialog = onDismissNoInternetDialog
     )
 }
 
@@ -90,6 +95,7 @@ fun RescueRequestScreen(
     onClickCancelButton: (CardModel) -> Unit = {},
     onClickConfirmButton: (CardModel) -> Unit = {},
     onDismissAlertDialog: () -> Unit = {},
+    onDismissNoInternetDialog: () -> Unit = {},
 ) {
 
     val respondents = remember(mappingState.userRescueRequestRespondents.respondents.size) {
@@ -153,6 +159,10 @@ fun RescueRequestScreen(
             CircularProgressIndicator()
         }
 
+        if(mappingState.hasInternet.not()){
+            NoInternetDialog(onDismiss = onDismissNoInternetDialog)
+        }
+
     }
 }
 
@@ -165,6 +175,7 @@ fun PreviewRescueRequest() {
             modifier = Modifier
                 .padding(PaddingValues(all = 0.dp)),
             mappingState = MappingState(
+                hasInternet = false,
                 isLoading = true,
                 userRescueRequestRespondents = RescueRequestRespondents(
                     respondents = listOf(
