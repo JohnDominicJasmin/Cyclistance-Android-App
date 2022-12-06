@@ -158,7 +158,8 @@ fun MainScreen(
                         onClickSaveProfile = onClickSaveProfile,
                         editProfileSaveButtonEnabled = editProfileState.isUserInformationChanges(),
                         onClickTopBarIcon = onClickTopBarIcon)
-                        NoInternetStatusBar(internetAvailable)
+
+                        NoInternetStatusBar(internetAvailable, navBackStackEntry?.destination?.route)
                 }
             },
             drawerContent = {
@@ -193,7 +194,6 @@ fun TopAppBar(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     onClickSaveProfile: () -> Unit = {},
     editProfileSaveButtonEnabled: Boolean = false,
-
     route: String?) {
 
         when (route) {
@@ -266,9 +266,12 @@ fun TopAppBar(
 
 
 @Composable
-fun NoInternetStatusBar(internetAvailable: Boolean) {
+fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
+
+    val inShowableScreens = route != Screens.SettingScreen.route && route != Screens.IntroSliderScreen.route
+
     AnimatedVisibility(
-        visible = internetAvailable.not(),
+        visible = internetAvailable.not() && inShowableScreens,
         enter = slideInVertically(),
         exit = slideOutVertically()) {
         Box(
