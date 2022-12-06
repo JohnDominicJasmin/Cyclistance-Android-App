@@ -2,8 +2,8 @@ package com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_tr
 
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Keep
@@ -13,6 +13,8 @@ data class Cancellation(
     val cancellationReason: CancellationReason = CancellationReason(),
     @SerializedName("id_cancelled_by")
     val idCancelledBy: String = "",
+    @SerializedName("name_cancelled_by")
+    val nameCancelledBy: String = "",
     @SerializedName("rescue_cancelled")
     val rescueCancelled: Boolean = false
 ):Parcelable
