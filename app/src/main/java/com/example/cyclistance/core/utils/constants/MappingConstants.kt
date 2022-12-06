@@ -56,4 +56,6 @@ object MappingConstants {
 
     const val SELECTION_RESCUER_TYPE = "rescuer_type"
     const val SELECTION_RESCUEE_TYPE = "rescuee_type"
+
+    const val NEAREST_METERS = 5.00
 }
