@@ -505,6 +505,7 @@ fun MappingScreen(
     onClickCallRescueTransactionButton: () -> Unit = {},
     onClickChatRescueTransactionButton: () -> Unit = {},
     onClickCancelRescueTransactionButton: () -> Unit = {},
+    onClickOkButtonCancelledRescue: () -> Unit = {},
     onInitializeMapView: (MapView) -> Unit = {},
     onInitializeNavigationCamera: (NavigationCamera) -> Unit = {},
     onChangeCameraState: (Point, Double) -> Unit = {_,_->},
@@ -518,7 +519,7 @@ fun MappingScreen(
         modifier = modifier
             .fillMaxSize()) {
 
-        val (mapScreen, searchButton, circularProgressbar, noInternetScreen, locateButton) = createRefs()
+        val (mapScreen, searchButton, circularProgressbar, noInternetScreen, locateButton, cancelledRescue) = createRefs()
 
 
 
@@ -598,6 +599,25 @@ fun MappingScreen(
                         height = Dimension.wrapContent
                     })
 
+            }
+
+            if (isRescueCancelled) {
+
+                val rescueTransaction = state.userRescueTransaction
+
+                val cancellation = rescueTransaction?.cancellation
+
+                val cancellationReason = cancellation?.cancellationReason
+
+
+                MappingCancelledRescue(
+                    onClickOkButton = onClickOkButtonCancelledRescue,
+                    cancelledRescueModel = CancelledRescueModel(
+                        transactionID = rescueTransaction!!.id,
+                        rescueCancelledBy = cancellation!!.nameCancelledBy,
+                        reason = cancellationReason!!.reason,
+                        message = cancellationReason.message
+                    ))
             }
 
         }
