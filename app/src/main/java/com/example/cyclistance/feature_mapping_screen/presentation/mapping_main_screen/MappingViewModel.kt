@@ -615,13 +615,12 @@ class MappingViewModel @Inject constructor(
     private fun subscribeToRescueTransactionUpdates() {
         getRescueTransactionUpdatesJob?.cancel()
         getRescueTransactionUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
-            mappingUseCase.getRescueTransactionUpdatesUseCase().distinctUntilChanged()
+            mappingUseCase.getRescueTransactionUpdatesUseCase()
                 .catch {
                     Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
                 }.collect {
-                    it.getUserRescueTransaction()
+                   it.getUserRescueTransaction()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                    Timber.v("COLLECTING RESCUE TRANSACTIONS")
                 }
         }
     }
@@ -651,7 +650,7 @@ class MappingViewModel @Inject constructor(
     private fun subscribeToNearbyUsersChanges() {
         getUsersUpdatesJob?.cancel()
         getUsersUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
-            mappingUseCase.getUserUpdatesUseCase().distinctUntilChanged()
+            mappingUseCase.getUserUpdatesUseCase()
                 .catch {
                     Timber.e("ERROR GETTING USERS: ${it.message}")
                     it.handleException()
