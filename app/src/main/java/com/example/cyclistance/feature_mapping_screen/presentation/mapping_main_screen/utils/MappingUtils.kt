@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.service.LocationService
+import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Location
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserAssistance
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.RouteOptions
@@ -34,6 +35,7 @@ import com.mapbox.navigation.base.route.RouterOrigin
 import com.mapbox.navigation.core.MapboxNavigation
 import com.mapbox.navigation.core.MapboxNavigationProvider
 import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider
+import im.delight.android.location.SimpleLocation
 import timber.log.Timber
 import java.io.IOException
 
@@ -187,6 +189,18 @@ fun rememberMapboxNavigation(parentContext: Context):MapboxNavigation{
         }
     }
 }
+
+fun getEstimatedTimeArrival(startingLocation: Location, endLocation: Location):String{
+    val distance = getCalculatedDistance(startingLocation, endLocation)
+    return getCalculatedETA(distance)
+}
+
+fun getCalculatedDistance(startingLocation: Location, endLocation: Location): Double{
+    val start = SimpleLocation.Point(startingLocation.latitude, startingLocation.longitude)
+    val end = SimpleLocation.Point(endLocation.latitude, endLocation.longitude)
+    return SimpleLocation.calculateDistance(start, end)
+}
+
 fun UserAssistance.getMapIconImageDescription(context: Context): Drawable? {
     return when(this.confirmationDetail.description){
         MappingConstants.INJURY_TEXT -> {
