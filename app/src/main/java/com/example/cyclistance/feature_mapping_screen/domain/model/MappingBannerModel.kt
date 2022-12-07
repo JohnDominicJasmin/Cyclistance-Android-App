@@ -5,7 +5,8 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class MappingBannerModel(
-    val userProfileImage: Int,
+    val userId: String = "",
+    val userProfileImage: String,
     val name: String,
     val issue: String,
     val bikeType: String,
