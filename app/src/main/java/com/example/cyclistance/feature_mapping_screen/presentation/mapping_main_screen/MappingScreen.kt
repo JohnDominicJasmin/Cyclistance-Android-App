@@ -322,8 +322,9 @@ fun MappingScreen(
       mappingViewModel.onEvent(event = MappingEvent.RemovedRescueTransaction)
     }}
 
-
-
+    val onClickRescueeMapIcon = remember{{ id: String ->
+        mappingViewModel.onEvent(event = MappingEvent.SelectRescueMapIcon(id))
+    }}
 
 
 
@@ -397,7 +398,6 @@ fun MappingScreen(
         }
     }
 
-
     LaunchedEffect(key1 = true) {
 
         mappingViewModel.eventFlow.collectLatest{ event ->
@@ -451,7 +451,8 @@ fun MappingScreen(
         isRescueCancelled = isRescueCancelled,
         onClickCallRescueTransactionButton = onClickCallRescueTransactionButton,
         onClickChatRescueTransactionButton = onClickChatRescueTransactionButton,
-        onClickOkButtonCancelledRescue = onClickOkButtonCancelledRescue
+        onClickOkButtonCancelledRescue = onClickOkButtonCancelledRescue,
+        onClickRescueeMapIcon = onClickRescueeMapIcon
     )
 
 }
@@ -518,6 +519,7 @@ fun MappingScreen(
     onInitializeNavigationCamera: (NavigationCamera) -> Unit = {},
     onChangeCameraState: (Point, Double) -> Unit = { _, _ -> },
     onDismissNoInternetDialog: () -> Unit = {},
+    onClickRescueeMapIcon: (String) -> Unit = {}
 ) {
 
     val configuration = LocalConfiguration.current
@@ -558,7 +560,8 @@ fun MappingScreen(
                 mapboxNavigation = mapboxNavigation!!,
                 onInitializeNavigationCamera = onInitializeNavigationCamera,
                 hasTransaction = hasTransaction,
-                isRescueCancelled = isRescueCancelled
+                isRescueCancelled = isRescueCancelled,
+                onClickRescueeMapIcon = onClickRescueeMapIcon
             )
 
 

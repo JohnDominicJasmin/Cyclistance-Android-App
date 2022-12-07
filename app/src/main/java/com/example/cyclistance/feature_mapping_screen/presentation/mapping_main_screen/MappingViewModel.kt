@@ -144,6 +144,59 @@ class MappingViewModel @Inject constructor(
             is MappingEvent.SearchAssistance -> {
                 uploadUserProfile()
             }
+            is MappingEvent.DismissRescueBanner -> {
+                _state.update { it.copy(selectedRescueeMapIcon = null) }
+            }
+            is MappingEvent.SelectRescueMapIcon -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    val selectedRescuee = state.value.nearbyCyclists.findUser(event.id)
+                    val selectedRescueeLocation = selectedRescuee.location
+                    val confirmationDetail = selectedRescuee.userAssistance?.confirmationDetail
+
+                    val userLocation = state.value.user.location ?: state.value.userLocation
+
+                    if (userLocation == null) {
+                        _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Tracking your location"))
+                        return@launch
+                    }
+
+                    val distance = MappingUtils.getCalculatedDistance(
+                        startingLocation = Location(
+                            latitude = userLocation.latitude,
+                            longitude = userLocation.longitude
+                        ), endLocation = Location(
+                            latitude = selectedRescueeLocation!!.latitude,
+                            longitude = selectedRescueeLocation.longitude
+                        ))
+
+                    val timeRemaining = MappingUtils.getEstimatedTimeArrival( startingLocation = Location(
+                        latitude = userLocation.latitude,
+                        longitude = userLocation.longitude
+                    ), endLocation = Location(
+                        latitude = selectedRescueeLocation.latitude,
+                        longitude = selectedRescueeLocation.longitude
+                    ))
+
+
+
+
+                    _state.update {
+                        it.copy(
+                            selectedRescueeMapIcon = MappingBannerModel(
+                                userId = selectedRescuee.id!!,
+                                userProfileImage = selectedRescuee.profilePictureUrl ?: IMAGE_PLACEHOLDER_URL,
+                                name = selectedRescuee.name ?: "name unavailable",
+                                issue = confirmationDetail?.description ?: "",
+                                bikeType = confirmationDetail?.bikeType ?: "",
+                                address = selectedRescuee.address ?: "",
+                                message = confirmationDetail?.message ?: "",
+                                distanceRemaining = distance.distanceFormat(),
+                                timeRemaining = timeRemaining
+                                ))
+                    }
+                }
+            }
+
 
             MappingEvent.RemovedRescueTransaction -> {
                 removeAssignedTransaction()

@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.location.Location
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -58,6 +59,7 @@ import timber.log.Timber
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun MappingMapsScreen(
+    modifier: Modifier,
     state: MappingState,
     isDarkTheme: Boolean,
     mapsMapView: MapView,
@@ -68,7 +70,8 @@ fun MappingMapsScreen(
     onInitializeNavigationCamera: (NavigationCamera) -> Unit,
     locationPermissionsState: MultiplePermissionsState?,
     onChangeCameraState: (Point, Double) -> Unit,
-    modifier: Modifier) {
+    onClickRescueeMapIcon:(String) -> Unit,
+    ) {
 
 
     val context = LocalContext.current
@@ -91,7 +94,6 @@ fun MappingMapsScreen(
 
 
     LaunchedEffect(key1 = nearbyCyclists, key2 = mapsMapView){
-
         if(isRescueCancelled.not() && hasTransaction){
             return@LaunchedEffect
         }
@@ -102,22 +104,32 @@ fun MappingMapsScreen(
                 it.id != state.user.id
             }.filter {
                 it.userAssistance?.needHelp == true
-            }.forEach { cyclist ->
+            }.forEachIndexed { index, cyclist ->
                 val location = cyclist.location
                 val cyclistAssistance = cyclist.userAssistance
                 val iconImage = cyclistAssistance?.getMapIconImageDescription(context)
                     ?.toBitmap(width = 100, height = 100)
-                iconImage?.let {
+                iconImage?.let { bitmap ->
                     val pointAnnotationOptions = PointAnnotationOptions()
-                        .withIconImage(it)
-                        .withPoint(
-                            Point.fromLngLat(
-                                location?.longitude ?: return@forEach,
-                                location.latitude))
+                        .withIconImage(bitmap)
+                        .withTextColor(context.getColor(R.color.Transparent))
+                        .withTextField(cyclist.id!!)
+                        .withPoint(Point.fromLngLat(location?.longitude ?: return@forEachIndexed, location.latitude))
                     pointAnnotationManager.create(pointAnnotationOptions)
                 }
             }
+
+
     }
+
+
+    LaunchedEffect(key1 = mapsMapView){
+        pointAnnotationManager.addClickListener{
+            Toast.makeText(context, "Marker clicked name ${it.textField} ", Toast.LENGTH_SHORT).show()
+            true
+        }
+    }
+
 
     val rescuerLocation = remember(state.transactionLocation, state.rescuer?.location){
         state.transactionLocation ?: state.rescuer?.location
