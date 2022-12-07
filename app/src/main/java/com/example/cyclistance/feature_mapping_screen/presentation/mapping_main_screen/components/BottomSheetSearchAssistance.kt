@@ -23,6 +23,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomSheetSearchingAssistance(
+    modifier : Modifier = Modifier,
     isDarkTheme: Boolean,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     content: @Composable (PaddingValues) -> Unit,
@@ -32,6 +33,7 @@ fun BottomSheetSearchingAssistance(
 
 
     MappingBottomSheet(
+        modifier = modifier,
         sheetPeekHeight = 0.dp,
         sheetGesturesEnabled = false,
         bottomSheetScaffoldState = bottomSheetScaffoldState,

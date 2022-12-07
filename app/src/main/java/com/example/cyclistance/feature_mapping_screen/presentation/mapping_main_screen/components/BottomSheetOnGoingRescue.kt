@@ -20,6 +20,7 @@ import com.example.cyclistance.theme.Red900
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomSheetOnGoingRescue(
+    modifier: Modifier = Modifier,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     onClickCallButton: () -> Unit,
     onClickChatButton: () -> Unit,
@@ -29,6 +30,7 @@ fun BottomSheetOnGoingRescue(
 
 
     MappingBottomSheet(
+        modifier = modifier,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         sheetPeekHeight = 0.dp,
         sheetContent = {

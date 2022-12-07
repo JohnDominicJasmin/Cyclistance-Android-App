@@ -21,6 +21,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomSheetRescue(
+    modifier : Modifier = Modifier,
     isDarkTheme: Boolean,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     onClickOkButton: () -> Unit,
@@ -32,6 +33,7 @@ fun BottomSheetRescue(
 
 
     MappingBottomSheet(
+        modifier = modifier,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         sheetContent = {
             Card(
