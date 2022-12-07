@@ -1,5 +1,9 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -14,18 +18,24 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun RequestHelpButton(onClickSearchButton: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean, state: MappingState = MappingState()) {
+fun RequestHelpButton(
+    modifier: Modifier = Modifier,
+    onClickSearchButton: () -> Unit = {},
+    state: MappingState = MappingState()) {
 
-    if(state.searchAssistanceButtonVisible) {
-
+    AnimatedVisibility(
+        modifier = modifier, visible = state.requestHelpButtonVisible, enter = fadeIn(
+            initialAlpha = 0.4f
+        ),
+        exit = fadeOut(
+            animationSpec = tween(durationMillis = 100)
+        )) {
         Button(
-            enabled = enabled,
+            enabled = !state.isLoading,
             onClick = onClickSearchButton,
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
-            modifier = modifier) {
-
-
+            modifier = Modifier) {
 
 
             Text(
@@ -55,9 +65,8 @@ fun RequestHelpButtonPreview() {
 
     CyclistanceTheme(true) {
         RequestHelpButton(
-            onClickSearchButton = {  },
+            onClickSearchButton = { },
             modifier = Modifier,
-            enabled = true,
             state = MappingState())
     }
 }

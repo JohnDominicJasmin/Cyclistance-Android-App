@@ -11,9 +11,12 @@ import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -594,14 +597,21 @@ fun MappingScreen(
             )
 
             RequestHelpButton(
-                enabled = !state.isLoading,
                 modifier = Modifier.constrainAs(searchButton) {
                     bottom.linkTo(parent.bottom, margin = 15.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
-                    height = Dimension.value(45.dp)
-                    width = Dimension.wrapContent
                 }, onClickSearchButton = onClickSearchButton,
+                state = state
+            )
+
+            RespondToHelpButton(
+                modifier = Modifier.constrainAs(respondToHelpButton){
+                    bottom.linkTo(parent.bottom, margin = 15.dp)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                },
+                onClickRespondButton = onClickRespondToHelpButton,
                 state = state
             )
 
@@ -628,7 +638,11 @@ fun MappingScreen(
 
             }
 
-            if (isRescueCancelled) {
+            AnimatedVisibility (visible = isRescueCancelled,
+                enter = fadeIn(),
+                exit = fadeOut(
+                animationSpec = tween(durationMillis = 220)
+            )) {
 
                 val rescueTransaction = state.userRescueTransaction
 
@@ -647,13 +661,20 @@ fun MappingScreen(
                     ))
             }
 
-            if(state.selectedRescueeMapIcon != null){
-                MappingExpandableBanner(
-                    modifier = Modifier
-                        .padding(all = 6.dp)
-                        .fillMaxWidth(), banner = state.selectedRescueeMapIcon,
-                    onClickDismissButton = onClickDismissBannerButton)
-
+            AnimatedVisibility(visible = state.selectedRescueeMapIcon != null,
+                enter = expandVertically(expandFrom = Alignment.Top) { 20 },
+                // Shrinks the content to half of its full height via an animation.
+                exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
+                    fullHeight / 2
+                },
+                ){
+                if(state.selectedRescueeMapIcon != null) {
+                    MappingExpandableBanner(
+                        modifier = Modifier
+                            .padding(all = 6.dp)
+                            .fillMaxWidth(), banner = state.selectedRescueeMapIcon,
+                        onClickDismissButton = onClickDismissBannerButton)
+                }
             }
 
         }
