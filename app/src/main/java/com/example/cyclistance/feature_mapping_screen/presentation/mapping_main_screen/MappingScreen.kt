@@ -331,7 +331,9 @@ fun MappingScreen(
         mappingViewModel.onEvent(event = MappingEvent.SelectRescueMapIcon(id))
     }}
 
-
+    val onDismissRescueeBanner = remember{{
+        mappingViewModel.onEvent(event = MappingEvent.DismissRescueeBanner)
+    }}
 
 
 
@@ -457,7 +459,9 @@ fun MappingScreen(
         onClickCallRescueTransactionButton = onClickCallRescueTransactionButton,
         onClickChatRescueTransactionButton = onClickChatRescueTransactionButton,
         onClickOkButtonCancelledRescue = onClickOkButtonCancelledRescue,
-        onClickRescueeMapIcon = onClickRescueeMapIcon
+        onClickRescueeMapIcon = onClickRescueeMapIcon,
+        onMapClick = onDismissRescueeBanner,
+        onClickDismissBannerButton = onDismissRescueeBanner
     )
 
 }
@@ -524,7 +528,9 @@ fun MappingScreen(
     onInitializeNavigationCamera: (NavigationCamera) -> Unit = {},
     onChangeCameraState: (Point, Double) -> Unit = { _, _ -> },
     onDismissNoInternetDialog: () -> Unit = {},
-    onClickRescueeMapIcon: (String) -> Unit = {}
+    onClickRescueeMapIcon: (String) -> Unit = {},
+    onMapClick: () -> Unit = {},
+    onClickDismissBannerButton : () -> Unit = {},
 ) {
 
     val configuration = LocalConfiguration.current
@@ -566,7 +572,8 @@ fun MappingScreen(
                 onInitializeNavigationCamera = onInitializeNavigationCamera,
                 hasTransaction = hasTransaction,
                 isRescueCancelled = isRescueCancelled,
-                onClickRescueeMapIcon = onClickRescueeMapIcon
+                onClickRescueeMapIcon = onClickRescueeMapIcon,
+                onMapClick = onMapClick
             )
 
 
@@ -637,8 +644,12 @@ fun MappingScreen(
             }
 
             if(state.selectedRescueeMapIcon != null){
-                MappingExpandableBanner(modifier = Modifier.padding(all = 6.dp)
-                    .fillMaxWidth(), banner = state.selectedRescueeMapIcon)
+                MappingExpandableBanner(
+                    modifier = Modifier
+                        .padding(all = 6.dp)
+                        .fillMaxWidth(), banner = state.selectedRescueeMapIcon,
+                    onClickDismissButton = onClickDismissBannerButton)
+
             }
 
         }

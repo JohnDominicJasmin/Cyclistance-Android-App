@@ -27,6 +27,7 @@ import com.mapbox.maps.plugin.animation.camera
 import com.mapbox.maps.plugin.annotation.annotations
 import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
+import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.locationcomponent.location2
 import com.mapbox.navigation.base.TimeFormat
 import com.mapbox.navigation.base.formatter.DistanceFormatterOptions
@@ -72,6 +73,7 @@ fun MappingMapsScreen(
     locationPermissionsState: MultiplePermissionsState?,
     onChangeCameraState: (Point, Double) -> Unit,
     onClickRescueeMapIcon:(String) -> Unit,
+    onMapClick: () -> Unit
     ) {
 
 
@@ -125,6 +127,11 @@ fun MappingMapsScreen(
 
 
     LaunchedEffect(key1 = mapsMapView){
+
+        mapsMapView.getMapboxMap().addOnMapClickListener{
+            onMapClick()
+            true
+        }
 
         pointAnnotationManager.addClickListener{
             it.textField?.let { it1 -> onClickRescueeMapIcon(it1) }

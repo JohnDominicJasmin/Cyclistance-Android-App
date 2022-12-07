@@ -151,8 +151,8 @@ class MappingViewModel @Inject constructor(
             is MappingEvent.SearchAssistance -> {
                 uploadUserProfile()
             }
-            is MappingEvent.DismissRescueBanner -> {
-                _state.update { it.copy(selectedRescueeMapIcon = null) }
+            is MappingEvent.DismissRescueeBanner -> {
+                dismissRescueeBanner()
             }
             is MappingEvent.SelectRescueMapIcon -> {
                 selectRescueeMapIcon(event.id)

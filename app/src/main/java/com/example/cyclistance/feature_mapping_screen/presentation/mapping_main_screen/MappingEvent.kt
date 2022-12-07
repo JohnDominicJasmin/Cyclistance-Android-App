@@ -21,5 +21,5 @@ sealed class MappingEvent {
     object RemovedRescueTransaction: MappingEvent()
     data class ChangeCameraState(val cameraPosition: Point, val cameraZoomLevel: Double): MappingEvent()
     data class SelectRescueMapIcon(val id: String): MappingEvent()
-    object DismissRescueBanner: MappingEvent()
+    object DismissRescueeBanner: MappingEvent()
 }

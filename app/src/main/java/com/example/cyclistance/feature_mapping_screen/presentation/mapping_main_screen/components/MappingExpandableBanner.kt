@@ -39,7 +39,10 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBannerModel) {
+fun MappingExpandableBanner(
+    modifier: Modifier = Modifier,
+    banner: MappingBannerModel,
+    onClickDismissButton: () -> Unit) {
 
 
     var expandedState by remember { mutableStateOf(false) }
@@ -257,7 +260,7 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .align(Alignment.End),
-                onClick = { }) {
+                onClick = onClickDismissButton) {
                 Text(
                     text = "DISMISS",
                     color = MaterialTheme.colors.primary,
@@ -273,7 +276,8 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
 fun MappingExpandableBannerPreview() {
     CyclistanceTheme(true) {
         MappingExpandableBanner(
-            modifier = Modifier.padding(all = 6.dp)
+            modifier = Modifier
+                .padding(all = 6.dp)
                 .fillMaxWidth(),
             banner = MappingBannerModel(
                 userProfileImage = "https://www.erlanger.org/find-a-doctor/media/PhysicianPhotos/Carbone_1436.jpg",
@@ -286,7 +290,7 @@ fun MappingExpandableBannerPreview() {
                 bikeType = "Road Bike",
 
                 )
-        )
+        ){}
     }
 
 }
