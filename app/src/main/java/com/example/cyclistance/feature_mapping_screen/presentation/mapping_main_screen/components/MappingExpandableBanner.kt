@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -50,8 +51,8 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
 
     Card(
         modifier = modifier
-            .padding(all = 6.dp)
-            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .shadow(elevation = 12.dp, shape = RoundedCornerShape(12.dp), )
             .animateContentSize(
                 animationSpec = tween(
                     durationMillis = 180,
@@ -89,7 +90,7 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
 
             ) {
 
-                val (roundedImage, nameText, issueText, distanceAndTime, expandedSection, dismissButton) = createRefs()
+                val (roundedImage, nameText, issueText, distanceAndTime, expandedSection, ) = createRefs()
 
 
                 AsyncImage(model = banner.userProfileImage,
@@ -107,7 +108,7 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
                 Text(
                     text = banner.name,
                     fontSize = MaterialTheme.typography.subtitle1.fontSize,
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight(570),
                     color = MaterialTheme.colors.onSurface,
                     modifier = Modifier.constrainAs(nameText) {
                         start.linkTo(roundedImage.end, margin = 15.dp)
@@ -118,7 +119,7 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
 
 
                 Text(
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight(570),
                     fontSize = MaterialTheme.typography.subtitle1.fontSize,
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(color = Black440)) {
@@ -137,7 +138,7 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
 
 
                 Text(
-                    fontWeight = FontWeight.SemiBold,
+                    fontWeight = FontWeight(570),
                     fontSize = MaterialTheme.typography.subtitle1.fontSize,
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(color = MaterialTheme.colors.onSurface)) {
@@ -186,7 +187,7 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
                             Text(
                                 text = banner.address,
                                 fontSize = MaterialTheme.typography.subtitle1.fontSize,
-                                fontWeight = FontWeight.SemiBold,
+                                fontWeight = FontWeight(570),
                                 color = MaterialTheme.colors.onSurface,
                             )
                         }
@@ -216,7 +217,7 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
                             Text(
                                 text = banner.bikeType,
                                 fontSize = MaterialTheme.typography.subtitle1.fontSize,
-                                fontWeight = FontWeight.SemiBold,
+                                fontWeight = FontWeight(570),
                                 color = MaterialTheme.colors.onSurface,
                             )
                         }
@@ -235,13 +236,13 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
                             Text(
                                 text = "Message:",
                                 fontSize = MaterialTheme.typography.subtitle1.fontSize,
-                                fontWeight = FontWeight.Normal,
+                                fontWeight = FontWeight(570),
                                 color = Black440
                             )
                             Text(
                                 text = banner.message,
                                 fontSize = MaterialTheme.typography.subtitle1.fontSize,
-                                fontWeight = FontWeight.SemiBold,
+                                fontWeight = FontWeight(570),
                                 color = MaterialTheme.colors.onSurface,
                             )
                         }
@@ -260,7 +261,8 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
                 Text(
                     text = "DISMISS",
                     color = MaterialTheme.colors.primary,
-                    style = MaterialTheme.typography.subtitle2)
+                    style = MaterialTheme.typography.subtitle2,
+                    fontWeight = FontWeight.SemiBold)
             }
         }
     }
@@ -271,6 +273,8 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
 fun MappingExpandableBannerPreview() {
     CyclistanceTheme(true) {
         MappingExpandableBanner(
+            modifier = Modifier.padding(all = 6.dp)
+                .fillMaxWidth(),
             banner = MappingBannerModel(
                 userProfileImage = "https://www.erlanger.org/find-a-doctor/media/PhysicianPhotos/Carbone_1436.jpg",
                 name = "John Doe",
