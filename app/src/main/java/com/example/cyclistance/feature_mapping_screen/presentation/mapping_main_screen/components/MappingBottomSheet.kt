@@ -3,28 +3,31 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.BottomSheetType
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MappingBottomSheet(
-    isDarkTheme: Boolean,
-    state: MappingState,
-    bottomSheetScaffoldState: BottomSheetScaffoldState,
-    onClickRescueArrivedButton: () -> Unit,
-    onClickReachedDestinationButton: () -> Unit,
-    onClickCancelSearchButton: () -> Unit,
-    onClickCallRescueTransactionButton: () -> Unit,
-    onClickChatRescueTransactionButton: () -> Unit,
-    onClickCancelRescueTransactionButton: () -> Unit,
-    content: @Composable (PaddingValues) -> Unit,
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean = true,
+    state: MappingState = MappingState(),
+    bottomSheetScaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
+    onClickRescueArrivedButton: () -> Unit = {},
+    onClickReachedDestinationButton: () -> Unit = {},
+    onClickCancelSearchButton: () -> Unit = {},
+    onClickCallRescueTransactionButton: () -> Unit = {},
+    onClickChatRescueTransactionButton: () -> Unit = {},
+    onClickCancelRescueTransactionButton: () -> Unit = {},
+    content: @Composable (PaddingValues) -> Unit = {},
 ) {
-
+//todo: add animated visibility
 
     when (state.bottomSheetType) {
         BottomSheetType.RescuerArrived.type -> {
             BottomSheetRescueArrived(
+                modifier = modifier,
                 isDarkTheme = isDarkTheme,
                 content = content,
                 onClickOkButton = onClickRescueArrivedButton,
@@ -33,6 +36,7 @@ fun MappingBottomSheet(
 
         BottomSheetType.DestinationReached.type -> {
             BottomSheetReachedDestination(
+                modifier = modifier,
                 isDarkTheme = isDarkTheme,
                 content = content,
                 onClickOkButton = onClickReachedDestinationButton,
@@ -42,6 +46,7 @@ fun MappingBottomSheet(
 
         BottomSheetType.SearchAssistance.type -> {
             BottomSheetSearchingAssistance(
+                modifier = modifier,
                 isDarkTheme = isDarkTheme,
                 onClickCancelSearchButton = onClickCancelSearchButton,
                 content = content,
@@ -51,6 +56,7 @@ fun MappingBottomSheet(
 
         BottomSheetType.OnGoingRescue.type -> {
             BottomSheetOnGoingRescue(
+                modifier = modifier,
                 estimatedTimeRemaining = state.rescuerETA,
                 content = content,
                 onClickCallButton = onClickCallRescueTransactionButton,

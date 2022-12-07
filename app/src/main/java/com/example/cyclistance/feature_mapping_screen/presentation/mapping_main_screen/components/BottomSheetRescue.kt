@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -39,8 +40,9 @@ fun BottomSheetRescue(
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.92f)
+                    .shadow(shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp), elevation = 12.dp)
                     .align(Alignment.CenterHorizontally),
-                shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp), elevation = 14.dp) {
+                shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)) {
 
 
                 ConstraintLayout(
