@@ -10,9 +10,9 @@ val userItems = listOf(
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
-        id = "8gm6NsOC5jL51px63Hc3qocti9As",
+        id = "75kBHI4QZrYxlGGH9eCbY4yfLU72",
         location = Location(latitude =  14.0874, longitude = 121.1517),
-        name = "John Doe",
+        name = "John Mark",
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK9gqFKRn28xKHD1CAbEevdzsLmsv5yQkGnQ&usqp=CAU",
         rescueRequest = RescueRequest(
             listOf(
@@ -25,7 +25,7 @@ val userItems = listOf(
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "92398512908",
-        id = "2",
+        id = "2326236",
         location = Location(latitude = 14.079426870239514, longitude = 121.15672703265659),
         name = "Jane Dominic",
         profilePictureUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
@@ -43,9 +43,9 @@ val userItems = listOf(
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "2845182739",
-        id = "3",
+        id = "32362323",
         location = Location(latitude = 14.090421127354372, longitude = 121.14870941179073),
-        name = "John Doe",
+        name = "John Terminator",
         userAssistance = UserAssistance(
             needHelp = true,
             confirmationDetail = ConfirmationDetail(
@@ -59,9 +59,9 @@ val userItems = listOf(
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "2367238327",
-        id = "4",
+        id = "423623",
         location = Location(latitude = 14.096044763009578, longitude = 121.13918029795505),
-        name = "Jane Doe",
+        name = "Boomie",
         userAssistance = UserAssistance(
             needHelp = true,
             confirmationDetail = ConfirmationDetail(
