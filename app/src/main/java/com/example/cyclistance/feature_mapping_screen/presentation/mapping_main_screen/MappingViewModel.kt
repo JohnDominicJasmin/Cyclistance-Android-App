@@ -198,8 +198,7 @@ class MappingViewModel @Inject constructor(
                                 address = selectedRescuee.address ?: "",
                                 message = confirmationDetail?.message ?: "",
                                 distanceRemaining = distance.distanceFormat(),
-                                timeRemaining = timeRemaining
-                                ))
+                                timeRemaining = timeRemaining))
                     }
                 }
             }
