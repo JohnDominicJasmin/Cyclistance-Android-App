@@ -112,10 +112,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                                     description = description,
                                     message = message.trim()),
                                 needHelp = true
-                            ),
-
-
-                            )).also {
+                            ))).also {
 
                         mappingUseCase.updateAddressUseCase(address = address)
                         mappingUseCase.updateBikeTypeUseCase(bikeType = bikeType)
