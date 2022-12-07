@@ -6,9 +6,9 @@ import com.example.cyclistance.core.utils.validation.InputValidate.containsSpeci
 import com.example.cyclistance.core.utils.validation.InputValidate.isDigit
 import com.example.cyclistance.core.utils.validation.InputValidate.isPhoneNumberLongEnough
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.distanceFormat
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getCalculatedETA
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.getFullAddress
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.distanceFormat
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getCalculatedETA
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getFullAddress
 import org.junit.Assert
 import org.junit.Test
 import timber.log.Timber
