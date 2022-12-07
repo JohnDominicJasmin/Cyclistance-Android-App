@@ -105,17 +105,17 @@ fun MappingMapsScreen(
                 it.id != state.user.id
             }.filter {
                 it.userAssistance?.needHelp == true
-            }.forEachIndexed { index, cyclist ->
+            }.forEach { cyclist ->
                 val location = cyclist.location
                 val cyclistAssistance = cyclist.userAssistance
                 val iconImage = cyclistAssistance?.getMapIconImageDescription(context)
-                    ?.toBitmap(width = 100, height = 100)
+                    ?.toBitmap(width = 120, height = 120)
                 iconImage?.let { bitmap ->
                     val pointAnnotationOptions = PointAnnotationOptions()
                         .withIconImage(bitmap)
                         .withTextColor(context.getColor(R.color.Transparent))
                         .withTextField(cyclist.id!!)
-                        .withPoint(Point.fromLngLat(location?.longitude ?: return@forEachIndexed, location.latitude))
+                        .withPoint(Point.fromLngLat(location?.longitude ?: return@forEach, location.latitude))
                     pointAnnotationManager.create(pointAnnotationOptions)
                 }
             }
