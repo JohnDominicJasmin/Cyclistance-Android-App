@@ -636,6 +636,11 @@ fun MappingScreen(
                     ))
             }
 
+            if(state.selectedRescueeMapIcon != null){
+                MappingExpandableBanner(modifier = Modifier.padding(all = 6.dp)
+                    .fillMaxWidth(), banner = state.selectedRescueeMapIcon)
+            }
+
         }
     }
 }
