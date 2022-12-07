@@ -537,11 +537,6 @@ fun MappingScreen(
     val configuration = LocalConfiguration.current
 
 
-    ConstraintLayout(
-        modifier = modifier
-            .fillMaxSize()) {
-
-        val (mapScreen, searchButton, circularProgressbar, noInternetScreen, locateButton, cancelledRescue) = createRefs()
 
 
 
@@ -554,9 +549,17 @@ fun MappingScreen(
             onClickCallRescueTransactionButton = onClickCallRescueTransactionButton,
             onClickChatRescueTransactionButton = onClickChatRescueTransactionButton,
             onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton,
-            bottomSheetScaffoldState = bottomSheetScaffoldState) {
+            bottomSheetScaffoldState = bottomSheetScaffoldState,
+           ) {
 
-            MappingMapsScreen(
+            ConstraintLayout(
+                modifier = modifier
+                    .fillMaxSize()) {
+
+                val (mapScreen, searchButton, circularProgressbar, noInternetScreen, locateButton, respondToHelpButton, bottomSheets) = createRefs()
+
+
+                MappingMapsScreen(
                 state = state,
                 modifier = Modifier.constrainAs(mapScreen) {
                     top.linkTo(parent.top)
