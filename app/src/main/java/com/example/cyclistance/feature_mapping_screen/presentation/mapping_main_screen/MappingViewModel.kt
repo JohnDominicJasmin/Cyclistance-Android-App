@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
+import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
@@ -19,6 +20,12 @@ import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingE
 import com.example.cyclistance.feature_mapping_screen.domain.model.*
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.distanceFormat
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getAddress
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getCalculatedDistance
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getCalculatedETA
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getEstimatedTimeArrival
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getFullAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.delight.android.location.SimpleLocation
 import io.github.farhanroy.composeawesomedialog.R
@@ -306,7 +313,7 @@ class MappingViewModel @Inject constructor(
             val rescueTransaction = state.value.userLocation
             val role = state.value.user.transaction?.role
 
-            rescueTransaction.let { transaction ->
+            rescueTransaction?.let { transaction ->
 
                 val distance = async { getCalculatedDistance(
                     startingLocation = Location(latitude, longitude),
@@ -345,7 +352,7 @@ class MappingViewModel @Inject constructor(
         val userLocation = state.value.userLocation
         val eta = getEstimatedTimeArrival(startingLocation = Location(
             latitude = this.latitude,
-            longitude = this.longitude), endLocation = userLocation)
+            longitude = this.longitude), endLocation = userLocation!!)
         _state.update { it.copy(rescuerETA = eta) }
     }
 
@@ -461,7 +468,7 @@ class MappingViewModel @Inject constructor(
 
     private fun updateTransactionETA(rescuer: UserItem,rescueTransaction: RescueTransactionItem ){
         val userLocation = state.value.userLocation
-        val estimatedTimeArrival = rescuer.location?.let { getEstimatedTimeArrival(startingLocation = it, endLocation = userLocation) }
+        val estimatedTimeArrival = rescuer.location?.let { getEstimatedTimeArrival(startingLocation = it, endLocation = userLocation!!) }
         _state.update {
             it.copy(userRescueTransaction = rescueTransaction,
                 rescuerETA = estimatedTimeArrival ?: "",

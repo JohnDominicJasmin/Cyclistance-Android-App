@@ -38,9 +38,9 @@ import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionSt
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.*
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CancelledRescueModel
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.findRoute
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.rememberMapboxNavigation
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.startLocationServiceIntentAction
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.findRoute
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.rememberMapboxNavigation
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.startLocationServiceIntentAction
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.navigation.navigateScreenInclusively

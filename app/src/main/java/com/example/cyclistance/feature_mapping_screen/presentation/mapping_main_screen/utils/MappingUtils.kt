@@ -39,194 +39,214 @@ import im.delight.android.location.SimpleLocation
 import timber.log.Timber
 import java.io.IOException
 
-@WorkerThread
-inline fun Geocoder.getAddress(
-    latitude: Double,
-    longitude: Double,
-    crossinline onCallbackAddress: (List<Address>) -> Unit) {
+object MappingUtils {
+    @WorkerThread
+    inline fun Geocoder.getAddress(
+        latitude: Double,
+        longitude: Double,
+        crossinline onCallbackAddress: (List<Address>) -> Unit) {
 
-    try {
+        try {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            getFromLocation(
-                latitude, longitude, 1,
-            ) { addresses ->
-                onCallbackAddress(addresses)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                getFromLocation(
+                    latitude, longitude, 1,
+                ) { addresses ->
+                    onCallbackAddress(addresses)
+                }
+            } else {
+                onCallbackAddress(
+                    getFromLocation(latitude, longitude, 1) ?: emptyList())
             }
-        } else {
-            onCallbackAddress(
-                getFromLocation(latitude, longitude, 1) ?: emptyList())
+
+        } catch (e: IOException) {
+            Timber.e("GET ADDRESS: ${e.message}")
+        }
+    }
+
+    fun Context.startLocationServiceIntentAction(intentAction: String = MappingConstants.ACTION_START) {
+        Intent(this, LocationService::class.java).apply {
+            action = intentAction
+            startService(this)
+        }
+    }
+
+    fun Address.getFullAddress(): String {
+        val subThoroughfare =
+            if (subThoroughfare != "null" && subThoroughfare != null) "$subThoroughfare " else ""
+        val thoroughfare =
+            if (thoroughfare != "null" && thoroughfare != null) "$thoroughfare., " else ""
+        val locality = if (locality != "null" && locality != null) "$locality, " else ""
+        val subAdminArea = if (subAdminArea != "null" && subAdminArea != null) subAdminArea else ""
+
+
+        return "$subThoroughfare$thoroughfare$locality$subAdminArea"
+    }
+
+    inline fun MapboxNavigation.findRoute(
+        parentContext: Context,
+        originPoint: Point,
+        destinationPoint: Point,
+        crossinline onSuccess: (List<NavigationRoute>) -> Unit) {
+
+        if (getNavigationRoutes().isNotEmpty()) {
+            setNavigationRoutes(listOf())
         }
 
-    } catch (e: IOException) {
-        Timber.e("GET ADDRESS: ${e.message}")
-    }
-}
+        requestRoutes(
+            RouteOptions.builder()
 
-fun Context.startLocationServiceIntentAction(intentAction:String = MappingConstants.ACTION_START){
-    Intent(this, LocationService::class.java).apply {
-        action = intentAction
-        startService(this)
-    }
-}
-
-fun Address.getFullAddress(): String {
-    val subThoroughfare = if(subThoroughfare != "null" && subThoroughfare != null) "$subThoroughfare " else ""
-    val thoroughfare = if (thoroughfare != "null" && thoroughfare != null) "$thoroughfare., " else ""
-    val locality = if (locality != "null" && locality != null) "$locality, " else ""
-    val subAdminArea = if(subAdminArea != "null" && subAdminArea != null) subAdminArea else ""
-
-
-    return "$subThoroughfare$thoroughfare$locality$subAdminArea"
-}
-
-inline fun MapboxNavigation.findRoute(
-    parentContext: Context,
-    originPoint: Point,
-    destinationPoint: Point,
-    crossinline onSuccess: (List<NavigationRoute>) -> Unit){
-
-    if(getNavigationRoutes().isNotEmpty()) {
-        setNavigationRoutes(listOf())
-    }
-
-    requestRoutes(
-        RouteOptions.builder()
-
-            .applyDefaultNavigationOptions()
-            .applyLanguageAndVoiceUnitOptions(parentContext)
-            .coordinatesList(listOf(originPoint, destinationPoint))
-            .bearingsList(
-                listOf(
-                    Bearing.builder()
-                        .angle(0.0)
-                        .degrees(45.0)
-                        .build(),
-                    null
+                .applyDefaultNavigationOptions()
+                .applyLanguageAndVoiceUnitOptions(parentContext)
+                .coordinatesList(listOf(originPoint, destinationPoint))
+                .bearingsList(
+                    listOf(
+                        Bearing.builder()
+                            .angle(0.0)
+                            .degrees(45.0)
+                            .build(),
+                        null
+                    )
                 )
-            )
-            .layersList(listOf(getZLevel(), null))
-            .build(),
-        object : NavigationRouterCallback {
-            override fun onRoutesReady(
-                routes: List<NavigationRoute>,
-                routerOrigin: RouterOrigin
-            ) {
-                onSuccess(routes)
-            }
+                .layersList(listOf(getZLevel(), null))
+                .build(),
+            object : NavigationRouterCallback {
+                override fun onRoutesReady(
+                    routes: List<NavigationRoute>,
+                    routerOrigin: RouterOrigin
+                ) {
+                    onSuccess(routes)
+                }
 
-            override fun onFailure(
-                reasons: List<RouterFailure>,
-                routeOptions: RouteOptions
-            ) {
-                Timber.e("Route request failed")
-            }
+                override fun onFailure(
+                    reasons: List<RouterFailure>,
+                    routeOptions: RouteOptions
+                ) {
+                    Timber.e("Route request failed")
+                }
 
-            override fun onCanceled(
-                routeOptions: RouteOptions,
-                routerOrigin: RouterOrigin) {
+                override fun onCanceled(
+                    routeOptions: RouteOptions,
+                    routerOrigin: RouterOrigin) {
 
-                Timber.e("Route request canceled")
+                    Timber.e("Route request canceled")
+                }
             }
+        )
+    }
+
+    fun Double.distanceFormat(): String {
+        if (this <= 0.0) {
+            throw IllegalArgumentException("Distance must be greater than 0")
         }
-    )
-}
 
-fun Double.distanceFormat(): String {
-    if(this <= 0.0){
-        throw IllegalArgumentException("Distance must be greater than 0")
-    }
-
-    return if (this < 1000) {
-        "%.2f m".format(this)
-    } else {
-        "%.2f km".format((this / 1000))
-    }
-}
-
-fun getCalculatedETA(distanceMeters: Double, averageSpeedKm: Double = MappingConstants.DEFAULT_BIKE_AVERAGE_SPEED_KM): String {
-    val distanceToKm = distanceMeters / 1000
-    if(distanceToKm <= 0.0){
-        return "0 min"
-    }
-    val eta = distanceToKm / averageSpeedKm
-    val hours = eta.toInt()
-    val minutes = (eta - hours) * 60
-    val minutesInt = minutes.toInt()
-    val minsFormat = if (minutesInt <= 1) "$minutesInt min" else "$minutesInt mins"
-    val hourFormat = if (hours >= 1) "$hours hrs " else ""
-    return "$hourFormat$minsFormat"
-}
-
-fun MapView.setDefaultSettings(parentContext: Context, navigationLocationProvider: NavigationLocationProvider){
-    scalebar.enabled = false
-    logo.enabled = false
-    attribution.enabled = false
-
-    location2.apply {
-
-        showAccuracyRing = true
-        pulsingColor = ContextCompat.getColor(parentContext, com.example.cyclistance.R.color.ThemeColor)
-        puckBearingEnabled = false
-        pulsingMaxRadius = 120.0f
-        puckBearingSource = PuckBearingSource.HEADING
-        setLocationProvider(navigationLocationProvider)
-        enabled = true
-    }
-}
-
-@Composable
-fun rememberMapboxNavigation(parentContext: Context):MapboxNavigation{
-    return remember{
-        if (MapboxNavigationProvider.isCreated()) {
-            MapboxNavigationProvider.retrieve()
+        return if (this < 1000) {
+            "%.2f m".format(this)
         } else {
-            MapboxNavigationProvider.create(
-                NavigationOptions.Builder(parentContext.applicationContext)
-                    .accessToken(parentContext.getString(com.example.cyclistance.R.string.MapsDownloadToken))
-                    .build()
-            )
+            "%.2f km".format((this / 1000))
         }
     }
-}
 
-fun getEstimatedTimeArrival(startingLocation: Location, endLocation: Location):String{
-    val distance = getCalculatedDistance(startingLocation, endLocation)
-    return getCalculatedETA(distance)
-}
-
-fun getCalculatedDistance(startingLocation: Location, endLocation: Location): Double{
-    val start = SimpleLocation.Point(startingLocation.latitude, startingLocation.longitude)
-    val end = SimpleLocation.Point(endLocation.latitude, endLocation.longitude)
-    return SimpleLocation.calculateDistance(start, end)
-}
-
-fun UserAssistance.getMapIconImageDescription(context: Context): Drawable? {
-    return when(this.confirmationDetail.description){
-        MappingConstants.INJURY_TEXT -> {
-            AppCompatResources.getDrawable(context, R.drawable.ic_injury_em)
+    fun getCalculatedETA(
+        distanceMeters: Double,
+        averageSpeedKm: Double = MappingConstants.DEFAULT_BIKE_AVERAGE_SPEED_KM): String {
+        val distanceToKm = distanceMeters / 1000
+        if (distanceToKm <= 0.0) {
+            return "0 min"
         }
+        val eta = distanceToKm / averageSpeedKm
+        val hours = eta.toInt()
+        val minutes = (eta - hours) * 60
+        val minutesInt = minutes.toInt()
+        val minsFormat = if (minutesInt <= 1) "$minutesInt min" else "$minutesInt mins"
+        val hourFormat = if (hours >= 1) "$hours hrs " else ""
+        return "$hourFormat$minsFormat"
+    }
 
-        MappingConstants.BROKEN_FRAME_TEXT -> {
-            AppCompatResources.getDrawable(context, R.drawable.ic_broken_frame_em)
+    fun MapView.setDefaultSettings(
+        parentContext: Context,
+        navigationLocationProvider: NavigationLocationProvider) {
+        scalebar.enabled = false
+        logo.enabled = false
+        attribution.enabled = false
+
+        location2.apply {
+
+            showAccuracyRing = true
+            pulsingColor =
+                ContextCompat.getColor(parentContext, com.example.cyclistance.R.color.ThemeColor)
+            puckBearingEnabled = false
+            pulsingMaxRadius = 120.0f
+            puckBearingSource = PuckBearingSource.HEADING
+            setLocationProvider(navigationLocationProvider)
+            enabled = true
         }
+    }
 
-        MappingConstants.INCIDENT_TEXT -> {
-            AppCompatResources.getDrawable(context, R.drawable.ic_incident_em)
+    @Composable
+    fun rememberMapboxNavigation(parentContext: Context): MapboxNavigation {
+        return remember {
+            if (MapboxNavigationProvider.isCreated()) {
+                MapboxNavigationProvider.retrieve()
+            } else {
+                MapboxNavigationProvider.create(
+                    NavigationOptions.Builder(parentContext.applicationContext)
+                        .accessToken(parentContext.getString(com.example.cyclistance.R.string.MapsDownloadToken))
+                        .build()
+                )
+            }
         }
+    }
 
-        MappingConstants.BROKEN_CHAIN_TEXT -> {
-            AppCompatResources.getDrawable(context, R.drawable.ic_broken_chain_em)
+    fun getEstimatedTimeArrival(startingLocation: Location, endLocation: Location): String {
+        val distance = getCalculatedDistance(startingLocation, endLocation)
+        return getCalculatedETA(distance)
+    }
+
+    fun getCalculatedDistance(startingLocation: Location, endLocation: Location): Double {
+        val start = SimpleLocation.Point(startingLocation.latitude, startingLocation.longitude)
+        val end = SimpleLocation.Point(endLocation.latitude, endLocation.longitude)
+        return SimpleLocation.calculateDistance(start, end)
+    }
+
+    fun getCalculatedDistance(
+        startLatitude: Double,
+        startLongitude: Double,
+        endLatitude: Double,
+        endLongitude: Double): Double {
+        return SimpleLocation.calculateDistance(
+            SimpleLocation.Point(startLatitude, startLongitude),
+            SimpleLocation.Point(endLatitude, endLongitude)
+        )
+    }
+
+    fun UserAssistance.getMapIconImageDescription(context: Context): Drawable? {
+        return when (this.confirmationDetail.description) {
+            MappingConstants.INJURY_TEXT -> {
+                AppCompatResources.getDrawable(context, R.drawable.ic_injury_em)
+            }
+
+            MappingConstants.BROKEN_FRAME_TEXT -> {
+                AppCompatResources.getDrawable(context, R.drawable.ic_broken_frame_em)
+            }
+
+            MappingConstants.INCIDENT_TEXT -> {
+                AppCompatResources.getDrawable(context, R.drawable.ic_incident_em)
+            }
+
+            MappingConstants.BROKEN_CHAIN_TEXT -> {
+                AppCompatResources.getDrawable(context, R.drawable.ic_broken_chain_em)
+            }
+
+            MappingConstants.FLAT_TIRES_TEXT -> {
+                AppCompatResources.getDrawable(context, R.drawable.ic_flat_tire_em)
+            }
+
+            MappingConstants.FAULTY_BRAKES_TEXT -> {
+                AppCompatResources.getDrawable(context, R.drawable.ic_faulty_brakes_em)
+            }
+
+            else -> null
         }
-
-        MappingConstants.FLAT_TIRES_TEXT -> {
-            AppCompatResources.getDrawable(context, R.drawable.ic_flat_tire_em)
-        }
-
-        MappingConstants.FAULTY_BRAKES_TEXT -> {
-            AppCompatResources.getDrawable(context, R.drawable.ic_faulty_brakes_em)
-        }
-
-        else -> null
     }
 }
