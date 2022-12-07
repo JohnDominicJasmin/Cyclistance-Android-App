@@ -103,7 +103,7 @@ fun MappingScreen(
     val mapboxNavigation = rememberMapboxNavigation(parentContext = context)
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Expanded)
+        bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
     )
 
     val onInitializeMapView = remember{{ mv: MapView ->
@@ -342,7 +342,13 @@ fun MappingScreen(
 
 
 
-
+    LaunchedEffect(key1 = state.bottomSheetType) {
+        coroutineScope.launch {
+            if (state.bottomSheetType.isNotEmpty()) {
+                bottomSheetScaffoldState.bottomSheetState.expand()
+            }
+        }
+    }
 
 
     LaunchedEffect(key1 = typeBottomSheet) {
