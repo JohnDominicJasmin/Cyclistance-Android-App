@@ -6,7 +6,8 @@ import com.mapbox.geojson.Point
 
 sealed class MappingEvent {
 
-    object SearchAssistance : MappingEvent()
+    object RequestHelp : MappingEvent()
+    object RespondToHelp : MappingEvent()
     object SignOut: MappingEvent()
     object StartPinging: MappingEvent()
     object StopPinging: MappingEvent()
@@ -14,7 +15,7 @@ sealed class MappingEvent {
     data class ChangeBottomSheet(val bottomSheetType: String): MappingEvent()
     object DismissAlertDialog: MappingEvent()
     object DismissNoInternetDialog: MappingEvent()
-    object CancelSearchAssistance: MappingEvent()
+    object CancelRequestHelp: MappingEvent()
     data class DeclineRescueRequest(val cardModel: CardModel): MappingEvent()
     data class AcceptRescueRequest(val cardModel: CardModel): MappingEvent()
     object LoadData: MappingEvent()

@@ -22,7 +22,8 @@ data class MappingState(
 
 //    UI STATES
     val isLoading: Boolean = false,
-    val searchAssistanceButtonVisible: Boolean = true,
+    val requestHelpButtonVisible: Boolean = true,
+    val respondToHelpButtonVisible: Boolean = false,
     val hasInternet: Boolean = true,
     val bottomSheetType: String = "",
     val isSearchingForAssistance: Boolean = false,

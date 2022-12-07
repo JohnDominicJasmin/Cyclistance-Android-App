@@ -169,12 +169,12 @@ fun MappingScreen(
                     onDisabled = settingResultRequest::launch,
                     onEnabled = {
                         mappingViewModel.onEvent(
-                            event = MappingEvent.SearchAssistance)
+                            event = MappingEvent.RequestHelp)
 
                     })
             } else {
                 mappingViewModel.onEvent(
-                    event = MappingEvent.SearchAssistance)
+                    event = MappingEvent.RequestHelp)
 
             }
         }
@@ -255,7 +255,7 @@ fun MappingScreen(
         coroutineScope.launch {
             bottomSheetScaffoldState.bottomSheetState.collapse()
         }.invokeOnCompletion {
-            mappingViewModel.onEvent(event = MappingEvent.CancelSearchAssistance)
+            mappingViewModel.onEvent(event = MappingEvent.CancelRequestHelp)
             mappingViewModel.onEvent(event = MappingEvent.StopPinging)
         }
         Unit
@@ -493,7 +493,7 @@ fun MappingScreenPreview() {
             isDarkTheme = true,
             state = MappingState(
                 bottomSheetType = BottomSheetType.SearchAssistance.type,
-                searchAssistanceButtonVisible = false),
+                requestHelpButtonVisible = false),
             onClickSearchButton = {},
             onClickLocateUserButton = {},
             mapView = mapView,
@@ -517,6 +517,7 @@ fun MappingScreen(
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     onClickLocateUserButton: () -> Unit = {},
     onClickSearchButton: () -> Unit = {},
+    onClickRespondToHelpButton: () -> Unit = {},
     onClickRescueArrivedButton: () -> Unit = {},
     onClickReachedDestinationButton: () -> Unit = {},
     onClickCancelSearchButton: () -> Unit = {},

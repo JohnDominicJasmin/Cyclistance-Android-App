@@ -188,7 +188,7 @@ class MappingViewModel @Inject constructor(
                 acceptRescueRequest(event.cardModel)
             }
 
-            is MappingEvent.CancelSearchAssistance -> {
+            is MappingEvent.CancelRequestHelp -> {
                 cancelSearchAssistance()
             }
             is MappingEvent.LoadUserProfile -> {
@@ -262,16 +262,38 @@ class MappingViewModel @Inject constructor(
                         distanceRemaining = distance.distanceFormat(),
                         timeRemaining = timeRemaining))
             }
+            hideRequestHelpButton()
+            showRespondToHelpButton()
+
         }
     }
 
+    private fun showRespondToHelpButton(){
+        _state.update { it.copy(respondToHelpButtonVisible = true) }
+    }
 
+    private fun hideRespondToHelpButton(){
+        _state.update { it.copy(respondToHelpButtonVisible = false) }
+    }
+
+
+
+    private fun showRequestHelpButton(){
+        _state.update { it.copy(requestHelpButtonVisible = true) }
+    }
+    private fun hideRequestHelpButton(){
+        _state.update { it.copy(requestHelpButtonVisible = false) }
+    }
 
 
     private fun dismissRescueeBanner(){
         if(state.value.selectedRescueeMapIcon != null){
             _state.update { it.copy(selectedRescueeMapIcon = null) }
+            hideRespondToHelpButton()
+            showRequestHelpButton()
         }
+
+
     }
 
     private suspend fun String.removeAssignedTransaction(){
@@ -482,9 +504,9 @@ class MappingViewModel @Inject constructor(
         _state.update {
             it.copy(userRescueTransaction = rescueTransaction,
                 rescuerETA = estimatedTimeArrival ?: "",
-                rescuer = rescuer,
-                searchAssistanceButtonVisible = false)
+                rescuer = rescuer)
         }
+        hideRequestHelpButton()
     }
 
     private fun startLoading() {
@@ -601,7 +623,7 @@ class MappingViewModel @Inject constructor(
                 )
 
             }.onSuccess {
-                _state.update { it.copy(searchAssistanceButtonVisible = true) }
+                showRequestHelpButton()
                 broadcastUser()
             }.onFailure { exception ->
                 Timber.e("Failed to cancel search assistance: ${exception.message}")
@@ -858,7 +880,8 @@ class MappingViewModel @Inject constructor(
 
             }.onSuccess {
                 finishLoading()
-                _state.update { it.copy(searchAssistanceButtonVisible = false) }
+
+
                 broadcastUser()
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
 
