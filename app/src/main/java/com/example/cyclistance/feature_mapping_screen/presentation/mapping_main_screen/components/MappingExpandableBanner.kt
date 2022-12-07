@@ -54,8 +54,7 @@ fun MappingExpandableBanner(
 
     Card(
         modifier = modifier
-            .clip(RoundedCornerShape(12.dp))
-            .shadow(elevation = 12.dp, shape = RoundedCornerShape(12.dp), )
+            .shadow(elevation = 12.dp, shape = RoundedCornerShape(12.dp))
             .animateContentSize(
                 animationSpec = tween(
                     durationMillis = 180,
