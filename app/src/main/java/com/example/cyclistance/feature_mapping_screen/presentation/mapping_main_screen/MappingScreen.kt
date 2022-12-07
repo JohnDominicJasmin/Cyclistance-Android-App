@@ -180,9 +180,10 @@ fun MappingScreen(
         }
     }
 
-    val userLocationAvailable by remember(locationPermissionsState.allPermissionsGranted, state.userLocation.latitude, state.userLocation.longitude) {
+    val userLocationAvailable by remember(locationPermissionsState.allPermissionsGranted,
+        state.userLocation?.latitude, state.userLocation?.longitude) {
         derivedStateOf {
-            locationPermissionsState.allPermissionsGranted.and(state.userLocation.latitude != DEFAULT_LATITUDE && state.userLocation.longitude != DEFAULT_LONGITUDE)
+            locationPermissionsState.allPermissionsGranted.and(state.userLocation?.latitude != DEFAULT_LATITUDE && state.userLocation?.longitude != DEFAULT_LONGITUDE)
         }
     }
 
@@ -241,8 +242,12 @@ fun MappingScreen(
                     context.checkLocationSetting(
                         onDisabled = settingResultRequest::launch)
                 }
-                val point = Point.fromLngLat(state.userLocation.longitude, state.userLocation.latitude)
-                locateUser(LOCATE_USER_ZOOM_LEVEL, point, DEFAULT_CAMERA_ANIMATION_DURATION)
+
+                state.userLocation?.let{
+                    val point = Point.fromLngLat(it.longitude, it.latitude)
+                    locateUser(LOCATE_USER_ZOOM_LEVEL, point, DEFAULT_CAMERA_ANIMATION_DURATION)
+                }
+
             })
     }}
 
