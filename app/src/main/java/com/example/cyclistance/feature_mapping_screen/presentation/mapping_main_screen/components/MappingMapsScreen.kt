@@ -4,7 +4,6 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.location.Location
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -126,8 +125,9 @@ fun MappingMapsScreen(
 
 
     LaunchedEffect(key1 = mapsMapView){
+
         pointAnnotationManager.addClickListener{
-            Toast.makeText(context, "Marker clicked name ${it.textField} ", Toast.LENGTH_SHORT).show()
+            it.textField?.let { it1 -> onClickRescueeMapIcon(it1) }
             true
         }
     }
