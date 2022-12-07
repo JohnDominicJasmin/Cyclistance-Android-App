@@ -1,7 +1,10 @@
 package com.example.cyclistance.feature_mapping_screen.domain.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-data class MappingBannerData(
+@Parcelize
+data class MappingBannerModel(
     val userProfileImage: Int,
     val name: String,
     val issue: String,
@@ -10,5 +13,5 @@ data class MappingBannerData(
     val timeRemaining: String,
     val address: String,
     val message: String
-)
+):Parcelable
 

@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_mapping_screen.domain.model.MappingBannerData
+import com.example.cyclistance.feature_mapping_screen.domain.model.MappingBannerModel
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.Black500
@@ -38,7 +38,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBannerData) {
+fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBannerModel) {
 
 
     var expandedState by remember { mutableStateOf(false) }
@@ -273,7 +273,7 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
 fun MappingExpandableBannerPreview() {
     CyclistanceTheme(true) {
         MappingExpandableBanner(
-            banner = MappingBannerData(
+            banner = MappingBannerModel(
                 userProfileImage = R.drawable.person_image,
                 name = "John Doe",
                 issue = "Faulty Brakes",
