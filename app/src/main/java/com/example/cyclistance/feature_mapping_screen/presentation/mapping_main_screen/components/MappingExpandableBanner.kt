@@ -4,7 +4,6 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -29,6 +28,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import coil.compose.AsyncImage
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping_screen.domain.model.MappingBannerModel
 import com.example.cyclistance.theme.Black440
@@ -92,9 +92,7 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
                 val (roundedImage, nameText, issueText, distanceAndTime, expandedSection, dismissButton) = createRefs()
 
 
-
-                Image(
-                    painter = painterResource(banner.userProfileImage),
+                AsyncImage(model = banner.userProfileImage,
                     contentDescription = "User Picture",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -103,8 +101,8 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
                         .constrainAs(roundedImage) {
                             top.linkTo(parent.top)
                             start.linkTo(parent.start)
-                        }
-                )
+                        })
+
 
                 Text(
                     text = banner.name,
@@ -224,15 +222,15 @@ fun MappingExpandableBanner(modifier: Modifier = Modifier, banner: MappingBanner
                         }
 
 
-                        val hasMessage = remember(banner.message){
+                        val hasMessage = remember(banner.message) {
                             banner.message.isNotEmpty()
                         }
 
-                        if(hasMessage){
+                        if (hasMessage) {
 
                             Divider(
-                            color = Black450,
-                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp))
+                                color = Black450,
+                                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp))
 
                             Text(
                                 text = "Message:",
@@ -274,7 +272,7 @@ fun MappingExpandableBannerPreview() {
     CyclistanceTheme(true) {
         MappingExpandableBanner(
             banner = MappingBannerModel(
-                userProfileImage = R.drawable.person_image,
+                userProfileImage = "https://www.erlanger.org/find-a-doctor/media/PhysicianPhotos/Carbone_1436.jpg",
                 name = "John Doe",
                 issue = "Faulty Brakes",
                 distanceRemaining = "7.0km",
