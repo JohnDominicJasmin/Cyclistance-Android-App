@@ -338,7 +338,6 @@ class MappingViewModel @Inject constructor(
             }.onSuccess {
                 broadcastUser()
                 broadcastRescueTransaction()
-                delay(500)
                 finishLoading()
                 _state.update { it.copy(respondedToHelp = true) }
             }.onFailure { exception ->
