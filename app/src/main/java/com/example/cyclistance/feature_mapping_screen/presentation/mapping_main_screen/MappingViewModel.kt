@@ -164,8 +164,11 @@ class MappingViewModel @Inject constructor(
                 selectRescueeMapIcon(event.id)
             }
 
+            is MappingEvent.RequestHelp -> {
+                requestHelp()
+            }
 
-            is MappingEvent.RemovedRescueTransaction -> {
+            is MappingEvent.CancelRescueTransaction -> {
                 removeAssignedTransaction()
             }
 
@@ -195,7 +198,7 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.CancelRequestHelp -> {
-                cancelSearchAssistance()
+                cancelRequestHelp()
             }
             is MappingEvent.LoadUserProfile -> {
                 loadUserProfile()
@@ -640,7 +643,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun cancelSearchAssistance() {
+    private fun cancelRequestHelp() {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 startLoading()
