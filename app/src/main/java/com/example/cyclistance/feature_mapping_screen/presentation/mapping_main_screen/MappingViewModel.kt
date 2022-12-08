@@ -730,20 +730,12 @@ class MappingViewModel @Inject constructor(
 
     private fun RescueTransactionItem.broadCastLocationToTransaction(location: android.location.Location){
         runCatching {
-
-            if (this.id.isNullOrEmpty()) {
-                return
-            }
-
-            if(this.cancellation?.rescueCancelled == true){
-                return
-            }
-
+            val user = state.value.user
             mappingUseCase.broadcastTransactionLocationUseCase(
                 LiveLocationWSModel(
                     latitude = location.latitude,
                     longitude = location.longitude,
-                    room = this.id))
+                    room = this.id), user = user, rescueTransactionItem = this)
 
         }.onFailure {
             Timber.v("Broadcasting location to transaction failed: ${it.message}")
