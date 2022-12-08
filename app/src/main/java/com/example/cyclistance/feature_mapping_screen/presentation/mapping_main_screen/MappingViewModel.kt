@@ -703,7 +703,7 @@ class MappingViewModel @Inject constructor(
 
     private fun UserItem.getUserRescueRespondents(user: User) {
         val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
-        rescueRequest?.respondents?.forEachIndexed { index, respondent ->
+        rescueRequest?.respondents?.forEach { respondent ->
             val userRespondent = user.findUser(id = respondent.clientId)
             val distance = location?.let { start ->
                 userRespondent.location?.let { end ->
@@ -713,11 +713,11 @@ class MappingViewModel @Inject constructor(
 
             distance?.let{
                 val formattedETA = getCalculatedETA(distanceMeters = distance)
-                rescueRespondentsSnapShot.add(index = index, element = userRespondent.toCardModel(distance = distance.distanceFormat(), eta = formattedETA))
+                rescueRespondentsSnapShot.add(element = userRespondent.toCardModel(distance = distance.distanceFormat(), eta = formattedETA))
             }
 
         }
-        _state.update {
+      _state.update {
             it.copy(userRescueRequestRespondents = RescueRequestRespondents(
                 respondents = rescueRespondentsSnapShot.distinct().toImmutableList()))
         }
