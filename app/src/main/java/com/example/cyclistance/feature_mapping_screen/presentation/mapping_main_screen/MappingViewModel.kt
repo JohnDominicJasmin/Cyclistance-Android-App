@@ -80,11 +80,11 @@ class MappingViewModel @Inject constructor(
     private suspend fun loadClient(){
         coroutineScope {
            val user = state.value.nearbyCyclists
-           user.getClient()
+           user.updateClient()
         }
     }
 
-    private fun User.getClient(rescueTransactionItem: RescueTransactionItem? = null){
+    private fun User.updateClient(rescueTransactionItem: RescueTransactionItem? = null){
 
         val rescueTransaction = rescueTransactionItem ?: state.value.userRescueTransaction
         val role = state.value.user.transaction?.role
@@ -104,7 +104,7 @@ class MappingViewModel @Inject constructor(
 
     private fun updateClient(rescueTransactionItem: RescueTransactionItem){
         val nearbyCyclist = state.value.nearbyCyclists
-        nearbyCyclist.getClient(rescueTransactionItem)
+        nearbyCyclist.updateClient(rescueTransactionItem)
     }
 
     private suspend fun loadUsers() {
@@ -136,21 +136,25 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun RescueTransaction.getUserRescueTransaction(){
+
+    private inline fun getUserRescueTransaction(
+        rescueTransaction: RescueTransaction,
+        onFoundRescueTransaction: (RescueTransactionItem?) -> Unit) {
+
         val transactionId = state.value.user.transaction?.transactionId
-        val rescueTransaction = transactionId?.let { findRescueTransaction(it) }
-        _state.update { it.copy(userRescueTransaction = rescueTransaction) }
-        rescueTransaction?.let { transaction ->
-            updateClient(transaction)
-        }
+        val rescueTransactionResult =
+            transactionId?.let { rescueTransaction.findRescueTransaction(it) }
+        onFoundRescueTransaction(rescueTransactionResult)
+
     }
 
     fun onEvent(event: MappingEvent) {
         when (event) {
 
-            is MappingEvent.SearchAssistance -> {
-                uploadUserProfile()
+            is MappingEvent.RespondToHelp -> {
+               respondToHelp()
             }
+
             is MappingEvent.DismissRescueeBanner -> {
                 dismissRescueeBanner()
             }
@@ -217,6 +221,25 @@ class MappingViewModel @Inject constructor(
             }
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+    }
+
+    private fun respondToHelp() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val selectedRescuee = state.value.selectedRescueeMapIcon
+            uploadUserProfile{
+                runCatching {
+                    mappingUseCase.addRescueRespondentUseCase(
+                        userId = selectedRescuee!!.userId,
+                        respondentId = getId())
+                }.onSuccess {
+                    broadcastUser()
+                    _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Rescue request sent"))
+                    _state.update { it.copy(respondedToHelp = true) }
+                }.onFailure {
+                    it.handleException()
+                }
+            }
+        }
     }
 
     private fun selectRescueeMapIcon(id: String){
@@ -317,6 +340,7 @@ class MappingViewModel @Inject constructor(
                 broadcastRescueTransaction()
                 delay(500)
                 finishLoading()
+                _state.update { it.copy(respondedToHelp = true) }
             }.onFailure { exception ->
                 finishLoading()
                 exception.handleException()
@@ -456,7 +480,7 @@ class MappingViewModel @Inject constructor(
 
     private fun getTransactionId(rescuer: UserItem):String{
         val user = state.value.user
-        return user.id?.take(3) + rescuer.id?.take(3) + System.currentTimeMillis().toString().takeLast(4)
+        return user.id?.take(3) + rescuer.id?.take(3) + System.currentTimeMillis().toString().takeLast(6)
     }
     private suspend fun broadcastRescueTransaction(){
         runCatching {
@@ -491,6 +515,7 @@ class MappingViewModel @Inject constructor(
             delay(500)
             updateTransactionETA(rescuer, rescueTransaction)
             finishLoading()
+            broadcastRescueTransaction()
         }.onFailure { exception ->
             finishLoading()
             exception.handleException()
@@ -745,6 +770,54 @@ class MappingViewModel @Inject constructor(
                 }
         }
     }
+    private suspend fun RescueTransaction.checkRescueRequestAccepted(){
+        val respondedToHelp = state.value.respondedToHelp
+
+        if(respondedToHelp.not()){
+            return
+        }
+
+        getUserRescueTransaction(this){ rescueTransaction ->
+            rescueTransaction?.let{ transaction ->
+
+                if(transaction.cancellation?.rescueCancelled == true){
+                    return@getUserRescueTransaction
+                }
+
+                if(transaction.rescuerId != state.value.user.id){
+                    return@getUserRescueTransaction
+                }
+
+                if(transaction.rescuerId != getId()){
+                    return@getUserRescueTransaction
+                }
+
+                val rescuee = state.value.nearbyCyclists.findUser(transaction.rescueeId!!)
+
+
+                coroutineScope {
+                    _state.update {
+                        it.copy(
+                            alertDialogModel = AlertDialogModel(
+                                title = "Request Accepted",
+                                description = "${rescuee.name} accepted your Rescue Request.",
+                                icon = R.raw.success,
+                            ), respondedToHelp = false)
+                    }
+                }
+
+            }
+        }
+
+    }
+    private fun RescueTransaction.updateRescueTransaction(){
+        getUserRescueTransaction(this){ rescueTransaction ->
+            _state.update { it.copy(userRescueTransaction = rescueTransaction) }
+            rescueTransaction?.let { transaction ->
+                updateClient(transaction)
+            }
+        }
+    }
     private fun unSubscribeToRescueTransactionUpdates() {
         getRescueTransactionUpdatesJob?.cancel()
     }
@@ -778,7 +851,7 @@ class MappingViewModel @Inject constructor(
                 }.collect {
                     it.getUser()
                     it.loadUsers()
-                    it.getClient()
+                    it.updateClient()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
         }
@@ -880,8 +953,6 @@ class MappingViewModel @Inject constructor(
 
             }.onSuccess {
                 finishLoading()
-
-
                 broadcastUser()
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
 

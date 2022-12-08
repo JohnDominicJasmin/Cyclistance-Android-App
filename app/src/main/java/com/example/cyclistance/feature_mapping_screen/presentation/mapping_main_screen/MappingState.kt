@@ -53,7 +53,7 @@ data class MappingState(
 
 
 
-
+    val respondedToHelp: Boolean = false,
     val transactionLocation: Location? = null,
     val rescuerETA: String = "",
     val currentAddress: String = "",
