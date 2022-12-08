@@ -949,8 +949,9 @@ class MappingViewModel @Inject constructor(
                         contactNumber = getPhoneNumber(),
                         location = Location(
                             latitude = address.latitude,
-                            longitude = address.longitude)))
-                mappingUseCase.updateAddressUseCase(currentAddress)
+                            longitude = address.longitude),
+                        rescueRequest = RescueRequest(), userAssistance = UserAssistance()))
+                mappingUseCase.setAddressUseCase(currentAddress)
 
             }.onSuccess {
                 finishLoading()

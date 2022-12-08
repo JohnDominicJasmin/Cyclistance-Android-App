@@ -4,7 +4,7 @@ import com.example.cyclistance.core.utils.validation.InputValidate.numberOfChara
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 
-class UpdateAddressUseCase(private val repository: MappingRepository) {
+class SetAddressUseCase(private val repository: MappingRepository) {
 
     suspend operator fun invoke(address: String){
         if(address.isEmpty()){
@@ -14,6 +14,6 @@ class UpdateAddressUseCase(private val repository: MappingRepository) {
             throw MappingExceptions.AddressException("Address is too short")
         }
 
-        repository.updateAddress(address)
+        repository.setAddress(address)
     }
 }

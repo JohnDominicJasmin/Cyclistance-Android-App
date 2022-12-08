@@ -114,8 +114,8 @@ class ConfirmDetailsViewModel @Inject constructor(
                                 needHelp = true
                             ))).also {
 
-                        mappingUseCase.updateAddressUseCase(address = address)
-                        mappingUseCase.updateBikeTypeUseCase(bikeType = bikeType)
+                        mappingUseCase.setAddressUseCase(address = address)
+                        mappingUseCase.setBikeTypeUseCase(bikeType = bikeType)
                     }
                 }
 

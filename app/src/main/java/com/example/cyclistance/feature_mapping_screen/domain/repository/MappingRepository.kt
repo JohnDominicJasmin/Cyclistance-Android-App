@@ -23,10 +23,10 @@ interface MappingRepository {
 
 
     fun getBikeType(): Flow<String>
-    suspend fun updateBikeType(bikeType: String)
+    suspend fun setBikeType(bikeType: String)
 
     fun getAddress(): Flow<String>
-    suspend fun updateAddress(address: String)
+    suspend fun setAddress(address: String)
 
     fun getUserLocation(): Flow<Location>
 

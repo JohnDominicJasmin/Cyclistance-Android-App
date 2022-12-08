@@ -56,7 +56,7 @@ class MappingRepositoryImpl(
         return dataStore.getData(key = BIKE_TYPE_KEY, defaultValue = "")
     }
 
-    override suspend fun updateBikeType(bikeType: String) {
+    override suspend fun setBikeType(bikeType: String) {
         dataStore.editData(BIKE_TYPE_KEY, bikeType)
     }
 
@@ -64,7 +64,7 @@ class MappingRepositoryImpl(
         return dataStore.getData(key = ADDRESS_KEY, defaultValue = "")
     }
 
-    override suspend fun updateAddress(address: String) {
+    override suspend fun setAddress(address: String) {
         dataStore.editData(ADDRESS_KEY, address)
     }
 
