@@ -327,7 +327,7 @@ fun MappingScreen(
 
 
     val onClickOkButtonCancelledRescue = remember{{
-      mappingViewModel.onEvent(event = MappingEvent.RemovedRescueTransaction)
+        mappingViewModel.onEvent(event = MappingEvent.CancelRescueTransaction)
     }}
 
     val onClickRescueeMapIcon = remember{{ id: String ->
@@ -336,6 +336,9 @@ fun MappingScreen(
 
     val onDismissRescueeBanner = remember{{
         mappingViewModel.onEvent(event = MappingEvent.DismissRescueeBanner)
+    }}
+    val onClickRespondToHelpButton = remember{{
+        mappingViewModel.onEvent(event = MappingEvent.RespondToHelp)
     }}
 
 
@@ -470,7 +473,8 @@ fun MappingScreen(
         onClickOkButtonCancelledRescue = onClickOkButtonCancelledRescue,
         onClickRescueeMapIcon = onClickRescueeMapIcon,
         onMapClick = onDismissRescueeBanner,
-        onClickDismissBannerButton = onDismissRescueeBanner
+        onClickDismissBannerButton = onDismissRescueeBanner,
+        onClickRespondToHelpButton = onClickRespondToHelpButton
     )
 
 }
