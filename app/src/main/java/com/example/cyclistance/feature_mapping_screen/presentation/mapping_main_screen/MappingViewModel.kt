@@ -109,17 +109,17 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun loadUsers() {
         coroutineScope {
-            mappingUseCase.getUsersUseCase().distinctUntilChanged().collect{
-                runCatching {
+            runCatching {
+                mappingUseCase.getUsersUseCase().distinctUntilChanged().collect {
                     it.getUser()
                     it.loadUsers()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                }.onFailure {
-                    it.handleException()
                 }
+            }.onFailure {
+                it.handleException()
             }
-
         }
+
     }
 
 
@@ -357,17 +357,18 @@ class MappingViewModel @Inject constructor(
         getTransactionLocationUpdatesJob?.cancel()
         getTransactionLocationUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
 
-            mappingUseCase.getTransactionLocationUpdatesUseCase().distinctUntilChanged().collect{ liveLocation ->
-                runCatching {
-                    liveLocation.updateTransactionLocation()
-                    liveLocation.updateTransactionETA()
-                    liveLocation.updateTransactionDistance()
-                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                }.onFailure {
-                    it.handleException()
-                }
-
+            runCatching {
+                mappingUseCase.getTransactionLocationUpdatesUseCase().distinctUntilChanged()
+                    .collect { liveLocation ->
+                        liveLocation.updateTransactionLocation()
+                        liveLocation.updateTransactionETA()
+                        liveLocation.updateTransactionDistance()
+                        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                    }
+            }.onFailure {
+                it.handleException()
             }
+
         }
     }
 
@@ -758,24 +759,26 @@ class MappingViewModel @Inject constructor(
     private fun unSubscribeToTransactionLocationUpdates(){
         getTransactionLocationUpdatesJob?.cancel()
     }
+
     private fun subscribeToRescueTransactionUpdates() {
         getRescueTransactionUpdatesJob?.cancel()
         getRescueTransactionUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
 
-            mappingUseCase.getRescueTransactionUpdatesUseCase().collect{
-                runCatching {
+            runCatching {
+                mappingUseCase.getRescueTransactionUpdatesUseCase().collect {
                     it.updateRescueTransaction()
                     it.checkRescueRequestAccepted()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                }.onFailure {
-                    Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
                 }
+            }.onFailure {
+                Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
             }
         }
     }
+
     private suspend fun RescueTransaction.checkRescueRequestAccepted(){
         val respondedToHelp = state.value.respondedToHelp
-
+        val role = state.value.user.transaction?.role
         if(respondedToHelp.not()){
             return
         }
@@ -792,6 +795,10 @@ class MappingViewModel @Inject constructor(
                 }
 
                 if(transaction.rescuerId != getId()){
+                    return@getUserRescueTransaction
+                }
+
+                if(role != Role.RESCUER.name.lowercase()){
                     return@getUserRescueTransaction
                 }
 
@@ -827,12 +834,14 @@ class MappingViewModel @Inject constructor(
     private fun unSubscribeToNearbyUsersChanges() {
         getUsersUpdatesJob?.cancel()
     }
+
     private fun subscribeToLocationUpdates() {
         locationUpdatesJob?.cancel()
         locationUpdatesJob = viewModelScope.launch(Dispatchers.IO) {
 
-            mappingUseCase.getUserLocationUseCase().collect{ location ->
-                runCatching {
+            runCatching {
+                mappingUseCase.getUserLocationUseCase().collect { location ->
+
                     val rescueTransaction = state.value.userRescueTransaction
                     rescueTransaction?.broadCastLocationToTransaction(location)
                     geocoder.getAddress(location.latitude, location.longitude) { addresses ->
@@ -840,25 +849,28 @@ class MappingViewModel @Inject constructor(
                     }
                     updateLocation(location)
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                }.onFailure {
-                    Timber.e("Error Location Updates: ${it.message}")
                 }
+
+            }.onFailure {
+                Timber.e("Error Location Updates: ${it.message}")
             }
         }
     }
+
     private fun subscribeToNearbyUsersChanges() {
         getUsersUpdatesJob?.cancel()
         getUsersUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
-            mappingUseCase.getUserUpdatesUseCase().collect{
-                runCatching {
+            runCatching {
+                mappingUseCase.getUserUpdatesUseCase().collect {
                     it.getUser()
                     it.loadUsers()
                     it.updateClient()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                }.onFailure {
-                    Timber.e("ERROR GETTING USERS: ${it.message}")
-                    it.handleException()
                 }
+
+            }.onFailure {
+                Timber.e("ERROR GETTING USERS: ${it.message}")
+                it.handleException()
             }
         }
     }
