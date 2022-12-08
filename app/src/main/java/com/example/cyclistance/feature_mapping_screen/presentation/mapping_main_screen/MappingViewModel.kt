@@ -380,6 +380,7 @@ class MappingViewModel @Inject constructor(
                 }
 
                 updateRoleBottomSheet(role)
+                removeAssignedTransaction()
 
             }
         }
