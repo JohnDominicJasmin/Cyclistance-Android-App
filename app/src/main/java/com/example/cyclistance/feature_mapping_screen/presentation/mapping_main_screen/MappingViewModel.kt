@@ -907,25 +907,32 @@ class MappingViewModel @Inject constructor(
     }
 
 
-
-    private fun uploadUserProfile() {
+    private fun requestHelp() {
         viewModelScope.launch(Dispatchers.IO) {
-            val address = state.value.userAddress.address
-            if (address != null) {
-                uploadProfile(address)
-                return@launch
+            uploadUserProfile {
+                hideRequestHelpButton()
+                _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
             }
-            _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
-
         }.invokeOnCompletion {
             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+        }
+    }
+
+    private suspend inline fun uploadUserProfile(crossinline onSuccess : suspend () -> Unit) {
+        coroutineScope {
+            val address = state.value.userAddress.address
+            if (address != null) {
+                uploadProfile(address, onSuccess)
+                return@coroutineScope
+            }
+            _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
         }
     }
 
 
 
 
-    private suspend fun uploadProfile(address: Address) {
+    private suspend inline fun uploadProfile(address: Address, crossinline onSuccess: suspend  () -> Unit ) {
         coroutineScope {
             runCatching {
                 val currentAddress = address.getFullAddress()
@@ -947,7 +954,7 @@ class MappingViewModel @Inject constructor(
             }.onSuccess {
                 finishLoading()
                 broadcastUser()
-                _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
+                onSuccess()
 
             }.onFailure { exception ->
                 Timber.e("Error uploading profile: ${exception.message}")
