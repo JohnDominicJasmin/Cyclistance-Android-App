@@ -372,7 +372,7 @@ class MappingViewModel @Inject constructor(
             rescueTransaction?.let { transaction ->
 
                 val distance = async { getCalculatedDistance(
-                    startingLocation = Location(latitude, longitude),
+                    startingLocation = Location(latitude!!, longitude!!),
                     endLocation = Location(transaction.latitude, transaction.longitude)).toInt() }
 
                 if (distance.await() >= NEAREST_METERS) {
@@ -400,16 +400,16 @@ class MappingViewModel @Inject constructor(
     private fun LiveLocationWSModel.updateTransactionLocation() {
         _state.update {
             it.copy(transactionLocation = Location(
-                    latitude = this.latitude,
-                    longitude = this.longitude))
+                    latitude = this.latitude!!,
+                    longitude = this.longitude!!))
         }
     }
 
     private fun LiveLocationWSModel.updateTransactionETA(){
         val userLocation = state.value.userLocation
         val eta = getEstimatedTimeArrival(startingLocation = Location(
-            latitude = this.latitude,
-            longitude = this.longitude), endLocation = userLocation!!)
+            latitude = this.latitude!!,
+            longitude = this.longitude!!), endLocation = userLocation!!)
         _state.update { it.copy(rescuerETA = eta) }
     }
 
