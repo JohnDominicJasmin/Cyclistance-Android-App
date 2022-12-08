@@ -46,6 +46,7 @@ val userItems = listOf(
         id = "32362323",
         location = Location(latitude = 14.090421127354372, longitude = 121.14870941179073),
         name = "John Terminator",
+        rescueRequest = RescueRequest(),
         userAssistance = UserAssistance(
             needHelp = true,
             confirmationDetail = ConfirmationDetail(
@@ -62,6 +63,7 @@ val userItems = listOf(
         id = "423623",
         location = Location(latitude = 14.096044763009578, longitude = 121.13918029795505),
         name = "Boomie",
+        rescueRequest = RescueRequest(),
         userAssistance = UserAssistance(
             needHelp = true,
             confirmationDetail = ConfirmationDetail(
@@ -79,6 +81,7 @@ val userItems = listOf(
         id = "5",
         location = Location(latitude = 14.044194, longitude = 121.747392),
         name = "John Doe",
+        rescueRequest = RescueRequest(),
         profilePictureUrl = "https://www.erlanger.org/find-a-doctor/media/PhysicianPhotos/Carbone_1436.jpg",
         userAssistance = UserAssistance(
             needHelp = true,
@@ -94,6 +97,7 @@ val userItems = listOf(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
         id = "6",
+        rescueRequest = RescueRequest(),
         location = Location(latitude = 6.523497, longitude = 125.037057),
         name = "Jeniffer",
         profilePictureUrl = "https://www.harleytherapy.co.uk/counselling/wp-content/uploads/16297800391_5c6e812832.jpg",
@@ -103,6 +107,7 @@ val userItems = listOf(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
         id = "7",
+        rescueRequest = RescueRequest(),
         location = Location(latitude = 6.531999, longitude = 125.043330),
         name = "Mark",
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQDwnb8KCy8eejkddV5FaKsBcm1uDznQhInOQ&usqp=CAU",
