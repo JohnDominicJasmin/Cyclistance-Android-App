@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
@@ -22,6 +23,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.PuckBearingSource
 import com.mapbox.maps.plugin.attribution.attribution
+import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.locationcomponent.location2
 import com.mapbox.maps.plugin.logo.logo
 import com.mapbox.maps.plugin.scalebar.scalebar
@@ -163,18 +165,24 @@ object MappingUtils {
         return "$hourFormat$minsFormat"
     }
 
+    private val getScreenHeight = Resources.getSystem().displayMetrics.heightPixels
+
     fun MapView.setDefaultSettings(
         parentContext: Context,
         navigationLocationProvider: NavigationLocationProvider) {
         scalebar.enabled = false
         logo.enabled = false
         attribution.enabled = false
-
+        compass.apply {
+            fadeWhenFacingNorth = false
+            marginTop = (getScreenHeight / 2.6).toFloat()
+            marginRight = 30f
+        }
         location2.apply {
 
             showAccuracyRing = true
             pulsingColor =
-                ContextCompat.getColor(parentContext, com.example.cyclistance.R.color.ThemeColor)
+                ContextCompat.getColor(parentContext, R.color.ThemeColor)
             puckBearingEnabled = false
             pulsingMaxRadius = 120.0f
             puckBearingSource = PuckBearingSource.HEADING
