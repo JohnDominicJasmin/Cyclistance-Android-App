@@ -1,7 +1,7 @@
 package com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions
 
 import android.content.Context
-import com.example.cyclistance.core.utils.network_observer.NetworkConnectivityUtil
+import com.example.cyclistance.feature_mapping_screen.data.network_observer.NetworkConnectivityUtil
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 

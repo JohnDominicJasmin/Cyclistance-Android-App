@@ -2,11 +2,11 @@ package com.example.cyclistance.feature_authentication.domain.use_case.create_ac
 
 import android.content.Context
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.network_observer.NetworkConnectivityUtil
 import com.example.cyclistance.core.utils.validation.InputValidate.isEmailValid
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
+import com.example.cyclistance.feature_mapping_screen.data.network_observer.NetworkConnectivityUtil
 import com.google.firebase.auth.AuthCredential
 
 class SignInWithEmailAndPasswordUseCase(
