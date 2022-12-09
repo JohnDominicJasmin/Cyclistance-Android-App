@@ -658,22 +658,21 @@ fun MappingScreen(
 
                 val cancellation = rescueTransaction?.cancellation
 
-                val cancellationReason = cancellation?.cancellationReason
+                val cancellationReason = cancellation?.cancellationReason ?: return@AnimatedVisibility
 
 
                 MappingCancelledRescue(
                     onClickOkButton = onClickOkButtonCancelledRescue,
                     cancelledRescueModel = CancelledRescueModel(
-                        transactionID = rescueTransaction!!.id,
-                        rescueCancelledBy = cancellation!!.nameCancelledBy,
-                        reason = cancellationReason!!.reason,
+                        transactionID = rescueTransaction.id,
+                        rescueCancelledBy = cancellation.nameCancelledBy,
+                        reason = cancellationReason.reason,
                         message = cancellationReason.message
                     ))
             }
 
             AnimatedVisibility(visible = state.selectedRescueeMapIcon != null,
                 enter = expandVertically(expandFrom = Alignment.Top) { 20 },
-                // Shrinks the content to half of its full height via an animation.
                 exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
                     fullHeight / 2
                 },

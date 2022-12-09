@@ -125,9 +125,12 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun loadRescueTransaction() {
         coroutineScope {
+            val transactionId = state.value.user.transaction?.transactionId
+            if (transactionId.isNullOrEmpty()) {
+                return@coroutineScope
+            }
             runCatching {
-                val transactionId = state.value.user.transaction?.transactionId
-                transactionId?.let { mappingUseCase.getRescueTransactionByIdUseCase(it) }
+                mappingUseCase.getRescueTransactionByIdUseCase(transactionId)
             }.onSuccess { rescueTransaction ->
                 _state.update { it.copy(userRescueTransaction = rescueTransaction) }
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
@@ -260,7 +263,7 @@ class MappingViewModel @Inject constructor(
                 return@launch
             }
 
-            val distance = MappingUtils.getCalculatedDistance(
+            val distance = getCalculatedDistance(
                 startingLocation = Location(
                     latitude = userLocation.latitude,
                     longitude = userLocation.longitude
@@ -333,13 +336,14 @@ class MappingViewModel @Inject constructor(
                 rescueRequest = RescueRequest()))
     }
 
-    private val clientId = state.value.rescuer?.id ?: state.value.rescuee?.id
+
 
     private fun removeAssignedTransaction(){
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 getId().removeAssignedTransaction()
                 clientId?.removeAssignedTransaction()
+
             }.onSuccess {
                 broadcastUser()
                 broadcastRescueTransaction()
@@ -376,14 +380,16 @@ class MappingViewModel @Inject constructor(
         coroutineScope {
             val rescueTransaction = state.value.userLocation
             val role = state.value.user.transaction?.role
+            latitude?:return@coroutineScope
+            longitude?:return@coroutineScope
 
             rescueTransaction?.let { transaction ->
 
-                val distance = async { getCalculatedDistance(
-                    startingLocation = Location(latitude!!, longitude!!),
-                    endLocation = Location(transaction.latitude, transaction.longitude)).toInt() }
+                val distance = getCalculatedDistance(
+                    startingLocation = Location(latitude, longitude),
+                    endLocation = Location(transaction.latitude, transaction.longitude)).toInt()
 
-                if (distance.await() >= NEAREST_METERS) {
+                if (distance >= NEAREST_METERS) {
                     return@let
                 }
 
@@ -406,18 +412,24 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun LiveLocationWSModel.updateTransactionLocation() {
+        this.longitude?:return
+        this.latitude?:return
         _state.update {
             it.copy(transactionLocation = Location(
-                    latitude = this.latitude!!,
-                    longitude = this.longitude!!))
+                    latitude = this.latitude,
+                    longitude = this.longitude))
         }
     }
 
     private fun LiveLocationWSModel.updateTransactionETA(){
         val userLocation = state.value.userLocation
+        userLocation?:return
+        this.latitude?:return
+        this.longitude?:return
+
         val eta = getEstimatedTimeArrival(startingLocation = Location(
-            latitude = this.latitude!!,
-            longitude = this.longitude!!), endLocation = userLocation!!)
+            latitude = this.latitude,
+            longitude = this.longitude), endLocation = userLocation)
         _state.update { it.copy(rescuerETA = eta) }
     }
 
@@ -476,7 +488,13 @@ class MappingViewModel @Inject constructor(
 
             }.onSuccess { rescueTransaction ->
                 broadcastRescueTransaction()
-                assignTransaction(rescueTransaction,user, rescuer, transactionId)
+
+                assignTransaction(
+                    rescueTransaction = rescueTransaction,
+                    user = user,
+                    rescuer = rescuer,
+                    transactionId = transactionId)
+
             }.onFailure { exception ->
                 finishLoading()
                 exception.handleException()
@@ -534,7 +552,10 @@ class MappingViewModel @Inject constructor(
 
     private fun updateTransactionETA(rescuer: UserItem,rescueTransaction: RescueTransactionItem ){
         val userLocation = state.value.userLocation
-        val estimatedTimeArrival = rescuer.location?.let { getEstimatedTimeArrival(startingLocation = it, endLocation = userLocation!!) }
+
+        userLocation?:return
+
+        val estimatedTimeArrival = rescuer.location?.let { getEstimatedTimeArrival(startingLocation = it, endLocation = userLocation) }
         _state.update {
             it.copy(userRescueTransaction = rescueTransaction,
                 rescuerETA = estimatedTimeArrival ?: "",
@@ -768,52 +789,55 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getRescueTransactionUpdatesUseCase().collect {
                     it.updateRescueTransaction()
                     it.checkRescueRequestAccepted()
-                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
+            }.onSuccess {
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }.onFailure {
                 Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
             }
         }
     }
 
-    private suspend fun RescueTransaction.checkRescueRequestAccepted(){
+
+
+    private fun RescueTransaction.checkRescueRequestAccepted(){
         val respondedToHelp = state.value.respondedToHelp
-        val role = state.value.user.transaction?.role
-        if(respondedToHelp.not()){
+        val user = state.value.user
+        val role = user.transaction?.role
+        val userId = state.value.user.id ?: getId()
+
+        if (respondedToHelp.not()) {
             return
         }
 
-        getUserRescueTransaction(this){ rescueTransaction ->
-            rescueTransaction?.let{ transaction ->
+        getUserRescueTransaction(this) { rescueTransaction ->
+            rescueTransaction?.let { transaction ->
 
-                if(transaction.cancellation?.rescueCancelled == true){
-                    return@getUserRescueTransaction
+                if (transaction.cancellation?.rescueCancelled == true) {
+                    return@let
                 }
 
-                if(transaction.rescuerId != state.value.user.id){
-                    return@getUserRescueTransaction
+                if (transaction.rescuerId != userId) {
+                    return@let
                 }
 
-                if(transaction.rescuerId != getId()){
-                    return@getUserRescueTransaction
+                if (role == Role.RESCUEE.name.lowercase()) {
+                    return@let
                 }
 
-                if(role != Role.RESCUER.name.lowercase()){
-                    return@getUserRescueTransaction
+                if(transaction.rescueeId.isNullOrEmpty()){
+                    return@let
                 }
 
-                val rescuee = state.value.nearbyCyclists.findUser(transaction.rescueeId!!)
+                val rescueeName = state.value.nearbyCyclists.findUser(transaction.rescueeId).name
 
-
-                coroutineScope {
-                    _state.update {
-                        it.copy(
-                            alertDialogModel = AlertDialogModel(
-                                title = "Request Accepted",
-                                description = "${rescuee.name} accepted your Rescue Request.",
-                                icon = R.raw.success,
-                            ), respondedToHelp = false)
-                    }
+                _state.update {
+                    it.copy(
+                        alertDialogModel = AlertDialogModel(
+                            title = "Request Accepted",
+                            description = "$rescueeName accepted your Rescue Request.",
+                            icon = R.raw.success,
+                        ), respondedToHelp = false)
                 }
 
             }
