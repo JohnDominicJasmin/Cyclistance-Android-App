@@ -22,7 +22,7 @@ fun MappingBottomSheet(
     onClickCancelRescueTransactionButton: () -> Unit = {},
     content: @Composable (PaddingValues) -> Unit = {},
 ) {
-//todo: add animated visibility
+
 
     when (state.bottomSheetType) {
         BottomSheetType.RescuerArrived.type -> {
