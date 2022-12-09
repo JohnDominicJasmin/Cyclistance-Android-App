@@ -15,6 +15,7 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.BUTTON_ANIMATION_DURATION
 import com.example.cyclistance.databinding.ActivityMappingBinding
+import com.example.cyclistance.feature_mapping_screen.domain.model.Role
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getMapIconImageDescription
@@ -140,14 +141,19 @@ fun MappingMapsScreen(
     }
 
 
-    val rescuerLocation = remember(state.transactionLocation, state.rescuer?.location){
-        state.transactionLocation ?: state.rescuer?.location
-    }
-    val hasTransactionLocationChanges = remember(rescuerLocation){
-        rescuerLocation != null
+ val clientLocation = remember(state.transactionLocation, state.rescuer?.location, state.rescuee?.location){
+        with(state){
+             transactionLocation ?: rescuer?.location ?: rescuee?.location
+        }
     }
 
-    LaunchedEffect(key1 = mapsMapView, key2 = hasTransactionLocationChanges){
+    val hasTransactionLocationChanges = remember(clientLocation){
+        clientLocation != null
+    }
+
+    LaunchedEffect(key1 = mapsMapView, key2 = hasTransactionLocationChanges, key3 = clientLocation){
+
+        val role = state.user.transaction?.role
 
         if(hasTransactionLocationChanges.not()){
             return@LaunchedEffect
@@ -160,17 +166,23 @@ fun MappingMapsScreen(
         if(isRescueCancelled){
             return@LaunchedEffect
         }
+        val mapIcon = if(role == Role.RESCUEE.name.lowercase()){
+            R.drawable.ic_map_rescuer
+        }else{
+            R.drawable.ic_map_rescuee
+        }
 
         val pointAnnotationOptions = PointAnnotationOptions()
             .withIconImage(
-                AppCompatResources.getDrawable(context, R.drawable.ic_navigation_map_icon)
-                    ?.toBitmap(width = 90, height = 90)!!)
-            .withPoint(Point.fromLngLat(rescuerLocation!!.longitude, rescuerLocation.latitude))
+                AppCompatResources.getDrawable(context, mapIcon)
+                    ?.toBitmap(width = 98, height = 98)!!)
+            .withPoint(Point.fromLngLat(clientLocation!!.longitude, clientLocation.latitude))
 
         pointAnnotationManager.deleteAll()
         pointAnnotationManager.create(pointAnnotationOptions)
 
     }
+
 
 
     LaunchedEffect(key1 = pulsingEnabled, mapsMapView){
