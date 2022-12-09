@@ -11,14 +11,14 @@ val userItems = listOf(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
         id = "75kBHI4QZrYxlGGH9eCbY4yfLU72",
-        location = Location(latitude =  14.0874, longitude = 121.1517),
+        location = Location(latitude = 14.0874, longitude = 121.1517),
         name = "John Mark",
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK9gqFKRn28xKHD1CAbEevdzsLmsv5yQkGnQ&usqp=CAU",
         rescueRequest = RescueRequest(
             listOf(
-                Respondent(clientId = "2"),
-                Respondent(clientId = "3"),
-                Respondent(clientId = "4")
+                Respondent(clientId = "2326236"),
+                Respondent(clientId = "32362323"),
+                Respondent(clientId = "423623")
             )
         )),
 
@@ -131,9 +131,9 @@ val userItems = listOf(
         profilePictureUrl = "https://www.commonwealthfund.org/sites/default/files/images/___media_upload_young_adults_individual_mandate_exemption_could_lead_to_more_uninsurance.jpg",
     ),
 
-)
+    )
 
-suspend fun MappingUseCase.createMockUsers(){
+suspend fun MappingUseCase.createMockUsers() {
     userItems.forEach {
         createUserUseCase(it)
     }
