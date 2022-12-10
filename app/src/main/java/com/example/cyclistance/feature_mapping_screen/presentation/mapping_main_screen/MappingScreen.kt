@@ -738,59 +738,6 @@ fun MappingScreen(
     }
 }
 
-@Composable
-fun FloatingButtonSection(
-    state: MappingState = MappingState(),
-    modifier: Modifier = Modifier,
-    locationPermissionGranted: Boolean = true,
-    onClickLocateUserButton: () -> Unit = {},
-    onClickRouteOverButton: () -> Unit = {},
-    onClickRecenterButton: () -> Unit = {},
-    onClickOpenNavigationButton: () -> Unit = {}) {
-
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        FabAnimated(state.isNavigating) {
-            RouteOverViewButton(
-                modifier = Modifier.size(53.dp),
-                onClick = onClickRouteOverButton
-            )
-        }
-
-        FabAnimated(state.isNavigating) {
-            RecenterButton(
-                modifier = Modifier.size(53.dp),
-                onClick = onClickRecenterButton)
-        }
-
-        Box {
-            FabAnimated(visible = state.isNavigating) {
-                OpenNavigationButton(
-                    modifier = Modifier.size(53.dp),
-                    onClick = onClickOpenNavigationButton
-                )
-            }
-            FabAnimated(state.isNavigating.not()) {
-                LocateUserButton(
-                    modifier = Modifier.size(53.dp),
-                    locationPermissionGranted = locationPermissionGranted,
-                    onClick = onClickLocateUserButton
-                )
-            }
-        }
-
-    }
-}
-
-
-@Preview
-@Composable
-fun PreviewFloatingButtons() {
-    CyclistanceTheme(true) {
-        FloatingButtonSection(state = MappingState(
-            isNavigating = true,
-        ))
-    }
-}
 
 
 
