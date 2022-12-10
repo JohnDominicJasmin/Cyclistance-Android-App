@@ -253,30 +253,7 @@ fun MappingMapsScreen(
             }
         }
 
-        val routeProgressObserver = RouteProgressObserver { routeProgress ->
-            viewportDataSource.onRouteProgressChanged(routeProgress)
-            viewportDataSource.evaluate()
 
-            val style = mapboxMap.getStyle()
-            if (style != null) {
-                val maneuverArrowResult = routeArrowApi.addUpcomingManeuverArrow(routeProgress)
-                routeArrowView.renderManeuverUpdate(style, maneuverArrowResult)
-            }
-
-            val maneuvers = maneuverApi.getManeuvers(routeProgress)
-            maneuvers.fold(
-                { error ->
-                 Timber.e(error.errorMessage)
-                },
-                {
-                    maneuverView.renderManeuvers(maneuvers)
-                }
-            )
-
-            tripProgressView.render(
-                tripProgressApi.getTripProgress(routeProgress)
-            )
-        }
         val routesObserver = RoutesObserver { routeUpdateResult ->
             if (routeUpdateResult.routes.isNotEmpty()) {
                 val routeLines = routeUpdateResult.routes.map { RouteLine(it, null) }
@@ -377,19 +354,6 @@ fun MappingMapsScreen(
                             if (isDarkTheme) NavigationStyles.NAVIGATION_NIGHT_STYLE else NavigationStyles.NAVIGATION_DAY_STYLE
                         )
 
-                        stop.setOnClickListener {
-                            clearRouteAndStopNavigation()
-                        }
-                        recenter.setOnClickListener {
-                            navigationCamera.requestNavigationCameraToFollowing()
-                            routeOverview.showTextAndExtend(BUTTON_ANIMATION_DURATION)
-                        }
-                        routeOverview.setOnClickListener {
-                            navigationCamera.requestNavigationCameraToOverview()
-                            recenter.showTextAndExtend(BUTTON_ANIMATION_DURATION)
-                        }
-
-                        soundButton.unmute()
 
                         if(locationPermissionsState?.allPermissionsGranted == true) {
                             mapboxNavigation.startTripSession()
@@ -398,18 +362,15 @@ fun MappingMapsScreen(
                         onInitializeMapView(mapView)
                         onInitializeNavigationCamera(navigationCamera)
 
-                        tripProgressCard.visibility = state.tripProgressCardVisibility
-                        maneuverView.visibility = state.maneuverViewVisibility
-                        soundButton.visibility = state.soundButtonVisibility
-                        routeOverview.visibility = state.routeOverviewVisibility
-                        recenter.visibility = state.recenterButtonVisibility
+
+
                     }
 
 
 
                     Lifecycle.Event.ON_START -> {
+                        Timber.v("Lifecycle Event: ON_START")
                         mapboxNavigation.registerRoutesObserver(routesObserver)
-                        mapboxNavigation.registerRouteProgressObserver(routeProgressObserver)
                         mapboxNavigation.registerLocationObserver(locationObserver)
                         mapView.onStart()
                     }
