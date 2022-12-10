@@ -23,8 +23,10 @@ fun RequestHelpButton(
     onClickSearchButton: () -> Unit = {},
     state: MappingState = MappingState()) {
 
+    val visibility =  state.requestHelpButtonVisible && state.isNavigating.not()
+
     AnimatedVisibility(
-        modifier = modifier, visible = state.requestHelpButtonVisible, enter = fadeIn(
+        modifier = modifier, visible = visibility, enter = fadeIn(
             initialAlpha = 0.4f
         ),
         exit = fadeOut(
