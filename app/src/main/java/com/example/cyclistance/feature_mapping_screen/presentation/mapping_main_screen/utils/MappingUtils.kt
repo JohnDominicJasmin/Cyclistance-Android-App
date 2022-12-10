@@ -24,6 +24,7 @@ import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.PuckBearingSource
 import com.mapbox.maps.plugin.attribution.attribution
 import com.mapbox.maps.plugin.compass.compass
+import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.locationcomponent.location2
 import com.mapbox.maps.plugin.logo.logo
 import com.mapbox.maps.plugin.scalebar.scalebar
@@ -174,10 +175,10 @@ object MappingUtils {
         logo.enabled = false
         attribution.enabled = false
         compass.apply {
-            fadeWhenFacingNorth = false
             marginTop = (getScreenHeight / 2.6).toFloat()
             marginRight = 30f
         }
+        location.enabled = true
         location2.apply {
 
             showAccuracyRing = true
