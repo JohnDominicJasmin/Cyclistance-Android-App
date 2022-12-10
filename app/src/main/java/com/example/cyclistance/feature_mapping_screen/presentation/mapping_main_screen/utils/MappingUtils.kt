@@ -2,13 +2,18 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.graphics.drawable.Drawable
 import android.location.Address
 import android.location.Geocoder
+import android.net.Uri
 import android.os.Build
 import androidx.annotation.WorkerThread
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.core.content.ContextCompat
@@ -23,7 +28,6 @@ import com.mapbox.geojson.Point
 import com.mapbox.maps.MapView
 import com.mapbox.maps.plugin.PuckBearingSource
 import com.mapbox.maps.plugin.attribution.attribution
-import com.mapbox.maps.plugin.compass.compass
 import com.mapbox.maps.plugin.locationcomponent.location
 import com.mapbox.maps.plugin.locationcomponent.location2
 import com.mapbox.maps.plugin.logo.logo
@@ -206,6 +210,18 @@ object MappingUtils {
             }
         }
     }
+
+    @Composable
+    fun FabAnimated(visible: Boolean, content: @Composable AnimatedVisibilityScope.() -> Unit) {
+        AnimatedVisibility(
+            visible = visible,
+            enter = fadeIn(initialAlpha = 0.2f),
+            exit = fadeOut(animationSpec = tween(durationMillis = 150)),
+            content = content
+        )
+    }
+
+
 
     fun getEstimatedTimeArrival(startingLocation: Location, endLocation: Location): String {
         val distance = getCalculatedDistance(startingLocation, endLocation)

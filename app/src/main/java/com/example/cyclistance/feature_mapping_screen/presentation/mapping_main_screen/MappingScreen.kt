@@ -253,6 +253,23 @@ fun MappingScreen(
 
             })
     }}
+    val openNavigationApp = remember(state.userRescueTransaction?.route){{
+        val route = state.userRescueTransaction?.route
+        val location = route?.destinationLocation
+        location?.let{
+            context.openNavigationApp(latitude = it.latitude, longitude = it.longitude)
+        }
+        Unit
+    }}
+    val onClickRouteOverButton = remember{{
+        navigationCamera.requestNavigationCameraToOverview()
+    }}
+    val onClickRecenterButton = remember{{
+        navigationCamera.requestNavigationCameraToFollowing()
+    }}
+    val onClickOpenNavigationButton = remember{{
+        openNavigationApp()
+    }}
 
     val onClickCancelSearchButton = remember {{
         coroutineScope.launch {
@@ -400,6 +417,11 @@ fun MappingScreen(
         val startingLocation = transactionRoute?.startingLocation
         val destinationLocation = transactionRoute?.destinationLocation
 
+        if(state.isNavigating.not()){
+            mapboxNavigation.setNavigationRoutes(listOf())
+            return@LaunchedEffect
+        }
+
         if(hasTransaction.not()){
             mapboxNavigation.setNavigationRoutes(listOf())
             return@LaunchedEffect
@@ -461,7 +483,6 @@ fun MappingScreen(
         state = state,
         onClickSearchButton = onClickSearchButton,
         locationPermissionState = locationPermissionsState,
-        onClickLocateUserButton = onClickLocateUserButton,
         mapView = mapView,
         onClickCancelSearchButton = onClickCancelSearchButton,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
@@ -479,8 +500,12 @@ fun MappingScreen(
         onClickRescueeMapIcon = onClickRescueeMapIcon,
         onMapClick = onDismissRescueeBanner,
         onClickDismissBannerButton = onDismissRescueeBanner,
-        onClickRespondToHelpButton = onClickRespondToHelpButton
-    )
+        onClickRespondToHelpButton = onClickRespondToHelpButton,
+        onClickLocateUserButton = onClickLocateUserButton,
+        onClickRouteOverButton = onClickRouteOverButton,
+        onClickRecenterButton = onClickRecenterButton,
+        onClickOpenNavigationButton = onClickOpenNavigationButton
+        )
 
 }
 
@@ -533,7 +558,6 @@ fun MappingScreen(
     hasTransaction: Boolean = false,
     isRescueCancelled: Boolean = false,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
-    onClickLocateUserButton: () -> Unit = {},
     onClickSearchButton: () -> Unit = {},
     onClickRespondToHelpButton: () -> Unit = {},
     onClickRescueArrivedButton: () -> Unit = {},
@@ -550,6 +574,10 @@ fun MappingScreen(
     onClickRescueeMapIcon: (String) -> Unit = {},
     onMapClick: () -> Unit = {},
     onClickDismissBannerButton : () -> Unit = {},
+    onClickLocateUserButton: () -> Unit = {},
+    onClickRouteOverButton: () -> Unit = {},
+    onClickRecenterButton: () -> Unit = {},
+    onClickOpenNavigationButton: () -> Unit = {}
 ) {
 
     val configuration = LocalConfiguration.current
@@ -567,14 +595,13 @@ fun MappingScreen(
             onClickCallRescueTransactionButton = onClickCallRescueTransactionButton,
             onClickChatRescueTransactionButton = onClickChatRescueTransactionButton,
             onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton,
-            bottomSheetScaffoldState = bottomSheetScaffoldState,
-           ) {
+            bottomSheetScaffoldState = bottomSheetScaffoldState) {
 
             ConstraintLayout(
                 modifier = modifier
                     .fillMaxSize()) {
 
-                val (mapScreen, searchButton, circularProgressbar, noInternetScreen, locateButton, respondToHelpButton, bottomSheets) = createRefs()
+                val (mapScreen, requestHelpButton, circularProgressbar, noInternetScreen, respondToHelpButton, floatingButtonSection) = createRefs()
 
 
                 MappingMapsScreen(
@@ -593,32 +620,36 @@ fun MappingScreen(
                 mapboxNavigation = mapboxNavigation!!,
                 onInitializeNavigationCamera = onInitializeNavigationCamera,
                 hasTransaction = hasTransaction,
-                isRescueCancelled = isRescueCancelled,
-                onClickRescueeMapIcon = onClickRescueeMapIcon,
-                onMapClick = onMapClick
-            )
+                    isRescueCancelled = isRescueCancelled,
+                    onClickRescueeMapIcon = onClickRescueeMapIcon,
+                    onMapClick = onMapClick
+                )
 
 
+                FloatingButtonSection(
+                    modifier = Modifier
+                        .constrainAs(floatingButtonSection) {
+                            end.linkTo(parent.end, margin = 4.dp)
+                            bottom.linkTo(
+                                parent.bottom,
+                                margin = (configuration.screenHeightDp / 3).dp)
+                        },
+                    locationPermissionGranted = locationPermissionState.allPermissionsGranted,
+                    state = state,
+                    onClickLocateUserButton = onClickLocateUserButton,
+                    onClickRouteOverButton = onClickRouteOverButton,
+                    onClickRecenterButton = onClickRecenterButton,
+                    onClickOpenNavigationButton = onClickOpenNavigationButton
+                )
 
-            LocateUserButton(
-                modifier = Modifier
-                    .size(53.dp)
-                    .constrainAs(locateButton) {
-                        end.linkTo(parent.end, margin = 10.dp)
-                        bottom.linkTo(parent.bottom, margin = (configuration.screenHeightDp / 3).dp)
-                    },
-                locationPermissionGranted = locationPermissionState.allPermissionsGranted,
-                onClick = onClickLocateUserButton
-            )
-
-            RequestHelpButton(
-                modifier = Modifier.constrainAs(searchButton) {
-                    bottom.linkTo(parent.bottom, margin = 15.dp)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                }, onClickSearchButton = onClickSearchButton,
-                state = state
-            )
+                RequestHelpButton(
+                    modifier = Modifier.constrainAs(requestHelpButton) {
+                        bottom.linkTo(parent.bottom, margin = 15.dp)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                    }, onClickSearchButton = onClickSearchButton,
+                    state = state
+                )
 
             RespondToHelpButton(
                 modifier = Modifier.constrainAs(respondToHelpButton){
@@ -695,8 +726,59 @@ fun MappingScreen(
     }
 }
 
+@Composable
+fun FloatingButtonSection(
+    state: MappingState = MappingState(),
+    modifier: Modifier = Modifier,
+    locationPermissionGranted: Boolean = true,
+    onClickLocateUserButton: () -> Unit = {},
+    onClickRouteOverButton: () -> Unit = {},
+    onClickRecenterButton: () -> Unit = {},
+    onClickOpenNavigationButton: () -> Unit = {}) {
+
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        FabAnimated(state.isNavigating) {
+            RouteOverViewButton(
+                modifier = Modifier.size(53.dp),
+                onClick = onClickRouteOverButton
+            )
+        }
+
+        FabAnimated(state.isNavigating) {
+            RecenterButton(
+                modifier = Modifier.size(53.dp),
+                onClick = onClickRecenterButton)
+        }
+
+        Box {
+            FabAnimated(visible = state.isNavigating) {
+                OpenNavigationButton(
+                    modifier = Modifier.size(53.dp),
+                    onClick = onClickOpenNavigationButton
+                )
+            }
+            FabAnimated(state.isNavigating.not()) {
+                LocateUserButton(
+                    modifier = Modifier.size(53.dp),
+                    locationPermissionGranted = locationPermissionGranted,
+                    onClick = onClickLocateUserButton
+                )
+            }
+        }
+
+    }
+}
 
 
+@Preview
+@Composable
+fun PreviewFloatingButtons() {
+    CyclistanceTheme(true) {
+        FloatingButtonSection(state = MappingState(
+            isNavigating = true,
+        ))
+    }
+}
 
 
 
