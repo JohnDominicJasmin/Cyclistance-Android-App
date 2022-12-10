@@ -170,7 +170,6 @@ object MappingUtils {
         return "$hourFormat$minsFormat"
     }
 
-    private val getScreenHeight = Resources.getSystem().displayMetrics.heightPixels
 
     fun MapView.setDefaultSettings(
         parentContext: Context,
@@ -178,10 +177,6 @@ object MappingUtils {
         scalebar.enabled = false
         logo.enabled = false
         attribution.enabled = false
-        compass.apply {
-            marginTop = (getScreenHeight / 2.6).toFloat()
-            marginRight = 30f
-        }
         location.enabled = true
         location2.apply {
 
@@ -194,6 +189,20 @@ object MappingUtils {
             setLocationProvider(navigationLocationProvider)
             enabled = true
         }
+    }
+
+    fun Context.openNavigationApp(latitude: Double, longitude: Double) {
+        val url = "waze://?ll=$latitude, $longitude&navigate=yes"
+        val intentWaze = Intent(Intent.ACTION_VIEW, Uri.parse(url)).setPackage("com.waze")
+        val uriGoogle = "google.navigation:q=$latitude,$longitude"
+        val intentGoogleNav = Intent(Intent.ACTION_VIEW, Uri.parse(uriGoogle)).setPackage("com.google.android.apps.maps")
+
+        val title: String = getString(R.string.app_name)
+        val chooserIntent = Intent.createChooser(intentGoogleNav, title)
+        val arr = arrayOfNulls<Intent>(1)
+        arr[0] = intentWaze
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, arr)
+        startActivity(chooserIntent)
     }
 
     @Composable
