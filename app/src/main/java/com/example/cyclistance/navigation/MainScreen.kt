@@ -2,9 +2,8 @@ package com.example.cyclistance.navigation
 
 import android.content.Intent
 import android.content.Intent.ACTION_MAIN
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -150,6 +149,8 @@ fun MainScreen(
             drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
             scaffoldState = scaffoldState,
             topBar = {
+
+
                 Column {
                     TopAppBar(
                         scaffoldState = scaffoldState,
@@ -157,7 +158,8 @@ fun MainScreen(
                         coroutineScope = coroutineScope,
                         onClickSaveProfile = onClickSaveProfile,
                         editProfileSaveButtonEnabled = editProfileState.isUserInformationChanges(),
-                        onClickTopBarIcon = onClickTopBarIcon)
+                        onClickTopBarIcon = onClickTopBarIcon,
+                        isNavigating = mappingState.isNavigating)
 
                         NoInternetStatusBar(internetAvailable, navBackStackEntry?.destination?.route)
                 }
@@ -194,10 +196,16 @@ fun TopAppBar(
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
     onClickSaveProfile: () -> Unit = {},
     editProfileSaveButtonEnabled: Boolean = false,
+    isNavigating: Boolean,
     route: String?) {
 
-        when (route) {
-            Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}" -> {
+    when (route) {
+        Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}" -> {
+
+            AnimatedVisibility(
+                visible = isNavigating.not(),
+                enter = fadeIn(initialAlpha = 0.4f),
+                exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
 
                 DefaultTopBar(onClickIcon = {
                     coroutineScope.launch {
@@ -205,6 +213,7 @@ fun TopAppBar(
                     }
                 })
             }
+        }
 
             "${Screens.CancellationScreen.route}/{cancellationType}/{transactionId}/{clientId}" -> {
                 TopAppBarCreator(
@@ -296,7 +305,7 @@ fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 @Composable
 fun TopAppBarPreview() {
     CyclistanceTheme(true) {
-        TopAppBar(route = Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}")
+        TopAppBar(route = Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}", isNavigating = false)
     }
 }
 
