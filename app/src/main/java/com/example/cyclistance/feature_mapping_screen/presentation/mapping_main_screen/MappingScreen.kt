@@ -400,7 +400,12 @@ fun MappingScreen(
         val startingLocation = transactionRoute?.startingLocation
         val destinationLocation = transactionRoute?.destinationLocation
 
-        if (hasTransaction.not() && isRescueCancelled) {
+        if(hasTransaction.not()){
+            mapboxNavigation.setNavigationRoutes(listOf())
+            return@LaunchedEffect
+        }
+
+        if (isRescueCancelled) {
             mapboxNavigation.setNavigationRoutes(listOf())
             return@LaunchedEffect
         }
