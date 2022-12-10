@@ -3,7 +3,6 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.location.Location
-import android.view.View
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -13,7 +12,6 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.*
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.core.utils.constants.MappingConstants.BUTTON_ANIMATION_DURATION
 import com.example.cyclistance.databinding.ActivityMappingBinding
 import com.example.cyclistance.feature_mapping_screen.domain.model.Role
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
@@ -30,17 +28,14 @@ import com.mapbox.maps.plugin.annotation.generated.PointAnnotationOptions
 import com.mapbox.maps.plugin.annotation.generated.createPointAnnotationManager
 import com.mapbox.maps.plugin.gestures.addOnMapClickListener
 import com.mapbox.maps.plugin.locationcomponent.location2
-import com.mapbox.navigation.base.TimeFormat
 import com.mapbox.navigation.base.formatter.DistanceFormatterOptions
 import com.mapbox.navigation.base.formatter.UnitType
-import com.mapbox.navigation.base.route.NavigationRoute
 import com.mapbox.navigation.core.MapboxNavigation
 import com.mapbox.navigation.core.MapboxNavigationProvider
 import com.mapbox.navigation.core.directions.session.RoutesObserver
 import com.mapbox.navigation.core.formatter.MapboxDistanceFormatter
 import com.mapbox.navigation.core.trip.session.LocationMatcherResult
 import com.mapbox.navigation.core.trip.session.LocationObserver
-import com.mapbox.navigation.core.trip.session.RouteProgressObserver
 import com.mapbox.navigation.ui.maneuver.api.MapboxManeuverApi
 import com.mapbox.navigation.ui.maps.NavigationStyles
 import com.mapbox.navigation.ui.maps.camera.NavigationCamera
@@ -54,7 +49,6 @@ import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineApi
 import com.mapbox.navigation.ui.maps.route.line.api.MapboxRouteLineView
 import com.mapbox.navigation.ui.maps.route.line.model.MapboxRouteLineOptions
 import com.mapbox.navigation.ui.maps.route.line.model.RouteLine
-import com.mapbox.navigation.ui.tripprogress.api.MapboxTripProgressApi
 import com.mapbox.navigation.ui.tripprogress.model.*
 import timber.log.Timber
 
@@ -228,35 +222,12 @@ fun MappingMapsScreen(
             )
         }
         lateinit var maneuverApi: MapboxManeuverApi
-        lateinit var tripProgressApi: MapboxTripProgressApi
+
         lateinit var routeLineApi: MapboxRouteLineApi
         lateinit var routeLineView: MapboxRouteLineView
         val routeArrowApi: MapboxRouteArrowApi = MapboxRouteArrowApi()
         lateinit var routeArrowView: MapboxRouteArrowView
         val navigationLocationProvider = NavigationLocationProvider()
-
-
-
-
-        val clearRouteAndStopNavigation = {
-            mapboxNavigation.setNavigationRoutes(listOf())
-
-            soundButton.visibility = View.INVISIBLE
-            maneuverView.visibility = View.INVISIBLE
-            routeOverview.visibility = View.INVISIBLE
-            tripProgressCard.visibility = View.INVISIBLE
-        }
-        val setRouteAndStartNavigation = { routes: List<NavigationRoute> ->
-            mapboxNavigation.setNavigationRoutes(routes)
-
-            soundButton.visibility = View.VISIBLE
-            routeOverview.visibility = View.VISIBLE
-            tripProgressCard.visibility = View.VISIBLE
-
-            navigationCamera.requestNavigationCameraToOverview()
-        }
-
-
 
 
 
@@ -379,7 +350,6 @@ fun MappingMapsScreen(
                             viewportDataSource.followingPadding = followingPadding
                         }
 
-                        val distanceFormatterOptions = mapboxNavigation.navigationOptions.distanceFormatterOptions
 
                         maneuverApi = MapboxManeuverApi(
                             MapboxDistanceFormatter(
@@ -388,22 +358,8 @@ fun MappingMapsScreen(
                                 .build())
                         )
 
-                        tripProgressApi = MapboxTripProgressApi(
-                            TripProgressUpdateFormatter.Builder(parentContext)
-                                .distanceRemainingFormatter(
-                                    DistanceRemainingFormatter(distanceFormatterOptions)
-                                )
-                                .timeRemainingFormatter(
-                                    TimeRemainingFormatter(parentContext)
-                                )
-                                .percentRouteTraveledFormatter(
-                                    PercentDistanceTraveledFormatter()
-                                )
-                                .estimatedTimeToArrivalFormatter(
-                                    EstimatedTimeToArrivalFormatter(parentContext, TimeFormat.NONE_SPECIFIED)
-                                )
-                                .build()
-                        )
+
+
 
 
                         val mapboxRouteLineOptions = MapboxRouteLineOptions.Builder(parentContext)
@@ -468,7 +424,6 @@ fun MappingMapsScreen(
                     Lifecycle.Event.ON_STOP -> {
                         Timber.v("Lifecycle Event: ON_STOP")
                         mapboxNavigation.unregisterRoutesObserver(routesObserver)
-                        mapboxNavigation.unregisterRouteProgressObserver(routeProgressObserver)
                         mapboxNavigation.unregisterLocationObserver(locationObserver)
                         mapView.onStop()
                     }
