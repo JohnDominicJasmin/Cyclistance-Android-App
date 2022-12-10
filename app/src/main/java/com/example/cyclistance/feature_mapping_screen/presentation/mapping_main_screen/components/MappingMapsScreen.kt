@@ -75,16 +75,13 @@ fun MappingMapsScreen(
     val context = LocalContext.current
 
 
-    val nearbyCyclists by remember(key1= state.nearbyCyclists.users.size) {
-        derivedStateOf { state.nearbyCyclists.users }
+    val nearbyCyclists = remember(key1= state.nearbyCyclists.users.size) {
+         state.nearbyCyclists.users
     }
-    val pulsingEnabled by remember(state.isSearchingForAssistance, locationPermissionsState?.allPermissionsGranted) {
-        derivedStateOf {
-            state.isSearchingForAssistance.and(locationPermissionsState?.allPermissionsGranted == true)
-        }
+    val pulsingEnabled = remember(state.isSearchingForAssistance, locationPermissionsState?.allPermissionsGranted) {
+        state.isSearchingForAssistance.and(locationPermissionsState?.allPermissionsGranted == true)
     }
-    val annotationApi = remember(mapsMapView) { mapsMapView.annotations }
-    val pointAnnotationManager = remember(annotationApi) { annotationApi.createPointAnnotationManager().apply{
+    val pointAnnotationManager = remember(mapsMapView) { mapsMapView.annotations.createPointAnnotationManager().apply{
         iconAllowOverlap = false
         iconIgnorePlacement = false
         textAllowOverlap = false
