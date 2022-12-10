@@ -41,7 +41,9 @@ import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionSt
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.*
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CancelledRescueModel
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.FabAnimated
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.findRoute
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.openNavigationApp
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.rememberMapboxNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.startLocationServiceIntentAction
 import com.example.cyclistance.navigation.Screens
@@ -69,6 +71,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import com.example.cyclistance.R as Resource
+import com.mapbox.navigation.R as R1
 
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -199,18 +202,27 @@ fun MappingScreen(
         }
     }}
 
-    val locationPuck2D = remember{
-        LocationPuck2D(
-            bearingImage = ContextCompat.getDrawable(
-                context,
-                Resource.drawable.ic_bearing_image_small),
-            topImage = ContextCompat.getDrawable(
-                context,
-                Resource.drawable.ic_location_top_image_small),
-            shadowImage = ContextCompat.getDrawable(
-                context,
-                com.mapbox.maps.R.drawable.mapbox_user_icon_shadow)
-        )
+    val locationPuck2D = remember(state.isNavigating){
+        if(state.isNavigating){
+            LocationPuck2D(
+                bearingImage = ContextCompat.getDrawable(
+                    context,
+                    R1.drawable.mapbox_navigation_puck_icon
+                )
+            )
+        }else {
+            LocationPuck2D(
+                bearingImage = ContextCompat.getDrawable(
+                    context,
+                    Resource.drawable.ic_bearing_image_small),
+                topImage = ContextCompat.getDrawable(
+                    context,
+                    Resource.drawable.ic_location_top_image_small),
+                shadowImage = ContextCompat.getDrawable(
+                    context,
+                    com.mapbox.maps.R.drawable.mapbox_user_icon_shadow)
+            )
+        }
     }
 
     val locateUser =
