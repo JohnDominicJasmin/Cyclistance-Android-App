@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
 import android.os.Parcelable
-import android.view.View
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
@@ -29,13 +28,7 @@ data class MappingState(
     val isSearchingForAssistance: Boolean = false,
     val alertDialogModel: AlertDialogModel = AlertDialogModel(),
     val cameraState: CameraState = CameraState(),
-    val tripProgressCardVisibility: Int = View.INVISIBLE,
-    val maneuverViewVisibility: Int = View.INVISIBLE,
-    val soundButtonVisibility: Int = View.INVISIBLE,
-    val routeOverviewVisibility: Int = View.INVISIBLE,
-    val recenterButtonVisibility: Int = View.INVISIBLE,
-
-
+    val isNavigating : Boolean = false,
 
 
 
