@@ -92,6 +92,10 @@ fun MappingMapsScreen(
 
 
     LaunchedEffect(key1 = nearbyCyclists, key2 = mapsMapView){
+        if(state.isNavigating){
+            return@LaunchedEffect
+        }
+
         if(isRescueCancelled.not() && hasTransaction){
             return@LaunchedEffect
         }
