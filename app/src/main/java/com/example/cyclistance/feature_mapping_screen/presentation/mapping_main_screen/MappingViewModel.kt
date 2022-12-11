@@ -700,11 +700,13 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun updateLocation(location: android.location.Location){
+        val latitude = location.latitude.takeIf { it != 0.0 } ?: return
+        val longitude = location.longitude.takeIf { it != 0.0 } ?: return
         _state.update { state ->
             state.copy(
                 userLocation = Location(
-                latitude = location.latitude.takeIf { it != 0.0 } ?: DEFAULT_LATITUDE,
-                longitude = location.longitude.takeIf { it != 0.0 } ?: DEFAULT_LONGITUDE,
+                    latitude = latitude,
+                    longitude = longitude,
                 )
             )
         }
