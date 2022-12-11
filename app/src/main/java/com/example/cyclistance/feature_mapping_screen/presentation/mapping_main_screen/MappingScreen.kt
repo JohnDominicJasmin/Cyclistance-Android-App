@@ -41,8 +41,6 @@ import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionSt
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.*
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CancelledRescueModel
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.FabAnimated
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.findRoute
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.openNavigationApp
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.rememberMapboxNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.startLocationServiceIntentAction
@@ -369,6 +367,12 @@ fun MappingScreen(
     val onClickRespondToHelpButton = remember{{
         mappingViewModel.onEvent(event = MappingEvent.RespondToHelp)
     }}
+    val onClickOkAcceptedRescue = remember{{
+        mappingViewModel.onEvent(event = MappingEvent.StartNavigation)
+        mappingViewModel.onEvent(event = MappingEvent.DismissRequestAccepted)
+        mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(BottomSheetType.OnGoingRescue.type))
+    }}
+
 
 
 
@@ -692,20 +696,17 @@ fun MappingScreen(
 
             }
 
-            AnimatedVisibility (visible = isRescueCancelled,
+            AnimatedVisibility (visible = isRescueCancelled && state.isRescueRequestAccepted.not(),
                 enter = fadeIn(),
-                exit = fadeOut(
-                animationSpec = tween(durationMillis = 220)
-            )) {
+                exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
 
                 val rescueTransaction = state.userRescueTransaction
-
                 val cancellation = rescueTransaction?.cancellation
-
                 val cancellationReason = cancellation?.cancellationReason ?: return@AnimatedVisibility
 
 
                 MappingCancelledRescue(
+                    modifier = Modifier.fillMaxSize(),
                     onClickOkButton = onClickOkButtonCancelledRescue,
                     cancelledRescueModel = CancelledRescueModel(
                         transactionID = rescueTransaction.id,
@@ -715,20 +716,21 @@ fun MappingScreen(
                     ))
             }
 
-            AnimatedVisibility(visible = state.selectedRescueeMapIcon != null,
-                enter = expandVertically(expandFrom = Alignment.Top) { 20 },
-                exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
-                    fullHeight / 2
-                },
-                ){
-                if(state.selectedRescueeMapIcon != null) {
-                    MappingExpandableBanner(
-                        modifier = Modifier
-                            .padding(all = 6.dp)
-                            .fillMaxWidth(), banner = state.selectedRescueeMapIcon,
-                        onClickDismissButton = onClickDismissBannerButton)
-                }
+            AnimatedVisibility(visible = state.isRescueRequestAccepted && isRescueCancelled.not(),
+                enter = fadeIn(),
+                exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
+                RescueRequestAccepted(
+                    modifier = Modifier.fillMaxSize(),
+                    onClickOkButton = onClickOkButtonRescueRequestAccepted,
+                    acceptedName = state.rescuee?.name ?: "Name placeholder",
+                )
             }
+
+
+
+
+
+
 
         }
     }

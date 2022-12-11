@@ -30,5 +30,5 @@ val Blue500 = Color(0xFF3B5998)
 val White200 = Color(0xFFEDEDED)
 val White100 = Color(0xFFF2F2F2)
 val White50 = Color(0xFFFDFDFD)
-val White70 = Color(0xFFF5F5F5)
+val Green678 = Color(0xFF3FC5B3)
 

@@ -166,6 +166,9 @@ class MappingViewModel @Inject constructor(
             is MappingEvent.SelectRescueMapIcon -> {
                 selectRescueeMapIcon(event.id)
             }
+            is MappingEvent.DismissRequestAccepted -> {
+                dismissRequestAccepted()
+            }
 
             is MappingEvent.RequestHelp -> {
                 requestHelp()
@@ -323,6 +326,14 @@ class MappingViewModel @Inject constructor(
             hideRespondToHelpButton()
             showRequestHelpButton()
         }
+    }
+
+    private fun dismissRequestAccepted(){
+        _state.update { it.copy(isRescueRequestAccepted = false) }
+    }
+
+    private fun showRequestAccepted(){
+        _state.update { it.copy(isRescueRequestAccepted = true) }
     }
 
     private suspend fun String.removeAssignedTransaction(){
@@ -828,17 +839,8 @@ class MappingViewModel @Inject constructor(
                     return@let
                 }
 
-                val rescueeName = state.value.nearbyCyclists.findUser(transaction.rescueeId).name
 
-                _state.update {
-                    it.copy(
-                        alertDialogModel = AlertDialogModel(
-                            title = "Request Accepted",
-                            description = "$rescueeName accepted your Rescue Request.",
-                            icon = R.raw.success,
-                        ), respondedToHelp = false)
-                }
-
+                showRequestAccepted()
             }
         }
 

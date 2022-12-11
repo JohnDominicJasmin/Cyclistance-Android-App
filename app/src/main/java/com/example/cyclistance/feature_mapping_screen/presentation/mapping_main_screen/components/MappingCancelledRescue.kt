@@ -42,7 +42,6 @@ fun MappingCancelledRescue(
     ) {
         Box(
             modifier = modifier
-                .fillMaxSize()
                 .background(
                     color = Color.Transparent,
                 )
@@ -72,77 +71,32 @@ private fun MappingCancelledRescueContent(
         contentAlignment = Alignment.TopCenter) {
 
         Column(
-            modifier = Modifier.fillMaxWidth(0.94f),
-            horizontalAlignment = Alignment.CenterHorizontally) {
+            modifier = Modifier.padding(bottom = 10.dp).fillMaxWidth(0.94f),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
-
-            Surface(
-
+            TopBanner(
+                modifier = Modifier.padding(top = 10.dp),
                 color = Red610,
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.padding(top = 10.dp)) {
-
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Color.Transparent)
-                        .padding(vertical = 12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(
-                        10.dp,
-                        alignment = Alignment.Start),
-
-                    ) {
+                iconId = R.drawable.ic_cancel,
+                title = "Rescue Cancelled"
+            )
 
 
-                    Spacer(modifier = Modifier.weight(0.01f))
 
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_cancel),
-                        contentDescription = "cancel_display",
-                        tint = Color.White,
-                        modifier = Modifier
-                            .padding(all = 4.dp)
-                            .requiredWidthIn(max = 300.dp)
-                            .weight(0.23f))
-
-                    Spacer(modifier = Modifier.weight(0.1f))
-
-                    Text(
-                        text = "Rescue Cancelled",
-                        color = Color.White,
-                        fontSize = 20.sp,
-                        style = MaterialTheme.typography.subtitle1,
-                        textAlign = TextAlign.Start,
-                        fontWeight = FontWeight.Medium
-                    )
-
-                    Spacer(modifier = Modifier.weight(0.3f))
-
-                }
-            }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 10.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)) {
-
-                CancellationDetails(cancelledRescueModel, onClickOkButton = onClickOkButton)
+                CancellationDetails(cancelledRescueModel)
 
                 OutlinedActionButton(
                     text = "Ok",
                     onClick = onClickOkButton,
                     modifier = Modifier.width(100.dp))
-            }
 
         }
     }
 }
 
 @Composable
-fun CancellationDetails(cancelledRescueModel: CancelledRescueModel, onClickOkButton: () -> Unit) {
+private fun CancellationDetails(cancelledRescueModel: CancelledRescueModel) {
 
     Column(
         modifier = Modifier
@@ -183,6 +137,56 @@ fun CancellationDetails(cancelledRescueModel: CancelledRescueModel, onClickOkBut
 }
 
 @Composable
+fun TopBanner(modifier: Modifier, color: Color, iconId: Int, title: String) {
+    Surface(
+
+        color = color,
+        shape = RoundedCornerShape(12.dp),
+        modifier = modifier) {
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Transparent)
+                .padding(vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(
+                10.dp,
+                alignment = Alignment.Start),
+
+            ) {
+
+
+            Spacer(modifier = Modifier.weight(0.01f))
+
+            Icon(
+                painter = painterResource(id = iconId),
+                contentDescription = "cancel_display",
+                tint = Color.White,
+                modifier = Modifier
+                    .padding(all = 4.dp)
+                    .requiredWidthIn(max = 300.dp)
+                    .weight(0.23f))
+
+            Spacer(modifier = Modifier.weight(0.1f))
+
+            Text(
+                text = title,
+                color = Color.White,
+                fontSize = 20.sp,
+                style = MaterialTheme.typography.subtitle1,
+                textAlign = TextAlign.Start,
+                fontWeight = FontWeight.Medium
+            )
+
+            Spacer(modifier = Modifier.weight(0.3f))
+
+        }
+    }
+
+}
+
+@Composable
 private fun DetailsItem(modifier: Modifier = Modifier, itemTitle: String, itemValue: String) {
     Row(
         modifier = modifier.wrapContentHeight(),
@@ -214,7 +218,7 @@ private fun DetailsItem(modifier: Modifier = Modifier, itemTitle: String, itemVa
 
 @Preview
 @Composable
-fun PreviewDetailsItem() {
+private fun PreviewDetailsItem() {
     CyclistanceTheme(true) {
         DetailsItem(
             itemTitle = "Transaction ID:",
@@ -228,6 +232,7 @@ fun PreviewDetailsItem() {
 private fun PreviewMappingCancelledRescue() {
     CyclistanceTheme(true) {
         MappingCancelledRescue(
+            modifier = Modifier.fillMaxSize(),
             cancelledRescueModel = CancelledRescueModel(
                 transactionID = "02i4n93j09",
                 rescueCancelledBy = "John Doe",

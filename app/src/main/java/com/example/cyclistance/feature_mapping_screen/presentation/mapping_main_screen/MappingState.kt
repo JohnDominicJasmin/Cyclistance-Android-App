@@ -29,6 +29,9 @@ data class MappingState(
     val alertDialogModel: AlertDialogModel = AlertDialogModel(),
     val cameraState: CameraState = CameraState(),
     val isNavigating : Boolean = false,
+    val isRescueRequestAccepted: Boolean = false,
+
+
 
 
 
