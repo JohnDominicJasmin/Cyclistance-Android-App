@@ -136,18 +136,17 @@ object MappingUtils {
                     routeOptions: RouteOptions,
                     routerOrigin: RouterOrigin) {
 
-                    Timber.e("Route request canceled")
+                    Timber.e("Route request cancelled")
                 }
             }
         )
     }
 
     fun Double.distanceFormat(): String {
-        if (this <= 0.0) {
-            throw IllegalArgumentException("Distance must be greater than 0")
-        }
 
-        return if (this < 1000) {
+        return if(this <= 0.0) {
+            "0 m"
+        } else if (this < 1000) {
             "%.2f m".format(this)
         } else {
             "%.2f km".format((this / 1000))
@@ -232,17 +231,23 @@ object MappingUtils {
 
 
 
-    fun getEstimatedTimeArrival(startingLocation: Location, endLocation: Location): String {
+    fun getETABetweenTwoPoints(startingLocation: Location, endLocation: Location): String {
         val distance = getCalculatedDistance(startingLocation, endLocation)
         return getCalculatedETA(distance)
     }
 
+    /**
+    Returns distance in meters
+     **/
     fun getCalculatedDistance(startingLocation: Location, endLocation: Location): Double {
         val start = SimpleLocation.Point(startingLocation.latitude, startingLocation.longitude)
         val end = SimpleLocation.Point(endLocation.latitude, endLocation.longitude)
         return SimpleLocation.calculateDistance(start, end)
     }
 
+    /**
+    Returns distance in meters
+     **/
     fun getCalculatedDistance(
         startLatitude: Double,
         startLongitude: Double,
