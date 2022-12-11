@@ -5,8 +5,7 @@ import android.location.Geocoder
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
-import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_RADIUS
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
@@ -773,8 +772,22 @@ class MappingViewModel @Inject constructor(
         rescueRespondentsSnapShot.clear()
     }
 
-    private fun User.loadUsers() {
-        _state.update { it.copy(nearbyCyclists = this) }
+    private suspend fun User.getNearbyCyclist() {
+        coroutineScope {
+            val currentLocation = state.value.userLocation
+
+            val nearbyCyclists = this@getNearbyCyclist.users
+                .filter { userItem ->
+                val distance = getCalculatedDistance(
+                    startingLocation = currentLocation!!,
+                    endLocation = userItem.location ?: return@coroutineScope
+                )
+                distance <= DEFAULT_RADIUS
+            }.filter{
+                it.id != getId()
+            }
+            _state.update { it.copy(nearbyCyclists = User(nearbyCyclists)) }
+        }
     }
 
     private fun RescueTransactionItem.broadCastLocationToTransaction(location: android.location.Location){

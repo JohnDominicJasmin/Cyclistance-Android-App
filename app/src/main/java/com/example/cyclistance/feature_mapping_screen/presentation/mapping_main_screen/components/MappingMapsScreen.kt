@@ -99,12 +99,9 @@ fun MappingMapsScreen(
         }
 
         pointAnnotationManager.deleteAll()
-        nearbyCyclists
-            .filter {
-                it.id != state.user.id
-            }.filter {
-                it.userAssistance?.needHelp == true
-            }.forEach { cyclist ->
+        nearbyCyclists.filter{
+            it.userAssistance?.needHelp == true
+        }.forEach { cyclist ->
                 val location = cyclist.location
                 val cyclistAssistance = cyclist.userAssistance
                 val iconImage = cyclistAssistance?.getMapIconImageDescription(context)

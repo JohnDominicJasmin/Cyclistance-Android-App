@@ -58,4 +58,5 @@ object MappingConstants {
     const val SELECTION_RESCUEE_TYPE = "rescuee_type"
 
     const val NEAREST_METERS = 2.00
+    const val DEFAULT_RADIUS = 7000.00
 }
