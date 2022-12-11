@@ -195,6 +195,14 @@ class MappingViewModel @Inject constructor(
                 }
             }
 
+            is MappingEvent.StartNavigation -> {
+                _state.update { it.copy(isNavigating = true) }
+            }
+
+            is MappingEvent.StopNavigation -> {
+                _state.update { it.copy(isNavigating = false) }
+            }
+
             is MappingEvent.DeclineRescueRequest -> {
                 declineRescueRequest(event.cardModel)
             }

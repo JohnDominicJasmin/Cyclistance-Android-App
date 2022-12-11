@@ -397,6 +397,19 @@ fun MappingScreen(
 
 
     }
+    LaunchedEffect(key1 = hasTransaction, key2 = isRescueCancelled){
+
+        if(hasTransaction.not()){
+            return@LaunchedEffect
+        }
+
+        if(isRescueCancelled){
+            return@LaunchedEffect
+        }
+
+        mappingViewModel.onEvent(event = MappingEvent.StopNavigation)
+
+    }
 
     LaunchedEffect(key1 = userLocationAvailable, key2 = mapView) {
 
