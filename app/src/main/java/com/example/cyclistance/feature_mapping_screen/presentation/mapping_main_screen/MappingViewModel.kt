@@ -876,12 +876,8 @@ class MappingViewModel @Inject constructor(
 
             runCatching {
                 mappingUseCase.getUserLocationUseCase().collect { location ->
-
-                    val rescueTransaction = state.value.userRescueTransaction
-                    rescueTransaction?.broadCastLocationToTransaction(location)
-                    geocoder.getAddress(location.latitude, location.longitude) { addresses ->
-                        _state.update { it.copy(userAddress = UserAddress(addresses.lastOrNull())) }
-                    }
+                    broadCastLocationToTransaction(location)
+                    updateAddress(location)
                     updateLocation(location)
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
@@ -889,6 +885,12 @@ class MappingViewModel @Inject constructor(
             }.onFailure {
                 Timber.e("Error Location Updates: ${it.message}")
             }
+        }
+    }
+
+    private fun updateAddress(location: android.location.Location){
+        geocoder.getAddress(location.latitude, location.longitude) { addresses ->
+            _state.update { it.copy(userAddress = UserAddress(addresses.lastOrNull())) }
         }
     }
 
