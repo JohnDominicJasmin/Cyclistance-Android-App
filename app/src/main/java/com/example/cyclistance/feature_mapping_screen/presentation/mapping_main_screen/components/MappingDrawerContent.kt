@@ -1,13 +1,15 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components
 
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -15,8 +17,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
@@ -25,6 +29,7 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.CyclistanceTheme
+import com.example.cyclistance.theme.Red710
 
 
 @Composable
@@ -35,6 +40,11 @@ fun MappingDrawerContent(
     onClickRescueRequest: () -> Unit = {},
     onClickSignOut: () -> Unit = {},
 ) {
+
+    val respondents = remember(state.userRescueRequestRespondents.respondents.size) {
+        state.userRescueRequestRespondents.respondents
+    }
+
 
     ConstraintLayout(
         modifier = Modifier
@@ -110,7 +120,10 @@ fun MappingDrawerContent(
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_rescue_request,
                 buttonText = "Rescue Request",
-                onClick = onClickRescueRequest)
+                onClick = onClickRescueRequest,
+                badgeCountEnabled = true,
+                badgeCount = respondents.size
+                )
 
             DrawerContentButtonItem(
                 modifier = Modifier
@@ -145,9 +158,10 @@ fun MappingDrawerContentPreview() {
 private fun DrawerContentButtonItem(
     modifier: Modifier,
     iconId: Int,
+    badgeCountEnabled: Boolean = false,
     buttonText: String,
-    onClick: () -> Unit) {
-
+    onClick: () -> Unit,
+    badgeCount: Int = -1) {
 
     TextButton(
         colors = ButtonDefaults.textButtonColors(contentColor = Black450),
@@ -172,7 +186,32 @@ private fun DrawerContentButtonItem(
             color = MaterialTheme.colors.onBackground
 
         )
+
+        AnimatedVisibility(visible = badgeCountEnabled, enter = fadeIn(), exit = fadeOut()) {
+            BadgeCount(
+                modifier = Modifier.padding(end = 5.dp),
+                count  = badgeCount.toString()
+            )
+        }
     }
 }
 
+@Composable
+fun BadgeCount(modifier: Modifier = Modifier, count: String) {
+
+    Surface(
+        shape = CircleShape,
+        color = Red710,
+        contentColor = Color.White,
+        modifier = modifier.size(22.dp)) {
+
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Text(
+                text = count,
+                textAlign = TextAlign.Center,
+                fontSize = 14.sp)
+        }
+    }
+
+}
 
