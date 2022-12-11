@@ -352,6 +352,9 @@ fun MappingScreen(
             }
     }}
 
+    val onRequestNavigationCameraToOverview = remember{{
+        navigationCamera.requestNavigationCameraToOverview()
+    }}
 
     val onClickOkCancelledRescue = remember{{
         mappingViewModel.onEvent(event = MappingEvent.CancelRescueTransaction)
@@ -441,33 +444,7 @@ fun MappingScreen(
         }
     }
 
-    LaunchedEffect(key1 = state.userRescueTransaction?.route, key2 = hasTransaction, key3 = isRescueCancelled){
-        val transactionRoute = state.userRescueTransaction?.route
-        val startingLocation = transactionRoute?.startingLocation
-        val destinationLocation = transactionRoute?.destinationLocation
 
-
-        if(hasTransaction.not()){
-            mapboxNavigation.setNavigationRoutes(listOf())
-            return@LaunchedEffect
-        }
-
-        if (isRescueCancelled) {
-            mapboxNavigation.setNavigationRoutes(listOf())
-            return@LaunchedEffect
-        }
-
-        startingLocation?.let {
-            destinationLocation?.let {
-                mapboxNavigation.findRoute(context, originPoint = Point.fromLngLat(startingLocation.longitude, startingLocation.latitude),
-                    destinationPoint = Point.fromLngLat(destinationLocation.longitude, destinationLocation.latitude)) {
-
-                    mapboxNavigation.setNavigationRoutes(it)
-                    navigationCamera.requestNavigationCameraToOverview()
-                }
-            }
-        }
-    }
 
     LaunchedEffect(key1 = true) {
 
@@ -605,7 +582,8 @@ fun MappingScreen(
     onClickLocateUserButton: () -> Unit = {},
     onClickRouteOverButton: () -> Unit = {},
     onClickRecenterButton: () -> Unit = {},
-    onClickOpenNavigationButton: () -> Unit = {}
+    onClickOpenNavigationButton: () -> Unit = {},
+    onRequestNavigationCameraToOverview: () -> Unit = {},
 ) {
 
     val configuration = LocalConfiguration.current
@@ -650,7 +628,8 @@ fun MappingScreen(
                 hasTransaction = hasTransaction,
                     isRescueCancelled = isRescueCancelled,
                     onClickRescueeMapIcon = onClickRescueeMapIcon,
-                    onMapClick = onMapClick
+                    onMapClick = onMapClick,
+                    requestNavigationCameraToOverview = onRequestNavigationCameraToOverview
                 )
 
 

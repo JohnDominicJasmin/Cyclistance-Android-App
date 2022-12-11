@@ -69,6 +69,7 @@ fun MappingMapsScreen(
     locationPermissionsState: MultiplePermissionsState?,
     onChangeCameraState: (Point, Double) -> Unit,
     onClickRescueeMapIcon:(String) -> Unit,
+    requestNavigationCameraToOverview:() -> Unit,
     onMapClick: () -> Unit
     ) {
 
@@ -181,7 +182,33 @@ fun MappingMapsScreen(
 
     }
 
+    LaunchedEffect(key1 = state.userRescueTransaction?.route, key2 = hasTransaction, key3 = isRescueCancelled){
+        val transactionRoute = state.userRescueTransaction?.route
+        val startingLocation = transactionRoute?.startingLocation
+        val destinationLocation = transactionRoute?.destinationLocation
 
+
+        if(hasTransaction.not()){
+            mapboxNavigation.setNavigationRoutes(listOf())
+            return@LaunchedEffect
+        }
+
+        if (isRescueCancelled) {
+            mapboxNavigation.setNavigationRoutes(listOf())
+            return@LaunchedEffect
+        }
+
+        startingLocation?.let {
+            destinationLocation?.let {
+                mapboxNavigation.findRoute(context, originPoint = Point.fromLngLat(startingLocation.longitude, startingLocation.latitude),
+                    destinationPoint = Point.fromLngLat(destinationLocation.longitude, destinationLocation.latitude)) {
+
+                    mapboxNavigation.setNavigationRoutes(it)
+                    requestNavigationCameraToOverview()
+                }
+            }
+        }
+    }
 
     LaunchedEffect(key1 = pulsingEnabled, mapsMapView){
         mapsMapView.location2.pulsingEnabled = pulsingEnabled
