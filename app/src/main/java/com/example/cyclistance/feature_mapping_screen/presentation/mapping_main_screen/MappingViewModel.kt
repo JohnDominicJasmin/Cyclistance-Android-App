@@ -24,7 +24,7 @@ import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getAddress
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getCalculatedDistance
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getCalculatedETA
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getEstimatedTimeArrival
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getETABetweenTwoPoints
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getFullAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.delight.android.location.SimpleLocation
@@ -107,12 +107,12 @@ class MappingViewModel @Inject constructor(
         nearbyCyclist.updateClient(rescueTransactionItem)
     }
 
-    private suspend fun loadUsers() {
+    private suspend fun getNearbyCyclist() {
         coroutineScope {
             runCatching {
                 mappingUseCase.getUsersUseCase().distinctUntilChanged().collect {
                     it.getUser()
-                    it.loadUsers()
+                    it.getNearbyCyclist()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
             }.onFailure {
@@ -283,7 +283,7 @@ class MappingViewModel @Inject constructor(
                     longitude = selectedRescueeLocation.longitude
                 ))
 
-            val timeRemaining = MappingUtils.getEstimatedTimeArrival( startingLocation = Location(
+            val timeRemaining = MappingUtils.getETABetweenTwoPoints( startingLocation = Location(
                 latitude = userLocation.latitude,
                 longitude = userLocation.longitude
             ), endLocation = Location(
@@ -445,7 +445,7 @@ class MappingViewModel @Inject constructor(
         this.latitude?:return
         this.longitude?:return
 
-        val eta = getEstimatedTimeArrival(startingLocation = Location(
+        val eta = getETABetweenTwoPoints(startingLocation = Location(
             latitude = this.latitude,
             longitude = this.longitude), endLocation = userLocation)
         _state.update { it.copy(rescuerETA = eta) }
@@ -573,7 +573,7 @@ class MappingViewModel @Inject constructor(
 
         userLocation?:return
 
-        val estimatedTimeArrival = rescuer.location?.let { getEstimatedTimeArrival(startingLocation = it, endLocation = userLocation) }
+        val estimatedTimeArrival = rescuer.location?.let { getETABetweenTwoPoints(startingLocation = it, endLocation = userLocation) }
         _state.update {
             it.copy(userRescueTransaction = rescueTransaction,
                 rescuerETA = estimatedTimeArrival ?: "",
@@ -808,6 +808,7 @@ class MappingViewModel @Inject constructor(
             runCatching {
                 mappingUseCase.getRescueTransactionUpdatesUseCase().collect {
                     it.updateRescueTransaction()
+                    it.updateRescueClient()
                     it.checkRescueRequestAccepted()
                 }
             }.onSuccess {
@@ -858,6 +859,10 @@ class MappingViewModel @Inject constructor(
     private fun RescueTransaction.updateRescueTransaction(){
         getUserRescueTransaction(this){ rescueTransaction ->
             _state.update { it.copy(userRescueTransaction = rescueTransaction) }
+        }
+    }
+    private fun RescueTransaction.updateRescueClient(){
+        getUserRescueTransaction(this){ rescueTransaction ->
             rescueTransaction?.let { transaction ->
                 updateClient(transaction)
             }
@@ -900,7 +905,7 @@ class MappingViewModel @Inject constructor(
             runCatching {
                 mappingUseCase.getUserUpdatesUseCase().collect {
                     it.getUser()
-                    it.loadUsers()
+                    it.getNearbyCyclist()
                     it.updateClient()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }

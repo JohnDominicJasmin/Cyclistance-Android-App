@@ -295,7 +295,7 @@ fun MappingScreen(
         mappingViewModel.onEvent(event = MappingEvent.ChangeCameraState(cameraPosition, zoom))
     }}
 
-    val onClickCancelRescueTransactionButton = remember(state.rescuer, state.userRescueTransaction) {{
+    val onClickCancelRescueButton = remember(state.rescuer, state.userRescueTransaction) {{
         val transactionId = state.userRescueTransaction?.id
         val selectionType = if (state.rescuer?.id != null) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
         val clientId = state.rescuer?.id ?: state.rescuee?.id
@@ -337,14 +337,14 @@ fun MappingScreen(
             callClient()
         }
     }
-    val onClickChatRescueTransactionButton = remember(clientPhoneNumber){{
+    val onClickChatButton = remember(clientPhoneNumber){{
         val intent = Intent(Intent.ACTION_SENDTO)
         intent.flags = FLAG_ACTIVITY_NEW_TASK
         intent.data = Uri.parse("smsto:$clientPhoneNumber")
         context.startActivity(intent)
     }}
 
-    val onClickCallRescueTransactionButton = remember(clientPhoneNumber) {{
+    val onClickCallButton = remember(clientPhoneNumber) {{
             callPhonePermissionState.requestPermission(
                 context = context,
                 rationalMessage = "Phone call permission is not yet granted.") {
@@ -353,7 +353,7 @@ fun MappingScreen(
     }}
 
 
-    val onClickOkButtonCancelledRescue = remember{{
+    val onClickOkCancelledRescue = remember{{
         mappingViewModel.onEvent(event = MappingEvent.CancelRescueTransaction)
     }}
 
@@ -515,13 +515,13 @@ fun MappingScreen(
         onChangeCameraState = onChangeCameraState,
         mapboxNavigation = mapboxNavigation,
         onInitializeNavigationCamera = onInitializeNavigationCamera,
-        onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton,
+        onClickCancelRescueTransactionButton = onClickCancelRescueButton,
         onDismissNoInternetDialog = onDismissNoInternetDialog,
         hasTransaction = hasTransaction,
         isRescueCancelled = isRescueCancelled,
-        onClickCallRescueTransactionButton = onClickCallRescueTransactionButton,
-        onClickChatRescueTransactionButton = onClickChatRescueTransactionButton,
-        onClickOkButtonCancelledRescue = onClickOkButtonCancelledRescue,
+        onClickCallRescueTransactionButton = onClickCallButton,
+        onClickChatRescueTransactionButton = onClickChatButton,
+        onClickOkButtonCancelledRescue = onClickOkCancelledRescue,
         onClickRescueeMapIcon = onClickRescueeMapIcon,
         onMapClick = onDismissRescueeBanner,
         onClickDismissBannerButton = onDismissRescueeBanner,
@@ -529,7 +529,9 @@ fun MappingScreen(
         onClickLocateUserButton = onClickLocateUserButton,
         onClickRouteOverButton = onClickRouteOverButton,
         onClickRecenterButton = onClickRecenterButton,
-        onClickOpenNavigationButton = onClickOpenNavigationButton
+        onClickOpenNavigationButton = onClickOpenNavigationButton,
+        onClickOkButtonRescueRequestAccepted = onClickOkAcceptedRescue,
+        onRequestNavigationCameraToOverview = onRequestNavigationCameraToOverview
         )
 
 }
@@ -592,6 +594,7 @@ fun MappingScreen(
     onClickChatRescueTransactionButton: () -> Unit = {},
     onClickCancelRescueTransactionButton: () -> Unit = {},
     onClickOkButtonCancelledRescue: () -> Unit = {},
+    onClickOkButtonRescueRequestAccepted: () -> Unit = {},
     onInitializeMapView: (MapView) -> Unit = {},
     onInitializeNavigationCamera: (NavigationCamera) -> Unit = {},
     onChangeCameraState: (Point, Double) -> Unit = { _, _ -> },
