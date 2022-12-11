@@ -136,21 +136,26 @@ fun MappingMapsScreen(
     }
 
 
- val clientLocation = remember(state.transactionLocation, state.rescuer?.location, state.rescuee?.location){
-        with(state){
-             transactionLocation ?: rescuer?.location ?: rescuee?.location
+    val clientLocation =
+        remember(state.transactionLocation, state.rescuer?.location, state.rescuee?.location) {
+            with(state) {
+                transactionLocation ?: rescuer?.location ?: rescuee?.location
+            }
         }
-    }
 
-    val hasTransactionLocationChanges = remember(clientLocation){
+    val hasTransactionLocationChanges = remember(clientLocation) {
         clientLocation != null
     }
 
-    LaunchedEffect(key1 = mapsMapView, key2 = hasTransactionLocationChanges, key3 = clientLocation){
+
+    LaunchedEffect(
+        key1 = mapsMapView,
+        key2 = hasTransactionLocationChanges,
+        key3 = clientLocation) {
 
         val role = state.user.transaction?.role
 
-        if(hasTransactionLocationChanges.not()){
+        if (hasTransactionLocationChanges.not()) {
             return@LaunchedEffect
         }
 
