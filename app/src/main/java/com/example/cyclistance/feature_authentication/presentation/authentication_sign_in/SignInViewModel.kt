@@ -169,7 +169,7 @@ class SignInViewModel @Inject constructor(
                     it.copy(
                         alertDialogModel = AlertDialogModel(
                             title = exception.title,
-                            description = exception.message ?: "You have been blocked for too many failed attempts. Please try again later.",
+                            description = exception.message ?: "You have been blocked temporarily for too many failed attempts. Please try again later.",
                             icon = R.raw.error,
                         ))
                 }
