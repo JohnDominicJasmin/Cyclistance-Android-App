@@ -122,6 +122,7 @@ class ConfirmDetailsViewModel @Inject constructor(
 
             }.onSuccess {
                 broadcastUser()
+                broadcastRescueTransaction()
                 _state.update { it.copy(isLoading = false) }
                 _eventFlow.emit(value = ConfirmDetailsUiEvent.ShowMappingScreen)
 
@@ -138,6 +139,14 @@ class ConfirmDetailsViewModel @Inject constructor(
     private suspend fun broadcastUser() {
         runCatching {
             mappingUseCase.broadcastUserUseCase()
+        }.onFailure {
+            it.handleException()
+        }
+    }
+
+    private suspend fun broadcastRescueTransaction() {
+        runCatching {
+            mappingUseCase.broadcastRescueTransactionUseCase()
         }.onFailure {
             it.handleException()
         }
