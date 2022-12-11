@@ -638,6 +638,23 @@ fun MappingScreen(
                 )
 
 
+
+
+                AnimatedVisibility(visible = state.selectedRescueeMapIcon != null,
+                    enter = expandVertically(expandFrom = Alignment.Top) { 20 },
+                    exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
+                        fullHeight / 2
+                    },
+                ){
+                    if(state.selectedRescueeMapIcon != null) {
+                        MappingExpandableBanner(
+                            modifier = Modifier
+                                .padding(all = 6.dp)
+                                .fillMaxWidth(), banner = state.selectedRescueeMapIcon,
+                            onClickDismissButton = onClickDismissBannerButton)
+                    }
+                }
+
                 FloatingButtonSection(
                     modifier = Modifier
                         .constrainAs(floatingButtonSection) {
