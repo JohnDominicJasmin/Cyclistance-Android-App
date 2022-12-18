@@ -18,13 +18,16 @@ import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping_screen.domain.model.*
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CameraState
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.distanceFormat
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getAddress
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getCalculatedDistance
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getCalculatedETA
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getETABetweenTwoPoints
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getFullAddress
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.RescueRequestRespondents
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.createMockUsers
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.delight.android.location.SimpleLocation
 import io.github.farhanroy.composeawesomedialog.R
