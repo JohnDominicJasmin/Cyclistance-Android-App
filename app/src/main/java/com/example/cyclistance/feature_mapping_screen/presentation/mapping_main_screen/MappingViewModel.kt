@@ -910,7 +910,6 @@ class MappingViewModel @Inject constructor(
             runCatching {
                 mappingUseCase.getUserLocationUseCase().collect { location ->
                     broadCastLocationToTransaction(location)
-                    updateAddress(location)
                     updateLocation(location)
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
@@ -921,11 +920,6 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun updateAddress(location: android.location.Location){
-        geocoder.getAddress(location.latitude, location.longitude) { addresses ->
-            _state.update { it.copy(userAddress = UserAddress(addresses.lastOrNull())) }
-        }
-    }
 
     private fun subscribeToNearbyUsersChanges() {
         getUsersUpdatesJob?.cancel()
@@ -1014,14 +1008,37 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend inline fun uploadUserProfile(crossinline onSuccess : suspend () -> Unit) {
+
+    private inline fun getAddress(
+        location: Location,
+        crossinline onCallbackAddress: (List<Address>) -> Unit) {
+        geocoder.getAddress(
+            location.latitude,
+            location.longitude,
+            onCallbackAddress = onCallbackAddress)
+    }
+
+    private suspend inline fun uploadUserProfile(crossinline onSuccess: suspend () -> Unit) {
         coroutineScope {
-            val address = state.value.userAddress.address
-            if (address != null) {
-                uploadProfile(address, onSuccess)
+            val location = state.value.userLocation
+
+            if(location == null){
+                _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
                 return@coroutineScope
             }
-            _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
+
+            getAddress(location) { addresses ->
+                launch {
+                    val address = addresses.lastOrNull()
+                    if(address != null){
+                        uploadProfile(address, onSuccess)
+                        return@launch
+                    }
+
+                    _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
+                }
+            }
+
         }
     }
 
