@@ -1029,6 +1029,14 @@ class MappingViewModel @Inject constructor(
 
 
     private suspend inline fun uploadProfile(address: Address, crossinline onSuccess: suspend  () -> Unit ) {
+
+        val isProfileUploaded = state.value.profileUploaded
+
+        if(isProfileUploaded){
+            onSuccess()
+            return
+        }
+
         coroutineScope {
             runCatching {
                 val currentAddress = address.getFullAddress()
@@ -1051,6 +1059,7 @@ class MappingViewModel @Inject constructor(
                 finishLoading()
                 broadcastUser()
                 onSuccess()
+                _state.update { it.copy(profileUploaded = true) }
 
             }.onFailure { exception ->
                 Timber.e("Error uploading profile: ${exception.message}")
