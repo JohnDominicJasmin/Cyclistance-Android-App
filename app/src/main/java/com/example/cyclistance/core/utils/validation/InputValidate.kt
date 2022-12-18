@@ -24,6 +24,8 @@ object InputValidate {
         return toCharArray().size == AuthConstants.PHONE_NUMBER_NUMBER_OF_CHARACTERS
     }
 
+
+    // TODO: create higher level function to validate email and password
     fun String.isEmailValid() = Patterns.EMAIL_ADDRESS.matcher(this).matches()
     fun String.isPasswordStrong(): Boolean {
         return isPasswordLongEnough() &&
