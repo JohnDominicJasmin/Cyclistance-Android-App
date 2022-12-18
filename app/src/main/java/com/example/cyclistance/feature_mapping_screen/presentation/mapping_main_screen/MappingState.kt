@@ -11,7 +11,6 @@ import com.example.cyclistance.feature_mapping_screen.domain.model.User
 import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CameraState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.RescueRequestRespondents
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.UserAddress
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -39,9 +38,12 @@ data class MappingState(
 
     val user: UserItem = UserItem(),
     val userRescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
-    val userAddress: UserAddress = UserAddress(),
     val userRescueTransaction: RescueTransactionItem? = null,
+
     val userLocation: Location? = null,
+
+
+
 
 
     val rescuer: UserItem? = null,
@@ -53,6 +55,7 @@ data class MappingState(
     val transactionLocation: Location? = null,
     val rescuerETA: String = "",
     val currentAddress: String = "",
+    val profileUploaded: Boolean = false,
     val name: String = "-----",
     val photoUrl: String = "",
     val selectedRescueeMapIcon: MappingBannerModel? = null,
