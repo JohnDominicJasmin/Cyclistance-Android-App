@@ -26,4 +26,7 @@ sealed class MappingEvent {
     object DismissRequestAccepted: MappingEvent()
     object StartNavigation: MappingEvent()
     object StopNavigation: MappingEvent()
+    object BroadcastUser: MappingEvent()
+    object BroadcastRescueTransaction: MappingEvent()
+
 }

@@ -159,6 +159,19 @@ class MappingViewModel @Inject constructor(
                respondToHelp()
             }
 
+            is MappingEvent.BroadcastUser -> {
+                viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+                    broadcastUser()
+                }
+            }
+
+            is MappingEvent.BroadcastRescueTransaction -> {
+                viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+                    broadcastRescueTransaction()
+                }
+            }
+
+
             is MappingEvent.DismissRescueeBanner -> {
                 dismissRescueeBanner()
             }
