@@ -1000,7 +1000,6 @@ class MappingViewModel @Inject constructor(
     private fun requestHelp() {
         viewModelScope.launch(Dispatchers.IO) {
             uploadUserProfile {
-                hideRequestHelpButton()
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
             }
         }.invokeOnCompletion {
