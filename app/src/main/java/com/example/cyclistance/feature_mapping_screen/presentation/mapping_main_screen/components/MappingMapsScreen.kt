@@ -77,7 +77,7 @@ fun MappingMapsScreen(
     val context = LocalContext.current
 
 
-    val nearbyCyclists = remember(key1= state.nearbyCyclists.users.size) {
+    val nearbyCyclists = remember(key1= state.nearbyCyclists.users.size, key2 = state.nearbyCyclists) {
          state.nearbyCyclists.users
     }
     val pulsingEnabled = remember(state.isSearchingForAssistance, locationPermissionsState?.allPermissionsGranted) {

@@ -316,7 +316,7 @@ fun MappingScreen(
         transaction != null  && rescueTransactionId.isNotEmpty() && userTransactionId.isNotEmpty()
     }
 
-    val isRescueCancelled = remember(state.userRescueTransaction?.cancellation?.rescueCancelled) {
+    val isRescueCancelled = remember(state.userRescueTransaction?.cancellation?.rescueCancelled, state.userRescueTransaction) {
             (state.userRescueTransaction?.cancellation)?.rescueCancelled ?: false
     }
 
@@ -434,7 +434,7 @@ fun MappingScreen(
 
     }
 
-    LaunchedEffect(key1 = mapView, key2 = userLocationAvailable) {
+    LaunchedEffect(key1 = mapView, key2 = userLocationAvailable, key3 = locationPuck2D) {
         mapView.location2.apply {
 
             locationPuck = locationPuck2D
