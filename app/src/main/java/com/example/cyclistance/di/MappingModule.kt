@@ -11,8 +11,8 @@ import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
-import com.example.cyclistance.feature_mapping_screen.data.network_observer.NetworkConnectivityUtil
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
+import com.example.cyclistance.feature_mapping_screen.data.network_observer.NetworkConnectivityUtil
 import com.example.cyclistance.feature_mapping_screen.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping_screen.data.websockets.RescueTransactionWSClient
 import com.example.cyclistance.feature_mapping_screen.data.websockets.TransactionLiveLocationWSClient
@@ -131,10 +131,10 @@ object MappingModule {
             imageUrlToDrawableUseCase = ImageUrlToDrawableUseCase(repository),
             broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(repository, context),
             broadcastUserUseCase = BroadcastUserUseCase(repository, context),
-            getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(repository),
-            getUserUpdatesUseCase = GetUserUpdatesUseCase(repository),
+            getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(context, repository),
+            getUserUpdatesUseCase = GetUserUpdatesUseCase(context, repository),
             broadcastTransactionLocationUseCase = BroadcastTransactionLocationUseCase(repository, context),
-            getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(repository),
+            getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(context, repository),
             deleteRescueRespondentUseCase = DeleteRescueRespondentUseCase(repository),
             addRescueRespondentUseCase = AddRescueRespondentUseCase(repository),
             deleteAllRespondentsUseCase = DeleteAllRespondentsUseCase(repository),
