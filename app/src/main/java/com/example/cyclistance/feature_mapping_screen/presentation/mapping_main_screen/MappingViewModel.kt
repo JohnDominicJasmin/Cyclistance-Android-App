@@ -379,7 +379,22 @@ class MappingViewModel @Inject constructor(
                 broadcastUser()
                 broadcastRescueTransaction()
                 finishLoading()
-                _state.update { it.copy(respondedToHelp = true) }
+                dismissRequestAccepted()
+                _state.update {
+                    it.copy(
+                        respondedToHelp = true,
+                        isSearchingForAssistance = false,
+                        bottomSheetType = "",
+                        requestHelpButtonVisible = true,
+                        isNavigating = false,
+                        isRescueRequestAccepted = false,
+                        userRescueRequestRespondents  = RescueRequestRespondents(),
+                        userRescueTransaction = RescueTransactionItem(),
+                        rescuee = null,
+                        rescuer = null
+
+                    )
+                }
             }.onFailure { exception ->
                 finishLoading()
                 exception.handleException()
