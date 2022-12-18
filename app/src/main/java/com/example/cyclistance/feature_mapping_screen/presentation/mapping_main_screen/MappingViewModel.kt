@@ -419,12 +419,10 @@ class MappingViewModel @Inject constructor(
                     startingLocation = Location(latitude, longitude),
                     endLocation = Location(transaction.latitude, transaction.longitude)).toInt()
 
-                if (distance >= NEAREST_METERS) {
-                    return@let
+                if (distance <= NEAREST_METERS) {
+                    updateRoleBottomSheet(role)
+                    removeAssignedTransaction()
                 }
-
-                updateRoleBottomSheet(role)
-                removeAssignedTransaction()
 
             }
         }
