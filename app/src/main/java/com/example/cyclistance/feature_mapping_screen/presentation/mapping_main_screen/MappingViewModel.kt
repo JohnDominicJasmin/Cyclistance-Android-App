@@ -264,6 +264,7 @@ class MappingViewModel @Inject constructor(
                         respondentId = getId())
                 }.onSuccess {
                     broadcastUser()
+                    broadcastRescueTransaction()
                     _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Rescue request sent"))
                     _state.update { it.copy(respondedToHelp = true) }
                 }.onFailure {
