@@ -374,10 +374,7 @@ class MappingViewModel @Inject constructor(
     private fun removeAssignedTransaction(){
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
-                val clientId = state.value.rescuer?.id ?: state.value.rescuee?.id
                 getId().removeAssignedTransaction()
-                clientId?.removeAssignedTransaction()
-
             }.onSuccess {
                 broadcastUser()
                 broadcastRescueTransaction()
