@@ -63,7 +63,7 @@ data class MappingState(
 
 
 
-    val nearbyCyclists: User = User(),
+    val nearbyCyclists: User? = null,
 
 
 

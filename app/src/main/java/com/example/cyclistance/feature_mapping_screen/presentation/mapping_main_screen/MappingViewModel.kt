@@ -82,7 +82,7 @@ class MappingViewModel @Inject constructor(
     private suspend fun loadClient(){
         coroutineScope {
            val user = state.value.nearbyCyclists
-           user.updateClient()
+           user?.updateClient()
         }
     }
 
@@ -106,7 +106,7 @@ class MappingViewModel @Inject constructor(
 
     private fun updateClient(rescueTransactionItem: RescueTransactionItem){
         val nearbyCyclist = state.value.nearbyCyclists
-        nearbyCyclist.updateClient(rescueTransactionItem)
+        nearbyCyclist?.updateClient(rescueTransactionItem)
     }
 
     private suspend fun getNearbyCyclist() {
@@ -279,7 +279,7 @@ class MappingViewModel @Inject constructor(
 
     private fun selectRescueeMapIcon(id: String){
         viewModelScope.launch(Dispatchers.IO) {
-            val selectedRescuee = state.value.nearbyCyclists.findUser(id)
+            val selectedRescuee = state.value.nearbyCyclists?.findUser(id) ?: return@launch
             val selectedRescueeLocation = selectedRescuee.location
             val confirmationDetail = selectedRescuee.userAssistance?.confirmationDetail
 
@@ -485,7 +485,7 @@ class MappingViewModel @Inject constructor(
             val user = state.value.user
             val userHasCurrentTransaction = (user.transaction ?: Transaction()).transactionId.isNotEmpty()
 
-            val rescuer = state.value.nearbyCyclists.findUser(cardModel.id!!)
+            val rescuer = state.value.nearbyCyclists?.findUser(cardModel.id!!) ?: return@launch
             val rescuerHasCurrentTransaction = (rescuer.transaction ?: Transaction()).transactionId.isNotEmpty()
 
             val transactionId = getTransactionId(rescuer)

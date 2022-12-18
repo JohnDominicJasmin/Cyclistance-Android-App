@@ -77,8 +77,8 @@ fun MappingMapsScreen(
     val context = LocalContext.current
 
 
-    val nearbyCyclists = remember(key1= state.nearbyCyclists.users.size, key2 = state.nearbyCyclists) {
-         state.nearbyCyclists.users
+    val nearbyCyclists = remember(key1= state.nearbyCyclists?.users?.size, key2 = state.nearbyCyclists) {
+         state.nearbyCyclists?.users
     }
     val pulsingEnabled = remember(state.isSearchingForAssistance, locationPermissionsState?.allPermissionsGranted) {
         state.isSearchingForAssistance.and(locationPermissionsState?.allPermissionsGranted == true)
@@ -100,9 +100,9 @@ fun MappingMapsScreen(
         }
 
         pointAnnotationManager.deleteAll()
-        nearbyCyclists.filter{
+        nearbyCyclists?.filter{
             it.userAssistance?.needHelp == true
-        }.forEach { cyclist ->
+        }?.forEach { cyclist ->
                 val location = cyclist.location
                 val cyclistAssistance = cyclist.userAssistance
                 val iconImage = cyclistAssistance?.getMapIconImageDescription(context)
