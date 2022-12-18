@@ -72,7 +72,7 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
             // TODO: Remove this when the backend is ready
             createMockUpUsers()
-            loadUsers()
+            getNearbyCyclist()
             loadRescueTransaction()
             loadClient()
         }
