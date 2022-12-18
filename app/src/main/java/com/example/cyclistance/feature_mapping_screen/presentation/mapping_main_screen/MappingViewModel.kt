@@ -158,22 +158,13 @@ class MappingViewModel @Inject constructor(
     fun onEvent(event: MappingEvent) {
         when (event) {
 
+            is MappingEvent.SubscribeToDataChanges -> {
+                observeDataChanges()
+            }
+
             is MappingEvent.RespondToHelp -> {
-               respondToHelp()
+                respondToHelp()
             }
-
-            is MappingEvent.BroadcastUser -> {
-                viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
-                    broadcastUser()
-                }
-            }
-
-            is MappingEvent.BroadcastRescueTransaction -> {
-                viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
-                    broadcastRescueTransaction()
-                }
-            }
-
 
             is MappingEvent.DismissRescueeBanner -> {
                 dismissRescueeBanner()

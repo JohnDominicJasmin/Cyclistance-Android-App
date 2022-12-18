@@ -119,20 +119,22 @@ fun MappingScreen(
 
 
     LaunchedEffect(key1 = hasInternetConnection) {
-        val dataHaveBeenLoaded = state.user.id != null
+        val nearbyCyclistLoaded = state.nearbyCyclists != null
+        val userLoaded =  state.user.id != null
+        val dataHaveBeenLoaded = userLoaded && nearbyCyclistLoaded
 
         if(hasInternetConnection.not()){
             return@LaunchedEffect
         }
 
-        mappingViewModel.onEvent(MappingEvent.BroadcastUser)
-        mappingViewModel.onEvent(MappingEvent.BroadcastRescueTransaction)
-
-        if(dataHaveBeenLoaded){
-            return@LaunchedEffect
+        if(dataHaveBeenLoaded.not()){
+            mappingViewModel.onEvent(MappingEvent.LoadData)
         }
 
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
+
+
+
     }
 
     BackHandler(enabled = true, onBack = {

@@ -19,6 +19,7 @@ sealed class MappingEvent {
     data class DeclineRescueRequest(val cardModel: CardModel): MappingEvent()
     data class AcceptRescueRequest(val cardModel: CardModel): MappingEvent()
     object LoadData: MappingEvent()
+    object SubscribeToDataChanges: MappingEvent()
     object CancelRescueTransaction: MappingEvent()
     data class ChangeCameraState(val cameraPosition: Point, val cameraZoomLevel: Double): MappingEvent()
     data class SelectRescueMapIcon(val id: String): MappingEvent()
@@ -26,7 +27,5 @@ sealed class MappingEvent {
     object DismissRequestAccepted: MappingEvent()
     object StartNavigation: MappingEvent()
     object StopNavigation: MappingEvent()
-    object BroadcastUser: MappingEvent()
-    object BroadcastRescueTransaction: MappingEvent()
 
 }
