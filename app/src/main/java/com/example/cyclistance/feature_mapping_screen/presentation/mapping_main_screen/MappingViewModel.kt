@@ -9,6 +9,10 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_RAD
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
+import com.example.cyclistance.core.utils.validation.FormatterUtils.getAddress
+import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedDistance
+import com.example.cyclistance.core.utils.validation.FormatterUtils.getETABetweenTwoPoints
+import com.example.cyclistance.core.utils.validation.FormatterUtils.getFullAddress
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toCardModel
@@ -290,7 +294,7 @@ class MappingViewModel @Inject constructor(
                     longitude = selectedRescueeLocation.longitude
                 ))
 
-            val timeRemaining = MappingUtils.getETABetweenTwoPoints( startingLocation = Location(
+            val timeRemaining = getETABetweenTwoPoints( startingLocation = Location(
                 latitude = userLocation.latitude,
                 longitude = userLocation.longitude
             ), endLocation = Location(

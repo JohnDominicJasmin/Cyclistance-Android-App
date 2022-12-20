@@ -2,13 +2,7 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.drawable.Drawable
-import android.location.Address
-import android.location.Geocoder
 import android.net.Uri
-import android.os.Build
-import androidx.annotation.WorkerThread
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.core.tween
@@ -20,8 +14,6 @@ import androidx.core.content.ContextCompat
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.service.LocationService
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Location
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserAssistance
 import com.mapbox.api.directions.v5.models.Bearing
 import com.mapbox.api.directions.v5.models.RouteOptions
 import com.mapbox.geojson.Point
@@ -42,34 +34,10 @@ import com.mapbox.navigation.base.route.RouterOrigin
 import com.mapbox.navigation.core.MapboxNavigation
 import com.mapbox.navigation.core.MapboxNavigationProvider
 import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider
-import im.delight.android.location.SimpleLocation
 import timber.log.Timber
-import java.io.IOException
 
 object MappingUtils {
-    @WorkerThread
-    inline fun Geocoder.getAddress(
-        latitude: Double,
-        longitude: Double,
-        crossinline onCallbackAddress: (List<Address>) -> Unit) {
 
-        try {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                getFromLocation(
-                    latitude, longitude, 1,
-                ) { addresses ->
-                    onCallbackAddress(addresses)
-                }
-            } else {
-                onCallbackAddress(
-                    getFromLocation(latitude, longitude, 1) ?: emptyList())
-            }
-
-        } catch (e: IOException) {
-            Timber.e("GET ADDRESS: ${e.message}")
-        }
-    }
 
     fun Context.startLocationServiceIntentAction(intentAction: String = MappingConstants.ACTION_START) {
         Intent(this, LocationService::class.java).apply {
@@ -78,17 +46,7 @@ object MappingUtils {
         }
     }
 
-    fun Address.getFullAddress(): String {
-        val subThoroughfare =
-            if (subThoroughfare != "null" && subThoroughfare != null) "$subThoroughfare " else ""
-        val thoroughfare =
-            if (thoroughfare != "null" && thoroughfare != null) "$thoroughfare., " else ""
-        val locality = if (locality != "null" && locality != null) "$locality, " else ""
-        val subAdminArea = if (subAdminArea != "null" && subAdminArea != null) subAdminArea else ""
 
-
-        return "$subThoroughfare$thoroughfare$locality$subAdminArea"
-    }
 
     inline fun MapboxNavigation.findRoute(
         parentContext: Context,
@@ -231,61 +189,4 @@ object MappingUtils {
 
 
 
-    fun getETABetweenTwoPoints(startingLocation: Location, endLocation: Location): String {
-        val distance = getCalculatedDistance(startingLocation, endLocation)
-        return getCalculatedETA(distance)
-    }
-
-    /**
-    Returns distance in meters
-     **/
-    fun getCalculatedDistance(startingLocation: Location, endLocation: Location): Double {
-        val start = SimpleLocation.Point(startingLocation.latitude, startingLocation.longitude)
-        val end = SimpleLocation.Point(endLocation.latitude, endLocation.longitude)
-        return SimpleLocation.calculateDistance(start, end)
-    }
-
-    /**
-    Returns distance in meters
-     **/
-    fun getCalculatedDistance(
-        startLatitude: Double,
-        startLongitude: Double,
-        endLatitude: Double,
-        endLongitude: Double): Double {
-        return SimpleLocation.calculateDistance(
-            SimpleLocation.Point(startLatitude, startLongitude),
-            SimpleLocation.Point(endLatitude, endLongitude)
-        )
-    }
-
-    fun UserAssistance.getMapIconImageDescription(context: Context): Drawable? {
-        return when (this.confirmationDetail.description) {
-            MappingConstants.INJURY_TEXT -> {
-                AppCompatResources.getDrawable(context, R.drawable.ic_injury_em)
-            }
-
-            MappingConstants.BROKEN_FRAME_TEXT -> {
-                AppCompatResources.getDrawable(context, R.drawable.ic_broken_frame_em)
-            }
-
-            MappingConstants.INCIDENT_TEXT -> {
-                AppCompatResources.getDrawable(context, R.drawable.ic_incident_em)
-            }
-
-            MappingConstants.BROKEN_CHAIN_TEXT -> {
-                AppCompatResources.getDrawable(context, R.drawable.ic_broken_chain_em)
-            }
-
-            MappingConstants.FLAT_TIRES_TEXT -> {
-                AppCompatResources.getDrawable(context, R.drawable.ic_flat_tire_em)
-            }
-
-            MappingConstants.FAULTY_BRAKES_TEXT -> {
-                AppCompatResources.getDrawable(context, R.drawable.ic_faulty_brakes_em)
-            }
-
-            else -> null
-        }
-    }
 }
