@@ -100,32 +100,6 @@ object MappingUtils {
         )
     }
 
-    fun Double.distanceFormat(): String {
-
-        return if(this <= 0.0) {
-            "0 m"
-        } else if (this < 1000) {
-            "%.2f m".format(this)
-        } else {
-            "%.2f km".format((this / 1000))
-        }
-    }
-
-    fun getCalculatedETA(
-        distanceMeters: Double,
-        averageSpeedKm: Double = MappingConstants.DEFAULT_BIKE_AVERAGE_SPEED_KM): String {
-        val distanceToKm = distanceMeters / 1000
-        if (distanceToKm <= 0.0) {
-            return "0 min"
-        }
-        val eta = distanceToKm / averageSpeedKm
-        val hours = eta.toInt()
-        val minutes = (eta - hours) * 60
-        val minutesInt = minutes.toInt()
-        val minsFormat = if (minutesInt <= 1) "$minutesInt min" else "$minutesInt mins"
-        val hourFormat = if (hours >= 1) "$hours hrs " else ""
-        return "$hourFormat$minsFormat"
-    }
 
 
     fun MapView.setDefaultSettings(
