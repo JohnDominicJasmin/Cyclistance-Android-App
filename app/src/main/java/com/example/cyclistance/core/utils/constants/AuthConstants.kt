@@ -5,7 +5,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 object AuthConstants {
     const val PHONE_NUMBER_NUMBER_OF_CHARACTERS: Int = 10
     const val REGEX_NUMBER_VALUE="[0-9]"
-    const val REGEX_SPECIAL_CHARACTERS_VALUE = "[!#$%&*()_+=|<>?{}\\[\\]~]"
+    const val REGEX_SPECIAL_CHARACTERS_VALUE = "[@!#$%&*()_+=|<>?{}\\[\\]~]"
     const val PASSWORD_MINIMUM_NUMBER_OF_CHARACTERS = 8
     const val TIMER_COUNTS: Long = 90000
     const val ONE_SECOND_TO_MILLIS: Long = 1000
