@@ -25,8 +25,7 @@ object InputValidate {
     }
 
 
-    // TODO: create higher level function to validate email and password
-    fun String.isEmailValid() = Patterns.EMAIL_ADDRESS.matcher(this).matches()
+    fun String.isEmailValid() = Patterns.EMAIL_ADDRESS.matcher(this@isEmailValid).matches()
     fun String.isPasswordStrong(): Boolean {
         return isPasswordLongEnough() &&
                (containsNumeric() ||

@@ -9,8 +9,10 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_RAD
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
+import com.example.cyclistance.core.utils.validation.FormatterUtils.distanceFormat
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getAddress
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedDistance
+import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedETA
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getETABetweenTwoPoints
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getFullAddress
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
@@ -23,13 +25,6 @@ import com.example.cyclistance.feature_mapping_screen.domain.exceptions.MappingE
 import com.example.cyclistance.feature_mapping_screen.domain.model.*
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CameraState
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.distanceFormat
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getAddress
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getCalculatedDistance
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getCalculatedETA
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getETABetweenTwoPoints
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getFullAddress
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.RescueRequestRespondents
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.createMockUsers
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -294,13 +289,7 @@ class MappingViewModel @Inject constructor(
                     longitude = selectedRescueeLocation.longitude
                 ))
 
-            val timeRemaining = getETABetweenTwoPoints( startingLocation = Location(
-                latitude = userLocation.latitude,
-                longitude = userLocation.longitude
-            ), endLocation = Location(
-                latitude = selectedRescueeLocation.latitude,
-                longitude = selectedRescueeLocation.longitude
-            ))
+            val timeRemaining = getCalculatedETA(distance)
 
             _state.update {
                 it.copy(
@@ -408,10 +397,11 @@ class MappingViewModel @Inject constructor(
                         liveLocation.updateTransactionLocation()
                         liveLocation.updateTransactionETA()
                         liveLocation.updateTransactionDistance()
-                        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                     }
+            }.onSuccess {
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }.onFailure {
-                it.handleException()
+                Timber.e("ERROR GETTING TRANSACTION LOCATION: ${it.message}")
             }
 
         }
@@ -939,12 +929,11 @@ class MappingViewModel @Inject constructor(
                     it.getUser()
                     it.getNearbyCyclist()
                     it.updateClient()
-                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
-
+            }.onSuccess {
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }.onFailure {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
-                it.handleException()
             }
         }
     }
@@ -1020,7 +1009,7 @@ class MappingViewModel @Inject constructor(
 
     private inline fun getAddress(
         location: Location,
-        crossinline onCallbackAddress: (List<Address>) -> Unit) {
+        crossinline onCallbackAddress: (Address?) -> Unit) {
         geocoder.getAddress(
             location.latitude,
             location.longitude,
@@ -1036,9 +1025,8 @@ class MappingViewModel @Inject constructor(
                 return@coroutineScope
             }
 
-            getAddress(location) { addresses ->
+            getAddress(location) { address ->
                 launch {
-                    val address = addresses.lastOrNull()
                     if(address != null){
                         uploadProfile(address, onSuccess)
                         return@launch

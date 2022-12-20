@@ -12,12 +12,12 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.*
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.validation.FormatterUtils.getMapIconImageDescription
 import com.example.cyclistance.databinding.ActivityMappingBinding
 import com.example.cyclistance.feature_mapping_screen.domain.model.Role
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.*
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.findRoute
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.getMapIconImageDescription
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.setDefaultSettings
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
@@ -104,8 +104,8 @@ fun MappingMapsScreen(
             it.userAssistance?.needHelp == true
         }?.forEach { cyclist ->
                 val location = cyclist.location
-                val cyclistAssistance = cyclist.userAssistance
-                val iconImage = cyclistAssistance?.getMapIconImageDescription(context)
+                val description = cyclist.userAssistance?.confirmationDetail?.description
+                val iconImage = description?.getMapIconImageDescription(context)
                     ?.toBitmap(width = 120, height = 120)
                 iconImage?.let { bitmap ->
                     val pointAnnotationOptions = PointAnnotationOptions()
