@@ -118,6 +118,14 @@ val userItems = listOf(
         contactNumber = "1234567890",
         id = "8",
         location = Location(latitude = 6.887962, longitude = 125.224905),
+        userAssistance = UserAssistance(
+            needHelp = true,
+            confirmationDetail = ConfirmationDetail(
+                bikeType = "Road Bike",
+                description = MappingConstants.BROKEN_CHAIN_TEXT,
+                message = "I need help with my flat tire",
+            ),
+        ),
         name = "Alex",
         profilePictureUrl = "https://thumbs.dreamstime.com/b/young-indian-man-having-fun-doing-video-call-outdoor-home-garden-mobile-phone-happy-person-using-technology-trends-tech-181375754.jpg",
     ),
