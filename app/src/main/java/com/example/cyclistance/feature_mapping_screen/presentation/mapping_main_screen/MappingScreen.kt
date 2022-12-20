@@ -38,6 +38,7 @@ import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialo
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionStatus.hasGPSConnection
+import com.example.cyclistance.feature_mapping_screen.domain.model.Role
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.*
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CancelledRescueModel
@@ -308,8 +309,10 @@ fun MappingScreen(
     }}
 
     val onClickCancelRescueButton = remember(state.rescuer, state.userRescueTransaction) {{
+        val role = state.user.transaction?.role
+        val isRescuee = role == Role.RESCUEE.name.lowercase()
         val transactionId = state.userRescueTransaction?.id
-        val selectionType = if (state.rescuer?.id != null) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
+        val selectionType = if (isRescuee) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
         val clientId = state.rescuer?.id ?: state.rescuee?.id
 
             navController.navigateScreen(destination = "${Screens.CancellationScreen.route}/$selectionType/$transactionId/$clientId")
