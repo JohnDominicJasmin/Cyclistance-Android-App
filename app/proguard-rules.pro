@@ -14,15 +14,14 @@
 
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+-keepattributes SourceFile,LineNumberTable
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
-
--keep class com.example.crypto.feature_coin.data.remote.dto.* { *; }
-
+-keep class com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.* { *; }
+-keep class com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.* { *; }
 
 
 -dontnote okhttp3.**, okio.**, retrofit2.**
