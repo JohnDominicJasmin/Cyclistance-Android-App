@@ -1,5 +1,7 @@
 package com.example.cyclistance.feature_mapping_screen.data.websockets
 
+import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_LOCATION
+import com.example.cyclistance.core.utils.constants.MappingConstants.JOIN_LIVE_LOCATION_UPDATES
 import com.example.cyclistance.feature_mapping_screen.domain.model.LiveLocationWSModel
 import com.example.cyclistance.feature_mapping_screen.domain.websockets.WebSocketClient
 import com.google.gson.Gson
@@ -22,12 +24,12 @@ class TransactionLiveLocationWSClient(
                 trySend(result)
             }
 
-            socket.on("broadcasting_location", onNewLocationUpdates)
+            socket.on(BROADCAST_LOCATION, onNewLocationUpdates)
             socket.connect()
 
             awaitClose {
                 socket.disconnect()
-                socket.off("broadcasting_location", onNewLocationUpdates)
+                socket.off(BROADCAST_LOCATION, onNewLocationUpdates)
             }
         }
     }
@@ -35,7 +37,7 @@ class TransactionLiveLocationWSClient(
 
     override fun broadCastEvent(t: LiveLocationWSModel?) {
         t?.let{ locationModel ->
-            socket.emit("joinLiveLocationUpdates", locationModel.latitude, locationModel.longitude, "room-${locationModel.room}")
+            socket.emit(JOIN_LIVE_LOCATION_UPDATES, locationModel.latitude, locationModel.longitude, "room-${locationModel.room}")
         }
     }
 
