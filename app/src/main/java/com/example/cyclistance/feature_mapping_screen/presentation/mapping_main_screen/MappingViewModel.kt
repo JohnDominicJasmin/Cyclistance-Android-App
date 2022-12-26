@@ -43,6 +43,7 @@ class MappingViewModel @Inject constructor(
     private val geocoder: Geocoder,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
+    private var loadDataJob: Job? = null
     private var getUsersUpdatesJob: Job? = null
     private var locationUpdatesJob: Job? = null
     private var getRescueTransactionUpdatesJob: Job? = null
@@ -68,7 +69,8 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun loadData() {
-        viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+        if(loadDataJob?.isActive == true) return
+        loadDataJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
             // TODO: Remove this when the backend is ready
             createMockUpUsers()
             getNearbyCyclist()
@@ -388,7 +390,9 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun subscribeToTransactionLocationUpdates(){
-        getTransactionLocationUpdatesJob?.cancel()
+        if(getRescueTransactionUpdatesJob?.isActive == true) {
+            return
+        }
         getTransactionLocationUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
 
             runCatching {
@@ -718,20 +722,25 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun updateLocation(location: android.location.Location){
+    private suspend fun updateLocation(location: android.location.Location){
         val latitude = location.latitude.takeIf { it != 0.0 } ?: return
         val longitude = location.longitude.takeIf { it != 0.0 } ?: return
-        _state.update { state ->
+        val updatedState = _state.updateAndGet { state ->
             state.copy(
-                userLocation = Location(
-                    latitude = latitude,
-                    longitude = longitude,
-                )
-            )
+                userLocation = Location(latitude = latitude,
+                    longitude = longitude))
         }
+
+        refreshNearbyCyclist(updatedState.userLocation)
     }
 
-
+    private suspend fun refreshNearbyCyclist(location: Location?){
+        val nearbyCyclist = state.value.nearbyCyclists?.users
+        if(nearbyCyclist?.isEmpty() == true){
+            val user = state.value.cachedNearbyCyclists
+            user?.getNearbyCyclist(location)
+        }
+    }
 
 
 
@@ -784,17 +793,23 @@ class MappingViewModel @Inject constructor(
         rescueRespondentsSnapShot.clear()
     }
 
-    private suspend fun User.getNearbyCyclist() {
+    private suspend fun User.getNearbyCyclist(currentLocation: Location? = state.value.userLocation) {
         coroutineScope {
-            val currentLocation = state.value.userLocation
 
-            val nearbyCyclists = this@getNearbyCyclist.users
-                .filter { userItem ->
-                val distance = getCalculatedDistance(
-                    startingLocation = currentLocation!!,
-                    endLocation = userItem.location ?: return@coroutineScope
-                )
-                distance <= DEFAULT_RADIUS
+            if(currentLocation == null){
+                _state.update { it.copy(cachedNearbyCyclists = this@getNearbyCyclist) }
+                return@coroutineScope
+            }
+
+            val nearbyCyclists = users.filter { userItem ->
+                val distance = userItem.location?.let {
+                        getCalculatedDistance(
+                            startingLocation = currentLocation,
+                            endLocation = userItem.location
+                        )
+                    }
+                 ?: DEFAULT_RADIUS
+                distance < DEFAULT_RADIUS
             }.filter{
                 it.id != getId()
             }
@@ -830,7 +845,9 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun subscribeToRescueTransactionUpdates() {
-        getRescueTransactionUpdatesJob?.cancel()
+        if(getRescueTransactionUpdatesJob?.isActive == true){
+            return
+        }
         getRescueTransactionUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
 
             runCatching {
@@ -904,7 +921,9 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun subscribeToLocationUpdates() {
-        locationUpdatesJob?.cancel()
+        if(locationUpdatesJob?.isActive == true){
+            return
+        }
         locationUpdatesJob = viewModelScope.launch(Dispatchers.IO) {
 
             runCatching {
@@ -922,7 +941,10 @@ class MappingViewModel @Inject constructor(
 
 
     private fun subscribeToNearbyUsersChanges() {
-        getUsersUpdatesJob?.cancel()
+        if(getUsersUpdatesJob?.isActive == true){
+            return
+        }
+
         getUsersUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
             runCatching {
                 mappingUseCase.getUserUpdatesUseCase().collect {
