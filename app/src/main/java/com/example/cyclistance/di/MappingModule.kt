@@ -43,7 +43,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.socket.client.IO
-import io.socket.client.Socket
 import okhttp3.Cache
 import okhttp3.CacheControl
 import okhttp3.Interceptor
@@ -81,20 +80,18 @@ object MappingModule {
     }
 
 
-    @Provides
-    @Singleton
-    fun provideIOSocket(@ApplicationContext context: Context): Socket =
-        IO.socket(getBaseUrl(context))
+
+
 
 
     @Provides
     @Singleton
     fun provideCyclistanceRepository(
         imageRequestBuilder: ImageRequest.Builder,
-        socket: Socket,
         @ApplicationContext context: Context,
         api: CyclistanceApi): MappingRepository {
 
+        val socket = IO.socket(getBaseUrl(context))
         val userWSClient = UserWSClient(socket)
         val rescueTransactionWSClient = RescueTransactionWSClient(socket)
         val liveLocation = TransactionLiveLocationWSClient(socket)
