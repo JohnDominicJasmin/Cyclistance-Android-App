@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_mapping_screen.data.websockets
 
-import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_USERS
 import com.example.cyclistance.feature_mapping_screen.data.mapper.UserMapper.toUser
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.UserDto
@@ -37,7 +36,7 @@ class UserWSClient(
 
             awaitClose {
                 socket.disconnect();
-                socket.off(MappingConstants.BROADCAST_RESCUE_TRANSACTION, onNewUsers)
+                socket.off(BROADCAST_USERS, onNewUsers)
             }
         }
     }
