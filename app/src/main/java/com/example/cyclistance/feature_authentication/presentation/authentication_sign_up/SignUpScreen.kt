@@ -129,7 +129,7 @@ fun SignUpScreen(
 @Composable
 fun SignUpScreenPreview() {
     CyclistanceTheme(true) {
-        SignUpScreen(signUpState = SignUpState(hasInternet = false))
+        SignUpScreen(signUpState = SignUpState())
     }
 
 }
