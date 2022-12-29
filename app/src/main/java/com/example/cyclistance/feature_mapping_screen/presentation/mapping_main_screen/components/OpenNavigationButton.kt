@@ -5,8 +5,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.R
 import com.example.cyclistance.theme.CyclistanceTheme
-
 @Composable
 fun OpenNavigationButton(
     modifier: Modifier = Modifier,
@@ -16,7 +16,7 @@ fun OpenNavigationButton(
         modifier = modifier,
         onClick = onClick,
         contentDescription = "Open Navigation App Button",
-        iconId = com.mapbox.navigation.R.drawable.mapbox_ic_recenter,
+        iconId = R.drawable.ic_baseline_navigation_24,
     )
 }
 

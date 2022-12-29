@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.R
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
@@ -14,7 +15,7 @@ fun RouteOverViewButton(
 ) {
 
     FabFactory(modifier = modifier,
-        iconId = com.mapbox.navigation.R.drawable.mapbox_ic_route_overview,
+        iconId = R.drawable.ic_baseline_route_24,
         onClick = onClick,
         contentDescription = "Route Line Button")
 }
