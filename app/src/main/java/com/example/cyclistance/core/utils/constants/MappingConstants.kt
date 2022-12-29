@@ -39,6 +39,8 @@ object MappingConstants {
     const val CANCELLATION_VM_STATE_KEY = "cancellation_vm_state_key"
     const val BROADCAST_USERS = "broadcast_users"
     const val BROADCAST_RESCUE_TRANSACTION = "broadcast_rescue_transaction"
+    const val BROADCAST_LOCATION = "broadcasting_location"
+    const val JOIN_LIVE_LOCATION_UPDATES = "joinLiveLocationUpdates"
     const val DEFAULT_BIKE_AVERAGE_SPEED_KM = 24.5
     const val BUTTON_ANIMATION_DURATION = 1500L
 
