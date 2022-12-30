@@ -13,6 +13,7 @@ import com.facebook.FacebookSdk.sdkInitialize
 import com.facebook.appevents.AppEventsLogger
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.mapbox.mapboxsdk.Mapbox
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -26,8 +27,9 @@ class MainActivity : ComponentActivity() {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
-
         super.onCreate(savedInstanceState)
+        Mapbox.getInstance(this, getString(R.string.MapsDownloadToken))
+
         setTheme(R.style.Theme_Cyclistance)
         sdkInitialize(applicationContext);
         AppEventsLogger.activateApp(application);

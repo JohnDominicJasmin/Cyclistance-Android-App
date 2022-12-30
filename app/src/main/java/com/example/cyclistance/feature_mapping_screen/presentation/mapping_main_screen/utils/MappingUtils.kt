@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.view.animation.DecelerateInterpolator
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.core.tween
@@ -10,33 +11,22 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LOCATION_CIRCLE_PULSE_RADIUS
+import com.example.cyclistance.core.utils.constants.MappingConstants.MAX_ZOOM_LEVEL_MAPS
+import com.example.cyclistance.core.utils.constants.MappingConstants.MIN_ZOOM_LEVEL_MAPS
 import com.example.cyclistance.core.utils.service.LocationService
-import com.mapbox.api.directions.v5.models.Bearing
-import com.mapbox.api.directions.v5.models.RouteOptions
-import com.mapbox.geojson.Point
-import com.mapbox.maps.MapView
-import com.mapbox.maps.plugin.PuckBearingSource
-import com.mapbox.maps.plugin.attribution.attribution
-import com.mapbox.maps.plugin.locationcomponent.location
-import com.mapbox.maps.plugin.locationcomponent.location2
-import com.mapbox.maps.plugin.logo.logo
-import com.mapbox.maps.plugin.scalebar.scalebar
-import com.mapbox.navigation.base.extensions.applyDefaultNavigationOptions
-import com.mapbox.navigation.base.extensions.applyLanguageAndVoiceUnitOptions
-import com.mapbox.navigation.base.options.NavigationOptions
-import com.mapbox.navigation.base.route.NavigationRoute
-import com.mapbox.navigation.base.route.NavigationRouterCallback
-import com.mapbox.navigation.base.route.RouterFailure
-import com.mapbox.navigation.base.route.RouterOrigin
-import com.mapbox.navigation.core.MapboxNavigation
-import com.mapbox.navigation.core.MapboxNavigationProvider
-import com.mapbox.navigation.ui.maps.location.NavigationLocationProvider
-import timber.log.Timber
+import com.mapbox.mapboxsdk.camera.CameraPosition
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.location.LocationComponentOptions
+import com.mapbox.mapboxsdk.maps.MapboxMap
 
-object MappingUtils {
+
+internal object MappingUtils {
 
 
     fun Context.startLocationServiceIntentAction(intentAction: String = MappingConstants.ACTION_START) {
@@ -48,79 +38,53 @@ object MappingUtils {
 
 
 
-    inline fun MapboxNavigation.findRoute(
-        parentContext: Context,
-        originPoint: Point,
-        destinationPoint: Point,
-        crossinline onSuccess: (List<NavigationRoute>) -> Unit) {
 
-        if (getNavigationRoutes().isNotEmpty()) {
-            setNavigationRoutes(listOf())
-        }
+    @Composable
+    fun rememberLocationComponentOptions():LocationComponentOptions.Builder {
+        val context = LocalContext.current
 
-        requestRoutes(
-            RouteOptions.builder()
-
-                .applyDefaultNavigationOptions()
-                .applyLanguageAndVoiceUnitOptions(parentContext)
-                .coordinatesList(listOf(originPoint, destinationPoint))
-                .bearingsList(
-                    listOf(
-                        Bearing.builder()
-                            .angle(0.0)
-                            .degrees(45.0)
-                            .build(),
-                        null
-                    )
-                )
-                .layersList(listOf(getZLevel(), null))
-                .build(),
-            object : NavigationRouterCallback {
-                override fun onRoutesReady(
-                    routes: List<NavigationRoute>,
-                    routerOrigin: RouterOrigin
-                ) {
-                    onSuccess(routes)
-                }
-
-                override fun onFailure(
-                    reasons: List<RouterFailure>,
-                    routeOptions: RouteOptions
-                ) {
-                    Timber.e("Route request failed")
-                }
-
-                override fun onCanceled(
-                    routeOptions: RouteOptions,
-                    routerOrigin: RouterOrigin) {
-
-                    Timber.e("Route request cancelled")
-                }
-            }
-        )
-    }
+        return remember{
+            LocationComponentOptions.builder(context)
+                .pulseFadeEnabled(true)
+                .pulseInterpolator(DecelerateInterpolator())
+                .pulseColor(ContextCompat.getColor(context, R.color.ThemeColor))
+                .pulseAlpha(0.55f)
+                .pulseSingleDuration(MappingConstants.DEFAULT_LOCATION_CIRCLE_PULSE_DURATION_MS)
+                .pulseMaxRadius(DEFAULT_LOCATION_CIRCLE_PULSE_RADIUS)
+                .accuracyAlpha(0.3f)
+                .compassAnimationEnabled(true)
+                .accuracyAnimationEnabled(true)
+                .elevation(100.0f)
 
 
-
-    fun MapView.setDefaultSettings(
-        parentContext: Context,
-        navigationLocationProvider: NavigationLocationProvider) {
-        scalebar.enabled = false
-        logo.enabled = false
-        attribution.enabled = false
-        location.enabled = true
-        location2.apply {
-
-            showAccuracyRing = true
-            pulsingColor =
-                ContextCompat.getColor(parentContext, R.color.ThemeColor)
-            puckBearingEnabled = false
-            pulsingMaxRadius = 120.0f
-            puckBearingSource = PuckBearingSource.HEADING
-            setLocationProvider(navigationLocationProvider)
-            enabled = true
         }
     }
+
+
+    fun MapboxMap.animateCameraPosition(latLng: LatLng, zoomLevel: Double, cameraAnimationDuration: Int){
+            CameraPosition.Builder()
+                .target(latLng)
+                .zoom(zoomLevel)
+                .build().apply {
+                    this@animateCameraPosition.animateCamera(
+                        CameraUpdateFactory
+                            .newCameraPosition(this@apply), cameraAnimationDuration)
+                }
+    }
+
+    fun LocationComponentOptions.Builder.changeToNormalPuckIcon(context: Context):LocationComponentOptions.Builder{
+        return this.backgroundTintColor(ContextCompat.getColor(context, R.color.White))
+            .foregroundTintColor(ContextCompat.getColor(context, R.color.ThemeColor))
+    }
+
+    fun MapboxMap.setDefaultSettings() {
+        uiSettings.isAttributionEnabled = false
+        uiSettings.isLogoEnabled = false
+        uiSettings.setCompassMargins(0, 400, 20, 0)
+        setMaxZoomPreference(MAX_ZOOM_LEVEL_MAPS)
+        setMinZoomPreference(MIN_ZOOM_LEVEL_MAPS)
+    }
+
 
     fun Context.openNavigationApp(latitude: Double, longitude: Double) {
         val url = "waze://?ll=$latitude, $longitude&navigate=yes"
@@ -136,23 +100,9 @@ object MappingUtils {
         startActivity(chooserIntent)
     }
 
-    @Composable
-    fun rememberMapboxNavigation(parentContext: Context): MapboxNavigation {
-        return remember {
-            if (MapboxNavigationProvider.isCreated()) {
-                MapboxNavigationProvider.retrieve()
-            } else {
-                MapboxNavigationProvider.create(
-                    NavigationOptions.Builder(parentContext.applicationContext)
-                        .accessToken(parentContext.getString(com.example.cyclistance.R.string.MapsDownloadToken))
-                        .build()
-                )
-            }
-        }
-    }
 
     @Composable
-    fun FabAnimated(visible: Boolean, content: @Composable AnimatedVisibilityScope.() -> Unit) {
+    internal fun FabAnimated(visible: Boolean, content: @Composable AnimatedVisibilityScope.() -> Unit) {
         AnimatedVisibility(
             visible = visible,
             enter = fadeIn(initialAlpha = 0.2f),

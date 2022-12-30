@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
@@ -20,15 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
-import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
-import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUEE_TYPE
@@ -42,37 +39,30 @@ import com.example.cyclistance.feature_mapping_screen.domain.model.Role
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.*
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CancelledRescueModel
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.animateCameraPosition
+import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.changeToNormalPuckIcon
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.openNavigationApp
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.rememberMapboxNavigation
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.startLocationServiceIntentAction
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.navigation.navigateScreenInclusively
-import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
-import com.mapbox.geojson.Point
-import com.mapbox.maps.MapInitOptions
-import com.mapbox.maps.MapView
-import com.mapbox.maps.ResourceOptions
-import com.mapbox.maps.dsl.cameraOptions
-import com.mapbox.maps.plugin.LocationPuck2D
-import com.mapbox.maps.plugin.animation.MapAnimationOptions.Companion.mapAnimationOptions
-import com.mapbox.maps.plugin.animation.camera
-import com.mapbox.maps.plugin.animation.flyTo
-import com.mapbox.maps.plugin.locationcomponent.location2
-import com.mapbox.navigation.core.MapboxNavigation
-import com.mapbox.navigation.ui.maps.camera.NavigationCamera
-import com.mapbox.navigation.ui.maps.camera.data.MapboxNavigationViewportDataSource
+import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
+import com.mapbox.mapboxsdk.location.modes.CameraMode
+import com.mapbox.mapboxsdk.location.modes.RenderMode
+import com.mapbox.mapboxsdk.maps.MapView
+import com.mapbox.mapboxsdk.maps.MapboxMap
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import com.example.cyclistance.R as Resource
-import com.mapbox.navigation.R as R1
 
 
+@SuppressLint("MissingPermission")
 @OptIn(ExperimentalMaterialApi::class)
 @ExperimentalPermissionsApi
 @Composable
@@ -88,21 +78,16 @@ fun MappingScreen(
     val context = LocalContext.current
     val state by mappingViewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
-    var mapView by remember{ mutableStateOf(MapView(context = context, mapInitOptions = MapInitOptions(
-        context,
-        resourceOptions = ResourceOptions
-            .Builder()
-            .accessToken(context.getString(com.example.cyclistance.R.string.MapsDownloadToken)).build()))) }
 
-    var navigationCamera by remember {
+    var mapView by remember {
         mutableStateOf(
-            NavigationCamera(
-                mapboxMap = mapView.getMapboxMap(),
-                viewportDataSource = MapboxNavigationViewportDataSource(mapView.getMapboxMap()),
-                cameraPlugin = mapView.camera))
+            MapView(context))
+    }
+    var mapboxMap by remember<MutableState<MapboxMap?>> {
+        mutableStateOf(null)
     }
 
-    val mapboxNavigation = rememberMapboxNavigation(parentContext = context)
+
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
@@ -112,8 +97,8 @@ fun MappingScreen(
         mapView = mv
     }}
 
-    val onInitializeNavigationCamera = remember{{ nc: NavigationCamera ->
-        navigationCamera = nc
+    val onInitializeMapboxMap = remember{{ mbm: MapboxMap ->
+        mapboxMap = mbm
     }}
 
 
@@ -197,10 +182,9 @@ fun MappingScreen(
         }
     }
 
-    val userLocationAvailable by remember(locationPermissionsState.allPermissionsGranted,
-        state.userLocation?.latitude, state.userLocation?.longitude) {
+    val userLocationAvailable by remember(locationPermissionsState.allPermissionsGranted, state.userLocation) {
         derivedStateOf {
-            locationPermissionsState.allPermissionsGranted.and(state.userLocation?.latitude != DEFAULT_LATITUDE && state.userLocation?.longitude != DEFAULT_LONGITUDE)
+            locationPermissionsState.allPermissionsGranted.and(state.userLocation != null)
         }
     }
 
@@ -213,48 +197,63 @@ fun MappingScreen(
         }
     }}
 
-    val locationPuck2D = remember(state.isNavigating){
-        if(state.isNavigating){
-            LocationPuck2D(
-                bearingImage = ContextCompat.getDrawable(
-                    context,
-                    R1.drawable.mapbox_navigation_puck_icon
-                )
-            )
-        }else {
-            LocationPuck2D(
-                bearingImage = ContextCompat.getDrawable(
-                    context,
-                    Resource.drawable.ic_bearing_image_small),
-                topImage = ContextCompat.getDrawable(
-                    context,
-                    Resource.drawable.ic_location_top_image_small),
-                shadowImage = ContextCompat.getDrawable(
-                    context,
-                    com.mapbox.maps.R.drawable.mapbox_user_icon_shadow)
-            )
-        }
+
+
+    val locationComponentOptions = MappingUtils.rememberLocationComponentOptions()
+
+    val pulsingEnabled by remember(state.isSearchingForAssistance, locationPermissionsState.allPermissionsGranted) {
+        derivedStateOf { state.isSearchingForAssistance.and(locationPermissionsState.allPermissionsGranted) }
     }
 
-    val locateUser =
-        remember(mapView) {
-            { zoomLevel: Double, point: Point, cameraAnimationDuration: Long  ->
-                if (userLocationAvailable) {
-                    mapView.location2.apply {
-                        locationPuck = locationPuck2D
-                        enabled = true
-                    }
 
-                    mapView.getMapboxMap().flyTo(
-                        cameraOptions {
-                            center(point)
-                            zoom(zoomLevel)
-                            bearing(0.0)
-                        },
-                        mapAnimationOptions {
-                            duration(cameraAnimationDuration)
-                        }
-                    )
+    val showUserLocation = remember(mapboxMap, state.isNavigating, userLocationAvailable){{
+        mapboxMap?.style?.let { style ->
+            if (state.isNavigating) {
+
+                val buildLocationComponentActivationOptions =
+                    LocationComponentActivationOptions.builder(context, style)
+                        .locationComponentOptions(locationComponentOptions.build())
+                        .build()
+                mapboxMap?.locationComponent?.apply {
+                    activateLocationComponent(buildLocationComponentActivationOptions);
+                    isLocationComponentEnabled = userLocationAvailable
+                    cameraMode = CameraMode.NONE
+                    renderMode = RenderMode.GPS
+
+                }
+
+            } else {
+                val buildLocationComponentActivationOptions =
+                    LocationComponentActivationOptions.builder(context, style)
+                        .locationComponentOptions(
+                            locationComponentOptions
+                                .changeToNormalPuckIcon(context)
+                                .pulseEnabled(pulsingEnabled)
+                                .build())
+                        .build()
+                mapboxMap?.locationComponent?.apply {
+                    activateLocationComponent(buildLocationComponentActivationOptions);
+                    isLocationComponentEnabled = userLocationAvailable
+                    cameraMode = CameraMode.NONE
+                    renderMode = RenderMode.NORMAL
+                }
+            }
+        }
+    }}
+
+
+
+    val locateUser =
+        remember(userLocationAvailable, mapboxMap) {
+            { zoomLevel: Double, latLng: LatLng, cameraAnimationDuration: Int  ->
+
+                val mapboxLoaded = mapboxMap?.locationComponent != null && mapboxMap?.style != null
+                if (userLocationAvailable && mapboxLoaded) {
+                    showUserLocation()
+                    mapboxMap?.animateCameraPosition(
+                        latLng = latLng,
+                        zoomLevel = zoomLevel,
+                        cameraAnimationDuration = cameraAnimationDuration)
                 }
             }
         }
@@ -270,7 +269,7 @@ fun MappingScreen(
                 }
 
                 state.userLocation?.let{
-                    val point = Point.fromLngLat(it.longitude, it.latitude)
+                    val point = LatLng(it.latitude, it.longitude)
                     locateUser(LOCATE_USER_ZOOM_LEVEL, point, DEFAULT_CAMERA_ANIMATION_DURATION)
                 }
 
@@ -284,11 +283,11 @@ fun MappingScreen(
         }
         Unit
     }}
-    val onClickRouteOverButton = remember{{
-        navigationCamera.requestNavigationCameraToOverview()
+    val onClickRouteOverViewButton = remember(mapboxMap){{
+        mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING
     }}
-    val onClickRecenterButton = remember{{
-        navigationCamera.requestNavigationCameraToFollowing()
+    val onClickRecenterButton = remember(mapboxMap){{
+        mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING_GPS
     }}
     val onClickOpenNavigationButton = remember{{
         openNavigationApp()
@@ -304,7 +303,7 @@ fun MappingScreen(
         Unit
     }}
 
-    val onChangeCameraState = remember{{ cameraPosition: Point, zoom: Double ->
+    val onChangeCameraState = remember{{ cameraPosition: LatLng, zoom: Double ->
         mappingViewModel.onEvent(event = MappingEvent.ChangeCameraState(cameraPosition, zoom))
     }}
 
@@ -315,10 +314,9 @@ fun MappingScreen(
         val selectionType = if (isRescuee) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
         val clientId = state.rescuer?.id ?: state.rescuee?.id
 
-            navController.navigateScreen(destination = "${Screens.CancellationScreen.route}/$selectionType/$transactionId/$clientId")
+        navController.navigateScreen(destination = "${Screens.CancellationScreen.route}/$selectionType/$transactionId/$clientId")
 
-        }
-    }
+    }}
 
     val onDismissNoInternetDialog = remember{{ ->
         mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetDialog)
@@ -367,8 +365,9 @@ fun MappingScreen(
             }
     }}
 
-    val onRequestNavigationCameraToOverview = remember{{
-        navigationCamera.requestNavigationCameraToOverview()
+    val onRequestNavigationCameraToOverview = remember(mapboxMap){{
+        val locationComponent = mapboxMap?.locationComponent
+        locationComponent?.cameraMode = CameraMode.TRACKING
     }}
 
     val onClickOkCancelledRescue = remember{{
@@ -392,9 +391,12 @@ fun MappingScreen(
     }}
 
 
-
-
-
+    LaunchedEffect(key1 = mapboxMap, key2 = userLocationAvailable, pulsingEnabled) {
+        showUserLocation()
+    }
+    LaunchedEffect(key1 = state.isNavigating){
+        showUserLocation()
+    }
 
     LaunchedEffect(key1 = state.bottomSheetType) {
         coroutineScope.launch {
@@ -429,7 +431,11 @@ fun MappingScreen(
 
     }
 
-    LaunchedEffect(key1 = userLocationAvailable, key2 = mapView) {
+    LaunchedEffect(key1 = userLocationAvailable, key2 = mapboxMap) {
+
+        if(userLocationAvailable.not()){
+            return@LaunchedEffect
+        }
 
         with(state.cameraState) {
             locateUser(cameraZoom, cameraPosition, FAST_CAMERA_ANIMATION_DURATION)
@@ -447,16 +453,6 @@ fun MappingScreen(
 
         context.startLocationServiceIntentAction()
 
-    }
-
-    LaunchedEffect(key1 = mapView, key2 = userLocationAvailable, key3 = locationPuck2D) {
-        mapView.location2.apply {
-
-            locationPuck = locationPuck2D
-            enabled = true
-
-
-        }
     }
 
 
@@ -505,11 +501,10 @@ fun MappingScreen(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         onInitializeMapView = onInitializeMapView,
         onChangeCameraState = onChangeCameraState,
-        mapboxNavigation = mapboxNavigation,
-        onInitializeNavigationCamera = onInitializeNavigationCamera,
         onClickCancelRescueTransactionButton = onClickCancelRescueButton,
         onDismissNoInternetDialog = onDismissNoInternetDialog,
         hasTransaction = hasTransaction,
+        userLocationAvailable = userLocationAvailable,
         isRescueCancelled = isRescueCancelled,
         onClickCallRescueTransactionButton = onClickCallButton,
         onClickChatRescueTransactionButton = onClickChatButton,
@@ -519,50 +514,17 @@ fun MappingScreen(
         onClickDismissBannerButton = onDismissRescueeBanner,
         onClickRespondToHelpButton = onClickRespondToHelpButton,
         onClickLocateUserButton = onClickLocateUserButton,
-        onClickRouteOverButton = onClickRouteOverButton,
+        onClickRouteOverButton = onClickRouteOverViewButton,
         onClickRecenterButton = onClickRecenterButton,
         onClickOpenNavigationButton = onClickOpenNavigationButton,
         onClickOkButtonRescueRequestAccepted = onClickOkAcceptedRescue,
-        onRequestNavigationCameraToOverview = onRequestNavigationCameraToOverview
+        onRequestNavigationCameraToOverview = onRequestNavigationCameraToOverview,
+        onInitializeMapboxMap = onInitializeMapboxMap,
+        mapboxMap = mapboxMap,
         )
 
 }
 
-
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
-@Preview
-@Composable
-fun MappingScreenPreview() {
-    val context = LocalContext.current
-    val mapView by remember {
-        mutableStateOf(
-            MapView(
-                context, mapInitOptions = MapInitOptions(
-                    context,
-                    resourceOptions = ResourceOptions
-                        .Builder()
-                        .accessToken(context.getString(com.example.cyclistance.R.string.MapsDownloadToken))
-                        .build())))
-    }
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Expanded))
-
-
-    CyclistanceTheme(true) {
-
-        MappingScreen(
-            modifier = Modifier,
-            isDarkTheme = true,
-            state = MappingState(
-                bottomSheetType = BottomSheetType.SearchAssistance.type,
-                requestHelpButtonVisible = false),
-            onClickSearchButton = {},
-            onClickLocateUserButton = {},
-            mapView = mapView,
-            bottomSheetScaffoldState = bottomSheetScaffoldState,
-        )
-    }
-}
 
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
@@ -573,9 +535,10 @@ fun MappingScreen(
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     state: MappingState,
     mapView: MapView,
-    mapboxNavigation: MapboxNavigation? = null,
+    mapboxMap: MapboxMap?,
     hasTransaction: Boolean = false,
     isRescueCancelled: Boolean = false,
+    userLocationAvailable: Boolean = false,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     onClickSearchButton: () -> Unit = {},
     onClickRespondToHelpButton: () -> Unit = {},
@@ -586,10 +549,10 @@ fun MappingScreen(
     onClickChatRescueTransactionButton: () -> Unit = {},
     onClickCancelRescueTransactionButton: () -> Unit = {},
     onClickOkButtonCancelledRescue: () -> Unit = {},
+    onInitializeMapboxMap: (MapboxMap) -> Unit = {},
     onClickOkButtonRescueRequestAccepted: () -> Unit = {},
     onInitializeMapView: (MapView) -> Unit = {},
-    onInitializeNavigationCamera: (NavigationCamera) -> Unit = {},
-    onChangeCameraState: (Point, Double) -> Unit = { _, _ -> },
+    onChangeCameraState: (LatLng, Double) -> Unit = { _, _ -> },
     onDismissNoInternetDialog: () -> Unit = {},
     onClickRescueeMapIcon: (String) -> Unit = {},
     onMapClick: () -> Unit = {},
@@ -607,25 +570,25 @@ fun MappingScreen(
 
 
 
-        MappingBottomSheet(
-            isDarkTheme = isDarkTheme,
-            state = state,
-            onClickRescueArrivedButton = onClickRescueArrivedButton,
-            onClickReachedDestinationButton = onClickReachedDestinationButton,
-            onClickCancelSearchButton = onClickCancelSearchButton,
-            onClickCallRescueTransactionButton = onClickCallRescueTransactionButton,
-            onClickChatRescueTransactionButton = onClickChatRescueTransactionButton,
-            onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton,
-            bottomSheetScaffoldState = bottomSheetScaffoldState) {
+    MappingBottomSheet(
+        isDarkTheme = isDarkTheme,
+        state = state,
+        onClickRescueArrivedButton = onClickRescueArrivedButton,
+        onClickReachedDestinationButton = onClickReachedDestinationButton,
+        onClickCancelSearchButton = onClickCancelSearchButton,
+        onClickCallRescueTransactionButton = onClickCallRescueTransactionButton,
+        onClickChatRescueTransactionButton = onClickChatRescueTransactionButton,
+        onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton,
+        bottomSheetScaffoldState = bottomSheetScaffoldState) {
 
-            ConstraintLayout(
-                modifier = modifier
-                    .fillMaxSize()) {
+        ConstraintLayout(
+            modifier = modifier
+                .fillMaxSize()) {
 
-                val (mapScreen, requestHelpButton, circularProgressbar, noInternetScreen, respondToHelpButton, floatingButtonSection) = createRefs()
+            val (mapScreen, requestHelpButton, circularProgressbar, noInternetScreen, respondToHelpButton, floatingButtonSection) = createRefs()
 
 
-                MappingMapsScreen(
+            MappingMapsScreen(
                 state = state,
                 modifier = Modifier.constrainAs(mapScreen) {
                     top.linkTo(parent.top)
@@ -634,64 +597,66 @@ fun MappingScreen(
                     bottom.linkTo(parent.bottom)
                 },
                 isDarkTheme = isDarkTheme,
+                userLocationAvailable = userLocationAvailable,
                 locationPermissionsState = locationPermissionState,
-                mapsMapView = mapView,
+                mapMapView = mapView,
                 onInitializeMapView = onInitializeMapView,
+                onInitializeMapboxMap = onInitializeMapboxMap,
                 onChangeCameraState = onChangeCameraState,
-                mapboxNavigation = mapboxNavigation!!,
-                onInitializeNavigationCamera = onInitializeNavigationCamera,
                 hasTransaction = hasTransaction,
-                    isRescueCancelled = isRescueCancelled,
-                    onClickRescueeMapIcon = onClickRescueeMapIcon,
-                    onMapClick = onMapClick,
-                    requestNavigationCameraToOverview = onRequestNavigationCameraToOverview
-                )
+                isRescueCancelled = isRescueCancelled,
+                onClickRescueeMapIcon = onClickRescueeMapIcon,
+                onMapClick = onMapClick,
+                requestNavigationCameraToOverview = onRequestNavigationCameraToOverview,
+                mapboxMap = mapboxMap
+            )
 
 
 
 
-                AnimatedVisibility(visible = state.selectedRescueeMapIcon != null,
-                    enter = expandVertically(expandFrom = Alignment.Top) { 20 },
-                    exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
-                        fullHeight / 2
-                    },
-                ){
-                    if(state.selectedRescueeMapIcon != null) {
-                        MappingExpandableBanner(
-                            modifier = Modifier
-                                .padding(all = 6.dp)
-                                .fillMaxWidth(), banner = state.selectedRescueeMapIcon,
-                            onClickDismissButton = onClickDismissBannerButton)
-                    }
+            AnimatedVisibility(
+                visible = state.selectedRescueeMapIcon != null,
+                enter = expandVertically(expandFrom = Alignment.Top) { 20 },
+                exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
+                    fullHeight / 2
+                },
+            ) {
+                if (state.selectedRescueeMapIcon != null) {
+                    MappingExpandableBanner(
+                        modifier = Modifier
+                            .padding(all = 6.dp)
+                            .fillMaxWidth(), banner = state.selectedRescueeMapIcon,
+                        onClickDismissButton = onClickDismissBannerButton)
                 }
+            }
 
-                FloatingButtonSection(
-                    modifier = Modifier
-                        .constrainAs(floatingButtonSection) {
-                            end.linkTo(parent.end, margin = 4.dp)
-                            bottom.linkTo(
-                                parent.bottom,
-                                margin = (configuration.screenHeightDp / 3).dp)
-                        },
-                    locationPermissionGranted = locationPermissionState.allPermissionsGranted,
-                    state = state,
-                    onClickLocateUserButton = onClickLocateUserButton,
-                    onClickRouteOverButton = onClickRouteOverButton,
-                    onClickRecenterButton = onClickRecenterButton,
-                    onClickOpenNavigationButton = onClickOpenNavigationButton
-                )
+            FloatingButtonSection(
+                modifier = Modifier
+                    .constrainAs(floatingButtonSection) {
+                        end.linkTo(parent.end, margin = 4.dp)
+                        bottom.linkTo(
+                            parent.bottom,
+                            margin = (configuration.screenHeightDp / 3).dp)
+                    },
+                locationPermissionGranted = locationPermissionState.allPermissionsGranted,
+                state = state,
+                onClickLocateUserButton = onClickLocateUserButton,
+                onClickRouteOverButton = onClickRouteOverButton,
+                onClickRecenterButton = onClickRecenterButton,
+                onClickOpenNavigationButton = onClickOpenNavigationButton
+            )
 
-                RequestHelpButton(
-                    modifier = Modifier.constrainAs(requestHelpButton) {
-                        bottom.linkTo(parent.bottom, margin = 15.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                    }, onClickSearchButton = onClickSearchButton,
-                    state = state
-                )
+            RequestHelpButton(
+                modifier = Modifier.constrainAs(requestHelpButton) {
+                    bottom.linkTo(parent.bottom, margin = 15.dp)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                }, onClickSearchButton = onClickSearchButton,
+                state = state
+            )
 
             RespondToHelpButton(
-                modifier = Modifier.constrainAs(respondToHelpButton){
+                modifier = Modifier.constrainAs(respondToHelpButton) {
                     bottom.linkTo(parent.bottom, margin = 15.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
@@ -723,13 +688,15 @@ fun MappingScreen(
 
             }
 
-            AnimatedVisibility (visible = isRescueCancelled && state.isRescueRequestAccepted.not(),
+            AnimatedVisibility(
+                visible = isRescueCancelled && state.isRescueRequestAccepted.not(),
                 enter = fadeIn(),
                 exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
 
                 val rescueTransaction = state.userRescueTransaction
                 val cancellation = rescueTransaction?.cancellation
-                val cancellationReason = cancellation?.cancellationReason ?: return@AnimatedVisibility
+                val cancellationReason =
+                    cancellation?.cancellationReason ?: return@AnimatedVisibility
 
 
                 MappingCancelledRescue(
@@ -743,7 +710,8 @@ fun MappingScreen(
                     ))
             }
 
-            AnimatedVisibility(visible = state.isRescueRequestAccepted && isRescueCancelled.not(),
+            AnimatedVisibility(
+                visible = state.isRescueRequestAccepted && isRescueCancelled.not(),
                 enter = fadeIn(),
                 exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
                 RescueRequestAccepted(
