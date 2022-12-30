@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 
 import android.annotation.SuppressLint
 import android.content.res.Resources
+import android.graphics.Color
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -9,6 +10,8 @@ import androidx.compose.ui.viewinterop.AndroidViewBinding
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.*
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_LAYER_ID
+import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_SOURCE_ID
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getMapIconImageDescription
 import com.example.cyclistance.databinding.ActivityMappingBinding
 import com.example.cyclistance.feature_mapping_screen.domain.model.Role
@@ -26,7 +29,10 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.style.expressions.Expression.*
+import com.mapbox.mapboxsdk.style.layers.LineLayer
+import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import timber.log.Timber
 
 
@@ -167,7 +173,7 @@ fun MappingMapsScreen(
 
 
         if(hasTransaction.not()){
-//          todo:  mapboxNavigation.setNavigationRoutes(listOf()), Remove routes
+//          todo: mapboxNavigation.setNavigationRoutes(listOf()), Remove routes
             return@LaunchedEffect
         }
 
@@ -200,6 +206,22 @@ fun MappingMapsScreen(
         lateinit var _mapboxMap: MapboxMap
         val pixelDensity = Resources.getSystem().displayMetrics.density
 
+        val initSource = { loadedMapStyle: Style ->
+            loadedMapStyle.addSource(GeoJsonSource(ROUTE_SOURCE_ID));
+        }
+        val initLayers = { loadedMapStyle: Style ->
+            loadedMapStyle.addLayer(
+                LineLayer(ROUTE_LAYER_ID, ROUTE_SOURCE_ID).apply {
+                    setProperties(
+                        lineCap(Property.LINE_CAP_ROUND),
+                        lineJoin(Property.LINE_JOIN_ROUND),
+                        lineWidth(5f),
+                        lineColor(Color.parseColor("#006eff"))
+                    )
+                }
+            )
+
+        }
 
         root.findViewTreeLifecycleOwner()?.lifecycle?.addObserver(
             LifecycleEventObserver { _, event ->
@@ -209,19 +231,17 @@ fun MappingMapsScreen(
                         Timber.v("Lifecycle Event: ON_CREATE")
                         mapView.getMapAsync {
                             _mapboxMap = it
-                            it.setStyle(if (isDarkTheme) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY) { style ->
-                                if(style.isFullyLoaded) {
+                            it.setStyle(if (isDarkTheme) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY) { loadedStyle ->
+                                if(loadedStyle.isFullyLoaded) {
                                     onInitializeMapboxMap(_mapboxMap)
                                     onInitializeMapView(mapView)
+                                    initSource(loadedStyle)
+                                    initLayers(loadedStyle)
                                 }
                             }
                             it.setDefaultSettings()
-
                         }
 
-                        if(locationPermissionsState?.allPermissionsGranted == true) {
-//                            mapboxNavigation.startTripSession()
-                        }
                     }
 
                     Lifecycle.Event.ON_START -> {
