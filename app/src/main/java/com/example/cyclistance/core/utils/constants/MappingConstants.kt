@@ -69,4 +69,7 @@ object MappingConstants {
     const val DEFAULT_LOCATION_CIRCLE_PULSE_RADIUS = 50f
 
 
+    const val ROUTE_LAYER_ID = "route-layer-id"
+    const val ROUTE_SOURCE_ID = "route-source-id"
+
 }
