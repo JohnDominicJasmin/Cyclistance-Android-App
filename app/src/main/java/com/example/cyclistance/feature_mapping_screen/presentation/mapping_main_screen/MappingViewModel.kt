@@ -735,8 +735,8 @@ class MappingViewModel @Inject constructor(
     }
 
     private suspend fun refreshNearbyCyclist(location: Location?){
-        val nearbyCyclist = state.value.nearbyCyclists?.users
-        if(nearbyCyclist?.isEmpty() == true){
+        val nearbyCyclist = state.value.nearbyCyclists
+        if(nearbyCyclist == null){
             val user = state.value.cachedNearbyCyclists
             user?.getNearbyCyclist(location)
         }
@@ -793,10 +793,11 @@ class MappingViewModel @Inject constructor(
         rescueRespondentsSnapShot.clear()
     }
 
-    private suspend fun User.getNearbyCyclist(currentLocation: Location? = state.value.userLocation) {
+    private suspend fun User.getNearbyCyclist(currentLocation: Location? = null) {
         coroutineScope {
 
-            if(currentLocation == null){
+            val userLocation = state.value.userLocation ?: currentLocation
+            if(userLocation == null){
                 _state.update { it.copy(cachedNearbyCyclists = this@getNearbyCyclist) }
                 return@coroutineScope
             }
@@ -804,7 +805,7 @@ class MappingViewModel @Inject constructor(
             val nearbyCyclists = users.filter { userItem ->
                 val distance = userItem.location?.let {
                         getCalculatedDistance(
-                            startingLocation = currentLocation,
+                            startingLocation = userLocation,
                             endLocation = userItem.location
                         )
                     }
