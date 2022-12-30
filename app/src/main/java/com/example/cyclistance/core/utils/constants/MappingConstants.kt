@@ -16,8 +16,8 @@ object MappingConstants {
     const val DEFAULT_LATITUDE = 12.8797
     const val DEFAULT_LONGITUDE = 121.7740
 
-    const val DEFAULT_CAMERA_ANIMATION_DURATION = 1500L
-    const val FAST_CAMERA_ANIMATION_DURATION = 0L
+    const val DEFAULT_CAMERA_ANIMATION_DURATION: Int = 1500
+    const val FAST_CAMERA_ANIMATION_DURATION:Int = 1
 
     const val CHARACTER_LIMIT = 110
     const val IMAGE_PLACEHOLDER_URL = "https://raw.githubusercontent.com/JohnDominicJasmin/JohnDominicJasmin/main/ic_empty_profile_placeholder.jpg"
@@ -61,4 +61,12 @@ object MappingConstants {
 
     const val NEAREST_METERS = 10.00
     const val DEFAULT_RADIUS = 7000.00
+
+
+    /*Map*/
+
+    const val DEFAULT_LOCATION_CIRCLE_PULSE_DURATION_MS = 1500f
+    const val DEFAULT_LOCATION_CIRCLE_PULSE_RADIUS = 50f
+
+
 }
