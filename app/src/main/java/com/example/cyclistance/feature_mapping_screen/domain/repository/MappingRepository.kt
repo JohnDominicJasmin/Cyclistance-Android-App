@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping_screen.domain.repository
 import android.graphics.drawable.Drawable
 import android.location.Location
 import com.example.cyclistance.feature_mapping_screen.domain.model.*
+import com.mapbox.geojson.Point
 import kotlinx.coroutines.flow.Flow
 
 interface MappingRepository {
@@ -40,4 +41,6 @@ interface MappingRepository {
     fun broadcastLocation(locationModel: LiveLocationWSModel)
 
 
+
+    suspend fun getRouteDirections(origin: Point, destination: Point): RouteDirection
 }

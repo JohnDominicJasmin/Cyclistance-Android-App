@@ -29,6 +29,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_tra
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
+import com.example.cyclistance.feature_mapping_screen.domain.use_case.routes.GetRouteDirectionsUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
@@ -37,6 +38,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.BroadcastUserUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.GetUserUpdatesUseCase
 import com.google.gson.GsonBuilder
+import com.mapbox.api.directions.v5.MapboxDirections
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -80,6 +82,15 @@ object MappingModule {
     }
 
 
+    @Singleton
+    @Provides
+    fun providesMapDirections(@ApplicationContext context: Context): MapboxDirections.Builder{
+        return MapboxDirections.builder()
+            .accessToken(context.getString(R.string.MapsDownloadToken))
+    }
+
+
+
 
 
 
@@ -89,19 +100,23 @@ object MappingModule {
     fun provideCyclistanceRepository(
         imageRequestBuilder: ImageRequest.Builder,
         @ApplicationContext context: Context,
-        api: CyclistanceApi): MappingRepository {
+        api: CyclistanceApi,
+        mapboxDirections: MapboxDirections.Builder): MappingRepository {
 
         val socket = IO.socket(getBaseUrl(context))
         val userWSClient = UserWSClient(socket)
         val rescueTransactionWSClient = RescueTransactionWSClient(socket)
         val liveLocation = TransactionLiveLocationWSClient(socket)
+
         return MappingRepositoryImpl(
             imageRequestBuilder = imageRequestBuilder,
             api = api,
             context = context,
             rescueTransactionClient = rescueTransactionWSClient,
             userClient = userWSClient,
-            liveLocation = liveLocation)
+            liveLocation = liveLocation,
+            mapboxDirections = mapboxDirections
+            )
     }
 
 
@@ -137,6 +152,7 @@ object MappingModule {
             deleteAllRespondentsUseCase = DeleteAllRespondentsUseCase(repository),
             confirmDetailsUseCase = ConfirmDetailsUseCase(repository),
             confirmCancellationUseCase = ConfirmCancellationUseCase(repository),
+            getRouteDirectionsUseCase = GetRouteDirectionsUseCase(repository),
         )
     }
 
