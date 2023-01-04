@@ -1,6 +1,7 @@
-package com.example.cyclistance.navigation
+package com.example.cyclistance.feature_readable_displays.presentation.intro_slider
 
 import android.os.Parcelable
+import com.example.cyclistance.navigation.Screens
 import kotlinx.parcelize.Parcelize
 
 

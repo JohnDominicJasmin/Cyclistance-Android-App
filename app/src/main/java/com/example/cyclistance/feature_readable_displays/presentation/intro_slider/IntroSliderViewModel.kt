@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.ReadableConstants
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_readable_displays.domain.use_case.IntroSliderUseCase
-import com.example.cyclistance.navigation.MainScreenState
 import com.example.cyclistance.navigation.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
