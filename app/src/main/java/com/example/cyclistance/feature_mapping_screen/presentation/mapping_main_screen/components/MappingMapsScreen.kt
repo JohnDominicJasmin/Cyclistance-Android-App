@@ -110,8 +110,9 @@ fun MappingMapsScreen(
             onClickRescueeMapIcon(it.title)
             true
         }
-        mapMapView.setOnClickListener {
+        mapboxMap?.addOnMapClickListener {
             onMapClick()
+            true
         }
 
     }
