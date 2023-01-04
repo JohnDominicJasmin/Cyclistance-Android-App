@@ -44,8 +44,6 @@ fun MappingMapsScreen(
     modifier: Modifier,
     state: MappingState,
     isDarkTheme: Boolean,
-    userLocationAvailable: Boolean,
-    mapMapView: MapView,
     mapboxMap: MapboxMap?,
     hasTransaction: Boolean,
     isRescueCancelled: Boolean,
