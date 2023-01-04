@@ -3,6 +3,8 @@ package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main
 import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.graphics.Color
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -165,117 +167,101 @@ fun MappingMapsScreen(
 
     }
 
-    LaunchedEffect(key1 = state.userRescueTransaction?.route, key2 = hasTransaction, key3 = isRescueCancelled){
-        val transactionRoute = state.userRescueTransaction?.route
-        val startingLocation = transactionRoute?.startingLocation
-        val destinationLocation = transactionRoute?.destinationLocation
-
-
-        if(hasTransaction.not()){
-//          todo: mapboxNavigation.setNavigationRoutes(listOf()), Remove routes
-            return@LaunchedEffect
-        }
-
-        if (isRescueCancelled) {
-//          todo: mapboxNavigation.setNavigationRoutes(listOf()), Remove routes
-            return@LaunchedEffect
-        }
-
-        startingLocation?.let {
-            destinationLocation?.let {
-                // TODO: Show route
-          /*      mapboxNavigation.findRoute(context, originPoint = Point.fromLngLat(startingLocation.longitude, startingLocation.latitude),
-                    destinationPoint = Point.fromLngLat(destinationLocation.longitude, destinationLocation.latitude)) {
-
-                    mapboxNavigation.setNavigationRoutes(it)
-                    requestNavigationCameraToOverview()
-                }*/
-            }
-        }
-    }
-
-
-
-
-
-
-
-    AndroidViewBinding(factory = ActivityMappingBinding::inflate, modifier = modifier){
-        val viewContext = this.root.context
-        lateinit var _mapboxMap: MapboxMap
-        val pixelDensity = Resources.getSystem().displayMetrics.density
-
-        val initSource = { loadedMapStyle: Style ->
-            loadedMapStyle.addSource(GeoJsonSource(ROUTE_SOURCE_ID));
-        }
-        val initLayers = { loadedMapStyle: Style ->
-            loadedMapStyle.addLayer(
-                LineLayer(ROUTE_LAYER_ID, ROUTE_SOURCE_ID).apply {
-                    setProperties(
-                        lineCap(Property.LINE_CAP_ROUND),
-                        lineJoin(Property.LINE_JOIN_ROUND),
-                        lineWidth(5f),
-                        lineColor(Color.parseColor("#006eff"))
-                    )
-                }
-            )
-
-        }
-
-        root.findViewTreeLifecycleOwner()?.lifecycle?.addObserver(
-            LifecycleEventObserver { _, event ->
-                when (event) {
-                    Lifecycle.Event.ON_CREATE -> {
-
-                        Timber.v("Lifecycle Event: ON_CREATE")
-                        mapView.getMapAsync {
-                            _mapboxMap = it
-                            it.setStyle(if (isDarkTheme) Style.TRAFFIC_NIGHT else Style.TRAFFIC_DAY) { loadedStyle ->
-                                if(loadedStyle.isFullyLoaded) {
-                                    onInitializeMapboxMap(_mapboxMap)
-                                    onInitializeMapView(mapView)
-                                    initSource(loadedStyle)
-                                    initLayers(loadedStyle)
-                                }
-                            }
-                            it.setDefaultSettings()
-                        }
-
-                    }
-
-                    Lifecycle.Event.ON_START -> {
-                        Timber.v("Lifecycle Event: ON_START")
-
-                        mapView.onStart()
-                    }
-                    Lifecycle.Event.ON_RESUME -> {
-                        Timber.v("Lifecycle Event: ON_RESUME")
-                    }
-                    Lifecycle.Event.ON_PAUSE -> {
-                        val camera = mapboxMap?.cameraPosition ?: return@LifecycleEventObserver
-                        val cameraCenter = camera.target
-                        val cameraZoom =  camera.zoom
-                        onChangeCameraState(cameraCenter, cameraZoom)
-                    }
-                    Lifecycle.Event.ON_STOP -> {
-                        Timber.v("Lifecycle Event: ON_STOP")
-
-                        mapView.onStop()
-                    }
-                    Lifecycle.Event.ON_DESTROY -> {
-
-                        mapView.onDestroy()
-                    }
-                    else -> {}
-
-                }
-            }
+    Map(
+        modifier = modifier,
+        isDarkTheme = isDarkTheme,
+        onInitializeMapboxMap = onInitializeMapboxMap,
+        onInitializeMapView = onInitializeMapView,
+        onChangeCameraState = onChangeCameraState,
         )
 
+}
 
 
+@Composable
+private fun Map(
+    modifier: Modifier,
+    isDarkTheme: Boolean,
+    onInitializeMapboxMap: (MapboxMap) -> Unit,
+    onInitializeMapView: (MapView) -> Unit,
+    onChangeCameraState: (LatLng, Double) -> Unit) {
 
+    Box(modifier = modifier) {
+
+        AndroidViewBinding(factory = ActivityMappingBinding::inflate, modifier = Modifier.fillMaxSize()) {
+            val viewContext = this.root.context
+            val pixelDensity = Resources.getSystem().displayMetrics.density
+            lateinit var mapboxMap: MapboxMap
+            val initSource = { loadedMapStyle: Style ->
+                loadedMapStyle.addSource(GeoJsonSource(ROUTE_SOURCE_ID));
+            }
+            val initLayers = { loadedMapStyle: Style ->
+                loadedMapStyle.addLayer(
+                    LineLayer(ROUTE_LAYER_ID, ROUTE_SOURCE_ID).apply {
+                        setProperties(
+                            lineCap(Property.LINE_CAP_ROUND),
+                            lineJoin(Property.LINE_JOIN_ROUND),
+                            lineWidth(5f),
+                            lineColor(Color.parseColor("#006eff"))
+                        )
+                    }
+                )
+
+            }
+
+
+            root.findViewTreeLifecycleOwner()?.lifecycle?.addObserver(
+                LifecycleEventObserver { _, event ->
+                    when (event) {
+                        Lifecycle.Event.ON_CREATE -> {
+
+                            Timber.v("Lifecycle Event: ON_CREATE")
+                            mapView.getMapAsync {
+                                mapboxMap = it
+                                it.setStyle(if (isDarkTheme) Style.DARK else Style.LIGHT) { loadedStyle ->
+
+                                    if (loadedStyle.isFullyLoaded) {
+
+                                        initSource(loadedStyle)
+                                        initLayers(loadedStyle)
+                                        onInitializeMapView(mapView)
+                                        onInitializeMapboxMap(it)
+
+                                    }
+                                }
+                                it.setDefaultSettings()
+                            }
+
+                        }
+
+                        Lifecycle.Event.ON_START -> {
+                            Timber.v("Lifecycle Event: ON_START")
+                            mapView.onStart()
+                        }
+                        Lifecycle.Event.ON_RESUME -> {
+                            Timber.v("Lifecycle Event: ON_RESUME")
+                        }
+                        Lifecycle.Event.ON_PAUSE -> {
+                            val camera = mapboxMap.cameraPosition
+                            val cameraCenter = camera.target
+                            val cameraZoom = camera.zoom
+                            onChangeCameraState(cameraCenter, cameraZoom)
+                        }
+                        Lifecycle.Event.ON_STOP -> {
+                            Timber.v("Lifecycle Event: ON_STOP")
+
+                            mapView.onStop()
+                        }
+                        Lifecycle.Event.ON_DESTROY -> {
+
+                            mapView.onDestroy()
+                        }
+                        else -> {}
+
+                    }
+                }
+            )
+        }
     }
-
 }
 
