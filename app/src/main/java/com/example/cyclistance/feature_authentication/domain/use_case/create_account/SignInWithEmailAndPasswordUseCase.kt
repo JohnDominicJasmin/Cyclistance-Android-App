@@ -6,7 +6,7 @@ import com.example.cyclistance.core.utils.validation.InputValidate.isEmailValid
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
-import com.example.cyclistance.feature_mapping_screen.data.network_observer.NetworkConnectivityUtil
+import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionStatus.hasInternetConnection
 import com.google.firebase.auth.AuthCredential
 
 class SignInWithEmailAndPasswordUseCase(
@@ -28,7 +28,7 @@ class SignInWithEmailAndPasswordUseCase(
             password.isEmpty() ->
                 throw AuthExceptions.PasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
 
-            !NetworkConnectivityUtil(context).hasInternet() ->
+            !context.hasInternetConnection() ->
                 throw AuthExceptions.NetworkException(message = context.getString(R.string.no_internet_message))
 
             else -> repository.signInWithEmailAndPassword(email, password)

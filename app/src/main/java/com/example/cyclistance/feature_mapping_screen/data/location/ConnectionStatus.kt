@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.IntentSender
 import android.location.LocationManager
 import androidx.activity.result.IntentSenderRequest
+import com.example.cyclistance.feature_mapping_screen.data.network_observer.NetworkConnectivityUtil
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task
@@ -18,6 +19,9 @@ object ConnectionStatus {
         }
 
 
+    fun Context.hasInternetConnection(): Boolean {
+        return NetworkConnectivityUtil(this).hasInternet()
+    }
 
      fun Context.checkLocationSetting(
         onDisabled: (IntentSenderRequest) -> Unit,
