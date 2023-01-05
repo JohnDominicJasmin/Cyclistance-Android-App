@@ -223,7 +223,7 @@ private fun Map(
                             Timber.v("Lifecycle Event: ON_RESUME")
                         }
                         Lifecycle.Event.ON_PAUSE -> {
-                            val camera = mapboxMap.cameraPosition
+                            val camera = mapboxMap?.cameraPosition ?: CameraPosition.DEFAULT
                             val cameraCenter = camera.target
                             val cameraZoom = camera.zoom
                             onChangeCameraState(cameraCenter, cameraZoom)
