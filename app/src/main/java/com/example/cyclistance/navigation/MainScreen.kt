@@ -44,7 +44,6 @@ import com.example.cyclistance.theme.Black900
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.theme.White50
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -139,8 +138,14 @@ fun MainScreen(
     val onToggleTheme = remember{{
         settingViewModel.onEvent(event = SettingEvent.ToggleTheme)
     }}
-    val onClickTopBarIcon = remember{{
+    val onClickArrowBackIcon = remember{{
         navController.navigateScreen(Screens.MappingScreen.route)
+    }}
+    val onClickMenuIcon = remember{{
+        coroutineScope.launch {
+            scaffoldState.drawerState.open()
+        }
+        Unit
     }}
 
     CyclistanceTheme(darkTheme = settingState.isDarkTheme) {
@@ -153,12 +158,11 @@ fun MainScreen(
 
                 Column {
                     TopAppBar(
-                        scaffoldState = scaffoldState,
                         route = navBackStackEntry?.destination?.route,
-                        coroutineScope = coroutineScope,
+                        onClickMenuIcon = onClickMenuIcon,
                         onClickSaveProfile = onClickSaveProfile,
                         editProfileSaveButtonEnabled = editProfileState.isUserInformationChanges(),
-                        onClickTopBarIcon = onClickTopBarIcon,
+                        onClickArrowBackIcon = onClickArrowBackIcon,
                         isNavigating = mappingState.isNavigating)
 
                         NoInternetStatusBar(internetAvailable, navBackStackEntry?.destination?.route)
@@ -190,10 +194,9 @@ fun MainScreen(
 }
 
 @Composable
-fun TopAppBar(
-    onClickTopBarIcon: () -> Unit = {},
-    scaffoldState: ScaffoldState = rememberScaffoldState(),
-    coroutineScope: CoroutineScope = rememberCoroutineScope(),
+private fun TopAppBar(
+    onClickArrowBackIcon: () -> Unit = {},
+    onClickMenuIcon: () -> Unit = {},
     onClickSaveProfile: () -> Unit = {},
     editProfileSaveButtonEnabled: Boolean = false,
     isNavigating: Boolean,
@@ -207,18 +210,14 @@ fun TopAppBar(
                 enter = fadeIn(initialAlpha = 0.4f),
                 exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
 
-                DefaultTopBar(onClickIcon = {
-                    coroutineScope.launch {
-                        scaffoldState.drawerState.open()
-                    }
-                })
+                DefaultTopBar(onClickIcon = onClickMenuIcon)
             }
         }
 
             "${Screens.CancellationScreen.route}/{cancellationType}/{transactionId}/{clientId}" -> {
                 TopAppBarCreator(
                     icon = Icons.Default.ArrowBack,
-                    onClickIcon = onClickTopBarIcon,
+                    onClickIcon = onClickArrowBackIcon,
                     topAppBarTitle = {
                         TitleTopAppBar(title = "Cancellation Reason")
                     })
@@ -227,7 +226,7 @@ fun TopAppBar(
             Screens.ConfirmDetailsScreen.route -> {
                 TopAppBarCreator(
                     icon = Icons.Default.ArrowBack,
-                    onClickIcon = onClickTopBarIcon,
+                    onClickIcon = onClickArrowBackIcon,
                     topAppBarTitle = {
                         TitleTopAppBar(
                             title = "Confirmation Details")
@@ -238,7 +237,7 @@ fun TopAppBar(
             Screens.RescueRequestScreen.route -> {
                 TopAppBarCreator(
                     icon = Icons.Default.ArrowBack,
-                    onClickIcon = onClickTopBarIcon,
+                    onClickIcon = onClickArrowBackIcon,
                     topAppBarTitle = {
                         TitleTopAppBar(title = "Rescue Requests")
                     })
@@ -246,14 +245,14 @@ fun TopAppBar(
             Screens.ChangePasswordScreen.route -> {
                 TopAppBarCreator(
                     icon = Icons.Default.ArrowBack,
-                    onClickIcon = onClickTopBarIcon,
+                    onClickIcon = onClickArrowBackIcon,
                     topAppBarTitle = {
                         TitleTopAppBar(title = "Change Password")
                     })
             }
             Screens.EditProfileScreen.route -> {
                 TopAppBarCreator(
-                    icon = Icons.Default.Close, onClickIcon = onClickTopBarIcon, topAppBarTitle = {
+                    icon = Icons.Default.Close, onClickIcon = onClickArrowBackIcon, topAppBarTitle = {
                         TitleTopAppBar(
                             title = "Edit Profile",
                             confirmationText = "Save",
@@ -264,7 +263,7 @@ fun TopAppBar(
             Screens.SettingScreen.route -> {
                 TopAppBarCreator(
                     icon = Icons.Default.ArrowBack,
-                    onClickIcon = onClickTopBarIcon,
+                    onClickIcon = onClickArrowBackIcon,
                     topAppBarTitle = {
                         TitleTopAppBar(title = "Setting Screen")
                     })
@@ -275,7 +274,7 @@ fun TopAppBar(
 
 
 @Composable
-fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
+private fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 
     val inShowableScreens = route != Screens.SettingScreen.route && route != Screens.IntroSliderScreen.route
 
