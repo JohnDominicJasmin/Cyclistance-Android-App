@@ -188,17 +188,6 @@ fun MappingScreen(
         }
     }
 
-    val onClickSearchButton = remember {{
-        locationPermissionsState.requestPermission(
-            context = context,
-            rationalMessage = "Location permission is not yet granted.") {
-            context.startLocationServiceIntentAction()
-            postProfile()
-        }
-    }}
-
-
-
     val locationComponentOptions = MappingUtils.rememberLocationComponentOptions()
 
     val pulsingEnabled by remember(state.isSearchingForAssistance, locationPermissionsState.allPermissionsGranted) {
