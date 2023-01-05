@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
+import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_SOURCE_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUEE_TYPE
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUER_TYPE
 import com.example.cyclistance.core.utils.permission.requestPermission
@@ -43,12 +44,17 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
+import com.mapbox.core.constants.Constants.PRECISION_6
+import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.LineString
+import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
 import com.mapbox.mapboxsdk.location.modes.CameraMode
 import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -208,7 +214,40 @@ fun MappingScreen(
                 }
             }
         }
+        Unit
     }}
+
+
+    val showRouteDirection = remember(state.routeDirection, mapboxMap){{
+
+        state.routeDirection?.geometry?.let { geometry ->
+
+            mapboxMap?.getStyle { style ->
+                if (style.isFullyLoaded.not() || geometry.isEmpty()) {
+                    return@getStyle
+                }
+
+                val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
+                routeLineSource?.setGeoJson(LineString.fromPolyline(geometry, PRECISION_6))
+            }
+        }
+        Unit
+    }}
+
+    val removeRouteDirection = remember(mapboxMap) {{
+        mapboxMap?.getStyle { style ->
+
+            if(style.isFullyLoaded.not()){
+                return@getStyle
+            }
+
+            val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
+            routeLineSource?.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
+        }
+        Unit
+    }}
+
+
 
 
 

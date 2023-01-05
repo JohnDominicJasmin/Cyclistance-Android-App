@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen
 
 import com.example.cyclistance.feature_mapping_screen.domain.model.CardModel
+import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 
 
@@ -27,5 +28,8 @@ sealed class MappingEvent {
     object DismissRequestAccepted: MappingEvent()
     object StartNavigation: MappingEvent()
     object StopNavigation: MappingEvent()
+    data class ShowRouteDirections(val origin: Point, val destination: Point): MappingEvent()
+    object RemoveRouteDirections: MappingEvent()
+
 
 }

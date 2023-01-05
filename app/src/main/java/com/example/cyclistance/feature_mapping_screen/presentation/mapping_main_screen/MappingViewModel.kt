@@ -27,6 +27,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUse
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CameraState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.RescueRequestRespondents
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.createMockUsers
+import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.delight.android.location.SimpleLocation
 import io.github.farhanroy.composeawesomedialog.R
@@ -156,11 +157,32 @@ class MappingViewModel @Inject constructor(
 
     }
 
+    private fun showRouteDirection(origin: Point, destination: Point){
+        viewModelScope.launch {
+            runCatching {
+                mappingUseCase.getRouteDirectionsUseCase(origin = origin, destination = destination)
+            }.onSuccess { routeDirection ->
+                _state.update { it.copy(routeDirection = routeDirection) }
+            }.onFailure {
+                Timber.v("Failure: ${it.message}")
+            }
+        }
+    }
+    private fun removeRouteDirections(){
+        _state.update { it.copy(routeDirection = RouteDirection()) }
+    }
     fun onEvent(event: MappingEvent) {
         when (event) {
 
             is MappingEvent.SubscribeToDataChanges -> {
                 observeDataChanges()
+            }
+
+            is MappingEvent.RemoveRouteDirections -> {
+                removeRouteDirections()
+            }
+            is MappingEvent.ShowRouteDirections -> {
+                showRouteDirection(origin = event.origin, destination = event.destination)
             }
 
             is MappingEvent.RespondToHelp -> {
@@ -1207,3 +1229,5 @@ class MappingViewModel @Inject constructor(
 
 
 }
+
+

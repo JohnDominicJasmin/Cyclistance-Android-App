@@ -5,10 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Location
-import com.example.cyclistance.feature_mapping_screen.domain.model.MappingBannerModel
-import com.example.cyclistance.feature_mapping_screen.domain.model.RescueTransactionItem
-import com.example.cyclistance.feature_mapping_screen.domain.model.User
-import com.example.cyclistance.feature_mapping_screen.domain.model.UserItem
+import com.example.cyclistance.feature_mapping_screen.domain.model.*
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CameraState
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.RescueRequestRespondents
 import kotlinx.parcelize.Parcelize
@@ -29,6 +26,7 @@ data class MappingState(
     val cameraState: CameraState = CameraState(),
     val isNavigating : Boolean = false,
     val isRescueRequestAccepted: Boolean = false,
+    val routeDirection: RouteDirection? = null,
 
 
 
