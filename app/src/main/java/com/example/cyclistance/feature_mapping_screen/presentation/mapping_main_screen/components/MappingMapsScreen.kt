@@ -9,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.*
 import com.example.cyclistance.R
@@ -156,15 +157,15 @@ fun MappingMapsScreen(
             R.drawable.ic_map_rescuee
         }
 
-
         clientLocation?.latitude ?: return@LaunchedEffect
-
-        val icon = IconFactory.getInstance(context).fromResource(mapIcon)
-        val markerOptions = MarkerOptions()
-            .icon(icon)
-            .position(LatLng(clientLocation.latitude, clientLocation.longitude))
-        mapboxMap?.addMarker(markerOptions)
-
+        ContextCompat.getDrawable(context, mapIcon)?.let { drawable ->
+            val bitmapIcon = drawable.toBitmap(width = 100, height = 100)
+            val icon = IconFactory.getInstance(context).fromBitmap(bitmapIcon)
+            val markerOptions = MarkerOptions()
+                .setIcon(icon)
+                .position(LatLng(clientLocation.latitude, clientLocation.longitude))
+            mapboxMap?.addMarker(markerOptions)
+        }
     }
 
     Map(
