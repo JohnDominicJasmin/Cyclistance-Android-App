@@ -12,7 +12,7 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
 import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
-import com.example.cyclistance.feature_mapping_screen.data.network_observer.NetworkConnectivityUtil
+import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_mapping_screen.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping_screen.data.websockets.RescueTransactionWSClient
 import com.example.cyclistance.feature_mapping_screen.data.websockets.TransactionLiveLocationWSClient
@@ -152,7 +152,7 @@ object MappingModule {
             deleteAllRespondentsUseCase = DeleteAllRespondentsUseCase(repository),
             confirmDetailsUseCase = ConfirmDetailsUseCase(repository),
             confirmCancellationUseCase = ConfirmCancellationUseCase(repository),
-            getRouteDirectionsUseCase = GetRouteDirectionsUseCase(repository),
+            getRouteDirectionsUseCase = GetRouteDirectionsUseCase(repository, context),
         )
     }
 
@@ -199,7 +199,7 @@ object MappingModule {
     fun providesOkhttpClient(@ApplicationContext context: Context): OkHttpClient {
         val interceptor  = Interceptor { chain ->
             var request = chain.request()
-            if (!NetworkConnectivityUtil(context).hasInternet()) {
+            if (!context.hasInternetConnection()) {
                 val cacheControl = CacheControl.Builder()
                     .maxStale(1, TimeUnit.DAYS)
                     .build()
