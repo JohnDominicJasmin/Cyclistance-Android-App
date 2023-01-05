@@ -183,7 +183,6 @@ private fun Map(
     modifier: Modifier,
     isDarkTheme: Boolean,
     onInitializeMapboxMap: (MapboxMap) -> Unit,
-    onInitializeMapView: (MapView) -> Unit,
     onChangeCameraState: (LatLng, Double) -> Unit) {
 
     Box(modifier = modifier) {
