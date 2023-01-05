@@ -52,7 +52,6 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
 import com.mapbox.mapboxsdk.location.modes.CameraMode
 import com.mapbox.mapboxsdk.location.modes.RenderMode
-import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import kotlinx.coroutines.flow.collectLatest
@@ -77,10 +76,7 @@ fun MappingScreen(
     val state by mappingViewModel.state.collectAsState()
     val coroutineScope = rememberCoroutineScope()
 
-    var mapView by remember {
-        mutableStateOf(
-            MapView(context))
-    }
+
     var mapboxMap by remember<MutableState<MapboxMap?>> {
         mutableStateOf(null)
     }
@@ -91,9 +87,7 @@ fun MappingScreen(
         bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
     )
 
-    val onInitializeMapView = remember{{ mv: MapView ->
-        mapView = mv
-    }}
+
 
     val onInitializeMapboxMap = remember{{ mbm: MapboxMap ->
         mapboxMap = mbm
@@ -338,7 +332,7 @@ fun MappingScreen(
     }
 
     val isRescueCancelled = remember(state.userRescueTransaction?.cancellation?.rescueCancelled, state.userRescueTransaction) {
-            (state.userRescueTransaction?.cancellation)?.rescueCancelled ?: false
+            (state.userRescueTransaction?.cancellation)?.rescueCancelled == true
     }
 
     val clientPhoneNumber = remember(state.rescuee, state.rescuer) {
@@ -430,7 +424,6 @@ fun MappingScreen(
         locationPermissionState = locationPermissionsState,
         onClickCancelSearchButton = onClickCancelSearchButton,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
-        onInitializeMapView = onInitializeMapView,
         onChangeCameraState = onChangeCameraState,
         onClickCancelRescueTransactionButton = onClickCancelRescueButton,
         onDismissNoInternetDialog = onDismissNoInternetDialog,
@@ -500,12 +493,7 @@ fun LaunchedEffects(
         val destinationLocation = transactionRoute?.destinationLocation
 
 
-        if(hasTransaction.not()){
-            mappingViewModel.onEvent(event = MappingEvent.RemoveRouteDirections)
-            return@LaunchedEffect
-        }
-//todo: combine using OR operator
-        if (isRescueCancelled) {
+        if(hasTransaction.not() || isRescueCancelled){
             mappingViewModel.onEvent(event = MappingEvent.RemoveRouteDirections)
             return@LaunchedEffect
         }

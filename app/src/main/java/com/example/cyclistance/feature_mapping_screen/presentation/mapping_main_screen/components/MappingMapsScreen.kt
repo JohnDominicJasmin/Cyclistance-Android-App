@@ -51,8 +51,6 @@ fun MappingMapsScreen(
     hasTransaction: Boolean,
     isRescueCancelled: Boolean,
     onInitializeMapboxMap: (MapboxMap) -> Unit,
-    onInitializeMapView: (MapView) -> Unit,
-    locationPermissionsState: MultiplePermissionsState?,
     onChangeCameraState: (LatLng, Double) -> Unit,
     onClickRescueeMapIcon:(String) -> Unit,
     requestNavigationCameraToOverview:() -> Unit,

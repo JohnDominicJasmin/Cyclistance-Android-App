@@ -22,7 +22,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.mapbox.mapboxsdk.geometry.LatLng
-import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 
 
@@ -48,7 +47,6 @@ fun MappingScreen(
     onClickOkButtonCancelledRescue: () -> Unit = {},
     onInitializeMapboxMap: (MapboxMap) -> Unit = {},
     onClickOkButtonRescueRequestAccepted: () -> Unit = {},
-    onInitializeMapView: (MapView) -> Unit = {},
     onChangeCameraState: (LatLng, Double) -> Unit = { _, _ -> },
     onDismissNoInternetDialog: () -> Unit = {},
     onClickRescueeMapIcon: (String) -> Unit = {},
@@ -94,8 +92,6 @@ fun MappingScreen(
                     bottom.linkTo(parent.bottom)
                 },
                 isDarkTheme = isDarkTheme,
-                locationPermissionsState = locationPermissionState,
-                onInitializeMapView = onInitializeMapView,
                 onInitializeMapboxMap = onInitializeMapboxMap,
                 onChangeCameraState = onChangeCameraState,
                 hasTransaction = hasTransaction,
