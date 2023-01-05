@@ -13,17 +13,11 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.FAST_CAMERA_ANIMATION_DURATION
@@ -31,14 +25,12 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUEE_TYPE
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUER_TYPE
 import com.example.cyclistance.core.utils.permission.requestPermission
-import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.feature_mapping_screen.domain.model.Role
 import com.example.cyclistance.feature_mapping_screen.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.components.*
-import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.CancelledRescueModel
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.animateCameraPosition
 import com.example.cyclistance.feature_mapping_screen.presentation.mapping_main_screen.utils.MappingUtils.changeToNormalPuckIcon
@@ -102,26 +94,6 @@ fun MappingScreen(
     }}
 
 
-
-
-    LaunchedEffect(key1 = hasInternetConnection) {
-        val nearbyCyclistLoaded = state.nearbyCyclists != null
-        val userLoaded =  state.user.id != null
-        val dataHaveBeenLoaded = userLoaded && nearbyCyclistLoaded
-
-        if(hasInternetConnection.not()){
-            return@LaunchedEffect
-        }
-
-        if(dataHaveBeenLoaded.not()){
-            mappingViewModel.onEvent(MappingEvent.LoadData)
-        }
-
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-
-
-
-    }
 
     BackHandler(enabled = true, onBack = {
         coroutineScope.launch {
@@ -194,6 +166,14 @@ fun MappingScreen(
         derivedStateOf { state.isSearchingForAssistance.and(locationPermissionsState.allPermissionsGranted) }
     }
 
+    val onClickRequestHelpButton = remember {{
+        locationPermissionsState.requestPermission(
+            context = context,
+            rationalMessage = "Location permission is not yet granted.") {
+            context.startLocationServiceIntentAction()
+            postProfile()
+        }
+    }}
 
     val showUserLocation = remember(mapboxMap, state.isNavigating, userLocationAvailable){{
         mapboxMap?.style?.let { style ->
@@ -380,7 +360,149 @@ fun MappingScreen(
     }}
 
 
-    LaunchedEffect(key1 = mapboxMap, key2 = userLocationAvailable, pulsingEnabled) {
+    LaunchedEffects(
+        state = state,
+        hasTransaction = hasTransaction,
+        isRescueCancelled = isRescueCancelled,
+        hasInternetConnection = hasInternetConnection,
+        mapboxMap = mapboxMap,
+        userLocationAvailable = userLocationAvailable,
+        pulsingEnabled = pulsingEnabled,
+        mappingViewModel = mappingViewModel,
+        showUserLocation = {showUserLocation(); Unit},
+        typeBottomSheet = typeBottomSheet,
+        bottomSheetScaffoldState = bottomSheetScaffoldState,
+        locationPermissionsState = locationPermissionsState,
+        onCheckLocationSetting = {
+            context.checkLocationSetting(onDisabled = settingResultRequest::launch)
+        },
+        navController = navController,
+        locateUser = locateUser,
+        onRemoveRouteDirection = removeRouteDirection,
+        onShowRouteDirection = showRouteDirection,
+    )
+
+
+    MappingScreen(
+        modifier = Modifier.padding(paddingValues),
+        isDarkTheme = isDarkTheme,
+        state = state,
+        onClickRequestHelpButton = onClickRequestHelpButton,
+        locationPermissionState = locationPermissionsState,
+        onClickCancelSearchButton = onClickCancelSearchButton,
+        bottomSheetScaffoldState = bottomSheetScaffoldState,
+        onInitializeMapView = onInitializeMapView,
+        onChangeCameraState = onChangeCameraState,
+        onClickCancelRescueTransactionButton = onClickCancelRescueButton,
+        onDismissNoInternetDialog = onDismissNoInternetDialog,
+        hasTransaction = hasTransaction,
+        isRescueCancelled = isRescueCancelled,
+        onClickCallRescueTransactionButton = onClickCallButton,
+        onClickChatRescueTransactionButton = onClickChatButton,
+        onClickOkButtonCancelledRescue = onClickOkCancelledRescue,
+        onClickRescueeMapIcon = onClickRescueeMapIcon,
+        onMapClick = onDismissRescueeBanner,
+        onClickDismissBannerButton = onDismissRescueeBanner,
+        onClickRespondToHelpButton = onClickRespondToHelpButton,
+        onClickLocateUserButton = onClickLocateUserButton,
+        onClickRouteOverButton = onClickRouteOverViewButton,
+        onClickRecenterButton = onClickRecenterButton,
+        onClickOpenNavigationButton = onClickOpenNavigationButton,
+        onClickOkButtonRescueRequestAccepted = onClickOkAcceptedRescue,
+        onRequestNavigationCameraToOverview = onRequestNavigationCameraToOverview,
+        onInitializeMapboxMap = onInitializeMapboxMap,
+        mapboxMap = mapboxMap,
+        )
+
+}
+
+
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalPermissionsApi::class)
+@Composable
+fun LaunchedEffects(
+    state: MappingState,
+    hasTransaction: Boolean,
+    isRescueCancelled: Boolean,
+    hasInternetConnection: Boolean,
+    mapboxMap: MapboxMap?,
+    userLocationAvailable: Boolean,
+    pulsingEnabled: Boolean,
+    mappingViewModel: MappingViewModel,
+    showUserLocation: () -> Unit,
+    typeBottomSheet: String,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
+    locationPermissionsState: MultiplePermissionsState,
+    onCheckLocationSetting: () -> Unit,
+    onRemoveRouteDirection: () -> Unit,
+    onShowRouteDirection: () -> Unit,
+    navController: NavController,
+    locateUser: (zoomLevel: Double, latLng: LatLng, cameraAnimationDuration: Int) -> Unit,
+    ) {
+
+    val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = state.routeDirection, key2 = mapboxMap){
+
+        val route = state.routeDirection ?: return@LaunchedEffect
+
+        if(route.geometry.isEmpty()){
+            onRemoveRouteDirection()
+            return@LaunchedEffect
+        }
+        onShowRouteDirection()
+    }
+
+
+    LaunchedEffect(key1 = state.userRescueTransaction?.route, key2 = hasTransaction, key3 = isRescueCancelled){
+        val transactionRoute = state.userRescueTransaction?.route
+        val startingLocation = transactionRoute?.startingLocation
+        val destinationLocation = transactionRoute?.destinationLocation
+
+
+        if(hasTransaction.not()){
+            mappingViewModel.onEvent(event = MappingEvent.RemoveRouteDirections)
+            return@LaunchedEffect
+        }
+//todo: combine using OR operator
+        if (isRescueCancelled) {
+            mappingViewModel.onEvent(event = MappingEvent.RemoveRouteDirections)
+            return@LaunchedEffect
+        }
+
+        startingLocation?:return@LaunchedEffect
+        destinationLocation?:return@LaunchedEffect
+
+        mappingViewModel.onEvent(
+            event = MappingEvent.ShowRouteDirections(
+                origin = Point.fromLngLat(startingLocation.longitude, startingLocation.latitude),
+                destination = Point.fromLngLat(destinationLocation.longitude, destinationLocation.latitude)))
+
+    }
+
+
+
+    LaunchedEffect(key1 = hasInternetConnection) {
+        val nearbyCyclistLoaded = state.nearbyCyclists != null
+        val userLoaded =  state.user.id != null
+        val dataHaveBeenLoaded = userLoaded && nearbyCyclistLoaded
+
+        if(hasInternetConnection.not()){
+            return@LaunchedEffect
+        }
+
+        if(dataHaveBeenLoaded.not()){
+            mappingViewModel.onEvent(MappingEvent.LoadData)
+        }
+        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
+    }
+
+
+
+
+
+    LaunchedEffect(key1 = mapboxMap, key2 = userLocationAvailable, key3= pulsingEnabled) {
         showUserLocation()
     }
     LaunchedEffect(key1 = state.isNavigating){
@@ -433,11 +555,11 @@ fun MappingScreen(
 
     LaunchedEffect(key1 = locationPermissionsState.allPermissionsGranted) {
         if (!locationPermissionsState.allPermissionsGranted) {
-          return@LaunchedEffect
+            return@LaunchedEffect
         }
 
         if (!context.hasGPSConnection()) {
-            context.checkLocationSetting(onDisabled = settingResultRequest::launch)
+            onCheckLocationSetting()
         }
 
         context.startLocationServiceIntentAction()
@@ -475,252 +597,4 @@ fun MappingScreen(
         }
     }
 
-
-
-
-
-    MappingScreen(
-        modifier = Modifier.padding(paddingValues),
-        isDarkTheme = isDarkTheme,
-        state = state,
-        onClickSearchButton = onClickSearchButton,
-        locationPermissionState = locationPermissionsState,
-        mapView = mapView,
-        onClickCancelSearchButton = onClickCancelSearchButton,
-        bottomSheetScaffoldState = bottomSheetScaffoldState,
-        onInitializeMapView = onInitializeMapView,
-        onChangeCameraState = onChangeCameraState,
-        onClickCancelRescueTransactionButton = onClickCancelRescueButton,
-        onDismissNoInternetDialog = onDismissNoInternetDialog,
-        hasTransaction = hasTransaction,
-        userLocationAvailable = userLocationAvailable,
-        isRescueCancelled = isRescueCancelled,
-        onClickCallRescueTransactionButton = onClickCallButton,
-        onClickChatRescueTransactionButton = onClickChatButton,
-        onClickOkButtonCancelledRescue = onClickOkCancelledRescue,
-        onClickRescueeMapIcon = onClickRescueeMapIcon,
-        onMapClick = onDismissRescueeBanner,
-        onClickDismissBannerButton = onDismissRescueeBanner,
-        onClickRespondToHelpButton = onClickRespondToHelpButton,
-        onClickLocateUserButton = onClickLocateUserButton,
-        onClickRouteOverButton = onClickRouteOverViewButton,
-        onClickRecenterButton = onClickRecenterButton,
-        onClickOpenNavigationButton = onClickOpenNavigationButton,
-        onClickOkButtonRescueRequestAccepted = onClickOkAcceptedRescue,
-        onRequestNavigationCameraToOverview = onRequestNavigationCameraToOverview,
-        onInitializeMapboxMap = onInitializeMapboxMap,
-        mapboxMap = mapboxMap,
-        )
-
 }
-
-
-
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
-@Composable
-fun MappingScreen(
-    modifier: Modifier,
-    isDarkTheme: Boolean,
-    bottomSheetScaffoldState: BottomSheetScaffoldState,
-    state: MappingState,
-    mapView: MapView,
-    mapboxMap: MapboxMap?,
-    hasTransaction: Boolean = false,
-    isRescueCancelled: Boolean = false,
-    userLocationAvailable: Boolean = false,
-    locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
-    onClickSearchButton: () -> Unit = {},
-    onClickRespondToHelpButton: () -> Unit = {},
-    onClickRescueArrivedButton: () -> Unit = {},
-    onClickReachedDestinationButton: () -> Unit = {},
-    onClickCancelSearchButton: () -> Unit = {},
-    onClickCallRescueTransactionButton: () -> Unit = {},
-    onClickChatRescueTransactionButton: () -> Unit = {},
-    onClickCancelRescueTransactionButton: () -> Unit = {},
-    onClickOkButtonCancelledRescue: () -> Unit = {},
-    onInitializeMapboxMap: (MapboxMap) -> Unit = {},
-    onClickOkButtonRescueRequestAccepted: () -> Unit = {},
-    onInitializeMapView: (MapView) -> Unit = {},
-    onChangeCameraState: (LatLng, Double) -> Unit = { _, _ -> },
-    onDismissNoInternetDialog: () -> Unit = {},
-    onClickRescueeMapIcon: (String) -> Unit = {},
-    onMapClick: () -> Unit = {},
-    onClickDismissBannerButton : () -> Unit = {},
-    onClickLocateUserButton: () -> Unit = {},
-    onClickRouteOverButton: () -> Unit = {},
-    onClickRecenterButton: () -> Unit = {},
-    onClickOpenNavigationButton: () -> Unit = {},
-    onRequestNavigationCameraToOverview: () -> Unit = {},
-) {
-
-    val configuration = LocalConfiguration.current
-
-
-
-
-
-    MappingBottomSheet(
-        isDarkTheme = isDarkTheme,
-        state = state,
-        onClickRescueArrivedButton = onClickRescueArrivedButton,
-        onClickReachedDestinationButton = onClickReachedDestinationButton,
-        onClickCancelSearchButton = onClickCancelSearchButton,
-        onClickCallRescueTransactionButton = onClickCallRescueTransactionButton,
-        onClickChatRescueTransactionButton = onClickChatRescueTransactionButton,
-        onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton,
-        bottomSheetScaffoldState = bottomSheetScaffoldState) {
-
-        ConstraintLayout(
-            modifier = modifier
-                .fillMaxSize()) {
-
-            val (mapScreen, requestHelpButton, circularProgressbar, noInternetScreen, respondToHelpButton, floatingButtonSection) = createRefs()
-
-
-            MappingMapsScreen(
-                state = state,
-                modifier = Modifier.constrainAs(mapScreen) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    bottom.linkTo(parent.bottom)
-                },
-                isDarkTheme = isDarkTheme,
-                userLocationAvailable = userLocationAvailable,
-                locationPermissionsState = locationPermissionState,
-                mapMapView = mapView,
-                onInitializeMapView = onInitializeMapView,
-                onInitializeMapboxMap = onInitializeMapboxMap,
-                onChangeCameraState = onChangeCameraState,
-                hasTransaction = hasTransaction,
-                isRescueCancelled = isRescueCancelled,
-                onClickRescueeMapIcon = onClickRescueeMapIcon,
-                onMapClick = onMapClick,
-                requestNavigationCameraToOverview = onRequestNavigationCameraToOverview,
-                mapboxMap = mapboxMap
-            )
-
-
-
-
-            AnimatedVisibility(
-                visible = state.selectedRescueeMapIcon != null,
-                enter = expandVertically(expandFrom = Alignment.Top) { 20 },
-                exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
-                    fullHeight / 2
-                },
-            ) {
-                if (state.selectedRescueeMapIcon != null) {
-                    MappingExpandableBanner(
-                        modifier = Modifier
-                            .padding(all = 6.dp)
-                            .fillMaxWidth(), banner = state.selectedRescueeMapIcon,
-                        onClickDismissButton = onClickDismissBannerButton)
-                }
-            }
-
-            FloatingButtonSection(
-                modifier = Modifier
-                    .constrainAs(floatingButtonSection) {
-                        end.linkTo(parent.end, margin = 4.dp)
-                        bottom.linkTo(
-                            parent.bottom,
-                            margin = (configuration.screenHeightDp / 3).dp)
-                    },
-                locationPermissionGranted = locationPermissionState.allPermissionsGranted,
-                state = state,
-                onClickLocateUserButton = onClickLocateUserButton,
-                onClickRouteOverButton = onClickRouteOverButton,
-                onClickRecenterButton = onClickRecenterButton,
-                onClickOpenNavigationButton = onClickOpenNavigationButton
-            )
-
-            RequestHelpButton(
-                modifier = Modifier.constrainAs(requestHelpButton) {
-                    bottom.linkTo(parent.bottom, margin = 15.dp)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                }, onClickSearchButton = onClickSearchButton,
-                state = state
-            )
-
-            RespondToHelpButton(
-                modifier = Modifier.constrainAs(respondToHelpButton) {
-                    bottom.linkTo(parent.bottom, margin = 15.dp)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                },
-                onClickRespondButton = onClickRespondToHelpButton,
-                state = state
-            )
-
-            if (state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.constrainAs(circularProgressbar) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    bottom.linkTo(parent.bottom)
-                    this.centerTo(parent)
-                })
-            }
-
-            if (!state.hasInternet) {
-                NoInternetDialog(
-                    onDismiss = onDismissNoInternetDialog,
-                    modifier = Modifier.constrainAs(noInternetScreen) {
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                        width = Dimension.matchParent
-                        height = Dimension.wrapContent
-                    })
-
-            }
-
-            AnimatedVisibility(
-                visible = isRescueCancelled && state.isRescueRequestAccepted.not(),
-                enter = fadeIn(),
-                exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
-
-                val rescueTransaction = state.userRescueTransaction
-                val cancellation = rescueTransaction?.cancellation
-                val cancellationReason =
-                    cancellation?.cancellationReason ?: return@AnimatedVisibility
-
-
-                MappingCancelledRescue(
-                    modifier = Modifier.fillMaxSize(),
-                    onClickOkButton = onClickOkButtonCancelledRescue,
-                    cancelledRescueModel = CancelledRescueModel(
-                        transactionID = rescueTransaction.id,
-                        rescueCancelledBy = cancellation.nameCancelledBy,
-                        reason = cancellationReason.reason,
-                        message = cancellationReason.message
-                    ))
-            }
-
-            AnimatedVisibility(
-                visible = state.isRescueRequestAccepted && isRescueCancelled.not(),
-                enter = fadeIn(),
-                exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
-                RescueRequestAccepted(
-                    modifier = Modifier.fillMaxSize(),
-                    onClickOkButton = onClickOkButtonRescueRequestAccepted,
-                    acceptedName = state.rescuee?.name ?: "Name placeholder",
-                )
-            }
-
-
-
-
-
-
-
-        }
-    }
-}
-
-
-
-
-
