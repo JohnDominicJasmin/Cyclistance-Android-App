@@ -132,6 +132,24 @@ fun MappingMapsScreen(
         clientLocation != null
     }
 
+    val showTransactionLocation = remember(mapboxMap, state.user){{ location: Location ->
+        val role = state.user.transaction?.role
+        val mapIcon = if(role == Role.RESCUEE.name.lowercase()){
+            R.drawable.ic_map_rescuer
+        }else{
+            R.drawable.ic_map_rescuee
+        }
+        mapboxMap?.getStyle { style ->
+            style.removeImage(TRANSACTION_ICON_ID)
+            ContextCompat.getDrawable(context, mapIcon)?.toBitmap(width = 100, height = 100)?.let{ iconBitmap ->
+                style.addImage(TRANSACTION_ICON_ID, iconBitmap)
+                val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
+                val feature = Feature.fromGeometry(Point.fromLngLat(location.longitude, location.latitude))
+                geoJsonSource?.setGeoJson(feature)
+            }
+        }
+    }}
+
 
     LaunchedEffect(
         key1 = hasActiveTransaction,
@@ -172,13 +190,33 @@ private fun Map(
 
         AndroidViewBinding(factory = ActivityMappingBinding::inflate, modifier = Modifier.fillMaxSize()) {
             val viewContext = this.root.context
-            val pixelDensity = Resources.getSystem().displayMetrics.density
-            lateinit var mapboxMap: MapboxMap
+            var mapboxMap: MapboxMap? = null
+
             val initSource = { loadedMapStyle: Style ->
+                loadedMapStyle.addSource(GeoJsonSource(ICON_SOURCE_ID));
                 loadedMapStyle.addSource(GeoJsonSource(ROUTE_SOURCE_ID));
+
             }
+
             val initLayers = { loadedMapStyle: Style ->
+
+
+                val drawableIcon = ContextCompat.getDrawable(viewContext, R.drawable.ic_map_rescuer)
+                val bitmapIcon = drawableIcon?.toBitmap(width = 100, height = 100)
+                bitmapIcon?.let { loadedMapStyle.addImage(TRANSACTION_ICON_ID, it) }
+
                 loadedMapStyle.addLayer(
+                    SymbolLayer(ICON_LAYER_ID, ICON_SOURCE_ID).apply {
+                        setProperties(
+                            iconImage(TRANSACTION_ICON_ID),
+                            iconAllowOverlap(true),
+                            iconIgnorePlacement(true)
+                        )
+                    }
+                )
+
+
+                loadedMapStyle.addLayerBelow(
                     LineLayer(ROUTE_LAYER_ID, ROUTE_SOURCE_ID).apply {
                         setProperties(
                             lineCap(Property.LINE_CAP_ROUND),
@@ -186,8 +224,8 @@ private fun Map(
                             lineWidth(5f),
                             lineColor(Color.parseColor("#006eff"))
                         )
-                    }
-                )
+                    }, ICON_LAYER_ID)
+
 
             }
 
