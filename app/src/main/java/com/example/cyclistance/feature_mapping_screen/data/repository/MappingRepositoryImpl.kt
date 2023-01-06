@@ -25,10 +25,9 @@ import com.example.cyclistance.feature_mapping_screen.domain.model.*
 import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping_screen.domain.websockets.WebSocketClient
 import com.mapbox.api.directions.v5.DirectionsCriteria
-import com.mapbox.api.directions.v5.MapboxDirections
-import com.mapbox.api.directions.v5.models.DirectionsResponse
 import com.mapbox.api.directions.v5.models.DirectionsRoute
-import com.mapbox.api.directions.v5.models.RouteOptions
+import com.mapbox.api.optimization.v1.MapboxOptimization
+import com.mapbox.api.optimization.v1.models.OptimizationResponse
 import com.mapbox.geojson.Point
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -51,7 +50,7 @@ class MappingRepositoryImpl(
     val liveLocation: WebSocketClient<LiveLocationWSModel>,
     val imageRequestBuilder: ImageRequest.Builder,
     private val api: CyclistanceApi,
-    private val mapboxDirections: MapboxDirections.Builder,
+    private val mapboxDirections: MapboxOptimization.Builder,
     val context: Context) : MappingRepository {
 
 
@@ -178,17 +177,14 @@ class MappingRepositoryImpl(
     override suspend fun getRouteDirections(origin: Point, destination: Point): RouteDirection{
 
 
-        val client = mapboxDirections.routeOptions(
-                RouteOptions.builder()
-                    .coordinatesList(listOf(origin,destination))
-                    .profile(DirectionsCriteria.PROFILE_CYCLING)
-                    .overview(DirectionsCriteria.OVERVIEW_FULL)
-                    .build())
-            .build()
+        val client = mapboxDirections.coordinates(listOf(origin,destination))
+                .profile(DirectionsCriteria.PROFILE_CYCLING)
+                .overview(DirectionsCriteria.OVERVIEW_FULL)
+                .build()
 
         return suspendCoroutine { continuation ->
-            client.enqueueCall(object : Callback<DirectionsResponse> {
-                override fun onResponse(call: Call<DirectionsResponse>, response: Response<DirectionsResponse>) {
+            client.enqueueCall(object : Callback<OptimizationResponse>  {
+                override fun onResponse(call: Call<OptimizationResponse>, response: Response<OptimizationResponse>) {
                     val routesAvailable = response.routesAvailable()
 
                     if(!routesAvailable){
@@ -200,7 +196,7 @@ class MappingRepositoryImpl(
                     continuation.resume(currentRoute.toRouteDirection())
                 }
 
-                override fun onFailure(call: Call<DirectionsResponse>, throwable: Throwable) {
+                override fun onFailure(call: Call<OptimizationResponse>, throwable: Throwable) {
                     Timber.e("Error: %s", throwable.message)
                     continuation.resumeWithException(throwable)
                 }
@@ -209,13 +205,13 @@ class MappingRepositoryImpl(
     }
 }
 
-private fun Response<DirectionsResponse>.getRoute():DirectionsRoute{
-    return body()!!.routes()[0]
+private fun Response<OptimizationResponse>.getRoute():DirectionsRoute{
+    return body()!!.trips()!![0]
 }
 
 
-private fun Response<DirectionsResponse>.routesAvailable(): Boolean{
-    return (this.body()!= null && this.body()!!.routes().isNotEmpty())
+private fun Response<OptimizationResponse>.routesAvailable(): Boolean{
+    return (this.body() != null && this.body()!!.trips()?.isNotEmpty() == true)
 }
 
 

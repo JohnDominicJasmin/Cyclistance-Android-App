@@ -61,7 +61,7 @@ val userItems = listOf(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "2367238327",
         id = "423623",
-        location = Location(latitude = 14.096044763009578, longitude = 121.13918029795505),
+        location = Location(latitude = 14.08894440102451, longitude = 121.14033042983098),
         name = "Boomie",
         rescueRequest = RescueRequest(),
         userAssistance = UserAssistance(

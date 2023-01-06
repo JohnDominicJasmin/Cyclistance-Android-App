@@ -38,7 +38,7 @@ import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.BroadcastUserUseCase
 import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.GetUserUpdatesUseCase
 import com.google.gson.GsonBuilder
-import com.mapbox.api.directions.v5.MapboxDirections
+import com.mapbox.api.optimization.v1.MapboxOptimization
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -84,8 +84,8 @@ object MappingModule {
 
     @Singleton
     @Provides
-    fun providesMapDirections(@ApplicationContext context: Context): MapboxDirections.Builder{
-        return MapboxDirections.builder()
+    fun providesMapOptimizationDirections(@ApplicationContext context: Context): MapboxOptimization.Builder{
+        return MapboxOptimization.builder()
             .accessToken(context.getString(R.string.MapsDownloadToken))
     }
 
@@ -101,7 +101,7 @@ object MappingModule {
         imageRequestBuilder: ImageRequest.Builder,
         @ApplicationContext context: Context,
         api: CyclistanceApi,
-        mapboxDirections: MapboxDirections.Builder): MappingRepository {
+        mapboxDirections: MapboxOptimization.Builder): MappingRepository {
 
         val socket = IO.socket(getBaseUrl(context))
         val userWSClient = UserWSClient(socket)

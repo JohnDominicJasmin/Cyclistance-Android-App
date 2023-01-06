@@ -45,6 +45,7 @@ import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.mapbox.core.constants.Constants.PRECISION_6
+import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
@@ -222,7 +223,8 @@ fun MappingScreen(
                 }
 
                 val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
-                routeLineSource?.setGeoJson(LineString.fromPolyline(geometry, PRECISION_6))
+                routeLineSource?.setGeoJson(FeatureCollection.fromFeature(Feature.fromGeometry(
+                    LineString.fromPolyline(geometry, PRECISION_6))))
             }
         }
         Unit
@@ -402,7 +404,7 @@ fun MappingScreen(
         userLocationAvailable = userLocationAvailable,
         pulsingEnabled = pulsingEnabled,
         mappingViewModel = mappingViewModel,
-        showUserLocation = {showUserLocation(); Unit},
+        showUserLocation = showUserLocation,
         typeBottomSheet = typeBottomSheet,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         locationPermissionsState = locationPermissionsState,

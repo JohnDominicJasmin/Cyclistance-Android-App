@@ -72,7 +72,7 @@ class MappingViewModel @Inject constructor(
     private fun loadData() {
         if(loadDataJob?.isActive == true) return
         loadDataJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
-            // TODO: Remove this when the backend is ready
+            // TODO: Remove when the backend is ready
             createMockUpUsers()
             getNearbyCyclist()
             loadRescueTransaction()
