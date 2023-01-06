@@ -25,6 +25,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.*
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.setDefaultSettings
 import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
@@ -58,6 +59,7 @@ fun MappingMapsScreen(
     onMapClick: () -> Unit
     ) {
 
+
     val context = LocalContext.current
 
 
@@ -65,8 +67,12 @@ fun MappingMapsScreen(
     val numberOfNearbyCyclists = remember(state.nearbyCyclists?.users?.size){
         state.nearbyCyclists?.users?.size
     }
+    val dismissNearbyCyclistsIcon = remember(mapboxMap){{
+        mapboxMap?.removeAnnotations()
+    }}
 
-    val showNearbyCyclists = remember(numberOfNearbyCyclists, mapboxMap){{
+    val showNearbyCyclistsIcon = remember(numberOfNearbyCyclists, mapboxMap){{
+        dismissNearbyCyclistsIcon()
         val nearbyCyclists = state.nearbyCyclists?.users
         nearbyCyclists?.filter{
             it.userAssistance?.needHelp == true
@@ -76,18 +82,17 @@ fun MappingMapsScreen(
             val iconImage = description?.getMapIconImageDescription(context)
                 ?.toBitmap(width = 120, height = 120)
             iconImage?.let { bitmap ->
-
+                mapboxMap?:return@let
                 val icon = IconFactory.getInstance(context).fromBitmap(bitmap)
-                val markerOptions = MarkerOptions()
-                    .setIcon(icon)
-                    .position(LatLng(location!!.latitude, location.longitude))
-                    .setTitle(cyclist.id)
-
-                mapboxMap?.addMarker(markerOptions)
-
+                MarkerOptions().apply {
+                    setIcon(icon)
+                    position(LatLng(location!!.latitude, location.longitude))
+                    title = cyclist.id
+                }.also(mapboxMap::addMarker)
             }
         }
     }}
+
 
     val hasActiveTransaction = remember(hasTransaction, isRescueCancelled){
         hasTransaction || isRescueCancelled.not()
@@ -101,10 +106,11 @@ fun MappingMapsScreen(
     LaunchedEffect(key1 = numberOfNearbyCyclists, key2= isNavigating, key3 = hasTransaction){
 
         if(isNavigating || hasTransaction){
+            dismissNearbyCyclistsIcon()
             return@LaunchedEffect
         }
 
-        showNearbyCyclists()
+        showNearbyCyclistsIcon()
     }
 
 
@@ -132,7 +138,17 @@ fun MappingMapsScreen(
         clientLocation != null
     }
 
-    val showTransactionLocation = remember(mapboxMap, state.user){{ location: Location ->
+    val dismissTransactionLocationIcon = remember(mapboxMap){{
+        mapboxMap?.getStyle { style ->
+            style.removeImage(TRANSACTION_ICON_ID)
+            val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
+            geoJsonSource?.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
+        }
+    }}
+
+
+    val showTransactionLocationIcon = remember(mapboxMap, state.user){{ location: Location ->
+        dismissTransactionLocationIcon()
         val role = state.user.transaction?.role
         val mapIcon = if(role == Role.RESCUEE.name.lowercase()){
             R.drawable.ic_map_rescuer
@@ -156,16 +172,14 @@ fun MappingMapsScreen(
         key2 = hasTransactionLocationChanges,
         key3 = clientLocation) {
 
-        if (hasTransactionLocationChanges.not()) {
+        if (hasTransactionLocationChanges.not() || hasActiveTransaction.not()) {
+            dismissTransactionLocationIcon()
             return@LaunchedEffect
         }
 
-        if(!hasActiveTransaction){
-            return@LaunchedEffect
-        }
 
         clientLocation?.latitude ?: return@LaunchedEffect
-        showTransactionLocation(clientLocation)
+        showTransactionLocationIcon(clientLocation)
     }
 
     Map(
