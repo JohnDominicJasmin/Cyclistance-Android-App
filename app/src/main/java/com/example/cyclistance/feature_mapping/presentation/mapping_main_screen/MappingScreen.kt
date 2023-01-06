@@ -529,12 +529,7 @@ fun LaunchedEffects(
 
 
 
-
-
-    LaunchedEffect(key1 = mapboxMap, key2 = userLocationAvailable, key3= pulsingEnabled) {
-        showUserLocation()
-    }
-    LaunchedEffect(key1 = state.isNavigating){
+    LaunchedEffect(key1 = state.isNavigating, key2 = userLocationAvailable, key3= pulsingEnabled) {
         showUserLocation()
     }
 
