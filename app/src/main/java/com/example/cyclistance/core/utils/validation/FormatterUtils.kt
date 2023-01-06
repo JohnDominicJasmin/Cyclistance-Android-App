@@ -9,7 +9,7 @@ import androidx.annotation.WorkerThread
 import androidx.appcompat.content.res.AppCompatResources
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Location
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import im.delight.android.location.SimpleLocation
 import timber.log.Timber
 import java.io.IOException

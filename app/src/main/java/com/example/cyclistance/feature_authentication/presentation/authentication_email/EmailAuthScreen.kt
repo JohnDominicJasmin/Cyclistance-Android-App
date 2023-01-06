@@ -112,7 +112,7 @@ fun EmailAuthScreen(
     }
 
 
-    EmailAuthScreen(
+    EmailAuthScreenContent(
         modifier = Modifier.padding(paddingValues),
         emailAuthState = emailAuthState,
         isDarkTheme = isDarkTheme,
@@ -127,7 +127,7 @@ fun EmailAuthScreen(
 @Composable
 fun EmailAuthScreenPreview() {
     CyclistanceTheme(true) {
-        EmailAuthScreen(
+        EmailAuthScreenContent(
             isDarkTheme = true, emailAuthState = EmailAuthState(
                 savedAccountEmail = "johndoe@gmail.com",
                 isTimerRunning = true, secondsLeft = 10,
@@ -139,7 +139,7 @@ fun EmailAuthScreenPreview() {
 
 
 @Composable
-fun EmailAuthScreen(
+fun EmailAuthScreenContent(
     modifier: Modifier = Modifier,
     emailAuthState: EmailAuthState = EmailAuthState(),
     isDarkTheme: Boolean,

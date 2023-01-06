@@ -32,7 +32,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.permission.requestPermission
-import com.example.cyclistance.feature_mapping_screen.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.SelectImageBottomSheet
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.TextFieldInputArea
@@ -176,7 +176,7 @@ fun EditProfileScreen(
         editProfileViewModel.onEvent(event = EditProfileEvent.Save)
     }}
 
-    EditProfileScreen(
+    EditProfileScreenContent(
         modifier = Modifier
             .padding(paddingValues),
         photoUrl = state.imageBitmap.bitmap?.asImageBitmap() ?: state.photoUrl,
@@ -196,7 +196,7 @@ fun EditProfileScreen(
 @Composable
 fun EditProfilePreview() {
     CyclistanceTheme(true) {
-        EditProfileScreen(
+        EditProfileScreenContent(
             modifier = Modifier,
             photoUrl = "",
             state = EditProfileState(isLoading = false, nameErrorMessage = "Field cannot be blank", phoneNumberErrorMessage = "Field cannot be blank"))
@@ -206,7 +206,7 @@ fun EditProfilePreview() {
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun EditProfileScreen(
+fun EditProfileScreenContent(
     modifier: Modifier,
     photoUrl: Any,
     state: EditProfileState = EditProfileState(),

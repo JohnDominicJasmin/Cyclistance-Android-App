@@ -167,7 +167,7 @@ fun SignInScreen(
     }}
 
 
-    SignInScreen(
+    SignInScreenContent(
         modifier = Modifier.padding(paddingValues),
         signInState = signInState,
         emailAuthState = emailAuthState,
@@ -189,13 +189,13 @@ fun SignInScreen(
 @Composable
 fun SignInScreenPreview() {
     CyclistanceTheme(true) {
-        SignInScreen()
+        SignInScreenContent()
     }
 }
 
 
 @Composable
-fun SignInScreen(
+fun SignInScreenContent(
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester = FocusRequester(),
     signInState: SignInState = SignInState(),
