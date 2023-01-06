@@ -71,7 +71,7 @@ class MappingViewModel @Inject constructor(
 
     private fun loadData() {
         if(loadDataJob?.isActive == true) return
-        loadDataJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+        loadDataJob = viewModelScope.launch(SupervisorJob()) {
             // TODO: Remove when the backend is ready
             createMockUpUsers()
             getNearbyCyclist()
@@ -272,7 +272,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun respondToHelp() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch() {
             val selectedRescuee = state.value.selectedRescueeMapIcon
             uploadUserProfile{
                 runCatching {
@@ -292,7 +292,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun selectRescueeMapIcon(id: String){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch() {
             val selectedRescuee = state.value.nearbyCyclists?.findUser(id) ?: return@launch
             val selectedRescueeLocation = selectedRescuee.location
             val confirmationDetail = selectedRescuee.userAssistance?.confirmationDetail
@@ -380,7 +380,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun removeAssignedTransaction(){
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch() {
             runCatching {
                 getId().removeAssignedTransaction()
             }.onSuccess {
@@ -415,7 +415,7 @@ class MappingViewModel @Inject constructor(
         if(getRescueTransactionUpdatesJob?.isActive == true) {
             return
         }
-        getTransactionLocationUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+        getTransactionLocationUpdatesJob = viewModelScope.launch(SupervisorJob()) {
 
             runCatching {
                 mappingUseCase.getTransactionLocationUpdatesUseCase().distinctUntilChanged()
@@ -491,7 +491,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun acceptRescueRequest(cardModel: CardModel) {
-        viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+        viewModelScope.launch(SupervisorJob()) {
 
             val user = state.value.user
             val userHasCurrentTransaction = (user.transaction ?: Transaction()).transactionId.isNotEmpty()
@@ -681,7 +681,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun loadUserProfile() {
-        viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+        viewModelScope.launch(SupervisorJob()) {
             loadName()
             loadPhoto()
         }.invokeOnCompletion {
@@ -721,7 +721,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun cancelRequestHelp() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch() {
             runCatching {
                 startLoading()
                 mappingUseCase.createUserUseCase(
@@ -840,9 +840,10 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun broadCastLocationToTransaction(location: android.location.Location){
+    private suspend fun broadCastLocationToTransaction(location: android.location.Location){
         val rescueTransaction = state.value.userRescueTransaction ?: return
         runCatching {
+
             val user = state.value.user
             mappingUseCase.broadcastTransactionLocationUseCase(
                 LiveLocationWSModel(
@@ -871,7 +872,7 @@ class MappingViewModel @Inject constructor(
         if(getRescueTransactionUpdatesJob?.isActive == true){
             return
         }
-        getRescueTransactionUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+        getRescueTransactionUpdatesJob = viewModelScope.launch(SupervisorJob()) {
 
             runCatching {
                 mappingUseCase.getRescueTransactionUpdatesUseCase().collect {
@@ -947,7 +948,7 @@ class MappingViewModel @Inject constructor(
         if(locationUpdatesJob?.isActive == true){
             return
         }
-        locationUpdatesJob = viewModelScope.launch(Dispatchers.IO) {
+        locationUpdatesJob = viewModelScope.launch() {
 
             runCatching {
                 mappingUseCase.getUserLocationUseCase().collect { location ->
@@ -968,7 +969,7 @@ class MappingViewModel @Inject constructor(
             return
         }
 
-        getUsersUpdatesJob = viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+        getUsersUpdatesJob = viewModelScope.launch(SupervisorJob()) {
             runCatching {
                 mappingUseCase.getUserUpdatesUseCase().collect {
                     it.getUser()
@@ -999,7 +1000,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun declineRescueRequest(cardModel: CardModel) {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch() {
             runCatching {
                 startLoading()
                 val rescueRespondents = state.value.userRescueRequestRespondents.respondents
@@ -1025,7 +1026,7 @@ class MappingViewModel @Inject constructor(
         }
     }
     private fun signOutAccount() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch() {
             runCatching {
                 startLoading()
                 authUseCase.signOutUseCase()
@@ -1042,7 +1043,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun requestHelp() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch() {
             uploadUserProfile {
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
             }

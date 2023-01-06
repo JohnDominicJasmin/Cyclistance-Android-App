@@ -15,7 +15,7 @@ class TransactionLiveLocationWSClient(
     private val socket: Socket
 ): WebSocketClient<LiveLocationWSModel> {
     
-    override fun getResult(): Flow<LiveLocationWSModel> {
+    override suspend fun getResult(): Flow<LiveLocationWSModel> {
         return callbackFlow {
             val onNewLocationUpdates = Emitter.Listener { response ->
                 val gson = Gson()
@@ -35,7 +35,7 @@ class TransactionLiveLocationWSClient(
     }
 
 
-    override fun broadCastEvent(t: LiveLocationWSModel?) {
+    override suspend fun broadCastEvent(t: LiveLocationWSModel?) {
         t?.let{ locationModel ->
             socket.emit(JOIN_LIVE_LOCATION_UPDATES, locationModel.latitude, locationModel.longitude, "room-${locationModel.room}")
         }

@@ -23,22 +23,22 @@ interface MappingRepository {
     suspend fun deleteRescueTransaction(id: String)
 
 
-    fun getBikeType(): Flow<String>
+    suspend fun getBikeType(): Flow<String>
     suspend fun setBikeType(bikeType: String)
 
-    fun getAddress(): Flow<String>
+    suspend fun getAddress(): Flow<String>
     suspend fun setAddress(address: String)
 
-    fun getUserLocation(): Flow<Location>
+    suspend fun getUserLocation(): Flow<Location>
 
     suspend fun imageUrlToDrawable(imageUrl: String): Drawable
 
-    fun getUserUpdates():Flow<User>
-    fun getRescueTransactionUpdates(): Flow<RescueTransaction>
-    fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel>
-    fun broadcastUser()
-    fun broadcastRescueTransaction()
-    fun broadcastLocation(locationModel: LiveLocationWSModel)
+    suspend fun getUserUpdates():Flow<User>
+    suspend fun getRescueTransactionUpdates(): Flow<RescueTransaction>
+    suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel>
+    suspend fun broadcastUser()
+    suspend fun broadcastRescueTransaction()
+    suspend fun broadcastLocation(locationModel: LiveLocationWSModel)
 
 
 

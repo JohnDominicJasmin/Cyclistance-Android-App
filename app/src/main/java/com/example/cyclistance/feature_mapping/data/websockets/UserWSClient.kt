@@ -17,11 +17,11 @@ class UserWSClient(
 ): WebSocketClient<User> {
 
 
-    override fun broadCastEvent(t: User?) {
+    override suspend  fun broadCastEvent(t: User?) {
         socket.emit(BROADCAST_USERS)
     }
 
-    override fun getResult(): Flow<User> {
+    override suspend fun getResult(): Flow<User> {
         return callbackFlow {
             val gson = Gson()
             val onNewUsers = Emitter.Listener { response ->

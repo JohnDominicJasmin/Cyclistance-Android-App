@@ -11,7 +11,7 @@ import com.example.cyclistance.feature_mapping.domain.repository.MappingReposito
 class BroadcastTransactionLocationUseCase(
     private val repository: MappingRepository,
     private val context: Context) {
-    operator fun invoke(
+    suspend operator fun invoke(
         locationModel: LiveLocationWSModel,
         user: UserItem,
         rescueTransactionItem: RescueTransactionItem) {

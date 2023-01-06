@@ -6,7 +6,7 @@ import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptio
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 
 class BroadcastRescueTransactionUseCase(private val repository: MappingRepository, private val context: Context,) {
-    operator fun invoke() {
+    suspend operator fun invoke() {
         if(context.hasInternetConnection().not()){
             throw MappingExceptions.NetworkException()
         }

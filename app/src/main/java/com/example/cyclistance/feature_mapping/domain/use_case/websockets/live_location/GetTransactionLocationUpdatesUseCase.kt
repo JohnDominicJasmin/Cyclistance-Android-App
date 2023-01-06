@@ -8,7 +8,7 @@ import com.example.cyclistance.feature_mapping.domain.repository.MappingReposito
 import kotlinx.coroutines.flow.Flow
 
 class GetTransactionLocationUpdatesUseCase(private val context: Context, val repository: MappingRepository) {
-    operator fun invoke(): Flow<LiveLocationWSModel>{
+    suspend operator fun invoke(): Flow<LiveLocationWSModel>{
 
         if(context.hasInternetConnection().not()){
             throw MappingExceptions.NetworkException()

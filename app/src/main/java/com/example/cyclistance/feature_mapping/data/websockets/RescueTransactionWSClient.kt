@@ -18,11 +18,11 @@ class RescueTransactionWSClient(
 ): WebSocketClient<RescueTransaction> {
 
 
-    override fun broadCastEvent(t: RescueTransaction?) {
+    override suspend fun broadCastEvent(t: RescueTransaction?) {
         socket.emit(BROADCAST_RESCUE_TRANSACTION)
     }
 
-    override fun getResult(): Flow<RescueTransaction> {
+    override suspend  fun getResult(): Flow<RescueTransaction> {
         return callbackFlow {
 
             val gson = Gson()

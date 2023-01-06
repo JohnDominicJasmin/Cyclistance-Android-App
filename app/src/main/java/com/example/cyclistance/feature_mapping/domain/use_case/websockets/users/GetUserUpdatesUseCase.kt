@@ -8,7 +8,7 @@ import com.example.cyclistance.feature_mapping.domain.repository.MappingReposito
 import kotlinx.coroutines.flow.Flow
 
 class GetUserUpdatesUseCase(private val context: Context,private val repository: MappingRepository) {
-    operator fun invoke(): Flow<User>{
+    suspend operator fun invoke(): Flow<User>{
 
         if(context.hasInternetConnection().not()){
             throw MappingExceptions.NetworkException()

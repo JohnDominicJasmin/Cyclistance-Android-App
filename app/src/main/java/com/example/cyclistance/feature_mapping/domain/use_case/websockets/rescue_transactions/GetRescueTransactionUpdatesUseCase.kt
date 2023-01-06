@@ -8,7 +8,7 @@ import com.example.cyclistance.feature_mapping.domain.repository.MappingReposito
 import kotlinx.coroutines.flow.Flow
 
 class GetRescueTransactionUpdatesUseCase(private val context: Context, private val repository: MappingRepository) {
-    operator fun invoke(): Flow<RescueTransaction> {
+    suspend operator fun invoke(): Flow<RescueTransaction> {
 
 
         if(context.hasInternetConnection().not()){
