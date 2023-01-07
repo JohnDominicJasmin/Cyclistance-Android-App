@@ -1,4 +1,4 @@
-package com.example.cyclistance
+package com.example.cyclistance.core.utils.validation
 
 import com.example.cyclistance.core.utils.validation.FormatterUtils.distanceFormat
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedETA

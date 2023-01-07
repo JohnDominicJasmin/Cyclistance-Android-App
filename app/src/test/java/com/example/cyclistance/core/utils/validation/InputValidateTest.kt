@@ -1,4 +1,4 @@
-package com.example.cyclistance
+package com.example.cyclistance.core.utils.validation
 
 import com.example.cyclistance.core.utils.validation.InputValidate.containsNumeric
 import com.example.cyclistance.core.utils.validation.InputValidate.containsSpecialCharacters
