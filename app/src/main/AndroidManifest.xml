@@ -30,7 +30,7 @@
 
 
         <service
-            android:name=".core.utils.service.LocationService"
+            android:name=".service.LocationService"
             android:foregroundServiceType="location" />
 
 

@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.cyclistance.feature_mapping_screen.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_change_password.components.PasswordTextFieldArea
 import com.example.cyclistance.theme.CyclistanceTheme
 

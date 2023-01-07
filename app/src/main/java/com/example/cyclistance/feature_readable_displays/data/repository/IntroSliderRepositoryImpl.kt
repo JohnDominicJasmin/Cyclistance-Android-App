@@ -5,7 +5,7 @@ import com.example.cyclistance.core.utils.constants.ReadableConstants.DATA_STORE
 import com.example.cyclistance.core.utils.extension.editData
 import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.feature_readable_displays.domain.repository.IntroSliderRepository
-import com.example.cyclistance.feature_mapping_screen.data.repository.dataStore
+import com.example.cyclistance.feature_mapping.data.repository.dataStore
 import kotlinx.coroutines.flow.Flow
 
 

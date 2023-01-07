@@ -108,7 +108,7 @@ fun SignUpScreen(
 
 
 
-    SignUpScreen(
+    SignUpScreenContent(
         modifier = Modifier.padding(paddingValues),
         focusRequester = focusRequester,
         signUpState = signUpState,
@@ -129,14 +129,14 @@ fun SignUpScreen(
 @Composable
 fun SignUpScreenPreview() {
     CyclistanceTheme(true) {
-        SignUpScreen(signUpState = SignUpState())
+        SignUpScreenContent(signUpState = SignUpState())
     }
 
 }
 
 
 @Composable
-fun SignUpScreen(
+fun SignUpScreenContent(
     modifier: Modifier = Modifier,
     signUpState: SignUpState = SignUpState(),
     focusRequester: FocusRequester = FocusRequester(),

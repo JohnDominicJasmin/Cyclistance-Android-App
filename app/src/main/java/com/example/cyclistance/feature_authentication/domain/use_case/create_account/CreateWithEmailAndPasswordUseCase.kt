@@ -7,7 +7,7 @@ import com.example.cyclistance.core.utils.validation.InputValidate.isPasswordStr
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
-import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionStatus.hasInternetConnection
+import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.hasInternetConnection
 import com.google.firebase.auth.AuthCredential
 
 class CreateWithEmailAndPasswordUseCase(

@@ -73,7 +73,7 @@ fun IntroSliderScreen(
     }}
 
 
-    IntroSlider(modifier = Modifier
+    IntroSliderContent(modifier = Modifier
         .fillMaxSize()
         .padding(paddingValues),
         pagerState = pagerState,
@@ -87,7 +87,7 @@ fun IntroSliderScreen(
 @Composable
 fun IntroSliderPreview() {
     CyclistanceTheme(darkTheme = true) {
-        IntroSlider(
+        IntroSliderContent(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colors.background),
@@ -98,7 +98,7 @@ fun IntroSliderPreview() {
     }
 }
 @Composable
-private fun IntroSlider(
+private fun IntroSliderContent(
     modifier: Modifier,
     pagerState: PagerState,
     onClickSkipButton: () -> Unit,

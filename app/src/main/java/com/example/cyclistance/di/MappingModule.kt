@@ -11,34 +11,34 @@ import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
-import com.example.cyclistance.feature_mapping_screen.data.CyclistanceApi
-import com.example.cyclistance.feature_mapping_screen.data.location.ConnectionStatus.hasInternetConnection
-import com.example.cyclistance.feature_mapping_screen.data.repository.MappingRepositoryImpl
-import com.example.cyclistance.feature_mapping_screen.data.websockets.RescueTransactionWSClient
-import com.example.cyclistance.feature_mapping_screen.data.websockets.TransactionLiveLocationWSClient
-import com.example.cyclistance.feature_mapping_screen.data.websockets.UserWSClient
-import com.example.cyclistance.feature_mapping_screen.domain.repository.MappingRepository
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.GetAddressUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.address.SetAddressUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.GetBikeTypeUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.bike_type.SetBikeTypeUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.image.ImageUrlToDrawableUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.location.GetUserLocationUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.routes.GetRouteDirectionsUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.user.*
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.BroadcastUserUseCase
-import com.example.cyclistance.feature_mapping_screen.domain.use_case.websockets.users.GetUserUpdatesUseCase
+import com.example.cyclistance.feature_mapping.data.CyclistanceApi
+import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.hasInternetConnection
+import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
+import com.example.cyclistance.feature_mapping.data.websockets.RescueTransactionWSClient
+import com.example.cyclistance.feature_mapping.data.websockets.TransactionLiveLocationWSClient
+import com.example.cyclistance.feature_mapping.data.websockets.UserWSClient
+import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
+import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.address.GetAddressUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.address.SetAddressUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.GetBikeTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.SetBikeTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.image.ImageUrlToDrawableUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDirectionsUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.user.*
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.BroadcastUserUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.GetUserUpdatesUseCase
 import com.google.gson.GsonBuilder
-import com.mapbox.api.directions.v5.MapboxDirections
+import com.mapbox.api.optimization.v1.MapboxOptimization
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -84,8 +84,8 @@ object MappingModule {
 
     @Singleton
     @Provides
-    fun providesMapDirections(@ApplicationContext context: Context): MapboxDirections.Builder{
-        return MapboxDirections.builder()
+    fun providesMapOptimizationDirections(@ApplicationContext context: Context): MapboxOptimization.Builder{
+        return MapboxOptimization.builder()
             .accessToken(context.getString(R.string.MapsDownloadToken))
     }
 
@@ -101,7 +101,7 @@ object MappingModule {
         imageRequestBuilder: ImageRequest.Builder,
         @ApplicationContext context: Context,
         api: CyclistanceApi,
-        mapboxDirections: MapboxDirections.Builder): MappingRepository {
+        mapboxDirections: MapboxOptimization.Builder): MappingRepository {
 
         val socket = IO.socket(getBaseUrl(context))
         val userWSClient = UserWSClient(socket)

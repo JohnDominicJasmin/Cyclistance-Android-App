@@ -9,7 +9,7 @@ import com.example.cyclistance.core.utils.validation.FormatterUtils.getAddress
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getFullAddress
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getMapIconImage
 import com.example.cyclistance.core.utils.validation.InputValidate.isEmailValid
-import com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.Location
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

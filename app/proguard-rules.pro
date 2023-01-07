@@ -20,8 +20,8 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.example.cyclistance.feature_mapping_screen.data.remote.dto.rescue_transaction.* { *; }
--keep class com.example.cyclistance.feature_mapping_screen.data.remote.dto.user_dto.* { *; }
+-keep class com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.* { *; }
+-keep class com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.* { *; }
 
 
 -dontnote okhttp3.**, okio.**, retrofit2.**

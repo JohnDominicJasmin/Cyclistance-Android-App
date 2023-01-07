@@ -71,5 +71,8 @@ object MappingConstants {
 
     const val ROUTE_LAYER_ID = "route-layer-id"
     const val ROUTE_SOURCE_ID = "route-source-id"
+    const val ICON_SOURCE_ID = "icon-source-id"
+    const val TRANSACTION_ICON_ID = "red-pin-icon-id"
+    const val ICON_LAYER_ID = "icon-layer-id"
 
 }

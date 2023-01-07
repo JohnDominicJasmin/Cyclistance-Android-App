@@ -14,7 +14,7 @@ import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.core.utils.constants.SettingConstants.DATA_STORE_THEME_KEY
 import com.example.cyclistance.core.utils.extension.editData
 import com.example.cyclistance.core.utils.extension.getData
-import com.example.cyclistance.feature_mapping_screen.data.repository.dataStore
+import com.example.cyclistance.feature_mapping.data.repository.dataStore
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
