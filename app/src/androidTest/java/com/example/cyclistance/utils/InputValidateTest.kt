@@ -1,8 +1,9 @@
-package com.example.cyclistance
+package com.example.cyclistance.utils
 
 import android.location.Geocoder
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
+import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.validation.FormatterUtils
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getAddress

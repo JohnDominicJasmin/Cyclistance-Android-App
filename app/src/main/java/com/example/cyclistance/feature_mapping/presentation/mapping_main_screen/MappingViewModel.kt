@@ -39,7 +39,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MappingViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle? = null,
     private val authUseCase: AuthenticationUseCase,
     private val geocoder: Geocoder,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
@@ -50,7 +50,8 @@ class MappingViewModel @Inject constructor(
     private var getRescueTransactionUpdatesJob: Job? = null
     private var getTransactionLocationUpdatesJob: Job? = null
 
-    private val _state: MutableStateFlow<MappingState> = MutableStateFlow(savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState())
+    private val _state: MutableStateFlow<MappingState> = MutableStateFlow(
+        savedStateHandle?.get(MAPPING_VM_STATE_KEY) ?: MappingState())
     val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<MappingUiEvent> = MutableSharedFlow()
@@ -117,7 +118,7 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getUsersUseCase().distinctUntilChanged().collect {
                     it.getUser()
                     it.getNearbyCyclist()
-                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                    savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
                 }
             }.onFailure {
                 it.handleException()
@@ -137,7 +138,7 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getRescueTransactionByIdUseCase(transactionId)
             }.onSuccess { rescueTransaction ->
                 _state.update { it.copy(userRescueTransaction = rescueTransaction) }
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
             }.onFailure {
                 it.handleException()
             }
@@ -268,7 +269,7 @@ class MappingViewModel @Inject constructor(
                 _state.update { it.copy(bottomSheetType = event.bottomSheetType) }
             }
         }
-        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+        savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
     }
 
     private fun respondToHelp() {
@@ -425,7 +426,7 @@ class MappingViewModel @Inject constructor(
                         liveLocation.updateTransactionDistance()
                     }
             }.onSuccess {
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
             }.onFailure {
                 Timber.e("ERROR GETTING TRANSACTION LOCATION: ${it.message}")
             }
@@ -555,7 +556,7 @@ class MappingViewModel @Inject constructor(
                 exception.handleException()
             }
 
-            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
 
         }
     }
@@ -685,7 +686,7 @@ class MappingViewModel @Inject constructor(
             loadName()
             loadPhoto()
         }.invokeOnCompletion {
-            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
         }
     }
 
@@ -740,11 +741,11 @@ class MappingViewModel @Inject constructor(
                 exception.handleException()
             }
             finishLoading()
-            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
         }
     }
 
-    private suspend fun updateLocation(location: android.location.Location){
+    private suspend fun updateLocation(location: Location){
         val latitude = location.latitude.takeIf { it != 0.0 } ?: return
         val longitude = location.longitude.takeIf { it != 0.0 } ?: return
         val updatedState = _state.updateAndGet { state ->
@@ -840,7 +841,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun broadCastLocationToTransaction(location: android.location.Location){
+    private suspend fun broadCastLocationToTransaction(location: Location){
         val rescueTransaction = state.value.userRescueTransaction ?: return
         runCatching {
 
@@ -881,7 +882,7 @@ class MappingViewModel @Inject constructor(
                     it.checkRescueRequestAccepted()
                 }
             }.onSuccess {
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
             }.onFailure {
                 Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
             }
@@ -954,7 +955,7 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getUserLocationUseCase().collect { location ->
                     broadCastLocationToTransaction(location)
                     updateLocation(location)
-                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                    savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
                 }
 
             }.onFailure {
@@ -977,7 +978,7 @@ class MappingViewModel @Inject constructor(
                     it.updateClient()
                 }
             }.onSuccess {
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
             }.onFailure {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
             }
@@ -1021,7 +1022,7 @@ class MappingViewModel @Inject constructor(
                 it.handleDeclineRescueRequest()
             }
             finishLoading()
-            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
 
         }
     }
@@ -1037,7 +1038,7 @@ class MappingViewModel @Inject constructor(
             }
             finishLoading()
         }.invokeOnCompletion {
-            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
         }
     }
 
@@ -1048,7 +1049,7 @@ class MappingViewModel @Inject constructor(
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
             }
         }.invokeOnCompletion {
-            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
         }
     }
 
@@ -1163,7 +1164,7 @@ class MappingViewModel @Inject constructor(
             }
 
         }
-        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+        savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
     }
 
 
