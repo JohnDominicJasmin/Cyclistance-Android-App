@@ -1,18 +1,12 @@
 package com.example.cyclistance
 
 import android.app.Application
-import coil.ImageLoader
-import coil.ImageLoaderFactory
 import com.example.cyclistance.feature_mapping.data.network_observer.NetworkConnectivityChecker
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
-import javax.inject.Inject
 
 @HiltAndroidApp
-class BaseApplication: Application(), ImageLoaderFactory {
-
-    @Inject
-    lateinit var imageLoaderBuilder: ImageLoader.Builder
+class BaseApplication: Application() {
 
     override fun onCreate() {
         super.onCreate()
@@ -20,7 +14,4 @@ class BaseApplication: Application(), ImageLoaderFactory {
         NetworkConnectivityChecker.init(this.applicationContext)
     }
 
-    override fun newImageLoader(): ImageLoader {
-        return imageLoaderBuilder.build()
-    }
 }
