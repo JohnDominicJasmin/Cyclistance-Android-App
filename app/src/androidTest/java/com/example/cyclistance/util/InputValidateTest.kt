@@ -1,4 +1,4 @@
-package com.example.cyclistance.utils
+package com.example.cyclistance.util
 
 import android.location.Geocoder
 import androidx.test.ext.junit.runners.AndroidJUnit4

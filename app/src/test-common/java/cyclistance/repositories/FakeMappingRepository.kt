@@ -1,8 +1,9 @@
-package com.example.cyclistance.repositories
+package cyclistance.repositories
 
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Route
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Status
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.*
+import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.model.*
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.mapbox.geojson.Point
@@ -103,17 +104,29 @@ class FakeMappingRepository: MappingRepository {
     fun shouldReturnNetworkError(value: Boolean){
         shouldReturnNetworkError = value
     }
+
     override suspend fun getUserById(userId: String): UserItem {
-        return users.find { it.id == userId } ?: throw Exception("User not found")
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+        return users.find { it.id == userId } ?: throw MappingExceptions.UserException()
     }
 
     override suspend fun getUsers(): User {
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
         return User(users)
     }
 
     override suspend fun createUser(userItem: UserItem) {
+
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+
         if (users.find { it.id == userItem.id } != null) {
-            throw Exception("User already exists")
+            throw MappingExceptions.UserException("User already exists")
         }
 
         users.add(userItem)
@@ -121,8 +134,12 @@ class FakeMappingRepository: MappingRepository {
 
     override suspend fun deleteUser(id: String) {
 
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+
         if(users.find { it.id == id } == null) {
-            throw Exception("User not found")
+            throw MappingExceptions.UserException()
         }
 
         users.removeIf { it.id == id }
@@ -133,19 +150,34 @@ class FakeMappingRepository: MappingRepository {
 
 
     override suspend fun deleteRescueRespondent(userId: String, respondentId: String) {
-        val userFound = users.find { it.id == userId } ?: throw Exception("User not found")
+
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+
+        val userFound = users.find { it.id == userId } ?: throw MappingExceptions.UserException()
         userFound.rescueRequest?.respondents?.toMutableList()
             ?.removeIf { it.clientId == respondentId }
     }
 
     override suspend fun addRescueRespondent(userId: String, respondentId: String) {
-        val userFound = users.find { it.id == userId } ?: throw Exception("User not found")
+
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+
+        val userFound = users.find { it.id == userId } ?: throw MappingExceptions.UserException()
         userFound.rescueRequest?.respondents?.toMutableList()
             ?.add(Respondent(clientId = respondentId))
     }
 
     override suspend fun deleteAllRespondents(userId: String) {
-        val userFound = users.find { it.id == userId } ?: throw Exception("User not found")
+
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+
+        val userFound = users.find { it.id == userId } ?: throw MappingExceptions.UserException()
         userFound.rescueRequest?.respondents?.toMutableList()?.clear()
     }
 
@@ -154,22 +186,36 @@ class FakeMappingRepository: MappingRepository {
 
     override suspend fun getRescueTransactionById(transactionId: String): RescueTransactionItem {
 
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+
         return rescueTransactions.find { it.id == transactionId }
-                ?: throw Exception("Rescue transaction not found")
+                ?: throw MappingExceptions.RescueTransactionException("Rescue transaction not found")
 
     }
 
     override suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem) {
+
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+
         if (rescueTransactions.find { it.id == rescueTransaction.id } != null) {
-            throw Exception("Rescue transaction already exists")
+            throw MappingExceptions.RescueTransactionException("Rescue transaction already exists")
         }
 
         rescueTransactions.toMutableList().add(rescueTransaction)
     }
 
     override suspend fun deleteRescueTransaction(transactionId: String) {
+
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+
         if(rescueTransactions.find { it.id == transactionId } == null) {
-            throw Exception("Rescue transaction not found")
+            throw MappingExceptions.RescueTransactionException("Rescue transaction not found")
         }
 
         rescueTransactions.toMutableList().removeIf { it.id == transactionId }
@@ -211,18 +257,38 @@ class FakeMappingRepository: MappingRepository {
     }
 
     override suspend fun broadcastUser() {
+
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+
         print("broadcastLocation")
     }
 
     override suspend fun broadcastRescueTransaction() {
+
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+
         print("broadcastRescueTransaction")
     }
 
     override suspend fun broadcastLocation(locationModel: LiveLocationWSModel) {
+
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+
         print("broadcastLocation")
     }
 
     override suspend fun getRouteDirections(origin: Point, destination: Point): RouteDirection {
+
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+
         return RouteDirection(geometry = "test-geometry", duration = 1000.0)
     }
 }
