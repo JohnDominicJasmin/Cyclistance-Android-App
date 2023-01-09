@@ -9,6 +9,6 @@ object MappingExceptions {
     class BikeTypeException(message: String = "Select bike type"): RuntimeException(message)
     class AddressException(message: String = "Field cannot be blank"): RuntimeException(message)
     class DescriptionException(message: String = "Select help description"): RuntimeException(message)
-    class RescueTransactionIdException(message: String = "Rescue transaction not found"): RuntimeException(message)
+    class RescueTransactionException(message: String = "Rescue transaction not found"): RuntimeException(message)
     class RescueTransactionReasonException(message: String = "Select cancellation reason"): RuntimeException(message)
 }

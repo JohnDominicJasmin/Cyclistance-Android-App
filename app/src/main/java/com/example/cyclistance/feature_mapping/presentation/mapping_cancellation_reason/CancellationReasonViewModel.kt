@@ -115,7 +115,7 @@ class CancellationReasonViewModel @Inject constructor(
 
     private suspend fun Throwable.handleException() {
         when (this) {
-            is MappingExceptions.UnexpectedErrorException, is MappingExceptions.UserException, is MappingExceptions.RescueTransactionIdException -> {
+            is MappingExceptions.UnexpectedErrorException, is MappingExceptions.UserException, is MappingExceptions.RescueTransactionException -> {
                 _eventFlow.emit(
                     CancellationReasonUiEvent.ShowToastMessage(
                         message = this.message!!
