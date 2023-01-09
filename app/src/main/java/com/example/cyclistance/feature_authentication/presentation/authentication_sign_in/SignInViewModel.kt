@@ -9,6 +9,7 @@ import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_IN_VM_STA
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
+import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_authentication.domain.util.ActivityResultCallbackI
 import com.facebook.AccessToken
@@ -17,8 +18,6 @@ import com.facebook.FacebookCallback
 import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
-import com.google.firebase.auth.AuthCredential
-import com.google.firebase.auth.FacebookAuthProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.farhanroy.composeawesomedialog.R
 import kotlinx.coroutines.Job
@@ -126,7 +125,7 @@ class SignInViewModel @Inject constructor(
 
 
 
-    private fun signInWithCredential(authCredential: AuthCredential) {
+    private fun signInWithCredential(authCredential: SignInCredential) {
         job?.cancel()
         job = viewModelScope.launch {
             runCatching {
@@ -202,7 +201,7 @@ class SignInViewModel @Inject constructor(
             object : FacebookCallback<LoginResult> {
                 override fun onSuccess(result: LoginResult) {
                     _state.update { it.copy(isLoading = true) }
-                    signInWithCredential(authCredential = FacebookAuthProvider.getCredential(result.accessToken.token))
+                    signInWithCredential(authCredential = SignInCredential.Facebook(result.accessToken.token))
                     savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
                 }
 

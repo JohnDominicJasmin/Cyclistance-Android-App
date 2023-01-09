@@ -3,7 +3,7 @@ package com.example.cyclistance.feature_authentication.domain.use_case.read_acco
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 
-class GetNameUseCase(private val repository: AuthRepository<*>) {
+class GetNameUseCase(private val repository: AuthRepository) {
 
      operator fun invoke(): String {
 

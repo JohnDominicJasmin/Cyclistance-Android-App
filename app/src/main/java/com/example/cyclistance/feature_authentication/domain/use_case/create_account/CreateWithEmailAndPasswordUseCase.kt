@@ -11,7 +11,7 @@ import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.ha
 
 class CreateWithEmailAndPasswordUseCase(
     private val context: Context,
-    private val repository: AuthRepository<*>) {
+    private val repository: AuthRepository) {
 
     suspend operator fun invoke(authModel: AuthModel): Boolean {
 

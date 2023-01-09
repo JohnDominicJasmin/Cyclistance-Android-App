@@ -11,6 +11,7 @@ import com.example.cyclistance.core.utils.constants.AuthConstants.USER_NOT_FOUND
 import com.example.cyclistance.core.utils.extension.editData
 import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
+import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_mapping.data.repository.dataStore
 import com.google.firebase.FirebaseNetworkException
@@ -29,7 +30,7 @@ import kotlin.coroutines.resumeWithException
 class AuthRepositoryImpl(
     private val context: Context,
     private val auth: FirebaseAuth,
-    ) : AuthRepository<AuthCredential> {
+    ) : AuthRepository {
 
     private var dataStore = context.dataStore
 
@@ -172,10 +173,15 @@ class AuthRepositoryImpl(
     }
 
 
-    override suspend fun signInWithCredentials(v: AuthCredential): Boolean {
+    override suspend fun signInWithCredential(credential: SignInCredential): Boolean {
         return suspendCancellableCoroutine { continuation ->
 
-            auth.signInWithCredential(v)
+            val signInCredential = when(credential){
+                is SignInCredential.Google -> GoogleAuthProvider.getCredential(credential.token, null)
+                is SignInCredential.Facebook -> FacebookAuthProvider.getCredential(credential.token)
+            }
+
+            auth.signInWithCredential(signInCredential)
                 .addOnCompleteListener { signInWithCredential ->
                     signInWithCredential.exception?.let { exception ->
                         if (exception.message == FACEBOOK_CONNECTION_FAILURE) {

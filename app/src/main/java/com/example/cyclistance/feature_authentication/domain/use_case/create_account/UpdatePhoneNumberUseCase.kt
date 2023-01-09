@@ -6,7 +6,7 @@ import com.example.cyclistance.core.utils.validation.InputValidate.isPhoneNumber
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 
-class UpdatePhoneNumberUseCase(private val repository: AuthRepository<*>) {
+class UpdatePhoneNumberUseCase(private val repository: AuthRepository) {
     suspend operator fun invoke(phoneNumber:String){
 
         val userPhoneNumber = phoneNumber.trim()
