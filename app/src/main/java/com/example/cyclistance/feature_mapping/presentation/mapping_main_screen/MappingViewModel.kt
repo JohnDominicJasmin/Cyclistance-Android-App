@@ -39,7 +39,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MappingViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle? = null,
+    private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase,
     private val geocoder: Geocoder,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
@@ -51,7 +51,7 @@ class MappingViewModel @Inject constructor(
     private var getTransactionLocationUpdatesJob: Job? = null
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(
-        savedStateHandle?.get(MAPPING_VM_STATE_KEY) ?: MappingState())
+        savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState())
     val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<MappingUiEvent> = MutableSharedFlow()
@@ -118,7 +118,7 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getUsersUseCase().distinctUntilChanged().collect {
                     it.getUser()
                     it.getNearbyCyclist()
-                    savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
             }.onFailure {
                 it.handleException()
@@ -138,7 +138,7 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getRescueTransactionByIdUseCase(transactionId)
             }.onSuccess { rescueTransaction ->
                 _state.update { it.copy(userRescueTransaction = rescueTransaction) }
-                savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }.onFailure {
                 it.handleException()
             }
@@ -269,11 +269,11 @@ class MappingViewModel @Inject constructor(
                 _state.update { it.copy(bottomSheetType = event.bottomSheetType) }
             }
         }
-        savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
     private fun respondToHelp() {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             val selectedRescuee = state.value.selectedRescueeMapIcon
             uploadUserProfile{
                 runCatching {
@@ -293,7 +293,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun selectRescueeMapIcon(id: String){
-        viewModelScope.launch() {
+        viewModelScope.launch {
             val selectedRescuee = state.value.nearbyCyclists?.findUser(id) ?: return@launch
             val selectedRescueeLocation = selectedRescuee.location
             val confirmationDetail = selectedRescuee.userAssistance?.confirmationDetail
@@ -381,7 +381,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun removeAssignedTransaction(){
-        viewModelScope.launch() {
+        viewModelScope.launch{
             runCatching {
                 getId().removeAssignedTransaction()
             }.onSuccess {
@@ -722,7 +722,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun cancelRequestHelp() {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             runCatching {
                 startLoading()
                 mappingUseCase.createUserUseCase(
@@ -741,7 +741,7 @@ class MappingViewModel @Inject constructor(
                 exception.handleException()
             }
             finishLoading()
-            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
     }
 
@@ -882,7 +882,7 @@ class MappingViewModel @Inject constructor(
                     it.checkRescueRequestAccepted()
                 }
             }.onSuccess {
-                savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }.onFailure {
                 Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
             }
@@ -949,13 +949,13 @@ class MappingViewModel @Inject constructor(
         if(locationUpdatesJob?.isActive == true){
             return
         }
-        locationUpdatesJob = viewModelScope.launch() {
+        locationUpdatesJob = viewModelScope.launch {
 
             runCatching {
                 mappingUseCase.getUserLocationUseCase().collect { location ->
                     broadCastLocationToTransaction(location)
                     updateLocation(location)
-                    savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
 
             }.onFailure {
@@ -978,7 +978,7 @@ class MappingViewModel @Inject constructor(
                     it.updateClient()
                 }
             }.onSuccess {
-                savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }.onFailure {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
             }
@@ -1001,7 +1001,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun declineRescueRequest(cardModel: CardModel) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             runCatching {
                 startLoading()
                 val rescueRespondents = state.value.userRescueRequestRespondents.respondents
@@ -1022,12 +1022,12 @@ class MappingViewModel @Inject constructor(
                 it.handleDeclineRescueRequest()
             }
             finishLoading()
-            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
 
         }
     }
     private fun signOutAccount() {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             runCatching {
                 startLoading()
                 authUseCase.signOutUseCase()
@@ -1038,18 +1038,18 @@ class MappingViewModel @Inject constructor(
             }
             finishLoading()
         }.invokeOnCompletion {
-            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
     }
 
 
     private fun requestHelp() {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             uploadUserProfile {
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
             }
         }.invokeOnCompletion {
-            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
     }
 
