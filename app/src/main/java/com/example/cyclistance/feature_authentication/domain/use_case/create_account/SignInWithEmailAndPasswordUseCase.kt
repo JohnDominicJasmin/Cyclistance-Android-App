@@ -12,7 +12,7 @@ import com.google.firebase.auth.AuthCredential
 
 class SignInWithEmailAndPasswordUseCase(
     private val context: Context,
-    private val repository: AuthRepository<AuthCredential, Uri>) {
+    private val repository: AuthRepository<*>) {
 
     suspend operator fun invoke(authModel: AuthModel):Boolean {
 

@@ -17,20 +17,19 @@ class FakeAuthRepository(
     private var photoUrl: String? = "",
     private var isSignedInWithProvider: Boolean? = false,
     private var isEmailVerified: Boolean? = false,
-    private var hasAccountSignedIn: Boolean? = false,
+    private var hasAccountSignedIn: Boolean = false,
     private var imagePath: String = "",
-    private var signInCredentials: String = ""
+    private var shouldReturnNetworkError: Boolean = false,
+    private var signInCredentials: String = ""): AuthRepository<String> {
 
 
 
-): AuthRepository<String, String> {
-    private var shouldReturnNetworkError = false
 
     fun shouldReturnNetworkError(value: Boolean){
         shouldReturnNetworkError = value
     }
     
-    fun setReloadEmail(value: Boolean){
+    fun setReloadedEmail(value: Boolean){
         reloadEmail = value
     }
 
@@ -54,7 +53,7 @@ class FakeAuthRepository(
 
     override fun isEmailVerified(): Boolean? = isEmailVerified
 
-    override fun hasAccountSignedIn(): Boolean? = hasAccountSignedIn
+    override fun hasAccountSignedIn(): Boolean = hasAccountSignedIn
 
     override suspend fun uploadImage(v: String): String {
 

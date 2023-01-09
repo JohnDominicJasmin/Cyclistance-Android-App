@@ -4,7 +4,7 @@ import android.net.Uri
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.google.firebase.auth.AuthCredential
 
-class SendEmailVerificationUseCase(private val repository: AuthRepository<AuthCredential, Uri>) {
+class SendEmailVerificationUseCase(private val repository: AuthRepository<*>) {
 
     suspend operator fun invoke():Boolean =
         repository.sendEmailVerification()

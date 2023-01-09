@@ -1,7 +1,6 @@
 package com.example.cyclistance.di
 
 import android.content.Context
-import android.net.Uri
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.feature_authentication.data.repository.AuthRepositoryImpl
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
@@ -37,7 +36,7 @@ import javax.inject.Singleton
 
     @Provides
     @Singleton
-     fun provideAuthRepository(@ApplicationContext context:Context, firebaseAuth: FirebaseAuth): AuthRepository<AuthCredential, Uri>{
+     fun provideAuthRepository(@ApplicationContext context:Context, firebaseAuth: FirebaseAuth): AuthRepository<AuthCredential>{
          return AuthRepositoryImpl(context = context, auth = firebaseAuth, )
      }
 
@@ -45,7 +44,7 @@ import javax.inject.Singleton
 
     @Provides
     @Singleton
-    fun provideAuthenticationUseCase(repository: AuthRepository<AuthCredential, Uri>, @ApplicationContext context: Context):AuthenticationUseCase =
+    fun provideAuthenticationUseCase(repository: AuthRepository<AuthCredential>, @ApplicationContext context: Context):AuthenticationUseCase =
         AuthenticationUseCase(
             reloadEmailUseCase = ReloadEmailUseCase(repository = repository),
             signOutUseCase = SignOutUseCase(repository = repository),

@@ -1,15 +1,13 @@
 package com.example.cyclistance.feature_authentication.domain.use_case.create_account
 
-import android.net.Uri
 import com.example.cyclistance.core.utils.validation.InputValidate.containsNumeric
 import com.example.cyclistance.core.utils.validation.InputValidate.containsSpecialCharacters
 import com.example.cyclistance.core.utils.validation.InputValidate.numberOfCharactersEnough
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.google.firebase.auth.AuthCredential
 
-class UpdateProfileUseCase(private val repository: AuthRepository<AuthCredential, Uri>) {
-    suspend operator fun invoke(photoUri: Uri?, name: String){
+class UpdateProfileUseCase(private val repository: AuthRepository<*>) {
+    suspend operator fun invoke(photoUri: String?, name: String){
         if(name.isEmpty()){
            throw MappingExceptions.NameException()
         }
