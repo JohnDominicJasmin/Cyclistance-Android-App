@@ -29,16 +29,14 @@ import kotlin.coroutines.resumeWithException
 class AuthRepositoryImpl(
     private val context: Context,
     private val auth: FirebaseAuth,
-
-    ) : AuthRepository<AuthCredential> {
+    ) : AuthRepository<AuthCredential, Uri> {
 
     private var dataStore = context.dataStore
 
-
-    override suspend fun uploadImage(uri: Uri): Uri {
+    override suspend fun uploadImage(v: Uri): Uri {
         val firebaseStorageReference: StorageReference = FirebaseStorage.getInstance().reference
         val reference = firebaseStorageReference.child("images/${getId()}")
-        val uploadTask = reference.putFile(uri)
+        val uploadTask = reference.putFile(v)
         return suspendCancellableCoroutine { continuation ->
             uploadTask.addOnCompleteListener { task ->
                 task.exception?.let { exception ->
@@ -234,10 +232,10 @@ class AuthRepositoryImpl(
     }
 
 
-    override suspend fun updateProfile(photoUri: Uri?, name: String?): Boolean {
+    override suspend fun updateProfile(v: Uri?, name: String?): Boolean {
         val profileUpdates = userProfileChangeRequest {
             name?.let { this.displayName = it }
-            photoUri?.let { this.photoUri = photoUri }
+            v?.let { this.photoUri = v }
         }
 
         return suspendCancellableCoroutine { continuation ->

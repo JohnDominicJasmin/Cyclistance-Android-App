@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_authentication.domain.use_case.create_account
 
 import android.content.Context
+import android.net.Uri
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.validation.InputValidate.isEmailValid
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
@@ -11,7 +12,7 @@ import com.google.firebase.auth.AuthCredential
 
 class SignInWithEmailAndPasswordUseCase(
     private val context: Context,
-    private val repository: AuthRepository<AuthCredential>) {
+    private val repository: AuthRepository<AuthCredential, Uri>) {
 
     suspend operator fun invoke(authModel: AuthModel):Boolean {
 
