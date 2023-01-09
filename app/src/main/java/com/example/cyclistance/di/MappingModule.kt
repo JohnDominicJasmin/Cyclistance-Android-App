@@ -2,11 +2,6 @@ package com.example.cyclistance.di
 
 import android.content.Context
 import android.location.Geocoder
-import coil.ImageLoader
-import coil.memory.MemoryCache
-import coil.request.CachePolicy
-import coil.request.ImageRequest
-import coil.transform.CircleCropTransformation
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
@@ -96,8 +91,7 @@ object MappingModule {
 
     @Provides
     @Singleton
-    fun provideCyclistanceRepository(
-        imageRequestBuilder: ImageRequest.Builder,
+    fun provideMappingRepository(
         @ApplicationContext context: Context,
         api: CyclistanceApi,
         mapboxDirections: MapboxOptimization.Builder): MappingRepository {
@@ -108,7 +102,6 @@ object MappingModule {
         val liveLocation = TransactionLiveLocationWSClient(socket)
 
         return MappingRepositoryImpl(
-            imageRequestBuilder = imageRequestBuilder,
             api = api,
             context = context,
             rescueTransactionClient = rescueTransactionWSClient,
@@ -161,35 +154,7 @@ object MappingModule {
         return Geocoder(context)
     }
 
-    @Provides
-    @Singleton
-    fun provideImageRequestBuilder(@ApplicationContext context: Context): ImageRequest.Builder{
-    return ImageRequest.Builder(context)
 
-        .networkCachePolicy(CachePolicy.ENABLED)
-        .diskCachePolicy(CachePolicy.ENABLED)
-        .memoryCachePolicy(CachePolicy.ENABLED)
-        .allowHardware(false)
-        .transformations(CircleCropTransformation())
-        .size(85)
-    }
-
-    @Provides
-    @Singleton
-    fun provideImageLoaderBuilder(@ApplicationContext context: Context): ImageLoader.Builder{
-        return ImageLoader.Builder(context)
-            .crossfade(true)
-            .allowHardware(false)
-            .memoryCache {
-                MemoryCache.Builder(context)
-                    .maxSizePercent(0.25)
-                    .build()
-            }
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .memoryCachePolicy(CachePolicy.ENABLED)
-            .networkCachePolicy(policy = CachePolicy.ENABLED)
-
-    }
 
 
     @Provides

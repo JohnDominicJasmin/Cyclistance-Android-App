@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import coil.request.ImageRequest
 import com.example.cyclistance.core.utils.constants.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_KEY
 import com.example.cyclistance.core.utils.extension.editData
@@ -47,7 +46,6 @@ class MappingRepositoryImpl(
     val rescueTransactionClient: WebSocketClient<RescueTransaction>,
     val userClient: WebSocketClient<User>,
     val liveLocation: WebSocketClient<LiveLocationWSModel>,
-    val imageRequestBuilder: ImageRequest.Builder,
     private val api: CyclistanceApi,
     private val mapboxDirections: MapboxOptimization.Builder,
     val context: Context,
