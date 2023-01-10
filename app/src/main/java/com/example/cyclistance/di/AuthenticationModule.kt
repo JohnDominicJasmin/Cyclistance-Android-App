@@ -9,7 +9,6 @@ import com.example.cyclistance.feature_authentication.domain.use_case.create_acc
 import com.example.cyclistance.feature_authentication.domain.use_case.read_account.*
 import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.*
-import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.FirebaseAuth
 import dagger.Module
 import dagger.Provides
@@ -36,7 +35,7 @@ import javax.inject.Singleton
 
     @Provides
     @Singleton
-     fun provideAuthRepository(@ApplicationContext context:Context, firebaseAuth: FirebaseAuth): AuthRepository<AuthCredential>{
+     fun provideAuthRepository(@ApplicationContext context:Context, firebaseAuth: FirebaseAuth): AuthRepository{
          return AuthRepositoryImpl(context = context, auth = firebaseAuth, )
      }
 
@@ -44,7 +43,7 @@ import javax.inject.Singleton
 
     @Provides
     @Singleton
-    fun provideAuthenticationUseCase(repository: AuthRepository<AuthCredential>, @ApplicationContext context: Context):AuthenticationUseCase =
+    fun provideAuthenticationUseCase(repository: AuthRepository, @ApplicationContext context: Context):AuthenticationUseCase =
         AuthenticationUseCase(
             reloadEmailUseCase = ReloadEmailUseCase(repository = repository),
             signOutUseCase = SignOutUseCase(repository = repository),

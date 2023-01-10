@@ -1,25 +1,24 @@
 package com.example.cyclistance.feature_authentication.domain.repository
 
-import android.net.Uri
+import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import kotlinx.coroutines.flow.Flow
 
-interface AuthRepository<T> {
+interface AuthRepository {
     suspend fun reloadEmail(): Boolean
     fun signOut()
     fun getEmail(): String?
     suspend fun sendEmailVerification(): Boolean
     fun getName(): String?
     fun getId(): String?
-
-    fun getPhotoUrl(): String
+    fun getPhotoUrl(): String?
     fun isSignedInWithProvider(): Boolean?
     fun isEmailVerified(): Boolean?
     fun hasAccountSignedIn(): Boolean
-    suspend fun uploadImage(uri: Uri): Uri
+    suspend fun uploadImage(v: String): String
     suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean
     suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean
-    suspend fun signInWithCredentials(v: T): Boolean
-    suspend fun updateProfile(photoUri: Uri?, name: String?): Boolean
+    suspend fun signInWithCredential(credential: SignInCredential): Boolean
+    suspend fun updateProfile(s: String?, name: String?): Boolean
     suspend fun updatePhoneNumber(phoneNumber: String)
     fun getPhoneNumber(): Flow<String>
 }

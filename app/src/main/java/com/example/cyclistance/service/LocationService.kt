@@ -5,13 +5,13 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.location.Location
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_START
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_STOP
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATION_SERVICE_CHANNEL_ID
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import com.example.cyclistance.feature_mapping.domain.location.LocationClient
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -34,7 +34,7 @@ class LocationService(
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     companion object {
-        val address: MutableStateFlow<Location> = MutableStateFlow(Location(""))
+        val address: MutableStateFlow<Location> = MutableStateFlow(Location())
     }
 
     override fun onCreate() {
@@ -77,7 +77,7 @@ class LocationService(
             .catch {
                 Timber.e("Start Service: ${it.message}")
             }.onEach { location ->
-                address.emit(location)
+                address.emit(Location(latitude = location.latitude, longitude = location.longitude))
             }.launchIn(serviceScope)
     }
 

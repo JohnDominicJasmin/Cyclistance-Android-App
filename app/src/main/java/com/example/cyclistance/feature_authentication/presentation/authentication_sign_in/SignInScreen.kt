@@ -26,6 +26,7 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
+import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.util.AuthResult
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
@@ -43,7 +44,6 @@ import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -65,9 +65,9 @@ fun SignInScreen(
     val authResultLauncher = rememberLauncherForActivityResult(contract = AuthResult()) { task ->
         try {
             val account: GoogleSignInAccount? = task?.getResult(ApiException::class.java)
-            account?.let {
+            account?.idToken?.let { token ->
                 scope.launch {
-                    signInViewModel.onEvent(event = SignInEvent.SignInGoogle( authCredential = GoogleAuthProvider.getCredential(account.idToken, null)))
+                    signInViewModel.onEvent(event = SignInEvent.SignInGoogle(authCredential = SignInCredential.Google(providerToken = token)))
                 }
             }
         } catch (e: ApiException) {

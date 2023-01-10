@@ -1,17 +1,12 @@
 package com.example.cyclistance.di
 
 import android.content.Context
-import android.location.Geocoder
-import com.example.cyclistance.BuildConfig
-import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
-import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
-import com.example.cyclistance.feature_mapping.data.CyclistanceApi
-import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.hasInternetConnection
-import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
-import com.example.cyclistance.feature_mapping.data.websockets.RescueTransactionWSClient
-import com.example.cyclistance.feature_mapping.data.websockets.TransactionLiveLocationWSClient
-import com.example.cyclistance.feature_mapping.data.websockets.UserWSClient
+import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
+import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.create_account.*
+import com.example.cyclistance.feature_authentication.domain.use_case.read_account.*
+import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.*
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.address.GetAddressUseCase
@@ -32,94 +27,31 @@ import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.BroadcastUserUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.GetUserUpdatesUseCase
-import com.google.gson.GsonBuilder
-import com.mapbox.api.optimization.v1.MapboxOptimization
+import cyclistance.repositories.FakeAuthRepository
+import cyclistance.repositories.FakeMappingRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import io.socket.client.IO
-import okhttp3.Cache
-import okhttp3.CacheControl
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
-import java.util.concurrent.TimeUnit
-import javax.inject.Singleton
+import javax.inject.Named
 
 @Module
 @InstallIn(SingletonComponent::class)
-object MappingModule {
-
-
-    @Provides
-    @Singleton
-    fun getBaseUrl(@ApplicationContext context: Context): String{
-        return context.getString(if (BuildConfig.DEBUG) R.string.CyclistanceApiBaseUrlLocal else R.string.CyclistanceApiBaseUrl)
-    }
+object TestAppModule {
 
     @Provides
-    @Singleton
-    fun provideCyclistanceApi(@ApplicationContext context: Context): CyclistanceApi {
-        val okHttpClient = providesOkhttpClient(context)
-        val gson = GsonBuilder().serializeNulls().create()
-
-        return Retrofit.Builder()
-            .baseUrl(getBaseUrl(context))
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(okHttpClient)
-            .build()
-            .create(CyclistanceApi::class.java)
-
-    }
-
-
-    @Singleton
-    @Provides
-    fun providesMapOptimizationDirections(@ApplicationContext context: Context): MapboxOptimization.Builder{
-        return MapboxOptimization.builder()
-            .accessToken(context.getString(R.string.MapsDownloadToken))
+    @Named("test_mapping_repository")
+    fun provideFakeMappingRepository(): MappingRepository {
+        return FakeMappingRepository()
     }
 
 
 
-
-
-
-
     @Provides
-    @Singleton
-    fun provideMappingRepository(
-        @ApplicationContext context: Context,
-        api: CyclistanceApi,
-        mapboxDirections: MapboxOptimization.Builder): MappingRepository {
-
-        val socket = IO.socket(getBaseUrl(context))
-        val userWSClient = UserWSClient(socket)
-        val rescueTransactionWSClient = RescueTransactionWSClient(socket)
-        val liveLocation = TransactionLiveLocationWSClient(socket)
-        val geocoder = Geocoder(context)
-
-        return MappingRepositoryImpl(
-            api = api,
-            context = context,
-            rescueTransactionClient = rescueTransactionWSClient,
-            userClient = userWSClient,
-            liveLocation = liveLocation,
-            mapboxDirections = mapboxDirections,
-            geocoder = geocoder
-        )
-    }
-
-
-    @Provides
-    @Singleton
-    fun provideMappingUseCase(repository: MappingRepository, @ApplicationContext context: Context): MappingUseCase {
+    @Named("test_mapping_use_case")
+    fun provideTestMappingUseCase(@Named("test_mapping_repository") repository: MappingRepository, @ApplicationContext context: Context): MappingUseCase {
         return MappingUseCase(
-
             getUsersUseCase = GetUsersUseCase(repository),
             getUserByIdUseCase = GetUserByIdUseCase(repository),
             createUserUseCase = CreateUserUseCase(repository),
@@ -132,7 +64,6 @@ object MappingModule {
 
             getUserLocationUseCase = GetUserLocationUseCase(repository),
             getFullAddressUseCase = GetFullAddressUseCase(repository),
-
             getBikeTypeUseCase = GetBikeTypeUseCase(repository),
             setBikeTypeUseCase = SetBikeTypeUseCase(repository),
             getAddressUseCase = GetAddressUseCase(repository),
@@ -152,39 +83,33 @@ object MappingModule {
         )
     }
 
-
-
-
-
-
-
     @Provides
-    @Singleton
-    fun providesOkhttpClient(@ApplicationContext context: Context): OkHttpClient {
-        val interceptor  = Interceptor { chain ->
-            var request = chain.request()
-            if (!context.hasInternetConnection()) {
-                val cacheControl = CacheControl.Builder()
-                    .maxStale(1, TimeUnit.DAYS)
-                    .build()
-
-                request = request.newBuilder()
-                    .removeHeader(HEADER_PRAGMA)
-                    .removeHeader(HEADER_CACHE_CONTROL)
-                    .cacheControl(cacheControl)
-                    .build()
-            }
-            chain.proceed(request)
-        }
-        val httpCacheDirectory = File(context.cacheDir, "offlineCache")
-        val cacheSize = 50 * 1024 * 1024
-        val cache = Cache(httpCacheDirectory, cacheSize.toLong())
-
-        return OkHttpClient.Builder()
-            .cache(cache)
-            .addInterceptor(interceptor)
-            .build()
+    @Named("test_auth_repository")
+    fun provideFakeAuthRepository(): AuthRepository{
+        return FakeAuthRepository()
     }
 
-
+    @Provides
+    @Named("test_auth_use_case")
+    fun provideTestAuthUseCase(@Named("test_auth_repository") repository: AuthRepository, @ApplicationContext context: Context): AuthenticationUseCase{
+       return AuthenticationUseCase(
+            reloadEmailUseCase = ReloadEmailUseCase(repository = repository),
+            signOutUseCase = SignOutUseCase(repository = repository),
+            createWithEmailAndPasswordUseCase = CreateWithEmailAndPasswordUseCase(repository = repository, context = context),
+            getEmailUseCase = GetEmailUseCase(repository = repository),
+            getNameUseCase = GetNameUseCase(repository = repository),
+            getPhoneNumberUseCase = GetPhoneNumberUseCase(repository = repository),
+            getPhotoUrlUseCase = GetPhotoUrlUseCase(repository = repository),
+            getIdUseCase = GetIdUseCase(repository = repository),
+            hasAccountSignedInUseCase = HasAccountSignedInUseCase(repository = repository),
+            isEmailVerifiedUseCase = IsEmailVerifiedUseCase(repository = repository),
+            isSignedInWithProviderUseCase = IsSignedInWithProviderUseCase(repository = repository),
+            sendEmailVerificationUseCase = SendEmailVerificationUseCase(repository = repository),
+            signInWithEmailAndPasswordUseCase = SignInWithEmailAndPasswordUseCase(repository = repository, context = context),
+            signInWithCredentialUseCase = SignInWithCredentialUseCase(repository = repository),
+            updateProfileUseCase = UpdateProfileUseCase(repository = repository),
+            updatePhoneNumberUseCase = UpdatePhoneNumberUseCase(repository = repository),
+            uploadImageUseCase = UploadImageUseCase(repository = repository)
+        )
+    }
 }

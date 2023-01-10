@@ -1,17 +1,16 @@
 package com.example.cyclistance.feature_mapping.data.repository
 
 import android.content.Context
-import android.graphics.drawable.Drawable
-import android.location.Location
+import android.location.Geocoder
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import coil.imageLoader
-import coil.request.ImageRequest
 import com.example.cyclistance.core.utils.constants.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_KEY
 import com.example.cyclistance.core.utils.extension.editData
 import com.example.cyclistance.core.utils.extension.getData
+import com.example.cyclistance.core.utils.validation.FormatterUtils.getAddress
+import com.example.cyclistance.core.utils.validation.FormatterUtils.getFullAddress
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransactionDto
@@ -19,6 +18,7 @@ import com.example.cyclistance.feature_mapping.data.mapper.RouteDirectionMapper.
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUser
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItem
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItemDto
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.model.*
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
@@ -49,15 +49,28 @@ class MappingRepositoryImpl(
     val rescueTransactionClient: WebSocketClient<RescueTransaction>,
     val userClient: WebSocketClient<User>,
     val liveLocation: WebSocketClient<LiveLocationWSModel>,
-    val imageRequestBuilder: ImageRequest.Builder,
     private val api: CyclistanceApi,
     private val mapboxDirections: MapboxOptimization.Builder,
     val context: Context,
+    private val geocoder: Geocoder,
     private val scope: CoroutineContext = Dispatchers.IO) : MappingRepository {
 
 
     private var dataStore = context.dataStore
 
+    override suspend fun getFullAddress(latitude: Double, longitude: Double): String {
+        return withContext(scope) {
+            suspendCoroutine { continuation ->
+                geocoder.getAddress(latitude = latitude, longitude = longitude) { address ->
+                    if (address != null) {
+                        continuation.resume(address.getFullAddress())
+                        return@getAddress
+                    }
+                    continuation.resumeWithException(MappingExceptions.NoAddressFound())
+                }
+            }
+        }
+    }
 
     override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {
 
@@ -124,28 +137,10 @@ class MappingRepositoryImpl(
             }
         }
 
-    override suspend fun imageUrlToDrawable(imageUrl: String): Drawable {
-        return withContext(scope) {
-            handleException {
-                withContext(scope) {
-                    val request = imageRequestBuilder
-                        .data(imageUrl)
-                        .diskCacheKey(imageUrl)
-                        .memoryCacheKey(imageUrl)
-                        .diskCacheKey(imageUrl)
-                        .memoryCacheKey(imageUrl)
-                        .build()
-                    val imageResult = context.imageLoader.execute(request)
-                    imageResult.drawable!!
-                }
-            }
-        }
-    }
-
-    override suspend fun getRescueTransactionById(userId: String): RescueTransactionItem =
+    override suspend fun getRescueTransactionById(transactionId: String): RescueTransactionItem =
         withContext(scope) {
             handleException {
-                api.getRescueTransactionById(userId).toRescueTransaction()
+                api.getRescueTransactionById(transactionId).toRescueTransaction()
             }
         }
 
@@ -159,10 +154,10 @@ class MappingRepositoryImpl(
 
 
 
-    override suspend fun deleteRescueTransaction(id: String) {
+    override suspend fun deleteRescueTransaction(transactionId: String) {
         withContext(scope) {
             handleException {
-                api.deleteRescueTransaction(id)
+                api.deleteRescueTransaction(transactionId)
             }
         }
     }
