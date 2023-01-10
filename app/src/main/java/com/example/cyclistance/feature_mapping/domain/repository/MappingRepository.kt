@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_mapping.domain.repository
 
-import android.graphics.drawable.Drawable
-import android.location.Location
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import com.example.cyclistance.feature_mapping.domain.model.*
 import com.mapbox.geojson.Point
 import kotlinx.coroutines.flow.Flow
@@ -17,10 +16,10 @@ interface MappingRepository {
     suspend fun addRescueRespondent(userId: String, respondentId: String)
     suspend fun deleteAllRespondents(userId: String)
 
-
-    suspend fun getRescueTransactionById(userId: String): RescueTransactionItem
+    suspend fun getFullAddress(latitude: Double, longitude: Double):String
+    suspend fun getRescueTransactionById(transactionId: String): RescueTransactionItem
     suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem)
-    suspend fun deleteRescueTransaction(id: String)
+    suspend fun deleteRescueTransaction(transactionId: String)
 
 
     suspend fun getBikeType(): Flow<String>
@@ -31,7 +30,6 @@ interface MappingRepository {
 
     suspend fun getUserLocation(): Flow<Location>
 
-    suspend fun imageUrlToDrawable(imageUrl: String): Drawable
 
     suspend fun getUserUpdates():Flow<User>
     suspend fun getRescueTransactionUpdates(): Flow<RescueTransaction>

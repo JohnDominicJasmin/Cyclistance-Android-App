@@ -7,11 +7,10 @@ import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExce
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.hasInternetConnection
-import com.google.firebase.auth.AuthCredential
 
 class SignInWithEmailAndPasswordUseCase(
     private val context: Context,
-    private val repository: AuthRepository<AuthCredential>) {
+    private val repository: AuthRepository) {
 
     suspend operator fun invoke(authModel: AuthModel):Boolean {
 

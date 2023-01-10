@@ -2,9 +2,8 @@ package com.example.cyclistance.feature_authentication.domain.use_case.read_acco
 
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
-import com.google.firebase.auth.AuthCredential
 
-class GetPhotoUrlUseCase(private val repository: AuthRepository<AuthCredential>) {
+class GetPhotoUrlUseCase(private val repository: AuthRepository) {
     operator fun invoke(): String {
         return repository.getPhotoUrl().takeIf { it != "null" } ?: IMAGE_PLACEHOLDER_URL
     }

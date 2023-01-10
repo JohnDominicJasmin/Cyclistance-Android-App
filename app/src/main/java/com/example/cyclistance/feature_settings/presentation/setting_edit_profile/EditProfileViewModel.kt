@@ -176,7 +176,7 @@ class EditProfileViewModel @Inject constructor(
                 authUseCase.updateProfileUseCase(
                     photoUri = run {
                         imageUri?.let { localImageUri ->
-                            authUseCase.uploadImageUseCase(localImageUri)
+                            authUseCase.uploadImageUseCase(localImageUri.toString())
                         } },
                     name = state.value.name.trim())
 

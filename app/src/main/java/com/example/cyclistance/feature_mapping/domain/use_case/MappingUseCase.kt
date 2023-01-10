@@ -4,7 +4,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.address.GetAddres
 import com.example.cyclistance.feature_mapping.domain.use_case.address.SetAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.GetBikeTypeUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.SetBikeTypeUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.image.ImageUrlToDrawableUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
@@ -38,8 +38,8 @@ data class MappingUseCase(
     val confirmCancellationUseCase: ConfirmCancellationUseCase,
 
     val getUserLocationUseCase: GetUserLocationUseCase,
+    val getFullAddressUseCase: GetFullAddressUseCase,
 
-    val imageUrlToDrawableUseCase: ImageUrlToDrawableUseCase,
 
     val getBikeTypeUseCase: GetBikeTypeUseCase,
     val setBikeTypeUseCase: SetBikeTypeUseCase,

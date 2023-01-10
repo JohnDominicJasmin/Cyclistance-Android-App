@@ -11,6 +11,7 @@ import com.example.cyclistance.core.utils.constants.AuthConstants.USER_NOT_FOUND
 import com.example.cyclistance.core.utils.extension.editData
 import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
+import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_mapping.data.repository.dataStore
 import com.google.firebase.FirebaseNetworkException
@@ -29,16 +30,14 @@ import kotlin.coroutines.resumeWithException
 class AuthRepositoryImpl(
     private val context: Context,
     private val auth: FirebaseAuth,
-
-    ) : AuthRepository<AuthCredential> {
+    ) : AuthRepository {
 
     private var dataStore = context.dataStore
 
-
-    override suspend fun uploadImage(uri: Uri): Uri {
+    override suspend fun uploadImage(v: String): String {
         val firebaseStorageReference: StorageReference = FirebaseStorage.getInstance().reference
         val reference = firebaseStorageReference.child("images/${getId()}")
-        val uploadTask = reference.putFile(uri)
+        val uploadTask = reference.putFile(Uri.parse(v))
         return suspendCancellableCoroutine { continuation ->
             uploadTask.addOnCompleteListener { task ->
                 task.exception?.let { exception ->
@@ -49,7 +48,9 @@ class AuthRepositoryImpl(
                     }
                 }
                 if (task.isSuccessful) {
-                    reference.downloadUrl.addOnSuccessListener(continuation::resume)
+                    reference.downloadUrl.addOnSuccessListener{
+                        continuation.resume(it.toString())
+                    }
                 }
             }
         }
@@ -172,10 +173,15 @@ class AuthRepositoryImpl(
     }
 
 
-    override suspend fun signInWithCredentials(v: AuthCredential): Boolean {
+    override suspend fun signInWithCredential(credential: SignInCredential): Boolean {
         return suspendCancellableCoroutine { continuation ->
 
-            auth.signInWithCredential(v)
+            val signInCredential = when(credential){
+                is SignInCredential.Google -> GoogleAuthProvider.getCredential(credential.providerToken, null)
+                is SignInCredential.Facebook -> FacebookAuthProvider.getCredential(credential.providerToken)
+            }
+
+            auth.signInWithCredential(signInCredential)
                 .addOnCompleteListener { signInWithCredential ->
                     signInWithCredential.exception?.let { exception ->
                         if (exception.message == FACEBOOK_CONNECTION_FAILURE) {
@@ -234,10 +240,10 @@ class AuthRepositoryImpl(
     }
 
 
-    override suspend fun updateProfile(photoUri: Uri?, name: String?): Boolean {
+    override suspend fun updateProfile(s: String?, name: String?): Boolean {
         val profileUpdates = userProfileChangeRequest {
             name?.let { this.displayName = it }
-            photoUri?.let { this.photoUri = photoUri }
+            s?.let { this.photoUri = Uri.parse(s) }
         }
 
         return suspendCancellableCoroutine { continuation ->

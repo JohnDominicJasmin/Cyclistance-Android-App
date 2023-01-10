@@ -1,7 +1,5 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
-import android.location.Address
-import android.location.Geocoder
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,11 +8,9 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACE
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
 import com.example.cyclistance.core.utils.validation.FormatterUtils.distanceFormat
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getAddress
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedDistance
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedETA
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getETABetweenTwoPoints
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getFullAddress
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toCardModel
@@ -41,7 +37,6 @@ import javax.inject.Inject
 class MappingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase,
-    private val geocoder: Geocoder,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
     private var loadDataJob: Job? = null
@@ -50,7 +45,8 @@ class MappingViewModel @Inject constructor(
     private var getRescueTransactionUpdatesJob: Job? = null
     private var getTransactionLocationUpdatesJob: Job? = null
 
-    private val _state: MutableStateFlow<MappingState> = MutableStateFlow(savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState())
+    private val _state: MutableStateFlow<MappingState> = MutableStateFlow(
+        savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState())
     val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<MappingUiEvent> = MutableSharedFlow()
@@ -272,7 +268,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun respondToHelp() {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             val selectedRescuee = state.value.selectedRescueeMapIcon
             uploadUserProfile{
                 runCatching {
@@ -292,7 +288,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun selectRescueeMapIcon(id: String){
-        viewModelScope.launch() {
+        viewModelScope.launch {
             val selectedRescuee = state.value.nearbyCyclists?.findUser(id) ?: return@launch
             val selectedRescueeLocation = selectedRescuee.location
             val confirmationDetail = selectedRescuee.userAssistance?.confirmationDetail
@@ -380,7 +376,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun removeAssignedTransaction(){
-        viewModelScope.launch() {
+        viewModelScope.launch{
             runCatching {
                 getId().removeAssignedTransaction()
             }.onSuccess {
@@ -425,7 +421,7 @@ class MappingViewModel @Inject constructor(
                         liveLocation.updateTransactionDistance()
                     }
             }.onSuccess {
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
             }.onFailure {
                 Timber.e("ERROR GETTING TRANSACTION LOCATION: ${it.message}")
             }
@@ -555,7 +551,7 @@ class MappingViewModel @Inject constructor(
                 exception.handleException()
             }
 
-            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
 
         }
     }
@@ -685,7 +681,7 @@ class MappingViewModel @Inject constructor(
             loadName()
             loadPhoto()
         }.invokeOnCompletion {
-            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
         }
     }
 
@@ -721,7 +717,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun cancelRequestHelp() {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             runCatching {
                 startLoading()
                 mappingUseCase.createUserUseCase(
@@ -744,7 +740,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateLocation(location: android.location.Location){
+    private suspend fun updateLocation(location: Location){
         val latitude = location.latitude.takeIf { it != 0.0 } ?: return
         val longitude = location.longitude.takeIf { it != 0.0 } ?: return
         val updatedState = _state.updateAndGet { state ->
@@ -840,7 +836,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun broadCastLocationToTransaction(location: android.location.Location){
+    private suspend fun broadCastLocationToTransaction(location: Location){
         val rescueTransaction = state.value.userRescueTransaction ?: return
         runCatching {
 
@@ -948,7 +944,7 @@ class MappingViewModel @Inject constructor(
         if(locationUpdatesJob?.isActive == true){
             return
         }
-        locationUpdatesJob = viewModelScope.launch() {
+        locationUpdatesJob = viewModelScope.launch {
 
             runCatching {
                 mappingUseCase.getUserLocationUseCase().collect { location ->
@@ -1000,7 +996,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun declineRescueRequest(cardModel: CardModel) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             runCatching {
                 startLoading()
                 val rescueRespondents = state.value.userRescueRequestRespondents.respondents
@@ -1026,7 +1022,7 @@ class MappingViewModel @Inject constructor(
         }
     }
     private fun signOutAccount() {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             runCatching {
                 startLoading()
                 authUseCase.signOutUseCase()
@@ -1043,7 +1039,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun requestHelp() {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             uploadUserProfile {
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
             }
@@ -1053,14 +1049,6 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private inline fun getAddress(
-        location: Location,
-        crossinline onCallbackAddress: (Address?) -> Unit) {
-        geocoder.getAddress(
-            location.latitude,
-            location.longitude,
-            onCallbackAddress = onCallbackAddress)
-    }
 
     private suspend inline fun uploadUserProfile(crossinline onSuccess: suspend () -> Unit) {
         coroutineScope {
@@ -1071,24 +1059,28 @@ class MappingViewModel @Inject constructor(
                 return@coroutineScope
             }
 
-            getAddress(location) { address ->
-                launch {
-                    if(address != null){
-                        uploadProfile(address, onSuccess)
-                        return@launch
-                    }
-
-                    _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
-                }
-            }
+            getFullAddress(location = location, onSuccess = onSuccess)
 
         }
     }
 
 
 
+    private suspend inline fun getFullAddress(location: Location, crossinline onSuccess: suspend () -> Unit){
+        runCatching {
+            mappingUseCase.getFullAddressUseCase(
+                latitude = location.latitude,
+                longitude = location.longitude)
+        }.onSuccess { fullAddress ->
+            uploadProfile(location = location, fullAddress = fullAddress, onSuccess = onSuccess)
+        }.onFailure { exception ->
+            if(exception is MappingExceptions.NoAddressFound){
+                _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = exception.message!!))
+            }
+        }
+    }
 
-    private suspend inline fun uploadProfile(address: Address, crossinline onSuccess: suspend  () -> Unit ) {
+    private suspend inline fun uploadProfile(location: Location,fullAddress: String, crossinline onSuccess: suspend  () -> Unit ) {
 
         val isProfileUploaded = state.value.profileUploaded
 
@@ -1099,21 +1091,19 @@ class MappingViewModel @Inject constructor(
 
         coroutineScope {
             runCatching {
-                val currentAddress = address.getFullAddress()
-                _state.update { it.copy(currentAddress = currentAddress) }
                 startLoading()
                 mappingUseCase.createUserUseCase(
                     user = UserItem(
                         id = getId(),
                         name = getName(),
-                        address = currentAddress,
+                        address = fullAddress,
                         profilePictureUrl = getPhotoUrl(),
                         contactNumber = getPhoneNumber(),
                         location = Location(
-                            latitude = address.latitude,
-                            longitude = address.longitude),
+                            latitude = location.latitude,
+                            longitude = location.longitude),
                         rescueRequest = RescueRequest(), userAssistance = UserAssistance()))
-                mappingUseCase.setAddressUseCase(currentAddress)
+                mappingUseCase.setAddressUseCase(fullAddress)
 
             }.onSuccess {
                 finishLoading()
@@ -1163,7 +1153,7 @@ class MappingViewModel @Inject constructor(
             }
 
         }
-        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+        savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
     }
 
 
