@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping.data.repository
 
 import android.content.Context
+import android.location.Geocoder
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -8,6 +9,8 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_KEY
 import com.example.cyclistance.core.utils.extension.editData
 import com.example.cyclistance.core.utils.extension.getData
+import com.example.cyclistance.core.utils.validation.FormatterUtils.getAddress
+import com.example.cyclistance.core.utils.validation.FormatterUtils.getFullAddress
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransactionDto
@@ -49,11 +52,25 @@ class MappingRepositoryImpl(
     private val api: CyclistanceApi,
     private val mapboxDirections: MapboxOptimization.Builder,
     val context: Context,
+    private val geocoder: Geocoder,
     private val scope: CoroutineContext = Dispatchers.IO) : MappingRepository {
 
 
     private var dataStore = context.dataStore
 
+    override suspend fun getFullAddress(latitude: Double, longitude: Double): String {
+        return withContext(scope) {
+            suspendCoroutine { continuation ->
+                geocoder.getAddress(latitude = latitude, longitude = longitude) { address ->
+                    if (address != null) {
+                        continuation.resume(address.getFullAddress())
+                        return@getAddress
+                    }
+                    continuation.resumeWithException(MappingExceptions.NoAddressFound())
+                }
+            }
+        }
+    }
 
     override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {
 

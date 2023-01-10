@@ -1,7 +1,5 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
-import android.location.Address
-import android.location.Geocoder
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,11 +8,9 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACE
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
 import com.example.cyclistance.core.utils.validation.FormatterUtils.distanceFormat
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getAddress
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedDistance
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedETA
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getETABetweenTwoPoints
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getFullAddress
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toCardModel
@@ -41,7 +37,6 @@ import javax.inject.Inject
 class MappingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase,
-    private val geocoder: Geocoder,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
     private var loadDataJob: Job? = null
@@ -1054,14 +1049,6 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private inline fun getAddress(
-        location: Location,
-        crossinline onCallbackAddress: (Address?) -> Unit) {
-        geocoder.getAddress(
-            location.latitude,
-            location.longitude,
-            onCallbackAddress = onCallbackAddress)
-    }
 
     private suspend inline fun uploadUserProfile(crossinline onSuccess: suspend () -> Unit) {
         coroutineScope {
@@ -1072,24 +1059,28 @@ class MappingViewModel @Inject constructor(
                 return@coroutineScope
             }
 
-            getAddress(location) { address ->
-                launch {
-                    if(address != null){
-                        uploadProfile(address, onSuccess)
-                        return@launch
-                    }
-
-                    _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
-                }
-            }
+            getFullAddress(location = location, onSuccess = onSuccess)
 
         }
     }
 
 
 
+    private suspend inline fun getFullAddress(location: Location, crossinline onSuccess: suspend () -> Unit){
+        runCatching {
+            mappingUseCase.getFullAddressUseCase(
+                latitude = location.latitude,
+                longitude = location.longitude)
+        }.onSuccess { fullAddress ->
+            uploadProfile(location = location, fullAddress = fullAddress, onSuccess = onSuccess)
+        }.onFailure { exception ->
+            if(exception is MappingExceptions.NoAddressFound){
+                _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = exception.message!!))
+            }
+        }
+    }
 
-    private suspend inline fun uploadProfile(address: Address, crossinline onSuccess: suspend  () -> Unit ) {
+    private suspend inline fun uploadProfile(location: Location,fullAddress: String, crossinline onSuccess: suspend  () -> Unit ) {
 
         val isProfileUploaded = state.value.profileUploaded
 
@@ -1100,21 +1091,19 @@ class MappingViewModel @Inject constructor(
 
         coroutineScope {
             runCatching {
-                val currentAddress = address.getFullAddress()
-                _state.update { it.copy(currentAddress = currentAddress) }
                 startLoading()
                 mappingUseCase.createUserUseCase(
                     user = UserItem(
                         id = getId(),
                         name = getName(),
-                        address = currentAddress,
+                        address = fullAddress,
                         profilePictureUrl = getPhotoUrl(),
                         contactNumber = getPhoneNumber(),
                         location = Location(
-                            latitude = address.latitude,
-                            longitude = address.longitude),
+                            latitude = location.latitude,
+                            longitude = location.longitude),
                         rescueRequest = RescueRequest(), userAssistance = UserAssistance()))
-                mappingUseCase.setAddressUseCase(currentAddress)
+                mappingUseCase.setAddressUseCase(fullAddress)
 
             }.onSuccess {
                 finishLoading()

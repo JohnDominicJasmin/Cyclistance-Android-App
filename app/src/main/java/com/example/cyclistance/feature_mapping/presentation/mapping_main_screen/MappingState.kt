@@ -52,7 +52,6 @@ data class MappingState(
     val respondedToHelp: Boolean = false,
     val transactionLocation: Location? = null,
     val rescuerETA: String = "",
-    val currentAddress: String = "",
     val profileUploaded: Boolean = false,
     val name: String = "-----",
     val photoUrl: String = "",
