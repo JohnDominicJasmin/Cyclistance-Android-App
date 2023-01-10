@@ -67,7 +67,7 @@ fun SignInScreen(
             val account: GoogleSignInAccount? = task?.getResult(ApiException::class.java)
             account?.idToken?.let { token ->
                 scope.launch {
-                    signInViewModel.onEvent(event = SignInEvent.SignInGoogle(authCredential = SignInCredential.Google(token)))
+                    signInViewModel.onEvent(event = SignInEvent.SignInGoogle(authCredential = SignInCredential.Google(providerToken = token)))
                 }
             }
         } catch (e: ApiException) {

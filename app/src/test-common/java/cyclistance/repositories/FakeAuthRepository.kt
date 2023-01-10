@@ -1,5 +1,6 @@
 package cyclistance.repositories
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
+import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import kotlinx.coroutines.flow.Flow
@@ -20,7 +21,7 @@ class FakeAuthRepository(
     private var hasAccountSignedIn: Boolean = false,
     private var imagePath: String = "",
     private var shouldReturnNetworkError: Boolean = false,
-    private var signInCredentials: String = ""): AuthRepository<String> {
+    private var signInCredential: SignInCredential? = null): AuthRepository {
 
 
 
@@ -91,12 +92,12 @@ class FakeAuthRepository(
         
     }
 
-    override suspend fun signInWithCredentials(v: String): Boolean {
+    override suspend fun signInWithCredential(v: SignInCredential): Boolean {
         
         if(shouldReturnNetworkError){
             throw AuthExceptions.NetworkException("Network error")
         }
-        signInCredentials = v
+        signInCredential = v
         return true
     }
 

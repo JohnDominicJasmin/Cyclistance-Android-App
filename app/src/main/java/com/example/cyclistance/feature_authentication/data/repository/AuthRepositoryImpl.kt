@@ -177,8 +177,8 @@ class AuthRepositoryImpl(
         return suspendCancellableCoroutine { continuation ->
 
             val signInCredential = when(credential){
-                is SignInCredential.Google -> GoogleAuthProvider.getCredential(credential.token, null)
-                is SignInCredential.Facebook -> FacebookAuthProvider.getCredential(credential.token)
+                is SignInCredential.Google -> GoogleAuthProvider.getCredential(credential.providerToken, null)
+                is SignInCredential.Facebook -> FacebookAuthProvider.getCredential(credential.providerToken)
             }
 
             auth.signInWithCredential(signInCredential)

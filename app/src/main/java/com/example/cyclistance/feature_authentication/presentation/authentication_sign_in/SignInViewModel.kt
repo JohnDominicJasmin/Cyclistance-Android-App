@@ -201,7 +201,7 @@ class SignInViewModel @Inject constructor(
             object : FacebookCallback<LoginResult> {
                 override fun onSuccess(result: LoginResult) {
                     _state.update { it.copy(isLoading = true) }
-                    signInWithCredential(authCredential = SignInCredential.Facebook(result.accessToken.token))
+                    signInWithCredential(authCredential = SignInCredential.Facebook(providerToken =  result.accessToken.token))
                     savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
                 }
 
