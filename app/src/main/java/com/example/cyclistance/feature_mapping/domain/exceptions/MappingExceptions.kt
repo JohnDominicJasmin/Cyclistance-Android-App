@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping.domain.exceptions
 
 object MappingExceptions {
+    class NoAddressFound(message:String = "Searching for GPS"): RuntimeException(message)
     class UnexpectedErrorException(message:String="An unexpected error occurred."):RuntimeException(message)
     class NetworkException(message: String = "Couldn't reach server. Check your internet connection"):RuntimeException(message)
     class UserException(message: String = "User not found"):RuntimeException(message)

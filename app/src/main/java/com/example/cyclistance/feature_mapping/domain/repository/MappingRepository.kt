@@ -17,6 +17,7 @@ interface MappingRepository {
     suspend fun deleteAllRespondents(userId: String)
 
 
+    suspend fun getFullAddress(latitude: Double, longitude: Double):String
     suspend fun getRescueTransactionById(transactionId: String): RescueTransactionItem
     suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem)
     suspend fun deleteRescueTransaction(transactionId: String)
