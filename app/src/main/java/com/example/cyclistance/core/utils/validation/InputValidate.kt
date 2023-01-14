@@ -1,8 +1,8 @@
 package com.example.cyclistance.core.utils.validation
 
-import android.util.Patterns
 import com.example.cyclistance.core.utils.constants.AuthConstants
 import com.example.cyclistance.core.utils.constants.AuthConstants.MINIMUM_NUMBER_OF_CHARACTERS
+import com.example.cyclistance.core.utils.constants.AuthConstants.REGEX_EMAIL_VALUE
 import com.example.cyclistance.core.utils.constants.AuthConstants.REGEX_NUMBER_VALUE
 import com.example.cyclistance.core.utils.constants.AuthConstants.REGEX_SPECIAL_CHARACTERS_VALUE
 import java.util.regex.Pattern
@@ -25,7 +25,11 @@ object InputValidate {
     }
 
 
-    fun String.isEmailValid() = Patterns.EMAIL_ADDRESS.matcher(this@isEmailValid).matches()
+    fun String.isEmailValid(): Boolean {
+        return Pattern.compile(REGEX_EMAIL_VALUE).matcher(this).matches()
+    }
+
+
     fun String.isPasswordStrong(): Boolean {
         return isPasswordLongEnough() &&
                (containsNumeric() ||

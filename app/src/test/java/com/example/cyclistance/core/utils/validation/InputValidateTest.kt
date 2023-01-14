@@ -3,15 +3,30 @@ package com.example.cyclistance.core.utils.validation
 import com.example.cyclistance.core.utils.validation.InputValidate.containsNumeric
 import com.example.cyclistance.core.utils.validation.InputValidate.containsSpecialCharacters
 import com.example.cyclistance.core.utils.validation.InputValidate.isDigit
+import com.example.cyclistance.core.utils.validation.InputValidate.isEmailValid
 import com.example.cyclistance.core.utils.validation.InputValidate.isPasswordStrong
 import com.example.cyclistance.core.utils.validation.InputValidate.isPhoneNumberLongEnough
 import com.example.cyclistance.core.utils.validation.InputValidate.numberOfCharactersEnough
+import org.junit.Assert
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class InputValidateTest {
 
+    @Test
+    fun inputEmailValue_returnsTrue() {
+        val input = "johndoe@gmail.com"
+        val result = input.isEmailValid()
+        Assert.assertTrue(result)
+    }
+
+    @Test
+    fun inputEmailValue_returnsFalse(){
+        val input = "johndoe"
+        val result = input.isEmailValid()
+        Assert.assertFalse(result)
+    }
     @Test
     fun `input contains numeric returns true`(){
         val input = "aslkdnalsdknalksd29"

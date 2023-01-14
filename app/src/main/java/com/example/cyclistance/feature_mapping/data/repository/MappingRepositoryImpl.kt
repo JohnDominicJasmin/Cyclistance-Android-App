@@ -12,6 +12,7 @@ import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getAddress
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getFullAddress
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
+import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransactionDto
 import com.example.cyclistance.feature_mapping.data.mapper.RouteDirectionMapper.toRouteDirection
@@ -74,12 +75,18 @@ class MappingRepositoryImpl(
 
     override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {
 
+        if(context.hasInternetConnection().not()){
+            throw MappingExceptions.NetworkException()
+        }
         return withContext(scope) {
              liveLocation.getResult()
         }
     }
 
     override suspend fun broadcastLocation(locationModel: LiveLocationWSModel) {
+        if (context.hasInternetConnection().not()) {
+            throw MappingExceptions.NetworkException()
+        }
         return withContext(scope) {
             liveLocation.broadCastEvent(locationModel)
         }
@@ -163,20 +170,34 @@ class MappingRepositoryImpl(
     }
 
     override suspend fun getUserUpdates(): Flow<User> {
+        if(context.hasInternetConnection().not()){
+            throw MappingExceptions.NetworkException()
+        }
         return withContext(scope) { userClient.getResult() }
     }
 
     override suspend fun broadcastUser() {
+        if(context.hasInternetConnection().not()){
+            throw MappingExceptions.NetworkException()
+        }
         withContext(scope) { userClient.broadCastEvent() }
     }
 
     override suspend fun broadcastRescueTransaction() {
+        if(context.hasInternetConnection().not()){
+            throw MappingExceptions.NetworkException()
+        }
+
         withContext(scope) {
             rescueTransactionClient.broadCastEvent()
         }
     }
 
     override suspend fun getRescueTransactionUpdates(): Flow<RescueTransaction> {
+        if(context.hasInternetConnection().not()){
+            throw MappingExceptions.NetworkException()
+        }
+
         return withContext(scope) { rescueTransactionClient.getResult() }
     }
 
@@ -206,6 +227,9 @@ class MappingRepositoryImpl(
 
     override suspend fun getRouteDirections(origin: Point, destination: Point): RouteDirection {
 
+        if(context.hasInternetConnection().not()){
+            throw MappingExceptions.NetworkException()
+        }
 
         val client = mapboxDirections.coordinates(listOf(origin, destination))
             .profile(DirectionsCriteria.PROFILE_CYCLING)

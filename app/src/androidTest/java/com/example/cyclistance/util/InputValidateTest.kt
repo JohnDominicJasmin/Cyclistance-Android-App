@@ -1,15 +1,10 @@
 package com.example.cyclistance.util
 
-import android.location.Geocoder
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import androidx.test.platform.app.InstrumentationRegistry
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.validation.FormatterUtils
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getAddress
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getFullAddress
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getMapIconImage
-import com.example.cyclistance.core.utils.validation.InputValidate.isEmailValid
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import org.junit.Assert
 import org.junit.Test
@@ -17,41 +12,6 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class InputValidateTest {
-
-    @Test
-    fun inputEmailValue_returnsTrue() {
-        val input = "johndoe@gmail.com"
-        val result = input.isEmailValid()
-        Assert.assertTrue(result)
-    }
-
-    @Test
-    fun inputEmailValue_returnsFalse(){
-        val input = "johndoe"
-        val result = input.isEmailValid()
-        Assert.assertFalse(result)
-    }
-
-
-    @Test
-    fun getAddressFromGeocoder(){
-        val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        val geocoder = Geocoder(appContext)
-        val manilaLatitude = 14.5995
-        val manilaLongitude = 120.9842
-
-        geocoder.getAddress(
-            latitude = manilaLatitude,
-            longitude = manilaLongitude
-        ){
-            Assert.assertTrue(it != null)
-            Assert.assertEquals("1001 Paterno Street., Manila", it!!.getFullAddress().trim())
-
-
-        }
-
-    }
-
 
 
     @Test
