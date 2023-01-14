@@ -1,4 +1,4 @@
-package cyclistance.repositories
+package com.example.cyclistance.feature_authentication.data.repositories
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
