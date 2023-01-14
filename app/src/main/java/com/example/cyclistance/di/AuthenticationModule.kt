@@ -43,11 +43,11 @@ import javax.inject.Singleton
 
     @Provides
     @Singleton
-    fun provideAuthenticationUseCase(repository: AuthRepository, @ApplicationContext context: Context):AuthenticationUseCase =
+    fun provideAuthenticationUseCase(repository: AuthRepository):AuthenticationUseCase =
         AuthenticationUseCase(
             reloadEmailUseCase = ReloadEmailUseCase(repository = repository),
             signOutUseCase = SignOutUseCase(repository = repository),
-            createWithEmailAndPasswordUseCase = CreateWithEmailAndPasswordUseCase(repository = repository, context = context),
+            createWithEmailAndPasswordUseCase = CreateWithEmailAndPasswordUseCase(repository = repository),
             getEmailUseCase = GetEmailUseCase(repository = repository),
             getNameUseCase = GetNameUseCase(repository = repository),
             getPhoneNumberUseCase = GetPhoneNumberUseCase(repository = repository),
@@ -57,7 +57,7 @@ import javax.inject.Singleton
             isEmailVerifiedUseCase = IsEmailVerifiedUseCase(repository = repository),
             isSignedInWithProviderUseCase = IsSignedInWithProviderUseCase(repository = repository),
             sendEmailVerificationUseCase = SendEmailVerificationUseCase(repository = repository),
-            signInWithEmailAndPasswordUseCase = SignInWithEmailAndPasswordUseCase(repository = repository, context = context),
+            signInWithEmailAndPasswordUseCase = SignInWithEmailAndPasswordUseCase(repository = repository),
             signInWithCredentialUseCase = SignInWithCredentialUseCase(repository = repository),
             updateProfileUseCase = UpdateProfileUseCase(repository = repository),
             updatePhoneNumberUseCase = UpdatePhoneNumberUseCase(repository = repository),

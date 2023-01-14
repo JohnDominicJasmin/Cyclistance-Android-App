@@ -1,15 +1,12 @@
 package com.example.cyclistance.feature_authentication.domain.use_case.create_account
 
-import android.content.Context
-import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.resource_texts.ResourceText
 import com.example.cyclistance.core.utils.validation.InputValidate.isEmailValid
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
-import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.hasInternetConnection
 
 class SignInWithEmailAndPasswordUseCase(
-    private val context: Context,
     private val repository: AuthRepository) {
 
     suspend operator fun invoke(authModel: AuthModel):Boolean {
@@ -19,16 +16,14 @@ class SignInWithEmailAndPasswordUseCase(
 
         return when {
             email.isEmpty() ->
-                throw AuthExceptions.EmailException(message = context.getString(R.string.fieldLeftBlankMessage))
+                throw AuthExceptions.EmailException(message = ResourceText.FieldLeftBlank().message)
 
             !email.isEmailValid() ->
-                throw AuthExceptions.EmailException(message = context.getString(R.string.emailIsInvalidMessage))
+                throw AuthExceptions.EmailException(message = ResourceText.EmailIsInvalid().message)
 
             password.isEmpty() ->
-                throw AuthExceptions.PasswordException(message = context.getString(R.string.fieldLeftBlankMessage))
+                throw AuthExceptions.PasswordException(message = ResourceText.FieldLeftBlank().message)
 
-            !context.hasInternetConnection() ->
-                throw AuthExceptions.NetworkException(message = context.getString(R.string.no_internet_message))
 
             else -> repository.signInWithEmailAndPassword(email, password)
         }
