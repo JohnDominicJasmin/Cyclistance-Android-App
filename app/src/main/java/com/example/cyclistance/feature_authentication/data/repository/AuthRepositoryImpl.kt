@@ -13,6 +13,7 @@ import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
+import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_mapping.data.repository.dataStore
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -29,8 +30,7 @@ import kotlin.coroutines.resumeWithException
 
 class AuthRepositoryImpl(
     private val context: Context,
-    private val auth: FirebaseAuth,
-    ) : AuthRepository {
+    private val auth: FirebaseAuth) : AuthRepository {
 
     private var dataStore = context.dataStore
 
@@ -90,6 +90,10 @@ class AuthRepositoryImpl(
 
     override suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean {
 
+        if(!context.hasInternetConnection()){
+            throw AuthExceptions.NetworkException(message = context.getString(R.string.no_internet_message))
+        }
+
         return suspendCancellableCoroutine { continuation ->
             auth.createUserWithEmailAndPassword(email.trim(), password.trim())
                 .addOnCompleteListener { createAccount ->
@@ -118,6 +122,10 @@ class AuthRepositoryImpl(
     }
 
     override suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean {
+
+        if(!context.hasInternetConnection()){
+            throw AuthExceptions.NetworkException(message = context.getString(R.string.no_internet_message))
+        }
 
         return suspendCancellableCoroutine { continuation ->
             auth.signInWithEmailAndPassword(email.trim(), password.trim())

@@ -85,11 +85,6 @@ object MappingModule {
     }
 
 
-
-
-
-
-
     @Provides
     @Singleton
     fun provideMappingRepository(
@@ -117,7 +112,7 @@ object MappingModule {
 
     @Provides
     @Singleton
-    fun provideMappingUseCase(repository: MappingRepository, @ApplicationContext context: Context): MappingUseCase {
+    fun provideMappingUseCase(repository: MappingRepository): MappingUseCase {
         return MappingUseCase(
 
             getUsersUseCase = GetUsersUseCase(repository),
@@ -137,18 +132,18 @@ object MappingModule {
             setBikeTypeUseCase = SetBikeTypeUseCase(repository),
             getAddressUseCase = GetAddressUseCase(repository),
             setAddressUseCase = SetAddressUseCase(repository),
-            broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(repository, context),
-            broadcastUserUseCase = BroadcastUserUseCase(repository, context),
-            getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(context, repository),
-            getUserUpdatesUseCase = GetUserUpdatesUseCase(context, repository),
-            broadcastTransactionLocationUseCase = BroadcastTransactionLocationUseCase(repository, context),
-            getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(context, repository),
+            broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(repository),
+            broadcastUserUseCase = BroadcastUserUseCase(repository),
+            getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(repository),
+            getUserUpdatesUseCase = GetUserUpdatesUseCase(repository),
+            broadcastTransactionLocationUseCase = BroadcastTransactionLocationUseCase(repository),
+            getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(repository),
             deleteRescueRespondentUseCase = DeleteRescueRespondentUseCase(repository),
             addRescueRespondentUseCase = AddRescueRespondentUseCase(repository),
             deleteAllRespondentsUseCase = DeleteAllRespondentsUseCase(repository),
             confirmDetailsUseCase = ConfirmDetailsUseCase(repository),
             confirmCancellationUseCase = ConfirmCancellationUseCase(repository),
-            getRouteDirectionsUseCase = GetRouteDirectionsUseCase(repository, context),
+            getRouteDirectionsUseCase = GetRouteDirectionsUseCase(repository),
         )
     }
 
