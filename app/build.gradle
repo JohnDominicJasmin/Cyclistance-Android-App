@@ -107,6 +107,7 @@ android {
             }
         }
     }
+    namespace 'com.example.cyclistance'
 }
 
 dependencies {
