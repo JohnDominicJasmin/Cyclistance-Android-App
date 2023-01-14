@@ -1,4 +1,4 @@
-package cyclistance.repositories
+package com.example.cyclistance.feature_mapping.data.repositories
 
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Route
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Status
@@ -221,8 +221,9 @@ class FakeMappingRepository: MappingRepository {
         rescueTransactions.toMutableList().removeIf { it.id == transactionId }
     }
 
-
-
+    override suspend fun getFullAddress(latitude: Double, longitude: Double): String {
+        return "Manila, Quiapo"
+    }
 
     override suspend fun getBikeType(): Flow<String> {
         return bikeType.asStateFlow()
