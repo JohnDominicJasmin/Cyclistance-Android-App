@@ -740,24 +740,15 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateLocation(location: Location){
+    private fun updateLocation(location: Location){
         val latitude = location.latitude.takeIf { it != 0.0 } ?: return
         val longitude = location.longitude.takeIf { it != 0.0 } ?: return
-        val updatedState = _state.updateAndGet { state ->
+        _state.update { state ->
             state.copy(
                 userLocation = Location(latitude = latitude,
                     longitude = longitude))
         }
 
-        refreshNearbyCyclist(updatedState.userLocation)
-    }
-
-    private suspend fun refreshNearbyCyclist(location: Location?){
-        val nearbyCyclist = state.value.nearbyCyclists
-        if(nearbyCyclist == null){
-            val user = state.value.cachedNearbyCyclists
-            user?.getNearbyCyclist(location)
-        }
     }
 
 
@@ -811,29 +802,8 @@ class MappingViewModel @Inject constructor(
         rescueRespondentsSnapShot.clear()
     }
 
-    private suspend fun User.getNearbyCyclist(currentLocation: Location? = null) {
-        coroutineScope {
-
-            val userLocation = state.value.userLocation ?: currentLocation
-            if(userLocation == null){
-                _state.update { it.copy(cachedNearbyCyclists = this@getNearbyCyclist) }
-                return@coroutineScope
-            }
-
-            val nearbyCyclists = users.filter { userItem ->
-                val distance = userItem.location?.let {
-                        getCalculatedDistance(
-                            startingLocation = userLocation,
-                            endLocation = userItem.location
-                        )
-                    }
-                 ?: DEFAULT_RADIUS
-                distance < DEFAULT_RADIUS
-            }.filter{
-                it.id != getId()
-            }
-            _state.update { it.copy(nearbyCyclists = User(nearbyCyclists)) }
-        }
+    private fun User.getNearbyCyclist() {
+      _state.update { it.copy(nearbyCyclists = this) }
     }
 
     private suspend fun broadCastLocationToTransaction(location: Location){
