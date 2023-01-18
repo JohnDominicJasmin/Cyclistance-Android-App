@@ -928,8 +928,11 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getUserLocationUseCase().collect { location ->
                     broadCastLocationToTransaction(location)
                     updateLocation(location)
-                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                    getNearbyCyclist()
                 }
+
+            }.onSuccess {
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
 
             }.onFailure {
                 Timber.e("Error Location Updates: ${it.message}")
