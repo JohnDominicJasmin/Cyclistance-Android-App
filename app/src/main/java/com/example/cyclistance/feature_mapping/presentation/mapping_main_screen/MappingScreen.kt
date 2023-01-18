@@ -25,6 +25,8 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER
 import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_SOURCE_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUEE_TYPE
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUER_TYPE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.permission.requestPermission
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.checkLocationSetting
@@ -592,7 +594,7 @@ fun LaunchedEffects(
 
 
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(key1 = true, key2 = state.userLocation) {
 
         mappingViewModel.eventFlow.collectLatest{ event ->
             when (event) {
@@ -602,7 +604,7 @@ fun LaunchedEffects(
 
                 is MappingUiEvent.ShowConfirmDetailsScreen -> {
                     navController.navigateScreen(
-                        Screens.ConfirmDetailsScreen.route)
+                        Screens.ConfirmDetailsScreen.route + "?$LATITUDE=${state.userLocation?.latitude}&$LONGITUDE=${state.userLocation?.longitude}")
                 }
 
                 is MappingUiEvent.ShowEditProfileScreen -> {

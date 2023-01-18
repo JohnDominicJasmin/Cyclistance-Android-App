@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping.data.websockets
 import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_USERS
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUser
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserDto
+import com.example.cyclistance.feature_mapping.domain.model.LiveLocationWSModel
 import com.example.cyclistance.feature_mapping.domain.model.User
 import com.example.cyclistance.feature_mapping.domain.websockets.WebSocketClient
 import com.google.gson.Gson
@@ -14,11 +15,13 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class UserWSClient(
     private val socket: Socket
-): WebSocketClient<User> {
+): WebSocketClient<User, LiveLocationWSModel> {
 
 
-    override suspend  fun broadCastEvent(t: User?) {
-        socket.emit(BROADCAST_USERS)
+    override suspend fun broadCastEvent(t: LiveLocationWSModel?) {
+        t?.let{ locationModel ->
+            socket.emit(BROADCAST_USERS, locationModel.latitude, locationModel.longitude)
+        }
     }
 
     override suspend fun getResult(): Flow<User> {
