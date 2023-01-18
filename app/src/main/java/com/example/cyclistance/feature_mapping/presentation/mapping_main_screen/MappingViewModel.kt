@@ -3,7 +3,7 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_RADIUS
+import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
@@ -26,7 +26,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.delight.android.location.SimpleLocation
-import io.github.farhanroy.composeawesomedialog.R
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import okhttp3.internal.toImmutableList
