@@ -12,8 +12,11 @@ interface CyclistanceApi {
     @GET("/api/v1/get-user-by-id/{user_id}")
     suspend fun getUserById(@Path("user_id") userId: String): UserItemDto
 
-    @GET("/api/v1/get-users")
-    suspend fun getUsers(): UserDto
+    @GET("/api/v1/get-users/{latitude}&{longitude}")
+    suspend fun getUsers(
+        @Path("latitude") latitude: Double,
+        @Path("longitude") longitude: Double,
+    ): UserDto
 
     @POST("/api/v1/create-user")
     suspend fun createUser(@Body userItemDto: UserItemDto)

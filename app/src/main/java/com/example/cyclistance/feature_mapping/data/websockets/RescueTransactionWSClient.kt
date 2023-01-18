@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping.data.websockets
 import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_RESCUE_TRANSACTION
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.RescueTransactionDto
+import com.example.cyclistance.feature_mapping.domain.model.LiveLocationWSModel
 import com.example.cyclistance.feature_mapping.domain.model.RescueTransaction
 import com.example.cyclistance.feature_mapping.domain.websockets.WebSocketClient
 import com.google.gson.Gson
@@ -15,10 +16,10 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class RescueTransactionWSClient(
     private val socket: Socket
-): WebSocketClient<RescueTransaction> {
+): WebSocketClient<RescueTransaction, LiveLocationWSModel> {
 
 
-    override suspend fun broadCastEvent(t: RescueTransaction?) {
+    override suspend fun broadCastEvent(t: LiveLocationWSModel?) {
         socket.emit(BROADCAST_RESCUE_TRANSACTION)
     }
 

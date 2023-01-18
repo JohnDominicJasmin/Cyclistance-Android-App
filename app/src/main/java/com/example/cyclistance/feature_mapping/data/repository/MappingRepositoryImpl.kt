@@ -47,9 +47,9 @@ import kotlin.coroutines.suspendCoroutine
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
 
 class MappingRepositoryImpl(
-    val rescueTransactionClient: WebSocketClient<RescueTransaction>,
-    val userClient: WebSocketClient<User>,
-    val liveLocation: WebSocketClient<LiveLocationWSModel>,
+    val rescueTransactionClient: WebSocketClient<RescueTransaction, LiveLocationWSModel>,
+    val userClient: WebSocketClient<User, LiveLocationWSModel>,
+    val liveLocation: WebSocketClient<LiveLocationWSModel, LiveLocationWSModel>,
     private val api: CyclistanceApi,
     private val mapboxDirections: MapboxOptimization.Builder,
     val context: Context,
@@ -126,7 +126,7 @@ class MappingRepositoryImpl(
     override suspend fun getUsers(): User =
         withContext(scope) {
             handleException {
-                api.getUsers().toUser()
+                api.getUsers(latitude = 14.0835, longitude = 121.1476).toUser()
             }
         }
 
@@ -176,11 +176,11 @@ class MappingRepositoryImpl(
         return withContext(scope) { userClient.getResult() }
     }
 
-    override suspend fun broadcastUser() {
+    override suspend fun broadcastUser(locationModel: LiveLocationWSModel) {
         if(context.hasInternetConnection().not()){
             throw MappingExceptions.NetworkException()
         }
-        withContext(scope) { userClient.broadCastEvent() }
+        withContext(scope) { userClient.broadCastEvent(locationModel) }
     }
 
     override suspend fun broadcastRescueTransaction() {

@@ -27,6 +27,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.core.utils.composable_utils.ComposableLifecycle
+import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_SHEET_TYPE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_ID
+import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
 import com.example.cyclistance.feature_mapping.data.network_observer.NetworkConnectivityChecker
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingUiEvent
@@ -59,7 +65,8 @@ fun MainScreen(
     val navController = rememberNavController()
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
+    val scaffoldState =
+        rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
     var internetAvailable by rememberSaveable { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
     val editProfileState by editProfileViewModel.state.collectAsState()
@@ -67,11 +74,11 @@ fun MainScreen(
     val settingState by settingViewModel.state.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    ComposableLifecycle{ _, event ->
-        when(event){
+    ComposableLifecycle { _, event ->
+        when (event) {
             Lifecycle.Event.ON_CREATE -> {
-                NetworkConnectivityChecker.observe(lifecycleOwner){ isConnected ->
-                    isConnected?.let{
+                NetworkConnectivityChecker.observe(lifecycleOwner) { isConnected ->
+                    isConnected?.let {
                         internetAvailable = isConnected
                     }
                 }
@@ -165,7 +172,7 @@ fun MainScreen(
                         onClickArrowBackIcon = onClickArrowBackIcon,
                         isNavigating = mappingState.isNavigating)
 
-                        NoInternetStatusBar(internetAvailable, navBackStackEntry?.destination?.route)
+                    NoInternetStatusBar(internetAvailable, navBackStackEntry?.destination?.route)
                 }
             },
             drawerContent = {
@@ -203,8 +210,7 @@ private fun TopAppBar(
     route: String?) {
 
     when (route) {
-        Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}" -> {
-
+        Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE={$BOTTOM_SHEET_TYPE}" -> {
             AnimatedVisibility(
                 visible = isNavigating.not(),
                 enter = fadeIn(initialAlpha = 0.4f),
@@ -214,61 +220,61 @@ private fun TopAppBar(
             }
         }
 
-            "${Screens.CancellationScreen.route}/{cancellationType}/{transactionId}/{clientId}" -> {
-                TopAppBarCreator(
-                    icon = Icons.Default.ArrowBack,
-                    onClickIcon = onClickArrowBackIcon,
-                    topAppBarTitle = {
-                        TitleTopAppBar(title = "Cancellation Reason")
-                    })
-            }
-
-            Screens.ConfirmDetailsScreen.route -> {
-                TopAppBarCreator(
-                    icon = Icons.Default.ArrowBack,
-                    onClickIcon = onClickArrowBackIcon,
-                    topAppBarTitle = {
-                        TitleTopAppBar(
-                            title = "Confirmation Details")
-                    })
-            }
-
-
-            Screens.RescueRequestScreen.route -> {
-                TopAppBarCreator(
-                    icon = Icons.Default.ArrowBack,
-                    onClickIcon = onClickArrowBackIcon,
-                    topAppBarTitle = {
-                        TitleTopAppBar(title = "Rescue Requests")
-                    })
-            }
-            Screens.ChangePasswordScreen.route -> {
-                TopAppBarCreator(
-                    icon = Icons.Default.ArrowBack,
-                    onClickIcon = onClickArrowBackIcon,
-                    topAppBarTitle = {
-                        TitleTopAppBar(title = "Change Password")
-                    })
-            }
-            Screens.EditProfileScreen.route -> {
-                TopAppBarCreator(
-                    icon = Icons.Default.Close, onClickIcon = onClickArrowBackIcon, topAppBarTitle = {
-                        TitleTopAppBar(
-                            title = "Edit Profile",
-                            confirmationText = "Save",
-                            confirmationTextEnable = editProfileSaveButtonEnabled,
-                            onClickConfirmation = onClickSaveProfile)
-                    })
-            }
-            Screens.SettingScreen.route -> {
-                TopAppBarCreator(
-                    icon = Icons.Default.ArrowBack,
-                    onClickIcon = onClickArrowBackIcon,
-                    topAppBarTitle = {
-                        TitleTopAppBar(title = "Setting Screen")
-                    })
-            }
+        "${Screens.CancellationScreen.route}/{$CANCELLATION_TYPE}/{$TRANSACTION_ID}/{$CLIENT_ID}" -> {
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Cancellation Reason")
+                })
         }
+
+        Screens.ConfirmDetailsScreen.route + "?$LATITUDE={$LATITUDE}&$LONGITUDE={$LONGITUDE}" -> {
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(
+                        title = "Confirmation Details")
+                })
+        }
+
+
+        Screens.RescueRequestScreen.route -> {
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Rescue Requests")
+                })
+        }
+        Screens.ChangePasswordScreen.route -> {
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Change Password")
+                })
+        }
+        Screens.EditProfileScreen.route -> {
+            TopAppBarCreator(
+                icon = Icons.Default.Close, onClickIcon = onClickArrowBackIcon, topAppBarTitle = {
+                    TitleTopAppBar(
+                        title = "Edit Profile",
+                        confirmationText = "Save",
+                        confirmationTextEnable = editProfileSaveButtonEnabled,
+                        onClickConfirmation = onClickSaveProfile)
+                })
+        }
+        Screens.SettingScreen.route -> {
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Setting Screen")
+                })
+        }
+    }
 
 }
 
@@ -276,7 +282,8 @@ private fun TopAppBar(
 @Composable
 private fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 
-    val inShowableScreens = route != Screens.SettingScreen.route && route != Screens.IntroSliderScreen.route
+    val inShowableScreens =
+        route != Screens.SettingScreen.route && route != Screens.IntroSliderScreen.route
 
     AnimatedVisibility(
         visible = internetAvailable.not() && inShowableScreens,
@@ -299,12 +306,13 @@ private fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 }
 
 
-
 @Preview
 @Composable
 fun TopAppBarPreview() {
     CyclistanceTheme(true) {
-        TopAppBar(route = Screens.MappingScreen.route + "?bottomSheetType={bottomSheetType}", isNavigating = false)
+        TopAppBar(
+            route = Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE={$BOTTOM_SHEET_TYPE}",
+            isNavigating = false)
     }
 }
 

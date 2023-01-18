@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
@@ -13,6 +14,8 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_R
 import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_SHEET_TYPE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_ID
+import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInScreen
@@ -45,15 +48,24 @@ fun NavGraph(
     NavHost(navController = navController, startDestination = Screens.IntroSliderScreen.route) {
 
         composable(Screens.IntroSliderScreen.route) {
-            IntroSliderScreen(navController = navController, paddingValues = paddingValues, hasInternetConnection = hasInternetConnection)
+            IntroSliderScreen(
+                navController = navController,
+                paddingValues = paddingValues,
+                hasInternetConnection = hasInternetConnection)
         }
 
         composable(Screens.SignInScreen.route) {
-            SignInScreen(navController = navController, paddingValues = paddingValues, hasInternetConnection = hasInternetConnection)
+            SignInScreen(
+                navController = navController,
+                paddingValues = paddingValues,
+                hasInternetConnection = hasInternetConnection)
         }
 
         composable(Screens.SignUpScreen.route) {
-            SignUpScreen(navController = navController, paddingValues = paddingValues, hasInternetConnection = hasInternetConnection)
+            SignUpScreen(
+                navController = navController,
+                paddingValues = paddingValues,
+                hasInternetConnection = hasInternetConnection)
         }
 
         composable(Screens.EmailAuthScreen.route) {
@@ -68,7 +80,7 @@ fun NavGraph(
 
 
         composable(
-            Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE={$BOTTOM_SHEET_TYPE}",
+            route = Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE={$BOTTOM_SHEET_TYPE}",
             arguments = listOf(navArgument(BOTTOM_SHEET_TYPE) {
                 defaultValue = ""
             })
@@ -88,11 +100,11 @@ fun NavGraph(
 
 
         composable(
-            "${Screens.CancellationScreen.route}/{$CANCELLATION_TYPE}/{$TRANSACTION_ID}/{$CLIENT_ID}",
+            route = "${Screens.CancellationScreen.route}/{$CANCELLATION_TYPE}/{$TRANSACTION_ID}/{$CLIENT_ID}",
             arguments = listOf(
                 navArgument(CANCELLATION_TYPE) { defaultValue = SELECTION_RESCUEE_TYPE },
-                navArgument(TRANSACTION_ID){},
-                navArgument(CLIENT_ID){})) {
+                navArgument(TRANSACTION_ID) {},
+                navArgument(CLIENT_ID) {})) {
 
             it.arguments?.getString(CANCELLATION_TYPE)?.let { cancellationType ->
                 CancellationReasonScreen(
@@ -104,12 +116,17 @@ fun NavGraph(
         }
 
 
-        composable(Screens.ConfirmDetailsScreen.route) {
+        composable(route = Screens.ConfirmDetailsScreen.route + "?$LATITUDE={$LATITUDE}&$LONGITUDE={$LONGITUDE}",
+            arguments = listOf(
+                navArgument(LATITUDE) { type = NavType.FloatType; defaultValue = -1f },
+                navArgument(LONGITUDE) { type = NavType.FloatType; defaultValue = -1f }
+            )) {
 
             ConfirmDetailsScreen(
                 hasInternetConnection = hasInternetConnection,
                 navController = navController,
                 paddingValues = paddingValues)
+
         }
 
         composable(Screens.RescueRequestScreen.route) {

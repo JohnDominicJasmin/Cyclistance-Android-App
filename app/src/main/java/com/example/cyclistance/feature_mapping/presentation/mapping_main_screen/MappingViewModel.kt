@@ -3,7 +3,7 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_RADIUS
+import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
@@ -26,7 +26,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import im.delight.android.location.SimpleLocation
-import io.github.farhanroy.composeawesomedialog.R
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import okhttp3.internal.toImmutableList
@@ -108,6 +107,10 @@ class MappingViewModel @Inject constructor(
     }
 
     private suspend fun getNearbyCyclist() {
+        if(state.value.nearbyCyclists != null) {
+            return
+        }
+
         coroutineScope {
             runCatching {
                 mappingUseCase.getUsersUseCase().distinctUntilChanged().collect {
@@ -568,9 +571,14 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun broadcastUser(){
+    private suspend fun broadcastUser() {
+        val location = state.value.userLocation ?: return
         runCatching {
-            mappingUseCase.broadcastUserUseCase()
+            mappingUseCase.broadcastUserUseCase(
+                locationModel = LiveLocationWSModel(
+                    latitude = location.latitude,
+                    longitude = location.longitude
+                ))
         }.onFailure {
             it.handleException()
         }
@@ -740,24 +748,15 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun updateLocation(location: Location){
+    private fun updateLocation(location: Location){
         val latitude = location.latitude.takeIf { it != 0.0 } ?: return
         val longitude = location.longitude.takeIf { it != 0.0 } ?: return
-        val updatedState = _state.updateAndGet { state ->
+        _state.update { state ->
             state.copy(
                 userLocation = Location(latitude = latitude,
                     longitude = longitude))
         }
 
-        refreshNearbyCyclist(updatedState.userLocation)
-    }
-
-    private suspend fun refreshNearbyCyclist(location: Location?){
-        val nearbyCyclist = state.value.nearbyCyclists
-        if(nearbyCyclist == null){
-            val user = state.value.cachedNearbyCyclists
-            user?.getNearbyCyclist(location)
-        }
     }
 
 
@@ -811,29 +810,8 @@ class MappingViewModel @Inject constructor(
         rescueRespondentsSnapShot.clear()
     }
 
-    private suspend fun User.getNearbyCyclist(currentLocation: Location? = null) {
-        coroutineScope {
-
-            val userLocation = state.value.userLocation ?: currentLocation
-            if(userLocation == null){
-                _state.update { it.copy(cachedNearbyCyclists = this@getNearbyCyclist) }
-                return@coroutineScope
-            }
-
-            val nearbyCyclists = users.filter { userItem ->
-                val distance = userItem.location?.let {
-                        getCalculatedDistance(
-                            startingLocation = userLocation,
-                            endLocation = userItem.location
-                        )
-                    }
-                 ?: DEFAULT_RADIUS
-                distance < DEFAULT_RADIUS
-            }.filter{
-                it.id != getId()
-            }
-            _state.update { it.copy(nearbyCyclists = User(nearbyCyclists)) }
-        }
+    private fun User.getNearbyCyclist() {
+      _state.update { it.copy(nearbyCyclists = this) }
     }
 
     private suspend fun broadCastLocationToTransaction(location: Location){
@@ -950,8 +928,11 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getUserLocationUseCase().collect { location ->
                     broadCastLocationToTransaction(location)
                     updateLocation(location)
-                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+                    getNearbyCyclist()
                 }
+
+            }.onSuccess {
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
 
             }.onFailure {
                 Timber.e("Error Location Updates: ${it.message}")
@@ -1041,6 +1022,10 @@ class MappingViewModel @Inject constructor(
     private fun requestHelp() {
         viewModelScope.launch {
             uploadUserProfile {
+                if (state.value.userLocation == null) {
+                    _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Searching for GPS"))
+                    return@uploadUserProfile
+                }
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
             }
         }.invokeOnCompletion {

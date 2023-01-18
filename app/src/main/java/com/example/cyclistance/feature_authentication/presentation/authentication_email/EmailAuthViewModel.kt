@@ -4,6 +4,7 @@ import android.os.CountDownTimer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.AuthConstants.EMAIL_AUTH_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.AuthConstants.ONE_SECOND_TO_MILLIS
 import com.example.cyclistance.core.utils.constants.AuthConstants.REFRESH_EMAIL_INTERVAL
@@ -16,7 +17,6 @@ import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
 import timber.log.Timber
 import javax.inject.Inject
-import io.github.farhanroy.composeawesomedialog.R as R1
 @HiltViewModel
 class EmailAuthViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
@@ -180,7 +180,7 @@ class EmailAuthViewModel @Inject constructor(
                             alertDialogModel = AlertDialogModel(
                                 title = "New Email Sent.",
                                 description = "New verification email has been sent to your email address.",
-                                icon = R1.raw.success))
+                                icon = R.raw.success))
                     }
                     return@launch
                 }
@@ -196,7 +196,7 @@ class EmailAuthViewModel @Inject constructor(
                             alertDialogModel = AlertDialogModel(
                                 title = "Error",
                                 description = "Sorry, something went wrong. Please try again.",
-                                icon = R1.raw.error))
+                                icon = R.raw.error))
                     }
                 }
 
