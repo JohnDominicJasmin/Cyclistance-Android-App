@@ -1022,6 +1022,10 @@ class MappingViewModel @Inject constructor(
     private fun requestHelp() {
         viewModelScope.launch {
             uploadUserProfile {
+                if (state.value.userLocation == null) {
+                    _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Searching for GPS"))
+                    return@uploadUserProfile
+                }
                 _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
             }
         }.invokeOnCompletion {
