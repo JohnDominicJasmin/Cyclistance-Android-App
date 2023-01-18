@@ -568,9 +568,14 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun broadcastUser(){
+    private suspend fun broadcastUser() {
+        val location = state.value.userLocation ?: return
         runCatching {
-            mappingUseCase.broadcastUserUseCase()
+            mappingUseCase.broadcastUserUseCase(
+                locationModel = LiveLocationWSModel(
+                    latitude = location.latitude,
+                    longitude = location.longitude
+                ))
         }.onFailure {
             it.handleException()
         }
