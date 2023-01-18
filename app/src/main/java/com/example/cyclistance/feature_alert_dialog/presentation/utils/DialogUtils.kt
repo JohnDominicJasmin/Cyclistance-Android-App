@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,7 +27,6 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import io.github.farhanroy.composeawesomedialog.themes.Shapes
 
 @Composable
   fun DialogCreator(
@@ -86,7 +86,7 @@ import io.github.farhanroy.composeawesomedialog.themes.Shapes
                             .wrapContentHeight()
                             .background(
                                 color = MaterialTheme.colors.surface,
-                                shape = Shapes.large)) {
+                                shape = RoundedCornerShape(0.dp))) {
                         Column(
                             modifier = Modifier.padding(16.dp),
                             horizontalAlignment = Alignment.CenterHorizontally
