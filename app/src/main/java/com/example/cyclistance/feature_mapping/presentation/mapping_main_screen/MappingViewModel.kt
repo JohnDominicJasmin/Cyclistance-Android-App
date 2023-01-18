@@ -107,6 +107,10 @@ class MappingViewModel @Inject constructor(
     }
 
     private suspend fun getNearbyCyclist() {
+        if(state.value.nearbyCyclists != null) {
+            return
+        }
+
         coroutineScope {
             runCatching {
                 mappingUseCase.getUsersUseCase().distinctUntilChanged().collect {
