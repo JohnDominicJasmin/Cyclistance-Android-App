@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class TransactionLiveLocationWSClient(
     private val socket: Socket
-): WebSocketClient<LiveLocationWSModel> {
+): WebSocketClient<LiveLocationWSModel, LiveLocationWSModel> {
     
     override suspend fun getResult(): Flow<LiveLocationWSModel> {
         return callbackFlow {

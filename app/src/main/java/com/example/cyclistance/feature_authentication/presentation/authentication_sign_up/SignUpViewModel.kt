@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_UP_VM_STATE_KEY
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
@@ -130,7 +131,7 @@ class SignUpViewModel @Inject constructor(
                         alertDialogModel = AlertDialogModel(
                             title = exception.title,
                             description = exception.message ?: "This account is Already in Use.",
-                            icon = io.github.farhanroy.composeawesomedialog.R.raw.error,
+                            icon = R.raw.error,
                         ))
                 }
             }

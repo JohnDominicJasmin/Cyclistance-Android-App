@@ -8,6 +8,7 @@ import com.example.cyclistance.feature_authentication.domain.use_case.Authentica
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.ConfirmationDetail
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserAssistance
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_mapping.domain.model.LiveLocationWSModel
 import com.example.cyclistance.feature_mapping.domain.model.UserItem
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,8 @@ class ConfirmDetailsViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase,
     private val mappingUseCase: MappingUseCase) : ViewModel() {
 
+    private val _latitude: Float? = savedStateHandle["latitude"]
+    private val _longitude: Float? = savedStateHandle["longitude"]
     private val _state: MutableStateFlow<ConfirmDetailsState> = MutableStateFlow(savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] ?: ConfirmDetailsState())
     val state = _state.asStateFlow()
 
@@ -137,8 +140,17 @@ class ConfirmDetailsViewModel @Inject constructor(
     }
 
     private suspend fun broadcastUser() {
+        _latitude?:return
+        _longitude?:return
+
+        val latitude = _latitude.toDouble()
+        val longitude = _longitude.toDouble()
+
         runCatching {
-            mappingUseCase.broadcastUserUseCase()
+            mappingUseCase.broadcastUserUseCase(locationModel = LiveLocationWSModel(
+                latitude = latitude,
+                longitude = longitude
+            ))
         }.onFailure {
             it.handleException()
         }
