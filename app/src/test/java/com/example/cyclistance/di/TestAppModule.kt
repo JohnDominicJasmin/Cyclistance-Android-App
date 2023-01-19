@@ -1,6 +1,5 @@
 package com.example.cyclistance.di
 
-import android.content.Context
 import com.example.cyclistance.feature_authentication.data.repositories.FakeAuthRepository
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.create_account.*
@@ -31,7 +30,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.
 object TestAppModule {
 
 
-    fun provideTestMappingUseCase(context: Context): MappingUseCase {
+    fun provideTestMappingUseCase(): MappingUseCase {
         val repository = FakeMappingRepository()
         return MappingUseCase(
             getUsersUseCase = GetUsersUseCase(repository),
@@ -67,7 +66,7 @@ object TestAppModule {
 
 
 
-    fun provideTestAuthUseCase(context: Context): AuthenticationUseCase {
+    fun provideTestAuthUseCase(): AuthenticationUseCase {
         val repository = FakeAuthRepository()
         return AuthenticationUseCase(
             reloadEmailUseCase = ReloadEmailUseCase(repository = repository),
