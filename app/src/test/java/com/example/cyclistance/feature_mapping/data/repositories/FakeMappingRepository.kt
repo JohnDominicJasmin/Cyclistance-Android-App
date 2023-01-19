@@ -19,7 +19,7 @@ class FakeMappingRepository: MappingRepository {
             address = "Manila, Quiapo",
             contactNumber = "09123456789",
             id = "1",
-            location = Location(latitude = 14.599512, longitude = 120.984222),
+            location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512),
             name = "Andres",
             profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
             rescueRequest = RescueRequest(
@@ -42,7 +42,7 @@ class FakeMappingRepository: MappingRepository {
             address = "Manila, Quiapo",
             contactNumber = "09123456789",
             id = "2",
-            location = Location(latitude = 14.599512, longitude = 120.984222),
+            location = Location(latitude = 14.083527714609879, longitude = 121.15211095078145),
             name = "Andres",
             profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
             rescueRequest = RescueRequest(
@@ -62,7 +62,7 @@ class FakeMappingRepository: MappingRepository {
             address = "Manila, Quiapo",
             contactNumber = "09123456789",
             id = "3",
-            location = Location(latitude = 14.599512, longitude = 120.984222),
+            location = Location(latitude = 14.082614567282977, longitude = 121.15017623540186),
             name = "Andres",
             profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
             rescueRequest = RescueRequest(),
@@ -94,8 +94,8 @@ class FakeMappingRepository: MappingRepository {
 
     private val bikeType = MutableStateFlow("")
     private val address = MutableStateFlow("")
-    private val location = MutableStateFlow(Location())
-    private val user = MutableStateFlow(User())
+    private val location = MutableStateFlow(Location(latitude = 14.0835, longitude = 121.1476))
+    private val user = MutableStateFlow(User(users))
     private val rescueTransaction = MutableStateFlow(RescueTransaction())
     private val liveLocation = MutableStateFlow(LiveLocationWSModel())
 
@@ -257,14 +257,14 @@ class FakeMappingRepository: MappingRepository {
         return liveLocation.asStateFlow()
     }
 
-    override suspend fun broadcastUser() {
-
+    override suspend fun broadcastUser(locationModel: LiveLocationWSModel) {
         if(shouldReturnNetworkError){
             throw MappingExceptions.NetworkException()
         }
 
-        print("broadcastLocation")
+        print("broadcastUser")
     }
+
 
     override suspend fun broadcastRescueTransaction() {
 
