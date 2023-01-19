@@ -61,7 +61,6 @@ data class MappingState(
 
 
     val nearbyCyclists: User? = null,
-    val cachedNearbyCyclists: User? = null,
 
 
 
