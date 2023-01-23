@@ -8,12 +8,14 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACE
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
 import com.example.cyclistance.core.utils.validation.FormatterUtils.distanceFormat
+import com.example.cyclistance.core.utils.validation.FormatterUtils.findRescueTransaction
+import com.example.cyclistance.core.utils.validation.FormatterUtils.findUser
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedDistance
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedETA
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getETABetweenTwoPoints
+import com.example.cyclistance.core.utils.validation.FormatterUtils.getUserRescueRespondents
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toCardModel
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Route
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Status
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.*
@@ -25,10 +27,8 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
 import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
-import im.delight.android.location.SimpleLocation
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
-import okhttp3.internal.toImmutableList
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -333,6 +333,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
+
     private fun showRespondToHelpButton(){
         _state.update { it.copy(respondToHelpButtonVisible = true) }
     }
@@ -387,21 +388,7 @@ class MappingViewModel @Inject constructor(
                 broadcastRescueTransaction()
                 finishLoading()
                 dismissRequestAccepted()
-                _state.update {
-                    it.copy(
-                        respondedToHelp = true,
-                        isSearchingForAssistance = false,
-                        bottomSheetType = "",
-                        requestHelpButtonVisible = true,
-                        isNavigating = false,
-                        isRescueRequestAccepted = false,
-                        userRescueRequestRespondents  = RescueRequestRespondents(),
-                        userRescueTransaction = RescueTransactionItem(),
-                        rescuee = null,
-                        rescuer = null
-
-                    )
-                }
+                resetUiState()
             }.onFailure { exception ->
                 finishLoading()
                 exception.handleException()
@@ -409,6 +396,23 @@ class MappingViewModel @Inject constructor(
         }
 
     }
+
+    private fun resetUiState() =
+        _state.update {
+            it.copy(
+                respondedToHelp = true,
+                isSearchingForAssistance = false,
+                bottomSheetType = "",
+                requestHelpButtonVisible = true,
+                isNavigating = false,
+                isRescueRequestAccepted = false,
+                userRescueRequestRespondents  = RescueRequestRespondents(),
+                userRescueTransaction = RescueTransactionItem(),
+                rescuee = null,
+                rescuer = null
+
+            )
+        }
 
     private fun subscribeToTransactionLocationUpdates(){
         if(getRescueTransactionUpdatesJob?.isActive == true) {
@@ -424,7 +428,7 @@ class MappingViewModel @Inject constructor(
                         liveLocation.updateTransactionDistance()
                     }
             }.onSuccess {
-                savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }.onFailure {
                 Timber.e("ERROR GETTING TRANSACTION LOCATION: ${it.message}")
             }
@@ -554,7 +558,7 @@ class MappingViewModel @Inject constructor(
                 exception.handleException()
             }
 
-            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
 
         }
     }
@@ -689,7 +693,7 @@ class MappingViewModel @Inject constructor(
             loadName()
             loadPhoto()
         }.invokeOnCompletion {
-            savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
     }
 
@@ -698,11 +702,9 @@ class MappingViewModel @Inject constructor(
             runCatching {
                 getName()
             }.onSuccess { name ->
-
                 _state.update {
                     it.copy(name = name)
                 }
-
             }.onFailure {
                 Timber.e("Load Name ${it.message}")
             }
@@ -761,18 +763,6 @@ class MappingViewModel @Inject constructor(
 
 
 
-    private fun User.findUser(id: String): UserItem {
-        return this.users.find {
-            it.id == id
-        } ?: UserItem()
-
-    }
-
-    private fun RescueTransaction.findRescueTransaction(id: String): RescueTransactionItem {
-        return this.rescueTransactions.find {
-            it.id == id
-        } ?: RescueTransactionItem()
-    }
 
     private fun User.getUser() {
         runCatching {
@@ -780,35 +770,17 @@ class MappingViewModel @Inject constructor(
         }.onSuccess { id ->
             val user = findUser(id = id)
             _state.update { it.copy(user = user) }
-            user.getUserRescueRespondents(this)
+            val respondents = user.getUserRescueRespondents(this)
+            _state.update {
+                it.copy(userRescueRequestRespondents = RescueRequestRespondents(
+                    respondents = respondents))
+            }
         }.onFailure {
             Timber.e("Failed to get User ID")
         }
 
     }
 
-    private fun UserItem.getUserRescueRespondents(user: User) {
-        val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
-        rescueRequest?.respondents?.forEach { respondent ->
-            val userRespondent = user.findUser(id = respondent.clientId)
-            val distance = location?.let { start ->
-                userRespondent.location?.let { end ->
-                    SimpleLocation.calculateDistance(start.latitude, start.longitude, end.latitude, end.longitude)
-                }
-            }
-
-            distance?.let{
-                val formattedETA = getCalculatedETA(distanceMeters = distance)
-                rescueRespondentsSnapShot.add(element = userRespondent.toCardModel(distance = distance.distanceFormat(), eta = formattedETA))
-            }
-
-        }
-      _state.update {
-            it.copy(userRescueRequestRespondents = RescueRequestRespondents(
-                respondents = rescueRespondentsSnapShot.distinct().toImmutableList()))
-        }
-        rescueRespondentsSnapShot.clear()
-    }
 
     private fun User.getNearbyCyclist() {
       _state.update { it.copy(nearbyCyclists = this) }
@@ -980,14 +952,7 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 startLoading()
-                val rescueRespondents = state.value.userRescueRequestRespondents.respondents
-                _state.update {
-                    it.copy(userRescueRequestRespondents = RescueRequestRespondents(
-                        rescueRespondents.toMutableList().apply {
-                            remove(element = cardModel)
-                        }))
-                }
-
+                removeRescueRespondent(cardModel)
                 mappingUseCase.deleteRescueRespondentUseCase(
                     userId = getId(),
                     respondentId = cardModel.id!!
@@ -1002,6 +967,16 @@ class MappingViewModel @Inject constructor(
 
         }
     }
+    private fun removeRescueRespondent(cardModel: CardModel){
+        val rescueRespondents = state.value.userRescueRequestRespondents.respondents
+        _state.update {
+            it.copy(userRescueRequestRespondents = RescueRequestRespondents(
+                rescueRespondents.toMutableList().apply {
+                    remove(element = cardModel)
+                }))
+        }
+    }
+
     private fun signOutAccount() {
         viewModelScope.launch {
             runCatching {
@@ -1065,7 +1040,11 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend inline fun uploadProfile(location: Location,fullAddress: String, crossinline onSuccess: suspend  () -> Unit ) {
+    private suspend inline fun uploadProfile(
+        location: Location,
+        fullAddress: String,
+        crossinline onSuccess: suspend () -> Unit
+    ) {
 
         val isProfileUploaded = state.value.profileUploaded
 
@@ -1138,7 +1117,7 @@ class MappingViewModel @Inject constructor(
             }
 
         }
-        savedStateHandle?.set(MAPPING_VM_STATE_KEY, state.value)
+        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
 
