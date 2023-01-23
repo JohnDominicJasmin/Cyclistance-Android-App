@@ -257,14 +257,14 @@ class FakeMappingRepository: MappingRepository {
         return liveLocation.asStateFlow()
     }
 
-    override suspend fun broadcastUser() {
-
+    override suspend fun broadcastUser(locationModel: LiveLocationWSModel) {
         if(shouldReturnNetworkError){
             throw MappingExceptions.NetworkException()
         }
 
-        print("broadcastLocation")
+        print("broadcastUser")
     }
+
 
     override suspend fun broadcastRescueTransaction() {
 

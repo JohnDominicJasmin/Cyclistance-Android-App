@@ -9,8 +9,11 @@ import androidx.annotation.WorkerThread
 import androidx.appcompat.content.res.AppCompatResources
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toCardModel
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
+import com.example.cyclistance.feature_mapping.domain.model.*
 import im.delight.android.location.SimpleLocation
+import okhttp3.internal.toImmutableList
 import timber.log.Timber
 import java.io.IOException
 
@@ -66,6 +69,44 @@ object FormatterUtils {
         }
     }
 
+     fun RescueTransaction.findRescueTransaction(id: String): RescueTransactionItem {
+        return this.rescueTransactions.find {
+            it.id == id
+        } ?: RescueTransactionItem()
+    }
+
+    fun User.findUser(id: String): UserItem {
+        return this.users.find {
+            it.id == id
+        } ?: UserItem()
+
+    }
+    fun UserItem.getUserRescueRespondents(user: User): List<CardModel> {
+        val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
+
+        rescueRequest?.respondents?.forEach { respondent ->
+            val userRespondent = user.findUser(id = respondent.clientId)
+            val distance = location?.let { start ->
+                userRespondent.location?.let { end ->
+                    SimpleLocation.calculateDistance(start.latitude, start.longitude, end.latitude, end.longitude)
+                }
+            }
+
+            distance?.let{
+                val formattedETA = getCalculatedETA(distanceMeters = distance)
+                rescueRespondentsSnapShot.add(element = userRespondent.toCardModel(distance = distance.distanceFormat(), eta = formattedETA))
+            }
+
+        }
+
+
+
+        return rescueRespondentsSnapShot.distinct().toImmutableList().also{
+            rescueRespondentsSnapShot.clear()
+        }
+
+
+    }
     fun getCalculatedETA(
         distanceMeters: Double,
         averageSpeedKm: Double = MappingConstants.DEFAULT_BIKE_AVERAGE_SPEED_KM): String {

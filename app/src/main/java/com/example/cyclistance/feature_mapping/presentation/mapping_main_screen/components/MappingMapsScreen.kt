@@ -57,23 +57,23 @@ fun MappingMapsScreen(
     onClickRescueeMapIcon:(String) -> Unit,
     requestNavigationCameraToOverview:() -> Unit, //todo use this one
     onMapClick: () -> Unit
-    ) {
+) {
 
 
     val context = LocalContext.current
 
 
 
-    val numberOfNearbyCyclists = remember(state.nearbyCyclists?.users?.size){
-        state.nearbyCyclists?.users?.size
+    val nearbyCyclists = remember(state.nearbyCyclists?.users?.size, mapboxMap){
+        state.nearbyCyclists?.users
     }
     val dismissNearbyCyclistsIcon = remember(mapboxMap){{
         mapboxMap?.removeAnnotations()
     }}
 
-    val showNearbyCyclistsIcon = remember(numberOfNearbyCyclists, mapboxMap){{
+    val showNearbyCyclistsIcon = remember(nearbyCyclists, mapboxMap){{
         dismissNearbyCyclistsIcon()
-        val nearbyCyclists = state.nearbyCyclists?.users
+
         nearbyCyclists?.filter{
             it.userAssistance?.needHelp == true
         }?.forEach { cyclist ->
@@ -103,7 +103,7 @@ fun MappingMapsScreen(
         state.isNavigating || geometry?.isNotEmpty() == true
     }
 
-    LaunchedEffect(key1 = numberOfNearbyCyclists, key2= isNavigating, key3 = hasTransaction){
+    LaunchedEffect(key1 = nearbyCyclists, key2= isNavigating, key3 = hasTransaction){
 
         if(isNavigating || hasTransaction){
             dismissNearbyCyclistsIcon()
@@ -187,7 +187,7 @@ fun MappingMapsScreen(
         isDarkTheme = isDarkTheme,
         onInitializeMapboxMap = onInitializeMapboxMap,
         onChangeCameraState = onChangeCameraState,
-        )
+    )
 
 }
 
@@ -250,14 +250,14 @@ private fun Map(
 
                             Timber.v("Lifecycle Event: ON_CREATE")
                             mapView.getMapAsync {
+                                onInitializeMapboxMap(it)
                                 mapboxMap = it
                                 it.setStyle(if (isDarkTheme) Style.DARK else Style.LIGHT) { loadedStyle ->
 
                                     if (loadedStyle.isFullyLoaded) {
-
                                         initSource(loadedStyle)
                                         initLayers(loadedStyle)
-                                        onInitializeMapboxMap(it)
+
 
                                     }
                                 }
