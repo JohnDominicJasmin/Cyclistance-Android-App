@@ -38,8 +38,8 @@ class MappingViewModelTest {
         mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
         mappingViewModel.onEvent(MappingEvent.LoadData)
         launch {
-            delay(2000)
-            Assert.assertEquals(true,mappingViewModel.state.value.nearbyCyclists?.users?.isNotEmpty() ?: false)
+            delay(5000)
+            Assert.assertEquals(12, mappingViewModel.state.value.nearbyCyclists?.users?.size)
         }
 
 
