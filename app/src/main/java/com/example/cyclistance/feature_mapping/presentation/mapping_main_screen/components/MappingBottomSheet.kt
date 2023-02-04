@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.BottomSheetType
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

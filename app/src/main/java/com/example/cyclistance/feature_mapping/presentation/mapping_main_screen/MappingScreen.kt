@@ -34,6 +34,7 @@ import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.ha
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.*
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.animateCameraPosition
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.changeToNormalPuckIcon
