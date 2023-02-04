@@ -22,4 +22,13 @@ data class UserItem(
     val rescueRequest: RescueRequest? = null,
     val transaction: Transaction? = null,
     val userAssistance: UserAssistance? = null,
-): Parcelable
+): Parcelable{
+    companion object{
+        fun empty(id:String?, role:String, transactionId:String) = UserItem(
+            id = id, userAssistance = UserAssistance(needHelp = false),
+            transaction = Transaction(role = role, transactionId = transactionId),
+            rescueRequest = RescueRequest()
+        )
+
+    }
+}
