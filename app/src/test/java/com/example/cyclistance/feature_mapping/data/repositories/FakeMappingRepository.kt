@@ -95,7 +95,7 @@ class FakeMappingRepository: MappingRepository {
     private val bikeType = MutableStateFlow("")
     private val address = MutableStateFlow("")
     private val location = MutableStateFlow(Location(latitude = 14.0835, longitude = 121.1476))
-    private val user = MutableStateFlow(User(users))
+    private val nearbyCyclist = MutableStateFlow(NearbyCyclist(users))
     private val rescueTransaction = MutableStateFlow(RescueTransaction())
     private val liveLocation = MutableStateFlow(LiveLocationWSModel())
 
@@ -112,11 +112,11 @@ class FakeMappingRepository: MappingRepository {
         return users.find { it.id == userId } ?: throw MappingExceptions.UserException()
     }
 
-    override suspend fun getUsers(): User {
+    override suspend fun getUsers(): NearbyCyclist {
         if(shouldReturnNetworkError){
             throw MappingExceptions.NetworkException()
         }
-        return User(users)
+        return NearbyCyclist(users)
     }
 
     override suspend fun createUser(userItem: UserItem) {
@@ -245,8 +245,8 @@ class FakeMappingRepository: MappingRepository {
         return location.asStateFlow()
     }
 
-    override suspend fun getUserUpdates(): Flow<User> {
-        return user.asStateFlow()
+    override suspend fun getUserUpdates(): Flow<NearbyCyclist> {
+        return nearbyCyclist.asStateFlow()
     }
 
     override suspend fun getRescueTransactionUpdates(): Flow<RescueTransaction> {

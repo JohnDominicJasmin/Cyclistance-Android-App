@@ -102,7 +102,7 @@ object MappingModule {
             api = api,
             context = context,
             rescueTransactionClient = rescueTransactionWSClient,
-            userClient = userWSClient,
+            nearbyCyclistClient = userWSClient,
             liveLocation = liveLocation,
             mapboxDirections = mapboxDirections,
             geocoder = geocoder
