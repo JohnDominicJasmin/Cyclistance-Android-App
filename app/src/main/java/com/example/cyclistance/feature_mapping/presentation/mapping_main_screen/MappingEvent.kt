@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
-import com.example.cyclistance.feature_mapping.domain.model.CardModel
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 
@@ -13,12 +12,19 @@ sealed class MappingEvent {
     object StartPinging: MappingEvent()
     object StopPinging: MappingEvent()
     object LoadUserProfile: MappingEvent()
+    /**
+     * Available BottomSheetType:
+     * RescuerArrived,DestinationReached, SearchAssistance, OnGoingRescue
+     *
+     *
+     * Usage: DestinationReached.type
+     * */
     data class ChangeBottomSheet(val bottomSheetType: String): MappingEvent()
     object DismissAlertDialog: MappingEvent()
     object DismissNoInternetDialog: MappingEvent()
     object CancelRequestHelp: MappingEvent()
-    data class DeclineRescueRequest(val cardModel: CardModel): MappingEvent()
-    data class AcceptRescueRequest(val cardModel: CardModel): MappingEvent()
+    data class DeclineRescueRequest(val id: String): MappingEvent()
+    data class AcceptRescueRequest(val id: String): MappingEvent()
     object LoadData: MappingEvent()
     object SubscribeToDataChanges: MappingEvent()
     object CancelRescueTransaction: MappingEvent()

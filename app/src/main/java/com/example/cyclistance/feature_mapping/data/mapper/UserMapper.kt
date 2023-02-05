@@ -3,7 +3,7 @@ package com.example.cyclistance.feature_mapping.data.mapper
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserItemDto
 import com.example.cyclistance.feature_mapping.domain.model.CardModel
-import com.example.cyclistance.feature_mapping.domain.model.User
+import com.example.cyclistance.feature_mapping.domain.model.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.model.UserItem
 
 object UserMapper {
@@ -38,8 +38,8 @@ object UserMapper {
     }
 
 
-    fun UserDto.toUser(): User{
-        return User(
+    fun UserDto.toUser(): NearbyCyclist{
+        return NearbyCyclist(
             users = this.map { it.toUserItem() }
         )
     }

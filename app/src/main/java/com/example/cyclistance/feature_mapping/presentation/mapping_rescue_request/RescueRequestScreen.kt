@@ -23,9 +23,13 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_S
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.common.visible
+import com.example.cyclistance.feature_mapping.domain.model.ActiveRescueRequests
 import com.example.cyclistance.feature_mapping.domain.model.CardModel
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.*
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.RescueRequestRespondents
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingUiEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.components.RequestItem
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
@@ -62,12 +66,12 @@ fun RescueRequestScreen(
         }
     }
 
-    val onClickCancelButton = remember {{ cardModel: CardModel ->
-        mappingViewModel.onEvent(MappingEvent.DeclineRescueRequest(cardModel))
+    val onClickCancelButton = remember {{ id: String ->
+        mappingViewModel.onEvent(MappingEvent.DeclineRescueRequest(id))
     }}
 
-    val onClickConfirmButton = remember{{ cardModel: CardModel ->
-        mappingViewModel.onEvent(MappingEvent.AcceptRescueRequest(cardModel))
+    val onClickConfirmButton = remember{{ id: String ->
+        mappingViewModel.onEvent(MappingEvent.AcceptRescueRequest(id))
     }}
 
     val onDismissAlertDialog = remember{{
@@ -93,14 +97,14 @@ fun RescueRequestScreen(
 fun RescueRequestScreenContent(
     modifier: Modifier = Modifier,
     mappingState: MappingState = MappingState(),
-    onClickCancelButton: (CardModel) -> Unit = {},
-    onClickConfirmButton: (CardModel) -> Unit = {},
+    onClickCancelButton: (String) -> Unit = {},
+    onClickConfirmButton: (String) -> Unit = {},
     onDismissAlertDialog: () -> Unit = {},
     onDismissNoInternetDialog: () -> Unit = {},
 ) {
 
-    val respondents = remember(mappingState.userRescueRequestRespondents.respondents.size) {
-        mappingState.userRescueRequestRespondents.respondents
+    val respondents = remember(mappingState.userActiveRescueRequests.respondents.size) {
+        mappingState.userActiveRescueRequests.respondents
     }
 
 
@@ -156,10 +160,10 @@ fun RescueRequestScreenContent(
                                     .fillMaxWidth(fraction = 0.95f)
                                     .wrapContentHeight(), cardState = respondent,
                                 onClickCancelButton = {
-                                    onClickCancelButton(respondent)
+                                    onClickCancelButton(respondent.id ?: "")
                                 },
                                 onClickConfirmButton = {
-                                    onClickConfirmButton(respondent)
+                                    onClickConfirmButton(respondent.id ?: "")
                                 }
                             )
                         }
@@ -205,7 +209,7 @@ fun PreviewRescueRequest() {
             mappingState = MappingState(
                 hasInternet = true,
                 isLoading = true,
-                userRescueRequestRespondents = RescueRequestRespondents(
+                userActiveRescueRequests = ActiveRescueRequests(
                     respondents = listOf(
                       CardModel(
                              id = "2",

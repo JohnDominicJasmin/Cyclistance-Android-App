@@ -17,7 +17,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.CancelledRescueModel
+import com.example.cyclistance.feature_mapping.domain.model.CancelledRescueModel
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState

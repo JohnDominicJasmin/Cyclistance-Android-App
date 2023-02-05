@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_mapping.domain.use_case.routes
 
-import android.content.Context
 import com.example.cyclistance.feature_mapping.domain.model.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.mapbox.geojson.Point

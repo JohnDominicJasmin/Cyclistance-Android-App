@@ -1,6 +1,6 @@
 package com.example.cyclistance.core.utils.validation
 
-import com.example.cyclistance.core.utils.validation.FormatterUtils.distanceFormat
+import com.example.cyclistance.core.utils.validation.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedETA
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -10,19 +10,19 @@ class FormatterTest {
     @Test
     fun `distance format to meters`(){
         val input = 10.0
-        val result = input.distanceFormat()
+        val result = input.formatToDistanceKm()
         assertEquals("10.00 m", result)
     }
 
     @Test
     fun `distance format to kilometers`(){
         val input = 1000.0
-        val result = input.distanceFormat()
+        val result = input.formatToDistanceKm()
         assertEquals("1.00 km", result)
     }
 
 
-    //make a test getCalculatedETA
+
     @Test
     fun `get calculated ETA`(){
         val result = getCalculatedETA(distanceMeters = 5000.0)

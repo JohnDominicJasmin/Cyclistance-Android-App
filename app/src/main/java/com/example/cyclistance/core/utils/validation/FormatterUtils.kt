@@ -58,7 +58,7 @@ object FormatterUtils {
 
         return "$subThoroughfare$thoroughfare$formattedLocality$subAdminArea"
     }
-    fun Double.distanceFormat(): String {
+    fun Double.formatToDistanceKm(): String {
 
         return if(this <= 0.0) {
             "0 m"
@@ -70,22 +70,22 @@ object FormatterUtils {
     }
 
      fun RescueTransaction.findRescueTransaction(id: String): RescueTransactionItem {
-        return this.rescueTransactions.find {
+        return this.transactions.find {
             it.id == id
         } ?: RescueTransactionItem()
     }
 
-    fun User.findUser(id: String): UserItem {
+    fun NearbyCyclist.findUser(id: String): UserItem {
         return this.users.find {
             it.id == id
         } ?: UserItem()
 
     }
-    fun UserItem.getUserRescueRespondents(user: User): List<CardModel> {
+    fun UserItem.getUserRescueRespondents(nearbyCyclist: NearbyCyclist): List<CardModel> {
         val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
 
         rescueRequest?.respondents?.forEach { respondent ->
-            val userRespondent = user.findUser(id = respondent.clientId)
+            val userRespondent = nearbyCyclist.findUser(id = respondent.clientId)
             val distance = location?.let { start ->
                 userRespondent.location?.let { end ->
                     SimpleLocation.calculateDistance(start.latitude, start.longitude, end.latitude, end.longitude)
@@ -94,7 +94,7 @@ object FormatterUtils {
 
             distance?.let{
                 val formattedETA = getCalculatedETA(distanceMeters = distance)
-                rescueRespondentsSnapShot.add(element = userRespondent.toCardModel(distance = distance.distanceFormat(), eta = formattedETA))
+                rescueRespondentsSnapShot.add(element = userRespondent.toCardModel(distance = distance.formatToDistanceKm(), eta = formattedETA))
             }
 
         }

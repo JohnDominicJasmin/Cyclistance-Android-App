@@ -30,7 +30,7 @@ object RescueTransactionMapper {
 
     fun RescueTransactionDto.toRescueTransaction():RescueTransaction{
         return RescueTransaction(
-            rescueTransactions = this.map { it.toRescueTransaction() }
+            transactions = this.map { it.toRescueTransaction() }
         )
     }
 
