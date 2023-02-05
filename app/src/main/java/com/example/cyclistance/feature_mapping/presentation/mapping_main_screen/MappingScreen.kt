@@ -34,6 +34,7 @@ import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.ha
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.*
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.animateCameraPosition
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.changeToNormalPuckIcon
@@ -136,10 +137,9 @@ fun MappingScreen(
             return@rememberLauncherForActivityResult
         }
         Timber.d("GPS Setting Request Denied")
-
     }
 
-    val postProfile = remember {
+    val requestHelp = remember {
         {
             if (!context.hasGPSConnection()) {
                 context.checkLocationSetting(
@@ -165,8 +165,8 @@ fun MappingScreen(
 
     val locationComponentOptions = MappingUtils.rememberLocationComponentOptions()
 
-    val pulsingEnabled by remember(state.isSearchingForAssistance, locationPermissionsState.allPermissionsGranted) {
-        derivedStateOf { state.isSearchingForAssistance.and(locationPermissionsState.allPermissionsGranted) }
+    val pulsingEnabled by remember(state.searchingAssistance, locationPermissionsState.allPermissionsGranted) {
+        derivedStateOf { state.searchingAssistance.and(locationPermissionsState.allPermissionsGranted) }
     }
 
     val onClickRequestHelpButton = remember {{
@@ -174,7 +174,7 @@ fun MappingScreen(
             context = context,
             rationalMessage = "Location permission is not yet granted.") {
             context.startLocationServiceIntentAction()
-            postProfile()
+            requestHelp()
         }
     }}
 

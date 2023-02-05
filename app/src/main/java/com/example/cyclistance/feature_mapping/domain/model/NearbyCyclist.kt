@@ -8,6 +8,6 @@ import javax.annotation.concurrent.Immutable
 @Stable
 @Immutable
 @Parcelize
-data class User(
+data class NearbyCyclist(
     val users: List<UserItem> = emptyList()
 ):Parcelable

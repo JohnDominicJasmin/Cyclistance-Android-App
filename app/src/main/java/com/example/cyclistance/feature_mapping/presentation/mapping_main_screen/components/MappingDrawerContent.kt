@@ -41,8 +41,8 @@ fun MappingDrawerContent(
     onClickSignOut: () -> Unit = {},
 ) {
 
-    val respondents = remember(state.userRescueRequestRespondents.respondents.size) {
-        state.userRescueRequestRespondents.respondents
+    val respondents = remember(state.userActiveRescueRequests.respondents.size) {
+        state.userActiveRescueRequests.respondents
     }
 
 

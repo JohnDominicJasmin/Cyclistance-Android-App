@@ -6,8 +6,6 @@ import androidx.compose.runtime.Stable
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import com.example.cyclistance.feature_mapping.domain.model.*
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.CameraState
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.RescueRequestRespondents
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -21,7 +19,7 @@ data class MappingState(
     val respondToHelpButtonVisible: Boolean = false,
     val hasInternet: Boolean = true,
     val bottomSheetType: String = "",
-    val isSearchingForAssistance: Boolean = false,
+    val searchingAssistance: Boolean = false,
     val alertDialogModel: AlertDialogModel = AlertDialogModel(),
     val cameraState: CameraState = CameraState(),
     val isNavigating : Boolean = false,
@@ -35,7 +33,7 @@ data class MappingState(
 
 
     val user: UserItem = UserItem(),
-    val userRescueRequestRespondents: RescueRequestRespondents = RescueRequestRespondents(),
+    val userActiveRescueRequests: ActiveRescueRequests = ActiveRescueRequests(),
     val userRescueTransaction: RescueTransactionItem? = null,
 
     val userLocation: Location? = null,
@@ -53,14 +51,14 @@ data class MappingState(
     val transactionLocation: Location? = null,
     val rescuerETA: String = "",
     val profileUploaded: Boolean = false,
-    val name: String = "-----",
+    val name: String = "", //todo: add placeholder for name in the UI
     val photoUrl: String = "",
     val selectedRescueeMapIcon: MappingBannerModel? = null,
 
 
 
 
-    val nearbyCyclists: User? = null,
+    val nearbyCyclists: NearbyCyclist? = null,
 
 
 

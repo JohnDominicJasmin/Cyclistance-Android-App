@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils
+package com.example.cyclistance.feature_mapping.domain.model
 
 import android.location.Address
 import android.os.Parcelable

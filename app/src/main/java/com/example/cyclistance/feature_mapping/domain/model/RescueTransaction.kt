@@ -6,5 +6,5 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class RescueTransaction(
-    val rescueTransactions: List<RescueTransactionItem> = emptyList()
+    val transactions: List<RescueTransactionItem> = emptyList()
 ):Parcelable

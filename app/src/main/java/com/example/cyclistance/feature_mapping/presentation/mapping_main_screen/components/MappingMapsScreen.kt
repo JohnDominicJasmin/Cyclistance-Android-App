@@ -77,24 +77,25 @@ fun MappingMapsScreen(
         nearbyCyclists?.filter{
             it.userAssistance?.needHelp == true
         }?.forEach { cyclist ->
-            val location = cyclist.location
+            val location = cyclist.location ?: return@forEach
             val description = cyclist.userAssistance?.confirmationDetail?.description
-            val iconImage = description?.getMapIconImageDescription(context)
-                ?.toBitmap(width = 120, height = 120)
+            val iconImage = description?.getMapIconImageDescription(context)?.toBitmap(width = 110, height = 110)
             iconImage?.let { bitmap ->
-                mapboxMap?:return@let
+
                 val icon = IconFactory.getInstance(context).fromBitmap(bitmap)
                 MarkerOptions().apply {
                     setIcon(icon)
-                    position(LatLng(location!!.latitude, location.longitude))
+                    position(LatLng(location.latitude, location.longitude))
                     title = cyclist.id
-                }.also(mapboxMap::addMarker)
+                }.also{
+                    mapboxMap?.addMarker(it)
+                }
             }
         }
     }}
 
 
-    val hasActiveTransaction = remember(hasTransaction, isRescueCancelled){
+    val hasOnGoingTransaction = remember(hasTransaction, isRescueCancelled){
         hasTransaction || isRescueCancelled.not()
     }
 
@@ -103,9 +104,13 @@ fun MappingMapsScreen(
         state.isNavigating || geometry?.isNotEmpty() == true
     }
 
-    LaunchedEffect(key1 = nearbyCyclists, key2= isNavigating, key3 = hasTransaction){
+    val hasOnGoingRescue by remember(isNavigating, hasTransaction){
+        derivedStateOf { isNavigating || hasTransaction }
+    }
 
-        if(isNavigating || hasTransaction){
+    LaunchedEffect(key1 = nearbyCyclists, key2= hasOnGoingRescue, key3 = mapboxMap){
+
+        if(hasOnGoingRescue){
             dismissNearbyCyclistsIcon()
             return@LaunchedEffect
         }
@@ -168,11 +173,11 @@ fun MappingMapsScreen(
 
 
     LaunchedEffect(
-        key1 = hasActiveTransaction,
+        key1 = hasOnGoingTransaction,
         key2 = hasTransactionLocationChanges,
         key3 = clientLocation) {
 
-        if (hasTransactionLocationChanges.not() || hasActiveTransaction.not()) {
+        if (hasTransactionLocationChanges.not() || hasOnGoingTransaction.not()) {
             dismissTransactionLocationIcon()
             return@LaunchedEffect
         }

@@ -4,7 +4,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_U
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUser
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping.domain.model.LiveLocationWSModel
-import com.example.cyclistance.feature_mapping.domain.model.User
+import com.example.cyclistance.feature_mapping.domain.model.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.websockets.WebSocketClient
 import com.google.gson.Gson
 import io.socket.client.Socket
@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class UserWSClient(
     private val socket: Socket
-): WebSocketClient<User, LiveLocationWSModel> {
+): WebSocketClient<NearbyCyclist, LiveLocationWSModel> {
 
 
     override suspend fun broadCastEvent(t: LiveLocationWSModel?) {
@@ -24,7 +24,7 @@ class UserWSClient(
         }
     }
 
-    override suspend fun getResult(): Flow<User> {
+    override suspend fun getResult(): Flow<NearbyCyclist> {
         return callbackFlow {
             val gson = Gson()
             val onNewUsers = Emitter.Listener { response ->

@@ -30,7 +30,8 @@ import com.example.cyclistance.feature_mapping.presentation.common.MappingButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.AddressTextField
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.ButtonDescriptionDetails
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.DropDownBikeList
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.BottomSheetType
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
+
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.theme.Black440
