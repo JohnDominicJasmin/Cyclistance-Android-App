@@ -22,6 +22,7 @@ import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.model.*
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -52,6 +53,7 @@ class MappingViewModel @Inject constructor(
 
 
     init {
+        loadData()
         observeDataChanges()
     }
 
@@ -580,8 +582,7 @@ class MappingViewModel @Inject constructor(
                         route = Route(
                             startingLocation = Location(
                                 latitude = rescuer.location!!.latitude,
-                                longitude = rescuer.location.longitude
-                            ),
+                                longitude = rescuer.location.longitude),
                             destinationLocation = Location(
                                 latitude = user.location!!.latitude,
                                 longitude = user.location.longitude)
@@ -661,8 +662,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun updateTransactionETA(rescuer: UserItem, rescueTransaction: RescueTransactionItem) {
-        val userLocation = state.value.userLocation
-        userLocation ?: return
+        val userLocation = state.value.userLocation  ?: return
 
         val estimatedTimeArrival = rescuer.location?.let {
             getETABetweenTwoPoints(
@@ -826,7 +826,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun NearbyCyclist.getNearbyCyclist() {
-        _state.update { it.copy(nearbyCyclists = this) }
+        _state.update { it.copy(nearbyCyclists = this.apply { users.distinct() }) }
     }
 
     private suspend fun broadCastLocationToTransaction(location: Location) {
