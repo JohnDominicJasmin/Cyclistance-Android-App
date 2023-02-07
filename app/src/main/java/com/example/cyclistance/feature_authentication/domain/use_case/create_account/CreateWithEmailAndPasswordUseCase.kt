@@ -1,14 +1,11 @@
 package com.example.cyclistance.feature_authentication.domain.use_case.create_account
 
-import android.content.Context
-import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.resource_texts.ResourceText
 import com.example.cyclistance.core.utils.validation.InputValidate.isEmailValid
 import com.example.cyclistance.core.utils.validation.InputValidate.isPasswordStrong
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
-import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.hasInternetConnection
 
 class CreateWithEmailAndPasswordUseCase(
     private val repository: AuthRepository) {

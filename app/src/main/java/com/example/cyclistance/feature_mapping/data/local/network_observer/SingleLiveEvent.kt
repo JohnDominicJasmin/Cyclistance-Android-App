@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.data.network_observer
+package com.example.cyclistance.feature_mapping.data.local.network_observer
 
 import androidx.annotation.MainThread
 import androidx.annotation.Nullable

@@ -7,11 +7,11 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
-import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.hasInternetConnection
+import com.example.cyclistance.feature_mapping.data.local.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
-import com.example.cyclistance.feature_mapping.data.websockets.RescueTransactionWSClient
-import com.example.cyclistance.feature_mapping.data.websockets.TransactionLiveLocationWSClient
-import com.example.cyclistance.feature_mapping.data.websockets.UserWSClient
+import com.example.cyclistance.feature_mapping.data.remote.dto.websockets.RescueTransactionWSClient
+import com.example.cyclistance.feature_mapping.data.remote.dto.websockets.TransactionLiveLocationWSClient
+import com.example.cyclistance.feature_mapping.data.remote.dto.websockets.UserWSClient
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.address.GetAddressUseCase

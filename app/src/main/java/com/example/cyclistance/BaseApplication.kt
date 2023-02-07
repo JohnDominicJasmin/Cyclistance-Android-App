@@ -1,7 +1,7 @@
 package com.example.cyclistance
 
 import android.app.Application
-import com.example.cyclistance.feature_mapping.data.network_observer.NetworkConnectivityChecker
+import com.example.cyclistance.feature_mapping.data.local.network_observer.NetworkConnectivityChecker
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 

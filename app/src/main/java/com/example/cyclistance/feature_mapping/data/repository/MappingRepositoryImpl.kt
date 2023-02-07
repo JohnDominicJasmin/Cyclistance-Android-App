@@ -12,7 +12,7 @@ import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getAddress
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getFullAddress
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
-import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.hasInternetConnection
+import com.example.cyclistance.feature_mapping.data.local.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransactionDto
 import com.example.cyclistance.feature_mapping.data.mapper.RouteDirectionMapper.toRouteDirection

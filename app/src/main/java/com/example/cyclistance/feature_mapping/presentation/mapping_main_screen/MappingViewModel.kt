@@ -22,6 +22,7 @@ import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.model.*
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -66,7 +67,7 @@ class MappingViewModel @Inject constructor(
         if (loadDataJob?.isActive == true) return
         loadDataJob = viewModelScope.launch(SupervisorJob()) {
             // TODO: Remove when the backend is ready
-            createMockUpUsers()
+//            createMockUpUsers()
             getNearbyCyclist()
             loadRescueTransaction()
             loadClient()
@@ -1054,6 +1055,7 @@ class MappingViewModel @Inject constructor(
     private suspend inline fun getFullAddress(
         location: Location,
         crossinline onSuccess: suspend () -> Unit) {
+
         runCatching {
             mappingUseCase.getFullAddressUseCase(
                 latitude = location.latitude,

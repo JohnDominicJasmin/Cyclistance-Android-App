@@ -13,7 +13,7 @@ import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
-import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.hasInternetConnection
+import com.example.cyclistance.feature_mapping.data.local.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_mapping.data.repository.dataStore
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
