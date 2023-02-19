@@ -87,7 +87,11 @@ object FormatterUtils {
         rescueRequest?.respondents?.forEach { respondent ->
             val userRespondent = nearbyCyclist.findUser(id = respondent.clientId)
             val distance = location?.let { start ->
+                start.latitude ?: return@forEach
+                start.longitude ?: return@forEach
                 userRespondent.location?.let { end ->
+                    end.latitude ?: return@forEach
+                    end.longitude ?: return@forEach
                     SimpleLocation.calculateDistance(start.latitude, start.longitude, end.latitude, end.longitude)
                 }
             }
@@ -132,6 +136,13 @@ object FormatterUtils {
     Returns distance in meters
      **/
     fun getCalculatedDistance(startingLocation: Location, endLocation: Location): Double {
+        startingLocation.latitude ?: throw RuntimeException("Latitude is null")
+        startingLocation.longitude ?: throw RuntimeException("Longitude is null")
+        endLocation.latitude ?: throw RuntimeException("Latitude is null")
+        endLocation.longitude ?: throw RuntimeException("Longitude is null")
+
+
+
         val start = SimpleLocation.Point(startingLocation.latitude, startingLocation.longitude)
         val end = SimpleLocation.Point(endLocation.latitude, endLocation.longitude)
         return SimpleLocation.calculateDistance(start, end)

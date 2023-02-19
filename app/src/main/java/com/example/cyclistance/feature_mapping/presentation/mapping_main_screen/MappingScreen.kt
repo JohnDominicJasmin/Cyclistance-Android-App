@@ -275,6 +275,8 @@ fun MappingScreen(
                 }
 
                 state.userLocation?.let{
+                    it.latitude ?: return@let
+                    it.longitude ?: return@let
                     val point = LatLng(it.latitude, it.longitude)
                     locateUser(LOCATE_USER_ZOOM_LEVEL, point, DEFAULT_CAMERA_ANIMATION_DURATION)
                 }
@@ -285,6 +287,8 @@ fun MappingScreen(
         val route = state.userRescueTransaction?.route
         val location = route?.destinationLocation
         location?.let{
+            it.latitude ?: return@let
+            it.longitude ?: return@let
             context.openNavigationApp(latitude = it.latitude, longitude = it.longitude)
         }
         Unit
@@ -502,8 +506,10 @@ fun LaunchedEffects(
             return@LaunchedEffect
         }
 
-        startingLocation?:return@LaunchedEffect
-        destinationLocation?:return@LaunchedEffect
+        startingLocation?.longitude?:return@LaunchedEffect
+        startingLocation.latitude ?: return@LaunchedEffect
+        destinationLocation?.longitude?:return@LaunchedEffect
+        destinationLocation.latitude ?: return@LaunchedEffect
 
         mappingViewModel.onEvent(
             event = MappingEvent.ShowRouteDirections(
