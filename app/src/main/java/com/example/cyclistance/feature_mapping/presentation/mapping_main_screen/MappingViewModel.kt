@@ -53,6 +53,7 @@ class MappingViewModel @Inject constructor(
 
 
     init {
+        loadData()
         observeDataChanges()
     }
 
@@ -67,7 +68,7 @@ class MappingViewModel @Inject constructor(
         if (loadDataJob?.isActive == true) return
         loadDataJob = viewModelScope.launch(SupervisorJob()) {
             // TODO: Remove when the backend is ready
-//            createMockUpUsers()
+            createMockUpUsers()
             getNearbyCyclist()
             loadRescueTransaction()
             loadClient()
@@ -581,8 +582,7 @@ class MappingViewModel @Inject constructor(
                         route = Route(
                             startingLocation = Location(
                                 latitude = rescuer.location!!.latitude,
-                                longitude = rescuer.location.longitude
-                            ),
+                                longitude = rescuer.location.longitude),
                             destinationLocation = Location(
                                 latitude = user.location!!.latitude,
                                 longitude = user.location.longitude)
@@ -662,8 +662,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun updateTransactionETA(rescuer: UserItem, rescueTransaction: RescueTransactionItem) {
-        val userLocation = state.value.userLocation
-        userLocation ?: return
+        val userLocation = state.value.userLocation  ?: return
 
         val estimatedTimeArrival = rescuer.location?.let {
             getETABetweenTwoPoints(
@@ -827,7 +826,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun NearbyCyclist.getNearbyCyclist() {
-        _state.update { it.copy(nearbyCyclists = this) }
+        _state.update { it.copy(nearbyCyclists = this.apply { users.distinct() }) }
     }
 
     private suspend fun broadCastLocationToTransaction(location: Location) {
@@ -1050,11 +1049,12 @@ class MappingViewModel @Inject constructor(
 
         }
     }
-
-
     private suspend inline fun getFullAddress(
         location: Location,
         crossinline onSuccess: suspend () -> Unit) {
+
+        location.latitude ?: return
+        location.longitude ?: return
 
         runCatching {
             mappingUseCase.getFullAddressUseCase(
@@ -1068,6 +1068,7 @@ class MappingViewModel @Inject constructor(
             }
         }
     }
+
 
     private suspend inline fun uploadProfile(
         location: Location,
