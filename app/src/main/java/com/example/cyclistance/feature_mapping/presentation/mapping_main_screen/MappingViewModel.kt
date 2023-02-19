@@ -1049,11 +1049,13 @@ class MappingViewModel @Inject constructor(
 
         }
     }
-
-
     private suspend inline fun getFullAddress(
         location: Location,
         crossinline onSuccess: suspend () -> Unit) {
+
+        location.latitude ?: return
+        location.longitude ?: return
+
         runCatching {
             mappingUseCase.getFullAddressUseCase(
                 latitude = location.latitude,
@@ -1066,6 +1068,7 @@ class MappingViewModel @Inject constructor(
             }
         }
     }
+
 
     private suspend inline fun uploadProfile(
         location: Location,

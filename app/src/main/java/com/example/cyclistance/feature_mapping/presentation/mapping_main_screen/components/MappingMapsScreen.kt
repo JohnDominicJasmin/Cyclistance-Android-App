@@ -77,25 +77,26 @@ fun MappingMapsScreen(
         nearbyCyclists?.filter{
             it.userAssistance?.needHelp == true
         }?.forEach { cyclist ->
-            val location = cyclist.location ?: return@forEach
+            val location = cyclist.location
+            val latitude = location?.latitude ?: return@forEach
+            val longitude = location.longitude ?: return@forEach
             val description = cyclist.userAssistance?.confirmationDetail?.description
-            val iconImage = description?.getMapIconImageDescription(context)?.toBitmap(width = 110, height = 110)
+            val iconImage = description?.getMapIconImageDescription(context)
+                ?.toBitmap(width = 120, height = 120)
             iconImage?.let { bitmap ->
-
+                mapboxMap?:return@let
                 val icon = IconFactory.getInstance(context).fromBitmap(bitmap)
                 MarkerOptions().apply {
                     setIcon(icon)
-                    position(LatLng(location.latitude, location.longitude))
+                    position(LatLng(latitude, longitude))
                     title = cyclist.id
-                }.also{
-                    mapboxMap?.addMarker(it)
-                }
+                }.also(mapboxMap::addMarker)
             }
         }
     }}
 
 
-    val hasOnGoingTransaction = remember(hasTransaction, isRescueCancelled){
+    val hasActiveTransaction = remember(hasTransaction, isRescueCancelled){
         hasTransaction || isRescueCancelled.not()
     }
 
@@ -104,13 +105,9 @@ fun MappingMapsScreen(
         state.isNavigating || geometry?.isNotEmpty() == true
     }
 
-    val hasOnGoingRescue by remember(isNavigating, hasTransaction){
-        derivedStateOf { isNavigating || hasTransaction }
-    }
+    LaunchedEffect(key1 = nearbyCyclists, key2= isNavigating, key3 = hasTransaction){
 
-    LaunchedEffect(key1 = nearbyCyclists, key2= hasOnGoingRescue, key3 = mapboxMap){
-
-        if(hasOnGoingRescue){
+        if(isNavigating || hasTransaction){
             dismissNearbyCyclistsIcon()
             return@LaunchedEffect
         }
@@ -151,7 +148,6 @@ fun MappingMapsScreen(
         }
     }}
 
-
     val showTransactionLocationIcon = remember(mapboxMap, state.user){{ location: Location ->
         dismissTransactionLocationIcon()
         val role = state.user.transaction?.role
@@ -161,23 +157,24 @@ fun MappingMapsScreen(
             R.drawable.ic_map_rescuee
         }
         mapboxMap?.getStyle { style ->
+            val longitude = location.longitude ?: return@getStyle
+            val latitude = location.latitude ?: return@getStyle
             style.removeImage(TRANSACTION_ICON_ID)
             ContextCompat.getDrawable(context, mapIcon)?.toBitmap(width = 100, height = 100)?.let{ iconBitmap ->
                 style.addImage(TRANSACTION_ICON_ID, iconBitmap)
                 val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
-                val feature = Feature.fromGeometry(Point.fromLngLat(location.longitude, location.latitude))
+                val feature = Feature.fromGeometry(Point.fromLngLat(longitude, latitude))
                 geoJsonSource?.setGeoJson(feature)
             }
         }
     }}
 
-
     LaunchedEffect(
-        key1 = hasOnGoingTransaction,
+        key1 = hasActiveTransaction,
         key2 = hasTransactionLocationChanges,
         key3 = clientLocation) {
 
-        if (hasTransactionLocationChanges.not() || hasOnGoingTransaction.not()) {
+        if (hasTransactionLocationChanges.not() || hasActiveTransaction.not()) {
             dismissTransactionLocationIcon()
             return@LaunchedEffect
         }
