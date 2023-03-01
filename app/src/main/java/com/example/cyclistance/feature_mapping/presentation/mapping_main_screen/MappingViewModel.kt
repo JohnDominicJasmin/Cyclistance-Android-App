@@ -935,7 +935,7 @@ class MappingViewModel @Inject constructor(
         if (locationUpdatesJob?.isActive == true) {
             return
         }
-        locationUpdatesJob = viewModelScope.launch {
+        locationUpdatesJob = viewModelScope.launch(SupervisorJob()){
 
             runCatching {
                 mappingUseCase.getUserLocationUseCase().collect { location ->
