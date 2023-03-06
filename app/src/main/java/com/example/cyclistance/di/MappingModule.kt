@@ -18,6 +18,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.address.GetAddres
 import com.example.cyclistance.feature_mapping.domain.use_case.address.SetAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.GetBikeTypeUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.SetBikeTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
@@ -144,6 +145,7 @@ object MappingModule {
             confirmDetailsUseCase = ConfirmDetailsUseCase(repository),
             confirmCancellationUseCase = ConfirmCancellationUseCase(repository),
             getRouteDirectionsUseCase = GetRouteDirectionsUseCase(repository),
+            getCalculatedDistanceUseCase = GetCalculatedDistanceUseCase(repository),
         )
     }
 

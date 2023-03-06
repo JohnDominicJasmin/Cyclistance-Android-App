@@ -42,4 +42,6 @@ interface MappingRepository {
 
 
     suspend fun getRouteDirections(origin: Point, destination: Point): RouteDirection
+    fun getCalculateDistance(startingLocation: Location, destinationLocation: Location):Double
+
 }

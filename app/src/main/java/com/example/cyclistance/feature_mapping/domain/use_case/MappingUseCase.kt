@@ -4,6 +4,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.address.GetAddres
 import com.example.cyclistance.feature_mapping.domain.use_case.address.SetAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.GetBikeTypeUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.SetBikeTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
@@ -53,6 +54,6 @@ data class MappingUseCase(
     val getRescueTransactionUpdatesUseCase: GetRescueTransactionUpdatesUseCase,
     val getUserUpdatesUseCase: GetUserUpdatesUseCase,
     val getTransactionLocationUpdatesUseCase: GetTransactionLocationUpdatesUseCase,
-    val getRouteDirectionsUseCase: GetRouteDirectionsUseCase
-
+    val getRouteDirectionsUseCase: GetRouteDirectionsUseCase,
+    val getCalculatedDistanceUseCase: GetCalculatedDistanceUseCase,
     )
