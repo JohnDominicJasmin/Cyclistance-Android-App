@@ -31,7 +31,6 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CancellationReasonScreen(
-    hasInternetConnection: Boolean,
     navController: NavController,
     viewModel: CancellationReasonViewModel = hiltViewModel(),
     cancellationType: String = MappingConstants.SELECTION_RESCUEE_TYPE,

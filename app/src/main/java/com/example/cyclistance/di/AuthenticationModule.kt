@@ -25,7 +25,7 @@ import javax.inject.Singleton
 
     @Provides
     @Singleton
-    fun provideFirebaseAuth(@ApplicationContext context: Context):FirebaseAuth{
+    fun provideFirebaseAuth():FirebaseAuth{
         return FirebaseAuth.getInstance().apply{
             if(BuildConfig.DEBUG){
                 useEmulator("10.0.2.2", 9099)
