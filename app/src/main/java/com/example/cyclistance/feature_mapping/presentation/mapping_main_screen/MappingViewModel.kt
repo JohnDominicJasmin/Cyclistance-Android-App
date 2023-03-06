@@ -10,12 +10,10 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_MET
 import com.example.cyclistance.core.utils.validation.FormatterUtils.findRescueTransaction
 import com.example.cyclistance.core.utils.validation.FormatterUtils.findUser
 import com.example.cyclistance.core.utils.validation.FormatterUtils.formatToDistanceKm
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedDistance
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedETA
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getETABetweenTwoPoints
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getUserRescueRespondents
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
+import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toCardModel
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Route
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Status
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.*
@@ -29,6 +27,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import okhttp3.internal.toImmutableList
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -338,14 +337,15 @@ class MappingViewModel @Inject constructor(
                 return@launch
             }
 
-            val distance = getCalculatedDistance(
+            val distance = mappingUseCase.getCalculatedDistanceUseCase(
                 startingLocation = Location(
                     latitude = userLocation.latitude,
                     longitude = userLocation.longitude
-                ), endLocation = Location(
+                ), destinationLocation = Location(
                     latitude = selectedRescueeLocation!!.latitude,
                     longitude = selectedRescueeLocation.longitude
-                ))
+                )
+            )
 
             val timeRemaining = getCalculatedETA(distance)
 
@@ -480,9 +480,11 @@ class MappingViewModel @Inject constructor(
 
             rescueTransaction?.let { transaction ->
 
-                val distance = getCalculatedDistance(
+                val distance = mappingUseCase.getCalculatedDistanceUseCase(
                     startingLocation = Location(latitude, longitude),
-                    endLocation = Location(transaction.latitude, transaction.longitude)).toInt()
+                    destinationLocation = Location(transaction.latitude, transaction.longitude)
+                ).toInt()
+
 
                 if (distance <= NEAREST_METERS) {
                     updateRoleBottomSheet(role)
@@ -526,6 +528,15 @@ class MappingViewModel @Inject constructor(
                 latitude = this.latitude,
                 longitude = this.longitude), endLocation = userLocation)
         _state.update { it.copy(rescuerETA = eta) }
+    }
+
+    private fun getETABetweenTwoPoints(startingLocation: Location, endLocation: Location): String {
+      val distance = mappingUseCase.getCalculatedDistanceUseCase(
+          startingLocation = startingLocation,
+          destinationLocation = endLocation
+      )
+
+      return getCalculatedETA(distanceMeters = distance)
     }
 
 
@@ -825,6 +836,44 @@ class MappingViewModel @Inject constructor(
     }
 
 
+    private fun UserItem.getUserRescueRespondents(nearbyCyclist: NearbyCyclist): List<CardModel> {
+        val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
+
+        rescueRequest?.respondents?.forEach { respondent ->
+            val userRespondent = nearbyCyclist.findUser(id = respondent.clientId)
+            val distance = location?.let { start ->
+                start.latitude ?: return@forEach
+                start.longitude ?: return@forEach
+                userRespondent.location?.let { end ->
+                    end.latitude ?: return@forEach
+                    end.longitude ?: return@forEach
+                    mappingUseCase.getCalculatedDistanceUseCase(
+                        startingLocation = Location(
+                            latitude = start.latitude,
+                            longitude = start.longitude
+                        ),
+                        destinationLocation = Location(
+                            latitude = end.latitude,
+                            longitude = end.longitude
+                        )
+                    )
+                }
+            }
+
+            distance?.let {
+                val formattedETA = getCalculatedETA(distanceMeters = distance)
+                rescueRespondentsSnapShot.add(
+                    element = userRespondent.toCardModel(
+                        distance = distance.formatToDistanceKm(),
+                        eta = formattedETA))
+            }
+        }
+
+        return rescueRespondentsSnapShot.distinct().toImmutableList().also {
+            rescueRespondentsSnapShot.clear()
+        }
+    }
+
     private fun NearbyCyclist.getNearbyCyclist() {
         _state.update { it.copy(nearbyCyclists = this.apply { users.distinct() }) }
     }
@@ -1063,7 +1112,7 @@ class MappingViewModel @Inject constructor(
         }.onSuccess { fullAddress ->
             uploadProfile(location = location, fullAddress = fullAddress, onSuccess = onSuccess)
         }.onFailure { exception ->
-            if (exception is MappingExceptions.NoAddressFound) {
+            if (exception is MappingExceptions.AddressException) {
                 _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = exception.message!!))
             }
         }

@@ -10,7 +10,7 @@ val userItems = listOf(
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
         contactNumber = "1234567890",
-        id = "6mhYPbKq6XAhzX0WJY28q10D7f0r",
+        id = "V45BYRCwjSzb9nljb6aZ2W82VKi5",
         location = Location(latitude = 14.0874, longitude = 121.1517),
         name = "John Mark",
         profilePictureUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQK9gqFKRn28xKHD1CAbEevdzsLmsv5yQkGnQ&usqp=CAU",

@@ -2,62 +2,17 @@ package com.example.cyclistance.core.utils.validation
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.location.Address
-import android.location.Geocoder
-import android.os.Build
-import androidx.annotation.WorkerThread
 import androidx.appcompat.content.res.AppCompatResources
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toCardModel
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
-import com.example.cyclistance.feature_mapping.domain.model.*
-import im.delight.android.location.SimpleLocation
-import okhttp3.internal.toImmutableList
-import timber.log.Timber
-import java.io.IOException
+import com.example.cyclistance.feature_mapping.domain.model.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.UserItem
 
 object FormatterUtils {
 
-    @Suppress("DEPRECATION")
-    @WorkerThread
-    inline fun Geocoder.getAddress(
-        latitude: Double,
-        longitude: Double,
-        crossinline onCallbackAddress: (Address?) -> Unit) {
 
-        try {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                getFromLocation(
-                    latitude, longitude, 1,
-                ) { addresses ->
-                    onCallbackAddress(addresses.lastOrNull())
-                }
-            } else {
-                onCallbackAddress(getFromLocation(latitude, longitude, 1)?.lastOrNull())
-            }
-
-        } catch (e: IOException) {
-            Timber.e("GET ADDRESS: ${e.message}")
-        }
-    }
-
-
-    fun Address.getFullAddress(): String {
-        val subThoroughfare = if (subThoroughfare != "null" && subThoroughfare != null) "$subThoroughfare " else ""
-        val thoroughfare = if (thoroughfare != "null" && thoroughfare != null) "$thoroughfare., " else ""
-        val subAdminArea = if (subAdminArea != "null" && subAdminArea != null) subAdminArea else ""
-
-        val locality = if (locality != "null" && locality != null) "$locality, " else ""
-        val formattedLocality = if(subAdminArea.isNotEmpty()) locality else locality.replace(
-            oldChar = ',',
-            newChar = ' ',
-            ignoreCase = true
-        )
-
-        return "$subThoroughfare$thoroughfare$formattedLocality$subAdminArea"
-    }
     fun Double.formatToDistanceKm(): String {
 
         return if(this <= 0.0) {
@@ -79,38 +34,8 @@ object FormatterUtils {
         return this.users.find {
             it.id == id
         } ?: UserItem()
-
     }
-    fun UserItem.getUserRescueRespondents(nearbyCyclist: NearbyCyclist): List<CardModel> {
-        val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
 
-        rescueRequest?.respondents?.forEach { respondent ->
-            val userRespondent = nearbyCyclist.findUser(id = respondent.clientId)
-            val distance = location?.let { start ->
-                start.latitude ?: return@forEach
-                start.longitude ?: return@forEach
-                userRespondent.location?.let { end ->
-                    end.latitude ?: return@forEach
-                    end.longitude ?: return@forEach
-                    SimpleLocation.calculateDistance(start.latitude, start.longitude, end.latitude, end.longitude)
-                }
-            }
-
-            distance?.let{
-                val formattedETA = getCalculatedETA(distanceMeters = distance)
-                rescueRespondentsSnapShot.add(element = userRespondent.toCardModel(distance = distance.formatToDistanceKm(), eta = formattedETA))
-            }
-
-        }
-
-
-
-        return rescueRespondentsSnapShot.distinct().toImmutableList().also{
-            rescueRespondentsSnapShot.clear()
-        }
-
-
-    }
     fun getCalculatedETA(
         distanceMeters: Double,
         averageSpeedKm: Double = MappingConstants.DEFAULT_BIKE_AVERAGE_SPEED_KM): String {
@@ -127,38 +52,6 @@ object FormatterUtils {
         return "$hourFormat$minsFormat"
     }
 
-    fun getETABetweenTwoPoints(startingLocation: Location, endLocation: Location): String {
-        val distance = getCalculatedDistance(startingLocation, endLocation)
-        return getCalculatedETA(distance)
-    }
-
-    /**
-    Returns distance in meters
-     **/
-    fun getCalculatedDistance(startingLocation: Location, endLocation: Location): Double {
-        startingLocation.latitude ?: throw RuntimeException("Latitude is null")
-        startingLocation.longitude ?: throw RuntimeException("Longitude is null")
-        endLocation.latitude ?: throw RuntimeException("Latitude is null")
-        endLocation.longitude ?: throw RuntimeException("Longitude is null")
-
-
-
-        val start = SimpleLocation.Point(startingLocation.latitude, startingLocation.longitude)
-        val end = SimpleLocation.Point(endLocation.latitude, endLocation.longitude)
-        return SimpleLocation.calculateDistance(start, end)
-    }
-
-
-    fun getCalculatedDistance(
-        startLatitude: Double,
-        startLongitude: Double,
-        endLatitude: Double,
-        endLongitude: Double): Double {
-        return SimpleLocation.calculateDistance(
-            SimpleLocation.Point(startLatitude, startLongitude),
-            SimpleLocation.Point(endLatitude, endLongitude)
-        )
-    }
 
     fun String.getMapIconImageDescription(context: Context): Drawable? {
       this.getMapIconImage()?.let { image ->
