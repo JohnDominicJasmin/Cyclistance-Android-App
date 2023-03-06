@@ -10,12 +10,10 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_MET
 import com.example.cyclistance.core.utils.validation.FormatterUtils.findRescueTransaction
 import com.example.cyclistance.core.utils.validation.FormatterUtils.findUser
 import com.example.cyclistance.core.utils.validation.FormatterUtils.formatToDistanceKm
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedDistance
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedETA
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getETABetweenTwoPoints
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getUserRescueRespondents
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
+import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toCardModel
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Route
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Status
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.*
@@ -29,6 +27,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
+import okhttp3.internal.toImmutableList
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -68,29 +67,29 @@ class MappingViewModel @Inject constructor(
         if (loadDataJob?.isActive == true) return
         loadDataJob = viewModelScope.launch(SupervisorJob()) {
             // TODO: Remove when the backend is ready
-//            createMockUpUsers()
+            createMockUpUsers()
             getNearbyCyclist()
             loadRescueTransaction()
-            loadUserRoles()
+            loadClient()
         }
 
     }
 
-    private suspend fun loadUserRoles() {
+    private suspend fun loadClient() {
         coroutineScope {
             val user = state.value.nearbyCyclists
-            user?.updateRoles()
+            user?.updateClient()
         }
     }
 
-    private fun NearbyCyclist.updateRoles(rescueTransactionItem: RescueTransactionItem? = null) {
+    private fun NearbyCyclist.updateClient(rescueTransactionItem: RescueTransactionItem? = null) {
 
         val rescueTransaction = rescueTransactionItem ?: state.value.userRescueTransaction
         val role = state.value.user.transaction?.role
 
         if (role == Role.RESCUEE.name.lowercase()) {
             rescueTransaction?.rescuerId?.let { rescuerId ->
-                _state.update { it.copy(rescuer = this.findUser(rescuerId), rescuee = null) }
+                _state.update { it.copy(rescuer = findUser(rescuerId), rescuee = null) }
             }
             return
         }
@@ -101,9 +100,9 @@ class MappingViewModel @Inject constructor(
 
     }
 
-    private fun updateRoles(rescueTransactionItem: RescueTransactionItem) {
+    private fun updateClient(rescueTransactionItem: RescueTransactionItem) {
         val nearbyCyclist = state.value.nearbyCyclists
-        nearbyCyclist?.updateRoles(rescueTransactionItem)
+        nearbyCyclist?.updateClient(rescueTransactionItem)
     }
 
     private suspend fun getNearbyCyclist() {
@@ -338,39 +337,35 @@ class MappingViewModel @Inject constructor(
                 return@launch
             }
 
-            runCatching {
+            val distance = mappingUseCase.getCalculatedDistanceUseCase(
+                startingLocation = Location(
+                    latitude = userLocation.latitude,
+                    longitude = userLocation.longitude
+                ), destinationLocation = Location(
+                    latitude = selectedRescueeLocation!!.latitude,
+                    longitude = selectedRescueeLocation.longitude
+                )
+            )
 
-                val distance = getCalculatedDistance(
-                    startingLocation = Location(
-                        latitude = userLocation.latitude,
-                        longitude = userLocation.longitude
-                    ), endLocation = Location(
-                        latitude = selectedRescueeLocation!!.latitude,
-                        longitude = selectedRescueeLocation.longitude
-                    ))
+            val timeRemaining = getCalculatedETA(distance)
 
-                val timeRemaining = getCalculatedETA(distance)
-
-                _state.update {
-                    it.copy(
-                        selectedRescueeMapIcon = MappingBannerModel(
-                            userId = selectedRescuee.id!!,
-                            userProfileImage = selectedRescuee.profilePictureUrl
-                                               ?: IMAGE_PLACEHOLDER_URL,
-                            name = selectedRescuee.name ?: "name unavailable",
-                            issue = confirmationDetail?.description ?: "",
-                            bikeType = confirmationDetail?.bikeType ?: "",
-                            address = selectedRescuee.address ?: "",
-                            message = confirmationDetail?.message ?: "",
-                            distanceRemaining = distance.formatToDistanceKm(),
-                            timeRemaining = timeRemaining))
-                }
-                hideRequestHelpButton()
-                showRespondToHelpButton()
-
-            }.onFailure {
-                Timber.e("Error selecting rescuee map icon: ${it.message}")
+            _state.update {
+                it.copy(
+                    selectedRescueeMapIcon = MappingBannerModel(
+                        userId = selectedRescuee.id!!,
+                        userProfileImage = selectedRescuee.profilePictureUrl
+                                           ?: IMAGE_PLACEHOLDER_URL,
+                        name = selectedRescuee.name ?: "name unavailable",
+                        issue = confirmationDetail?.description ?: "",
+                        bikeType = confirmationDetail?.bikeType ?: "",
+                        address = selectedRescuee.address ?: "",
+                        message = confirmationDetail?.message ?: "",
+                        distanceRemaining = distance.formatToDistanceKm(),
+                        timeRemaining = timeRemaining))
             }
+            hideRequestHelpButton()
+            showRespondToHelpButton()
+
         }
     }
 
@@ -485,9 +480,11 @@ class MappingViewModel @Inject constructor(
 
             rescueTransaction?.let { transaction ->
 
-                val distance = getCalculatedDistance(
+                val distance = mappingUseCase.getCalculatedDistanceUseCase(
                     startingLocation = Location(latitude, longitude),
-                    endLocation = Location(transaction.latitude, transaction.longitude)).toInt()
+                    destinationLocation = Location(transaction.latitude, transaction.longitude)
+                ).toInt()
+
 
                 if (distance <= NEAREST_METERS) {
                     updateRoleBottomSheet(role)
@@ -533,44 +530,48 @@ class MappingViewModel @Inject constructor(
         _state.update { it.copy(rescuerETA = eta) }
     }
 
+    private fun getETABetweenTwoPoints(startingLocation: Location, endLocation: Location): String {
+      val distance = mappingUseCase.getCalculatedDistanceUseCase(
+          startingLocation = startingLocation,
+          destinationLocation = endLocation
+      )
 
-    private suspend inline fun checkAvailability(
+      return getCalculatedETA(distanceMeters = distance)
+    }
+
+
+    private suspend inline fun checkCurrentTransactions(
         user: UserItem,
         rescuer: UserItem,
-        crossinline isAvailable: suspend () -> Unit,
-    ) {
+        crossinline noCurrentTransaction: suspend () -> Unit) {
 
-        val rescuerLocationAvailable =
-            rescuer.location?.latitude != null && rescuer.location.longitude != null
+        val userHasCurrentTransaction =
+            (user.transaction ?: Transaction()).transactionId.isNotEmpty()
 
-        if (!rescuerLocationAvailable) {
+        val rescuerHasCurrentTransaction =
+            (rescuer.transaction ?: Transaction()).transactionId.isNotEmpty()
+
+
+        if (rescuer.location == null) {
             _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Can't reach Rescuer"))
             return
         }
 
-        val userLocation = state.value.userLocation
-        val userLocationAvailable = userLocation?.latitude != null && userLocation.longitude != null
-
-        if (!userLocationAvailable) {
+        if (user.location == null) {
             _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Location not found"))
             return
         }
-
-        val userHasCurrentTransaction = (user.transaction ?: Transaction()).transactionId.isNotEmpty()
 
         if (userHasCurrentTransaction) {
             rescueeCannotRequest()
             return
         }
 
-        val rescuerHasCurrentTransaction = (rescuer.transaction ?: Transaction()).transactionId.isNotEmpty()
-
         if (rescuerHasCurrentTransaction) {
             rescuerCannotRequest()
             return
         }
-
-        isAvailable()
+        noCurrentTransaction()
     }
 
     private fun acceptRescueRequest(id: String) {
@@ -580,7 +581,7 @@ class MappingViewModel @Inject constructor(
             val transactionId = getTransactionId(rescuer)
             val user = state.value.user
 
-            checkAvailability(user = user, rescuer = rescuer, isAvailable = {
+            checkCurrentTransactions(user = user, rescuer = rescuer) {
 
                 runCatching {
                     startLoading()
@@ -612,8 +613,10 @@ class MappingViewModel @Inject constructor(
                     finishLoading()
                     exception.handleException()
                 }
+
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-            })
+
+            }
         }
     }
 
@@ -802,8 +805,8 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun updateLocation(location: Location) {
-        val latitude = location.latitude ?: return
-        val longitude = location.longitude ?: return
+        val latitude = location.latitude.takeIf { it != 0.0 } ?: return
+        val longitude = location.longitude.takeIf { it != 0.0 } ?: return
         _state.update { state ->
             state.copy(
                 userLocation = Location(
@@ -832,6 +835,44 @@ class MappingViewModel @Inject constructor(
 
     }
 
+
+    private fun UserItem.getUserRescueRespondents(nearbyCyclist: NearbyCyclist): List<CardModel> {
+        val rescueRespondentsSnapShot: MutableList<CardModel> = mutableListOf()
+
+        rescueRequest?.respondents?.forEach { respondent ->
+            val userRespondent = nearbyCyclist.findUser(id = respondent.clientId)
+            val distance = location?.let { start ->
+                start.latitude ?: return@forEach
+                start.longitude ?: return@forEach
+                userRespondent.location?.let { end ->
+                    end.latitude ?: return@forEach
+                    end.longitude ?: return@forEach
+                    mappingUseCase.getCalculatedDistanceUseCase(
+                        startingLocation = Location(
+                            latitude = start.latitude,
+                            longitude = start.longitude
+                        ),
+                        destinationLocation = Location(
+                            latitude = end.latitude,
+                            longitude = end.longitude
+                        )
+                    )
+                }
+            }
+
+            distance?.let {
+                val formattedETA = getCalculatedETA(distanceMeters = distance)
+                rescueRespondentsSnapShot.add(
+                    element = userRespondent.toCardModel(
+                        distance = distance.formatToDistanceKm(),
+                        eta = formattedETA))
+            }
+        }
+
+        return rescueRespondentsSnapShot.distinct().toImmutableList().also {
+            rescueRespondentsSnapShot.clear()
+        }
+    }
 
     private fun NearbyCyclist.getNearbyCyclist() {
         _state.update { it.copy(nearbyCyclists = this.apply { users.distinct() }) }
@@ -926,7 +967,7 @@ class MappingViewModel @Inject constructor(
     private fun RescueTransaction.updateRescueClient() {
         getUserRescueTransaction(this) { rescueTransaction ->
             rescueTransaction?.let { transaction ->
-                updateRoles(transaction)
+                updateClient(transaction)
             }
         }
     }
@@ -943,7 +984,7 @@ class MappingViewModel @Inject constructor(
         if (locationUpdatesJob?.isActive == true) {
             return
         }
-        locationUpdatesJob = viewModelScope.launch(SupervisorJob()){
+        locationUpdatesJob = viewModelScope.launch {
 
             runCatching {
                 mappingUseCase.getUserLocationUseCase().collect { location ->
@@ -966,18 +1007,19 @@ class MappingViewModel @Inject constructor(
         if (getUsersUpdatesJob?.isActive == true) {
             return
         }
-        runCatching {
-            getUsersUpdatesJob = viewModelScope.launch(SupervisorJob()) {
+
+        getUsersUpdatesJob = viewModelScope.launch(SupervisorJob()) {
+            runCatching {
                 mappingUseCase.getUserUpdatesUseCase().collect {
                     it.getUser()
                     it.getNearbyCyclist()
-                    it.updateRoles()
+                    it.updateClient()
                 }
+            }.onSuccess {
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+            }.onFailure {
+                Timber.e("ERROR GETTING USERS: ${it.message}")
             }
-        }.onSuccess {
-            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-        }.onFailure {
-            Timber.e("ERROR GETTING USERS: ${it.message}")
         }
     }
 
@@ -1070,7 +1112,7 @@ class MappingViewModel @Inject constructor(
         }.onSuccess { fullAddress ->
             uploadProfile(location = location, fullAddress = fullAddress, onSuccess = onSuccess)
         }.onFailure { exception ->
-            if (exception is MappingExceptions.NoAddressFound) {
+            if (exception is MappingExceptions.AddressException) {
                 _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = exception.message!!))
             }
         }

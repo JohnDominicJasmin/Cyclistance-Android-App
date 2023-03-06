@@ -1,7 +1,10 @@
 package com.example.cyclistance.feature_mapping.data.repository
 
 import android.content.Context
+import android.location.Address
 import android.location.Geocoder
+import android.os.Build
+import androidx.annotation.WorkerThread
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -9,8 +12,6 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_KEY
 import com.example.cyclistance.core.utils.extension.editData
 import com.example.cyclistance.core.utils.extension.getData
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getAddress
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getFullAddress
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping.data.local.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransaction
@@ -30,6 +31,7 @@ import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.optimization.v1.MapboxOptimization
 import com.mapbox.api.optimization.v1.models.OptimizationResponse
 import com.mapbox.geojson.Point
+import im.delight.android.location.SimpleLocation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -67,11 +69,68 @@ class MappingRepositoryImpl(
                         continuation.resume(address.getFullAddress())
                         return@getAddress
                     }
-                    continuation.resumeWithException(MappingExceptions.NoAddressFound())
+                    continuation.resumeWithException(MappingExceptions.AddressException("Searching for GPS"))
                 }
             }
         }
     }
+
+     @Suppress("DEPRECATION")
+    @WorkerThread
+    private inline fun Geocoder.getAddress(
+        latitude: Double,
+        longitude: Double,
+        crossinline onCallbackAddress: (Address?) -> Unit) {
+
+        try {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                getFromLocation(
+                    latitude, longitude, 1,
+                ) { addresses ->
+                    onCallbackAddress(addresses.lastOrNull())
+                }
+            } else {
+                onCallbackAddress(getFromLocation(latitude, longitude, 1)?.lastOrNull())
+            }
+
+        } catch (e: IOException) {
+            Timber.e("GET ADDRESS: ${e.message}")
+        }
+    }
+
+    override fun getCalculateDistance(
+        startingLocation: Location,
+        destinationLocation: Location,
+    ): Double {
+
+        startingLocation.latitude ?: throw MappingExceptions.LocationException()
+        startingLocation.longitude ?: throw MappingExceptions.LocationException()
+        destinationLocation.latitude ?: throw MappingExceptions.LocationException()
+        destinationLocation.longitude ?: throw MappingExceptions.LocationException()
+
+        return SimpleLocation.calculateDistance(
+            startingLocation.latitude,
+            startingLocation.longitude,
+            destinationLocation.latitude,
+            destinationLocation.longitude)
+    }
+
+    private fun Address.getFullAddress(): String {
+        val subThoroughfare = if (subThoroughfare != "null" && subThoroughfare != null) "$subThoroughfare " else ""
+        val thoroughfare = if (thoroughfare != "null" && thoroughfare != null) "$thoroughfare., " else ""
+        val subAdminArea = if (subAdminArea != "null" && subAdminArea != null) subAdminArea else ""
+
+        val locality = if (locality != "null" && locality != null) "$locality, " else ""
+        val formattedLocality = if(subAdminArea.isNotEmpty()) locality else locality.replace(
+            oldChar = ',',
+            newChar = ' ',
+            ignoreCase = true
+        )
+
+        return "$subThoroughfare$thoroughfare$formattedLocality$subAdminArea"
+    }
+
 
     override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {
 
