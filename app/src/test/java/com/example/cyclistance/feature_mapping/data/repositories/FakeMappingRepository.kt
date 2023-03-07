@@ -1,119 +1,50 @@
 package com.example.cyclistance.feature_mapping.data.repositories
 
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Route
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Status
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.*
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Respondent
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.model.*
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.mapbox.geojson.Point
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flow
 
-class FakeMappingRepository: MappingRepository {
-
-
-    private val users = mutableListOf(
-        UserItem(
-            address = "Manila, Quiapo",
-            contactNumber = "09123456789",
-            id = "1",
-            location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512),
-            name = "Andres",
-            profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
-            rescueRequest = RescueRequest(
-                respondents = listOf(
-                    Respondent(clientId = "2"),
-                    Respondent(clientId = "3"))
-            ),
-            transaction = Transaction(role = "rescuee", transactionId = "12345"),
-            userAssistance = UserAssistance(
-                confirmationDetail = ConfirmationDetail(
-                    bikeType = "road-bike",
-                    description = "Sample description",
-                    message = "I need help",
-                ),
-                needHelp = true,
-            ),
-
-            ),
-        UserItem(
-            address = "Manila, Quiapo",
-            contactNumber = "09123456789",
-            id = "2",
-            location = Location(latitude = 14.083527714609879, longitude = 121.15211095078145),
-            name = "Andres",
-            profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
-            rescueRequest = RescueRequest(
-            ),
-            transaction = Transaction(role = "rescuee", transactionId = "12345"),
-            userAssistance = UserAssistance(
-                confirmationDetail = ConfirmationDetail(
-                    bikeType = "road-bike",
-                    description = "Sample description",
-                    message = "I need help",
-                ),
-                needHelp = true,
-            ),
-
-            ),
-        UserItem(
-            address = "Manila, Quiapo",
-            contactNumber = "09123456789",
-            id = "3",
-            location = Location(latitude = 14.082614567282977, longitude = 121.15017623540186),
-            name = "Andres",
-            profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
-            rescueRequest = RescueRequest(),
-            transaction = Transaction(role = "rescuee", transactionId = "12345"),
-            userAssistance = UserAssistance(
-                confirmationDetail = ConfirmationDetail(
-                    bikeType = "road-bike",
-                    description = "Sample description",
-                    message = "I need help",
-                ),
-                needHelp = true,
-            ))
-
-        )
+class FakeMappingRepository : MappingRepository {
 
 
-    private val rescueTransactions = listOf(
-        RescueTransactionItem(
-            id = "12345",
-            rescueeId = "1",
-            rescuerId = "2",
-            status = Status(ongoing = true, started = true),
-            route = Route(
-                startingLocation = Location(latitude = 14.599512, longitude = 120.984222),
-                destinationLocation = Location(latitude = 14.599512, longitude = 120.984222),
-            ),
-        )
-    )
+    companion object {
 
-    private val bikeType = MutableStateFlow("")
-    private val address = MutableStateFlow("")
-    private val location = MutableStateFlow(Location(latitude = 14.0835, longitude = 121.1476))
-    private val nearbyCyclist = MutableStateFlow(NearbyCyclist(users))
-    private val rescueTransaction = MutableStateFlow(RescueTransaction())
-    private val liveLocation = MutableStateFlow(LiveLocationWSModel())
 
-    private var shouldReturnNetworkError = false
+        val bikeType = MutableStateFlow("")
+        val address = MutableStateFlow("")
+        var location = Location()
 
-    fun shouldReturnNetworkError(value: Boolean){
-        shouldReturnNetworkError = value
+        val nearbyCyclist = MutableStateFlow(NearbyCyclist())
+        val users = nearbyCyclist.value.users.toMutableList()
+        val rescueTransaction = MutableStateFlow(RescueTransaction())
+        val liveLocation = MutableStateFlow(LiveLocationWSModel())
+        var shouldReturnNetworkError = false
+        var calculatedDistance = 0.0
+    }
+
+
+    override fun getCalculateDistance(
+        startingLocation: Location,
+        destinationLocation: Location,
+    ): Double {
+        return calculatedDistance
     }
 
     override suspend fun getUserById(userId: String): UserItem {
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
         return users.find { it.id == userId } ?: throw MappingExceptions.UserException()
     }
 
     override suspend fun getUsers(): NearbyCyclist {
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
         return NearbyCyclist(users)
@@ -121,7 +52,7 @@ class FakeMappingRepository: MappingRepository {
 
     override suspend fun createUser(userItem: UserItem) {
 
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
 
@@ -134,11 +65,11 @@ class FakeMappingRepository: MappingRepository {
 
     override suspend fun deleteUser(id: String) {
 
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
 
-        if(users.find { it.id == id } == null) {
+        if (users.find { it.id == id } == null) {
             throw MappingExceptions.UserException()
         }
 
@@ -147,11 +78,9 @@ class FakeMappingRepository: MappingRepository {
     }
 
 
-
-
     override suspend fun deleteRescueRespondent(userId: String, respondentId: String) {
 
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
 
@@ -162,7 +91,7 @@ class FakeMappingRepository: MappingRepository {
 
     override suspend fun addRescueRespondent(userId: String, respondentId: String) {
 
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
 
@@ -173,7 +102,7 @@ class FakeMappingRepository: MappingRepository {
 
     override suspend fun deleteAllRespondents(userId: String) {
 
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
 
@@ -182,43 +111,41 @@ class FakeMappingRepository: MappingRepository {
     }
 
 
-
-
     override suspend fun getRescueTransactionById(transactionId: String): RescueTransactionItem {
 
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
 
-        return rescueTransactions.find { it.id == transactionId }
-                ?: throw MappingExceptions.RescueTransactionException("Rescue transaction not found")
+        return rescueTransaction.value.transactions.find { it.id == transactionId }
+               ?: throw MappingExceptions.RescueTransactionException("Rescue transaction not found")
 
     }
 
     override suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem) {
 
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
 
-        if (rescueTransactions.find { it.id == rescueTransaction.id } != null) {
+        if (Companion.rescueTransaction.value.transactions.find { it.id == rescueTransaction.id } != null) {
             throw MappingExceptions.RescueTransactionException("Rescue transaction already exists")
         }
 
-        rescueTransactions.toMutableList().add(rescueTransaction)
+        Companion.rescueTransaction.value.transactions.toMutableList().add(rescueTransaction)
     }
 
     override suspend fun deleteRescueTransaction(transactionId: String) {
 
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
 
-        if(rescueTransactions.find { it.id == transactionId } == null) {
+        if (rescueTransaction.value.transactions.find { it.id == transactionId } == null) {
             throw MappingExceptions.RescueTransactionException("Rescue transaction not found")
         }
 
-        rescueTransactions.toMutableList().removeIf { it.id == transactionId }
+        rescueTransaction.value.transactions.toMutableList().removeIf { it.id == transactionId }
     }
 
     override suspend fun getFullAddress(latitude: Double, longitude: Double): String {
@@ -226,39 +153,51 @@ class FakeMappingRepository: MappingRepository {
     }
 
     override suspend fun getBikeType(): Flow<String> {
-        return bikeType.asStateFlow()
+        return bikeType
     }
 
     override suspend fun setBikeType(bikeType: String) {
-        this.bikeType.value = bikeType
+        Companion.bikeType.value = bikeType
     }
 
     override suspend fun getAddress(): Flow<String> {
-        return address.asStateFlow()
+        return address
     }
 
     override suspend fun setAddress(address: String) {
-        this.address.value = address
+        Companion.address.value = address
     }
 
     override suspend fun getUserLocation(): Flow<Location> {
-        return location.asStateFlow()
+
+        return flow {
+            emit(location)
+        }
     }
 
     override suspend fun getUserUpdates(): Flow<NearbyCyclist> {
-        return nearbyCyclist.asStateFlow()
+        if(shouldReturnNetworkError){
+            throw MappingExceptions.NetworkException()
+        }
+        return nearbyCyclist
     }
 
     override suspend fun getRescueTransactionUpdates(): Flow<RescueTransaction> {
-        return rescueTransaction.asStateFlow()
+        if (shouldReturnNetworkError) {
+            throw MappingExceptions.NetworkException()
+        }
+        return rescueTransaction
     }
 
     override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {
-        return liveLocation.asStateFlow()
+        if (shouldReturnNetworkError) {
+            throw MappingExceptions.NetworkException()
+        }
+        return liveLocation
     }
 
     override suspend fun broadcastUser(locationModel: LiveLocationWSModel) {
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
 
@@ -268,7 +207,7 @@ class FakeMappingRepository: MappingRepository {
 
     override suspend fun broadcastRescueTransaction() {
 
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
 
@@ -277,19 +216,20 @@ class FakeMappingRepository: MappingRepository {
 
     override suspend fun broadcastLocation(locationModel: LiveLocationWSModel) {
 
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
-
         print("broadcastLocation")
     }
 
     override suspend fun getRouteDirections(origin: Point, destination: Point): RouteDirection {
 
-        if(shouldReturnNetworkError){
+        if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
 
         return RouteDirection(geometry = "test-geometry", duration = 1000.0)
     }
+
+
 }

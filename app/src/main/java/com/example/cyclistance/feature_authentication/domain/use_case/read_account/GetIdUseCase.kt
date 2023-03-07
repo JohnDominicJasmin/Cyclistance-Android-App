@@ -6,6 +6,6 @@ import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptio
 class GetIdUseCase(private val repository: AuthRepository) {
     operator fun invoke():String {
         return repository.getId().takeIf { !it.isNullOrEmpty() }
-               ?: throw MappingExceptions.UserException()
+               ?: throw MappingExceptions.UserException(message = "Id not found!")
     }
 }
