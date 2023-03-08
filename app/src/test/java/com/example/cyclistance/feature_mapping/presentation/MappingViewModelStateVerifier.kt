@@ -1,10 +1,14 @@
 package com.example.cyclistance.feature_mapping.presentation
 
 import app.cash.turbine.test
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_MAP_ZOOM_LEVEL
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
+import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.coroutines.delay
 import org.junit.Assert
 import kotlin.time.Duration.Companion.minutes
@@ -113,7 +117,10 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         mappingViewModel.onEvent(event = MappingEvent.AcceptRescueRequest(id = "2"))
         state.test {
             val transaction = awaitItem().user.transaction
-            Assert.assertTrue("User has current transaction", transaction?.transactionId!!.isNotEmpty())
+            Assert.assertTrue(
+                "User has current transaction",
+                transaction?.transactionId!!.isNotEmpty()
+            )
         }
     }
 
@@ -125,7 +132,10 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         delay(200)
         state.test {
             val transaction = awaitItem().rescueRequestAcceptedUser?.transaction
-            Assert.assertTrue("User has current transaction", transaction?.transactionId!!.isNotEmpty())
+            Assert.assertTrue(
+                "User has current transaction",
+                transaction?.transactionId!!.isNotEmpty()
+            )
         }
     }
 
@@ -141,11 +151,47 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
 
+    suspend fun changeCameraState_cameraStateChanges_returnsTrue():MappingViewModelStateVerifier {
+        mappingViewModel.onEvent(
+            event = MappingEvent.ChangeCameraState(
+                cameraPosition = LatLng(14.000, 14.000,), cameraZoomLevel = 10.0
+            )
+        )
+        state.test {
+            val result = awaitItem().cameraState
+            Assert.assertTrue(result.cameraPosition.latitude != DEFAULT_LATITUDE)
+            Assert.assertTrue(result.cameraPosition.longitude != DEFAULT_LONGITUDE)
+            Assert.assertTrue(result.cameraZoom != DEFAULT_MAP_ZOOM_LEVEL)
+
+        }
+        return this
+    }
 
 
+    suspend fun selectRescueeMapIcon_toastMessage_isShown():MappingViewModelStateVerifier{
+        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingEvent.LoadData)
+        delay(2000)
 
+        event.test(timeout = 1.minutes) {
+            mappingViewModel.onEvent(event = MappingEvent.SelectRescueMapIcon(id = "2"))
+            Assert.assertEquals(MappingUiEvent.ShowToastMessage("Tracking your Location"), awaitItem())
+        }
+        return this
 
+    }
+    suspend fun selectRescueMapIcon_SelectedRescueeMapIconStateUpdated():MappingViewModelStateVerifier{
 
+        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingEvent.LoadData)
+        delay(200)
+        mappingViewModel.onEvent(event = MappingEvent.SelectRescueMapIcon(id = "2"))
+        delay(300)
+        val result = state.value.selectedRescueeMapIcon
+        Assert.assertNotNull(result)
+        return this
+
+    }
 
     suspend fun signOut_SignInScreen_IsShown(): MappingViewModelStateVerifier {
         event.test {
@@ -179,7 +225,8 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         mappingViewModel.onEvent(event = MappingEvent.LoadUserProfile)
         Assert.assertTrue(
             "User Profile Available",
-            state.value.name.isNotEmpty() && state.value.photoUrl.isNotEmpty())
+            state.value.name.isNotEmpty() && state.value.photoUrl.isNotEmpty()
+        )
         return this
     }
 
@@ -187,7 +234,8 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         mappingViewModel.onEvent(event = MappingEvent.LoadUserProfile)
         Assert.assertTrue(
             "User Profile Available",
-            state.value.name.isEmpty() && state.value.photoUrl.isEmpty())
+            state.value.name.isEmpty() && state.value.photoUrl.isEmpty()
+        )
         return this
     }
 

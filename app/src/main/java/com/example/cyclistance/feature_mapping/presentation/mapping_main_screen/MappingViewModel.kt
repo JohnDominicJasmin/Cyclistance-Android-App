@@ -327,21 +327,22 @@ class MappingViewModel @Inject constructor(
 
     private fun selectRescueeMapIcon(id: String) {
         viewModelScope.launch {
+            // TODO: Check if selected the rescuee doesn't exist
             val selectedRescuee = state.value.nearbyCyclists?.findUser(id) ?: return@launch
             val selectedRescueeLocation = selectedRescuee.location
             val confirmationDetail = selectedRescuee.userAssistance?.confirmationDetail
 
             val userLocation = state.value.user.location ?: state.value.userLocation
 
-            if (userLocation == null) {
-                _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Tracking your location"))
+            if (!userLocation.isLocationAvailable()) {
+                _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Tracking your Location"))
                 return@launch
             }
 
             val distance = mappingUseCase.getCalculatedDistanceUseCase(
                 startingLocation = Location(
-                    latitude = userLocation.latitude,
-                    longitude = userLocation.longitude
+                    latitude = userLocation?.latitude,
+                    longitude = userLocation?.longitude
                 ), destinationLocation = Location(
                     latitude = selectedRescueeLocation!!.latitude,
                     longitude = selectedRescueeLocation.longitude
@@ -389,13 +390,17 @@ class MappingViewModel @Inject constructor(
     }
 
 
+
     private fun dismissRescueeBanner() {
-        if (state.value.selectedRescueeMapIcon != null) {
+
+        val isRescueeBannerVisible = state.value.selectedRescueeMapIcon != null
+        if (isRescueeBannerVisible) {
             _state.update { it.copy(selectedRescueeMapIcon = null) }
             hideRespondToHelpButton()
             showRequestHelpButton()
         }
     }
+
 
     private fun dismissRequestAccepted() {
         _state.update { it.copy(isRescueRequestAccepted = false) }

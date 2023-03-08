@@ -37,24 +37,29 @@ class MappingViewModelTest {
         mappingViewModel = MappingViewModel(
             savedStateHandle = SavedStateHandle(),
             authUseCase = testAuthModule.provideTestAuthUseCase(),
-            mappingUseCase = testMappingModule.provideTestMappingUseCase())
+            mappingUseCase = testMappingModule.provideTestMappingUseCase()
+        )
     }
 
     @Test
     fun `1_nearby cyclists available`() = runTest {
-        testMappingModule().nearbyCyclist.value  = NearbyCyclist(
+        testMappingModule().nearbyCyclist.value = NearbyCyclist(
             listOf(
                 UserItem(
                     address = "Manila, Quiapo",
                     contactNumber = "09123456789",
                     id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
-                    location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512),
+                    location = Location(
+                        latitude = 14.084499224680876,
+                        longitude = 121.15170397731512
+                    ),
                     name = "Andres",
                     profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
                     rescueRequest = RescueRequest(
                         respondents = listOf(
                             Respondent(clientId = "2"),
-                            Respondent(clientId = "3"))
+                            Respondent(clientId = "3")
+                        )
                     ),
                     transaction = Transaction(role = "rescuee", transactionId = "12345"),
                     userAssistance = UserAssistance(
@@ -71,7 +76,10 @@ class MappingViewModelTest {
                     address = "Manila, Quiapo",
                     contactNumber = "09123456789",
                     id = "2",
-                    location = Location(latitude = 14.083527714609879, longitude = 121.15211095078145),
+                    location = Location(
+                        latitude = 14.083527714609879,
+                        longitude = 121.15211095078145
+                    ),
                     name = "Andres",
                     profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
                     rescueRequest = RescueRequest(
@@ -85,8 +93,9 @@ class MappingViewModelTest {
                         ),
                         needHelp = true,
                     ),
+                )
             )
-        ))
+        )
         assertThat(mappingViewModel).nearbyCyclistsAvailable()
 
     }
@@ -103,192 +112,418 @@ class MappingViewModelTest {
 
     @Test
     fun `3_request help event, toast message 'Searching for Gps' is shown`() = runTest {
-            testMappingModule().location = Location()
+        testMappingModule().location = Location()
+        assertThat(mappingViewModel)
+            .requestHelp_ToastMessageSearchingGps_IsShown()
+    }
+
+
+    @Test
+    fun `4_request help event then confirm details screen is shown, after hitting request help event again the profile uploaded state should be true`() =
+        runTest {
+            testMappingModule().location = Location(latitude = 14.0835, longitude = 121.1476)
+            testMappingModule().shouldReturnNetworkError = false
+            testMappingModule().users.clear()
+
             assertThat(mappingViewModel)
-                .requestHelp_ToastMessageSearchingGps_IsShown()
+                .requestHelp_ConfirmDetailScreen_IsShown()
+                .requestHelp_profileUploadedState_returnsTrue()
+
+        }
+
+    @Test
+    fun `5_accept rescue request event a toast message 'Can't reach Rescuer' is shown`() =
+        runTest(UnconfinedTestDispatcher()) {
+            testMappingModule().location =
+                Location(latitude = 14.084499224680876, longitude = 121.15170397731512)
+            testMappingModule().users.clear()
+            testMappingModule().nearbyCyclist.value = NearbyCyclist(
+                listOf(
+                    UserItem(
+                        address = "Manila, Quiapo",
+                        contactNumber = "09123456789",
+                        id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
+                        location = Location(
+                            latitude = 14.084499224680876,
+                            longitude = 121.15170397731512
+                        ),
+                        name = "Andres",
+                        profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                        rescueRequest = RescueRequest(
+                            respondents = listOf(
+                                Respondent(clientId = "2"),
+                                Respondent(clientId = "3")
+                            )
+                        ),
+                        transaction = Transaction(role = "rescuee", transactionId = "12345"),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "road-bike",
+                                description = "Sample description",
+                                message = "I need help",
+                            ),
+                            needHelp = true,
+                        ),
+
+                        ),
+                    UserItem(
+                        address = "Manila, Quiapo",
+                        contactNumber = "09123456789",
+                        id = "2",
+                        location = Location(),
+                        name = "Andres",
+                        profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                        rescueRequest = RescueRequest(),
+                        transaction = Transaction(role = "rescuer", transactionId = "12345"),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "road-bike",
+                                description = "Sample description",
+                                message = "I need help",
+                            ),
+                            needHelp = true,
+                        ),
+                    )
+                )
+            )
+
+            assertThat(mappingViewModel).acceptRescueRequest_CantReachRescuer_ToastMessage_IsShown()
+
         }
 
 
-
     @Test
-    fun `4_request help event then confirm details screen is shown, after hitting request help event again the profile uploaded state should be true`() = runTest{
-        testMappingModule().location = Location(latitude = 14.0835, longitude = 121.1476)
-        testMappingModule().shouldReturnNetworkError = false
-        testMappingModule().users.clear()
-
-        assertThat(mappingViewModel)
-            .requestHelp_ConfirmDetailScreen_IsShown()
-            .requestHelp_profileUploadedState_returnsTrue()
-
-    }
-
-    @Test
-    fun `5_accept rescue request event a toast message 'Can't reach Rescuer' is shown`() = runTest(UnconfinedTestDispatcher()) {
-        testMappingModule().location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512)
-        testMappingModule().users.clear()
-        testMappingModule().nearbyCyclist.value = NearbyCyclist(
-            listOf(
-                UserItem(
-                    address = "Manila, Quiapo",
-                    contactNumber = "09123456789",
-                    id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
-                    location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512),
-                    name = "Andres",
-                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
-                    rescueRequest = RescueRequest(
-                        respondents = listOf(
-                            Respondent(clientId = "2"),
-                            Respondent(clientId = "3"))
-                    ),
-                    transaction = Transaction(role = "rescuee", transactionId = "12345"),
-                    userAssistance = UserAssistance(
-                        confirmationDetail = ConfirmationDetail(
-                            bikeType = "road-bike",
-                            description = "Sample description",
-                            message = "I need help",
+    fun `6_accept rescue request event, toast message 'Location not Found' is shown`() =
+        runTest(UnconfinedTestDispatcher()) {
+            testMappingModule().location = Location()
+            testMappingModule().users.clear()
+            testMappingModule().nearbyCyclist.value = NearbyCyclist(
+                listOf(
+                    UserItem(
+                        address = "Manila, Quiapo",
+                        contactNumber = "09123456789",
+                        id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
+                        name = "Andres",
+                        profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                        rescueRequest = RescueRequest(
+                            respondents = listOf(
+                                Respondent(clientId = "2"),
+                                Respondent(clientId = "3")
+                            )
                         ),
-                        needHelp = true,
-                    ),
-
-                    ),
-                UserItem(
-                    address = "Manila, Quiapo",
-                    contactNumber = "09123456789",
-                    id = "2",
-                    location = Location(),
-                    name = "Andres",
-                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
-                    rescueRequest = RescueRequest(),
-                    transaction = Transaction(role = "rescuer", transactionId = "12345"),
-                    userAssistance = UserAssistance(
-                        confirmationDetail = ConfirmationDetail(
-                            bikeType = "road-bike",
-                            description = "Sample description",
-                            message = "I need help",
+                        transaction = Transaction(role = "rescuee", transactionId = "12345"),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "road-bike",
+                                description = "Sample description",
+                                message = "I need help",
+                            ),
+                            needHelp = true,
                         ),
-                        needHelp = true,
-                    ),
+
+                        ),
+                    UserItem(
+                        address = "Manila, Quiapo",
+                        contactNumber = "09123456789",
+                        id = "2",
+                        location = Location(
+                            latitude = 14.084499224680876,
+                            longitude = 121.15170397731512
+                        ),
+                        name = "Andres",
+                        profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                        rescueRequest = RescueRequest(),
+                        transaction = Transaction(role = "rescuer", transactionId = "12345"),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "road-bike",
+                                description = "Sample description",
+                                message = "I need help",
+                            ),
+                            needHelp = true,
+                        ),
+                    )
                 )
-            ))
+            )
 
-        assertThat(mappingViewModel).acceptRescueRequest_CantReachRescuer_ToastMessage_IsShown()
-
-    }
-
-
+            assertThat(mappingViewModel).acceptRescueRequest_LocationNotFound_ToastMessage_IsShown()
+        }
 
 
     @Test
-    fun `6_accept rescue request event, toast message 'Location not Found' is shown`() = runTest(UnconfinedTestDispatcher()){
-        testMappingModule().location = Location()
-        testMappingModule().users.clear()
-        testMappingModule().nearbyCyclist.value = NearbyCyclist(
-            listOf(
-                UserItem(
-                    address = "Manila, Quiapo",
-                    contactNumber = "09123456789",
-                    id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
-                    name = "Andres",
-                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
-                    rescueRequest = RescueRequest(
-                        respondents = listOf(
-                            Respondent(clientId = "2"),
-                            Respondent(clientId = "3"))
-                    ),
-                    transaction = Transaction(role = "rescuee", transactionId = "12345"),
-                    userAssistance = UserAssistance(
-                        confirmationDetail = ConfirmationDetail(
-                            bikeType = "road-bike",
-                            description = "Sample description",
-                            message = "I need help",
+    fun `7_accept rescue request event, user should have transaction`() =
+        runTest(UnconfinedTestDispatcher()) {
+            testMappingModule().location =
+                Location(latitude = 14.084499224680876, longitude = 121.15170397731512)
+            testMappingModule().users.clear()
+            testMappingModule().nearbyCyclist.value = NearbyCyclist(
+                listOf(
+                    UserItem(
+                        address = "Manila, Quiapo",
+                        contactNumber = "09123456789",
+                        id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
+                        location = Location(
+                            latitude = 14.084499224680876,
+                            longitude = 121.15170397731512
                         ),
-                        needHelp = true,
-                    ),
+                        name = "Andres",
+                        profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                        rescueRequest = RescueRequest(
+                            respondents = listOf(
+                                Respondent(clientId = "2"),
+                                Respondent(clientId = "3")
+                            )
+                        ),
+                        transaction = Transaction(role = "rescuee", transactionId = "12345"),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "road-bike",
+                                description = "Sample description",
+                                message = "I need help",
+                            ),
+                            needHelp = true,
+                        ),
 
-                    ),
-                UserItem(
-                    address = "Manila, Quiapo",
-                    contactNumber = "09123456789",
-                    id = "2",
-                    location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512),
-                    name = "Andres",
-                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
-                    rescueRequest = RescueRequest(),
-                    transaction = Transaction(role = "rescuer", transactionId = "12345"),
-                    userAssistance = UserAssistance(
-                        confirmationDetail = ConfirmationDetail(
-                            bikeType = "road-bike",
-                            description = "Sample description",
-                            message = "I need help",
                         ),
-                        needHelp = true,
-                    ),
+                    UserItem(
+                        address = "Manila, Quiapo",
+                        contactNumber = "09123456789",
+                        id = "2",
+                        location = Location(
+                            latitude = 14.084499224680876,
+                            longitude = 121.15170397731512
+                        ),
+                        name = "Andres",
+                        profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                        rescueRequest = RescueRequest(),
+                        transaction = Transaction(role = "rescuer", transactionId = "12345"),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "road-bike",
+                                description = "Sample description",
+                                message = "I need help",
+                            ),
+                            needHelp = true,
+                        ),
+                    )
                 )
-            ))
+            )
 
-        assertThat(mappingViewModel).acceptRescueRequest_LocationNotFound_ToastMessage_IsShown()
-    }
+            assertThat(mappingViewModel).acceptRescueRequest_userHasCurrentTransaction_returnsTrue()
 
+        }
 
 
     @Test
-    fun `7_accept rescue request event, user should have transaction`() = runTest(UnconfinedTestDispatcher()){
-        testMappingModule().location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512)
-        testMappingModule().users.clear()
-        testMappingModule().nearbyCyclist.value = NearbyCyclist(
-            listOf(
-                UserItem(
-                    address = "Manila, Quiapo",
-                    contactNumber = "09123456789",
-                    id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
-                    location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512),
-                    name = "Andres",
-                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
-                    rescueRequest = RescueRequest(
-                        respondents = listOf(
-                            Respondent(clientId = "2"),
-                            Respondent(clientId = "3"))
-                    ),
-                    transaction = Transaction(role = "rescuee", transactionId = "12345"),
-                    userAssistance = UserAssistance(
-                        confirmationDetail = ConfirmationDetail(
-                            bikeType = "road-bike",
-                            description = "Sample description",
-                            message = "I need help",
+    fun `8_accept rescue request event, rescuer should have transaction`() =
+        runTest(UnconfinedTestDispatcher()) {
+            testMappingModule().location =
+                Location(latitude = 14.084499224680876, longitude = 121.15170397731512)
+            testMappingModule().users.clear()
+            testMappingModule().nearbyCyclist.value = NearbyCyclist(
+                listOf(
+                    UserItem(
+                        address = "Manila, Quiapo",
+                        contactNumber = "09123456789",
+                        id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
+                        location = Location(
+                            latitude = 14.084499224680876,
+                            longitude = 121.15170397731512
                         ),
-                        needHelp = true,
-                    ),
+                        name = "Andres",
+                        profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                        rescueRequest = RescueRequest(
+                            respondents = listOf(
+                                Respondent(clientId = "2"),
+                                Respondent(clientId = "3")
+                            )
+                        ),
+                        transaction = Transaction(),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "road-bike",
+                                description = "Sample description",
+                                message = "I need help",
+                            ),
+                            needHelp = true,
+                        ),
 
-                    ),
-                UserItem(
-                    address = "Manila, Quiapo",
-                    contactNumber = "09123456789",
-                    id = "2",
-                    location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512),
-                    name = "Andres",
-                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
-                    rescueRequest = RescueRequest(),
-                    transaction = Transaction(role = "rescuer", transactionId = "12345"),
-                    userAssistance = UserAssistance(
-                        confirmationDetail = ConfirmationDetail(
-                            bikeType = "road-bike",
-                            description = "Sample description",
-                            message = "I need help",
                         ),
-                        needHelp = true,
-                    ),
+                    UserItem(
+                        address = "Manila, Quiapo",
+                        contactNumber = "09123456789",
+                        id = "2",
+                        location = Location(
+                            latitude = 14.084499224680876,
+                            longitude = 121.15170397731512
+                        ),
+                        name = "Andres",
+                        profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                        rescueRequest = RescueRequest(),
+                        transaction = Transaction(role = "rescuer", transactionId = "12345"),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "road-bike",
+                                description = "Sample description",
+                                message = "I need help",
+                            ),
+                            needHelp = true,
+                        ),
+                    )
                 )
-            ))
+            )
 
-        assertThat(mappingViewModel).acceptRescueRequest_userHasCurrentTransaction_returnsTrue()
+            assertThat(mappingViewModel).acceptRescueRequest_rescuerHasCurrentTransaction_returnsTrue()
 
-    }
-
+        }
 
 
     @Test
-    fun `8_accept rescue request event, rescuer should have transaction`() = runTest(UnconfinedTestDispatcher()){
-        testMappingModule().location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512)
+    fun `9_accept rescue request event, mapping screen is shown`() =
+        runTest(UnconfinedTestDispatcher()) {
+            testMappingModule().location =
+                Location(latitude = 14.084499224680876, longitude = 121.15170397731512)
+            testMappingModule().users.clear()
+            testMappingModule().nearbyCyclist.value = NearbyCyclist(
+                listOf(
+                    UserItem(
+                        address = "Manila, Quiapo",
+                        contactNumber = "09123456789",
+                        id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
+                        location = Location(
+                            latitude = 14.084499224680876,
+                            longitude = 121.15170397731512
+                        ),
+                        name = "Andres",
+                        profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                        rescueRequest = RescueRequest(
+                            respondents = listOf(
+                                Respondent(clientId = "2"),
+                                Respondent(clientId = "3")
+                            )
+                        ),
+                        transaction = Transaction(),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "road-bike",
+                                description = "Sample description",
+                                message = "I need help",
+                            ),
+                            needHelp = true,
+                        ),
+
+                        ),
+                    UserItem(
+                        address = "Manila, Quiapo",
+                        contactNumber = "09123456789",
+                        id = "2",
+                        location = Location(
+                            latitude = 14.084499224680876,
+                            longitude = 121.15170397731512
+                        ),
+                        name = "Andres",
+                        profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                        rescueRequest = RescueRequest(),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "road-bike",
+                                description = "Sample description",
+                                message = "I need help",
+                            ),
+                            needHelp = true,
+                        ),
+                    )
+                )
+            )
+
+            assertThat(mappingViewModel).acceptRescueRequest_MappingScreen_IsShown()
+        }
+
+    @Test
+    fun `10_change camera state event, camera state should change`() = runTest {
+        assertThat(mappingViewModel).changeCameraState_cameraStateChanges_returnsTrue()
+    }
+
+    @Test
+    fun `11_select rescuee map icon event, toast message 'Tracking your location' is shown `() =
+        runTest(
+            UnconfinedTestDispatcher()
+        ) {
+
+            testMappingModule().users.clear()
+            testMappingModule().nearbyCyclist.value = NearbyCyclist(
+                listOf(
+                    UserItem(
+                        address = "Manila, Quiapo",
+                        contactNumber = "09123456789",
+                        id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
+                        name = "Andres",
+                        profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                        rescueRequest = RescueRequest(
+                            respondents = listOf(
+                                Respondent(clientId = "2"),
+                                Respondent(clientId = "3")
+                            )
+                        ),
+                        transaction = Transaction(),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "road-bike",
+                                description = "Sample description",
+                                message = "I need help",
+                            ),
+                            needHelp = true,
+                        ),
+
+                        ),
+                    UserItem(
+                        address = "Manila, Quiapo",
+                        contactNumber = "09123456789",
+                        id = "2",
+                        location = Location(
+                            latitude = 14.084499224680876,
+                            longitude = 121.15170397731512
+                        ),
+                        name = "Andres",
+                        profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                        rescueRequest = RescueRequest(),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "road-bike",
+                                description = "Sample description",
+                                message = "I need help",
+                            ),
+                            needHelp = true,
+                        ),
+                    ),
+
+                    UserItem(
+                        address = "Tanauan Batangas",
+                        contactNumber = "09123456789",
+                        id = "3",
+                        name = "Juan",
+                        profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                        rescueRequest = RescueRequest(),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "mountain-bike",
+                                description = "Sample description",
+                                message = "I need help",
+                            ),
+                            needHelp = true,
+                        ),
+
+                        )
+                )
+            )
+
+            assertThat(mappingViewModel).selectRescueeMapIcon_toastMessage_isShown()
+        }
+
+
+    @Test
+    fun `12_select rescue map icon event, toggle visibility of rescuee banner `() = runTest {
+
         testMappingModule().users.clear()
         testMappingModule().nearbyCyclist.value = NearbyCyclist(
             listOf(
@@ -296,13 +531,17 @@ class MappingViewModelTest {
                     address = "Manila, Quiapo",
                     contactNumber = "09123456789",
                     id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
-                    location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512),
                     name = "Andres",
                     profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
                     rescueRequest = RescueRequest(
                         respondents = listOf(
                             Respondent(clientId = "2"),
-                            Respondent(clientId = "3"))
+                            Respondent(clientId = "3")
+                        )
+                    ),
+                    location = Location(
+                        latitude = 14.084499224680876,
+                        longitude = 121.15170397731512
                     ),
                     transaction = Transaction(),
                     userAssistance = UserAssistance(
@@ -319,61 +558,10 @@ class MappingViewModelTest {
                     address = "Manila, Quiapo",
                     contactNumber = "09123456789",
                     id = "2",
-                    location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512),
-                    name = "Andres",
-                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
-                    rescueRequest = RescueRequest(),
-                    transaction = Transaction(role = "rescuer", transactionId = "12345"),
-                    userAssistance = UserAssistance(
-                        confirmationDetail = ConfirmationDetail(
-                            bikeType = "road-bike",
-                            description = "Sample description",
-                            message = "I need help",
-                        ),
-                        needHelp = true,
+                    location = Location(
+                        latitude = 14.084499224680876,
+                        longitude = 121.15170397731512
                     ),
-                )
-            ))
-
-        assertThat(mappingViewModel).acceptRescueRequest_rescuerHasCurrentTransaction_returnsTrue()
-
-    }
-
-
-    @Test
-    fun `9_accept rescue request event, mapping screen is shown`() = runTest(UnconfinedTestDispatcher()){
-        testMappingModule().location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512)
-        testMappingModule().users.clear()
-        testMappingModule().nearbyCyclist.value = NearbyCyclist(
-            listOf(
-                UserItem(
-                    address = "Manila, Quiapo",
-                    contactNumber = "09123456789",
-                    id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
-                    location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512),
-                    name = "Andres",
-                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
-                    rescueRequest = RescueRequest(
-                        respondents = listOf(
-                            Respondent(clientId = "2"),
-                            Respondent(clientId = "3"))
-                    ),
-                    transaction = Transaction(),
-                    userAssistance = UserAssistance(
-                        confirmationDetail = ConfirmationDetail(
-                            bikeType = "road-bike",
-                            description = "Sample description",
-                            message = "I need help",
-                        ),
-                        needHelp = true,
-                    ),
-
-                    ),
-                UserItem(
-                    address = "Manila, Quiapo",
-                    contactNumber = "09123456789",
-                    id = "2",
-                    location = Location(latitude = 14.084499224680876, longitude = 121.15170397731512),
                     name = "Andres",
                     profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
                     rescueRequest = RescueRequest(),
@@ -385,9 +573,37 @@ class MappingViewModelTest {
                         ),
                         needHelp = true,
                     ),
-                )
-            ))
+                ),
 
-        assertThat(mappingViewModel).acceptRescueRequest_MappingScreen_IsShown()
+                UserItem(
+                    address = "Tanauan Batangas",
+                    contactNumber = "09123456789",
+                    id = "3",
+                    name = "Juan",
+                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                    rescueRequest = RescueRequest(),
+                    userAssistance = UserAssistance(
+                        confirmationDetail = ConfirmationDetail(
+                            bikeType = "mountain-bike",
+                            description = "Sample description",
+                            message = "I need help",
+                        ),
+                        needHelp = true,
+                    ),
+                    location = Location(
+                        latitude = 14.084499224680876,
+                        longitude = 121.15170397731512
+                    ),
+                )
+            )
+        )
+        testMappingModule().calculatedDistanceInMeters = 1000.00
+
+        assertThat(mappingViewModel).selectRescueMapIcon_SelectedRescueeMapIconStateUpdated()
+
     }
+
 }
+
+
+

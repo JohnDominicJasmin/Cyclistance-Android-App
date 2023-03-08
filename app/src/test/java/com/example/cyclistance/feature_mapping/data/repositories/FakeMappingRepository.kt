@@ -25,7 +25,7 @@ class FakeMappingRepository : MappingRepository {
         val rescueTransaction = MutableStateFlow(RescueTransaction())
         val liveLocation = MutableStateFlow(LiveLocationWSModel())
         var shouldReturnNetworkError = false
-        var calculatedDistance = 0.0
+        var calculatedDistanceInMeters = 0.0
     }
 
 
@@ -33,7 +33,7 @@ class FakeMappingRepository : MappingRepository {
         startingLocation: Location,
         destinationLocation: Location,
     ): Double {
-        return calculatedDistance
+        return calculatedDistanceInMeters
     }
 
     override suspend fun getUserById(userId: String): UserItem {
