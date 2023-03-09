@@ -1,50 +1,77 @@
 package com.example.cyclistance.di
 
-import android.content.Context
-import com.example.cyclistance.BuildConfig
-import com.example.cyclistance.feature_authentication.data.repository.AuthRepositoryImpl
-import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
+import com.example.cyclistance.feature_authentication.data.repositories.FakeAuthRepository
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.create_account.*
 import com.example.cyclistance.feature_authentication.domain.use_case.read_account.*
 import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.*
-import com.google.firebase.auth.FirebaseAuth
-import dagger.Module
-import dagger.Provides
-import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
 
+object TestAuthModule {
+    private val fakeAuthRepository: FakeAuthRepository = FakeAuthRepository()
 
-@Module
-@InstallIn(SingletonComponent::class)
- object AuthenticationModule {
-
-
-    @Provides
-    @Singleton
-    fun provideFirebaseAuth():FirebaseAuth{
-        return FirebaseAuth.getInstance().apply{
-            if(BuildConfig.DEBUG){
-                useEmulator("10.0.2.2", 9099)
-            }
-        }
+    fun setEmailReloaded(value: Boolean){
+        fakeAuthRepository.reloadEmail(value)
     }
 
-    @Provides
-    @Singleton
-     fun provideAuthRepository(@ApplicationContext context:Context, firebaseAuth: FirebaseAuth): AuthRepository{
-         return AuthRepositoryImpl(context = context, auth = firebaseAuth, )
-     }
+    fun setSignOut(value: Boolean){
+        fakeAuthRepository.signOut(value)
+    }
+
+    fun sendEmailVerification(value: Boolean){
+        fakeAuthRepository.sendEmailVerification(value)
+    }
+
+    fun setEmail(value: String){
+        fakeAuthRepository.setEmail(value)
+    }
+
+    fun setPassword(value: String){
+        fakeAuthRepository.setPassword(value)
+    }
+
+    fun setName(value: String){
+        fakeAuthRepository.setName(value)
+    }
+
+    fun setPhoneNumber(value: String){
+        fakeAuthRepository.setPhoneNumber(value)
+    }
+
+    fun setId(value: String){
+        fakeAuthRepository.setId(value)
+    }
+
+    fun setPhotoUrl(value: String){
+        fakeAuthRepository.setPhotoUrl(value)
+    }
+
+    fun isSignedInWithProvider(value: Boolean){
+        fakeAuthRepository.isSignedInWithProvider(value)
+    }
+
+    fun isEmailVerified(value: Boolean){
+        fakeAuthRepository.isEmailVerified(value)
+    }
+
+    fun hasAccountSignedIn(value: Boolean){
+        fakeAuthRepository.hasAccountSignedIn(value)
+    }
+
+    fun setImagePath(value: String){
+        fakeAuthRepository.setImagePath(value)
+    }
+
+    fun shouldReturnError(value: Boolean){
+        fakeAuthRepository.shouldReturnNetworkError(value)
+    }
 
 
 
-    @Provides
-    @Singleton
-    fun provideAuthenticationUseCase(repository: AuthRepository):AuthenticationUseCase =
-        AuthenticationUseCase(
+
+    fun provideTestAuthUseCase(): AuthenticationUseCase {
+        val repository = fakeAuthRepository
+        return AuthenticationUseCase(
             reloadEmailUseCase = ReloadEmailUseCase(repository = repository),
             signOutUseCase = SignOutUseCase(repository = repository),
             createWithEmailAndPasswordUseCase = CreateWithEmailAndPasswordUseCase(repository = repository),
@@ -63,5 +90,5 @@ import javax.inject.Singleton
             updatePhoneNumberUseCase = UpdatePhoneNumberUseCase(repository = repository),
             uploadImageUseCase = UploadImageUseCase(repository = repository)
         )
-
+    }
 }

@@ -29,8 +29,8 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.permission.requestPermission
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
-import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.checkLocationSetting
-import com.example.cyclistance.feature_mapping.data.location.ConnectionStatus.hasGPSConnection
+import com.example.cyclistance.feature_mapping.data.local.location.ConnectionStatus.checkLocationSetting
+import com.example.cyclistance.feature_mapping.data.local.location.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.*

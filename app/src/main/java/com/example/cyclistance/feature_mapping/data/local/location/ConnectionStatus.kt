@@ -1,10 +1,10 @@
-package com.example.cyclistance.feature_mapping.data.location
+package com.example.cyclistance.feature_mapping.data.local.location
 
 import android.content.Context
 import android.content.IntentSender
 import android.location.LocationManager
 import androidx.activity.result.IntentSenderRequest
-import com.example.cyclistance.feature_mapping.data.network_observer.NetworkConnectivityUtil
+import com.example.cyclistance.feature_mapping.data.local.network_observer.NetworkConnectivityUtil
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.*
 import com.google.android.gms.tasks.Task

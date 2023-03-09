@@ -33,7 +33,7 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_I
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
-import com.example.cyclistance.feature_mapping.data.network_observer.NetworkConnectivityChecker
+import com.example.cyclistance.feature_mapping.data.local.network_observer.NetworkConnectivityChecker
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel

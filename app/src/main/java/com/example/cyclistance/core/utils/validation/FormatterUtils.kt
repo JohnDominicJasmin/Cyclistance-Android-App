@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import androidx.appcompat.content.res.AppCompatResources
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import com.example.cyclistance.feature_mapping.domain.model.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.model.RescueTransaction
 import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
@@ -35,6 +36,8 @@ object FormatterUtils {
             it.id == id
         } ?: UserItem()
     }
+
+    fun Location?.isLocationAvailable() = (this?.latitude != null).and(this?.longitude != null)
 
     fun getCalculatedETA(
         distanceMeters: Double,

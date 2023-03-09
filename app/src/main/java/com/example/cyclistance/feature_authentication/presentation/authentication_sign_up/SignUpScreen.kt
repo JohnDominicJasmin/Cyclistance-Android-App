@@ -34,7 +34,6 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SignUpScreen(
-    hasInternetConnection : Boolean,
     signUpViewModel: SignUpViewModel = hiltViewModel(),
     paddingValues: PaddingValues,
     navController: NavController) {

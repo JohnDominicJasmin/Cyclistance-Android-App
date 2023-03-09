@@ -11,6 +11,7 @@ import com.example.cyclistance.core.utils.validation.FormatterUtils.findRescueTr
 import com.example.cyclistance.core.utils.validation.FormatterUtils.findUser
 import com.example.cyclistance.core.utils.validation.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedETA
+import com.example.cyclistance.core.utils.validation.FormatterUtils.isLocationAvailable
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toCardModel
@@ -67,7 +68,7 @@ class MappingViewModel @Inject constructor(
         if (loadDataJob?.isActive == true) return
         loadDataJob = viewModelScope.launch(SupervisorJob()) {
             // TODO: Remove when the backend is ready
-            createMockUpUsers()
+//            createMockUpUsers()
             getNearbyCyclist()
             loadRescueTransaction()
             loadClient()
@@ -237,7 +238,7 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingEvent.CancelRequestHelp -> {
-                cancelRequestHelp()
+                cancelHelpRequest()
             }
             is MappingEvent.LoadUserProfile -> {
                 loadUserProfile()
@@ -326,21 +327,22 @@ class MappingViewModel @Inject constructor(
 
     private fun selectRescueeMapIcon(id: String) {
         viewModelScope.launch {
+            // TODO: Check if selected the rescuee doesn't exist
             val selectedRescuee = state.value.nearbyCyclists?.findUser(id) ?: return@launch
             val selectedRescueeLocation = selectedRescuee.location
             val confirmationDetail = selectedRescuee.userAssistance?.confirmationDetail
 
             val userLocation = state.value.user.location ?: state.value.userLocation
 
-            if (userLocation == null) {
-                _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Tracking your location"))
+            if (!userLocation.isLocationAvailable()) {
+                _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Tracking your Location"))
                 return@launch
             }
 
             val distance = mappingUseCase.getCalculatedDistanceUseCase(
                 startingLocation = Location(
-                    latitude = userLocation.latitude,
-                    longitude = userLocation.longitude
+                    latitude = userLocation?.latitude,
+                    longitude = userLocation?.longitude
                 ), destinationLocation = Location(
                     latitude = selectedRescueeLocation!!.latitude,
                     longitude = selectedRescueeLocation.longitude
@@ -388,13 +390,17 @@ class MappingViewModel @Inject constructor(
     }
 
 
+
     private fun dismissRescueeBanner() {
-        if (state.value.selectedRescueeMapIcon != null) {
+
+        val isRescueeBannerVisible = state.value.selectedRescueeMapIcon != null
+        if (isRescueeBannerVisible) {
             _state.update { it.copy(selectedRescueeMapIcon = null) }
             hideRespondToHelpButton()
             showRequestHelpButton()
         }
     }
+
 
     private fun dismissRequestAccepted() {
         _state.update { it.copy(isRescueRequestAccepted = false) }
@@ -545,73 +551,80 @@ class MappingViewModel @Inject constructor(
         rescuer: UserItem,
         crossinline noCurrentTransaction: suspend () -> Unit) {
 
-        val userHasCurrentTransaction =
-            (user.transaction ?: Transaction()).transactionId.isNotEmpty()
+            val userHasCurrentTransaction =
+                (user.transaction ?: Transaction()).transactionId.isNotEmpty()
 
-        val rescuerHasCurrentTransaction =
-            (rescuer.transaction ?: Transaction()).transactionId.isNotEmpty()
+            val rescuerHasCurrentTransaction =
+                (rescuer.transaction ?: Transaction()).transactionId.isNotEmpty()
+
+            val rescuerLocationAvailable = rescuer.location.isLocationAvailable()
+            val userLocationAvailable = user.location.isLocationAvailable()
+
+            if (!rescuerLocationAvailable) {
+                _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Can't reach Rescuer"))
+                return
+            }
+
+            if (!userLocationAvailable) {
+                _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Location not found"))
+                return
+            }
+
+            if (rescuerHasCurrentTransaction) {
+                cannotRequestRescuer()
+                return
+            }
+
+            if (userHasCurrentTransaction) {
+                cannotRequestUser()
+                return
+            }
 
 
-        if (rescuer.location == null) {
-            _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Can't reach Rescuer"))
-            return
-        }
-
-        if (user.location == null) {
-            _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Location not found"))
-            return
-        }
-
-        if (userHasCurrentTransaction) {
-            rescueeCannotRequest()
-            return
-        }
-
-        if (rescuerHasCurrentTransaction) {
-            rescuerCannotRequest()
-            return
-        }
-        noCurrentTransaction()
+            noCurrentTransaction()
     }
 
     private fun acceptRescueRequest(id: String) {
         viewModelScope.launch(SupervisorJob()) {
 
             val rescuer = state.value.nearbyCyclists?.findUser(id) ?: return@launch
+            _state.update { it.copy(rescueRequestAcceptedUser = rescuer) }
             val transactionId = getTransactionId(rescuer)
             val user = state.value.user
 
             checkCurrentTransactions(user = user, rescuer = rescuer) {
 
-                runCatching {
-                    startLoading()
-                    RescueTransactionItem(
-                        id = transactionId,
-                        rescuerId = rescuer.id,
-                        rescueeId = user.id,
-                        status = Status(started = true, ongoing = true),
-                        route = Route(
-                            startingLocation = Location(
-                                latitude = rescuer.location!!.latitude,
-                                longitude = rescuer.location.longitude),
-                            destinationLocation = Location(
-                                latitude = user.location!!.latitude,
-                                longitude = user.location.longitude)
-                        )).apply {
-                        mappingUseCase.createRescueTransactionUseCase(rescueTransaction = this)
+                coroutineScope {
+                    runCatching {
+                        startLoading()
+                        RescueTransactionItem(
+                            id = transactionId,
+                            rescuerId = rescuer.id,
+                            rescueeId = user.id,
+                            status = Status(started = true, ongoing = true),
+                            route = Route(
+                                startingLocation = Location(
+                                    latitude = rescuer.location!!.latitude,
+                                    longitude = rescuer.location.longitude),
+                                destinationLocation = Location(
+                                    latitude = user.location!!.latitude,
+                                    longitude = user.location.longitude)
+                            )).apply {
+                            mappingUseCase.createRescueTransactionUseCase(rescueTransaction = this)
+                        }
+
+                    }.onSuccess { rescueTransaction ->
+                        broadcastRescueTransaction()
+                        assignTransaction(
+                            rescueTransaction = rescueTransaction,
+                            user = user,
+                            rescuer = rescuer,
+                            transactionId = transactionId)
+
+                    }.onFailure { exception ->
+                        finishLoading()
+                        exception.handleException()
                     }
-
-                }.onSuccess { rescueTransaction ->
-                    broadcastRescueTransaction()
-                    assignTransaction(
-                        rescueTransaction = rescueTransaction,
-                        user = user,
-                        rescuer = rescuer,
-                        transactionId = transactionId)
-
-                }.onFailure { exception ->
-                    finishLoading()
-                    exception.handleException()
                 }
 
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
@@ -698,7 +711,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun rescueeCannotRequest() {
+    private fun cannotRequestUser() {
         _state.update {
             it.copy(
                 alertDialogModel = AlertDialogModel(
@@ -709,7 +722,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun rescuerCannotRequest() {
+    private fun cannotRequestRescuer() {
         _state.update {
             it.copy(
                 alertDialogModel = AlertDialogModel(
@@ -777,14 +790,15 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun cancelRequestHelp() {
+    private fun cancelHelpRequest() {
         viewModelScope.launch {
             runCatching {
                 startLoading()
-                createUser()
+                cancelUserHelpRequest()
             }.onSuccess {
                 showRequestHelpButton()
                 broadcastUser()
+                _state.update { it.copy(rescueRequestAcceptedUser = null)}
             }.onFailure { exception ->
                 Timber.e("Failed to cancel search assistance: ${exception.message}")
                 exception.handleException()
@@ -794,7 +808,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun createUser() {
+    private suspend fun cancelUserHelpRequest() {
         mappingUseCase.createUserUseCase(
             user = UserItem(
                 id = getId(),

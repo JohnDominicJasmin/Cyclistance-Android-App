@@ -37,7 +37,6 @@ import timber.log.Timber
 
 @Composable
 fun EmailAuthScreen(
-    hasInternetConnection : Boolean,
     isDarkTheme: Boolean,
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel(),
     paddingValues: PaddingValues,

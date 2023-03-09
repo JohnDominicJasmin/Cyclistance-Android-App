@@ -41,7 +41,6 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ConfirmDetailsScreen(
-    hasInternetConnection : Boolean,
     viewModel: ConfirmDetailsViewModel = hiltViewModel(),
     paddingValues: PaddingValues,
     navController: NavController) {

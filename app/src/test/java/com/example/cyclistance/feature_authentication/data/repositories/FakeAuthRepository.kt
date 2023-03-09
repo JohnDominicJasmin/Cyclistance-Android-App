@@ -10,12 +10,12 @@ class FakeAuthRepository(
     private var reloadEmail: Boolean = false,
     private var signOut: Boolean = false,
     private var sendEmailVerification: Boolean = false,
-    private var email: String? = "",
-    private var password: String? = "",
-    private var name: String? = "",
-    private var phoneNumber: String? = "",
-    private var id: String? = "",
-    private var photoUrl: String? = "",
+    private var email: String? = "johndoe@gmail.com",
+    private var password: String? = "12341234",
+    private var name: String? = "John Doe",
+    private var phoneNumber: String? = "09263208902",
+    private var id: String? = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
+    private var photoUrl: String? = "http://sample_photo_url.png",
     private var isSignedInWithProvider: Boolean? = false,
     private var isEmailVerified: Boolean? = false,
     private var hasAccountSignedIn: Boolean = false,
@@ -24,14 +24,69 @@ class FakeAuthRepository(
     private var signInCredential: SignInCredential? = null): AuthRepository {
 
 
+    fun signInCredential(value: SignInCredential?){
+        signInCredential = value
+    }
+
+    fun reloadEmail(value: Boolean){
+        reloadEmail = value
+    }
+
+    fun signOut(value: Boolean){
+        signOut = value
+    }
+
+    fun sendEmailVerification(value: Boolean){
+        sendEmailVerification = value
+    }
+
+    fun setEmail(value: String?){
+        email = value
+    }
+
+    fun setPassword(value: String?){
+        password = value
+    }
+
+    fun setName(value: String?){
+        name = value
+    }
+
+    fun setPhoneNumber(value: String?){
+        phoneNumber = value
+    }
+
+    fun setId(value: String?){
+        id = value
+    }
+
+    fun setPhotoUrl(value: String?){
+        photoUrl = value
+    }
+
+    fun isSignedInWithProvider(value: Boolean?){
+        isSignedInWithProvider = value
+    }
+
+    fun isEmailVerified(value: Boolean?){
+        isEmailVerified = value
+    }
+
+    fun hasAccountSignedIn(value: Boolean){
+        hasAccountSignedIn = value
+    }
 
 
     fun shouldReturnNetworkError(value: Boolean){
         shouldReturnNetworkError = value
     }
-    
+
     fun setReloadedEmail(value: Boolean){
         reloadEmail = value
+    }
+
+    fun setImagePath(value: String){
+        imagePath = value
     }
 
     override suspend fun reloadEmail(): Boolean = reloadEmail

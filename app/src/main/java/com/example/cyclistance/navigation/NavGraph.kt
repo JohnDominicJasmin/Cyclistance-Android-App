@@ -50,30 +50,26 @@ fun NavGraph(
         composable(Screens.IntroSliderScreen.route) {
             IntroSliderScreen(
                 navController = navController,
-                paddingValues = paddingValues,
-                hasInternetConnection = hasInternetConnection)
+                paddingValues = paddingValues)
         }
 
         composable(Screens.SignInScreen.route) {
             SignInScreen(
                 navController = navController,
-                paddingValues = paddingValues,
-                hasInternetConnection = hasInternetConnection)
+                paddingValues = paddingValues)
         }
 
         composable(Screens.SignUpScreen.route) {
             SignUpScreen(
                 navController = navController,
-                paddingValues = paddingValues,
-                hasInternetConnection = hasInternetConnection)
+                paddingValues = paddingValues)
         }
 
         composable(Screens.EmailAuthScreen.route) {
             EmailAuthScreen(
                 isDarkTheme = isDarkTheme,
                 navController = navController,
-                paddingValues = paddingValues,
-                hasInternetConnection = hasInternetConnection)
+                paddingValues = paddingValues)
         }
 
 
@@ -108,7 +104,6 @@ fun NavGraph(
 
             it.arguments?.getString(CANCELLATION_TYPE)?.let { cancellationType ->
                 CancellationReasonScreen(
-                    hasInternetConnection = hasInternetConnection,
                     navController = navController,
                     paddingValues = paddingValues,
                     cancellationType = cancellationType)
@@ -123,7 +118,6 @@ fun NavGraph(
             )) {
 
             ConfirmDetailsScreen(
-                hasInternetConnection = hasInternetConnection,
                 navController = navController,
                 paddingValues = paddingValues)
 
@@ -131,7 +125,6 @@ fun NavGraph(
 
         composable(Screens.RescueRequestScreen.route) {
             RescueRequestScreen(
-                hasInternetConnection = hasInternetConnection,
                 navController = navController,
                 paddingValues = paddingValues,
                 mappingViewModel = mappingViewModel)
@@ -143,7 +136,6 @@ fun NavGraph(
 
         composable(Screens.EditProfileScreen.route) {
             EditProfileScreen(
-                hasInternetConnection = hasInternetConnection,
                 navController = navController,
                 paddingValues = paddingValues,
                 editProfileViewModel = editProfileViewModel)
@@ -151,7 +143,6 @@ fun NavGraph(
 
         composable(Screens.SettingScreen.route) {
             SettingScreen(
-                hasInternetConnection = hasInternetConnection,
                 isDarkTheme = isDarkTheme,
                 onToggleTheme = onToggleTheme,
                 navController = navController,

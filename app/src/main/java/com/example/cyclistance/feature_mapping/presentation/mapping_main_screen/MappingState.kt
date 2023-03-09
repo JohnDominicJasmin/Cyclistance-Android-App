@@ -25,23 +25,24 @@ data class MappingState(
     val isNavigating : Boolean = false,
     val isRescueRequestAccepted: Boolean = false,
     val routeDirection: RouteDirection? = null,
-
-
-
-
-
-
-
-    val user: UserItem = UserItem(),
-    val userActiveRescueRequests: ActiveRescueRequests = ActiveRescueRequests(),
-    val userRescueTransaction: RescueTransactionItem? = null,
-
     val userLocation: Location? = null,
 
 
 
 
 
+
+
+
+    val userActiveRescueRequests: ActiveRescueRequests = ActiveRescueRequests(),
+    val userRescueTransaction: RescueTransactionItem? = null,
+
+
+
+
+
+    val user: UserItem = UserItem(),
+    val rescueRequestAcceptedUser: UserItem? = null,
     val rescuer: UserItem? = null,
     val rescuee: UserItem? = null,
 

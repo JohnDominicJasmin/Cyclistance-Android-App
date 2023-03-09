@@ -20,7 +20,6 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun SettingScreen(
-    hasInternetConnection : Boolean,
     isDarkTheme: Boolean,
     onToggleTheme: () -> Unit,
     paddingValues: PaddingValues,
@@ -95,7 +94,7 @@ fun SettingScreen(
 fun SettingScreenPreview() {
     CyclistanceTheme(true) {
         val navController = rememberNavController()
-        SettingScreen(hasInternetConnection = true, isDarkTheme = true, onToggleTheme = {}, navController = navController, paddingValues = PaddingValues())
+        SettingScreen(isDarkTheme = true, onToggleTheme = {}, navController = navController, paddingValues = PaddingValues())
     }
 }
 
