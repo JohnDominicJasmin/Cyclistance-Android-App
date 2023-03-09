@@ -13,10 +13,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.*
-import org.junit.runners.MethodSorters
 
 @OptIn(ExperimentalCoroutinesApi::class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class MappingViewModelTest {
 
 
@@ -42,7 +40,7 @@ class MappingViewModelTest {
     }
 
     @Test
-    fun `1_nearby cyclists available`() = runTest {
+    fun `nearby cyclists available`() = runTest {
         testMappingModule().nearbyCyclist.value = NearbyCyclist(
             listOf(
                 UserItem(
@@ -101,7 +99,7 @@ class MappingViewModelTest {
     }
 
     @Test
-    fun `2_nearby cyclists not available`() = runTest() {
+    fun `nearby cyclists not available`() = runTest() {
         testMappingModule().shouldReturnNetworkError = true
         testMappingModule().users.clear()
         assertThat(mappingViewModel).nearbyCyclistsNotAvailable()
@@ -111,7 +109,7 @@ class MappingViewModelTest {
     }
 
     @Test
-    fun `3_request help event, toast message 'Searching for Gps' is shown`() = runTest {
+    fun `request help event, toast message 'Searching for Gps' is shown`() = runTest {
         testMappingModule().location = Location()
         assertThat(mappingViewModel)
             .requestHelp_ToastMessageSearchingGps_IsShown()
@@ -119,7 +117,7 @@ class MappingViewModelTest {
 
 
     @Test
-    fun `4_request help event then confirm details screen is shown, after hitting request help event again the profile uploaded state should be true`() =
+    fun `request help event then confirm details screen is shown, after hitting request help event again the profile uploaded state should be true`() =
         runTest {
             testMappingModule().location = Location(latitude = 14.0835, longitude = 121.1476)
             testMappingModule().shouldReturnNetworkError = false
@@ -132,7 +130,7 @@ class MappingViewModelTest {
         }
 
     @Test
-    fun `5_accept rescue request event a toast message 'Can't reach Rescuer' is shown`() =
+    fun `accept rescue request event a toast message 'Can't reach Rescuer' is shown`() =
         runTest(UnconfinedTestDispatcher()) {
             testMappingModule().location =
                 Location(latitude = 14.084499224680876, longitude = 121.15170397731512)
@@ -193,7 +191,7 @@ class MappingViewModelTest {
 
 
     @Test
-    fun `6_accept rescue request event, toast message 'Location not Found' is shown`() =
+    fun `accept rescue request event, toast message 'Location not Found' is shown`() =
         runTest(UnconfinedTestDispatcher()) {
             testMappingModule().location = Location()
             testMappingModule().users.clear()
@@ -251,7 +249,7 @@ class MappingViewModelTest {
 
 
     @Test
-    fun `7_accept rescue request event, user should have transaction`() =
+    fun `accept rescue request event, user should have transaction`() =
         runTest(UnconfinedTestDispatcher()) {
             testMappingModule().location =
                 Location(latitude = 14.084499224680876, longitude = 121.15170397731512)
@@ -315,7 +313,7 @@ class MappingViewModelTest {
 
 
     @Test
-    fun `8_accept rescue request event, rescuer should have transaction`() =
+    fun `accept rescue request event, rescuer should have transaction`() =
         runTest(UnconfinedTestDispatcher()) {
             testMappingModule().location =
                 Location(latitude = 14.084499224680876, longitude = 121.15170397731512)
@@ -379,7 +377,7 @@ class MappingViewModelTest {
 
 
     @Test
-    fun `9_accept rescue request event, mapping screen is shown`() =
+    fun `accept rescue request event, mapping screen is shown`() =
         runTest(UnconfinedTestDispatcher()) {
             testMappingModule().location =
                 Location(latitude = 14.084499224680876, longitude = 121.15170397731512)
@@ -440,12 +438,12 @@ class MappingViewModelTest {
         }
 
     @Test
-    fun `10_change camera state event, camera state should change`() = runTest {
+    fun `change camera state event, camera state should change`() = runTest {
         assertThat(mappingViewModel).changeCameraState_cameraStateChanges_returnsTrue()
     }
 
     @Test
-    fun `11_select rescuee map icon event, toast message 'Tracking your location' is shown `() =
+    fun `select rescuee map icon event, toast message 'Tracking your location' is shown `() =
         runTest(
             UnconfinedTestDispatcher()
         ) {
@@ -522,7 +520,7 @@ class MappingViewModelTest {
 
 
     @Test
-    fun `12_select rescue map icon event, toggle visibility of rescuee banner `() = runTest {
+    fun `select rescue map icon event, toggle visibility of rescuee banner `() = runTest {
 
         testMappingModule().users.clear()
         testMappingModule().nearbyCyclist.value = NearbyCyclist(
