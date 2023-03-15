@@ -84,7 +84,7 @@ class FakeMappingRepository : MappingRepository {
             throw MappingExceptions.NetworkException()
         }
 
-        val userFound = users.find { it.id == userId } ?: throw MappingExceptions.UserException()
+        val userFound = nearbyCyclist.value.users.toMutableList().find { it.id == userId } ?: throw MappingExceptions.UserException()
         userFound.rescueRequest?.respondents?.toMutableList()
             ?.removeIf { it.clientId == respondentId }
     }

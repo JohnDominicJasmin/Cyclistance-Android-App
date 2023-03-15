@@ -313,8 +313,8 @@ fun MappingScreen(
         Unit
     }}
 
-    val onChangeCameraState = remember{{ cameraPosition: LatLng, zoom: Double ->
-        mappingViewModel.onEvent(event = MappingEvent.ChangeCameraState(cameraPosition, zoom))
+    val onChangeCameraPosition = remember{{ cameraPosition: LatLng, zoom: Double ->
+        mappingViewModel.onEvent(event = MappingEvent.ChangeCameraPosition(cameraPosition, zoom))
     }}
 
     val onClickCancelRescueButton = remember(state.rescuer, state.userRescueTransaction) {{
@@ -432,7 +432,7 @@ fun MappingScreen(
         locationPermissionState = locationPermissionsState,
         onClickCancelSearchButton = onClickCancelSearchButton,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
-        onChangeCameraState = onChangeCameraState,
+        onChangeCameraState = onChangeCameraPosition,
         onClickCancelRescueTransactionButton = onClickCancelRescueButton,
         onDismissNoInternetDialog = onDismissNoInternetDialog,
         hasTransaction = hasTransaction,
