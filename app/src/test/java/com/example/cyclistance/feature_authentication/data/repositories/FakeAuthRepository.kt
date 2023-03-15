@@ -6,87 +6,27 @@ import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptio
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
-class FakeAuthRepository(
-    private var reloadEmail: Boolean = false,
-    private var signOut: Boolean = false,
-    private var sendEmailVerification: Boolean = false,
-    private var email: String? = "johndoe@gmail.com",
-    private var password: String? = "12341234",
-    private var name: String? = "John Doe",
-    private var phoneNumber: String? = "09263208902",
-    private var id: String? = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
-    private var photoUrl: String? = "http://sample_photo_url.png",
-    private var isSignedInWithProvider: Boolean? = false,
-    private var isEmailVerified: Boolean? = false,
-    private var hasAccountSignedIn: Boolean = false,
-    private var imagePath: String = "",
-    private var shouldReturnNetworkError: Boolean = false,
-    private var signInCredential: SignInCredential? = null): AuthRepository {
+class FakeAuthRepository: AuthRepository {
 
 
-    fun signInCredential(value: SignInCredential?){
-        signInCredential = value
-    }
+    companion object {
 
-    fun reloadEmail(value: Boolean){
-        reloadEmail = value
-    }
+        var reloadEmail = false
+        var signOut = false
+        var sendEmailVerification = false
+        var email = "johndoe@gmail.com"
+        var password = "12341234"
+        var name:String? = "miko"
+        var phoneNumber:String? = "09263208902"
+        var id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN"
+        var photoUrl:String? = "http://sample_photo_url.png"
+        var isSignedInWithProvider = false
+        var isEmailVerified = false
+        var hasAccountSignedIn = false
+        var imagePath = ""
+        var shouldReturnNetworkError = false
+        var signInCredential: SignInCredential? = null
 
-    fun signOut(value: Boolean){
-        signOut = value
-    }
-
-    fun sendEmailVerification(value: Boolean){
-        sendEmailVerification = value
-    }
-
-    fun setEmail(value: String?){
-        email = value
-    }
-
-    fun setPassword(value: String?){
-        password = value
-    }
-
-    fun setName(value: String?){
-        name = value
-    }
-
-    fun setPhoneNumber(value: String?){
-        phoneNumber = value
-    }
-
-    fun setId(value: String?){
-        id = value
-    }
-
-    fun setPhotoUrl(value: String?){
-        photoUrl = value
-    }
-
-    fun isSignedInWithProvider(value: Boolean?){
-        isSignedInWithProvider = value
-    }
-
-    fun isEmailVerified(value: Boolean?){
-        isEmailVerified = value
-    }
-
-    fun hasAccountSignedIn(value: Boolean){
-        hasAccountSignedIn = value
-    }
-
-
-    fun shouldReturnNetworkError(value: Boolean){
-        shouldReturnNetworkError = value
-    }
-
-    fun setReloadedEmail(value: Boolean){
-        reloadEmail = value
-    }
-
-    fun setImagePath(value: String){
-        imagePath = value
     }
 
     override suspend fun reloadEmail(): Boolean = reloadEmail
@@ -125,8 +65,8 @@ class FakeAuthRepository(
         if(shouldReturnNetworkError){
             throw AuthExceptions.NetworkException("Network error")
         }
-        this.email = email
-        this.password = password
+        Companion.email = email
+        Companion.password = password
         return true
     }
 
@@ -135,11 +75,11 @@ class FakeAuthRepository(
             throw AuthExceptions.NetworkException("Network error")
         }
         
-        if(email != this.email){
+        if(email != Companion.email){
             throw MappingExceptions.UserException("Email is not correct")
         }
         
-        if(this.password != password){
+        if(Companion.password != password){
             throw MappingExceptions.UserException("Password is not correct")
         }
         
@@ -160,8 +100,8 @@ class FakeAuthRepository(
         if(shouldReturnNetworkError){
             throw AuthExceptions.NetworkException("Network error")
         }
-        this.name = name
-        this.photoUrl = v
+        Companion.name = name
+        photoUrl = v
         return true
     }
 
@@ -169,7 +109,7 @@ class FakeAuthRepository(
         if(shouldReturnNetworkError){
             throw AuthExceptions.NetworkException("Network error")
         }
-        this.phoneNumber = phoneNumber
+        Companion.phoneNumber = phoneNumber
     }
 
     override fun getPhoneNumber(): Flow<String> {
