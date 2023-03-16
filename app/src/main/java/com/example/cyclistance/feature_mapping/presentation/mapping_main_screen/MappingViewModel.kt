@@ -163,12 +163,13 @@ class MappingViewModel @Inject constructor(
                 _state.update { it.copy(routeDirection = routeDirection) }
             }.onFailure {
                 Timber.v("Failure: ${it.message}")
+                it.handleException()
             }
         }
     }
 
     private fun removeRouteDirections() {
-        _state.update { it.copy(routeDirection = RouteDirection()) }
+        _state.update { it.copy(routeDirection = null) }
     }
 
     fun onEvent(event: MappingEvent) {
@@ -215,7 +216,7 @@ class MappingViewModel @Inject constructor(
                 loadData()
             }
 
-            is MappingEvent.ChangeCameraState -> {
+            is MappingEvent.ChangeCameraPosition -> {
                 updateCameraState(
                     cameraPosition = event.cameraPosition,
                     cameraZoomLevel = event.cameraZoomLevel)
@@ -326,17 +327,17 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun selectRescueeMapIcon(id: String) {
-        viewModelScope.launch {
-            // TODO: Check if selected the rescuee doesn't exist
-            val selectedRescuee = state.value.nearbyCyclists?.findUser(id) ?: return@launch
+            val selectedRescuee = state.value.nearbyCyclists?.findUser(id) ?: return
             val selectedRescueeLocation = selectedRescuee.location
             val confirmationDetail = selectedRescuee.userAssistance?.confirmationDetail
 
             val userLocation = state.value.user.location ?: state.value.userLocation
 
             if (!userLocation.isLocationAvailable()) {
-                _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Tracking your Location"))
-                return@launch
+                viewModelScope.launch {
+                    _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Tracking your Location"))
+                }
+                return
             }
 
             val distance = mappingUseCase.getCalculatedDistanceUseCase(
@@ -368,7 +369,7 @@ class MappingViewModel @Inject constructor(
             hideRequestHelpButton()
             showRespondToHelpButton()
 
-        }
+
     }
 
 
@@ -1046,9 +1047,9 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 startLoading()
-                removeRescueRespondent(id)
                 mappingUseCase.deleteRescueRespondentUseCase(userId = getId(), respondentId = id)
             }.onSuccess {
+                removeRescueRespondent(id)
                 broadcastUser()
             }.onFailure {
                 it.handleDeclineRescueRequest()
@@ -1060,14 +1061,19 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun removeRescueRespondent(id: String) {
-        val rescueRespondents = state.value.userActiveRescueRequests.respondents.apply {
-            toMutableList().apply {
-                removeAll { it.id == id }
+        state.value.userActiveRescueRequests.respondents.toMutableList().apply {
+            val respondentRemoved = removeAll { it.id == id }
+            if (!respondentRemoved) {
+                viewModelScope.launch {
+                    _eventFlow.emit(value = MappingUiEvent.ShowToastMessage(message = "Failed to Remove Respondent"))
+                }
+                return
+            }
+            _state.update {
+                it.copy(userActiveRescueRequests = ActiveRescueRequests(this))
             }
         }
-        _state.update {
-            it.copy(userActiveRescueRequests = ActiveRescueRequests(rescueRespondents))
-        }
+
     }
 
     private fun signOutAccount() {

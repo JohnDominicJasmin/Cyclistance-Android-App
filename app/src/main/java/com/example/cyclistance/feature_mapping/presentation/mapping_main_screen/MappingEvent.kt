@@ -6,8 +6,8 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 
 sealed class MappingEvent {
 
-    object RequestHelp : MappingEvent()
-    object RespondToHelp : MappingEvent()
+    object RequestHelp : MappingEvent()//
+    object RespondToHelp : MappingEvent()//
     object SignOut: MappingEvent()
     object StartPinging: MappingEvent()
     object StopPinging: MappingEvent()
@@ -15,8 +15,6 @@ sealed class MappingEvent {
     /**
      * Available BottomSheetType:
      * RescuerArrived,DestinationReached, SearchAssistance, OnGoingRescue
-     *
-     *
      * Usage: DestinationReached.type
      * */
     data class ChangeBottomSheet(val bottomSheetType: String): MappingEvent()
@@ -28,7 +26,7 @@ sealed class MappingEvent {
     object LoadData: MappingEvent()
     object SubscribeToDataChanges: MappingEvent()
     object CancelRescueTransaction: MappingEvent()
-    data class ChangeCameraState(val cameraPosition: LatLng, val cameraZoomLevel: Double): MappingEvent()
+    data class ChangeCameraPosition(val cameraPosition: LatLng, val cameraZoomLevel: Double): MappingEvent()
     data class SelectRescueMapIcon(val id: String): MappingEvent()
     object DismissRescueeBanner: MappingEvent()
     object DismissRequestAccepted: MappingEvent()
