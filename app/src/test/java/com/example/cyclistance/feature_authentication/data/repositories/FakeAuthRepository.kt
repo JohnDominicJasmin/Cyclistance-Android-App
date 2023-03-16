@@ -26,7 +26,7 @@ class FakeAuthRepository: AuthRepository {
         var imagePath = ""
         var shouldReturnNetworkError = false
         var signInCredential: SignInCredential? = null
-
+        
     }
 
     override suspend fun reloadEmail(): Boolean = reloadEmail

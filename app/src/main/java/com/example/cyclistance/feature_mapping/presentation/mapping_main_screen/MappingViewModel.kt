@@ -327,7 +327,6 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun selectRescueeMapIcon(id: String) {
-            // TODO: Check if selected the rescuee doesn't exist
             val selectedRescuee = state.value.nearbyCyclists?.findUser(id) ?: return
             val selectedRescueeLocation = selectedRescuee.location
             val confirmationDetail = selectedRescuee.userAssistance?.confirmationDetail

@@ -40,7 +40,6 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
             val nearbyCyclists = awaitItem().nearbyCyclists?.users
             Assert.assertNotNull(nearbyCyclists)
             Assert.assertTrue(nearbyCyclists!!.isNotEmpty())
-
         }
         return this
     }
@@ -187,7 +186,6 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
     }
 
-
     suspend fun selectRescueMapIcon_SelectedRescueeMapIconStateUpdated():MappingViewModelStateVerifier{
 
         mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
@@ -297,8 +295,6 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         Assert.assertFalse("Searching Assistance", state.value.searchingAssistance)
         return this
     }
-
-
 
     suspend fun loadUserProfile_userProfileAvailable_returnsTrue(): MappingViewModelStateVerifier {
         mappingViewModel.onEvent(event = MappingEvent.LoadUserProfile)
@@ -432,7 +428,6 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         return this
     }
 
-
     suspend fun removeRouteDirection_routeDirectionStateIsNull(){
         mappingViewModel.onEvent(event = MappingEvent.RemoveRouteDirections)
         delay(1000)
@@ -443,7 +438,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     fun respondToHelp_hasInternetState_returnsFalse(){
         mappingViewModel.onEvent(event = MappingEvent.RespondToHelp)
         Assert.assertFalse(state.value.hasInternet)
-    }
 
+    }
 
 }

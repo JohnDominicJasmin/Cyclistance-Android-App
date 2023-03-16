@@ -17,7 +17,6 @@ import org.junit.runners.MethodSorters
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
-
 class MappingViewModelTest {
 
 
@@ -35,7 +34,6 @@ class MappingViewModelTest {
 
     @Before
     fun setup() {
-
         mappingViewModel = MappingViewModel(
             savedStateHandle = SavedStateHandle(),
             authUseCase = testAuthModule.provideTestAuthUseCase(),
@@ -685,6 +683,7 @@ class MappingViewModelTest {
                 testMappingModule().shouldReturnNetworkError = true
                 cancelRequestHelp_hasInternetState_isFalse()
             }
+
         }
 
 

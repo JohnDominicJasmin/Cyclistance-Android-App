@@ -10,6 +10,7 @@ import com.example.cyclistance.feature_authentication.domain.use_case.verify_acc
 object TestAuthModule {
     private val fakeAuthRepository: FakeAuthRepository = FakeAuthRepository()
 
+
     operator fun invoke() = FakeAuthRepository.Companion
 
     fun provideTestAuthUseCase(): AuthenticationUseCase {
