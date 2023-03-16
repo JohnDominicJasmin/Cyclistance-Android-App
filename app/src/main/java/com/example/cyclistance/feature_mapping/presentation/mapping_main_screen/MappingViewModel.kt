@@ -169,7 +169,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun removeRouteDirections() {
-        _state.update { it.copy(routeDirection = RouteDirection()) }
+        _state.update { it.copy(routeDirection = null) }
     }
 
     fun onEvent(event: MappingEvent) {
@@ -1048,9 +1048,9 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 startLoading()
-                removeRescueRespondent(id)
                 mappingUseCase.deleteRescueRespondentUseCase(userId = getId(), respondentId = id)
             }.onSuccess {
+                removeRescueRespondent(id)
                 broadcastUser()
             }.onFailure {
                 it.handleDeclineRescueRequest()
@@ -1063,12 +1063,12 @@ class MappingViewModel @Inject constructor(
 
     private fun removeRescueRespondent(id: String) {
         state.value.userActiveRescueRequests.respondents.toMutableList().apply {
-            val updatedValue = removeAll { it.id == id }
-            if (!updatedValue) {
+            val respondentRemoved = removeAll { it.id == id }
+            if (!respondentRemoved) {
                 viewModelScope.launch {
                     _eventFlow.emit(value = MappingUiEvent.ShowToastMessage(message = "Failed to Remove Respondent"))
                 }
-
+                return
             }
             _state.update {
                 it.copy(userActiveRescueRequests = ActiveRescueRequests(this))
