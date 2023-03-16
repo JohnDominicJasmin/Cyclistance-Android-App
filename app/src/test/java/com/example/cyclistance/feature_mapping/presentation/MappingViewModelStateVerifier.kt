@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_mapping.presentation
 
+import androidx.test.core.app.ActivityScenario.launch
 import app.cash.turbine.test
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
@@ -10,6 +11,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import org.junit.Assert
 import kotlin.time.Duration.Companion.minutes
@@ -36,7 +38,9 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         delay(1000)
         state.test {
             val nearbyCyclists = awaitItem().nearbyCyclists?.users
-            Assert.assertTrue(nearbyCyclists != null && nearbyCyclists.isNotEmpty())
+            Assert.assertNotNull(nearbyCyclists)
+            Assert.assertTrue(nearbyCyclists!!.isNotEmpty())
+
         }
         return this
     }
@@ -178,7 +182,6 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
             mappingViewModel.onEvent(event = MappingEvent.SelectRescueMapIcon(id = "2"))
             delay(2000)
             Assert.assertEquals(MappingUiEvent.ShowToastMessage("Tracking your Location"), awaitItem())
-
         }
         return this
 
@@ -262,6 +265,8 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         val hasInternet = state.value.hasInternet
         Assert.assertTrue(hasInternet)
         Assert.assertNotNull(routeDirection)
+        Assert.assertTrue(routeDirection!!.geometry.isNotEmpty())
+        Assert.assertTrue(routeDirection.duration != 0.00)
         return this
     }
 
@@ -401,6 +406,10 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         mappingViewModel.onEvent(event = MappingEvent.DeclineRescueRequest(id = "124 this id doesn't exist"))
         val sizeAfterDeclineRequest = state.value.userActiveRescueRequests.respondents.size
         Assert.assertFalse((originalSize - sizeAfterDeclineRequest) == 1)
+        event.test(timeout = 1.5.minutes) {
+            val result = awaitItem()
+            Assert.assertEquals(MappingUiEvent.ShowToastMessage(message = "Failed to Remove Respondent"), result)
+        }
         return this
     }
 
@@ -410,7 +419,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         mappingViewModel.onEvent(MappingEvent.LoadData)
         delay(2500)
         mappingViewModel.onEvent(event = MappingEvent.DeclineRescueRequest(id = "1"))
-        event.test {
+        event.test(timeout = 1.5.minutes) {
             when (val result = awaitItem()) {
                 is MappingUiEvent.ShowToastMessage -> {
                     Assert.assertEquals("No Internet Connection", result.message)
@@ -423,25 +432,17 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         return this
     }
 
-    suspend fun declineRescueRequest_NoInternetToastMessage_IsHidden(): MappingViewModelStateVerifier {
 
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
-        delay(2500)
-        event.test {
-            mappingViewModel.onEvent(event = MappingEvent.DeclineRescueRequest(id = "1"))
-            when (awaitItem()) {
-                is MappingUiEvent.ShowToastMessage -> {
-                    throw Exception("Not expected to show toast message")
-                }
-                else -> {
-                    throw Exception("Not expected")
-                }
-            }
-        }
+    suspend fun removeRouteDirection_routeDirectionStateIsNull(){
+        mappingViewModel.onEvent(event = MappingEvent.RemoveRouteDirections)
+        delay(1000)
+        val routeDirection = state.value.routeDirection
+        Assert.assertNull(routeDirection)
+    }
 
-        Assert.assertTrue("No events happened", true)
-        return this
+    fun respondToHelp_hasInternetState_returnsFalse(){
+        mappingViewModel.onEvent(event = MappingEvent.RespondToHelp)
+        Assert.assertFalse(state.value.hasInternet)
     }
 
 

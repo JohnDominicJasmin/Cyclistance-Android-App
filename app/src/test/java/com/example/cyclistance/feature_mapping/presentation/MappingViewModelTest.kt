@@ -626,6 +626,8 @@ class MappingViewModelTest {
     @Test
     fun `16_ShowRouteDirections Event, routeDirection state is updated`() = runTest {
         testMappingModule().shouldReturnNetworkError = false
+        testMappingModule().routeDirectionGeometry = "sample-geometry"
+        testMappingModule().routeDirectionDuration = 1000.0
         assertThat(mappingViewModel)
             .showRouteDirections_routeDirectionStateUpdated()
     }
@@ -722,28 +724,32 @@ class MappingViewModelTest {
                             description = "flat tire",
                         )
                     ),
-                ),   UserItem(
+                ),
+                UserItem(
                     id = "2",
                     name = "Doe",
                     address = "Tanauan Batangas",
                     contactNumber = "09123456789",
                     location = Location(latitude = 14.251, longitude = 14.5238),
                     profilePictureUrl = "https//:sample.png",
-                ),   UserItem(
+                ),
+                UserItem(
                     id = "3",
                     name = "DJay",
                     address = "Tanauan",
                     contactNumber = "09123456789",
                     location = Location(latitude = 14.251, longitude = 14.5238),
                     profilePictureUrl = "https//:sample.png",
-                ),   UserItem(
+                ),
+                UserItem(
                     id = "4",
                     name = "John",
                     address = "Tanauan",
                     contactNumber = "09123456789",
                     location = Location(latitude = 14.251, longitude = 14.5238),
                     profilePictureUrl = "https//:sample.png",
-                ),   UserItem(
+                ),
+                UserItem(
                     id = "5",
                     name = "John",
                     address = "Tanauan",
@@ -758,6 +764,107 @@ class MappingViewModelTest {
             .declineRescueRequest_rescueRespondentsRemoved_returnsTrue()
     }
 
+    @Test
+    fun `25_DeclineRescueRequest Event, toast message 'Failed to Remove Respondent' is shown`() =
+        runTest(
+            UnconfinedTestDispatcher()
+        ) {
+            testMappingModule().shouldReturnNetworkError = false
+            testMappingModule().users.clear()
+            testMappingModule().nearbyCyclist.value = NearbyCyclist(
+                users = listOf(
+                    UserItem(
+                        id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
+                        name = "John",
+                        address = "Tanauan",
+                        contactNumber = "09123456789",
+                        location = Location(latitude = 14.251, longitude = 14.5238),
+                        profilePictureUrl = "https//:sample.png",
+                        rescueRequest = RescueRequest(
+                            respondents = listOf(
+                                Respondent(
+                                    clientId = "2",
+                                ),
+                                Respondent(
+                                    clientId = "3",
+                                ),
+                                Respondent(
+                                    clientId = "4",
+                                ),
+                                Respondent(
+                                    clientId = "5",
+                                ),
+                            )
+                        ),
+                        transaction = Transaction(role = "rescuee", transactionId = "1234"),
+                        userAssistance = UserAssistance(
+                            confirmationDetail = ConfirmationDetail(
+                                bikeType = "mountain bike",
+                                description = "flat tire",
+                            )
+                        ),
+                    ),
+                    UserItem(
+                        id = "2",
+                        name = "Doe",
+                        address = "Tanauan Batangas",
+                        contactNumber = "09123456789",
+                        location = Location(latitude = 14.251, longitude = 14.5238),
+                        profilePictureUrl = "https//:sample.png",
+                    ),
+                    UserItem(
+                        id = "3",
+                        name = "DJay",
+                        address = "Tanauan",
+                        contactNumber = "09123456789",
+                        location = Location(latitude = 14.251, longitude = 14.5238),
+                        profilePictureUrl = "https//:sample.png",
+                    ),
+                    UserItem(
+                        id = "4",
+                        name = "John",
+                        address = "Tanauan",
+                        contactNumber = "09123456789",
+                        location = Location(latitude = 14.251, longitude = 14.5238),
+                        profilePictureUrl = "https//:sample.png",
+                    ),
+                    UserItem(
+                        id = "5",
+                        name = "John",
+                        address = "Tanauan",
+                        contactNumber = "09123456789",
+                        location = Location(latitude = 14.251, longitude = 14.5238),
+                        profilePictureUrl = "https//:sample.png",
+                    ),
+                )
+            )
+
+            assertThat(mappingViewModel).declineRescueRequest_rescueRespondentsRemoved_returnsFalse()
+        }
+
+    @Test
+    fun `26_DeclineRescueRequest Event, no internet toast message is shown`() = runTest {
+        testMappingModule().shouldReturnNetworkError = true
+        assertThat(mappingViewModel).declineRescueRequest_NoInternetToastMessage_IsShown()
+    }
+
+    @Test
+    fun `27_RemoveRouteDirections Event, routeDirection state is null`() = runTest {
+        testMappingModule().routeDirectionDuration = 1000.0
+        testMappingModule().routeDirectionGeometry = "sample_geometry"
+        assertThat(mappingViewModel)
+            .removeRouteDirection_routeDirectionStateIsNull()
+    }
+
+    @Test
+    fun `28_RespondToHelp Event, hasInternet state is false`() = runTest{
+
+        testMappingModule().location = Location(latitude = 14.25216, longitude = 14.6939)
+        testMappingModule().shouldReturnNetworkError = true
+        assertThat(mappingViewModel)
+            .respondToHelp_hasInternetState_returnsFalse()
+
+    }
 
 }
 

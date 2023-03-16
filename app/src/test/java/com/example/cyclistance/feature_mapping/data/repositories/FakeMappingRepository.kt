@@ -26,6 +26,8 @@ class FakeMappingRepository : MappingRepository {
         val liveLocation = MutableStateFlow(LiveLocationWSModel())
         var shouldReturnNetworkError = false
         var calculatedDistanceInMeters = 0.0
+        var routeDirectionGeometry: String = ""
+        var routeDirectionDuration: Double = 0.0
     }
 
 
@@ -228,7 +230,7 @@ class FakeMappingRepository : MappingRepository {
             throw MappingExceptions.NetworkException()
         }
 
-        return RouteDirection(geometry = "test-geometry", duration = 1000.0)
+        return RouteDirection(geometry = routeDirectionGeometry, duration = routeDirectionDuration)
     }
 
 

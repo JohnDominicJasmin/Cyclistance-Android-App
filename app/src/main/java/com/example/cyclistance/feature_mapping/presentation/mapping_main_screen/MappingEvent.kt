@@ -6,8 +6,8 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 
 sealed class MappingEvent {
 
-    object RequestHelp : MappingEvent()
-    object RespondToHelp : MappingEvent()
+    object RequestHelp : MappingEvent()//
+    object RespondToHelp : MappingEvent()//
     object SignOut: MappingEvent()
     object StartPinging: MappingEvent()
     object StopPinging: MappingEvent()
