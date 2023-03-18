@@ -147,7 +147,7 @@ class ConfirmDetailsViewModel @Inject constructor(
         val longitude = _longitude.toDouble()
 
         runCatching {
-            mappingUseCase.broadcastUserUseCase(locationModel = LiveLocationWSModel(
+            mappingUseCase.broadcastToNearbyCyclists(locationModel = LiveLocationWSModel(
                 latitude = latitude,
                 longitude = longitude
             ))

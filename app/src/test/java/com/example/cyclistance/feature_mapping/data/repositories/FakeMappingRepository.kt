@@ -198,7 +198,7 @@ class FakeMappingRepository : MappingRepository {
         return liveLocation
     }
 
-    override suspend fun broadcastUser(locationModel: LiveLocationWSModel) {
+    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel) {
         if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
@@ -207,7 +207,7 @@ class FakeMappingRepository : MappingRepository {
     }
 
 
-    override suspend fun broadcastRescueTransaction() {
+    override suspend fun broadcastRescueTransactionToRespondent() {
 
         if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
@@ -216,7 +216,7 @@ class FakeMappingRepository : MappingRepository {
         print("broadcastRescueTransaction")
     }
 
-    override suspend fun broadcastLocation(locationModel: LiveLocationWSModel) {
+    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel) {
 
         if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()

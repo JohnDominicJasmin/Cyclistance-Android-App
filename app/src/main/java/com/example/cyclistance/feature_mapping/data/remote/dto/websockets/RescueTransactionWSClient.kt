@@ -19,7 +19,7 @@ class RescueTransactionWSClient(
 ): WebSocketClient<RescueTransaction, LiveLocationWSModel> {
 
 
-    override suspend fun broadCastEvent(t: LiveLocationWSModel?) {
+    override suspend fun broadcastEvent(t: LiveLocationWSModel?) {
         socket.emit(BROADCAST_RESCUE_TRANSACTION)
     }
 

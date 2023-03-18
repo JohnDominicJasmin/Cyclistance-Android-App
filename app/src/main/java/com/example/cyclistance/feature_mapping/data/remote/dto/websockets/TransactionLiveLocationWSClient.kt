@@ -35,7 +35,7 @@ class TransactionLiveLocationWSClient(
     }
 
 
-    override suspend fun broadCastEvent(t: LiveLocationWSModel?) {
+    override suspend fun broadcastEvent(t: LiveLocationWSModel?) {
         t?.let{ locationModel ->
             socket.emit(JOIN_LIVE_LOCATION_UPDATES, locationModel.latitude, locationModel.longitude, "room-${locationModel.room}")
         }

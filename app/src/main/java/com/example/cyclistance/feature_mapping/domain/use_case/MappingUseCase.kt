@@ -17,7 +17,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_l
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.BroadcastUserUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.BroadcastToNearbyCyclists
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.GetUserUpdatesUseCase
 
 data class MappingUseCase(
@@ -49,8 +49,8 @@ data class MappingUseCase(
     val setAddressUseCase: SetAddressUseCase,
 
     val broadcastRescueTransactionUseCase: BroadcastRescueTransactionUseCase,
-    val broadcastUserUseCase: BroadcastUserUseCase,
-    val broadcastTransactionLocationUseCase: BroadcastTransactionLocationUseCase,
+    val broadcastToNearbyCyclists: BroadcastToNearbyCyclists,
+    val broadcastRescueTransactionToRespondent: BroadcastTransactionLocationUseCase,
     val getRescueTransactionUpdatesUseCase: GetRescueTransactionUpdatesUseCase,
     val getUserUpdatesUseCase: GetUserUpdatesUseCase,
     val getTransactionLocationUpdatesUseCase: GetTransactionLocationUpdatesUseCase,

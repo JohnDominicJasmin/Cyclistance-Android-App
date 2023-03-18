@@ -35,9 +35,9 @@ interface MappingRepository {
     suspend fun getUserUpdates():Flow<NearbyCyclist>
     suspend fun getRescueTransactionUpdates(): Flow<RescueTransaction>
     suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel>
-    suspend fun broadcastUser(locationModel: LiveLocationWSModel)
-    suspend fun broadcastRescueTransaction()
-    suspend fun broadcastLocation(locationModel: LiveLocationWSModel)
+    suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel)
+    suspend fun broadcastRescueTransactionToRespondent()
+    suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel)
 
 
 
