@@ -1098,10 +1098,13 @@ class MappingViewModel @Inject constructor(
 
     private fun requestHelp() {
         viewModelScope.launch {
-            uploadUserProfile(onSuccess = {
-                _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
-            })
-
+            runCatching {
+                uploadUserProfile(onSuccess = {
+                    _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
+                })
+            }.onFailure {
+                it.handleException()
+            }
         }.invokeOnCompletion {
             savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
         }
@@ -1135,9 +1138,7 @@ class MappingViewModel @Inject constructor(
         }.onSuccess { fullAddress ->
             uploadProfile(location = location, fullAddress = fullAddress, onSuccess = onSuccess)
         }.onFailure { exception ->
-            if (exception is MappingExceptions.AddressException) {
-                _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = exception.message!!))
-            }
+            throw exception
         }
     }
 
@@ -1193,7 +1194,7 @@ class MappingViewModel @Inject constructor(
                 _state.update { it.copy(hasInternet = false) }
             }
 
-            is MappingExceptions.UnexpectedErrorException, is MappingExceptions.UserException -> {
+            is MappingExceptions.UnexpectedErrorException, is MappingExceptions.UserException, is MappingExceptions.AddressException -> {
                 _eventFlow.emit(
                     MappingUiEvent.ShowToastMessage(
                         message = this.message ?: "Unexpected error occurred."
