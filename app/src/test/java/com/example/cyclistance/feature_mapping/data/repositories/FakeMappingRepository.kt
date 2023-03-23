@@ -18,12 +18,12 @@ class FakeMappingRepository : MappingRepository {
 
         val bikeType = MutableStateFlow("")
         val address = MutableStateFlow("")
-        var location = Location()
-
         val nearbyCyclist = MutableStateFlow(NearbyCyclist())
-        val users = nearbyCyclist.value.users.toMutableList()
-        val rescueTransaction = MutableStateFlow(RescueTransaction())
         val liveLocation = MutableStateFlow(LiveLocationWSModel())
+        val rescueTransaction = MutableStateFlow(RescueTransaction())
+
+        val users = nearbyCyclist.value.users.toMutableList()
+        var location = Location()
         var shouldReturnNetworkError = false
         var calculatedDistanceInMeters = 0.0
         var routeDirectionGeometry: String = ""
@@ -97,7 +97,9 @@ class FakeMappingRepository : MappingRepository {
             throw MappingExceptions.NetworkException()
         }
 
-        val userFound = users.find { it.id == userId } ?: throw MappingExceptions.UserException()
+
+        val userFound = nearbyCyclist.value.users.find { it.id == userId }
+                        ?: throw MappingExceptions.UserException()
         userFound.rescueRequest?.respondents?.toMutableList()
             ?.add(Respondent(clientId = respondentId))
     }
@@ -151,7 +153,12 @@ class FakeMappingRepository : MappingRepository {
     }
 
     override suspend fun getFullAddress(latitude: Double, longitude: Double): String {
-        return "Manila, Quiapo"
+
+        if(address.value.isEmpty()){
+            throw MappingExceptions.AddressException("Address not found")
+        }
+
+        return address.value
     }
 
     override suspend fun getBikeType(): Flow<String> {
@@ -198,30 +205,34 @@ class FakeMappingRepository : MappingRepository {
         return liveLocation
     }
 
-    override suspend fun broadcastUser(locationModel: LiveLocationWSModel) {
+    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel) {
         if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
 
-        print("broadcastUser")
+        liveLocation.emit(value = locationModel)
+        println("broadcastUser")
     }
 
 
-    override suspend fun broadcastRescueTransaction() {
+    override suspend fun broadcastRescueTransactionToRespondent() {
 
         if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
 
-        print("broadcastRescueTransaction")
+        rescueTransaction.emit(value = rescueTransaction.value)
+        println("broadcastRescueTransaction")
     }
 
-    override suspend fun broadcastLocation(locationModel: LiveLocationWSModel) {
+    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel) {
 
         if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
-        print("broadcastLocation")
+
+        // TODO: Make collectors listen to changes
+        println("broadcastLocation")
     }
 
     override suspend fun getRouteDirections(origin: Point, destination: Point): RouteDirection {

@@ -142,12 +142,12 @@ class MappingRepositoryImpl(
         }
     }
 
-    override suspend fun broadcastLocation(locationModel: LiveLocationWSModel) {
+    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel) {
         if (context.hasInternetConnection().not()) {
             throw MappingExceptions.NetworkException()
         }
         return withContext(scope) {
-            liveLocation.broadCastEvent(locationModel)
+            liveLocation.broadcastEvent(locationModel)
         }
     }
 
@@ -235,20 +235,20 @@ class MappingRepositoryImpl(
         return withContext(scope) { nearbyCyclistClient.getResult() }
     }
 
-    override suspend fun broadcastUser(locationModel: LiveLocationWSModel) {
+    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel) {
         if(context.hasInternetConnection().not()){
             throw MappingExceptions.NetworkException()
         }
-        withContext(scope) { nearbyCyclistClient.broadCastEvent(locationModel) }
+        withContext(scope) { nearbyCyclistClient.broadcastEvent(locationModel) }
     }
 
-    override suspend fun broadcastRescueTransaction() {
+    override suspend fun broadcastRescueTransactionToRespondent() {
         if(context.hasInternetConnection().not()){
             throw MappingExceptions.NetworkException()
         }
 
         withContext(scope) {
-            rescueTransactionClient.broadCastEvent()
+            rescueTransactionClient.broadcastEvent()
         }
     }
 

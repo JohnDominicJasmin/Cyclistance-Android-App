@@ -1,17 +1,17 @@
 package com.example.cyclistance.feature_mapping.presentation
 
-import androidx.test.core.app.ActivityScenario.launch
 import app.cash.turbine.test
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_MAP_ZOOM_LEVEL
+import com.example.cyclistance.feature_mapping.domain.model.ActiveRescueRequests
+import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import org.junit.Assert
 import kotlin.time.Duration.Companion.minutes
@@ -172,7 +172,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
 
-    suspend fun selectRescueeMapIcon_toastMessage_isShown():MappingViewModelStateVerifier{
+    suspend fun selectRescueeMapIcon_ToastMessageIsShown():MappingViewModelStateVerifier{
         mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
         mappingViewModel.onEvent(MappingEvent.LoadData)
         delay(2000)
@@ -409,7 +409,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         return this
     }
 
-    suspend fun declineRescueRequest_NoInternetToastMessage_IsShown(): MappingViewModelStateVerifier {
+    suspend fun declineRescueRequest_NoInternet_ToastMessageIsShown(): MappingViewModelStateVerifier {
 
         mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
         mappingViewModel.onEvent(MappingEvent.LoadData)
@@ -435,10 +435,51 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         Assert.assertNull(routeDirection)
     }
 
-    fun respondToHelp_hasInternetState_returnsFalse(){
+   suspend fun respondToHelp_hasInternetState_returnsFalse(){
         mappingViewModel.onEvent(event = MappingEvent.RespondToHelp)
+        delay(1000)
         Assert.assertFalse(state.value.hasInternet)
 
     }
+
+    suspend fun respondToHelp_RescueRequestSent_ToastMessageIsShown(){
+        event.test(timeout = 1.5.minutes) {
+            mappingViewModel.onEvent(event = MappingEvent.RespondToHelp)
+            val result = awaitItem()
+            Assert.assertEquals(MappingUiEvent.ShowToastMessage("Rescue request sent"), result)
+        }
+    }
+
+    suspend fun respondToHelp_AddressNotFound_ToastMessageIsShown(){
+        event.test(timeout = 1.5.minutes) {
+            mappingViewModel.onEvent(event = MappingEvent.RespondToHelp)
+            val result = awaitItem()
+            Assert.assertEquals(MappingUiEvent.ShowToastMessage("Address not found"), result)
+        }
+    }
+
+    suspend fun cancelRescueTransaction_resetUiState(){
+        mappingViewModel.onEvent(event = MappingEvent.LoadData)
+        mappingViewModel.onEvent(event = MappingEvent.SubscribeToDataChanges)
+        delay(200)
+        mappingViewModel.onEvent(event = MappingEvent.CancelRescueTransaction)
+        delay(200)
+        val result = state.value
+        Assert.assertFalse(result.isRescueRequestAccepted)
+        Assert.assertTrue(result.respondedToHelp)
+        Assert.assertFalse(result.searchingAssistance)
+        Assert.assertTrue(result.bottomSheetType.isEmpty())
+        Assert.assertTrue(result.requestHelpButtonVisible)
+        Assert.assertFalse(result.isNavigating)
+        Assert.assertFalse(result.isRescueRequestAccepted)
+        Assert.assertEquals(ActiveRescueRequests(), result.userActiveRescueRequests)
+        Assert.assertEquals(RescueTransactionItem(), result.userRescueTransaction)
+        Assert.assertNull(result.rescuee)
+        Assert.assertNull(result.rescuer)
+
+
+    }
+
+
 
 }

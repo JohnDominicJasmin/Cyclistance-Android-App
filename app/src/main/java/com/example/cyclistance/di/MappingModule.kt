@@ -31,7 +31,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_l
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.BroadcastUserUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.BroadcastToNearbyCyclists
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.GetUserUpdatesUseCase
 import com.google.gson.GsonBuilder
 import com.mapbox.api.optimization.v1.MapboxOptimization
@@ -134,10 +134,10 @@ object MappingModule {
             getAddressUseCase = GetAddressUseCase(repository),
             setAddressUseCase = SetAddressUseCase(repository),
             broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(repository),
-            broadcastUserUseCase = BroadcastUserUseCase(repository),
+            broadcastToNearbyCyclists = BroadcastToNearbyCyclists(repository),
             getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(repository),
             getUserUpdatesUseCase = GetUserUpdatesUseCase(repository),
-            broadcastTransactionLocationUseCase = BroadcastTransactionLocationUseCase(repository),
+            broadcastRescueTransactionToRespondent = BroadcastTransactionLocationUseCase(repository),
             getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(repository),
             deleteRescueRespondentUseCase = DeleteRescueRespondentUseCase(repository),
             addRescueRespondentUseCase = AddRescueRespondentUseCase(repository),

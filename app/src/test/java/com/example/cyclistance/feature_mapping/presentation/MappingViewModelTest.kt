@@ -4,8 +4,11 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.SavedStateHandle
 import com.example.cyclistance.di.TestAuthModule
 import com.example.cyclistance.di.TestMappingModule
+import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Route
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.*
 import com.example.cyclistance.feature_mapping.domain.model.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.UserItem
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.test_rule.MainDispatcherRule
@@ -124,6 +127,7 @@ class MappingViewModelTest {
             testMappingModule().location = Location(latitude = 14.0835, longitude = 121.1476)
             testMappingModule().shouldReturnNetworkError = false
             testMappingModule().users.clear()
+            testMappingModule().address.value = "Manila, Quiapo"
 
             assertThat(mappingViewModel)
                 .requestHelp_ConfirmDetailScreen_IsShown()
@@ -513,7 +517,7 @@ class MappingViewModelTest {
                 )
             )
 
-            assertThat(mappingViewModel).selectRescueeMapIcon_toastMessage_isShown()
+            assertThat(mappingViewModel).selectRescueeMapIcon_ToastMessageIsShown()
         }
 
     @Test
@@ -844,7 +848,7 @@ class MappingViewModelTest {
     @Test
     fun `26_DeclineRescueRequest Event, no internet toast message is shown`() = runTest {
         testMappingModule().shouldReturnNetworkError = true
-        assertThat(mappingViewModel).declineRescueRequest_NoInternetToastMessage_IsShown()
+        assertThat(mappingViewModel).declineRescueRequest_NoInternet_ToastMessageIsShown()
     }
 
     @Test
@@ -857,7 +861,6 @@ class MappingViewModelTest {
 
     @Test
     fun `28_RespondToHelp Event, hasInternet state is false`() = runTest{
-
         testMappingModule().location = Location(latitude = 14.25216, longitude = 14.6939)
         testMappingModule().shouldReturnNetworkError = true
         assertThat(mappingViewModel)
@@ -865,6 +868,172 @@ class MappingViewModelTest {
 
     }
 
+    @Test
+    fun `29_RespondToHelp Event, 'Rescue request sent' toast message is shown`() = runTest(
+        UnconfinedTestDispatcher()){
+        testMappingModule().location = Location(latitude = 14.25216, longitude = 14.6939)
+        testMappingModule().shouldReturnNetworkError = false
+        testAuthModule().name = "Miko jasmin"
+
+        testMappingModule().users.clear()
+        testMappingModule().nearbyCyclist.value = NearbyCyclist(
+            listOf(
+                UserItem(
+                    address = "Manila, Quiapo",
+                    contactNumber = "09123456789",
+                    id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
+                    name = "Andres",
+                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                    rescueRequest = RescueRequest(
+                        respondents = listOf(
+                            Respondent(clientId = "2"),
+                            Respondent(clientId = "3")
+                        )
+                    ),
+                    location = Location(
+                        latitude = 14.084499224680876,
+                        longitude = 121.15170397731512
+                    ),
+                    transaction = Transaction(),
+                    userAssistance = UserAssistance(
+                        confirmationDetail = ConfirmationDetail(
+                            bikeType = "road-bike",
+                            description = "Sample description",
+                            message = "I need help",
+                        ),
+                        needHelp = true,
+                    ),
+
+                    ),
+                UserItem(
+                    address = "Manila, Quiapo",
+                    contactNumber = "09123456789",
+                    id = "2",
+                    location = Location(
+                        latitude = 14.084499224680876,
+                        longitude = 121.15170397731512
+                    ),
+                    name = "Andres",
+                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                    rescueRequest = RescueRequest(),
+                    userAssistance = UserAssistance(
+                        confirmationDetail = ConfirmationDetail(
+                            bikeType = "road-bike",
+                            description = "Sample description",
+                            message = "I need help",
+                        ),
+                        needHelp = true,
+                    ),
+                ),
+
+                UserItem(
+                    address = "Tanauan Batangas",
+                    contactNumber = "09123456789",
+                    id = "3",
+                    name = "Juan",
+                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                    rescueRequest = RescueRequest(),
+                    userAssistance = UserAssistance(
+                        confirmationDetail = ConfirmationDetail(
+                            bikeType = "mountain-bike",
+                            description = "Sample description",
+                            message = "I need help",
+                        ),
+                        needHelp = true,
+                    ),
+                    location = Location(
+                        latitude = 14.084499224680876,
+                        longitude = 121.15170397731512
+                    ),
+                )
+            )
+        )
+        testMappingModule().calculatedDistanceInMeters = 1000.00
+
+        assertThat(mappingViewModel)
+            .selectRescueMapIcon_SelectedRescueeMapIconStateUpdated()
+            .respondToHelp_RescueRequestSent_ToastMessageIsShown()
+    }
+
+
+    @Test
+    fun `30_CancelRescueTransaction Event then reset ui state`() = runTest(UnconfinedTestDispatcher()){
+        testMappingModule().location = Location(latitude = 14.25216, longitude = 14.6939)
+        testMappingModule().shouldReturnNetworkError = false
+        testAuthModule().name = "Miko"
+
+        testMappingModule().users.clear()
+        testMappingModule().nearbyCyclist.value = NearbyCyclist(
+            listOf(
+                UserItem(
+                    address = "Manila, Quiapo",
+                    contactNumber = "09123456789",
+                    id = "rwLt7Y9Me7JCNJ3Fhh1SP4PaizqN",
+                    name = "Andres",
+                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                    location = Location(
+                        latitude = 14.084499224680876,
+                        longitude = 121.15170397731512
+                    ),
+                    transaction = Transaction(role = "rescuer", transactionId = "1234"),
+                    userAssistance = UserAssistance(
+                        confirmationDetail = ConfirmationDetail(
+                            bikeType = "road-bike",
+                            description = "Sample description",
+                            message = "I need help",
+                        ),
+                        needHelp = true,
+                    ),
+                    ),
+                UserItem(
+                    address = "Manila, Quiapo",
+                    contactNumber = "09123456789",
+                    id = "2",
+                    location = Location(
+                        latitude = 14.084499224680876,
+                        longitude = 121.15170397731512
+                    ),
+                    name = "Andres",
+                    profilePictureUrl = "https://i.imgur.com/1ZQ3Y7r.jpg",
+                    transaction = Transaction(role = "rescuee", transactionId = "1234"),
+                    rescueRequest = RescueRequest(),
+                    userAssistance = UserAssistance(
+                        confirmationDetail = ConfirmationDetail(
+                            bikeType = "road-bike",
+                            description = "Sample description",
+                            message = "I need help",
+                        ),
+                        needHelp = true,
+                    ),
+                ),
+            )
+        )
+        
+        testMappingModule().calculatedDistanceInMeters = 1000.00
+        testMappingModule().rescueTransaction.value = RescueTransaction(
+            transactions = listOf(
+                RescueTransactionItem(
+                    id = "1234",
+                    rescuerId = "1",
+                    rescueeId = "2",
+                    route = Route(
+                        startingLocation = Location(latitude = 14.25125, longitude = 14.12497),
+                        destinationLocation = Location(latitude = 14.25125, longitude = 14.12497),
+                    )
+                ),))
+
+        assertThat(mappingViewModel)
+            .cancelRescueTransaction_resetUiState()
+
+    }
+
+    @Test
+    fun `31_RespondToHelp Event, 'AddressNotFound' toast message is shown`() = runTest{
+        testMappingModule().location = Location(latitude = 14.25216, longitude = 14.6939)
+        testMappingModule().address.value = ""
+        assertThat(mappingViewModel)
+            .respondToHelp_AddressNotFound_ToastMessageIsShown()
+    }
 }
 
 

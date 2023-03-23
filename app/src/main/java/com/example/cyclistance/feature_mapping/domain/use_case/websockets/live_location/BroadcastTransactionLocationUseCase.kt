@@ -24,6 +24,6 @@ class BroadcastTransactionLocationUseCase(
             return
         }
 
-        repository.broadcastLocation(locationModel)
+        repository.broadcastTransactionLocation(locationModel)
     }
 }

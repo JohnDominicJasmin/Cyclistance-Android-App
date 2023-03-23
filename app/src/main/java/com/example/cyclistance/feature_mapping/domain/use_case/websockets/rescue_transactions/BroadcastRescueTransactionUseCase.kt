@@ -4,6 +4,6 @@ import com.example.cyclistance.feature_mapping.domain.repository.MappingReposito
 
 class BroadcastRescueTransactionUseCase(private val repository: MappingRepository) {
     suspend operator fun invoke() {
-        repository.broadcastRescueTransaction()
+        repository.broadcastRescueTransactionToRespondent()
     }
 }

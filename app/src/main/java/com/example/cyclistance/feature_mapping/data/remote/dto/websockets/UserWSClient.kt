@@ -18,7 +18,7 @@ class UserWSClient(
 ): WebSocketClient<NearbyCyclist, LiveLocationWSModel> {
 
 
-    override suspend fun broadCastEvent(t: LiveLocationWSModel?) {
+    override suspend fun broadcastEvent(t: LiveLocationWSModel?) {
         t?.let{ locationModel ->
             socket.emit(BROADCAST_USERS, locationModel.latitude, locationModel.longitude)
         }
