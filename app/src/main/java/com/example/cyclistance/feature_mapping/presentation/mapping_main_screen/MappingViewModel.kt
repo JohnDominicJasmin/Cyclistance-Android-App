@@ -428,7 +428,7 @@ class MappingViewModel @Inject constructor(
             runCatching {
                 getId().removeAssignedTransaction()
             }.onSuccess {
-                broadcastUser()
+                broadcastToNearbyCyclists()
                 broadcastRescueTransaction()
                 finishLoading()
                 dismissRequestAccepted()
@@ -650,10 +650,10 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun broadcastUser() {
+    private suspend fun broadcastToNearbyCyclists() {
         val location = state.value.userLocation ?: return
         runCatching {
-            mappingUseCase.broadcastUserUseCase(
+            mappingUseCase.broadcastToNearbyCyclists(
                 locationModel = LiveLocationWSModel(
                     latitude = location.latitude,
                     longitude = location.longitude
@@ -675,7 +675,7 @@ class MappingViewModel @Inject constructor(
             transactionId.assignTransaction(role = Role.RESCUER.name.lowercase(), id = rescuer.id)
 
         }.onSuccess {
-            broadcastUser()
+            broadcastToNearbyCyclists()
             _eventFlow.emit(value = MappingUiEvent.ShowMappingScreen)
             delay(500)
             updateTransactionETA(rescuer, rescueTransaction)
@@ -800,7 +800,7 @@ class MappingViewModel @Inject constructor(
                 cancelUserHelpRequest()
             }.onSuccess {
                 showRequestHelpButton()
-                broadcastUser()
+                broadcastToNearbyCyclists()
                 _state.update { it.copy(rescueRequestAcceptedUser = null)}
             }.onFailure { exception ->
                 Timber.e("Failed to cancel search assistance: ${exception.message}")
@@ -896,12 +896,12 @@ class MappingViewModel @Inject constructor(
         _state.update { it.copy(nearbyCyclists = this.apply { users.distinct() }) }
     }
 
-    private suspend fun broadCastLocationToTransaction(location: Location) {
+    private suspend fun broadcastRescueTransactionToRespondent(location: Location) {
         val rescueTransaction = state.value.userRescueTransaction ?: return
         runCatching {
 
             val user = state.value.user
-            mappingUseCase.broadcastTransactionLocationUseCase(
+            mappingUseCase.broadcastRescueTransactionToRespondent(
                 LiveLocationWSModel(
                     latitude = location.latitude,
                     longitude = location.longitude,
@@ -1006,7 +1006,7 @@ class MappingViewModel @Inject constructor(
 
             runCatching {
                 mappingUseCase.getUserLocationUseCase().collect { location ->
-                    broadCastLocationToTransaction(location)
+                    broadcastRescueTransactionToRespondent(location)
                     updateLocation(location)
                     getNearbyCyclist()
                 }
@@ -1053,7 +1053,7 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.deleteRescueRespondentUseCase(userId = getId(), respondentId = id)
             }.onSuccess {
                 removeRescueRespondent(id)
-                broadcastUser()
+                broadcastToNearbyCyclists()
             }.onFailure {
                 it.handleDeclineRescueRequest()
             }
@@ -1173,7 +1173,7 @@ class MappingViewModel @Inject constructor(
 
             }.onSuccess {
                 finishLoading()
-                broadcastUser()
+                broadcastToNearbyCyclists()
                 onSuccess()
                 _state.update { it.copy(profileUploaded = true) }
 
@@ -1217,7 +1217,7 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.createMockUsers()
         }.onSuccess {
             Timber.v("CREATED MOCK USERS!")
-            broadcastUser()
+            broadcastToNearbyCyclists()
         }.onFailure {
             Timber.e("FAILED TO CREATE MOCK USERS: ${it.message}")
         }
