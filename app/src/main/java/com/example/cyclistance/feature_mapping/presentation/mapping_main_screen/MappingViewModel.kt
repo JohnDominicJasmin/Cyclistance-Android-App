@@ -308,21 +308,22 @@ class MappingViewModel @Inject constructor(
 
     private fun respondToHelp() {
         viewModelScope.launch {
-            val selectedRescuee = state.value.selectedRescueeMapIcon
-            uploadUserProfile {
-                runCatching {
+            runCatching {
+                val selectedRescuee = state.value.selectedRescueeMapIcon
+                uploadUserProfile(onSuccess = {
                     mappingUseCase.addRescueRespondentUseCase(
                         userId = selectedRescuee!!.userId,
                         respondentId = getId())
-                }.onSuccess {
-                    broadcastUser()
-                    broadcastRescueTransaction()
-                    _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Rescue request sent"))
-                    _state.update { it.copy(respondedToHelp = true) }
-                }.onFailure {
-                    it.handleException()
-                }
+                })
+            }.onSuccess {
+                _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Rescue request sent"))
+                broadcastToNearbyCyclists()
+                broadcastRescueTransaction()
+                _state.update { it.copy(respondedToHelp = true) }
+            }.onFailure {
+                it.handleException()
             }
+
         }
     }
 
@@ -412,6 +413,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private suspend fun String.removeAssignedTransaction() {
+        //todo: create api breakpoint
         mappingUseCase.createUserUseCase(
             user = UserItem(
                 id = this,
@@ -810,6 +812,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private suspend fun cancelUserHelpRequest() {
+        // TODO: Create api breakpoint
         mappingUseCase.createUserUseCase(
             user = UserItem(
                 id = getId(),
