@@ -113,6 +113,7 @@ class SignInViewModel @Inject constructor(
                     _eventFlow.emit(SignInUiEvent.RefreshEmail)
                 } else {
                     _eventFlow.emit(SignInUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
+                    // TODO: move to Constants
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
@@ -154,12 +155,14 @@ class SignInViewModel @Inject constructor(
                 _state.update {
                     it.copy(
                         emailErrorMessage = exception.message ?: "Email is Invalid.")
+                    // TODO: move to Constants
                 }
             }
             is AuthExceptions.PasswordException -> {
                 _state.update {
                     it.copy(
                         passwordErrorMessage = exception.message ?: "Password is Invalid.")
+                    // TODO: move to Constants
                 }
             }
 
@@ -169,6 +172,7 @@ class SignInViewModel @Inject constructor(
                         alertDialogModel = AlertDialogModel(
                             title = exception.title,
                             description = exception.message ?: "You have been blocked temporarily for too many failed attempts. Please try again later.",
+                            // TODO: move to Constants
                             icon = R.raw.error,
                         ))
                 }
@@ -185,6 +189,7 @@ class SignInViewModel @Inject constructor(
                             title = "Error",
                             description = exception.message ?: "Sorry, something went wrong. Please try again.",
                             icon = R.raw.error))
+                    // TODO: move to Constants
                 }
             }
 
@@ -195,6 +200,7 @@ class SignInViewModel @Inject constructor(
         savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
     }
 
+    // TODO: move to repository
     private fun registerFacebookSignInCallback() {
         LoginManager.getInstance().registerCallback(
             callbackManager,
@@ -214,7 +220,7 @@ class SignInViewModel @Inject constructor(
                 override fun onError(error: FacebookException) {
                     _state.update { it.copy(isLoading = false) }
                     viewModelScope.launch {
-                        handleFacebookSignInException(error)
+                        error.handleFacebookSignInException()
                     }.invokeOnCompletion {
                         savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
                     }
@@ -224,12 +230,12 @@ class SignInViewModel @Inject constructor(
     }
 
 
-    private fun handleFacebookSignInException(error: Exception) {
-        if (error.message == FACEBOOK_CONNECTION_FAILURE) {
+    private fun Exception.handleFacebookSignInException() {
+        if (message == FACEBOOK_CONNECTION_FAILURE) {
             _state.update { it.copy(hasInternet = false) }
             return
         }
-        error.message?.let { errorMessage ->
+        message?.let { errorMessage ->
             _state.update {
                 it.copy(alertDialogModel = AlertDialogModel(
                         title = "Error",
@@ -240,6 +246,7 @@ class SignInViewModel @Inject constructor(
         }
     }
 
+    //todo move this to repository
     private fun removeFacebookUserAccountPreviousToken() {
         if (AccessToken.getCurrentAccessToken() != null) {
             LoginManager.getInstance().logOut()

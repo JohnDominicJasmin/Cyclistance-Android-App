@@ -94,6 +94,7 @@ class SignUpViewModel @Inject constructor(
                     _eventFlow.emit(SignUpUiEvent.ShowEmailAuthScreen)
                 } else {
                     _eventFlow.emit(SignUpUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
+                    // TODO: Move to constants
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
@@ -108,19 +109,23 @@ class SignUpViewModel @Inject constructor(
         when (exception) {
             is AuthExceptions.EmailException -> {
                 _state.update { it.copy(emailErrorMessage = exception.message ?: "Invalid Email.") }
+                // TODO: Move to constants
             }
             is AuthExceptions.PasswordException -> {
                 _state.update {
                     it.copy(
                         passwordErrorMessage = exception.message ?: "Invalid Password.")
                 }
+                // TODO: Move to constants
             }
             is AuthExceptions.ConfirmPasswordException -> {
                 _state.update {
                     it.copy(
                         confirmPasswordErrorMessage = exception.message ?: "Invalid Password.")
                 }
+                // TODO: Move to constants
             }
+
             is AuthExceptions.NetworkException -> {
                 _state.update { it.copy(hasInternet = false) }
             }
@@ -134,6 +139,7 @@ class SignUpViewModel @Inject constructor(
                             icon = R.raw.error,
                         ))
                 }
+                // TODO: Move to constants
             }
             else -> {
                 Timber.e("${this@SignUpViewModel.javaClass.name}: ${exception.message}")
