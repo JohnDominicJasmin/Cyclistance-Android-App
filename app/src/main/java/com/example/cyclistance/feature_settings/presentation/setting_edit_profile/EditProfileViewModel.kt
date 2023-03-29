@@ -21,7 +21,6 @@ import javax.inject.Inject
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val settingUseCase: SettingUseCase,
     private val authUseCase: AuthenticationUseCase) : ViewModel() {
 
     private val _state = MutableStateFlow(savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] ?: EditProfileState())
@@ -30,7 +29,6 @@ class EditProfileViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<EditProfileUiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    private var imageUri: Uri? = savedStateHandle[EDIT_PROFILE_VM_IMAGE_URI_KEY]
 
 
     fun onEvent(event: EditProfileEvent) {
