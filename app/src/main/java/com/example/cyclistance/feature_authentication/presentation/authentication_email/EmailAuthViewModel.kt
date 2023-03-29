@@ -137,6 +137,7 @@ class EmailAuthViewModel @Inject constructor(
     }
 
 
+    // TODO: move to repository
     private fun startTimer() {
         _state.update { it.copy(isTimerRunning = true) }
         savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
@@ -157,12 +158,14 @@ class EmailAuthViewModel @Inject constructor(
 
     }
 
+    // TODO: move to repository
     private fun stopTimer() {
         if (::verificationTimer.isInitialized) {
             verificationTimer.cancel()
         }
     }
 
+    // TODO: Move texts to Constants
     private fun sendEmailVerification() {
         viewModelScope.launch {
             runCatching {

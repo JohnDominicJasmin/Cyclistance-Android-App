@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_settings.presentation.setting_edit_profi
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
@@ -32,6 +33,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.permission.requestPermission
+import com.example.cyclistance.core.utils.save_images.ImageUtils.saveImageToGallery
+import com.example.cyclistance.core.utils.save_images.ImageUtils.toImageUri
 import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.SelectImageBottomSheet
@@ -58,37 +61,44 @@ fun EditProfileScreen(
 
     val context = LocalContext.current
 
+    var imageUri by remember{ mutableStateOf<Uri?>(null) }
+    var imageBitmap by remember{ mutableStateOf<Bitmap?>(null) }
+
+    val saveImageToGallery = remember {{ bitmap: Bitmap ->
+        context.saveImageToGallery(bitmap = bitmap)
+    }}
 
     val openGalleryResultLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            editProfileViewModel.onEvent(event = EditProfileEvent.SelectImageUri(uri = uri))
+            imageUri = uri
+            editProfileViewModel.onEvent(event = EditProfileEvent.SelectImageUri(uri = uri.toString()))
             uri?.let { selectedUri ->
-                editProfileViewModel.onEvent(
-                    event = EditProfileEvent.SelectBitmapPicture(
-                        when {
-                            Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> {
-                                MediaStore.Images.Media.getBitmap(
+                imageBitmap =
+                    when {
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> {
+                            MediaStore.Images.Media.getBitmap(
+                                context.contentResolver,
+                                selectedUri)
+                        }
+                        else -> {
+                            val source =
+                                ImageDecoder.createSource(
                                     context.contentResolver,
                                     selectedUri)
-                            }
-                            else -> {
-                                val source =
-                                    ImageDecoder.createSource(
-                                        context.contentResolver,
-                                        selectedUri)
-                                ImageDecoder.decodeBitmap(source)
-                            }
+                            ImageDecoder.decodeBitmap(source)
                         }
-                    ))
+                    }
             }
+
+
         }
 
     val openCameraResultLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
-
-            editProfileViewModel.onEvent(event = EditProfileEvent.SelectBitmapPicture(bitmap = bitmap))
-            editProfileViewModel.onEvent(event = EditProfileEvent.SaveImageToGallery)
-
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
+            val uri = bitmap?.toImageUri(context).toString()
+            imageBitmap = bitmap
+            editProfileViewModel.onEvent(event = EditProfileEvent.SelectImageUri(uri = uri))
+            bitmap?.let(saveImageToGallery)
         }
 
 
@@ -178,8 +188,7 @@ fun EditProfileScreen(
     EditProfileScreenContent(
         modifier = Modifier
             .padding(paddingValues),
-        photoUrl = state.imageBitmap.bitmap?.asImageBitmap() ?: state.photoUrl,
-
+        photoUrl = imageBitmap?.asImageBitmap() ?: state.photoUrl,
         onClickGalleryButton = onClickGalleryButton,
         onClickCameraButton = onClickCameraButton,
         state = state,

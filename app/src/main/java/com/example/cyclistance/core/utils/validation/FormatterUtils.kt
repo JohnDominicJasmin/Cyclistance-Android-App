@@ -25,18 +25,21 @@ object FormatterUtils {
         }
     }
 
+    // TODO: test this code
      fun RescueTransaction.findRescueTransaction(id: String): RescueTransactionItem {
         return this.transactions.find {
             it.id == id
         } ?: RescueTransactionItem()
     }
 
+    // TODO: test this code
     fun NearbyCyclist.findUser(id: String): UserItem {
         return this.users.find {
             it.id == id
         } ?: UserItem()
     }
 
+    // TODO: test this code
     fun Location?.isLocationAvailable() = (this?.latitude != null).and(this?.longitude != null)
 
     fun getCalculatedETA(
@@ -55,7 +58,7 @@ object FormatterUtils {
         return "$hourFormat$minsFormat"
     }
 
-
+    // TODO: test this code
     fun String.getMapIconImageDescription(context: Context): Drawable? {
       this.getMapIconImage()?.let { image ->
           return AppCompatResources.getDrawable(context, image)

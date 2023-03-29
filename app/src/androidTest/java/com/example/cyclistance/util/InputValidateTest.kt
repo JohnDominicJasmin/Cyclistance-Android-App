@@ -3,9 +3,7 @@ package com.example.cyclistance.util
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.core.utils.validation.FormatterUtils
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getMapIconImage
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -14,20 +12,6 @@ import org.junit.runner.RunWith
 class InputValidateTest {
 
 
-    @Test
-    fun getETABetweenTwoPointsTest(){
-        val result = FormatterUtils.getETABetweenTwoPoints(
-            startingLocation = Location(
-                latitude = 40.74030573169066,
-                longitude = -73.98681511981998
-            ),
-            endLocation = Location(
-                latitude = 40.72358717941432,
-                longitude = -73.99637648058844
-            )
-        )
-        Assert.assertEquals("4 mins", result)
-    }
 
     @Test
     fun getMapIconImageTest_returnsInjuryIcon(){

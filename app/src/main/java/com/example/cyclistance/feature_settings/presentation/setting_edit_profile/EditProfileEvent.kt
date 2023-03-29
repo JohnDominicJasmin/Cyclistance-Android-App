@@ -1,8 +1,5 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
 
-import android.graphics.Bitmap
-import android.net.Uri
-
 sealed class EditProfileEvent {
 
     object Save: EditProfileEvent()
@@ -13,9 +10,7 @@ sealed class EditProfileEvent {
     object LoadName: EditProfileEvent()
     object LoadPhoneNumber: EditProfileEvent()
 
-    data class SelectImageUri(val uri: Uri?): EditProfileEvent()
-    data class SelectBitmapPicture(val bitmap: Bitmap?): EditProfileEvent()
-    object SaveImageToGallery: EditProfileEvent()
+    data class SelectImageUri(val uri: String?): EditProfileEvent()
     object OnClickGalleryButton : EditProfileEvent()
 
 }
