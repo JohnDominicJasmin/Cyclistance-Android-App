@@ -2,16 +2,15 @@ package com.example.cyclistance.di
 
 import android.content.Context
 import android.location.Geocoder
-import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping.data.local.location.ConnectionStatus.hasInternetConnection
-import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping.data.remote.dto.websockets.RescueTransactionWSClient
 import com.example.cyclistance.feature_mapping.data.remote.dto.websockets.TransactionLiveLocationWSClient
 import com.example.cyclistance.feature_mapping.data.remote.dto.websockets.UserWSClient
+import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.address.GetAddressUseCase
@@ -59,7 +58,7 @@ object MappingModule {
     @Provides
     @Singleton
     fun getBaseUrl(@ApplicationContext context: Context): String{
-        return context.getString(if (BuildConfig.DEBUG) R.string.CyclistanceApiBaseUrlLocal else R.string.CyclistanceApiBaseUrl)
+        return context.getString(R.string.CyclistanceApiBaseUrl)
     }
 
     @Provides
@@ -68,12 +67,14 @@ object MappingModule {
         val okHttpClient = providesOkhttpClient(context)
         val gson = GsonBuilder().serializeNulls().create()
 
-        return Retrofit.Builder()
-            .baseUrl(getBaseUrl(context))
-            .addConverterFactory(GsonConverterFactory.create(gson))
-            .client(okHttpClient)
-            .build()
-            .create(CyclistanceApi::class.java)
+        return lazy {
+            Retrofit.Builder()
+                .baseUrl(getBaseUrl(context))
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .client(okHttpClient)
+                .build()
+                .create(CyclistanceApi::class.java)
+        }.value
 
     }
 
@@ -81,8 +82,10 @@ object MappingModule {
     @Singleton
     @Provides
     fun providesMapOptimizationDirections(@ApplicationContext context: Context): MapboxOptimization.Builder{
-        return MapboxOptimization.builder()
-            .accessToken(context.getString(R.string.MapsDownloadToken))
+        return lazy {
+            MapboxOptimization.builder()
+                .accessToken(context.getString(R.string.MapsDownloadToken))
+        }.value
     }
 
 
@@ -158,7 +161,7 @@ object MappingModule {
     @Provides
     @Singleton
     fun providesOkhttpClient(@ApplicationContext context: Context): OkHttpClient {
-        val interceptor  = Interceptor { chain ->
+        val interceptor = Interceptor { chain ->
             var request = chain.request()
             if (!context.hasInternetConnection()) {
                 val cacheControl = CacheControl.Builder()
@@ -177,10 +180,12 @@ object MappingModule {
         val cacheSize = 50 * 1024 * 1024
         val cache = Cache(httpCacheDirectory, cacheSize.toLong())
 
-        return OkHttpClient.Builder()
-            .cache(cache)
-            .addInterceptor(interceptor)
-            .build()
+        return lazy {
+            OkHttpClient.Builder()
+                .cache(cache)
+                .addInterceptor(interceptor)
+                .build()
+        }.value
     }
 
 

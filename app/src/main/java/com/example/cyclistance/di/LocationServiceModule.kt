@@ -23,11 +23,13 @@ object LocationServiceModule {
     @Provides
     @ServiceScoped
     fun provideLocationRequest(): LocationRequest {
-        return LocationRequest.create()
-            .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
-            .setInterval(MappingConstants.LOCATION_UPDATES_INTERVAL)
-            .setFastestInterval(MappingConstants.FASTEST_LOCATION_UPDATES_INTERVAL)
-            .setSmallestDisplacement(2f)
+        return lazy {
+            LocationRequest.create()
+                .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+                .setInterval(MappingConstants.LOCATION_UPDATES_INTERVAL)
+                .setFastestInterval(MappingConstants.FASTEST_LOCATION_UPDATES_INTERVAL)
+                .setSmallestDisplacement(2f)
+        }.value
     }
 
 
@@ -50,13 +52,15 @@ object LocationServiceModule {
     fun provideNotificationBuilder(
         @ApplicationContext context: Context
     ): NotificationCompat.Builder {
-        return NotificationCompat.Builder(context, MappingConstants.LOCATION_SERVICE_CHANNEL_ID)
-            .setOngoing(true)
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .setContentTitle("Cyclistance")
-            .setContentText("Tracking your ride")
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-            .setAutoCancel(true);
+        return lazy {
+            NotificationCompat.Builder(context, MappingConstants.LOCATION_SERVICE_CHANNEL_ID)
+                .setOngoing(true)
+                .setSmallIcon(R.drawable.ic_launcher_background)
+                .setContentTitle("Cyclistance")
+                .setContentText("Tracking your ride")
+                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)
+        }.value
 
     }
 }
