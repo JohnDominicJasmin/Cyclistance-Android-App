@@ -8,6 +8,7 @@ import com.example.cyclistance.feature_authentication.domain.use_case.Authentica
 import com.example.cyclistance.feature_readable_displays.domain.use_case.IntroSliderUseCase
 import com.example.cyclistance.navigation.Screens
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,12 +17,13 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class IntroSliderViewModel @Inject
-constructor(
+class IntroSliderViewModel @Inject constructor(
 
     private val savedStateHandle: SavedStateHandle,
     private val introSliderUseCase: IntroSliderUseCase,
-    private val authUseCase: AuthenticationUseCase) : ViewModel() {
+    private val authUseCase: AuthenticationUseCase,
+    private val defaultDispatcher: CoroutineDispatcher
+    ) : ViewModel() {
 
 
     private val _state: MutableStateFlow<MainScreenState> = MutableStateFlow(
@@ -35,7 +37,7 @@ constructor(
 
     private fun getStartingDestination() {
 
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
 
                 introSliderUseCase.readIntroSliderUseCase().collect { userCompletedWalkThrough ->
@@ -70,7 +72,7 @@ constructor(
     fun onEvent(event: IntroSliderEvent) {
         when (event) {
             is IntroSliderEvent.UserCompletedWalkThrough -> {
-                viewModelScope.launch {
+                viewModelScope.launch(context = defaultDispatcher) {
                     introSliderUseCase.completedIntroSliderUseCase()
                 }
             }

@@ -36,7 +36,10 @@ import javax.inject.Inject
 class MappingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase,
-    private val mappingUseCase: MappingUseCase) : ViewModel() {
+    private val mappingUseCase: MappingUseCase,
+    private val defaultDispatcher: CoroutineDispatcher
+    ) : ViewModel() {
+
 
     private var loadDataJob: Job? = null
     private var getUsersUpdatesJob: Job? = null
@@ -66,7 +69,7 @@ class MappingViewModel @Inject constructor(
 
     private fun loadData() {
         if (loadDataJob?.isActive == true) return
-        loadDataJob = viewModelScope.launch(SupervisorJob()) {
+        loadDataJob = viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             // TODO: Remove when the backend is ready
 //            createMockUpUsers()
             getNearbyCyclist()
@@ -156,7 +159,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun showRouteDirection(origin: Point, destination: Point) {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 mappingUseCase.getRouteDirectionsUseCase(origin = origin, destination = destination)
             }.onSuccess { routeDirection ->
@@ -307,7 +310,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun respondToHelp() {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 val selectedRescuee = state.value.selectedRescueeMapIcon
                 uploadUserProfile(onSuccess = {
@@ -335,7 +338,7 @@ class MappingViewModel @Inject constructor(
             val userLocation = state.value.user.location ?: state.value.userLocation
 
             if (!userLocation.isLocationAvailable()) {
-                viewModelScope.launch {
+                viewModelScope.launch(context = defaultDispatcher) {
                     _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Tracking your Location"))
                 }
                 return
@@ -424,7 +427,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun removeAssignedTransaction() {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 getId().removeAssignedTransaction()
             }.onSuccess {
@@ -462,7 +465,7 @@ class MappingViewModel @Inject constructor(
         if (getRescueTransactionUpdatesJob?.isActive == true) {
             return
         }
-        getTransactionLocationUpdatesJob = viewModelScope.launch(SupervisorJob()) {
+        getTransactionLocationUpdatesJob = viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
             runCatching {
                 mappingUseCase.getTransactionLocationUpdatesUseCase().distinctUntilChanged()
@@ -588,7 +591,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun acceptRescueRequest(id: String) {
-        viewModelScope.launch(SupervisorJob()) {
+        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
             val rescuer = state.value.nearbyCyclists?.findUser(id) ?: return@launch
             _state.update { it.copy(rescueRequestAcceptedUser = rescuer) }
@@ -756,7 +759,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun loadUserProfile() {
-        viewModelScope.launch(SupervisorJob()) {
+        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
             loadName()
             loadPhoto()
         }.invokeOnCompletion {
@@ -794,7 +797,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun cancelHelpRequest() {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 startLoading()
                 cancelUserHelpRequest()
@@ -923,7 +926,7 @@ class MappingViewModel @Inject constructor(
         if (getRescueTransactionUpdatesJob?.isActive == true) {
             return
         }
-        getRescueTransactionUpdatesJob = viewModelScope.launch(SupervisorJob()) {
+        getRescueTransactionUpdatesJob = viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
             runCatching {
                 mappingUseCase.getRescueTransactionUpdatesUseCase().collect {
@@ -1002,7 +1005,7 @@ class MappingViewModel @Inject constructor(
         if (locationUpdatesJob?.isActive == true) {
             return
         }
-        locationUpdatesJob = viewModelScope.launch {
+        locationUpdatesJob = viewModelScope.launch(context = defaultDispatcher){
 
             runCatching {
                 mappingUseCase.getUserLocationUseCase().collect { location ->
@@ -1026,7 +1029,7 @@ class MappingViewModel @Inject constructor(
             return
         }
 
-        getUsersUpdatesJob = viewModelScope.launch(SupervisorJob()) {
+        getUsersUpdatesJob = viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
             runCatching {
                 mappingUseCase.getUserUpdatesUseCase().collect {
                     it.getUser()
@@ -1047,7 +1050,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun declineRescueRequest(id: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 startLoading()
                 mappingUseCase.deleteRescueRespondentUseCase(userId = getId(), respondentId = id)
@@ -1067,7 +1070,7 @@ class MappingViewModel @Inject constructor(
         state.value.userActiveRescueRequests.respondents.toMutableList().apply {
             val respondentRemoved = removeAll { it.id == id }
             if (!respondentRemoved) {
-                viewModelScope.launch {
+                viewModelScope.launch(context = defaultDispatcher){
                     _eventFlow.emit(value = MappingUiEvent.ShowToastMessage(message = "Failed to Remove Respondent"))
                 }
                 return
@@ -1080,7 +1083,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun signOutAccount() {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 startLoading()
                 authUseCase.signOutUseCase()
@@ -1097,7 +1100,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun requestHelp() {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 uploadUserProfile(onSuccess = {
                     _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)

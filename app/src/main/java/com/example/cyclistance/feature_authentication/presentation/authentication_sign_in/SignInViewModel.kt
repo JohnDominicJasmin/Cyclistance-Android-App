@@ -20,6 +20,7 @@ import com.facebook.FacebookException
 import com.facebook.login.LoginManager
 import com.facebook.login.LoginResult
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -30,7 +31,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SignInViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val authUseCase: AuthenticationUseCase) : ViewModel(), ActivityResultCallbackI {
+    private val authUseCase: AuthenticationUseCase,
+    private val defaultDispatcher: CoroutineDispatcher
+    ) : ViewModel(), ActivityResultCallbackI {
 
     private var job: Job? = null
     private var callbackManager = CallbackManager.Factory.create()
@@ -97,7 +100,7 @@ class SignInViewModel @Inject constructor(
 
     private fun signInDefault() {
 
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 _state.update { it.copy(isLoading = true) }
                 with(state.value) {
@@ -128,7 +131,7 @@ class SignInViewModel @Inject constructor(
 
     private fun signInWithCredential(authCredential: SignInCredential) {
         job?.cancel()
-        job = viewModelScope.launch {
+        job = viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 _state.update { it.copy(isLoading = true) }
                 authUseCase.signInWithCredentialUseCase(authCredential)
@@ -219,7 +222,7 @@ class SignInViewModel @Inject constructor(
 
                 override fun onError(error: FacebookException) {
                     _state.update { it.copy(isLoading = false) }
-                    viewModelScope.launch {
+                    viewModelScope.launch(context = defaultDispatcher) {
                         error.handleFacebookSignInException()
                     }.invokeOnCompletion {
                         savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value

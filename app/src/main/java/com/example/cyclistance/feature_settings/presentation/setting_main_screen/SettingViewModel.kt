@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.SettingConstants.SETTING_VM_STATE_KEY
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -17,7 +17,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val settingUseCase: SettingUseCase) : ViewModel() {
+    private val settingUseCase: SettingUseCase,
+    private val defaultDispatcher: CoroutineDispatcher
+    ) : ViewModel() {
 
     private val _state = MutableStateFlow(savedStateHandle[SETTING_VM_STATE_KEY] ?: SettingState())
     val state = _state.asStateFlow()
@@ -29,7 +31,7 @@ class SettingViewModel @Inject constructor(
 
     private fun loadTheme(){
 
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 settingUseCase.isDarkThemeUseCase().collect { isDarkTheme ->
                     _state.update { it.copy(isDarkTheme = isDarkTheme) }
@@ -52,7 +54,7 @@ class SettingViewModel @Inject constructor(
     }
 
     private fun toggleTheme() {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 settingUseCase.toggleThemeUseCase()
             }.onFailure { exception ->

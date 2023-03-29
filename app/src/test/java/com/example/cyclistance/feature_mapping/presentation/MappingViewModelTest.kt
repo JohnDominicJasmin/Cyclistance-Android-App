@@ -13,6 +13,7 @@ import com.example.cyclistance.feature_mapping.domain.model.UserItem
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.test_rule.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.*
@@ -40,7 +41,8 @@ class MappingViewModelTest {
         mappingViewModel = MappingViewModel(
             savedStateHandle = SavedStateHandle(),
             authUseCase = testAuthModule.provideTestAuthUseCase(),
-            mappingUseCase = testMappingModule.provideTestMappingUseCase()
+            mappingUseCase = testMappingModule.provideTestMappingUseCase(),
+            defaultDispatcher = StandardTestDispatcher()
         )
     }
 

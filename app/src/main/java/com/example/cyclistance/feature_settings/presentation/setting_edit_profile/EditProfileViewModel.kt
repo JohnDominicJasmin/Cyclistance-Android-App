@@ -8,6 +8,7 @@ import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExce
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -16,7 +17,9 @@ import javax.inject.Inject
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val authUseCase: AuthenticationUseCase) : ViewModel() {
+    private val authUseCase: AuthenticationUseCase,
+    private val defaultDispatcher: CoroutineDispatcher
+    ) : ViewModel() {
 
     private val _state = MutableStateFlow(savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] ?: EditProfileState())
     val state = _state.asStateFlow()
@@ -65,7 +68,7 @@ class EditProfileViewModel @Inject constructor(
 
 
     private fun loadPhoto() {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 _state.update {
                     it.copy(photoUrl = getPhotoUrl())
@@ -83,7 +86,7 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private fun loadName() {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 _state.update {
                     val name = getName()
@@ -108,7 +111,7 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private fun loadPhoneNumber() {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher){
             runCatching {
                 _state.update {
                     val phoneNumber = getPhoneNumber()
@@ -133,7 +136,7 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private fun updateUserProfile() {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 startLoading()
                 val photoUri = state.value.imageUri?.let { authUseCase.uploadImageUseCase(it) }
