@@ -20,7 +20,9 @@ import javax.inject.Inject
 @HiltViewModel
 class EmailAuthViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val authUseCase: AuthenticationUseCase) : ViewModel() {
+    private val authUseCase: AuthenticationUseCase,
+    private val defaultDispatcher: CoroutineDispatcher
+    ) : ViewModel() {
 
     private lateinit var verificationTimer: CountDownTimer
     private var job: Job? = null
@@ -41,7 +43,7 @@ class EmailAuthViewModel @Inject constructor(
     fun onEvent(event: EmailAuthEvent) {
         when (event) {
             is EmailAuthEvent.RefreshEmail -> {
-                viewModelScope.launch {
+                viewModelScope.launch(context = defaultDispatcher) {
                     reloadEmail()
                 }
             }
@@ -55,12 +57,12 @@ class EmailAuthViewModel @Inject constructor(
                 sendEmailVerification()
             }
             is EmailAuthEvent.StartTimer -> {
-                viewModelScope.launch {
+                viewModelScope.launch(context = defaultDispatcher) {
                     startTimer()
                 }
             }
             is EmailAuthEvent.SubscribeEmailVerification -> {
-                job = viewModelScope.launch {
+                job = viewModelScope.launch(context = defaultDispatcher) {
                     refreshEmailAsync()
                 }
             }
@@ -167,7 +169,7 @@ class EmailAuthViewModel @Inject constructor(
 
     // TODO: Move texts to Constants
     private fun sendEmailVerification() {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 _state.update { it.copy(isLoading = true) }
                 authUseCase.sendEmailVerificationUseCase()

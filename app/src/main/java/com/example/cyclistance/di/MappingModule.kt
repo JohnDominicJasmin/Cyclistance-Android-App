@@ -40,6 +40,8 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.socket.client.IO
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okhttp3.Cache
 import okhttp3.CacheControl
 import okhttp3.Interceptor
@@ -151,10 +153,6 @@ object MappingModule {
             getCalculatedDistanceUseCase = GetCalculatedDistanceUseCase(repository),
         )
     }
-
-
-
-
 
 
 

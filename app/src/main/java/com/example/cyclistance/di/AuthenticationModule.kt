@@ -36,7 +36,7 @@ import javax.inject.Singleton
     @Provides
     @Singleton
      fun provideAuthRepository(@ApplicationContext context:Context, firebaseAuth: FirebaseAuth): AuthRepository{
-         return AuthRepositoryImpl(context = context, auth = firebaseAuth, )
+         return AuthRepositoryImpl(context = context, auth = firebaseAuth)
      }
 
 
@@ -63,5 +63,8 @@ import javax.inject.Singleton
             updatePhoneNumberUseCase = UpdatePhoneNumberUseCase(repository = repository),
             uploadImageUseCase = UploadImageUseCase(repository = repository)
         )
+
+
+
 
 }

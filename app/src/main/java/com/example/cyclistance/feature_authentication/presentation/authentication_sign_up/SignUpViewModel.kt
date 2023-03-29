@@ -10,6 +10,7 @@ import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExce
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -18,7 +19,9 @@ import javax.inject.Inject
 @HiltViewModel
 class SignUpViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val authUseCase: AuthenticationUseCase) : ViewModel() {
+    private val authUseCase: AuthenticationUseCase,
+    private val defaultDispatcher: CoroutineDispatcher
+    ) : ViewModel() {
 
     private val _state: MutableStateFlow<SignUpState> = MutableStateFlow(savedStateHandle[SIGN_UP_VM_STATE_KEY] ?: SignUpState())
     val state = _state.asStateFlow()
@@ -77,7 +80,7 @@ class SignUpViewModel @Inject constructor(
 
 
     private fun signUp() {
-        viewModelScope.launch {
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 _state.update { it.copy(isLoading = true) }
                 with(state.value) {
