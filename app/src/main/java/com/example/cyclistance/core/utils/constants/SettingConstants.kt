@@ -7,6 +7,5 @@ object SettingConstants {
     const val FOLDER_NAME = "cyclistance-images"
     const val SETTING_VM_STATE_KEY = "setting_vm_state_key"
     const val EDIT_PROFILE_VM_STATE_KEY = "edit_profile_vm_state_key"
-    const val EDIT_PROFILE_VM_IMAGE_URI_KEY = "edit_profile_vm_image_uri_key"
 
 }

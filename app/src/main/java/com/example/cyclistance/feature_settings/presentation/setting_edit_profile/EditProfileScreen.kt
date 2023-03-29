@@ -178,8 +178,7 @@ fun EditProfileScreen(
     EditProfileScreenContent(
         modifier = Modifier
             .padding(paddingValues),
-        photoUrl = state.imageBitmap.bitmap?.asImageBitmap() ?: state.photoUrl,
-
+        photoUrl = imageBitmap?.asImageBitmap() ?: state.photoUrl,
         onClickGalleryButton = onClickGalleryButton,
         onClickCameraButton = onClickCameraButton,
         state = state,

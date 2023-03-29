@@ -49,8 +49,7 @@ class EditProfileViewModel @Inject constructor(
                 _state.update { it.copy(name = event.name, nameErrorMessage = "") }
             }
             is EditProfileEvent.SelectImageUri -> {
-                imageUri = event.uri
-                savedStateHandle[EDIT_PROFILE_VM_IMAGE_URI_KEY] = event.uri
+                _state.update { it.copy(imageUri = event.uri) }
             }
             is EditProfileEvent.SelectBitmapPicture -> {
                 _state.update { it.copy(imageBitmap = ImageBitmap(event.bitmap)) }
