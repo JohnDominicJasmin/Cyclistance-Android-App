@@ -76,30 +76,14 @@ class EditProfileViewModel @Inject constructor(
 
     }
 
-    private fun saveImageToGallery() {
-        viewModelScope.launch(context = Dispatchers.IO) {
-            state.value.imageBitmap.bitmap?.let { bitmap ->
-                runCatching {
-                    settingUseCase.saveImageToGalleryUseCase(bitmap)
-                }.onSuccess { uri ->
-                    imageUri = uri
-                    savedStateHandle[EDIT_PROFILE_VM_IMAGE_URI_KEY] = uri
-                }.onFailure {
-                    Timber.e("Saving Image to Gallery: ${it.message}")
-                }
-            }
-        }
-
-    }
 
     private fun loadPhoto() {
         viewModelScope.launch {
             runCatching {
                 _state.update {
-                    it.copy(
-                        photoUrl = getPhotoUrl(),
-                        isLoading = true)
+                    it.copy(photoUrl = getPhotoUrl())
                 }
+                startLoading()
             }.onSuccess {
                 _state.update {
                     it.copy(
@@ -118,10 +102,10 @@ class EditProfileViewModel @Inject constructor(
                     val name = getName()
                     it.copy(
                         name = name,
-                        nameSnapshot = name,
-                        isLoading = true
+                        nameSnapshot = name
                     )
                 }
+                startLoading()
             }.onSuccess {
                 _state.update { it.copy(isLoading = false) }
             }.onFailure { exception ->
@@ -143,9 +127,9 @@ class EditProfileViewModel @Inject constructor(
                     val phoneNumber = getPhoneNumber()
                     it.copy(
                         phoneNumber = phoneNumber,
-                        phoneNumberSnapshot = phoneNumber,
-                        isLoading = true)
+                        phoneNumberSnapshot = phoneNumber)
                 }
+                startLoading()
 
             }.onSuccess {
                 _state.update { it.copy(isLoading = false) }
@@ -164,7 +148,8 @@ class EditProfileViewModel @Inject constructor(
     private fun updateUserProfile() {
         viewModelScope.launch {
             runCatching {
-                _state.update { it.copy(isLoading = true) }
+                startLoading()
+                val photoUri = state.value.imageUri?.let { authUseCase.uploadImageUseCase(it) }
                 val phoneNumberChanges = with(state.value) {
                     phoneNumber != phoneNumberSnapshot
                 }
@@ -174,18 +159,13 @@ class EditProfileViewModel @Inject constructor(
                 }
 
                 authUseCase.updateProfileUseCase(
-                    photoUri = run {
-                        imageUri?.let { localImageUri ->
-                            authUseCase.uploadImageUseCase(localImageUri.toString())
-                        } },
+                    photoUri = photoUri,
                     name = state.value.name.trim())
 
             }.onSuccess {
-                _state.update { it.copy(isLoading = false) }
                 _eventFlow.emit(EditProfileUiEvent.ShowToastMessage(message = "Successfully Updated!"))
                 _eventFlow.emit(EditProfileUiEvent.CloseScreen)
             }.onFailure { exception ->
-                _state.update { it.copy(isLoading = false) }
                 when (exception) {
                     is MappingExceptions.PhoneNumberException -> {
                         _state.update {
@@ -206,11 +186,20 @@ class EditProfileViewModel @Inject constructor(
                     }
                 }
 
+            }.also {
+                finishLoading()
             }
         }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
+
+    private fun finishLoading(){
+        _state.update { it.copy(isLoading = false) }
+    }
+    private fun startLoading(){
+        _state.update { it.copy(isLoading = true) }
+    }
 
 
 
