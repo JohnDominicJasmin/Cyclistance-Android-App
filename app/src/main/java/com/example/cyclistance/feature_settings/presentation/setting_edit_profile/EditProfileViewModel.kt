@@ -1,20 +1,15 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
 
-import android.net.Uri
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.SettingConstants.EDIT_PROFILE_VM_IMAGE_URI_KEY
 import com.example.cyclistance.core.utils.constants.SettingConstants.EDIT_PROFILE_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -51,9 +46,7 @@ class EditProfileViewModel @Inject constructor(
             is EditProfileEvent.SelectImageUri -> {
                 _state.update { it.copy(imageUri = event.uri) }
             }
-            is EditProfileEvent.SelectBitmapPicture -> {
-                _state.update { it.copy(imageBitmap = ImageBitmap(event.bitmap)) }
-            }
+
             is EditProfileEvent.LoadPhoto -> {
                 loadPhoto()
             }
@@ -63,9 +56,6 @@ class EditProfileViewModel @Inject constructor(
             }
             is EditProfileEvent.LoadName -> {
                 loadName()
-            }
-            is EditProfileEvent.SaveImageToGallery -> {
-                saveImageToGallery()
             }
         }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
