@@ -98,7 +98,7 @@ fun EditProfileScreen(
             val uri = bitmap?.toImageUri(context).toString()
             imageBitmap = bitmap
             editProfileViewModel.onEvent(event = EditProfileEvent.SelectImageUri(uri = uri))
-            bitmap?.let(saveImageToGallery)
+
         }
 
 
