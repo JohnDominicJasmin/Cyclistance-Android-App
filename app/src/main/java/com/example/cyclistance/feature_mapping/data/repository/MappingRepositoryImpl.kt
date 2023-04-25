@@ -8,12 +8,12 @@ import androidx.annotation.WorkerThread
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_KEY
 import com.example.cyclistance.core.utils.extension.editData
 import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
-import com.example.cyclistance.feature_mapping.data.local.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransactionDto
 import com.example.cyclistance.feature_mapping.data.mapper.RouteDirectionMapper.toRouteDirection

@@ -3,10 +3,10 @@ package com.example.cyclistance.di
 import android.content.Context
 import android.location.Geocoder
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
-import com.example.cyclistance.feature_mapping.data.local.location.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.feature_mapping.data.remote.dto.websockets.RescueTransactionWSClient
 import com.example.cyclistance.feature_mapping.data.remote.dto.websockets.TransactionLiveLocationWSClient
 import com.example.cyclistance.feature_mapping.data.remote.dto.websockets.UserWSClient
@@ -40,8 +40,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.socket.client.IO
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import okhttp3.Cache
 import okhttp3.CacheControl
 import okhttp3.Interceptor

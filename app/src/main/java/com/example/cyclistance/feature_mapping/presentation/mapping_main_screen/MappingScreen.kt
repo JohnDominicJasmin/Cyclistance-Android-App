@@ -19,6 +19,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import com.example.cyclistance.core.utils.connection.ConnectionStatus.checkLocationSetting
+import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
@@ -29,8 +31,6 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.permission.requestPermission
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
-import com.example.cyclistance.feature_mapping.data.local.location.ConnectionStatus.checkLocationSetting
-import com.example.cyclistance.feature_mapping.data.local.location.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.*
