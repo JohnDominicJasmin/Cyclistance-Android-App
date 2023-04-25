@@ -401,7 +401,8 @@ fun MappingScreen(
     }}
 
 
-    LaunchedEffects(
+    MappingLaunchedEffects(
+
         state = state,
         hasTransaction = hasTransaction,
         isRescueCancelled = isRescueCancelled,
@@ -460,7 +461,7 @@ fun MappingScreen(
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalPermissionsApi::class)
 @Composable
-fun LaunchedEffects(
+fun MappingLaunchedEffects(
     state: MappingState,
     hasTransaction: Boolean,
     isRescueCancelled: Boolean,
