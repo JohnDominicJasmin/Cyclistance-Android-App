@@ -1,7 +1,11 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
 
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,8 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping.domain.model.CancelledRescueModel
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -211,10 +215,6 @@ fun MappingScreenContent(
                     acceptedName = state.rescuee?.name ?: "Name placeholder",
                 )
             }
-
-
-
-
 
 
 
