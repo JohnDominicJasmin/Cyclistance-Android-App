@@ -122,7 +122,7 @@ class FakeMappingRepository : MappingRepository {
         }
 
         return rescueTransaction.value.transactions.find { it.id == transactionId }
-               ?: throw MappingExceptions.RescueTransactionException("Rescue transaction not found")
+               ?: throw MappingExceptions.RescueTransactionNotFoundException("Rescue transaction not found")
 
     }
 
@@ -133,7 +133,7 @@ class FakeMappingRepository : MappingRepository {
         }
 
         if (Companion.rescueTransaction.value.transactions.find { it.id == rescueTransaction.id } != null) {
-            throw MappingExceptions.RescueTransactionException("Rescue transaction already exists")
+            throw MappingExceptions.RescueTransactionNotFoundException("Rescue transaction already exists")
         }
 
         Companion.rescueTransaction.value.transactions.toMutableList().add(rescueTransaction)
@@ -146,7 +146,7 @@ class FakeMappingRepository : MappingRepository {
         }
 
         if (rescueTransaction.value.transactions.find { it.id == transactionId } == null) {
-            throw MappingExceptions.RescueTransactionException("Rescue transaction not found")
+            throw MappingExceptions.RescueTransactionNotFoundException("Rescue transaction not found")
         }
 
         rescueTransaction.value.transactions.toMutableList().removeIf { it.id == transactionId }
