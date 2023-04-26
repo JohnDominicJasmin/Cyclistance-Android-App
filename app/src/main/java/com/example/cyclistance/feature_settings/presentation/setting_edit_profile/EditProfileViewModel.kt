@@ -39,6 +39,9 @@ class EditProfileViewModel @Inject constructor(
             is EditProfileEvent.Save -> {
                 updateUserProfile()
             }
+            is EditProfileEvent.DismissNoInternetDialog -> {
+                _state.update { it.copy(hasInternet = true) }
+            }
             is EditProfileEvent.OnClickGalleryButton -> {
                 _state.update { it.copy(galleryButtonClick = !state.value.galleryButtonClick) }
             }
@@ -173,9 +176,7 @@ class EditProfileViewModel @Inject constructor(
                         }
                     }
                     is AuthExceptions.NetworkException -> {
-                        _eventFlow.emit(
-                            value = EditProfileUiEvent.ShowToastMessage(
-                                message = exception.message ?:"No Internet Connection."))
+                       _state.update { it.copy(hasInternet = false) }
                     }
                 }
 

@@ -35,6 +35,7 @@ import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.permission.requestPermission
 import com.example.cyclistance.core.utils.save_images.ImageUtils.saveImageToGallery
 import com.example.cyclistance.core.utils.save_images.ImageUtils.toImageUri
+import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.SelectImageBottomSheet
@@ -61,8 +62,7 @@ fun EditProfileScreen(
 
     val context = LocalContext.current
 
-    var imageUri by remember{ mutableStateOf<Uri?>(null) }
-    var imageBitmap by remember{ mutableStateOf<Bitmap?>(null) }
+    var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
 
     val saveImageToGallery = remember {{ bitmap: Bitmap ->
         context.saveImageToGallery(bitmap = bitmap)
@@ -70,7 +70,6 @@ fun EditProfileScreen(
 
     val openGalleryResultLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            imageUri = uri
             editProfileViewModel.onEvent(event = EditProfileEvent.SelectImageUri(uri = uri.toString()))
             uri?.let { selectedUri ->
                 imageBitmap =
@@ -80,6 +79,7 @@ fun EditProfileScreen(
                                 context.contentResolver,
                                 selectedUri)
                         }
+
                         else -> {
                             val source =
                                 ImageDecoder.createSource(
@@ -154,32 +154,44 @@ fun EditProfileScreen(
             openGalleryResultLauncher.launch("image/*")
         }
 
-    }}
-
-    val onClickCameraButton = remember{{
-        openCameraPermissionState.requestPermission(
-            context = context,
-            rationalMessage = "Camera permission is not yet granted.") {
-            openCameraResultLauncher.launch()
         }
-    }}
-    val onValueChangeName = remember{{ name: String ->
-        editProfileViewModel.onEvent(
-            event = EditProfileEvent.EnterName(name = name))
-    }}
-    val onValueChangePhoneNumber = remember{{ phoneNumber: String ->
-        editProfileViewModel.onEvent(
-            event = EditProfileEvent.EnterPhoneNumber(phoneNumber = phoneNumber))
-    }}
-    val keyboardActions = remember{ KeyboardActions(onDone = {
-        editProfileViewModel.onEvent(event = EditProfileEvent.Save)
-    })}
+    }
+
+    val onClickCameraButton = remember {{
+            openCameraPermissionState.requestPermission(
+                context = context,
+                rationalMessage = "Camera permission is not yet granted.") {
+                openCameraResultLauncher.launch()
+            }
+        }}
+
+    val onValueChangeName = remember {
+        { name: String ->
+            editProfileViewModel.onEvent(
+                event = EditProfileEvent.EnterName(name = name))
+        }
+    }
+    val onValueChangePhoneNumber = remember {
+        { phoneNumber: String ->
+            editProfileViewModel.onEvent(
+                event = EditProfileEvent.EnterPhoneNumber(phoneNumber = phoneNumber))
+        }
+    }
+    val keyboardActions = remember {
+        KeyboardActions(onDone = {
+            editProfileViewModel.onEvent(event = EditProfileEvent.Save)
+        })
+    }
     val onClickCancelButton = remember {{
-        navController.popBackStack()
-        Unit
+            navController.popBackStack()
+            Unit
     }}
     val onClickConfirmButton = remember {{
-        editProfileViewModel.onEvent(event = EditProfileEvent.Save)
+            editProfileViewModel.onEvent(event = EditProfileEvent.Save)
+    }}
+
+    val onDismissNoInternetDialog = remember{{
+        editProfileViewModel.onEvent(event = EditProfileEvent.DismissNoInternetDialog)
     }}
 
     EditProfileScreenContent(
@@ -193,7 +205,9 @@ fun EditProfileScreen(
         onValueChangePhoneNumber = onValueChangePhoneNumber,
         keyboardActions = keyboardActions,
         onClickCancelButton = onClickCancelButton,
-        onClickConfirmButton = onClickConfirmButton)
+        onClickConfirmButton = onClickConfirmButton,
+        onDismissNoInternetDialog = onDismissNoInternetDialog
+        )
 
 }
 
@@ -204,7 +218,11 @@ fun EditProfilePreview() {
         EditProfileScreenContent(
             modifier = Modifier,
             photoUrl = "",
-            state = EditProfileState(isLoading = false, nameErrorMessage = "Field cannot be blank", phoneNumberErrorMessage = "Field cannot be blank"))
+            state = EditProfileState(
+                isLoading = false,
+                nameErrorMessage = "Field cannot be blank",
+                phoneNumberErrorMessage = "Field cannot be blank",
+                hasInternet = false))
     }
 }
 
@@ -222,6 +240,7 @@ fun EditProfileScreenContent(
     keyboardActions: KeyboardActions = KeyboardActions { },
     onClickCancelButton: () -> Unit = {},
     onClickConfirmButton: () -> Unit = {},
+    onDismissNoInternetDialog: () -> Unit = {},
 ) {
 
 
@@ -258,7 +277,7 @@ fun EditProfileScreenContent(
                 .background(MaterialTheme.colors.background)) {
 
 
-            val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText, progressBar) = createRefs()
+            val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText, progressBar, noInternetDialog) = createRefs()
 
             ProfilePictureArea(
                 photoUrl = photoUrl,
@@ -334,6 +353,20 @@ fun EditProfileScreenContent(
                 positiveButtonEnabled = !state.isLoading && state.isUserInformationChanges(),
             )
 
+            if (!state.hasInternet) {
+
+                NoInternetDialog(
+                    modifier = Modifier.constrainAs(noInternetDialog) {
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                        bottom.linkTo(parent.bottom)
+                        width = Dimension.matchParent
+                        height = Dimension.wrapContent
+                    }, onDismiss = onDismissNoInternetDialog
+                )
+
+            }
+
             if (state.isLoading) {
                 CircularProgressIndicator(modifier = Modifier.constrainAs(progressBar) {
                     top.linkTo(parent.top)
@@ -346,4 +379,5 @@ fun EditProfileScreenContent(
         }
     }
 }
+
 
