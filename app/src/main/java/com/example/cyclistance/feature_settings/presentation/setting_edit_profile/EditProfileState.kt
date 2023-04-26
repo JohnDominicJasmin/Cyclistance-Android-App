@@ -16,5 +16,6 @@ data class EditProfileState(
     val phoneNumberErrorMessage: String = "",
     val isLoading: Boolean = false,
     val galleryButtonClick: Boolean = false,
+    val hasInternet: Boolean = true,
     val imageUri: String? = ""
     ):Parcelable
