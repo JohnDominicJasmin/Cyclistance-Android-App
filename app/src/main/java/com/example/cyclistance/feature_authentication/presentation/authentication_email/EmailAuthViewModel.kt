@@ -152,23 +152,26 @@ class EmailAuthViewModel @Inject constructor(
 
     // TODO: move to repository
     private fun startTimer() {
-        _state.update { it.copy(isTimerRunning = true) }
-        savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
-        verificationTimer = object : CountDownTimer(TIMER_COUNTS, ONE_SECOND_TO_MILLIS) {
-            override fun onTick(millisUntilFinished: Long) {
-                val timeLeft = millisUntilFinished / ONE_SECOND_TO_MILLIS
-                _state.update { it.copy(secondsLeft = timeLeft.toInt()) }
-                savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
-                Timber.d("TimeLeft is $timeLeft")
-            }
+        viewModelScope.launch(Dispatchers.Main) {
 
-            override fun onFinish() {
-                stopTimer()
-                _state.update { it.copy(isTimerRunning = false) }
-                savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
-            }
-        }.start()
+            _state.update { it.copy(isTimerRunning = true) }
+            savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
+            verificationTimer = object : CountDownTimer(TIMER_COUNTS, ONE_SECOND_TO_MILLIS) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val timeLeft = millisUntilFinished / ONE_SECOND_TO_MILLIS
+                    _state.update { it.copy(secondsLeft = timeLeft.toInt()) }
+                    savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
+                    Timber.d("TimeLeft is $timeLeft")
+                }
 
+                override fun onFinish() {
+                    stopTimer()
+                    _state.update { it.copy(isTimerRunning = false) }
+                    savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
+                }
+            }.start()
+
+        }
     }
 
     // TODO: move to repository
