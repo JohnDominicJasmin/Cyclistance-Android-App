@@ -89,16 +89,19 @@ fun EmailAuthScreen(
             onEvent(EmailAuthEvent.SubscribeEmailVerification)
 
             eventFlow.collectLatest { event ->
-
                 when (event) {
-
-                    is EmailAuthUiEvent.ShowMappingScreen -> {
+                    is EmailAuthUiEvent.EmailVerificationSuccess -> {
                         navController.navigateScreenInclusively(
                             Screens.MappingScreen.route,
                             Screens.EmailAuthScreen.route)
                     }
-                    is EmailAuthUiEvent.ShowToastMessage -> {
-                        Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+
+                    is EmailAuthUiEvent.ReloadEmailFailed -> {
+                        Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()
+                    }
+
+                    is EmailAuthUiEvent.EmailVerificationNotSent -> {
+                        Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()
                     }
 
                     else -> {

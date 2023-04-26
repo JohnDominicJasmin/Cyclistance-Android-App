@@ -70,7 +70,7 @@ class ConfirmDetailsViewModel @Inject constructor(
     fun onEvent(event: ConfirmDetailsEvent) {
         when (event) {
             is ConfirmDetailsEvent.ConfirmDetails -> {
-                updateUser()
+                confirmDetails()
             }
             is ConfirmDetailsEvent.DismissNoInternetDialog -> {
                 _state.update { it.copy(hasInternet = true) }
@@ -98,7 +98,7 @@ class ConfirmDetailsViewModel @Inject constructor(
     }
 
 
-    private fun updateUser() {
+    private fun confirmDetails() {
 
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
@@ -127,7 +127,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                 broadcastUser()
                 broadcastRescueTransaction()
                 _state.update { it.copy(isLoading = false) }
-                _eventFlow.emit(value = ConfirmDetailsUiEvent.ShowMappingScreen)
+                _eventFlow.emit(value = ConfirmDetailsUiEvent.ConfirmDetailsSuccess)
 
 
             }.onFailure { exception ->
@@ -166,11 +166,11 @@ class ConfirmDetailsViewModel @Inject constructor(
 
     private suspend fun Throwable.handleException() {
         when (this) {
-            is MappingExceptions.UnexpectedErrorException, is MappingExceptions.UserException -> {
-                _eventFlow.emit(
-                    ConfirmDetailsUiEvent.ShowToastMessage(
-                        message = this.message ?: "",
-                    ))
+            is MappingExceptions.UnexpectedErrorException -> {
+                _eventFlow.emit(value = ConfirmDetailsUiEvent.UnexpectedError(this.message!!))
+            }
+            is MappingExceptions.UserException -> {
+                _eventFlow.emit(value = ConfirmDetailsUiEvent.UserError(this.message!!))
             }
             is MappingExceptions.NetworkException -> {
                 _state.update { it.copy(hasInternet = false) }

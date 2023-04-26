@@ -50,12 +50,16 @@ fun ConfirmDetailsScreen(
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is ConfirmDetailsUiEvent.ShowMappingScreen -> {
+                is ConfirmDetailsUiEvent.ConfirmDetailsSuccess -> {
                     navController.navigateScreen(Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE=${BottomSheetType.SearchAssistance.type}")
                 }
 
-                is ConfirmDetailsUiEvent.ShowToastMessage -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                is ConfirmDetailsUiEvent.UserError -> {
+                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
+                }
+
+                is ConfirmDetailsUiEvent.UnexpectedError -> {
+                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
             }

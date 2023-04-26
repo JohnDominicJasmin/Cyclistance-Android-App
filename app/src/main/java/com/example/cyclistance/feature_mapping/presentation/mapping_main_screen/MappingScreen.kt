@@ -8,7 +8,6 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION_CODES.Q
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -605,21 +604,19 @@ fun MappingLaunchedEffects(
 
         mappingViewModel.eventFlow.collectLatest{ event ->
             when (event) {
-                is MappingUiEvent.ShowToastMessage -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                }
 
-                is MappingUiEvent.ShowConfirmDetailsScreen -> {
+
+                is MappingUiEvent.RequestHelpSuccess -> {
                     navController.navigateScreen(
                         Screens.ConfirmDetailsScreen.route + "?$LATITUDE=${state.userLocation?.latitude}&$LONGITUDE=${state.userLocation?.longitude}")
                 }
 
-                is MappingUiEvent.ShowEditProfileScreen -> {
+                is MappingUiEvent.InsufficientUserCredential -> {
                     navController.navigateScreen(
                         Screens.EditProfileScreen.route)
                 }
 
-                is MappingUiEvent.ShowSignInScreen -> {
+                is MappingUiEvent.SignOutSuccess -> {
                     navController.navigateScreenInclusively(
                         Screens.SignInScreen.route,
                         Screens.MappingScreen.route)

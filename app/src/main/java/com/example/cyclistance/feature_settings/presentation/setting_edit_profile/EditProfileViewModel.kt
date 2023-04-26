@@ -153,8 +153,7 @@ class EditProfileViewModel @Inject constructor(
                     name = state.value.name.trim())
 
             }.onSuccess {
-                _eventFlow.emit(EditProfileUiEvent.ShowToastMessage(message = "Successfully Updated!"))
-                _eventFlow.emit(EditProfileUiEvent.CloseScreen)
+                _eventFlow.emit(EditProfileUiEvent.UpdateUserProfileSuccess(reason = "Successfully Updated!"))
             }.onFailure { exception ->
                 when (exception) {
                     is MappingExceptions.PhoneNumberException -> {

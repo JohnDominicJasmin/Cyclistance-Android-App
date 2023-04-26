@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 
 
 sealed class SignUpUiEvent{
-    object ShowEmailAuthScreen: SignUpUiEvent()
-    data class ShowToastMessage(val message: String) : SignUpUiEvent()
-
+    object SignUpSuccess: SignUpUiEvent()
+    data class CreateAccountFailed(val reason:String = "Failed to create account. Please try again later."): SignUpUiEvent()
 }

@@ -22,7 +22,12 @@ import com.facebook.login.LoginResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -115,8 +120,7 @@ class SignInViewModel @Inject constructor(
                 if (isSignedIn) {
                     _eventFlow.emit(SignInUiEvent.RefreshEmail)
                 } else {
-                    _eventFlow.emit(SignInUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
-                    // TODO: move to Constants
+                    _eventFlow.emit(SignInUiEvent.SignInFailed())
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
@@ -138,7 +142,7 @@ class SignInViewModel @Inject constructor(
             }.onSuccess { isSuccess ->
                 _state.update { it.copy(isLoading = false) }
                 if (isSuccess) {
-                    _eventFlow.emit(SignInUiEvent.ShowMappingScreen)
+                    _eventFlow.emit(SignInUiEvent.SignInSuccess)
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }

@@ -93,11 +93,11 @@ class EmailAuthViewModel @Inject constructor(
 
     private suspend fun showVerifyEmailResult(emailIsVerified: Boolean) {
         if (emailIsVerified) {
-            _eventFlow.emit(EmailAuthUiEvent.ShowMappingScreen)
+            _eventFlow.emit(EmailAuthUiEvent.EmailVerificationSuccess)
             delay(300)
             job?.cancel()
         } else {
-            _eventFlow.emit(EmailAuthUiEvent.ShowEmailAuthScreen)
+            _eventFlow.emit(EmailAuthUiEvent.EmailVerificationFailed)
         }
     }
 
@@ -121,7 +121,7 @@ class EmailAuthViewModel @Inject constructor(
                 if (isEmailReloaded) {
                     verifyEmail()
                 } else {
-                    _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
+                    _eventFlow.emit(EmailAuthUiEvent.ReloadEmailFailed())
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
@@ -192,7 +192,6 @@ class EmailAuthViewModel @Inject constructor(
                             icon = R.raw.success))
                 }
 
-                _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
 
             }.onFailure {
 

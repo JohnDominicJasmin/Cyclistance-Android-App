@@ -83,7 +83,7 @@ class CancellationReasonViewModel @Inject constructor(
                 broadcastRescueTransaction()
                 delay(500)
                 finishLoading()
-                _eventFlow.emit(value = CancellationReasonUiEvent.ShowMappingScreen)
+                _eventFlow.emit(value = CancellationReasonUiEvent.ConfirmCancellationReasonSuccess)
             }.onFailure { exception ->
                 finishLoading()
                 exception.handleException()
@@ -115,12 +115,19 @@ class CancellationReasonViewModel @Inject constructor(
 
     private suspend fun Throwable.handleException() {
         when (this) {
-            is MappingExceptions.UnexpectedErrorException, is MappingExceptions.UserException, is MappingExceptions.RescueTransactionException -> {
-                _eventFlow.emit(
-                    CancellationReasonUiEvent.ShowToastMessage(
-                        message = this.message!!
-                    ))
+
+            is MappingExceptions.UnexpectedErrorException -> {
+                _eventFlow.emit(value = CancellationReasonUiEvent.UnexpectedError(this.message!!))
             }
+
+            is MappingExceptions.UserException -> {
+                _eventFlow.emit(value = CancellationReasonUiEvent.UserFailed(this.message!!))
+            }
+
+            is MappingExceptions.RescueTransactionNotFoundException -> {
+                _eventFlow.emit(value = CancellationReasonUiEvent.RescueTransactionFailed(this.message!!))
+            }
+
             is MappingExceptions.NetworkException -> {
                 _state.update { it.copy(hasInternet = false) }
             }
