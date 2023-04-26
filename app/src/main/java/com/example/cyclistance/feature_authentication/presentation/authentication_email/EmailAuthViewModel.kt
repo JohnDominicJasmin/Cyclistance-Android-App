@@ -179,15 +179,17 @@ class EmailAuthViewModel @Inject constructor(
                     return@launch
                 }
 
-                if (isEmailVerificationSent) {
-                    _state.update {
-                        it.copy(
-                            alertDialogModel = AlertDialogModel(
-                                title = "New Email Sent.",
-                                description = "New verification email has been sent to your email address.",
-                                icon = R.raw.success))
-                    }
+                if (!isEmailVerificationSent) {
+                    _eventFlow.emit(EmailAuthUiEvent.EmailVerificationNotSent())
                     return@launch
+                }
+
+                _state.update {
+                    it.copy(
+                        alertDialogModel = AlertDialogModel(
+                            title = "New Email Sent.",
+                            description = "New verification email has been sent to your email address.",
+                            icon = R.raw.success))
                 }
 
                 _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
