@@ -12,5 +12,6 @@ sealed class EditProfileEvent {
 
     data class SelectImageUri(val uri: String?): EditProfileEvent()
     object OnClickGalleryButton : EditProfileEvent()
+    object DismissNoInternetDialog: EditProfileEvent()
 
 }

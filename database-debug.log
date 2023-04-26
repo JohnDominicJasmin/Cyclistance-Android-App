@@ -1,8 +1,15 @@
-17:14:28.063 [NamespaceSystem-akka.actor.default-dispatcher-6] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
-17:14:28.295 [main] INFO com.firebase.server.forge.App$ - Listening at localhost:3103
-17:14:40.576 [NamespaceSystem-akka.actor.default-dispatcher-7] INFO com.firebase.core.namespace.NamespaceActor - cyclistance-cc715-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 201ms, init: 0ms
-17:14:40.646 [NamespaceSystem-blocking-namespace-operation-dispatcher-8:cyclistance-cc715-default-rtdb$-1591170239:] INFO com.firebase.core.namespace.StateManager - Namespace cyclistance-cc715-default-rtdb status Active to Active
-23:36:41.910 [Thread-0] INFO com.firebase.server.forge.App$ - Attempting graceful shutdown.
-23:36:41.942 [NamespaceSystem-akka.actor.default-dispatcher-15] INFO com.firebase.core.namespace.Terminator$Terminator - 1 actors left to terminate: cyclistance-cc715-default-rtdb
-23:36:41.968 [NamespaceSystem-akka.actor.default-dispatcher-15] INFO com.firebase.core.namespace.NamespaceActor - stopped namespace actor for cyclistance-cc715-default-rtdb
-23:36:41.978 [Thread-0] INFO com.firebase.server.forge.App$ - Graceful shutdown complete.
+WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by io.netty.util.internal.ReflectionUtil (file:/home/miko/.cache/firebase/emulators/firebase-database-emulator-v4.8.0.jar) to field sun.nio.ch.SelectorImpl.selectedKeys
+WARNING: Please consider reporting this to the maintainers of io.netty.util.internal.ReflectionUtil
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+14:58:59.213 [NamespaceSystem-akka.actor.default-dispatcher-4] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+14:58:59.407 [main] INFO com.firebase.server.forge.App$ - Listening at localhost:3103
+14:59:09.629 [NamespaceSystem-akka.actor.default-dispatcher-6] INFO com.firebase.core.namespace.NamespaceActor - cyclistance-cc715-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 175ms, init: 0ms
+14:59:09.701 [NamespaceSystem-blocking-namespace-operation-dispatcher-8:cyclistance-cc715-default-rtdb$987223488:] INFO com.firebase.core.namespace.StateManager - Namespace cyclistance-cc715-default-rtdb status Active to Active
+15:07:27.895 [NamespaceSystem-akka.actor.default-dispatcher-11] INFO com.firebase.core.namespace.NamespaceActor - cyclistance-cc715 successfully activated FBKV (SurveyIdle(0)) wait: 4ms, init: 0ms
+15:45:20.568 [Thread-0] INFO com.firebase.server.forge.App$ - Attempting graceful shutdown.
+15:45:20.589 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.Terminator$Terminator - 2 actors left to terminate: cyclistance-cc715, cyclistance-cc715-default-rtdb
+15:45:20.600 [NamespaceSystem-akka.actor.default-dispatcher-26] INFO com.firebase.core.namespace.NamespaceActor - stopped namespace actor for cyclistance-cc715
+15:45:20.600 [NamespaceSystem-akka.actor.default-dispatcher-5] INFO com.firebase.core.namespace.NamespaceActor - stopped namespace actor for cyclistance-cc715-default-rtdb
+15:45:20.605 [Thread-0] INFO com.firebase.server.forge.App$ - Graceful shutdown complete.

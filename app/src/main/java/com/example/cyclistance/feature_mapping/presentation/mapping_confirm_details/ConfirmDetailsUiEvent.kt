@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details
 
 sealed class ConfirmDetailsUiEvent{
-    data class ShowToastMessage(val message: String): ConfirmDetailsUiEvent()
-    object ShowMappingScreen: ConfirmDetailsUiEvent()
+    object ConfirmDetailsSuccess: ConfirmDetailsUiEvent()
+    data class UserError(val reason:String = "User not found"): ConfirmDetailsUiEvent()
+    data class UnexpectedError(val reason:String = "An unexpected error occurred."): ConfirmDetailsUiEvent()
 }

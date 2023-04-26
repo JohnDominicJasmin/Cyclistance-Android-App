@@ -4,13 +4,24 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
@@ -34,7 +45,12 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthState
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.*
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInButton
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInClickableText
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInGoogleAndFacebookSection
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInTextFieldsArea
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignUpTextArea
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.signInConstraints
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.visible
@@ -93,13 +109,13 @@ fun SignInScreen(
                 is SignInUiEvent.RefreshEmail -> {
                     emailAuthViewModel.onEvent(EmailAuthEvent.RefreshEmail)
                 }
-                is SignInUiEvent.ShowMappingScreen -> {
+                is SignInUiEvent.SignInSuccess -> {
                     navController.navigateScreenInclusively(
                         Screens.MappingScreen.route,
                         Screens.SignInScreen.route)
                 }
-                is SignInUiEvent.ShowToastMessage -> {
-                    Toast.makeText(context, signInEvent.message, Toast.LENGTH_SHORT).show()
+                is SignInUiEvent.SignInFailed -> {
+                    Toast.makeText(context, signInEvent.reason, Toast.LENGTH_SHORT).show()
                 }
 
 
@@ -111,15 +127,18 @@ fun SignInScreen(
     LaunchedEffect(key1 = true) {
         emailAuthViewModel.eventFlow.collectLatest { emailAuthEvent ->
             when (emailAuthEvent) {
-                is EmailAuthUiEvent.ShowMappingScreen -> {
+                is EmailAuthUiEvent.EmailVerificationSuccess -> {
                     navController.navigateScreenInclusively(
                         Screens.MappingScreen.route,
                         Screens.SignInScreen.route)
                 }
-                is EmailAuthUiEvent.ShowToastMessage -> {
-                    Toast.makeText(context, emailAuthEvent.message, Toast.LENGTH_SHORT).show()
+                is EmailAuthUiEvent.ReloadEmailFailed -> {
+                    Toast.makeText(context, emailAuthEvent.reason, Toast.LENGTH_LONG).show()
                 }
-                is EmailAuthUiEvent.ShowEmailAuthScreen -> {
+                is EmailAuthUiEvent.EmailVerificationNotSent -> {
+                    Toast.makeText(context, emailAuthEvent.reason, Toast.LENGTH_LONG).show()
+                }
+                is EmailAuthUiEvent.EmailVerificationFailed -> {
                     navController.navigateScreenInclusively(
                         Screens.EmailAuthScreen.route,
                         Screens.SignInScreen.route)

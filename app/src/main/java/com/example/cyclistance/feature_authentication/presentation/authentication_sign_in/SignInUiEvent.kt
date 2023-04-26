@@ -3,7 +3,7 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 
 sealed class SignInUiEvent {
     object RefreshEmail: SignInUiEvent()
-    object ShowMappingScreen: SignInUiEvent()
-    data class ShowToastMessage(val message: String) : SignInUiEvent()
+    object SignInSuccess: SignInUiEvent()
+    data class SignInFailed(val reason:String = "Sign in failed. Please try again."): SignInUiEvent()
 
 }

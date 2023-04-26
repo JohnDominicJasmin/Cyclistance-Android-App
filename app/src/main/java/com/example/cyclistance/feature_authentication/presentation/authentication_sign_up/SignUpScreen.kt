@@ -91,14 +91,14 @@ fun SignUpScreen(
         signUpViewModel.eventFlow.collectLatest { event ->
 
             when (event) {
-                is SignUpUiEvent.ShowEmailAuthScreen -> {
+                is SignUpUiEvent.SignUpSuccess -> {
                     navController.navigateScreenInclusively(
                         Screens.EmailAuthScreen.route,
                         Screens.SignUpScreen.route)
 
                 }
-                is SignUpUiEvent.ShowToastMessage -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                is SignUpUiEvent.CreateAccountFailed -> {
+                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
             }
         }

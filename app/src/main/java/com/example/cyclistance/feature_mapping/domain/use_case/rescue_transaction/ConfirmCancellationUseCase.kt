@@ -9,7 +9,7 @@ class ConfirmCancellationUseCase(private val repository : MappingRepository) {
         val cancellationReason = rescueTransaction.cancellation?.cancellationReason?.reason
 
         if(rescueTransaction.id.isNullOrEmpty()){
-            throw MappingExceptions.RescueTransactionException()
+            throw MappingExceptions.RescueTransactionNotFoundException()
         }
         if (cancellationReason.isNullOrEmpty()){
             throw MappingExceptions.RescueTransactionReasonException()

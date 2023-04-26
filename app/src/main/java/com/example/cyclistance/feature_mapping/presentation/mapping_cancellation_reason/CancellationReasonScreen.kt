@@ -9,7 +9,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,13 +45,18 @@ fun CancellationReasonScreen(
     LaunchedEffect(key1 = true){
         viewModel.eventFlow.collectLatest { event ->
            when(event){
-               is CancellationReasonUiEvent.ShowMappingScreen -> {
+               is CancellationReasonUiEvent.ConfirmCancellationReasonSuccess -> {
                    navController.navigateScreen(Screens.MappingScreen.route)
                }
-               is CancellationReasonUiEvent.ShowToastMessage -> {
-                   Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+               is CancellationReasonUiEvent.UnexpectedError-> {
+                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                }
-
+               is CancellationReasonUiEvent.UserFailed -> {
+                   Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
+               }
+               is CancellationReasonUiEvent.RescueTransactionFailed -> {
+                   Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
+               }
            }
         }
     }

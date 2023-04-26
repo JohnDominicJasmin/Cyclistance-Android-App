@@ -11,7 +11,12 @@ import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -94,10 +99,9 @@ class SignUpViewModel @Inject constructor(
             }.onSuccess { isAccountCreated ->
                 _state.update { it.copy(isLoading = false) }
                 if (isAccountCreated) {
-                    _eventFlow.emit(SignUpUiEvent.ShowEmailAuthScreen)
+                    _eventFlow.emit(SignUpUiEvent.SignUpSuccess)
                 } else {
-                    _eventFlow.emit(SignUpUiEvent.ShowToastMessage("Sorry, something went wrong. Please try again."))
-                    // TODO: Move to constants
+                    _eventFlow.emit(SignUpUiEvent.CreateAccountFailed())
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }

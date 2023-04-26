@@ -17,17 +17,41 @@ import com.example.cyclistance.feature_authentication.domain.use_case.Authentica
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toCardModel
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Route
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Status
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.*
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.ConfirmationDetail
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.RescueRequest
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Transaction
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserAssistance
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping.domain.model.*
+import com.example.cyclistance.feature_mapping.domain.model.ActiveRescueRequests
+import com.example.cyclistance.feature_mapping.domain.model.CameraState
+import com.example.cyclistance.feature_mapping.domain.model.CardModel
+import com.example.cyclistance.feature_mapping.domain.model.LiveLocationWSModel
+import com.example.cyclistance.feature_mapping.domain.model.MappingBannerModel
+import com.example.cyclistance.feature_mapping.domain.model.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.Role
+import com.example.cyclistance.feature_mapping.domain.model.UserItem
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import okhttp3.internal.toImmutableList
 import timber.log.Timber
 import javax.inject.Inject
@@ -319,7 +343,7 @@ class MappingViewModel @Inject constructor(
                         respondentId = getId())
                 })
             }.onSuccess {
-                _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Rescue request sent"))
+                _eventFlow.emit(value = MappingUiEvent.RespondToHelpFailed("Rescue request sent"))
                 broadcastToNearbyCyclists()
                 broadcastRescueTransaction()
                 _state.update { it.copy(respondedToHelp = true) }
@@ -339,7 +363,7 @@ class MappingViewModel @Inject constructor(
 
             if (!userLocation.isLocationAvailable()) {
                 viewModelScope.launch(context = defaultDispatcher) {
-                    _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Tracking your Location"))
+                    _eventFlow.emit(value = MappingUiEvent.TrackingLocation("Tracking your Location"))
                 }
                 return
             }
@@ -567,12 +591,12 @@ class MappingViewModel @Inject constructor(
             val userLocationAvailable = user.location.isLocationAvailable()
 
             if (!rescuerLocationAvailable) {
-                _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Can't reach Rescuer"))
+                _eventFlow.emit(value = MappingUiEvent.RescuerLocationNotAvailable())
                 return
             }
 
             if (!userLocationAvailable) {
-                _eventFlow.emit(value = MappingUiEvent.ShowToastMessage("Location not found"))
+                _eventFlow.emit(value = MappingUiEvent.TrackingLocation("Location not found"))
                 return
             }
 
@@ -621,7 +645,7 @@ class MappingViewModel @Inject constructor(
 
                     }.onSuccess { rescueTransaction ->
                         broadcastRescueTransaction()
-                        assignTransaction(
+                        assignRequestTransaction(
                             rescueTransaction = rescueTransaction,
                             user = user,
                             rescuer = rescuer,
@@ -666,7 +690,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun assignTransaction(
+    private suspend fun assignRequestTransaction(
         rescueTransaction: RescueTransactionItem,
         user: UserItem,
         rescuer: UserItem,
@@ -674,12 +698,12 @@ class MappingViewModel @Inject constructor(
 
         runCatching {
 
-            transactionId.assignTransaction(role = Role.RESCUEE.name.lowercase(), id = user.id)
-            transactionId.assignTransaction(role = Role.RESCUER.name.lowercase(), id = rescuer.id)
+            transactionId.assignRequestTransaction(role = Role.RESCUEE.name.lowercase(), id = user.id)
+            transactionId.assignRequestTransaction(role = Role.RESCUER.name.lowercase(), id = rescuer.id)
 
         }.onSuccess {
             broadcastToNearbyCyclists()
-            _eventFlow.emit(value = MappingUiEvent.ShowMappingScreen)
+            _eventFlow.emit(value = MappingUiEvent.AcceptRescueRequestSuccess)
             delay(500)
             updateTransactionETA(rescuer, rescueTransaction)
             finishLoading()
@@ -739,7 +763,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun String.assignTransaction(role: String, id: String?) {
+    private suspend fun String.assignRequestTransaction(role: String, id: String?) {
         mappingUseCase.createUserUseCase(
             user = UserItem.empty(id = id, transactionId = this, role = role)
         )
@@ -749,7 +773,7 @@ class MappingViewModel @Inject constructor(
     private suspend fun Throwable.handleDeclineRescueRequest() {
         when (this) {
             is MappingExceptions.NetworkException -> {
-                _eventFlow.emit(MappingUiEvent.ShowToastMessage("No Internet Connection"))
+
             }
             else -> {
                 Timber.d("Failed to update user")
@@ -1071,7 +1095,7 @@ class MappingViewModel @Inject constructor(
             val respondentRemoved = removeAll { it.id == id }
             if (!respondentRemoved) {
                 viewModelScope.launch(context = defaultDispatcher){
-                    _eventFlow.emit(value = MappingUiEvent.ShowToastMessage(message = "Failed to Remove Respondent"))
+                    _eventFlow.emit(value = MappingUiEvent.RemovingRespondentFailed(reason = "Failed to Remove Respondent"))
                 }
                 return
             }
@@ -1088,7 +1112,7 @@ class MappingViewModel @Inject constructor(
                 startLoading()
                 authUseCase.signOutUseCase()
             }.onSuccess {
-                _eventFlow.emit(value = MappingUiEvent.ShowSignInScreen)
+                _eventFlow.emit(value = MappingUiEvent.SignOutSuccess)
             }.onFailure {
                 Timber.e("Error Sign out account: ${it.message}")
             }
@@ -1103,7 +1127,7 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 uploadUserProfile(onSuccess = {
-                    _eventFlow.emit(MappingUiEvent.ShowConfirmDetailsScreen)
+                    _eventFlow.emit(MappingUiEvent.RequestHelpSuccess)
                 })
             }.onFailure {
                 it.handleException()
@@ -1119,7 +1143,7 @@ class MappingViewModel @Inject constructor(
             val userLocation = state.value.userLocation
 
             if (userLocation == null) {
-                _eventFlow.emit(MappingUiEvent.ShowToastMessage(message = "Searching for GPS"))
+                _eventFlow.emit(MappingUiEvent.TrackingLocation(reason = "Searching for GPS"))
                 return@coroutineScope
             }
 
@@ -1197,14 +1221,29 @@ class MappingViewModel @Inject constructor(
                 _state.update { it.copy(hasInternet = false) }
             }
 
-            is MappingExceptions.UnexpectedErrorException, is MappingExceptions.UserException, is MappingExceptions.AddressException -> {
+            is MappingExceptions.UnexpectedErrorException -> {
                 _eventFlow.emit(
-                    MappingUiEvent.ShowToastMessage(
-                        message = this.message ?: "Unexpected error occurred."
+                    MappingUiEvent.UnexpectedError(
+                        reason = this.message
                     ))
             }
+
+            is MappingExceptions.UserException -> {
+                _eventFlow.emit(
+                    MappingUiEvent.UserFailed(
+                        reason = this.message
+                    ))
+            }
+
+            is MappingExceptions.AddressException -> {
+                _eventFlow.emit(
+                    MappingUiEvent.RescueTransactionFailed(
+                        reason = this.message
+                    ))
+            }
+
             is MappingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
-                _eventFlow.emit(MappingUiEvent.ShowEditProfileScreen)
+                _eventFlow.emit(MappingUiEvent.InsufficientUserCredential)
             }
 
             else -> {

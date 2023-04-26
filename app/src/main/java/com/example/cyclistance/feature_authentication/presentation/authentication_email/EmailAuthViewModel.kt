@@ -13,8 +13,19 @@ import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogMode
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.*
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 @HiltViewModel
@@ -93,11 +104,11 @@ class EmailAuthViewModel @Inject constructor(
 
     private suspend fun showVerifyEmailResult(emailIsVerified: Boolean) {
         if (emailIsVerified) {
-            _eventFlow.emit(EmailAuthUiEvent.ShowMappingScreen)
+            _eventFlow.emit(EmailAuthUiEvent.EmailVerificationSuccess)
             delay(300)
             job?.cancel()
         } else {
-            _eventFlow.emit(EmailAuthUiEvent.ShowEmailAuthScreen)
+            _eventFlow.emit(EmailAuthUiEvent.EmailVerificationFailed)
         }
     }
 
@@ -121,7 +132,7 @@ class EmailAuthViewModel @Inject constructor(
                 if (isEmailReloaded) {
                     verifyEmail()
                 } else {
-                    _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
+                    _eventFlow.emit(EmailAuthUiEvent.ReloadEmailFailed())
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
@@ -179,18 +190,19 @@ class EmailAuthViewModel @Inject constructor(
                     return@launch
                 }
 
-                if (isEmailVerificationSent) {
-                    _state.update {
-                        it.copy(
-                            alertDialogModel = AlertDialogModel(
-                                title = "New Email Sent.",
-                                description = "New verification email has been sent to your email address.",
-                                icon = R.raw.success))
-                    }
+                if (!isEmailVerificationSent) {
+                    _eventFlow.emit(EmailAuthUiEvent.EmailVerificationNotSent())
                     return@launch
                 }
 
-                _eventFlow.emit(EmailAuthUiEvent.ShowToastMessage(message = "Sorry, something went wrong. Please try again."))
+                _state.update {
+                    it.copy(
+                        alertDialogModel = AlertDialogModel(
+                            title = "New Email Sent.",
+                            description = "New verification email has been sent to your email address.",
+                            icon = R.raw.success))
+                }
+
 
             }.onFailure {
 

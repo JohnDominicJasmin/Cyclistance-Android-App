@@ -75,7 +75,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         event.test(timeout = 1.5.minutes) {
             mappingViewModel.onEvent(event = MappingEvent.RequestHelp)
             val result = awaitItem()
-            Assert.assertEquals(MappingUiEvent.ShowConfirmDetailsScreen, result)
+            Assert.assertEquals(MappingUiEvent.RequestHelpSuccess, result)
             Assert.assertNotEquals(MappingUiEvent.ShowToastMessage("Searching for GPS"), result)
         }
 
@@ -149,7 +149,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         delay(5000)
         event.test(timeout = 1.5.minutes) {
             mappingViewModel.onEvent(event = MappingEvent.AcceptRescueRequest(id = "2"))
-            Assert.assertEquals(MappingUiEvent.ShowMappingScreen, awaitItem())
+            Assert.assertEquals(MappingUiEvent.AcceptRescueRequestSuccess, awaitItem())
         }
         return this
     }
@@ -272,7 +272,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         event.test {
             mappingViewModel.onEvent(event = MappingEvent.SignOut)
             when (awaitItem()) {
-                is MappingUiEvent.ShowSignInScreen -> {
+                is MappingUiEvent.SignOutSuccess -> {
                     Assert.assertTrue("Showing sign in screen", true)
                 }
                 else -> {

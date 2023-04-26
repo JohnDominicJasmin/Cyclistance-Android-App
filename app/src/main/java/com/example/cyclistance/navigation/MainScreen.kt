@@ -96,7 +96,7 @@ fun MainScreen(
         mappingViewModel.onEvent(event = MappingEvent.LoadUserProfile)
         mappingViewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is MappingUiEvent.ShowSignInScreen -> {
+                is MappingUiEvent.SignOutSuccess -> {
                     navController.popBackStack()
                     navController.navigate(Screens.SignInScreen.route)
                 }

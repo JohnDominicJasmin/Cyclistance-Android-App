@@ -15,7 +15,11 @@ import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -83,7 +87,7 @@ class CancellationReasonViewModel @Inject constructor(
                 broadcastRescueTransaction()
                 delay(500)
                 finishLoading()
-                _eventFlow.emit(value = CancellationReasonUiEvent.ShowMappingScreen)
+                _eventFlow.emit(value = CancellationReasonUiEvent.ConfirmCancellationReasonSuccess)
             }.onFailure { exception ->
                 finishLoading()
                 exception.handleException()
@@ -115,12 +119,19 @@ class CancellationReasonViewModel @Inject constructor(
 
     private suspend fun Throwable.handleException() {
         when (this) {
-            is MappingExceptions.UnexpectedErrorException, is MappingExceptions.UserException, is MappingExceptions.RescueTransactionException -> {
-                _eventFlow.emit(
-                    CancellationReasonUiEvent.ShowToastMessage(
-                        message = this.message!!
-                    ))
+
+            is MappingExceptions.UnexpectedErrorException -> {
+                _eventFlow.emit(value = CancellationReasonUiEvent.UnexpectedError(this.message!!))
             }
+
+            is MappingExceptions.UserException -> {
+                _eventFlow.emit(value = CancellationReasonUiEvent.UserFailed(this.message!!))
+            }
+
+            is MappingExceptions.RescueTransactionNotFoundException -> {
+                _eventFlow.emit(value = CancellationReasonUiEvent.RescueTransactionFailed(this.message!!))
+            }
+
             is MappingExceptions.NetworkException -> {
                 _state.update { it.copy(hasInternet = false) }
             }

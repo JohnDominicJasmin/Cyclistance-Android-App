@@ -8,7 +8,6 @@ import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION_CODES.Q
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -19,6 +18,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import com.example.cyclistance.core.utils.connection.ConnectionStatus.checkLocationSetting
+import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
@@ -29,8 +30,6 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.permission.requestPermission
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
-import com.example.cyclistance.feature_mapping.data.local.location.ConnectionStatus.checkLocationSetting
-import com.example.cyclistance.feature_mapping.data.local.location.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.*
@@ -401,7 +400,8 @@ fun MappingScreen(
     }}
 
 
-    LaunchedEffects(
+    MappingLaunchedEffects(
+
         state = state,
         hasTransaction = hasTransaction,
         isRescueCancelled = isRescueCancelled,
@@ -460,7 +460,7 @@ fun MappingScreen(
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalPermissionsApi::class)
 @Composable
-fun LaunchedEffects(
+fun MappingLaunchedEffects(
     state: MappingState,
     hasTransaction: Boolean,
     isRescueCancelled: Boolean,
@@ -604,21 +604,19 @@ fun LaunchedEffects(
 
         mappingViewModel.eventFlow.collectLatest{ event ->
             when (event) {
-                is MappingUiEvent.ShowToastMessage -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                }
 
-                is MappingUiEvent.ShowConfirmDetailsScreen -> {
+
+                is MappingUiEvent.RequestHelpSuccess -> {
                     navController.navigateScreen(
                         Screens.ConfirmDetailsScreen.route + "?$LATITUDE=${state.userLocation?.latitude}&$LONGITUDE=${state.userLocation?.longitude}")
                 }
 
-                is MappingUiEvent.ShowEditProfileScreen -> {
+                is MappingUiEvent.InsufficientUserCredential -> {
                     navController.navigateScreen(
                         Screens.EditProfileScreen.route)
                 }
 
-                is MappingUiEvent.ShowSignInScreen -> {
+                is MappingUiEvent.SignOutSuccess -> {
                     navController.navigateScreenInclusively(
                         Screens.SignInScreen.route,
                         Screens.MappingScreen.route)

@@ -98,7 +98,7 @@ fun EditProfileScreen(
             val uri = bitmap?.toImageUri(context).toString()
             imageBitmap = bitmap
             editProfileViewModel.onEvent(event = EditProfileEvent.SelectImageUri(uri = uri))
-            bitmap?.let(saveImageToGallery)
+
         }
 
 
@@ -136,13 +136,10 @@ fun EditProfileScreen(
 
         editProfileViewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is EditProfileUiEvent.CloseScreen -> {
+                is EditProfileUiEvent.UpdateUserProfileSuccess -> {
+                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                     navController.popBackStack()
                 }
-                is EditProfileUiEvent.ShowToastMessage -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                }
-
             }
         }
 

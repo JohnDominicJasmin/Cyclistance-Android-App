@@ -36,18 +36,20 @@ fun IntroSliderScreen(
 
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
-    val navigationDestinationChange = remember(introSliderState.navigationStartingDestination,){
-            introSliderState.navigationStartingDestination != Screens.IntroSliderScreen.route
+    val navigationDestinationChange = remember(introSliderState.navigationStartingDestination) {
+        introSliderState.navigationStartingDestination != Screens.IntroSliderScreen.route
     }
 
-    if(navigationDestinationChange){
-        LaunchedEffect(key1 = true){
-            navController.navigateScreenInclusively(introSliderState.navigationStartingDestination, Screens.IntroSliderScreen.route)
+    if (navigationDestinationChange) {
+        LaunchedEffect(key1 = true) {
+            navController.navigateScreenInclusively(
+                destination = introSliderState.navigationStartingDestination,
+                popUpToDestination = Screens.IntroSliderScreen.route)
         }
         return
     }
 
-    val onClickSkipButton = remember{
+    val onClickSkipButton = remember {
         {
             introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
             navController.navigateScreenInclusively(
@@ -72,9 +74,10 @@ fun IntroSliderScreen(
     }}
 
 
-    IntroSliderContent(modifier = Modifier
-        .fillMaxSize()
-        .padding(paddingValues),
+    IntroSliderContent(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues),
         pagerState = pagerState,
         onClickSkipButton = onClickSkipButton,
         onClickNextButton = onClickNextButton)
@@ -97,6 +100,8 @@ fun IntroSliderPreview() {
         )
     }
 }
+
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun IntroSliderContent(
     modifier: Modifier,
@@ -112,12 +117,11 @@ private fun IntroSliderContent(
             .background(MaterialTheme.colors.background)) {
         ConstraintLayout(
             constraintSet = introSliderConstraints,
-            modifier = Modifier
-                .background(MaterialTheme.colors.background)) {
+            modifier = Modifier.background(MaterialTheme.colors.background)) {
 
             IntroSliderItem(pagerState = pagerState)
 
-            val isOnLastPage = remember(pagerState.currentPage){
+            val isOnLastPage = remember(pagerState.currentPage) {
                 pagerState.currentPage == 2
             }
 
