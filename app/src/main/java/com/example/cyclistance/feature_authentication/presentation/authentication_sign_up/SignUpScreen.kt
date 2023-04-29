@@ -1,17 +1,27 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
@@ -21,9 +31,14 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.*
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpButton
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpClickableText
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpTextArea
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpTextFieldsArea
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.signUpConstraints
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.visible
@@ -42,49 +57,85 @@ fun SignUpScreen(
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
 
-    val context = LocalContext.current
+    var email by rememberSaveable { mutableStateOf("") }
+    var emailErrorMessage by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var passwordErrorMessage by rememberSaveable { mutableStateOf("") }
+    var confirmPassword by rememberSaveable { mutableStateOf("") }
+    var confirmPasswordErrorMessage by rememberSaveable { mutableStateOf("") }
 
-    val signUpAccount = remember(key1 = signUpState.email, key2 = signUpState.email, key3 = signUpState.hasAccountSignedIn) {
+    var alertDialogModel by remember { mutableStateOf(AlertDialogModel()) }
+    var passwordVisibility by rememberSaveable { mutableStateOf(false) }
+    var isNoInternetDialogVisible by remember { mutableStateOf(false) }
+
+
+    val signUpAccount = remember(key1 = email, key2 = signUpState.hasAccountSignedIn) {
         {
-            val isUserCreatedNewAccount = signUpState.email != signUpState.savedAccountEmail
+            val isUserCreatedNewAccount = email != signUpState.savedAccountEmail
             if (signUpState.hasAccountSignedIn && isUserCreatedNewAccount) {
                 signUpViewModel.onEvent(SignUpEvent.SignOut)
             }
-            signUpViewModel.onEvent(SignUpEvent.SignUp)
+            signUpViewModel.onEvent(
+                SignUpEvent.SignUp(
+                    email = email,
+                    password = password,
+                    confirmPassword = confirmPassword))
+        }
+
+    }
+
+    val onDismissAlertDialog = remember {
+        {
+            alertDialogModel = AlertDialogModel()
         }
     }
 
-    val onDismissAlertDialog = remember{{
-        signUpViewModel.onEvent(SignUpEvent.DismissAlertDialog)
-    }}
-
-    val onDoneKeyboardAction = remember<KeyboardActionScope.() -> Unit> {{
-        signUpAccount()
-        focusManager.clearFocus()
-    }}
-    val onValueChangeEmail = remember{{ email:String ->
-        signUpViewModel.onEvent(SignUpEvent.EnterEmail(email))
-    }}
-    val onValueChangePassword = remember{{password: String ->
-        signUpViewModel.onEvent(SignUpEvent.EnterPassword(password))
-    }}
-    val onValueChangeConfirmPassword = remember { { confirmPassword: String ->
-        signUpViewModel.onEvent(SignUpEvent.EnterConfirmPassword(confirmPassword))
-    }}
-    val onClickPasswordVisibility = remember{{
-        signUpViewModel.onEvent(SignUpEvent.TogglePasswordVisibility)
-    }}
-    val onClickSignUpButton = remember{{
-        signUpAccount()
-    }}
-    val onClickSignUpText = remember{{
-        navController.navigateScreenInclusively(
-            Screens.SignInScreen.route,
-            Screens.SignUpScreen.route)
-    }}
-    val onDismissNoInternetDialog = remember{{
-        signUpViewModel.onEvent(SignUpEvent.DismissNoInternetDialog)
-    }}
+    val onDoneKeyboardAction = remember<KeyboardActionScope.() -> Unit> {
+        {
+            signUpAccount()
+            focusManager.clearFocus()
+        }
+    }
+    val onValueChangeEmail = remember {
+        { inputEmail: String ->
+            email = inputEmail
+            emailErrorMessage = ""
+        }
+    }
+    val onValueChangePassword = remember {
+        { inputPassword: String ->
+            password = inputPassword
+            passwordErrorMessage = ""
+        }
+    }
+    val onValueChangeConfirmPassword = remember {
+        { inputConfirmPassword: String ->
+            confirmPassword = inputConfirmPassword
+            confirmPasswordErrorMessage = ""
+        }
+    }
+    val onClickPasswordVisibility = remember {
+        {
+            passwordVisibility = !passwordVisibility
+        }
+    }
+    val onClickSignUpButton = remember {
+        {
+            signUpAccount()
+        }
+    }
+    val onClickSignUpText = remember {
+        {
+            navController.navigateScreenInclusively(
+                Screens.SignInScreen.route,
+                Screens.SignUpScreen.route)
+        }
+    }
+    val onDismissNoInternetDialog = remember {
+        {
+            isNoInternetDialogVisible = false
+        }
+    }
 
     LaunchedEffect(key1 = true) {
         focusRequester.requestFocus()
@@ -97,9 +148,40 @@ fun SignUpScreen(
                         Screens.SignUpScreen.route)
 
                 }
+
                 is SignUpUiEvent.CreateAccountFailed -> {
-                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
+                    alertDialogModel = AlertDialogModel(
+                        title = "Failed to create account",
+                        description = " Failed to create account. Check info and try again or contact support.",
+                        icon = R.raw.error
+                    )
                 }
+
+                is SignUpUiEvent.NoInternetConnection -> {
+                    isNoInternetDialogVisible = true
+                }
+
+                is SignUpUiEvent.AccountAlreadyTaken -> {
+                    alertDialogModel = AlertDialogModel(
+                        title = "Account already taken",
+                        description = "Account already taken. Try again or contact support.",
+                        icon = R.raw.error
+                    )
+                }
+
+                is SignUpUiEvent.InvalidEmail -> {
+                    emailErrorMessage = event.reason
+                }
+
+                is SignUpUiEvent.InvalidPassword -> {
+                    passwordErrorMessage = event.reason
+                }
+
+                is SignUpUiEvent.InvalidConfirmPassword -> {
+                    confirmPasswordErrorMessage = event.reason
+                }
+
+
             }
         }
     }
@@ -120,7 +202,16 @@ fun SignUpScreen(
         onClickPasswordVisibility = onClickPasswordVisibility,
         onClickSignUpButton = onClickSignUpButton,
         onClickSignUpText = onClickSignUpText,
-    )
+        alertDialogModel = alertDialogModel,
+        isInternetDialogVisible = isNoInternetDialogVisible,
+        email = email,
+        password = password,
+        confirmPassword = confirmPassword,
+        isPasswordVisible = passwordVisibility,
+        emailErrorMessage = emailErrorMessage,
+        passwordErrorMessage = passwordErrorMessage,
+        confirmPasswordErrorMessage = confirmPasswordErrorMessage,
+        )
 }
 
 
@@ -128,7 +219,18 @@ fun SignUpScreen(
 @Composable
 fun SignUpScreenPreview() {
     CyclistanceTheme(true) {
-        SignUpScreenContent(signUpState = SignUpState())
+        SignUpScreenContent(
+            signUpState = SignUpState(),
+            alertDialogModel = AlertDialogModel(),
+            email = "asddsadsadsadasw@gmail.com",
+            password = "Passwordasknaisd",
+            confirmPassword = "Confirm password",
+            isPasswordVisible = false,
+            isInternetDialogVisible = true,
+            emailErrorMessage = "Email error message",
+            passwordErrorMessage = "Password error message",
+            confirmPasswordErrorMessage = "Confirm password error message",
+            )
     }
 
 }
@@ -139,6 +241,15 @@ fun SignUpScreenContent(
     modifier: Modifier = Modifier,
     signUpState: SignUpState = SignUpState(),
     focusRequester: FocusRequester = FocusRequester(),
+    alertDialogModel: AlertDialogModel = AlertDialogModel(),
+    isInternetDialogVisible: Boolean,
+    email: String,
+    emailErrorMessage: String,
+    password: String,
+    passwordErrorMessage: String,
+    confirmPassword: String,
+    confirmPasswordErrorMessage: String,
+    isPasswordVisible: Boolean,
     onDismissAlertDialog: () -> Unit = {},
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit) = {},
     onValueChangeEmail: (String) -> Unit = {},
@@ -180,9 +291,9 @@ fun SignUpScreenContent(
 
 
 
-        if (signUpState.alertDialogModel.visible()) {
+        if (alertDialogModel.visible()) {
             AlertDialog(
-                alertDialog = signUpState.alertDialogModel,
+                alertDialog = alertDialogModel,
                 onDismissRequest = onDismissAlertDialog)
         }
 
@@ -193,7 +304,14 @@ fun SignUpScreenContent(
             onValueChangeEmail = onValueChangeEmail,
             onValueChangePassword = onValueChangePassword,
             onValueChangeConfirmPassword = onValueChangeConfirmPassword,
-            onClickPasswordVisibility = onClickPasswordVisibility
+            onClickPasswordVisibility = onClickPasswordVisibility,
+            email = email,
+            emailErrorMessage = emailErrorMessage,
+            password = password,
+            passwordErrorMessage = passwordErrorMessage,
+            confirmPassword = confirmPassword,
+            confirmPasswordErrorMessage = confirmPasswordErrorMessage,
+            passwordVisibility = isPasswordVisible
         )
 
 
@@ -205,8 +323,11 @@ fun SignUpScreenContent(
             CircularProgressIndicator(modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId))
         }
 
-        if (!signUpState.hasInternet) {
-            NoInternetDialog(onDismiss = onDismissNoInternetDialog,  modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),)
+        if (isInternetDialogVisible) {
+            NoInternetDialog(
+                onDismiss = onDismissNoInternetDialog,
+                modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+            )
         }
 
 

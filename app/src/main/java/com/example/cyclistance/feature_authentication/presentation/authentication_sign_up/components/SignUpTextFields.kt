@@ -11,11 +11,21 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpState
-import com.example.cyclistance.feature_authentication.presentation.common.*
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.ConfirmPasswordTextField
+import com.example.cyclistance.feature_authentication.presentation.common.EmailTextField
+import com.example.cyclistance.feature_authentication.presentation.common.PasswordTextField
 
 @Composable
 fun SignUpTextFieldsArea(
     state: SignUpState,
+    email: String,
+    emailErrorMessage: String,
+    password: String,
+    passwordErrorMessage: String,
+    confirmPassword: String,
+    confirmPasswordErrorMessage: String,
+    passwordVisibility: Boolean,
     focusRequester: FocusRequester,
     onValueChangeEmail: (String) -> Unit,
     onValueChangePassword: (String) -> Unit,
@@ -36,7 +46,7 @@ fun SignUpTextFieldsArea(
             EmailTextField(
                 focusRequester = focusRequester,
                 email = email,
-                emailExceptionMessage = emailErrorMessage,
+                emailErrorMessage = emailErrorMessage,
                 clearIconOnClick = {
                  onValueChangeEmail("")
                 },
@@ -57,7 +67,7 @@ fun SignUpTextFieldsArea(
 
             ConfirmPasswordTextField(
                 password = confirmPassword,
-                passwordExceptionMessage = confirmPasswordErrorMessage,
+                passwordErrorMessage = confirmPasswordErrorMessage,
                 onValueChange = onValueChangeConfirmPassword,
                 keyboardActionOnDone = keyboardActionOnDone,
                 isPasswordVisible = passwordVisibility,
