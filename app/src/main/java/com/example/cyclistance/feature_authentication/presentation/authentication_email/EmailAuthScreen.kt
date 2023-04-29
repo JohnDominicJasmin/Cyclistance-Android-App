@@ -18,7 +18,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
@@ -31,6 +34,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthResendButton
@@ -57,6 +61,11 @@ fun EmailAuthScreen(
     val context = LocalContext.current
 
     val emailAuthState by emailAuthViewModel.state.collectAsState()
+    var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
+    var isTimerRunning by rememberSaveable { mutableStateOf(false) }
+    var alertDialogModel by remember { mutableStateOf(AlertDialogModel()) }
+
+
     val intent = remember {
         Intent(Intent.ACTION_MAIN).apply {
             addCategory(Intent.CATEGORY_APP_EMAIL)
@@ -64,31 +73,38 @@ fun EmailAuthScreen(
         }
     }
 
-    val onDismissAlertDialog = remember{{
-        emailAuthViewModel.onEvent(EmailAuthEvent.DismissAlertDialog)
-    }}
-
-    val onClickVerifyButton = remember {{
-        runCatching {
-            startActivity(context, intent, null)
-        }.onFailure {
-            Toast.makeText(context, "No email app detected.", Toast.LENGTH_LONG).show()
+    val onDismissAlertDialog = remember {
+        {
+            alertDialogModel = AlertDialogModel()
         }
-        Unit
-    }}
+    }
 
-    val onClickResendButton = remember {{
-        emailAuthViewModel.apply {
-            onEvent(EmailAuthEvent.ResendButtonClick)
-            onEvent(EmailAuthEvent.StartTimer)
-            onEvent(EmailAuthEvent.SendEmailVerification)
+    val onClickVerifyButton = remember {
+        {
+            runCatching {
+                startActivity(context, intent, null)
+            }.onFailure {
+                Toast.makeText(context, "No email app detected.", Toast.LENGTH_LONG).show()
+            }
+            Unit
         }
-        Unit
+    }
+
+    val onClickResendButton = remember {
+        {
+            emailAuthViewModel.apply {
+                onEvent(EmailAuthEvent.ResendEmailVerification)
+                onEvent(EmailAuthEvent.StartTimer)
+                onEvent(EmailAuthEvent.SendEmailVerification)
+            }
+            Unit
+        }
+    }
+
+    val onDismissNoInternetDialog = remember {{
+        isNoInternetDialogVisible = false
     }}
 
-    val onDismissNoInternetDialog = remember{{
-        emailAuthViewModel.onEvent(EmailAuthEvent.DismissNoInternetDialog)
-    }}
 
 
 
@@ -114,6 +130,28 @@ fun EmailAuthScreen(
                     is EmailAuthUiEvent.EmailVerificationNotSent -> {
                         Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()
                     }
+                    is EmailAuthUiEvent.NoInternetConnection -> {
+                        isNoInternetDialogVisible = true
+                    }
+                    is EmailAuthUiEvent.TimerStarted -> {
+                        isTimerRunning = true
+                    }
+                    is EmailAuthUiEvent.TimerStopped -> {
+                        isTimerRunning = false
+                    }
+                    is EmailAuthUiEvent.EmailVerificationSent -> {
+                        alertDialogModel = AlertDialogModel(
+                            title = "New Email Sent.",
+                            description = "New verification email has been sent to your email address.",
+                            icon = R.raw.success
+                        )
+                    }
+                    is EmailAuthUiEvent.SendEmailVerificationFailed -> {
+                        alertDialogModel = AlertDialogModel(
+                            title = "Email Verification Failed.",
+                            description = "Failed to send verification email. Please try again later.",
+                            icon = R.raw.error)
+                    }
 
                     else -> {
                         Timber.d("User email is not verified yet. Verification is not success.")
@@ -132,7 +170,11 @@ fun EmailAuthScreen(
         onDismissAlertDialog = onDismissAlertDialog,
         onDismissNoInternetDialog = onDismissNoInternetDialog,
         onClickVerifyButton = onClickVerifyButton,
-        onClickResendButton = onClickResendButton)
+        onClickResendButton = onClickResendButton,
+        alertDialogModel = alertDialogModel,
+        isTimerRunning = isTimerRunning,
+        isNoInternetDialogVisible = isNoInternetDialogVisible,
+        )
 
 }
 
@@ -141,11 +183,19 @@ fun EmailAuthScreen(
 fun EmailAuthScreenPreview() {
     CyclistanceTheme(true) {
         EmailAuthScreenContent(
-            isDarkTheme = true, emailAuthState = EmailAuthState(
+            isDarkTheme = true,
+            emailAuthState = EmailAuthState(
                 savedAccountEmail = "johndoe@gmail.com",
-                isTimerRunning = true, secondsLeft = 10,
-                hasInternet = false
-            ))
+                secondsLeft = 10,
+            ),
+            alertDialogModel = AlertDialogModel(
+                title = "Sample Title",
+                description = "Sample Description",
+                icon = R.drawable.ic_check_icon
+            ),
+            isTimerRunning = true,
+            isNoInternetDialogVisible = false,
+        )
     }
 
 }
@@ -156,11 +206,13 @@ fun EmailAuthScreenContent(
     modifier: Modifier = Modifier,
     emailAuthState: EmailAuthState = EmailAuthState(),
     isDarkTheme: Boolean,
+    alertDialogModel: AlertDialogModel,
+    isTimerRunning: Boolean,
+    isNoInternetDialogVisible: Boolean,
     onDismissAlertDialog: () -> Unit = {},
     onClickVerifyButton: () -> Unit = {},
     onClickResendButton: () -> Unit = {},
-    onDismissNoInternetDialog: () -> Unit = {},
-) {
+    onDismissNoInternetDialog: () -> Unit = {}) {
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -189,9 +241,9 @@ fun EmailAuthScreenContent(
             EmailAuthTextStatus(email = emailAuthState.savedAccountEmail)
 
 
-            if (emailAuthState.alertDialogModel.visible()) {
+            if (alertDialogModel.visible()) {
                 AlertDialog(
-                    alertDialog = emailAuthState.alertDialogModel,
+                    alertDialog = alertDialogModel,
                     onDismissRequest = onDismissAlertDialog
                 )
             }
@@ -203,10 +255,9 @@ fun EmailAuthScreenContent(
             }
 
 
-
-            val secondsRemainingText = remember(emailAuthState.isTimerRunning, emailAuthState.secondsLeft) {
-                        if (emailAuthState.isTimerRunning) "Resend Email in ${emailAuthState.secondsLeft}s" else "Resend Email"
-                    }
+            val secondsRemainingText = remember(isTimerRunning, emailAuthState.secondsLeft) {
+                if (isTimerRunning) "Resend Email in ${emailAuthState.secondsLeft}s" else "Resend Email"
+            }
 
             EmailAuthVerifyEmailButton(
                 onClickVerifyButton = onClickVerifyButton,
@@ -214,11 +265,14 @@ fun EmailAuthScreenContent(
 
             EmailAuthResendButton(
                 text = secondsRemainingText,
-                isEnabled = !emailAuthState.isTimerRunning && !emailAuthState.isLoading,
+                isEnabled = !isTimerRunning && !emailAuthState.isLoading,
                 onClickResendButton = onClickResendButton)
 
-            if (!emailAuthState.hasInternet) {
-                NoInternetDialog(onDismiss = onDismissNoInternetDialog, modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),)
+            if (isNoInternetDialogVisible) {
+                NoInternetDialog(
+                    onDismiss = onDismissNoInternetDialog,
+                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                )
             }
 
         }

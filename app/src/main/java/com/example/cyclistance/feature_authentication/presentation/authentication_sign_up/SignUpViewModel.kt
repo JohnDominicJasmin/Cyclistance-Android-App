@@ -3,9 +3,7 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_UP_VM_STATE_KEY
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
@@ -47,44 +45,28 @@ class SignUpViewModel @Inject constructor(
 
     fun onEvent(event: SignUpEvent) {
         when (event) {
+
             is SignUpEvent.SignUp -> {
-                signUp()
+                signUp(
+                    email = event.email,
+                    password = event.password,
+                    confirmPassword = event.confirmPassword
+                )
             }
 
-            is SignUpEvent.DismissNoInternetDialog -> {
-                _state.update { it.copy(hasInternet = true) }
-            }
-
-            is SignUpEvent.EnterEmail -> {
-                _state.update { it.copy(email = event.email, emailErrorMessage = "") }
-            }
-            is SignUpEvent.EnterPassword -> {
-                _state.update { it.copy(password = event.password, passwordErrorMessage = "") }
-            }
-            is SignUpEvent.EnterConfirmPassword -> {
-                _state.update {
-                    it.copy(
-                        confirmPassword = event.confirmPassword,
-                        confirmPasswordErrorMessage = "")
-                }
-            }
-            is SignUpEvent.DismissAlertDialog -> {
-                _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
-            }
             is SignUpEvent.SignOut -> {
                 authUseCase.signOutUseCase()
             }
-            is SignUpEvent.TogglePasswordVisibility -> {
-                _state.update { it.copy(passwordVisibility = !state.value.passwordVisibility) }
-            }
-
-
         }
         savedStateHandle[SIGN_UP_VM_STATE_KEY] = state.value
     }
 
 
-    private fun signUp() {
+    private fun signUp(
+         email: String,
+         password: String,
+         confirmPassword: String) {
+
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 _state.update { it.copy(isLoading = true) }
@@ -112,41 +94,22 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private fun handleException(exception: Throwable) {
+    private suspend fun handleException(exception: Throwable) {
         when (exception) {
             is AuthExceptions.EmailException -> {
-                _state.update { it.copy(emailErrorMessage = exception.message ?: "Invalid Email.") }
-                // TODO: Move to constants
+                _eventFlow.emit(value = SignUpUiEvent.InvalidEmail(reason = exception.message ?: "Invalid email. Please try again."))
             }
             is AuthExceptions.PasswordException -> {
-                _state.update {
-                    it.copy(
-                        passwordErrorMessage = exception.message ?: "Invalid Password.")
-                }
-                // TODO: Move to constants
+                _eventFlow.emit(value = SignUpUiEvent.InvalidPassword(reason = exception.message ?: "Invalid password. Please try again."))
             }
             is AuthExceptions.ConfirmPasswordException -> {
-                _state.update {
-                    it.copy(
-                        confirmPasswordErrorMessage = exception.message ?: "Invalid Password.")
-                }
-                // TODO: Move to constants
+                _eventFlow.emit(value = SignUpUiEvent.InvalidConfirmPassword(reason = exception.message ?: "Passwords do not match. Please try again."))
             }
-
             is AuthExceptions.NetworkException -> {
-                _state.update { it.copy(hasInternet = false) }
+                _eventFlow.emit(value = SignUpUiEvent.NoInternetConnection)
             }
             is AuthExceptions.UserAlreadyExistsException -> {
-
-                _state.update {
-                    it.copy(
-                        alertDialogModel = AlertDialogModel(
-                            title = exception.title,
-                            description = exception.message ?: "This account is Already in Use.",
-                            icon = R.raw.error,
-                        ))
-                }
-                // TODO: Move to constants
+                _eventFlow.emit(value = SignUpUiEvent.AccountAlreadyTaken)
             }
             else -> {
                 Timber.e("${this@SignUpViewModel.javaClass.name}: ${exception.message}")
