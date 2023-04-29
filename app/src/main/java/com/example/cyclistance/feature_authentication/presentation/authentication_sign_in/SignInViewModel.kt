@@ -4,10 +4,8 @@ import android.content.Intent
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNECTION_FAILURE
 import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_IN_VM_STATE_KEY
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
@@ -72,30 +70,12 @@ class SignInViewModel @Inject constructor(
                 }
             }
 
-            is SignInEvent.DismissNoInternetDialog -> {
-                _state.update { it.copy(hasInternet = true) }
-            }
-
-
-            is SignInEvent.DismissAlertDialog -> {
-                _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
-            }
-
             is SignInEvent.SignInGoogle -> {
                 signInWithCredential(event.authCredential)
             }
 
-            is SignInEvent.SignInDefault -> {
-                signInDefault()
-            }
-            is SignInEvent.EnterEmail -> {
-                _state.update { it.copy(email = event.email, emailErrorMessage = "") }
-            }
-            is SignInEvent.EnterPassword -> {
-                _state.update { it.copy(password = event.password, passwordErrorMessage = "") }
-            }
-            is SignInEvent.TogglePasswordVisibility -> {
-                _state.update { it.copy(passwordVisibility = !state.value.passwordVisibility) }
+            is SignInEvent.SignInWithEmailAndPassword -> {
+                signInWithEmailAndPassword(email = event.email, password = event.password)
             }
 
         }
@@ -103,7 +83,7 @@ class SignInViewModel @Inject constructor(
     }
 
 
-    private fun signInDefault() {
+    private fun signInWithEmailAndPassword(email: String, password: String) {
 
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
@@ -156,47 +136,30 @@ class SignInViewModel @Inject constructor(
 
     }
 
-    private fun handleException(exception: Throwable){
+    private suspend fun handleException(exception: Throwable){
         when (exception) {
             is AuthExceptions.EmailException -> {
-                _state.update {
-                    it.copy(
-                        emailErrorMessage = exception.message ?: "Email is Invalid.")
-                    // TODO: move to Constants
-                }
+                _eventFlow.emit(value = SignInUiEvent.InvalidEmail(exception.message ?: "Email is Invalid."))
             }
             is AuthExceptions.PasswordException -> {
-                _state.update {
-                    it.copy(
-                        passwordErrorMessage = exception.message ?: "Password is Invalid.")
-                    // TODO: move to Constants
-                }
+                _eventFlow.emit(value = SignInUiEvent.InvalidPassword(exception.message ?: "Password is Invalid."))
             }
 
             is AuthExceptions.TooManyRequestsException -> {
-                _state.update {
-                    it.copy(
-                        alertDialogModel = AlertDialogModel(
-                            title = exception.title,
-                            description = exception.message ?: "You have been blocked temporarily for too many failed attempts. Please try again later.",
-                            // TODO: move to Constants
-                            icon = R.raw.error,
-                        ))
+                viewModelScope.launch {
+                    _eventFlow.emit(value = SignInUiEvent.AccountBlockedTemporarily)
                 }
             }
 
             is AuthExceptions.NetworkException -> {
-                _state.update { it.copy(hasInternet = false) }
+                viewModelScope.launch {
+                    _eventFlow.emit(value = SignInUiEvent.NoInternetConnection)
+                }
             }
             is AuthExceptions.ConflictFBTokenException -> {
-                removeFacebookUserAccountPreviousToken()
-                _state.update {
-                    it.copy(
-                        alertDialogModel = AlertDialogModel(
-                            title = "Error",
-                            description = exception.message ?: "Sorry, something went wrong. Please try again.",
-                            icon = R.raw.error))
-                    // TODO: move to Constants
+                viewModelScope.launch {
+                    removeFacebookUserAccountPreviousToken()
+                    _eventFlow.emit(value = SignInUiEvent.ConflictFbToken)
                 }
             }
 
@@ -237,18 +200,14 @@ class SignInViewModel @Inject constructor(
     }
 
 
-    private fun Exception.handleFacebookSignInException() {
+    private suspend fun Exception.handleFacebookSignInException() {
+
         if (message == FACEBOOK_CONNECTION_FAILURE) {
-            _state.update { it.copy(hasInternet = false) }
+            _eventFlow.emit(value = SignInUiEvent.NoInternetConnection)
             return
         }
-        message?.let { errorMessage ->
-            _state.update {
-                it.copy(alertDialogModel = AlertDialogModel(
-                        title = "Error",
-                        description = errorMessage,
-                        icon = R.raw.error))
-            }
+        message?.let {
+            _eventFlow.emit(value = SignInUiEvent.FacebookSignInFailed)
             removeFacebookUserAccountPreviousToken()
         }
     }

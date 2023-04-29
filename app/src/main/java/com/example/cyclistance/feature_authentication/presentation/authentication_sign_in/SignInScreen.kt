@@ -20,8 +20,11 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
@@ -35,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
@@ -75,6 +79,14 @@ fun SignInScreen(
     val signInState by signInViewModel.state.collectAsState()
     val emailAuthState by emailAuthViewModel.state.collectAsState()
     val focusRequester = remember { FocusRequester() }
+    var alertDialogModel by remember { mutableStateOf(AlertDialogModel()) }
+    var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
+    var email by rememberSaveable { mutableStateOf("") }
+    var emailErrorMessage by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var passwordErrorMessage by rememberSaveable { mutableStateOf("") }
+    var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
+
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
     val authResultLauncher = rememberLauncherForActivityResult(contract = AuthResult()) { task ->
@@ -117,7 +129,39 @@ fun SignInScreen(
                 is SignInUiEvent.SignInFailed -> {
                     Toast.makeText(context, signInEvent.reason, Toast.LENGTH_SHORT).show()
                 }
+                is SignInUiEvent.NoInternetConnection -> {
+                    isNoInternetDialogVisible = true
+                }
 
+                is SignInUiEvent.AccountBlockedTemporarily -> {
+                    alertDialogModel = AlertDialogModel(
+                        title = "Account Blocked Temporarily",
+                        description = "You have been blocked temporarily for too many failed attempts. Please try again later.",
+                        icon = R.raw.error,
+                    )
+                }
+
+                is SignInUiEvent.ConflictFbToken -> {
+                    alertDialogModel = AlertDialogModel(
+                        title = "Conflict Facebook Account",
+                        description = "Sorry, something went wrong. Please try again.",
+                        icon = R.raw.error)
+                }
+
+                is SignInUiEvent.FacebookSignInFailed -> {
+                    alertDialogModel = AlertDialogModel(
+                        title = "Facebook Sign In Failed",
+                        description = "Failed to sign in with Facebook. Please try again.",
+                        icon = R.raw.error)
+                }
+
+                is SignInUiEvent.InvalidEmail -> {
+                    emailErrorMessage = signInEvent.reason
+                }
+
+                is SignInUiEvent.InvalidPassword -> {
+                    passwordErrorMessage = signInEvent.reason
+                }
 
             }
         }
@@ -143,45 +187,71 @@ fun SignInScreen(
                         Screens.EmailAuthScreen.route,
                         Screens.SignInScreen.route)
                 }
+                is EmailAuthUiEvent.EmailVerificationSent -> {
+                    alertDialogModel = AlertDialogModel(
+                        title = "New Email Sent.",
+                        description = "New verification email has been sent to your email address.",
+                        icon = R.raw.success
+                    )
+                }
+                is EmailAuthUiEvent.SendEmailVerificationFailed -> {
+                    alertDialogModel = AlertDialogModel(
+                        title = "Email Verification Failed.",
+                        description = "Failed to send verification email. Please try again later.",
+                        icon = R.raw.error)
+                }
+                else -> {}
             }
         }
     }
 
 
     val onDismissAlertDialog = remember{{
-        signInViewModel.onEvent(SignInEvent.DismissAlertDialog)
+        alertDialogModel = AlertDialogModel()
     }}
     val onDoneKeyboardAction = remember<KeyboardActionScope.() -> Unit>{{
-        signInViewModel.onEvent(SignInEvent.SignInDefault)
+        signInViewModel.onEvent(SignInEvent.SignInWithEmailAndPassword(email = email, password = password))
         focusManager.clearFocus()
     }}
+
     val onValueChangeEmail = remember<(String) -> Unit>{{
-        signInViewModel.onEvent(event = SignInEvent.EnterEmail(it))
+        email = it
+        emailErrorMessage = ""
     }}
+
     val onValueChangePassword = remember<(String) -> Unit>{{
-        signInViewModel.onEvent(event = SignInEvent.EnterPassword(it))
+        password = it
+        passwordErrorMessage = ""
     }}
+
     val onClickPasswordVisibility = remember {{
-        signInViewModel.onEvent(SignInEvent.TogglePasswordVisibility)
+        isPasswordVisible = !isPasswordVisible
     }}
+
     val onClickFacebookButton = remember {{
         signInViewModel.onEvent(SignInEvent.SignInFacebook(activity = context.findActivity()))
     }}
+
     val onClickGoogleButton = remember{{
         scope.launch {
             authResultLauncher.launch(GOOGLE_SIGN_IN_REQUEST_CODE)
         }
         Unit
     }}
+
     val onClickSignInButton = remember{{
-        signInViewModel.onEvent(SignInEvent.SignInDefault)
+        signInViewModel.onEvent(SignInEvent.SignInWithEmailAndPassword(
+            email = email,
+            password = password
+        ))
     }}
+
     val onClickSignInText = remember {{
         navController.navigateScreen(Screens.SignUpScreen.route)
-    } }
+    }}
+
     val onDismissNoInternetDialog = remember{{
-        signInViewModel.onEvent(SignInEvent.DismissNoInternetDialog)
-        emailAuthViewModel.onEvent(EmailAuthEvent.DismissNoInternetDialog)
+        isNoInternetDialogVisible = false
     }}
 
 
@@ -200,6 +270,14 @@ fun SignInScreen(
         onClickGoogleButton = onClickGoogleButton,
         onClickSignInButton = onClickSignInButton,
         onClickSignInText = onClickSignInText,
+        isNoInternetDialogVisible = isNoInternetDialogVisible,
+        alertDialogModel = alertDialogModel,
+        email = email,
+        password = password,
+        isPasswordVisible = isPasswordVisible,
+        emailErrorMessage = emailErrorMessage,
+        passwordErrorMessage = passwordErrorMessage
+
     )
 }
 
@@ -207,7 +285,15 @@ fun SignInScreen(
 @Composable
 fun SignInScreenPreview() {
     CyclistanceTheme(true) {
-        SignInScreenContent()
+        SignInScreenContent(
+            alertDialogModel = AlertDialogModel(),
+            isNoInternetDialogVisible = false,
+            email = "ausbdaiosbdoauwdb",
+            password = "aisntqiono9iqn",
+            isPasswordVisible = false,
+            emailErrorMessage = "asidnaiosdnaisd",
+            passwordErrorMessage = "asidnaiosdnaisd"
+        )
     }
 }
 
@@ -218,6 +304,13 @@ fun SignInScreenContent(
     focusRequester: FocusRequester = FocusRequester(),
     signInState: SignInState = SignInState(),
     emailAuthState: EmailAuthState = EmailAuthState(),
+    alertDialogModel: AlertDialogModel,
+    isNoInternetDialogVisible: Boolean,
+    email: String,
+    emailErrorMessage: String,
+    password: String,
+    passwordErrorMessage: String,
+    isPasswordVisible: Boolean,
     onDismissAlertDialog: () -> Unit = {},
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit) = {},
     onValueChangeEmail: (String) -> Unit = {},
@@ -253,9 +346,9 @@ fun SignInScreenContent(
 
         SignUpTextArea()
 
-        if (signInState.alertDialogModel.visible()) {
+        if (alertDialogModel.visible()) {
             AlertDialog(
-                alertDialog = signInState.alertDialogModel,
+                alertDialog = alertDialogModel,
                 onDismissRequest = onDismissAlertDialog)
         }
 
@@ -270,15 +363,16 @@ fun SignInScreenContent(
             keyboardActionOnDone = keyboardActionOnDone,
             onValueChangeEmail = onValueChangeEmail,
             onValueChangePassword = onValueChangePassword,
-            onClickPasswordVisibility = onClickPasswordVisibility
+            onClickPasswordVisibility = onClickPasswordVisibility,
+            email = email,
+            password = password,
+            passwordVisible = isPasswordVisible,
+            emailErrorMessage = emailErrorMessage,
+            passwordErrorMessage = passwordErrorMessage
         )
 
         val isLoading = remember(signInState.isLoading, emailAuthState.isLoading) {
             (signInState.isLoading || emailAuthState.isLoading)
-        }
-
-        val hasInternet = remember(emailAuthState.hasInternet, signInState.hasInternet){
-            emailAuthState.hasInternet && signInState.hasInternet
         }
 
         SignInGoogleAndFacebookSection(
@@ -297,7 +391,7 @@ fun SignInScreenContent(
             )
         }
 
-        if (!hasInternet) {
+        if (isNoInternetDialogVisible) {
             NoInternetDialog(onDismiss = onDismissNoInternetDialog,
             modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId))
 

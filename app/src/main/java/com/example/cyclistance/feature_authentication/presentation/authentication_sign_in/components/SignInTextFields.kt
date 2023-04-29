@@ -1,23 +1,29 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.text.KeyboardActionScope
-
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInState
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.ConfirmPasswordTextField
 import com.example.cyclistance.feature_authentication.presentation.common.EmailTextField
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 
 
 @Composable
 fun SignInTextFieldsArea(
     state: SignInState,
+    email: String,
+    emailErrorMessage: String,
+    password: String,
+    passwordErrorMessage: String,
+    passwordVisible: Boolean,
     focusRequester: FocusRequester,
     onValueChangeEmail: (String) -> Unit,
     onValueChangePassword: (String) -> Unit,
@@ -35,8 +41,8 @@ fun SignInTextFieldsArea(
 
         EmailTextField(
             focusRequester = focusRequester,
-            email = state.email,
-            emailExceptionMessage = state.emailErrorMessage,
+            email = email,
+            emailErrorMessage = emailErrorMessage,
             onValueChange = onValueChangeEmail,
             clearIconOnClick = {
                 onValueChangeEmail("")
@@ -44,11 +50,11 @@ fun SignInTextFieldsArea(
             enabled = !state.isLoading)
 
         ConfirmPasswordTextField(
-            password = state.password,
-            passwordExceptionMessage = state.passwordErrorMessage,
+            password = password,
+            passwordErrorMessage = passwordErrorMessage,
             onValueChange = onValueChangePassword,
             keyboardActionOnDone = keyboardActionOnDone,
-            isPasswordVisible = state.passwordVisibility,
+            isPasswordVisible = passwordVisible,
             passwordVisibilityIconOnClick = onClickPasswordVisibility,
             enabled = !state.isLoading
         )
