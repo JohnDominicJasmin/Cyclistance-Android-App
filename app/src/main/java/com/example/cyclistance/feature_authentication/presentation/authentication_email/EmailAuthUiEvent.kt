@@ -8,4 +8,10 @@ sealed class EmailAuthUiEvent{
 
     data class ReloadEmailFailed(val reason:String = "Failed to reload email. Please try again later."): EmailAuthUiEvent()
     data class EmailVerificationNotSent(val reason:String = "Email verification failed. Please try again."): EmailAuthUiEvent()
+
+    object NoInternetConnection: EmailAuthUiEvent()
+    object TimerStarted: EmailAuthUiEvent()
+    object TimerStopped: EmailAuthUiEvent()
+    object EmailVerificationSent: EmailAuthUiEvent()
+    object SendEmailVerificationFailed: EmailAuthUiEvent()
 }
