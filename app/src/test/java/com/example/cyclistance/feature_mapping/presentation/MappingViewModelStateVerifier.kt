@@ -4,7 +4,7 @@ import app.cash.turbine.test
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_MAP_ZOOM_LEVEL
-import com.example.cyclistance.feature_mapping.domain.model.ActiveRescueRequests
+import com.example.cyclistance.feature_mapping.domain.model.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingUiEvent
@@ -233,7 +233,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun showRouteDirections_hasInternetState_isFalse(): MappingViewModelStateVerifier{
-        mappingViewModel.onEvent(event = MappingEvent.ShowRouteDirections(
+        mappingViewModel.onEvent(event = MappingEvent.GetRouteDirections(
             origin = Point.fromLngLat(14.000, 14.000),
             destination = Point.fromLngLat(14.000, 14.000)
         ))
@@ -243,7 +243,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         return this
     }
     suspend fun showRouteDirections_hasInternetState_isTrue(): MappingViewModelStateVerifier{
-        mappingViewModel.onEvent(event = MappingEvent.ShowRouteDirections(
+        mappingViewModel.onEvent(event = MappingEvent.GetRouteDirections(
             origin = Point.fromLngLat(14.000, 14.000),
             destination = Point.fromLngLat(14.000, 14.000)
         ))
@@ -254,7 +254,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun showRouteDirections_routeDirectionStateUpdated(): MappingViewModelStateVerifier{
-        mappingViewModel.onEvent(event = MappingEvent.ShowRouteDirections(
+        mappingViewModel.onEvent(event = MappingEvent.GetRouteDirections(
             origin = Point.fromLngLat(14.000, 14.000),
             destination = Point.fromLngLat(14.000, 14.000)
         ))
@@ -472,8 +472,8 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         Assert.assertTrue(result.requestHelpButtonVisible)
         Assert.assertFalse(result.isNavigating)
         Assert.assertFalse(result.isRescueRequestAccepted)
-        Assert.assertEquals(ActiveRescueRequests(), result.userActiveRescueRequests)
-        Assert.assertEquals(RescueTransactionItem(), result.userRescueTransaction)
+        Assert.assertEquals(NewRescueRequestsModel(), result.userActiveRescueRequests)
+        Assert.assertEquals(RescueTransactionItem(), result.rescueTransaction)
         Assert.assertNull(result.rescuee)
         Assert.assertNull(result.rescuer)
 

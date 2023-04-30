@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Immutable
 @Stable
-data class MappingBannerModel(
+data class MapSelectedRescuee(
     val userId: String = "",
     val userProfileImage: String,
     val name: String,

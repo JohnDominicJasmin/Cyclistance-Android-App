@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_mapping.domain.model.CardModel
+import com.example.cyclistance.feature_mapping.domain.model.RescueRequestModel
 import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.theme.Black450
 
@@ -28,7 +28,7 @@ import com.example.cyclistance.theme.Black450
 @Composable
 fun RequestItem(
     modifier: Modifier,
-    cardState: CardModel,
+    cardState: RescueRequestModel,
     onClickCancelButton: () -> Unit,
     onClickConfirmButton: () -> Unit) {
 
