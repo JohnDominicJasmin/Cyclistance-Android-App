@@ -55,7 +55,7 @@ fun ConfirmPasswordTextField(
     SetupTextField(
         enabled = enabled,
         textFieldValue = password,
-        exceptionMessage = passwordErrorMessage,
+        failureMessage = passwordErrorMessage,
         onValueChange = onValueChange,
         placeholderText = "Confirm Password",
         trailingIcon = {
@@ -86,7 +86,7 @@ fun PasswordTextField(
     SetupTextField(
         enabled = enabled,
         textFieldValue = password,
-        exceptionMessage = passwordExceptionMessage,
+        failureMessage = passwordExceptionMessage,
         onValueChange = onValueChange,
         placeholderText = "Password",
         trailingIcon = {
@@ -123,7 +123,7 @@ private fun SetupTextField(
     enabled: Boolean,
     focusRequester: FocusRequester = FocusRequester(),
     textFieldValue: String,
-    exceptionMessage: String,
+    failureMessage: String,
     onValueChange: (String) -> Unit,
     placeholderText: String,
     leadingIcon: ImageVector = Icons.Default.Lock,
@@ -133,7 +133,8 @@ private fun SetupTextField(
     keyboardActions: KeyboardActions = KeyboardActions()
 ) {
 
-    val hasError = exceptionMessage.isNotEmpty()
+    val hasError = failureMessage.isNotEmpty()
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
@@ -178,7 +179,7 @@ private fun SetupTextField(
         if (hasError) {
 
             Text(
-                text = exceptionMessage,
+                text = failureMessage,
                 color = MaterialTheme.colors.error,
                 style = MaterialTheme.typography.caption,
                 )
@@ -202,7 +203,7 @@ fun EmailTextField(
         enabled = enabled,
         focusRequester = focusRequester,
         textFieldValue = email,
-        exceptionMessage = emailErrorMessage,
+        failureMessage = emailErrorMessage,
         onValueChange = onValueChange,
         placeholderText = "Email",
         leadingIcon = Icons.Default.Email,

@@ -186,6 +186,10 @@ class ConfirmDetailsViewModel @Inject constructor(
             is MappingExceptions.DescriptionException -> {
                 _state.update { it.copy(descriptionErrorMessage = this.message!!) }
             }
+
+            is MappingExceptions.AddressException -> {
+                _eventFlow.emit(value = ConfirmDetailsUiEvent.InvalidAddress(this.message!!))
+            }
         }
         savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
     }
