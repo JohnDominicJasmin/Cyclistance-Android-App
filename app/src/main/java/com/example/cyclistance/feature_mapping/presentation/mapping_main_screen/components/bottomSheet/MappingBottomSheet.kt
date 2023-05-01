@@ -13,6 +13,7 @@ fun MappingBottomSheet(
     modifier: Modifier = Modifier,
     isDarkTheme: Boolean = true,
     state: MappingState = MappingState(),
+    bottomSheetType: BottomSheetType,
     bottomSheetScaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
     onClickRescueArrivedButton: () -> Unit = {},
     onClickReachedDestinationButton: () -> Unit = {},
@@ -24,8 +25,8 @@ fun MappingBottomSheet(
 ) {
 
 
-    when (state.bottomSheetType) {
-        BottomSheetType.RescuerArrived.type -> {
+    when (bottomSheetType) {
+        BottomSheetType.RescuerArrived -> {
             BottomSheetRescueArrived(
                 modifier = modifier,
                 isDarkTheme = isDarkTheme,
@@ -34,7 +35,7 @@ fun MappingBottomSheet(
                 bottomSheetScaffoldState = bottomSheetScaffoldState)
         }
 
-        BottomSheetType.DestinationReached.type -> {
+        BottomSheetType.DestinationReached -> {
             BottomSheetReachedDestination(
                 modifier = modifier,
                 isDarkTheme = isDarkTheme,
@@ -44,7 +45,7 @@ fun MappingBottomSheet(
 
         }
 
-        BottomSheetType.SearchAssistance.type -> {
+        BottomSheetType.SearchAssistance -> {
             BottomSheetSearchingAssistance(
                 modifier = modifier,
                 isDarkTheme = isDarkTheme,
@@ -54,7 +55,7 @@ fun MappingBottomSheet(
 
         }
 
-        BottomSheetType.OnGoingRescue.type -> {
+        BottomSheetType.OnGoingRescue -> {
             BottomSheetOnGoingRescue(
                 modifier = modifier,
                 estimatedTimeRemaining = state.rescuerETA,
@@ -65,7 +66,7 @@ fun MappingBottomSheet(
                 bottomSheetScaffoldState = bottomSheetScaffoldState)
         }
 
-        else -> {
+        BottomSheetType.Collapsed -> {
             content(PaddingValues())
         }
     }
