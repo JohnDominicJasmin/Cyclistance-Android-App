@@ -31,7 +31,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpButton
@@ -64,7 +64,7 @@ fun SignUpScreen(
     var confirmPassword by rememberSaveable { mutableStateOf("") }
     var confirmPasswordErrorMessage by rememberSaveable { mutableStateOf("") }
 
-    var alertDialogModel by remember { mutableStateOf(AlertDialogModel()) }
+    var alertDialogState by remember { mutableStateOf(AlertDialogState()) }
     var passwordVisibility by rememberSaveable { mutableStateOf(false) }
     var isNoInternetDialogVisible by remember { mutableStateOf(false) }
 
@@ -86,7 +86,7 @@ fun SignUpScreen(
 
     val onDismissAlertDialog = remember {
         {
-            alertDialogModel = AlertDialogModel()
+            alertDialogState = AlertDialogState()
         }
     }
 
@@ -150,7 +150,7 @@ fun SignUpScreen(
                 }
 
                 is SignUpUiEvent.CreateAccountFailed -> {
-                    alertDialogModel = AlertDialogModel(
+                    alertDialogState = AlertDialogState(
                         title = "Failed to create account",
                         description = " Failed to create account. Check info and try again or contact support.",
                         icon = R.raw.error
@@ -162,7 +162,7 @@ fun SignUpScreen(
                 }
 
                 is SignUpUiEvent.AccountAlreadyTaken -> {
-                    alertDialogModel = AlertDialogModel(
+                    alertDialogState = AlertDialogState(
                         title = "Account already taken",
                         description = "Account already taken. Try again or contact support.",
                         icon = R.raw.error
@@ -202,7 +202,7 @@ fun SignUpScreen(
         onClickPasswordVisibility = onClickPasswordVisibility,
         onClickSignUpButton = onClickSignUpButton,
         onClickSignUpText = onClickSignUpText,
-        alertDialogModel = alertDialogModel,
+        alertDialogState = alertDialogState,
         isInternetDialogVisible = isNoInternetDialogVisible,
         email = email,
         password = password,
@@ -221,7 +221,7 @@ fun SignUpScreenPreview() {
     CyclistanceTheme(true) {
         SignUpScreenContent(
             signUpState = SignUpState(),
-            alertDialogModel = AlertDialogModel(),
+            alertDialogState = AlertDialogState(),
             email = "asddsadsadsadasw@gmail.com",
             password = "Passwordasknaisd",
             confirmPassword = "Confirm password",
@@ -241,7 +241,7 @@ fun SignUpScreenContent(
     modifier: Modifier = Modifier,
     signUpState: SignUpState = SignUpState(),
     focusRequester: FocusRequester = FocusRequester(),
-    alertDialogModel: AlertDialogModel = AlertDialogModel(),
+    alertDialogState: AlertDialogState = AlertDialogState(),
     isInternetDialogVisible: Boolean,
     email: String,
     emailErrorMessage: String,
@@ -291,9 +291,9 @@ fun SignUpScreenContent(
 
 
 
-        if (alertDialogModel.visible()) {
+        if (alertDialogState.visible()) {
             AlertDialog(
-                alertDialog = alertDialogModel,
+                alertDialog = alertDialogState,
                 onDismissRequest = onDismissAlertDialog)
         }
 

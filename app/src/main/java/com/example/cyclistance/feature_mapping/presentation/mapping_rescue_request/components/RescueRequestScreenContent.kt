@@ -35,6 +35,8 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun RescueRequestScreenContent(
     modifier: Modifier = Modifier,
     mappingState: MappingState = MappingState(),
+    alertDialogState: AlertDialogState,
+    isNoInternetDialogVisible: Boolean,
     onClickCancelButton: (String) -> Unit = {},
     onClickConfirmButton: (String) -> Unit = {},
     onDismissAlertDialog: () -> Unit = {},
@@ -47,8 +49,8 @@ fun RescueRequestScreenContent(
 
 
 
-    if(mappingState.alertDialogModel.visible()){
-        AlertDialog(alertDialog = mappingState.alertDialogModel, onDismissRequest = onDismissAlertDialog)
+    if(alertDialogState.visible()){
+        AlertDialog(alertDialog = alertDialogState, onDismissRequest = onDismissAlertDialog)
     }
 
     Box( modifier = modifier

@@ -38,7 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
@@ -79,7 +79,7 @@ fun SignInScreen(
     val signInState by signInViewModel.state.collectAsState()
     val emailAuthState by emailAuthViewModel.state.collectAsState()
     val focusRequester = remember { FocusRequester() }
-    var alertDialogModel by remember { mutableStateOf(AlertDialogModel()) }
+    var alertDialogState by remember { mutableStateOf(AlertDialogState()) }
     var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
     var email by rememberSaveable { mutableStateOf("") }
     var emailErrorMessage by rememberSaveable { mutableStateOf("") }
@@ -134,7 +134,7 @@ fun SignInScreen(
                 }
 
                 is SignInUiEvent.AccountBlockedTemporarily -> {
-                    alertDialogModel = AlertDialogModel(
+                    alertDialogState = AlertDialogState(
                         title = "Account Blocked Temporarily",
                         description = "You have been blocked temporarily for too many failed attempts. Please try again later.",
                         icon = R.raw.error,
@@ -142,14 +142,14 @@ fun SignInScreen(
                 }
 
                 is SignInUiEvent.ConflictFbToken -> {
-                    alertDialogModel = AlertDialogModel(
+                    alertDialogState = AlertDialogState(
                         title = "Conflict Facebook Account",
                         description = "Sorry, something went wrong. Please try again.",
                         icon = R.raw.error)
                 }
 
                 is SignInUiEvent.FacebookSignInFailed -> {
-                    alertDialogModel = AlertDialogModel(
+                    alertDialogState = AlertDialogState(
                         title = "Facebook Sign In Failed",
                         description = "Failed to sign in with Facebook. Please try again.",
                         icon = R.raw.error)
@@ -188,14 +188,14 @@ fun SignInScreen(
                         Screens.SignInScreen.route)
                 }
                 is EmailAuthUiEvent.EmailVerificationSent -> {
-                    alertDialogModel = AlertDialogModel(
+                    alertDialogState = AlertDialogState(
                         title = "New Email Sent.",
                         description = "New verification email has been sent to your email address.",
                         icon = R.raw.success
                     )
                 }
                 is EmailAuthUiEvent.SendEmailVerificationFailed -> {
-                    alertDialogModel = AlertDialogModel(
+                    alertDialogState = AlertDialogState(
                         title = "Email Verification Failed.",
                         description = "Failed to send verification email. Please try again later.",
                         icon = R.raw.error)
@@ -207,7 +207,7 @@ fun SignInScreen(
 
 
     val onDismissAlertDialog = remember{{
-        alertDialogModel = AlertDialogModel()
+        alertDialogState = AlertDialogState()
     }}
     val onDoneKeyboardAction = remember<KeyboardActionScope.() -> Unit>{{
         signInViewModel.onEvent(SignInEvent.SignInWithEmailAndPassword(email = email, password = password))
@@ -271,7 +271,7 @@ fun SignInScreen(
         onClickSignInButton = onClickSignInButton,
         onClickSignInText = onClickSignInText,
         isNoInternetDialogVisible = isNoInternetDialogVisible,
-        alertDialogModel = alertDialogModel,
+        alertDialogState = alertDialogState,
         email = email,
         password = password,
         isPasswordVisible = isPasswordVisible,
@@ -286,7 +286,7 @@ fun SignInScreen(
 fun SignInScreenPreview() {
     CyclistanceTheme(true) {
         SignInScreenContent(
-            alertDialogModel = AlertDialogModel(),
+            alertDialogState = AlertDialogState(),
             isNoInternetDialogVisible = false,
             email = "ausbdaiosbdoauwdb",
             password = "aisntqiono9iqn",
@@ -304,7 +304,7 @@ fun SignInScreenContent(
     focusRequester: FocusRequester = FocusRequester(),
     signInState: SignInState = SignInState(),
     emailAuthState: EmailAuthState = EmailAuthState(),
-    alertDialogModel: AlertDialogModel,
+    alertDialogState: AlertDialogState,
     isNoInternetDialogVisible: Boolean,
     email: String,
     emailErrorMessage: String,
@@ -346,9 +346,9 @@ fun SignInScreenContent(
 
         SignUpTextArea()
 
-        if (alertDialogModel.visible()) {
+        if (alertDialogState.visible()) {
             AlertDialog(
-                alertDialog = alertDialogModel,
+                alertDialog = alertDialogState,
                 onDismissRequest = onDismissAlertDialog)
         }
 

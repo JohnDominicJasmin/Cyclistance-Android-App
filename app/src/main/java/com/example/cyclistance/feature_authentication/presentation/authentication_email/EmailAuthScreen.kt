@@ -34,7 +34,7 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthResendButton
@@ -63,7 +63,7 @@ fun EmailAuthScreen(
     val emailAuthState by emailAuthViewModel.state.collectAsState()
     var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
     var isTimerRunning by rememberSaveable { mutableStateOf(false) }
-    var alertDialogModel by remember { mutableStateOf(AlertDialogModel()) }
+    var alertDialogState by remember { mutableStateOf(AlertDialogState()) }
 
 
     val intent = remember {
@@ -75,7 +75,7 @@ fun EmailAuthScreen(
 
     val onDismissAlertDialog = remember {
         {
-            alertDialogModel = AlertDialogModel()
+            alertDialogState = AlertDialogState()
         }
     }
 
@@ -140,14 +140,14 @@ fun EmailAuthScreen(
                         isTimerRunning = false
                     }
                     is EmailAuthUiEvent.EmailVerificationSent -> {
-                        alertDialogModel = AlertDialogModel(
+                        alertDialogState = AlertDialogState(
                             title = "New Email Sent.",
                             description = "New verification email has been sent to your email address.",
                             icon = R.raw.success
                         )
                     }
                     is EmailAuthUiEvent.SendEmailVerificationFailed -> {
-                        alertDialogModel = AlertDialogModel(
+                        alertDialogState = AlertDialogState(
                             title = "Email Verification Failed.",
                             description = "Failed to send verification email. Please try again later.",
                             icon = R.raw.error)
@@ -171,7 +171,7 @@ fun EmailAuthScreen(
         onDismissNoInternetDialog = onDismissNoInternetDialog,
         onClickVerifyButton = onClickVerifyButton,
         onClickResendButton = onClickResendButton,
-        alertDialogModel = alertDialogModel,
+        alertDialogState = alertDialogState,
         isTimerRunning = isTimerRunning,
         isNoInternetDialogVisible = isNoInternetDialogVisible,
         )
@@ -188,7 +188,7 @@ fun EmailAuthScreenPreview() {
                 savedAccountEmail = "johndoe@gmail.com",
                 secondsLeft = 10,
             ),
-            alertDialogModel = AlertDialogModel(
+            alertDialogState = AlertDialogState(
                 title = "Sample Title",
                 description = "Sample Description",
                 icon = R.drawable.ic_check_icon
@@ -206,7 +206,7 @@ fun EmailAuthScreenContent(
     modifier: Modifier = Modifier,
     emailAuthState: EmailAuthState = EmailAuthState(),
     isDarkTheme: Boolean,
-    alertDialogModel: AlertDialogModel,
+    alertDialogState: AlertDialogState,
     isTimerRunning: Boolean,
     isNoInternetDialogVisible: Boolean,
     onDismissAlertDialog: () -> Unit = {},
@@ -241,9 +241,9 @@ fun EmailAuthScreenContent(
             EmailAuthTextStatus(email = emailAuthState.savedAccountEmail)
 
 
-            if (alertDialogModel.visible()) {
+            if (alertDialogState.visible()) {
                 AlertDialog(
-                    alertDialog = alertDialogModel,
+                    alertDialog = alertDialogState,
                     onDismissRequest = onDismissAlertDialog
                 )
             }
