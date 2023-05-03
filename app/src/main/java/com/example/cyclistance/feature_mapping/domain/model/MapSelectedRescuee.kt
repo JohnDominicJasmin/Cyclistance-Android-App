@@ -9,13 +9,13 @@ import kotlinx.parcelize.Parcelize
 @Stable
 data class MapSelectedRescuee(
     val userId: String = "",
-    val userProfileImage: String,
-    val name: String,
-    val issue: String,
-    val bikeType: String,
-    val distanceRemaining: String,
-    val timeRemaining: String,
-    val address: String,
-    val message: String
+    val userProfileImage: String = "",
+    val name: String = "",
+    val issue: String = "",
+    val bikeType: String = "",
+    val distanceRemaining: String = "",
+    val timeRemaining: String = "",
+    val address: String = "",
+    val message: String = ""
 ):Parcelable
 
