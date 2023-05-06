@@ -28,7 +28,8 @@ import javax.inject.Singleton
     fun provideFirebaseAuth():FirebaseAuth{
         return FirebaseAuth.getInstance().apply{
             if(BuildConfig.DEBUG){
-                useEmulator("10.0.2.2", 9099)
+//                emulator host = 10.0.2.2
+                useEmulator("192.168.18.21", 9099)
             }
         }
     }
