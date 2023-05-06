@@ -1,0 +1,78 @@
+[debug] [2023-05-06T09:46:02.905Z] ----------------------------------------------------------------------
+[debug] [2023-05-06T09:46:02.906Z] Command:       /usr/local/bin/firebase /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase emulators:start
+[debug] [2023-05-06T09:46:02.907Z] CLI Version:   11.8.1
+[debug] [2023-05-06T09:46:02.907Z] Platform:      linux
+[debug] [2023-05-06T09:46:02.907Z] Node Version:  v16.16.0
+[debug] [2023-05-06T09:46:02.928Z] Time:          Sat May 06 2023 17:46:02 GMT+0800 (Philippine Standard Time)
+[debug] [2023-05-06T09:46:02.930Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-05-06T09:46:03.034Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-05-06T09:46:03.034Z] > authorizing via signed-in user (mikocabal27@gmail.com)
+[debug] [2023-05-06T09:46:03.139Z] openjdk version "11.0.18" 2023-01-17
+[debug] [2023-05-06T09:46:03.139Z] 
+OpenJDK Runtime Environment (build 11.0.18+10)
+OpenJDK 64-Bit Server VM (build 11.0.18+10, mixed mode)
+
+[debug] [2023-05-06T09:46:03.144Z] Parsed Java major version: 11
+[info] i  emulators: Starting emulators: auth, database, storage {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: auth, database, storage"}}
+[debug] [2023-05-06T09:46:03.154Z] [hub] writing locator at /tmp/hub-cyclistance-cc715.json
+[debug] [2023-05-06T09:46:08.047Z] > refreshing access token with scopes: []
+[debug] [2023-05-06T09:46:08.049Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2023-05-06T09:46:08.049Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-05-06T09:46:18.303Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2023-05-06T09:46:18.304Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-05-06T09:46:18.348Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/cyclistance-cc715 [none]
+[debug] [2023-05-06T09:46:24.037Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/cyclistance-cc715 200
+[debug] [2023-05-06T09:46:24.037Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/cyclistance-cc715 {"projectId":"cyclistance-cc715","projectNumber":"297531421452","displayName":"Cyclistance","name":"projects/cyclistance-cc715","resources":{"hostingSite":"cyclistance-cc715","storageBucket":"cyclistance-cc715.appspot.com","locationId":"asia-southeast1"},"state":"ACTIVE","etag":"1_9cc18b17-b487-4d90-9655-6dc33f1fd618"}
+[debug] [2023-05-06T09:46:24.037Z] database rules config:  [{"instance":"cyclistance-cc715-default-rtdb","rules":"/home/miko/AndroidStudioProjects/Cyclistance/database.rules.json"}]
+[debug] [2023-05-06T09:46:24.043Z] Ignoring unsupported arg: projectId {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: projectId"}}
+[debug] [2023-05-06T09:46:24.043Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-05-06T09:46:24.043Z] Ignoring unsupported arg: rules {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: rules"}}
+[debug] [2023-05-06T09:46:24.043Z] Starting Database Emulator with command {"binary":"java","args":["-Duser.language=en","-jar","/home/miko/.cache/firebase/emulators/firebase-database-emulator-v4.8.0.jar","--host","192.168.18.21","--port",3103],"optionalArgs":["port","host","functions_emulator_port","functions_emulator_host"],"joinArgs":false} {"metadata":{"emulator":{"name":"database"},"message":"Starting Database Emulator with command {\"binary\":\"java\",\"args\":[\"-Duser.language=en\",\"-jar\",\"/home/miko/.cache/firebase/emulators/firebase-database-emulator-v4.8.0.jar\",\"--host\",\"192.168.18.21\",\"--port\",3103],\"optionalArgs\":[\"port\",\"host\",\"functions_emulator_port\",\"functions_emulator_host\"],\"joinArgs\":false}"}}
+[info] i  database: Database Emulator logging to database-debug.log {"metadata":{"emulator":{"name":"database"},"message":"Database Emulator logging to \u001b[1mdatabase-debug.log\u001b[22m"}}
+[debug] [2023-05-06T09:46:25.062Z] WARNING: An illegal reflective access operation has occurred
+WARNING: Illegal reflective access by io.netty.util.internal.ReflectionUtil (file:/home/miko/.cache/firebase/emulators/firebase-database-emulator-v4.8.0.jar) to field sun.nio.ch.SelectorImpl.selectedKeys
+WARNING: Please consider reporting this to the maintainers of io.netty.util.internal.ReflectionUtil
+WARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations
+WARNING: All illegal access operations will be denied in a future release
+ {"metadata":{"emulator":{"name":"database"},"message":"WARNING: An illegal reflective access operation has occurred\nWARNING: Illegal reflective access by io.netty.util.internal.ReflectionUtil (file:/home/miko/.cache/firebase/emulators/firebase-database-emulator-v4.8.0.jar) to field sun.nio.ch.SelectorImpl.selectedKeys\nWARNING: Please consider reporting this to the maintainers of io.netty.util.internal.ReflectionUtil\nWARNING: Use --illegal-access=warn to enable warnings of further illegal reflective access operations\nWARNING: All illegal access operations will be denied in a future release\n"}}
+[debug] [2023-05-06T09:46:26.121Z] 17:46:26.119 [NamespaceSystem-akka.actor.default-dispatcher-6] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started
+ {"metadata":{"emulator":{"name":"database"},"message":"17:46:26.119 [NamespaceSystem-akka.actor.default-dispatcher-6] INFO akka.event.slf4j.Slf4jLogger - Slf4jLogger started\n"}}
+[debug] [2023-05-06T09:46:26.425Z] 17:46:26.423 [main] INFO com.firebase.server.forge.App$ - Listening at 192.168.18.21:3103
+ {"metadata":{"emulator":{"name":"database"},"message":"17:46:26.423 [main] INFO com.firebase.server.forge.App$ - Listening at 192.168.18.21:3103\n"}}
+[debug] [2023-05-06T09:46:33.736Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"storage"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2023-05-06T09:46:34.753Z] Temp file directory for storage emulator: /tmp/firebase/storage/blobs {"metadata":{"emulator":{"name":"storage"},"message":"Temp file directory for storage emulator: /tmp/firebase/storage/blobs"}}
+[debug] [2023-05-06T09:46:34.774Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-05-06T09:46:34.774Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2023-05-06T09:46:34.774Z] Starting Emulator UI with command {"binary":"node","args":["/home/miko/.cache/firebase/emulators/ui-v1.9.0/server/server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"/home/miko/.cache/firebase/emulators/ui-v1.9.0/server/server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
+[info] i  ui: Emulator UI logging to ui-debug.log {"metadata":{"emulator":{"name":"ui"},"message":"Emulator UI logging to \u001b[1mui-debug.log\u001b[22m"}}
+[debug] [2023-05-06T09:46:34.996Z] Web / API server started at localhost:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at localhost:4000\n"}}
+[debug] [2023-05-06T09:46:35.040Z] >>> [apiv2][query] PUT http://192.168.18.21:3103/.settings/rules.json ns=cyclistance-cc715-default-rtdb
+[debug] [2023-05-06T09:46:35.040Z] >>> [apiv2][body] PUT http://192.168.18.21:3103/.settings/rules.json "{\n  /* Visit https://firebase.google.com/docs/database/security to learn more about security rules. */\n  \"rules\": {\n    \".read\": false,\n    \".write\": false\n  }\n}"
+[debug] [2023-05-06T09:46:35.340Z] 17:46:35.339 [NamespaceSystem-akka.actor.default-dispatcher-8] INFO com.firebase.core.namespace.NamespaceActor - cyclistance-cc715-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 131ms, init: 0ms
+ {"metadata":{"emulator":{"name":"database"},"message":"17:46:35.339 [NamespaceSystem-akka.actor.default-dispatcher-8] INFO com.firebase.core.namespace.NamespaceActor - cyclistance-cc715-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 131ms, init: 0ms\n"}}
+[debug] [2023-05-06T09:46:35.398Z] 17:46:35.398 [NamespaceSystem-blocking-namespace-operation-dispatcher-10:cyclistance-cc715-default-rtdb$-1327396842:] INFO com.firebase.core.namespace.StateManager - Namespace cyclistance-cc715-default-rtdb status Active to Active
+ {"metadata":{"emulator":{"name":"database"},"message":"17:46:35.398 [NamespaceSystem-blocking-namespace-operation-dispatcher-10:cyclistance-cc715-default-rtdb$-1327396842:] INFO com.firebase.core.namespace.StateManager - Namespace cyclistance-cc715-default-rtdb status Active to Active\n"}}
+[debug] [2023-05-06T09:46:35.491Z] <<< [apiv2][status] PUT http://192.168.18.21:3103/.settings/rules.json 200
+[debug] [2023-05-06T09:46:35.491Z] <<< [apiv2][body] PUT http://192.168.18.21:3103/.settings/rules.json {"status":"ok"}
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://localhost:4000                │
+└─────────────────────────────────────────────────────────────┘
+
+┌────────────────┬────────────────────┬────────────────────────────────┐
+│ Emulator       │ Host:Port          │ View in Emulator UI            │
+├────────────────┼────────────────────┼────────────────────────────────┤
+│ Authentication │ 192.168.18.21:9099 │ http://localhost:4000/auth     │
+├────────────────┼────────────────────┼────────────────────────────────┤
+│ Database       │ 192.168.18.21:3103 │ http://localhost:4000/database │
+├────────────────┼────────────────────┼────────────────────────────────┤
+│ Storage        │ 192.168.18.21:9199 │ http://localhost:4000/storage  │
+└────────────────┴────────────────────┴────────────────────────────────┘
+  Emulator Hub running at localhost:4400
+  Other reserved ports: 4500
+
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 
