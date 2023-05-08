@@ -44,6 +44,8 @@ fun NavGraph(
     mappingViewModel: MappingViewModel,
     isDarkTheme: Boolean,
     scaffoldState: ScaffoldState,
+    isNavigating: Boolean,
+    onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
     onToggleTheme: () -> Unit) {
 
     NavHost(navController = navController, startDestination = Screens.IntroSliderScreen.route) {
@@ -79,7 +81,7 @@ fun NavGraph(
         composable(
             route = Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE={$BOTTOM_SHEET_TYPE}",
             arguments = listOf(navArgument(BOTTOM_SHEET_TYPE) {
-                defaultValue = ""
+                defaultValue = BottomSheetType.Collapsed.type
             })
         ) {
 
@@ -91,7 +93,10 @@ fun NavGraph(
                     navController = navController,
                     scaffoldState = scaffoldState,
                     paddingValues = paddingValues,
-                    mappingViewModel = mappingViewModel)
+                    mappingViewModel = mappingViewModel,
+                    isNavigating = isNavigating,
+                    onChangeNavigatingState = onChangeNavigatingState
+                    )
             }
         }
 

@@ -23,11 +23,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.common.visible
-import com.example.cyclistance.feature_mapping.domain.model.ActiveRescueRequests
-import com.example.cyclistance.feature_mapping.domain.model.CardModel
+import com.example.cyclistance.feature_mapping.domain.model.NewRescueRequestsModel
+import com.example.cyclistance.feature_mapping.domain.model.RescueRequestModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -43,8 +44,8 @@ fun RescueRequestScreenContent(
     onDismissNoInternetDialog: () -> Unit = {},
 ) {
 
-    val respondents = remember(mappingState.userActiveRescueRequests.respondents.size) {
-        mappingState.userActiveRescueRequests.respondents
+    val respondents = remember(mappingState.newRescueRequest?.request?.size) {
+        mappingState.newRescueRequest?.request ?: emptyList()
     }
 
 
@@ -120,7 +121,7 @@ fun RescueRequestScreenContent(
             CircularProgressIndicator()
         }
 
-        if (mappingState.hasInternet.not()) {
+        if (isNoInternetDialogVisible) {
             NoInternetDialog(onDismiss = onDismissNoInternetDialog)
         }
 
@@ -137,67 +138,21 @@ fun PreviewRescueRequest() {
             modifier = Modifier
                 .padding(PaddingValues(all = 0.dp)),
             mappingState = MappingState(
-                hasInternet = true,
                 isLoading = true,
-                userActiveRescueRequests = ActiveRescueRequests(
-                    respondents = listOf(
-                        CardModel(
-                            id = "2",
-                            name = "Jane Doe",
-                            profileImageUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                            estimatedTimeTravel = "5 mins",
-                            distance = "500m",
-                            address = "1234, 5th Street, New York, NY 10001",
-                        ),
-                        /*
-                                              CardModel(
-                                                  id = "3",
-                                                  name = "John Doe",
-                                                  profileImageUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSv9zzOmzF32TNcQ2O93T21Serg2aJj5O-1hrQdZiE6ITGiKLsW4rjgVpX-asQYXa4iVeA&usqp=CAU",
-                                                  estimatedTimeTravel = "5 mins",
-                                                  distance = "500m",
-                                                  address = "1234, 5th Street, New York, NY 10001",
-                                              ),
+                newRescueRequest = NewRescueRequestsModel(request = listOf(
+                    RescueRequestModel(
+                        id = "2",
+                        name = "Jane Doe",
+                        profileImageUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+                        estimatedTimeTravel = "5 mins",
+                        distance = "500m",
+                        address = "1234, 5th Street, New York, NY 10001",
+                    ),
+                ))
+            ),
+            alertDialogState = AlertDialogState(),
+            isNoInternetDialogVisible = false,
 
-                                              CardModel(
-                                                  id = "4",
-                                                  name = "John Doe",
-                                                  profileImageUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                                                  estimatedTimeTravel = "5 mins",
-                                                  distance = "500m",
-                                                  address = "1234, 5th Street, New York, NY 10001",
-                                              ),
-
-                                              CardModel(
-                                                  id = "5",
-                                                  name = "John Doe",
-                                                  profileImageUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                                                  estimatedTimeTravel = "5 mins",
-                                                  distance = "500m",
-                                                  address = "1234, 5th Street, New York, NY 10001",
-                                              ),
-
-                                              CardModel(
-                                                  id = "6",
-                                                  name = "John Doe",
-                                                  profileImageUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                                                  estimatedTimeTravel = "5 mins",
-                                                  distance = "500m",
-                                                  address = "1234, 5th Street, New York, NY 10001",
-                                              ),
-
-                                              CardModel(
-                                                  id = "7",
-                                                  name = "John Doe",
-                                                  profileImageUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                                                  estimatedTimeTravel = "5 mins",
-                                                  distance = "500m",
-                                                  address = "1234, 5th Street, New York, NY 10001",
-                                              ),
-
-                      */
-                    )
-                )
-            ))
+            )
     }
 }

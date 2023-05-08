@@ -65,14 +65,19 @@ fun MainScreen(
     val navController = rememberNavController()
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val scaffoldState =
-        rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
+    val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
     var internetAvailable by rememberSaveable { mutableStateOf(true) }
+    var isNavigating by rememberSaveable{ mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val editProfileState by editProfileViewModel.state.collectAsState()
     val mappingState by mappingViewModel.state.collectAsState()
     val settingState by settingViewModel.state.collectAsState()
     val lifecycleOwner = LocalLifecycleOwner.current
+
+    val onChangeNavigatingState = remember{{ navigating: Boolean ->
+        isNavigating = navigating
+    }}
+
 
     ComposableLifecycle { _, event ->
         when (event) {
@@ -162,7 +167,6 @@ fun MainScreen(
             scaffoldState = scaffoldState,
             topBar = {
 
-
                 Column {
                     TopAppBar(
                         route = navBackStackEntry?.destination?.route,
@@ -170,7 +174,7 @@ fun MainScreen(
                         onClickSaveProfile = onClickSaveProfile,
                         editProfileSaveButtonEnabled = editProfileState.isUserInformationChanges(),
                         onClickArrowBackIcon = onClickArrowBackIcon,
-                        isNavigating = mappingState.isNavigating)
+                        isNavigating = isNavigating)
 
                     NoInternetStatusBar(internetAvailable, navBackStackEntry?.destination?.route)
                 }

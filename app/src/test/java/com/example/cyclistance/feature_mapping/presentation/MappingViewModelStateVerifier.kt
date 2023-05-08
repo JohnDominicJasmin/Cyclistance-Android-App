@@ -22,11 +22,7 @@ fun assertThat(someViewModel: MappingViewModel): MappingViewModelStateVerifier {
 
 class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewModel) {
 
-    /*
-    todo:
-    * write passing and failing tests
-    * do not initialize the viewmodel in the test, but rather in the function
-    * */
+
 
     private val state = mappingViewModel.state
     private val event = mappingViewModel.eventFlow

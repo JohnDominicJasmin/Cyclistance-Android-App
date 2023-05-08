@@ -5,9 +5,21 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -39,10 +51,10 @@ fun MappingDrawerContent(
     onClickChat: () -> Unit = {},
     onClickRescueRequest: () -> Unit = {},
     onClickSignOut: () -> Unit = {},
-) {
 
-    val respondents = remember(state.userActiveRescueRequests.respondents.size) {
-        state.userActiveRescueRequests.respondents
+) {
+    val respondents = remember(state.newRescueRequest?.request?.size) {
+        state.newRescueRequest?.request ?: emptyList()
     }
 
 

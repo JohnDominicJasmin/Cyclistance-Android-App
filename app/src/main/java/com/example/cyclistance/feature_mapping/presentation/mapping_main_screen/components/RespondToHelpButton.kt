@@ -6,7 +6,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -20,13 +24,13 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun RespondToHelpButton(
     modifier: Modifier = Modifier,
+    visible: Boolean = true,
     onClickRespondButton: () -> Unit = {},
     state: MappingState = MappingState()) {
 
-    val visibility =  state.respondToHelpButtonVisible && state.isNavigating.not()
 
     AnimatedVisibility(
-        modifier = modifier, visible = visibility, enter = fadeIn(
+        modifier = modifier, visible = visible, enter = fadeIn(
             initialAlpha = 0.4f
         ),
         exit = fadeOut(

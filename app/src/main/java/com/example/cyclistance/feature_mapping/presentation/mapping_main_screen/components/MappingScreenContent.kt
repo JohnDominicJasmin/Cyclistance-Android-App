@@ -21,7 +21,11 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_mapping.domain.model.CancelledRescueModel
+import com.example.cyclistance.feature_mapping.domain.model.MapSelectedRescuee
+import com.example.cyclistance.feature_mapping.domain.model.RouteDirection
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.FloatingButtonSection
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -38,7 +42,14 @@ fun MappingScreenContent(
     state: MappingState,
     mapboxMap: MapboxMap?,
     hasTransaction: Boolean = false,
+    bottomSheetType: String,
     isRescueCancelled: Boolean = false,
+    mapSelectedRescuee: MapSelectedRescuee?,
+    routeDirection: RouteDirection?,
+    isNavigating:Boolean,
+    isNoInternetDialogVisible: Boolean,
+    rescueRequestAccepted: Boolean,
+    requestHelpButtonVisible: Boolean,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     onClickRequestHelpButton: () -> Unit = {},
     onClickRespondToHelpButton: () -> Unit = {},
@@ -67,8 +78,6 @@ fun MappingScreenContent(
 
 
 
-
-
     MappingBottomSheet(
         isDarkTheme = isDarkTheme,
         state = state,
@@ -78,7 +87,9 @@ fun MappingScreenContent(
         onClickCallRescueTransactionButton = onClickCallRescueTransactionButton,
         onClickChatRescueTransactionButton = onClickChatRescueTransactionButton,
         onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton,
-        bottomSheetScaffoldState = bottomSheetScaffoldState) {
+        bottomSheetScaffoldState = bottomSheetScaffoldState,
+        bottomSheetType = bottomSheetType,
+    ) {
 
         ConstraintLayout(
             modifier = modifier
@@ -103,24 +114,26 @@ fun MappingScreenContent(
                 onClickRescueeMapIcon = onClickRescueeMapIcon,
                 onMapClick = onMapClick,
                 requestNavigationCameraToOverview = onRequestNavigationCameraToOverview,
-                mapboxMap = mapboxMap
+                mapboxMap = mapboxMap,
+                routeDirection = routeDirection,
+                isNavigating = isNavigating
             )
 
 
 
 
             AnimatedVisibility(
-                visible = state.selectedRescueeMapIcon != null,
+                visible = mapSelectedRescuee != null,
                 enter = expandVertically(expandFrom = Alignment.Top) { 20 },
                 exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
                     fullHeight / 2
                 },
             ) {
-                if (state.selectedRescueeMapIcon != null) {
+                if (mapSelectedRescuee != null) {
                     MappingExpandableBanner(
                         modifier = Modifier
                             .padding(all = 6.dp)
-                            .fillMaxWidth(), banner = state.selectedRescueeMapIcon,
+                            .fillMaxWidth(), banner = mapSelectedRescuee,
                         onClickDismissButton = onClickDismissBannerButton)
                 }
             }
@@ -134,11 +147,11 @@ fun MappingScreenContent(
                             margin = (configuration.screenHeightDp / 3).dp)
                     },
                 locationPermissionGranted = locationPermissionState.allPermissionsGranted,
-                state = state,
                 onClickLocateUserButton = onClickLocateUserButton,
                 onClickRouteOverButton = onClickRouteOverButton,
                 onClickRecenterButton = onClickRecenterButton,
-                onClickOpenNavigationButton = onClickOpenNavigationButton
+                onClickOpenNavigationButton = onClickOpenNavigationButton,
+                isNavigating = isNavigating
             )
 
             RequestHelpButton(
@@ -147,7 +160,9 @@ fun MappingScreenContent(
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
                 }, onClickSearchButton = onClickRequestHelpButton,
-                state = state
+                state = state,
+                visible = requestHelpButtonVisible && isNavigating.not()
+
             )
 
             RespondToHelpButton(
@@ -157,7 +172,8 @@ fun MappingScreenContent(
                     start.linkTo(parent.start)
                 },
                 onClickRespondButton = onClickRespondToHelpButton,
-                state = state
+                state = state,
+                visible = requestHelpButtonVisible.not() && isNavigating.not()
             )
 
             if (state.isLoading) {
@@ -170,7 +186,7 @@ fun MappingScreenContent(
                 })
             }
 
-            if (!state.hasInternet) {
+            if (isNoInternetDialogVisible) {
                 NoInternetDialog(
                     onDismiss = onDismissNoInternetDialog,
                     modifier = Modifier.constrainAs(noInternetScreen) {
@@ -184,11 +200,11 @@ fun MappingScreenContent(
             }
 
             AnimatedVisibility(
-                visible = isRescueCancelled && state.isRescueRequestAccepted.not(),
+                visible = isRescueCancelled && rescueRequestAccepted.not(),
                 enter = fadeIn(),
                 exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
 
-                val rescueTransaction = state.userRescueTransaction
+                val rescueTransaction = state.rescueTransaction
                 val cancellation = rescueTransaction?.cancellation
                 val cancellationReason =
                     cancellation?.cancellationReason ?: return@AnimatedVisibility
@@ -206,7 +222,7 @@ fun MappingScreenContent(
             }
 
             AnimatedVisibility(
-                visible = state.isRescueRequestAccepted && isRescueCancelled.not(),
+                visible = rescueRequestAccepted && isRescueCancelled.not(),
                 enter = fadeIn(),
                 exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
                 RescueRequestAccepted(
@@ -215,7 +231,6 @@ fun MappingScreenContent(
                     acceptedName = state.rescuee?.name ?: "Name placeholder",
                 )
             }
-
 
 
         }
