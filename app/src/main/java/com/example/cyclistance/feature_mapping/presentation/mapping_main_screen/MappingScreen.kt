@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION_CODES.Q
 import android.widget.Toast
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
@@ -31,7 +30,6 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_R
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.permission.requestPermission
-import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping.domain.model.CameraState
 import com.example.cyclistance.feature_mapping.domain.model.MapSelectedRescuee
 import com.example.cyclistance.feature_mapping.domain.model.Role
@@ -46,7 +44,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.startLocationServiceIntentAction
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
-import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
@@ -514,12 +511,6 @@ fun MappingScreen(
 
                 is MappingUiEvent.AddressFailed -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
-                }
-
-                is MappingUiEvent.SignOutSuccess -> {
-                    navController.navigateScreenInclusively(
-                        Screens.SignInScreen.route,
-                        Screens.MappingScreen.route)
                 }
 
                 is MappingUiEvent.NoInternetConnection -> {

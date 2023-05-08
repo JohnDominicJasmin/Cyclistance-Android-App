@@ -238,12 +238,6 @@ class MappingViewModel @Inject constructor(
                 cancelHelpRequest()
             }
 
-
-            is MappingEvent.SignOut -> {
-                signOutAccount()
-            }
-
-
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
@@ -963,21 +957,6 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun signOutAccount() {
-        viewModelScope.launch(context = defaultDispatcher) {
-            runCatching {
-                startLoading()
-                authUseCase.signOutUseCase()
-            }.onSuccess {
-                _eventFlow.emit(value = MappingUiEvent.SignOutSuccess)
-            }.onFailure {
-                _eventFlow.emit(value = MappingUiEvent.SignOutFailed)
-            }
-            finishLoading()
-        }.invokeOnCompletion {
-            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-        }
-    }
 
 
     private fun requestHelp() {

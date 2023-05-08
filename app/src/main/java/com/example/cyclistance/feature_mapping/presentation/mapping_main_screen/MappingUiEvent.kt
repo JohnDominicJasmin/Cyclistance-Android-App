@@ -7,7 +7,6 @@ import com.example.cyclistance.feature_mapping.domain.model.RouteDirection
 sealed class MappingUiEvent{
     object RequestHelpSuccess: MappingUiEvent()
     object InsufficientUserCredential: MappingUiEvent()
-    object SignOutSuccess: MappingUiEvent()
     object AcceptRescueRequestSuccess: MappingUiEvent()
     //
     data class LocationNotAvailable(val reason:String = "Tracking your Location"): MappingUiEvent()

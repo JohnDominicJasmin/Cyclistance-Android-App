@@ -8,7 +8,6 @@ sealed class MappingEvent {
 
     object RequestHelp : MappingEvent()
     data class RespondToHelp(val selectedRescuee: MapSelectedRescuee) : MappingEvent()
-    object SignOut: MappingEvent()
     data class SelectRescueMapIcon(val id: String): MappingEvent()
     /**
      * Available BottomSheetType:
