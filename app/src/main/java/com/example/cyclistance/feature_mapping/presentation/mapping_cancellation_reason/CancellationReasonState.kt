@@ -9,9 +9,5 @@ import kotlinx.parcelize.Parcelize
 @Immutable
 @Stable
 data class CancellationReasonState(
-    val selectedReason: String = "",
-    val hasInternet: Boolean = true,
     val isLoading: Boolean = false,
-    val reasonErrorMessage: String = "",
-    val message: String = "",
 ):Parcelable
