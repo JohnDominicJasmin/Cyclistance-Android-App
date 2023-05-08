@@ -2,6 +2,8 @@ package com.example.cyclistance.navigation
 
 import android.content.Intent
 import android.content.Intent.ACTION_MAIN
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -33,9 +35,8 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_I
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
+import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping.data.local.network_observer.NetworkConnectivityChecker
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingEvent
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.DefaultTopBar
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.MappingDrawerContent
@@ -45,6 +46,7 @@ import com.example.cyclistance.feature_settings.presentation.setting_edit_profil
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.utils.isUserInformationChanges
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingEvent
+import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingUiEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingViewModel
 import com.example.cyclistance.theme.Black900
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -79,6 +81,18 @@ fun MainScreen(
     }}
 
 
+    BackHandler(enabled = true, onBack = {
+        coroutineScope.launch {
+
+            if (scaffoldState.drawerState.isOpen) {
+                scaffoldState.drawerState.close()
+                return@launch
+            }
+
+            context.findActivity()?.finish()
+        }
+    })
+
     ComposableLifecycle { _, event ->
         when (event) {
             Lifecycle.Event.ON_CREATE -> {
@@ -98,14 +112,16 @@ fun MainScreen(
 
     }
     LaunchedEffect(key1 = true) {
-        mappingViewModel.onEvent(event = MappingEvent.LoadUserProfile)
-        mappingViewModel.eventFlow.collectLatest { event ->
+
+        settingViewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is MappingUiEvent.SignOutSuccess -> {
+                is SettingUiEvent.SignOutSuccess -> {
                     navController.popBackStack()
                     navController.navigate(Screens.SignInScreen.route)
                 }
-                else -> {}
+                is SettingUiEvent.SignOutFailed -> {
+                    Toast.makeText(context, "Failed to Sign out account", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -140,13 +156,14 @@ fun MainScreen(
         }
         Unit
     }}
+
     val onClickSignOut = remember{{
         coroutineScope.launch {
             scaffoldState.drawerState.close()
         }
-        mappingViewModel.onEvent(event = MappingEvent.SignOut)
-
+        settingViewModel.onEvent(event = SettingEvent.SignOut)
     }}
+
     val onToggleTheme = remember{{
         settingViewModel.onEvent(event = SettingEvent.ToggleTheme)
     }}
@@ -196,7 +213,6 @@ fun MainScreen(
                 isDarkTheme = settingState.isDarkTheme,
                 editProfileViewModel = editProfileViewModel,
                 mappingViewModel = mappingViewModel,
-                scaffoldState = scaffoldState,
                 onToggleTheme = onToggleTheme,
                 isNavigating = isNavigating,
                 onChangeNavigatingState = onChangeNavigatingState

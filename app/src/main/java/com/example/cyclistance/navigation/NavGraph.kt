@@ -43,7 +43,6 @@ fun NavGraph(
     editProfileViewModel: EditProfileViewModel,
     mappingViewModel: MappingViewModel,
     isDarkTheme: Boolean,
-    scaffoldState: ScaffoldState,
     isNavigating: Boolean,
     onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
     onToggleTheme: () -> Unit) {
@@ -91,7 +90,6 @@ fun NavGraph(
                     typeBottomSheet = bottomSheetType,
                     isDarkTheme = isDarkTheme,
                     navController = navController,
-                    scaffoldState = scaffoldState,
                     paddingValues = paddingValues,
                     mappingViewModel = mappingViewModel,
                     isNavigating = isNavigating,
