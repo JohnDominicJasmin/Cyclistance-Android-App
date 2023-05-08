@@ -77,7 +77,7 @@ class MappingViewModel @Inject constructor(
     init {
         loadData()
         observeDataChanges()
-
+        loadUserProfile()
     }
 
     private fun observeDataChanges() {
@@ -238,9 +238,6 @@ class MappingViewModel @Inject constructor(
                 cancelHelpRequest()
             }
 
-            is MappingEvent.LoadUserProfile -> {
-                loadUserProfile()
-            }
 
             is MappingEvent.SignOut -> {
                 signOutAccount()

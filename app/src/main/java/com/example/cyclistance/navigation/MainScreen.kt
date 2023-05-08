@@ -2,6 +2,7 @@ package com.example.cyclistance.navigation
 
 import android.content.Intent
 import android.content.Intent.ACTION_MAIN
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
@@ -33,6 +34,7 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_I
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
+import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping.data.local.network_observer.NetworkConnectivityChecker
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingUiEvent
@@ -79,6 +81,18 @@ fun MainScreen(
     }}
 
 
+    BackHandler(enabled = true, onBack = {
+        coroutineScope.launch {
+
+            if (scaffoldState.drawerState.isOpen) {
+                scaffoldState.drawerState.close()
+                return@launch
+            }
+
+            context.findActivity()?.finish()
+        }
+    })
+
     ComposableLifecycle { _, event ->
         when (event) {
             Lifecycle.Event.ON_CREATE -> {
@@ -98,7 +112,7 @@ fun MainScreen(
 
     }
     LaunchedEffect(key1 = true) {
-        mappingViewModel.onEvent(event = MappingEvent.LoadUserProfile)
+
         mappingViewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is MappingUiEvent.SignOutSuccess -> {
@@ -196,7 +210,6 @@ fun MainScreen(
                 isDarkTheme = settingState.isDarkTheme,
                 editProfileViewModel = editProfileViewModel,
                 mappingViewModel = mappingViewModel,
-                scaffoldState = scaffoldState,
                 onToggleTheme = onToggleTheme,
                 isNavigating = isNavigating,
                 onChangeNavigatingState = onChangeNavigatingState

@@ -76,7 +76,6 @@ fun MappingScreen(
     isDarkTheme: Boolean,
     mappingViewModel: MappingViewModel,
     paddingValues: PaddingValues,
-    scaffoldState: ScaffoldState,
     isNavigating: Boolean,
     onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
     navController: NavController) {
@@ -117,17 +116,6 @@ fun MappingScreen(
 
 
 
-    BackHandler(enabled = true, onBack = {
-        coroutineScope.launch {
-
-            if (scaffoldState.drawerState.isOpen) {
-                scaffoldState.drawerState.close()
-                return@launch
-            }
-
-            context.findActivity()?.finish()
-        }
-    })
 
     val locationPermissionsState = if (Build.VERSION.SDK_INT >= Q) {
         rememberMultiplePermissionsState(
