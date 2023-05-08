@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
@@ -44,7 +43,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.TopAppBarCreator
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.utils.isUserInformationChanges
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingUiEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingViewModel
@@ -188,8 +186,6 @@ fun MainScreen(
                     TopAppBar(
                         route = navBackStackEntry?.destination?.route,
                         onClickMenuIcon = onClickMenuIcon,
-                        onClickSaveProfile = onClickSaveProfile,
-                        editProfileSaveButtonEnabled = editProfileState.isUserInformationChanges(),
                         onClickArrowBackIcon = onClickArrowBackIcon,
                         isNavigating = isNavigating)
 
@@ -226,8 +222,6 @@ fun MainScreen(
 private fun TopAppBar(
     onClickArrowBackIcon: () -> Unit = {},
     onClickMenuIcon: () -> Unit = {},
-    onClickSaveProfile: () -> Unit = {},
-    editProfileSaveButtonEnabled: Boolean = false,
     isNavigating: Boolean,
     route: String?) {
 
@@ -280,12 +274,8 @@ private fun TopAppBar(
         }
         Screens.EditProfileScreen.route -> {
             TopAppBarCreator(
-                icon = Icons.Default.Close, onClickIcon = onClickArrowBackIcon, topAppBarTitle = {
-                    TitleTopAppBar(
-                        title = "Edit Profile",
-                        confirmationText = "Save",
-                        confirmationTextEnable = editProfileSaveButtonEnabled,
-                        onClickConfirmation = onClickSaveProfile)
+                icon = Icons.Default.ArrowBack, onClickIcon = onClickArrowBackIcon, topAppBarTitle = {
+                    TitleTopAppBar(title = "Edit Profile")
                 })
         }
         Screens.SettingScreen.route -> {
@@ -333,7 +323,7 @@ private fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 fun TopAppBarPreview() {
     CyclistanceTheme(true) {
         TopAppBar(
-            route = Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE={$BOTTOM_SHEET_TYPE}",
+            route = Screens.EditProfileScreen.route,
             isNavigating = false)
     }
 }
