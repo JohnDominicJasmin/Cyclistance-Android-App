@@ -30,7 +30,7 @@ import com.example.cyclistance.feature_readable_displays.presentation.intro_slid
 import com.example.cyclistance.feature_settings.presentation.setting_change_password.ChangePasswordScreen
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileScreen
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
-import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingScreen
+import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 

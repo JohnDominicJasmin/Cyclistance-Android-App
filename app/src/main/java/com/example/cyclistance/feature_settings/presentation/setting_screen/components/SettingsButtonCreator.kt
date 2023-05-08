@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_main_screen.components
+package com.example.cyclistance.feature_settings.presentation.setting_screen.components
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
