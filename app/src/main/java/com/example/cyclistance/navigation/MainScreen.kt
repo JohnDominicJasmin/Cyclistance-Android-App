@@ -44,8 +44,8 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.utils.isUserInformationChanges
-import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingEvent
-import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingViewModel
+import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingEvent
+import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingViewModel
 import com.example.cyclistance.theme.Black900
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.theme.White50
@@ -193,7 +193,9 @@ fun MainScreen(
                 editProfileViewModel = editProfileViewModel,
                 mappingViewModel = mappingViewModel,
                 scaffoldState = scaffoldState,
-                onToggleTheme = onToggleTheme
+                onToggleTheme = onToggleTheme,
+                isNavigating = isNavigating,
+                onChangeNavigatingState = onChangeNavigatingState
             )
         }
     }
