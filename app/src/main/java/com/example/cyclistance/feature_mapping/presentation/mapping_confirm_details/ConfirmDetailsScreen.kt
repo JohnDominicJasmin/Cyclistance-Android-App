@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
@@ -23,10 +22,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -35,14 +36,15 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_SHEET_TYPE
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
+import com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetailsModel
 import com.example.cyclistance.feature_mapping.presentation.common.AdditionalMessage
 import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.AddressTextField
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.ButtonDescriptionDetails
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.DropDownBikeList
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
-
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.theme.Black440
@@ -58,6 +60,17 @@ fun ConfirmDetailsScreen(
 
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
+    var address by rememberSaveable { mutableStateOf("") }
+    var addressErrorMessage by rememberSaveable { mutableStateOf("") }
+    var message by rememberSaveable { mutableStateOf("") }
+    var bikeType by rememberSaveable { mutableStateOf("") }
+    var bikeTypeErrorMessage by rememberSaveable { mutableStateOf("") }
+    var description by rememberSaveable { mutableStateOf("") }
+    var descriptionErrorMessage by rememberSaveable { mutableStateOf("") }
+    var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
+    var alertDialogState by remember { mutableStateOf(AlertDialogState()) }
+
+
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -73,37 +86,85 @@ fun ConfirmDetailsScreen(
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
+                is ConfirmDetailsUiEvent.GetSavedBikeType -> {
+                    bikeType = event.bikeType
+                }
+
+                is ConfirmDetailsUiEvent.GetSavedAddress -> {
+                    address = event.address
+                }
+
+                is ConfirmDetailsUiEvent.NoInternetConnection -> {
+                    isNoInternetDialogVisible = true
+                }
+
+                is ConfirmDetailsUiEvent.InvalidBikeType -> {
+                    bikeTypeErrorMessage = event.reason
+                }
+
+                is ConfirmDetailsUiEvent.InvalidDescription -> {
+                    descriptionErrorMessage = event.reason
+                }
+
+                is ConfirmDetailsUiEvent.InvalidAddress -> {
+                    addressErrorMessage = event.reason
+                }
+
             }
         }
     }
 
 
-    val onValueChangeAddress = remember {{ address: String ->
-        viewModel.onEvent(event = ConfirmDetailsEvent.EnterAddress(address))
-    }}
-    val onValueChangeMessage = remember {{ message: String ->
-        viewModel.onEvent(event = ConfirmDetailsEvent.EnterMessage(message))
-    }}
-    val onClickBikeType = remember {{ bikeType: String ->
-        viewModel.onEvent(event = ConfirmDetailsEvent.SelectBikeType(bikeType))
-        viewModel.onEvent(event = ConfirmDetailsEvent.ClearBikeTypeErrorMessage)
+    val onValueChangeAddress = remember {
+        { addressInput: String ->
+            address = addressInput
+            addressErrorMessage = ""
+        }
+    }
+    val onValueChangeMessage = remember {
+        { messageInput: String ->
+            message = messageInput
+        }
+    }
+    val onClickBikeType = remember {
+        { bikeTypeInput: String ->
+            bikeType = bikeTypeInput
+            bikeTypeErrorMessage = ""
 
-    }}
-    val onClickDescriptionButton = remember {{ description: String ->
-        viewModel.onEvent(event = ConfirmDetailsEvent.SelectDescription(description))
-        viewModel.onEvent(event = ConfirmDetailsEvent.ClearDescriptionErrorMessage)
-    }}
-    val onClickCancelButton = remember {{
-        navController.navigateScreen(Screens.MappingScreen.route)
-    }}
-    val onClickConfirmButton = remember {{
-            viewModel.onEvent(event = ConfirmDetailsEvent.ConfirmDetails)
-    }}
-    val onDismissNoInternetDialog = remember{ {
-            viewModel.onEvent(event = ConfirmDetailsEvent.DismissNoInternetDialog)
-    }}
+        }
+    }
+    val onClickDescriptionButton = remember {
+        { descriptionInput: String ->
+            description = descriptionInput
+            descriptionErrorMessage = ""
+        }
+    }
+    val onClickCancelButton = remember {
+        {
+            navController.navigateScreen(Screens.MappingScreen.route)
+        }
+    }
+    val onClickConfirmButton = remember {
+        {
+            viewModel.onEvent(
+                event = ConfirmDetailsEvent.ConfirmDetails(
+                    confirmDetailsModel = ConfirmationDetailsModel(
+                        address = address,
+                        bikeType = bikeType,
+                        description = description,
+                        message = message
+                    )
+                ))
+        }
+    }
+    val onDismissNoInternetDialog = remember {
+        {
+            alertDialogState = AlertDialogState()
+        }
+    }
 
-    CoinDetailContent(modifier = Modifier.padding(paddingValues),
+    ConfirmDetailsContent(
+        modifier = Modifier.padding(paddingValues),
         state = state,
         onValueChangeAddress = onValueChangeAddress,
         onValueChangeMessage = onValueChangeMessage,
@@ -111,23 +172,50 @@ fun ConfirmDetailsScreen(
         onClickDescriptionButton = onClickDescriptionButton,
         onClickConfirmButton = onClickConfirmButton,
         onClickCancelButton = onClickCancelButton,
-        onDismissNoInternetDialog = onDismissNoInternetDialog)
+        onDismissNoInternetDialog = onDismissNoInternetDialog,
+        address = address,
+        addressErrorMessage = addressErrorMessage,
+        bikeType = bikeType,
+        bikeTypeErrorMessage = bikeTypeErrorMessage,
+        description = description,
+        descriptionErrorMessage = descriptionErrorMessage,
+        message = message,
+        isNoInternetDialogVisible = isNoInternetDialogVisible
+    )
 }
 
 
 @Preview
 @Composable
-fun CoinDetailScreenPreview() {
+fun PreviewConfirmDetailsScreen() {
     CyclistanceTheme(true) {
-        CoinDetailContent(modifier = Modifier, state = ConfirmDetailsState())
+        ConfirmDetailsContent(
+            modifier = Modifier,
+            state = ConfirmDetailsState(),
+            address = "Address sample",
+            addressErrorMessage = "Invalid Address",
+            bikeType = "Mountain Bike",
+            bikeTypeErrorMessage = "",
+            description = "Flat tire",
+            descriptionErrorMessage = "",
+            message = "bla bla",
+            isNoInternetDialogVisible = false)
     }
 }
 
 
 @Composable
-fun CoinDetailContent(
+fun ConfirmDetailsContent(
     modifier: Modifier,
     state: ConfirmDetailsState = ConfirmDetailsState(),
+    address: String,
+    addressErrorMessage: String,
+    bikeType: String,
+    bikeTypeErrorMessage: String,
+    description: String,
+    descriptionErrorMessage: String,
+    message: String,
+    isNoInternetDialogVisible: Boolean,
     onValueChangeAddress: (String) -> Unit = {},
     onClickBikeType: (String) -> Unit = {},
     onClickDescriptionButton: (String) -> Unit = {},
@@ -157,7 +245,6 @@ fun CoinDetailContent(
 
             AddressTextField(
                 modifier = Modifier
-                    .shadow(2.dp, shape = RoundedCornerShape(12.dp), clip = true)
                     .constrainAs(addressTextField) {
                         top.linkTo(parent.top, margin = 15.dp)
                         end.linkTo(parent.end)
@@ -165,7 +252,8 @@ fun CoinDetailContent(
                         width = Dimension.percent(0.9f)
                         height = Dimension.wrapContent
                     },
-                address = state.address,
+                address = address,
+                addressErrorMessage = addressErrorMessage,
                 onValueChange = onValueChangeAddress,
                 enabled = !state.isLoading
             )
@@ -179,8 +267,8 @@ fun CoinDetailContent(
                         width = Dimension.percent(0.9f)
                         height = Dimension.wrapContent
                     },
-                errorMessage = state.bikeTypeErrorMessage,
-                selectedItem = state.bikeType,
+                errorMessage = bikeTypeErrorMessage,
+                selectedItem = bikeType,
                 onClickItem = onClickBikeType,
                 enabled = !state.isLoading)
 
@@ -194,8 +282,8 @@ fun CoinDetailContent(
                         height = Dimension.wrapContent
                         width = Dimension.percent(0.9f)
                     },
-                selectedOption = state.description,
-                errorMessage = state.descriptionErrorMessage,
+                selectedOption = description,
+                errorMessage = descriptionErrorMessage,
                 onClickButton = onClickDescriptionButton,
                 state = state,
             )
@@ -210,7 +298,7 @@ fun CoinDetailContent(
                         width = Dimension.percent(0.9f)
 
                     },
-                message = state.message,
+                message = message,
                 onChangeValueMessage = onValueChangeMessage,
                 enabled = !state.isLoading
             )
@@ -232,7 +320,7 @@ fun CoinDetailContent(
                         .size(22.dp)
                         .padding(end = 2.dp)
 
-                    )
+                )
 
                 Text(
                     text = "Your location will be shared with Rescuer",
@@ -270,13 +358,16 @@ fun CoinDetailContent(
                         }
                 )
             }
-            if (!state.hasInternet) {
-                NoInternetDialog(onDismiss = onDismissNoInternetDialog, modifier = Modifier.constrainAs(noInternetScreen) {
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.matchParent
-                    height = Dimension.wrapContent})
+            if (isNoInternetDialogVisible) {
+                NoInternetDialog(
+                    onDismiss = onDismissNoInternetDialog,
+                    modifier = Modifier.constrainAs(noInternetScreen) {
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.matchParent
+                        height = Dimension.wrapContent
+                    })
 
             }
         }

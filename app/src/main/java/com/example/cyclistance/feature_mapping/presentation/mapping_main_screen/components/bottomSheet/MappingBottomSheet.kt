@@ -1,10 +1,13 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.BottomSheetReachedDestination
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.BottomSheetRescueArrived
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.BottomSheetSearchingAssistance
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -13,6 +16,7 @@ fun MappingBottomSheet(
     modifier: Modifier = Modifier,
     isDarkTheme: Boolean = true,
     state: MappingState = MappingState(),
+    bottomSheetType: String,
     bottomSheetScaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
     onClickRescueArrivedButton: () -> Unit = {},
     onClickReachedDestinationButton: () -> Unit = {},
@@ -24,7 +28,7 @@ fun MappingBottomSheet(
 ) {
 
 
-    when (state.bottomSheetType) {
+    when (bottomSheetType) {
         BottomSheetType.RescuerArrived.type -> {
             BottomSheetRescueArrived(
                 modifier = modifier,
@@ -65,7 +69,7 @@ fun MappingBottomSheet(
                 bottomSheetScaffoldState = bottomSheetScaffoldState)
         }
 
-        else -> {
+        BottomSheetType.Collapsed.type -> {
             content(PaddingValues())
         }
     }

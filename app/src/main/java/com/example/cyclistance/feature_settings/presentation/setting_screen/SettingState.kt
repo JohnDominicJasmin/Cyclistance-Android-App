@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_main_screen
+package com.example.cyclistance.feature_settings.presentation.setting_screen
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

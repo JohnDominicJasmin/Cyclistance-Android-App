@@ -2,7 +2,7 @@ package com.example.cyclistance.feature_mapping.data.mapper
 
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserItemDto
-import com.example.cyclistance.feature_mapping.domain.model.CardModel
+import com.example.cyclistance.feature_mapping.domain.model.RescueRequestModel
 import com.example.cyclistance.feature_mapping.domain.model.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.model.UserItem
 
@@ -47,8 +47,8 @@ object UserMapper {
 
 
 
-    fun UserItem.toCardModel(distance: String = "---", eta: String = "---"): CardModel {
-        return CardModel(
+    fun UserItem.toCardModel(distance: String = "---", eta: String = "---"): RescueRequestModel {
+        return RescueRequestModel(
             id = this.id,
             name = this.name,
             profileImageUrl = this.profilePictureUrl,

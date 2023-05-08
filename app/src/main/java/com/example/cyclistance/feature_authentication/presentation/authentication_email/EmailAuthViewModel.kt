@@ -4,12 +4,10 @@ import android.os.CountDownTimer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.AuthConstants.EMAIL_AUTH_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.AuthConstants.ONE_SECOND_TO_MILLIS
 import com.example.cyclistance.core.utils.constants.AuthConstants.REFRESH_EMAIL_INTERVAL
 import com.example.cyclistance.core.utils.constants.AuthConstants.TIMER_COUNTS
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -49,6 +47,7 @@ class EmailAuthViewModel @Inject constructor(
     init{
         _state.update { it.copy(savedAccountEmail = authUseCase.getEmailUseCase() ?: "") }
         savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
+
     }
 
     fun onEvent(event: EmailAuthEvent) {
@@ -58,11 +57,10 @@ class EmailAuthViewModel @Inject constructor(
                     reloadEmail()
                 }
             }
-            
-            is EmailAuthEvent.DismissNoInternetDialog -> {
-                _state.update { it.copy(hasInternet = true) }
-            }
 
+            is EmailAuthEvent.ResendEmailVerification -> {
+                _state.update { it.copy(isEmailResend = true) }
+            }
 
             is EmailAuthEvent.SendEmailVerification -> {
                 sendEmailVerification()
@@ -76,14 +74,6 @@ class EmailAuthViewModel @Inject constructor(
                 job = viewModelScope.launch(context = defaultDispatcher) {
                     refreshEmailAsync()
                 }
-            }
-
-            is EmailAuthEvent.ResendButtonClick -> {
-                _state.update { it.copy(isEmailResendClicked = true) }
-            }
-
-            is EmailAuthEvent.DismissAlertDialog -> {
-                _state.update { it.copy(alertDialogModel = AlertDialogModel()) }
             }
         }
         savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
@@ -138,7 +128,7 @@ class EmailAuthViewModel @Inject constructor(
                 _state.update { it.copy(isLoading = false) }
                 when (exception) {
                     is AuthExceptions.NetworkException -> {
-                        _state.update { it.copy(hasInternet = false) }
+                        _eventFlow.emit(value = EmailAuthUiEvent.NoInternetConnection)
                     }
                     else -> {
                         Timber.e("${this.javaClass.name}: ${exception.message}")
@@ -152,9 +142,10 @@ class EmailAuthViewModel @Inject constructor(
 
     // TODO: move to repository
     private fun startTimer() {
+
         viewModelScope.launch(Dispatchers.Main) {
 
-            _state.update { it.copy(isTimerRunning = true) }
+            _eventFlow.emit(value = EmailAuthUiEvent.TimerStarted)
             savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
             verificationTimer = object : CountDownTimer(TIMER_COUNTS, ONE_SECOND_TO_MILLIS) {
                 override fun onTick(millisUntilFinished: Long) {
@@ -166,7 +157,9 @@ class EmailAuthViewModel @Inject constructor(
 
                 override fun onFinish() {
                     stopTimer()
-                    _state.update { it.copy(isTimerRunning = false) }
+                    this@launch.launch {
+                        _eventFlow.emit(value = EmailAuthUiEvent.TimerStopped)
+                    }
                     savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value
                 }
             }.start()
@@ -189,7 +182,7 @@ class EmailAuthViewModel @Inject constructor(
                 authUseCase.sendEmailVerificationUseCase()
             }.onSuccess { isEmailVerificationSent ->
                 _state.update { it.copy(isLoading = false) }
-                if (!state.value.isEmailResendClicked) {
+                if (!state.value.isEmailResend) {
                     return@launch
                 }
 
@@ -198,26 +191,12 @@ class EmailAuthViewModel @Inject constructor(
                     return@launch
                 }
 
-                _state.update {
-                    it.copy(
-                        alertDialogModel = AlertDialogModel(
-                            title = "New Email Sent.",
-                            description = "New verification email has been sent to your email address.",
-                            icon = R.raw.success))
-                }
-
-
+                _eventFlow.emit(value = EmailAuthUiEvent.EmailVerificationSent)
             }.onFailure {
 
                 _state.update { it.copy(isLoading = false) }
-                if (state.value.isEmailResendClicked) {
-                    _state.update {
-                        it.copy(
-                            alertDialogModel = AlertDialogModel(
-                                title = "Error",
-                                description = "Sorry, something went wrong. Please try again.",
-                                icon = R.raw.error))
-                    }
+                if (state.value.isEmailResend) {
+                    _eventFlow.emit(value = EmailAuthUiEvent.SendEmailVerificationFailed)
                 }
 
             }

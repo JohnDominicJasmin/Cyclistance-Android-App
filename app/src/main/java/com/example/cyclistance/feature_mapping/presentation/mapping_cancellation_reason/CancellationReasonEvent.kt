@@ -1,9 +1,9 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason
 
 sealed class CancellationReasonEvent{
-    data class SelectReason(val reason: String): CancellationReasonEvent()
-    object ClearReasonErrorMessage: CancellationReasonEvent()
-    data class EnterMessage(val message: String): CancellationReasonEvent()
-    object ConfirmCancellationReason: CancellationReasonEvent()
-    object DismissNoInternetDialog: CancellationReasonEvent()
+    data class ConfirmCancellationReason(
+        val reason: String,
+        val message: String,
+    ): CancellationReasonEvent()
+
 }

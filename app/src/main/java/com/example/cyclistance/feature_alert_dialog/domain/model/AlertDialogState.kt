@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Immutable
 @Stable
-data class AlertDialogModel(
+data class AlertDialogState(
     val title: String = "",
     val description: String = "",
     val icon: Int = -1

@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 
 
 @Parcelize
-data class CardModel(
+data class RescueRequestModel(
     val id: String? = null,
     val name: String? = null,
     val profileImageUrl:String? = null,

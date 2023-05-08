@@ -21,6 +21,7 @@ import com.example.cyclistance.core.utils.validation.FormatterUtils.getMapIconIm
 import com.example.cyclistance.databinding.ActivityMappingBinding
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import com.example.cyclistance.feature_mapping.domain.model.Role
+import com.example.cyclistance.feature_mapping.domain.model.RouteDirection
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.*
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.setDefaultSettings
@@ -51,6 +52,8 @@ fun MappingMapsScreen(
     isDarkTheme: Boolean,
     mapboxMap: MapboxMap?,
     hasTransaction: Boolean,
+    isNavigating: Boolean,
+    routeDirection: RouteDirection?,
     isRescueCancelled: Boolean,
     onInitializeMapboxMap: (MapboxMap) -> Unit,
     onChangeCameraState: (LatLng, Double) -> Unit,
@@ -100,9 +103,9 @@ fun MappingMapsScreen(
         hasTransaction || isRescueCancelled.not()
     }
 
-    val isNavigating = remember(state.isNavigating, state.routeDirection?.geometry) {
-        val geometry = state.routeDirection?.geometry
-        state.isNavigating || geometry?.isNotEmpty() == true
+    val isNavigating = remember(key1 = isNavigating, key2 = routeDirection?.geometry) {
+        val geometry = routeDirection?.geometry
+        isNavigating || geometry?.isNotEmpty() == true
     }
 
     LaunchedEffect(key1 = nearbyCyclists, key2= isNavigating, key3 = hasTransaction){

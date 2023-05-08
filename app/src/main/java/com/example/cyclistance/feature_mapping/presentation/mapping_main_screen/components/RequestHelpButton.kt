@@ -6,7 +6,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
@@ -21,12 +25,13 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun RequestHelpButton(
     modifier: Modifier = Modifier,
     onClickSearchButton: () -> Unit = {},
-    state: MappingState = MappingState()) {
+    state: MappingState = MappingState(),
+    visible: Boolean = true
+    ) {
 
-    val visibility =  state.requestHelpButtonVisible && state.isNavigating.not()
 
     AnimatedVisibility(
-        modifier = modifier, visible = visibility, enter = fadeIn(
+        modifier = modifier, visible = visible, enter = fadeIn(
             initialAlpha = 0.4f
         ),
         exit = fadeOut(

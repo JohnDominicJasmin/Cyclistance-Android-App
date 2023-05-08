@@ -24,12 +24,13 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.ConfirmDetailsScreen
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingScreen
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.RescueRequestScreen
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.IntroSliderScreen
 import com.example.cyclistance.feature_settings.presentation.setting_change_password.ChangePasswordScreen
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileScreen
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
-import com.example.cyclistance.feature_settings.presentation.setting_main_screen.SettingScreen
+import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 
@@ -42,7 +43,8 @@ fun NavGraph(
     editProfileViewModel: EditProfileViewModel,
     mappingViewModel: MappingViewModel,
     isDarkTheme: Boolean,
-    scaffoldState: ScaffoldState,
+    isNavigating: Boolean,
+    onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
     onToggleTheme: () -> Unit) {
 
     NavHost(navController = navController, startDestination = Screens.IntroSliderScreen.route) {
@@ -78,7 +80,7 @@ fun NavGraph(
         composable(
             route = Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE={$BOTTOM_SHEET_TYPE}",
             arguments = listOf(navArgument(BOTTOM_SHEET_TYPE) {
-                defaultValue = ""
+                defaultValue = BottomSheetType.Collapsed.type
             })
         ) {
 
@@ -88,9 +90,11 @@ fun NavGraph(
                     typeBottomSheet = bottomSheetType,
                     isDarkTheme = isDarkTheme,
                     navController = navController,
-                    scaffoldState = scaffoldState,
                     paddingValues = paddingValues,
-                    mappingViewModel = mappingViewModel)
+                    mappingViewModel = mappingViewModel,
+                    isNavigating = isNavigating,
+                    onChangeNavigatingState = onChangeNavigatingState
+                    )
             }
         }
 

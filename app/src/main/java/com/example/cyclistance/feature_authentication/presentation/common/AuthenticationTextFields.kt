@@ -1,22 +1,39 @@
 
 package com.example.cyclistance.feature_authentication.presentation.common
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.input.*
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,7 +44,7 @@ import com.example.cyclistance.theme.Black500
 fun ConfirmPasswordTextField(
     enabled: Boolean,
     password: String,
-    passwordExceptionMessage: String,
+    passwordErrorMessage: String,
     isPasswordVisible: Boolean,
     passwordVisibilityIconOnClick: () -> Unit,
     onValueChange: (String) -> Unit,
@@ -38,7 +55,7 @@ fun ConfirmPasswordTextField(
     SetupTextField(
         enabled = enabled,
         textFieldValue = password,
-        exceptionMessage = passwordExceptionMessage,
+        failureMessage = passwordErrorMessage,
         onValueChange = onValueChange,
         placeholderText = "Confirm Password",
         trailingIcon = {
@@ -69,7 +86,7 @@ fun PasswordTextField(
     SetupTextField(
         enabled = enabled,
         textFieldValue = password,
-        exceptionMessage = passwordExceptionMessage,
+        failureMessage = passwordExceptionMessage,
         onValueChange = onValueChange,
         placeholderText = "Password",
         trailingIcon = {
@@ -106,7 +123,7 @@ private fun SetupTextField(
     enabled: Boolean,
     focusRequester: FocusRequester = FocusRequester(),
     textFieldValue: String,
-    exceptionMessage: String,
+    failureMessage: String,
     onValueChange: (String) -> Unit,
     placeholderText: String,
     leadingIcon: ImageVector = Icons.Default.Lock,
@@ -116,7 +133,8 @@ private fun SetupTextField(
     keyboardActions: KeyboardActions = KeyboardActions()
 ) {
 
-    val hasError = exceptionMessage.isNotEmpty()
+    val hasError = failureMessage.isNotEmpty()
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
@@ -161,7 +179,7 @@ private fun SetupTextField(
         if (hasError) {
 
             Text(
-                text = exceptionMessage,
+                text = failureMessage,
                 color = MaterialTheme.colors.error,
                 style = MaterialTheme.typography.caption,
                 )
@@ -175,17 +193,17 @@ fun EmailTextField(
     enabled: Boolean,
     focusRequester: FocusRequester,
     email: String,
-    emailExceptionMessage: String,
+    emailErrorMessage: String,
     clearIconOnClick: ()-> Unit,
     onValueChange: (String) -> Unit) {
 
-    val hasError = emailExceptionMessage.isNotEmpty()
+    val hasError = emailErrorMessage.isNotEmpty()
 
     SetupTextField(
         enabled = enabled,
         focusRequester = focusRequester,
         textFieldValue = email,
-        exceptionMessage = emailExceptionMessage,
+        failureMessage = emailErrorMessage,
         onValueChange = onValueChange,
         placeholderText = "Email",
         leadingIcon = Icons.Default.Email,

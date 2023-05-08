@@ -43,26 +43,20 @@ class CancellationReasonViewModel @Inject constructor(
 
     fun onEvent(event: CancellationReasonEvent) {
         when (event) {
-            is CancellationReasonEvent.DismissNoInternetDialog -> {
-                _state.update { it.copy(hasInternet = true) }
-            }
-            is CancellationReasonEvent.SelectReason -> {
-                _state.update { it.copy(selectedReason = event.reason) }
-            }
-            is CancellationReasonEvent.ClearReasonErrorMessage -> {
-                _state.update { it.copy(reasonErrorMessage = "") }
-            }
+
             is CancellationReasonEvent.ConfirmCancellationReason -> {
-                confirmCancellationReason()
+
+                confirmCancellationReason(
+                    reason = event.reason,
+                    message = event.message)
+
             }
-            is CancellationReasonEvent.EnterMessage -> {
-                _state.update { it.copy(message = event.message) }
-            }
+
         }
         savedStateHandle[CANCELLATION_VM_STATE_KEY] = state.value
     }
 
-    private fun confirmCancellationReason() {
+    private fun confirmCancellationReason(reason: String, message: String) {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 startLoading()
@@ -71,8 +65,8 @@ class CancellationReasonViewModel @Inject constructor(
                         id = _transactionId,
                         cancellation = Cancellation(
                             cancellationReason = CancellationReason(
-                                reason = state.value.selectedReason,
-                                message = state.value.message
+                                reason = reason,
+                                message = message
                             ),
                             idCancelledBy = getId(),
                             nameCancelledBy = getName(),
@@ -133,11 +127,11 @@ class CancellationReasonViewModel @Inject constructor(
             }
 
             is MappingExceptions.NetworkException -> {
-                _state.update { it.copy(hasInternet = false) }
+                _eventFlow.emit(value = CancellationReasonUiEvent.NoInternetConnection)
             }
 
             is MappingExceptions.RescueTransactionReasonException -> {
-                _state.update { it.copy(reasonErrorMessage = this.message!!) }
+                _eventFlow.emit(value = CancellationReasonUiEvent.InvalidCancellationReason(this.message!!))
             }
 
         }

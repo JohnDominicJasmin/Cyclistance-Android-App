@@ -1,7 +1,12 @@
-package com.example.cyclistance.feature_settings.presentation.setting_main_screen
+package com.example.cyclistance.feature_settings.presentation.setting_screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -11,9 +16,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_settings.presentation.setting_main_screen.components.SectionTitle
-import com.example.cyclistance.feature_settings.presentation.setting_main_screen.components.SettingSwitchButton
-import com.example.cyclistance.feature_settings.presentation.setting_main_screen.components.SettingsButtonItem
+import com.example.cyclistance.feature_settings.presentation.setting_screen.components.SectionTitle
+import com.example.cyclistance.feature_settings.presentation.setting_screen.components.SettingSwitchButton
+import com.example.cyclistance.feature_settings.presentation.setting_screen.components.SettingsButtonItem
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.theme.CyclistanceTheme

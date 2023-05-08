@@ -8,6 +8,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Immutable
 @Stable
-data class ActiveRescueRequests(
-    val respondents: List<CardModel> = emptyList(),
+data class NewRescueRequestsModel(
+    val request: List<RescueRequestModel> = emptyList(),
 ) : Parcelable

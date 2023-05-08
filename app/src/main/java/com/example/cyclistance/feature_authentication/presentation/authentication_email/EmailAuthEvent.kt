@@ -2,12 +2,10 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 
 sealed class EmailAuthEvent{
 
-    object ResendButtonClick: EmailAuthEvent()
     object SendEmailVerification: EmailAuthEvent()
+    object ResendEmailVerification: EmailAuthEvent()
     object RefreshEmail: EmailAuthEvent()
     object StartTimer: EmailAuthEvent()
     object SubscribeEmailVerification: EmailAuthEvent()
-    object DismissAlertDialog: EmailAuthEvent()
-    object DismissNoInternetDialog: EmailAuthEvent()
 
 }

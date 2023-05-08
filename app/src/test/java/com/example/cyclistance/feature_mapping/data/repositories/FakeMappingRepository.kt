@@ -3,7 +3,12 @@ package com.example.cyclistance.feature_mapping.data.repositories
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Respondent
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping.domain.model.*
+import com.example.cyclistance.feature_mapping.domain.model.LiveLocationWSModel
+import com.example.cyclistance.feature_mapping.domain.model.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.RouteDirection
+import com.example.cyclistance.feature_mapping.domain.model.UserItem
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.mapbox.geojson.Point
 import kotlinx.coroutines.flow.Flow
@@ -231,7 +236,6 @@ class FakeMappingRepository : MappingRepository {
             throw MappingExceptions.NetworkException()
         }
 
-        // TODO: Make collectors listen to changes
         println("broadcastLocation")
     }
 

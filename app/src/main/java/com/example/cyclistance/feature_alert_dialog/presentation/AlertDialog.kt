@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogModel
+import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
 import com.example.cyclistance.feature_alert_dialog.presentation.utils.DialogCreator
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -26,7 +26,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun AlertDialog(
-    alertDialog: AlertDialogModel,
+    alertDialog: AlertDialogState,
     onDismissRequest: () -> Unit = {}) {
 
     val (isDialogOpen, onDialogVisibilityToggle) = rememberSaveable { mutableStateOf(true) }
@@ -98,7 +98,7 @@ fun AlertDialogPreview() {
 
     CyclistanceTheme(true) {
         AlertDialog(
-            alertDialog = AlertDialogModel(
+            alertDialog = AlertDialogState(
                 title = "Success!",
                 description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
                 icon = R.raw.info),

@@ -31,7 +31,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_mapping.domain.model.MappingBannerModel
+import com.example.cyclistance.feature_mapping.domain.model.MapSelectedRescuee
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.Black500
@@ -41,7 +41,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun MappingExpandableBanner(
     modifier: Modifier = Modifier,
-    banner: MappingBannerModel,
+    banner: MapSelectedRescuee,
     onClickDismissButton: () -> Unit) {
 
 
@@ -278,7 +278,7 @@ fun MappingExpandableBannerPreview() {
             modifier = Modifier
                 .padding(all = 6.dp)
                 .fillMaxWidth(),
-            banner = MappingBannerModel(
+            banner = MapSelectedRescuee(
                 userProfileImage = "https://www.erlanger.org/find-a-doctor/media/PhysicianPhotos/Carbone_1436.jpg",
                 name = "John Doe",
                 issue = "Faulty Brakes",
