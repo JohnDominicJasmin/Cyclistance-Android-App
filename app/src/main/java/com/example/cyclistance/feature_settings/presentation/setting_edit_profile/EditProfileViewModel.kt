@@ -23,70 +23,46 @@ class EditProfileViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase,
     private val defaultDispatcher: CoroutineDispatcher
-    ) : ViewModel() {
+) : ViewModel() {
 
-    private val _state = MutableStateFlow(savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] ?: EditProfileState())
+    private val _state =
+        MutableStateFlow(savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] ?: EditProfileState())
     val state = _state.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<EditProfileUiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
 
+    init {
+        loadName()
+        loadPhoneNumber()
+        loadPhoto()
+    }
 
     fun onEvent(event: EditProfileEvent) {
 
         when (event) {
             is EditProfileEvent.Save -> {
-                updateUserProfile()
-            }
-            is EditProfileEvent.DismissNoInternetDialog -> {
-                _state.update { it.copy(hasInternet = true) }
-            }
-            is EditProfileEvent.OnClickGalleryButton -> {
-                _state.update { it.copy(galleryButtonClick = !state.value.galleryButtonClick) }
-            }
-
-            is EditProfileEvent.EnterPhoneNumber -> {
-                _state.update { it.copy(phoneNumber = event.phoneNumber, phoneNumberErrorMessage = "") }
-
-            }
-            is EditProfileEvent.EnterName -> {
-                _state.update { it.copy(name = event.name, nameErrorMessage = "") }
-            }
-            is EditProfileEvent.SelectImageUri -> {
-                _state.update { it.copy(imageUri = event.uri) }
-            }
-
-            is EditProfileEvent.LoadPhoto -> {
-                loadPhoto()
-            }
-
-            is EditProfileEvent.LoadPhoneNumber -> {
-                loadPhoneNumber()
-            }
-            is EditProfileEvent.LoadName -> {
-                loadName()
+                updateUserProfile(
+                    imageUri = event.imageUri,
+                    phoneNumber = event.phoneNumber,
+                    name = event.name)
             }
         }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
-
-
     }
 
 
     private fun loadPhoto() {
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
-                _state.update {
-                    it.copy(photoUrl = getPhotoUrl())
-                }
                 startLoading()
-            }.onSuccess {
-                _state.update {
-                    it.copy(
-                        isLoading = false
-                    )
-                }
+                getPhotoUrl()
+            }.onSuccess { photoUrl ->
+                _eventFlow.emit(value = EditProfileUiEvent.GetPhotoUrlSuccess(photoUrl))
+                finishLoading()
+            }.onFailure {
+                finishLoading()
             }
         }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
@@ -95,22 +71,15 @@ class EditProfileViewModel @Inject constructor(
     private fun loadName() {
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
-                _state.update {
-                    val name = getName()
-                    it.copy(
-                        name = name,
-                        nameSnapshot = name
-                    )
-                }
                 startLoading()
-            }.onSuccess {
-                _state.update { it.copy(isLoading = false) }
+                getName()
+            }.onSuccess { name ->
+                _eventFlow.emit(value = EditProfileUiEvent.GetNameSuccess(name))
+                _state.update { it.copy(nameSnapshot = name) }
+                finishLoading()
             }.onFailure { exception ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        nameErrorMessage = exception.message!!)
-                }
+                finishLoading()
+                _eventFlow.emit(value = EditProfileUiEvent.GetNameFailed(exception.message!!))
 
             }
         }
@@ -118,83 +87,70 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private fun loadPhoneNumber() {
-        viewModelScope.launch(context = defaultDispatcher){
+        viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
-                _state.update {
-                    val phoneNumber = getPhoneNumber()
-                    it.copy(
-                        phoneNumber = phoneNumber,
-                        phoneNumberSnapshot = phoneNumber)
-                }
                 startLoading()
-
-            }.onSuccess {
-                _state.update { it.copy(isLoading = false) }
+                getPhoneNumber()
+            }.onSuccess { phoneNumber ->
+                finishLoading()
+                _eventFlow.emit(value = EditProfileUiEvent.GetPhoneNumberSuccess(phoneNumber))
+                _state.update { it.copy(phoneNumberSnapshot = phoneNumber) }
             }.onFailure { exception ->
-                _state.update {
-                    it.copy(
-                        isLoading = false,
-                        phoneNumberErrorMessage = exception.message!!)
-                }
+                finishLoading()
+                _eventFlow.emit(value = EditProfileUiEvent.GetPhoneNumberFailed(reason = exception.message!!))
             }
         }
 
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
-    private fun updateUserProfile() {
+    private fun updateUserProfile(imageUri: String, phoneNumber: String, name: String) {
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 startLoading()
-                val photoUri = state.value.imageUri?.let { authUseCase.uploadImageUseCase(it) }
-                val phoneNumberChanges = with(state.value) {
-                    phoneNumber != phoneNumberSnapshot
-                }
+                val photoUri = imageUri?.let { authUseCase.uploadImageUseCase(it) }
+                val phoneNumberChanges = phoneNumber != state.value.phoneNumberSnapshot
+
 
                 if (phoneNumberChanges) {
-                    authUseCase.updatePhoneNumberUseCase(state.value.phoneNumber.trim())
+                    authUseCase.updatePhoneNumberUseCase(phoneNumber.trim())
                 }
 
                 authUseCase.updateProfileUseCase(
                     photoUri = photoUri,
-                    name = state.value.name.trim())
+                    name = name.trim())
 
             }.onSuccess {
+                finishLoading()
                 _eventFlow.emit(EditProfileUiEvent.UpdateUserProfileSuccess(reason = "Successfully Updated!"))
             }.onFailure { exception ->
+                finishLoading()
                 when (exception) {
                     is MappingExceptions.PhoneNumberException -> {
-                        _state.update {
-                            it.copy(
-                                phoneNumberErrorMessage = exception.message!!)
-                        }
+                        _eventFlow.emit(value = EditProfileUiEvent.GetPhoneNumberFailed(reason = exception.message!!))
                     }
+
                     is MappingExceptions.NameException -> {
-                        _state.update {
-                            it.copy(
-                                nameErrorMessage = exception.message!!)
-                        }
+                        _eventFlow.emit(value = EditProfileUiEvent.GetNameFailed(reason = exception.message!!))
                     }
+
                     is AuthExceptions.NetworkException -> {
-                       _state.update { it.copy(hasInternet = false) }
+                        _eventFlow.emit(value = EditProfileUiEvent.NoInternetConnection)
                     }
                 }
-
-            }.also {
-                finishLoading()
             }
         }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
 
-    private fun finishLoading(){
+    private fun finishLoading() {
         _state.update { it.copy(isLoading = false) }
     }
-    private fun startLoading(){
+
+    private fun startLoading() {
         _state.update { it.copy(isLoading = true) }
     }
-
 
 
     private fun getName() = authUseCase.getNameUseCase()
