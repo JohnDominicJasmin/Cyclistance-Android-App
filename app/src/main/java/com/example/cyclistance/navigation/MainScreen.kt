@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.core.utils.composable_utils.ComposableLifecycle
@@ -58,8 +59,7 @@ import kotlinx.coroutines.launch
 fun MainScreen(
     settingViewModel: SettingViewModel = hiltViewModel(),
     mappingViewModel: MappingViewModel = hiltViewModel(),
-    editProfileViewModel: EditProfileViewModel = hiltViewModel()
-) {
+    editProfileViewModel: EditProfileViewModel = hiltViewModel()) {
 
 
     val navController = rememberNavController()
@@ -69,9 +69,8 @@ fun MainScreen(
     var internetAvailable by rememberSaveable { mutableStateOf(true) }
     var isNavigating by rememberSaveable{ mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
-    val editProfileState by editProfileViewModel.state.collectAsState()
-    val mappingState by mappingViewModel.state.collectAsState()
-    val settingState by settingViewModel.state.collectAsState()
+    val mappingState by mappingViewModel.state.collectAsStateWithLifecycle()
+    val settingState by settingViewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val onChangeNavigatingState = remember{{ navigating: Boolean ->

@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.permission.requestPermission
 import com.example.cyclistance.core.utils.save_images.ImageUtils.toImageUri
@@ -55,7 +56,7 @@ fun EditProfileScreen(
     paddingValues: PaddingValues
 ) {
 
-    val state by editProfileViewModel.state.collectAsState()
+    val state by editProfileViewModel.state.collectAsStateWithLifecycle()
 
 
     val context = LocalContext.current
