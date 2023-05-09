@@ -41,7 +41,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.MappingDrawerContent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.TitleTopAppBar
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.TopAppBarCreator
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingUiEvent
@@ -124,9 +123,7 @@ fun MainScreen(
         }
     }
 
-    val onClickSaveProfile = remember(scaffoldState.drawerState){{
-        editProfileViewModel.onEvent(EditProfileEvent.Save)
-    }}
+
     val onClickSettings = remember{{
         coroutineScope.launch {
             scaffoldState.drawerState.close()
