@@ -1,14 +1,21 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -21,13 +28,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileState
-import com.example.cyclistance.theme.*
+import com.example.cyclistance.theme.Black450
+import com.example.cyclistance.theme.Black500
 
 
 @Composable
 fun TextFieldInputArea(
     modifier: Modifier,
     state: EditProfileState,
+    name:String,
+    nameErrorMessage:String,
+    phoneNumber:String,
+    phoneNumberErrorMessage:String,
     onValueChangeName: (String) -> Unit,
     onValueChangePhoneNumber: (String) -> Unit,
     keyboardActions: KeyboardActions
@@ -38,10 +50,10 @@ fun TextFieldInputArea(
         modifier = modifier, verticalArrangement = Arrangement.spacedBy(20.dp)) {
 
 
-        TextFieldCreator(label = "Full Name", errorMessage = state.nameErrorMessage) {
+        TextFieldCreator(label = "Full Name", errorMessage = nameErrorMessage) {
             TextFieldItem(
                 enabled = !state.isLoading,
-                value = state.name,
+                value = name,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Words,
                     autoCorrect = false,
@@ -52,7 +64,7 @@ fun TextFieldInputArea(
         }
 
 
-        TextFieldCreator(label = "Phone Number", errorMessage = state.phoneNumberErrorMessage, ) {
+        TextFieldCreator(label = "Phone Number", errorMessage = phoneNumberErrorMessage, ) {
 
             Row(verticalAlignment = Alignment.CenterVertically) {
 
@@ -64,7 +76,7 @@ fun TextFieldInputArea(
 
                 TextFieldItem(
                     enabled = !state.isLoading,
-                    value = state.phoneNumber,
+                    value = phoneNumber,
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.None,
                         autoCorrect = false,
@@ -93,7 +105,7 @@ private fun TextFieldCreator(
     content: @Composable () -> Unit
     ) {
 
-    val hasError by derivedStateOf { errorMessage.isNotEmpty() }
+    val hasError by remember(errorMessage){ derivedStateOf { errorMessage.isNotEmpty() } }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
 
@@ -158,6 +170,10 @@ fun EditProfileTextFieldPreview() {
         onValueChangeName = { },
         onValueChangePhoneNumber = {},
         keyboardActions = KeyboardActions { },
+        name = "John Doe",
+        nameErrorMessage = "Sample Error",
+        phoneNumber = "09123456789",
+        phoneNumberErrorMessage = "Sample Error"
     )
 
 }

@@ -20,6 +20,7 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -33,14 +34,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.permission.requestPermission
-import com.example.cyclistance.core.utils.save_images.ImageUtils.saveImageToGallery
 import com.example.cyclistance.core.utils.save_images.ImageUtils.toImageUri
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.SelectImageBottomSheet
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.TextFieldInputArea
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.utils.isUserInformationChanges
 import com.example.cyclistance.theme.Blue600
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.*
@@ -63,14 +62,30 @@ fun EditProfileScreen(
     val context = LocalContext.current
 
     var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
+    val (selectedImageUri, onChangeSelectedImageUri) = remember { mutableStateOf("") }
 
-    val saveImageToGallery = remember {{ bitmap: Bitmap ->
-        context.saveImageToGallery(bitmap = bitmap)
-    }}
+    val (photoUrl, onChangePhotoUrl) = remember { mutableStateOf("") }
+
+
+
+    val (name, onChangeName) = remember { mutableStateOf("") }
+    val (nameErrorMessage, onChangeNameError) = remember { mutableStateOf("") }
+
+    val (phoneNumber, onChangePhoneNumber) = remember { mutableStateOf("") }
+    val (phoneNumberErrorMessage, onChangePhoneNumberError) = remember { mutableStateOf("") }
+
+    val (isNoInternetVisible, onChangeNoInternetVisibility) = rememberSaveable { mutableStateOf(false) }
+
+    val isUserInformationChanges by remember {
+        derivedStateOf { name != state.nameSnapshot ||
+                         phoneNumber != state.phoneNumberSnapshot ||
+                         selectedImageUri.isNotEmpty() }
+    }
+
 
     val openGalleryResultLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            editProfileViewModel.onEvent(event = EditProfileEvent.SelectImageUri(uri = uri.toString()))
+            onChangeSelectedImageUri(uri.toString())
             uri?.let { selectedUri ->
                 imageBitmap =
                     when {
@@ -97,7 +112,7 @@ fun EditProfileScreen(
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
             val uri = bitmap?.toImageUri(context).toString()
             imageBitmap = bitmap
-            editProfileViewModel.onEvent(event = EditProfileEvent.SelectImageUri(uri = uri))
+            onChangeSelectedImageUri(uri)
 
         }
 
@@ -107,7 +122,7 @@ fun EditProfileScreen(
             permissions = listOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)) { permissionGranted ->
-            if (state.galleryButtonClick && permissionGranted.values.all { it }) {
+            if (permissionGranted.values.all { it }) {
                 openGalleryResultLauncher.launch("image/*")
             }
         }
@@ -126,13 +141,6 @@ fun EditProfileScreen(
 
     LaunchedEffect(true) {
 
-        editProfileViewModel.onEvent(event = EditProfileEvent.LoadName)
-        editProfileViewModel.onEvent(event = EditProfileEvent.LoadPhoto)
-        editProfileViewModel.onEvent(event = EditProfileEvent.LoadPhoneNumber)
-
-        if (!accessStoragePermissionState.allPermissionsGranted) {
-            accessStoragePermissionState.launchMultiplePermissionRequest()
-        }
 
         editProfileViewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -140,6 +148,32 @@ fun EditProfileScreen(
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                     navController.popBackStack()
                 }
+
+                is EditProfileUiEvent.GetPhotoUrlSuccess -> {
+                    onChangePhotoUrl(event.photoUrl)
+                }
+
+                is EditProfileUiEvent.GetNameSuccess -> {
+                    onChangeName(event.name)
+                }
+
+                is EditProfileUiEvent.GetNameFailed -> {
+                    onChangeNameError(event.reason)
+                }
+
+                is EditProfileUiEvent.GetPhoneNumberSuccess -> {
+                    onChangePhoneNumber(event.phoneNumber)
+                }
+
+                is EditProfileUiEvent.GetPhoneNumberFailed -> {
+                    onChangePhoneNumberError(event.reason)
+                }
+
+                is EditProfileUiEvent.NoInternetConnection -> {
+                    onChangeNoInternetVisibility(true)
+                }
+
+
             }
         }
 
@@ -147,7 +181,6 @@ fun EditProfileScreen(
 
 
     val onClickGalleryButton = remember{{
-        editProfileViewModel.onEvent(event = EditProfileEvent.OnClickGalleryButton)
         accessStoragePermissionState.requestPermission(
             context = context,
             rationalMessage = "Storage permission is not yet granted.") {
@@ -167,19 +200,21 @@ fun EditProfileScreen(
 
     val onValueChangeName = remember {
         { name: String ->
-            editProfileViewModel.onEvent(
-                event = EditProfileEvent.EnterName(name = name))
+            onChangeName(name)
         }
     }
     val onValueChangePhoneNumber = remember {
         { phoneNumber: String ->
-            editProfileViewModel.onEvent(
-                event = EditProfileEvent.EnterPhoneNumber(phoneNumber = phoneNumber))
+            onChangePhoneNumberError(phoneNumber)
         }
     }
     val keyboardActions = remember {
         KeyboardActions(onDone = {
-            editProfileViewModel.onEvent(event = EditProfileEvent.Save)
+            editProfileViewModel.onEvent(
+                event = EditProfileEvent.Save(
+                    imageUri = selectedImageUri,
+                    name = name,
+                    phoneNumber = phoneNumber))
         })
     }
     val onClickCancelButton = remember {{
@@ -187,17 +222,20 @@ fun EditProfileScreen(
             Unit
     }}
     val onClickConfirmButton = remember {{
-            editProfileViewModel.onEvent(event = EditProfileEvent.Save)
+            editProfileViewModel.onEvent(event = EditProfileEvent.Save(
+                imageUri = selectedImageUri,
+                name = name,
+                phoneNumber = phoneNumber))
     }}
 
     val onDismissNoInternetDialog = remember{{
-        editProfileViewModel.onEvent(event = EditProfileEvent.DismissNoInternetDialog)
+        onChangeNoInternetVisibility(false)
     }}
 
     EditProfileScreenContent(
         modifier = Modifier
             .padding(paddingValues),
-        photoUrl = imageBitmap?.asImageBitmap() ?: state.photoUrl,
+        photoUrl = imageBitmap?.asImageBitmap() ?: photoUrl,
         onClickGalleryButton = onClickGalleryButton,
         onClickCameraButton = onClickCameraButton,
         state = state,
@@ -206,7 +244,13 @@ fun EditProfileScreen(
         keyboardActions = keyboardActions,
         onClickCancelButton = onClickCancelButton,
         onClickConfirmButton = onClickConfirmButton,
-        onDismissNoInternetDialog = onDismissNoInternetDialog
+        onDismissNoInternetDialog = onDismissNoInternetDialog,
+        isNoInternetVisible = isNoInternetVisible,
+        name = name,
+        nameErrorMessage = nameErrorMessage,
+        phoneNumber = phoneNumber,
+        phoneNumberErrorMessage = phoneNumberErrorMessage,
+        isUserInformationChanges = isUserInformationChanges
         )
 
 }
@@ -219,10 +263,14 @@ fun EditProfilePreview() {
             modifier = Modifier,
             photoUrl = "",
             state = EditProfileState(
-                isLoading = false,
-                nameErrorMessage = "Field cannot be blank",
-                phoneNumberErrorMessage = "Field cannot be blank",
-                hasInternet = false))
+                isLoading = false),
+            isNoInternetVisible = false,
+            name = "John Doe",
+            nameErrorMessage = "Sample Error",
+            phoneNumber = "09123456789",
+            phoneNumberErrorMessage = "Sample Error",
+            isUserInformationChanges = true
+            )
     }
 }
 
@@ -233,6 +281,12 @@ fun EditProfileScreenContent(
     modifier: Modifier,
     photoUrl: Any,
     state: EditProfileState = EditProfileState(),
+    isNoInternetVisible: Boolean,
+    isUserInformationChanges: Boolean,
+    name:String,
+    nameErrorMessage:String,
+    phoneNumber:String,
+    phoneNumberErrorMessage:String,
     onClickGalleryButton: () -> Unit = {},
     onClickCameraButton: () -> Unit = {},
     onValueChangeName: (String) -> Unit = {},
@@ -332,6 +386,11 @@ fun EditProfileScreenContent(
                 onValueChangeName = onValueChangeName,
                 onValueChangePhoneNumber = onValueChangePhoneNumber,
                 keyboardActions = keyboardActions,
+                name = name,
+                nameErrorMessage = nameErrorMessage,
+                phoneNumber = phoneNumber,
+                phoneNumberErrorMessage = phoneNumberErrorMessage,
+
             )
 
 
@@ -350,10 +409,10 @@ fun EditProfileScreenContent(
                 onClickCancelButton = onClickCancelButton,
                 onClickConfirmButton = onClickConfirmButton,
                 negativeButtonEnabled = !state.isLoading,
-                positiveButtonEnabled = !state.isLoading && state.isUserInformationChanges(),
+                positiveButtonEnabled = !state.isLoading && isUserInformationChanges,
             )
 
-            if (!state.hasInternet) {
+            if (isNoInternetVisible) {
 
                 NoInternetDialog(
                     modifier = Modifier.constrainAs(noInternetDialog) {
