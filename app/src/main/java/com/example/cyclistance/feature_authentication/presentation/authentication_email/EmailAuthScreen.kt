@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -101,9 +102,11 @@ fun EmailAuthScreen(
         }
     }
 
-    val onDismissNoInternetDialog = remember {{
-        isNoInternetDialogVisible = false
-    }}
+    val onDismissNoInternetDialog = remember {
+        {
+            isNoInternetDialogVisible = false
+        }
+    }
 
 
 
@@ -130,15 +133,19 @@ fun EmailAuthScreen(
                     is EmailAuthUiEvent.EmailVerificationNotSent -> {
                         Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()
                     }
+
                     is EmailAuthUiEvent.NoInternetConnection -> {
                         isNoInternetDialogVisible = true
                     }
+
                     is EmailAuthUiEvent.TimerStarted -> {
                         isTimerRunning = true
                     }
+
                     is EmailAuthUiEvent.TimerStopped -> {
                         isTimerRunning = false
                     }
+
                     is EmailAuthUiEvent.EmailVerificationSent -> {
                         alertDialogState = AlertDialogState(
                             title = "New Email Sent.",
@@ -146,6 +153,7 @@ fun EmailAuthScreen(
                             icon = R.raw.success
                         )
                     }
+
                     is EmailAuthUiEvent.SendEmailVerificationFailed -> {
                         alertDialogState = AlertDialogState(
                             title = "Email Verification Failed.",
@@ -174,7 +182,7 @@ fun EmailAuthScreen(
         alertDialogState = alertDialogState,
         isTimerRunning = isTimerRunning,
         isNoInternetDialogVisible = isNoInternetDialogVisible,
-        )
+    )
 
 }
 
@@ -191,7 +199,7 @@ fun EmailAuthScreenPreview() {
             alertDialogState = AlertDialogState(
                 title = "Sample Title",
                 description = "Sample Description",
-                icon = R.drawable.ic_check_icon
+                icon = R.raw.success
             ),
             isTimerRunning = true,
             isNoInternetDialogVisible = false,
@@ -214,69 +222,73 @@ fun EmailAuthScreenContent(
     onClickResendButton: () -> Unit = {},
     onDismissNoInternetDialog: () -> Unit = {}) {
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)) {
+
+    Surface(
+        color = MaterialTheme.colors.background,
+        modifier = modifier.fillMaxSize()
+    ) {
+
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center) {
 
 
-        ConstraintLayout(
-            constraintSet = emailAuthConstraints,
-            modifier = Modifier
-                .fillMaxHeight(0.9f)
-                .background(MaterialTheme.colors.background)) {
-
-            Image(
-                contentDescription = "App Icon",
-                painter = painterResource(id = if (isDarkTheme) R.drawable.ic_dark_email else R.drawable.ic_light_email),
+            ConstraintLayout(
+                constraintSet = emailAuthConstraints,
                 modifier = Modifier
-                    .height(165.dp)
-                    .width(155.dp)
-                    .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
+                    .fillMaxHeight(0.9f)
+                    .background(MaterialTheme.colors.background)) {
 
-            )
+                Image(
+                    contentDescription = "App Icon",
+                    painter = painterResource(id = if (isDarkTheme) R.drawable.ic_dark_email else R.drawable.ic_light_email),
+                    modifier = Modifier
+                        .height(165.dp)
+                        .width(155.dp)
+                        .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
 
-            EmailAuthTextStatus(email = emailAuthState.savedAccountEmail)
-
-
-            if (alertDialogState.visible()) {
-                AlertDialog(
-                    alertDialog = alertDialogState,
-                    onDismissRequest = onDismissAlertDialog
                 )
+
+                EmailAuthTextStatus(email = emailAuthState.savedAccountEmail)
+
+
+                if (alertDialogState.visible()) {
+                    AlertDialog(
+                        alertDialog = alertDialogState,
+                        onDismissRequest = onDismissAlertDialog
+                    )
+                }
+
+                if (emailAuthState.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.layoutId(
+                            AuthenticationConstraintsItem.ProgressBar.layoutId))
+                }
+
+
+                val secondsRemainingText = remember(isTimerRunning, emailAuthState.secondsLeft) {
+                    if (isTimerRunning) "Resend Email in ${emailAuthState.secondsLeft}s" else "Resend Email"
+                }
+
+                EmailAuthVerifyEmailButton(
+                    onClickVerifyButton = onClickVerifyButton,
+                    enabled = !emailAuthState.isLoading)
+
+                EmailAuthResendButton(
+                    text = secondsRemainingText,
+                    isEnabled = !isTimerRunning && !emailAuthState.isLoading,
+                    onClickResendButton = onClickResendButton)
+
+                if (isNoInternetDialogVisible) {
+                    NoInternetDialog(
+                        onDismiss = onDismissNoInternetDialog,
+                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                    )
+                }
+
             }
 
-            if (emailAuthState.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.layoutId(
-                        AuthenticationConstraintsItem.ProgressBar.layoutId))
-            }
-
-
-            val secondsRemainingText = remember(isTimerRunning, emailAuthState.secondsLeft) {
-                if (isTimerRunning) "Resend Email in ${emailAuthState.secondsLeft}s" else "Resend Email"
-            }
-
-            EmailAuthVerifyEmailButton(
-                onClickVerifyButton = onClickVerifyButton,
-                enabled = !emailAuthState.isLoading)
-
-            EmailAuthResendButton(
-                text = secondsRemainingText,
-                isEnabled = !isTimerRunning && !emailAuthState.isLoading,
-                onClickResendButton = onClickResendButton)
-
-            if (isNoInternetDialogVisible) {
-                NoInternetDialog(
-                    onDismiss = onDismissNoInternetDialog,
-                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                )
-            }
 
         }
-
-
     }
 }

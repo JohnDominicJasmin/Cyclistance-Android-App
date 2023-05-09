@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -262,11 +262,11 @@ fun SignUpScreenContent(
 ) {
 
 
+
+    Surface(color = MaterialTheme.colors.background, modifier = modifier.fillMaxSize()){
+
     ConstraintLayout(
-        constraintSet = signUpConstraints,
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)) {
+        constraintSet = signUpConstraints) {
 
         Spacer(
             modifier = Modifier.layoutId(
@@ -330,7 +330,7 @@ fun SignUpScreenContent(
             )
         }
 
-
+    }
     }
 }
 

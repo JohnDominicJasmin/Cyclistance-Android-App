@@ -11,7 +11,6 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -74,12 +73,16 @@ fun EditProfileScreen(
     val (phoneNumber, onChangePhoneNumber) = remember { mutableStateOf("") }
     val (phoneNumberErrorMessage, onChangePhoneNumberError) = remember { mutableStateOf("") }
 
-    val (isNoInternetVisible, onChangeNoInternetVisibility) = rememberSaveable { mutableStateOf(false) }
+    val (isNoInternetVisible, onChangeNoInternetVisibility) = rememberSaveable {
+        mutableStateOf(false)
+    }
 
     val isUserInformationChanges by remember {
-        derivedStateOf { name != state.nameSnapshot ||
-                         phoneNumber != state.phoneNumberSnapshot ||
-                         selectedImageUri.isNotEmpty() }
+        derivedStateOf {
+            name != state.nameSnapshot ||
+            phoneNumber != state.phoneNumberSnapshot ||
+            selectedImageUri.isNotEmpty()
+        }
     }
 
 
@@ -180,23 +183,26 @@ fun EditProfileScreen(
     }
 
 
-    val onClickGalleryButton = remember{{
-        accessStoragePermissionState.requestPermission(
-            context = context,
-            rationalMessage = "Storage permission is not yet granted.") {
-            openGalleryResultLauncher.launch("image/*")
-        }
+    val onClickGalleryButton = remember {
+        {
+            accessStoragePermissionState.requestPermission(
+                context = context,
+                rationalMessage = "Storage permission is not yet granted.") {
+                openGalleryResultLauncher.launch("image/*")
+            }
 
         }
     }
 
-    val onClickCameraButton = remember {{
+    val onClickCameraButton = remember {
+        {
             openCameraPermissionState.requestPermission(
                 context = context,
                 rationalMessage = "Camera permission is not yet granted.") {
                 openCameraResultLauncher.launch()
             }
-        }}
+        }
+    }
 
     val onValueChangeName = remember {
         { name: String ->
@@ -217,20 +223,27 @@ fun EditProfileScreen(
                     phoneNumber = phoneNumber))
         })
     }
-    val onClickCancelButton = remember {{
+    val onClickCancelButton = remember {
+        {
             navController.popBackStack()
             Unit
-    }}
-    val onClickConfirmButton = remember {{
-            editProfileViewModel.onEvent(event = EditProfileEvent.Save(
-                imageUri = selectedImageUri,
-                name = name,
-                phoneNumber = phoneNumber))
-    }}
+        }
+    }
+    val onClickConfirmButton = remember {
+        {
+            editProfileViewModel.onEvent(
+                event = EditProfileEvent.Save(
+                    imageUri = selectedImageUri,
+                    name = name,
+                    phoneNumber = phoneNumber))
+        }
+    }
 
-    val onDismissNoInternetDialog = remember{{
-        onChangeNoInternetVisibility(false)
-    }}
+    val onDismissNoInternetDialog = remember {
+        {
+            onChangeNoInternetVisibility(false)
+        }
+    }
 
     EditProfileScreenContent(
         modifier = Modifier
@@ -251,7 +264,7 @@ fun EditProfileScreen(
         phoneNumber = phoneNumber,
         phoneNumberErrorMessage = phoneNumberErrorMessage,
         isUserInformationChanges = isUserInformationChanges
-        )
+    )
 
 }
 
@@ -270,7 +283,7 @@ fun EditProfilePreview() {
             phoneNumber = "09123456789",
             phoneNumberErrorMessage = "Sample Error",
             isUserInformationChanges = true
-            )
+        )
     }
 }
 
@@ -283,10 +296,10 @@ fun EditProfileScreenContent(
     state: EditProfileState = EditProfileState(),
     isNoInternetVisible: Boolean,
     isUserInformationChanges: Boolean,
-    name:String,
-    nameErrorMessage:String,
-    phoneNumber:String,
-    phoneNumberErrorMessage:String,
+    name: String,
+    nameErrorMessage: String,
+    phoneNumber: String,
+    phoneNumberErrorMessage: String,
     onClickGalleryButton: () -> Unit = {},
     onClickCameraButton: () -> Unit = {},
     onValueChangeName: (String) -> Unit = {},
@@ -300,140 +313,140 @@ fun EditProfileScreenContent(
 
     val scope = rememberCoroutineScope()
     val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-    val toggleBottomSheet = remember(bottomSheetScaffoldState, state.isLoading) {{
-        scope.launch {
-            if (!state.isLoading) {
-                with(bottomSheetScaffoldState) {
-                    if (isVisible) hide() else show()
+    val toggleBottomSheet = remember(bottomSheetScaffoldState, state.isLoading) {
+        {
+            scope.launch {
+                if (!state.isLoading) {
+                    with(bottomSheetScaffoldState) {
+                        if (isVisible) hide() else show()
+                    }
                 }
             }
         }
-    }}
+    }
 
 
 
+    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
-    SelectImageBottomSheet(
-        onClickGalleryButton = {
-            toggleBottomSheet()
-            onClickGalleryButton()
-        },
-        onClickCameraButton = {
-            toggleBottomSheet()
-            onClickCameraButton()
-        },
-        bottomSheetScaffoldState = bottomSheetScaffoldState,
-        editProfileState = state) {
-
-        ConstraintLayout(
-            modifier = modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background)) {
-
-
-            val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText, progressBar, noInternetDialog) = createRefs()
-
-            ProfilePictureArea(
-                photoUrl = photoUrl,
-                modifier = Modifier
-                    .size(125.dp)
-                    .constrainAs(profilePictureArea) {
-
-                        top.linkTo(parent.top, margin = 30.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-
-                    },
-                onClick = {
-                    toggleBottomSheet()
-                })
-
-
-
-
-            ClickableText(text = buildAnnotatedString {
-                withStyle(
-                    style = SpanStyle(color = Blue600, fontWeight = FontWeight.SemiBold)) {
-                    append("Change Profile Photo")
-                }
+        SelectImageBottomSheet(
+            onClickGalleryButton = {
+                toggleBottomSheet()
+                onClickGalleryButton()
             },
-                modifier = Modifier.constrainAs(changePhotoText) {
-                    top.linkTo(profilePictureArea.bottom, margin = 12.dp)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
+            onClickCameraButton = {
+                toggleBottomSheet()
+                onClickCameraButton()
+            },
+            bottomSheetScaffoldState = bottomSheetScaffoldState,
+            editProfileState = state) {
 
+            ConstraintLayout {
+
+                val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText, progressBar, noInternetDialog) = createRefs()
+
+                ProfilePictureArea(
+                    photoUrl = photoUrl,
+                    modifier = Modifier
+                        .size(125.dp)
+                        .constrainAs(profilePictureArea) {
+
+                            top.linkTo(parent.top, margin = 30.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+
+                        },
+                    onClick = {
+                        toggleBottomSheet()
+                    })
+
+
+
+
+                ClickableText(text = buildAnnotatedString {
+                    withStyle(
+                        style = SpanStyle(color = Blue600, fontWeight = FontWeight.SemiBold)) {
+                        append("Change Profile Photo")
+                    }
                 },
-                style = MaterialTheme.typography.body2,
-                onClick = {
-                    toggleBottomSheet()
-                })
-
-
-
-
-
-            TextFieldInputArea(
-                modifier = Modifier
-                    .constrainAs(textFieldInputArea) {
-                        top.linkTo(changePhotoText.bottom, margin = 30.dp)
+                    modifier = Modifier.constrainAs(changePhotoText) {
+                        top.linkTo(profilePictureArea.bottom, margin = 12.dp)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                        height = Dimension.percent(0.5f)
-                        width = Dimension.percent(0.9f)
 
                     },
-                state = state,
-                onValueChangeName = onValueChangeName,
-                onValueChangePhoneNumber = onValueChangePhoneNumber,
-                keyboardActions = keyboardActions,
-                name = name,
-                nameErrorMessage = nameErrorMessage,
-                phoneNumber = phoneNumber,
-                phoneNumberErrorMessage = phoneNumberErrorMessage,
-
-            )
+                    style = MaterialTheme.typography.body2,
+                    onClick = {
+                        toggleBottomSheet()
+                    })
 
 
 
-            MappingButtonNavigation(
-                modifier = Modifier
-                    .constrainAs(buttonNavigationArea) {
-                        top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                        bottom.linkTo(parent.bottom, margin = 50.dp)
-                        height = Dimension.percent(0.1f)
-                        width = Dimension.percent(0.8f)
-                    },
-                positiveButtonText = "Save",
-                onClickCancelButton = onClickCancelButton,
-                onClickConfirmButton = onClickConfirmButton,
-                negativeButtonEnabled = !state.isLoading,
-                positiveButtonEnabled = !state.isLoading && isUserInformationChanges,
-            )
 
-            if (isNoInternetVisible) {
 
-                NoInternetDialog(
-                    modifier = Modifier.constrainAs(noInternetDialog) {
+                TextFieldInputArea(
+                    modifier = Modifier
+                        .constrainAs(textFieldInputArea) {
+                            top.linkTo(changePhotoText.bottom, margin = 30.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            height = Dimension.percent(0.5f)
+                            width = Dimension.percent(0.9f)
+
+                        },
+                    state = state,
+                    onValueChangeName = onValueChangeName,
+                    onValueChangePhoneNumber = onValueChangePhoneNumber,
+                    keyboardActions = keyboardActions,
+                    name = name,
+                    nameErrorMessage = nameErrorMessage,
+                    phoneNumber = phoneNumber,
+                    phoneNumberErrorMessage = phoneNumberErrorMessage,
+
+                    )
+
+
+
+                MappingButtonNavigation(
+                    modifier = Modifier
+                        .constrainAs(buttonNavigationArea) {
+                            top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            bottom.linkTo(parent.bottom, margin = 50.dp)
+                            height = Dimension.percent(0.1f)
+                            width = Dimension.percent(0.8f)
+                        },
+                    positiveButtonText = "Save",
+                    onClickCancelButton = onClickCancelButton,
+                    onClickConfirmButton = onClickConfirmButton,
+                    negativeButtonEnabled = !state.isLoading,
+                    positiveButtonEnabled = !state.isLoading && isUserInformationChanges,
+                )
+
+                if (isNoInternetVisible) {
+
+                    NoInternetDialog(
+                        modifier = Modifier.constrainAs(noInternetDialog) {
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            width = Dimension.matchParent
+                            height = Dimension.wrapContent
+                        }, onDismiss = onDismissNoInternetDialog
+                    )
+
+                }
+
+                if (state.isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.constrainAs(progressBar) {
+                        top.linkTo(parent.top)
                         end.linkTo(parent.end)
                         start.linkTo(parent.start)
                         bottom.linkTo(parent.bottom)
-                        width = Dimension.matchParent
-                        height = Dimension.wrapContent
-                    }, onDismiss = onDismissNoInternetDialog
-                )
-
-            }
-
-            if (state.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.constrainAs(progressBar) {
-                    top.linkTo(parent.top)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    bottom.linkTo(parent.bottom)
-                    this.centerTo(parent)
-                })
+                        this.centerTo(parent)
+                    })
+                }
             }
         }
     }

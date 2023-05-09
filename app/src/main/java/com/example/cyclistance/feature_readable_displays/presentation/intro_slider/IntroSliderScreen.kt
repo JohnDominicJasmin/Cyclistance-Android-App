@@ -5,6 +5,7 @@ package com.example.cyclistance.feature_readable_displays.presentation.intro_sli
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -110,25 +111,26 @@ private fun IntroSliderContent(
     onClickNextButton: () -> Unit) {
 
 
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-            .background(MaterialTheme.colors.background)) {
-        ConstraintLayout(
-            constraintSet = introSliderConstraints,
-            modifier = Modifier.background(MaterialTheme.colors.background)) {
+    Surface(modifier = modifier, color = MaterialTheme.colors.background) {
 
-            IntroSliderItem(pagerState = pagerState)
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            ConstraintLayout(
+                constraintSet = introSliderConstraints,
+                modifier = Modifier.background(MaterialTheme.colors.background)) {
 
-            val isOnLastPage = remember(pagerState.currentPage) {
-                pagerState.currentPage == 2
+                IntroSliderItem(pagerState = pagerState)
+
+                val isOnLastPage = remember(pagerState.currentPage) {
+                    pagerState.currentPage == 2
+                }
+
+                IntroSliderButtons(
+                    text = if (isOnLastPage) "Let's get Started!" else "Next",
+                    onClickSkipButton = onClickSkipButton,
+                    onClickNextButton = onClickNextButton)
             }
-
-            IntroSliderButtons(
-                text = if (isOnLastPage) "Let's get Started!" else "Next",
-                onClickSkipButton = onClickSkipButton,
-                onClickNextButton = onClickNextButton)
         }
     }
 }

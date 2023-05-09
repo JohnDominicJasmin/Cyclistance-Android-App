@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_settings.presentation.setting_screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,66 +30,80 @@ fun SettingScreen(
     paddingValues: PaddingValues,
     navController: NavController) {
 
-    Column(
+
+    SettingScreenContent(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues)
-            .background(MaterialTheme.colors.background),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally) {
+            .padding(paddingValues),
+        isDarkTheme = isDarkTheme,
+        onToggleTheme = onToggleTheme,
+        onClickEditProfile = {
+            navController.navigateScreen(Screens.EditProfileScreen.route)
+        }
+    )
+
+}
+
+@Composable
+fun SettingScreenContent(
+    modifier: Modifier = Modifier,
+    isDarkTheme: Boolean = false,
+    onToggleTheme: () -> Unit = {},
+    onClickEditProfile: () -> Unit = {}) {
+
+    Surface(modifier = modifier, color = MaterialTheme.colors.background) {
 
         Column(
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .padding(top = 30.dp),
-            verticalArrangement = Arrangement.spacedBy(3.dp)) {
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally) {
 
-            SectionTitle(iconId = R.drawable.ic_baseline_brush_24, title = "Preference")
-            SettingSwitchButton(
-                checkedState = isDarkTheme,
-                onCheckedChange = {
-                    onToggleTheme()
-                }, onClick = {
-                    onToggleTheme()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .padding(top = 30.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp)) {
+
+                SectionTitle(iconId = R.drawable.ic_baseline_brush_24, title = "Preference")
+                SettingSwitchButton(
+                    checkedState = isDarkTheme,
+                    onCheckedChange = { onToggleTheme() },
+                    onClick = onToggleTheme)
+
+
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .padding(top = 30.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp)) {
+
+
+                SectionTitle(iconId = R.drawable.ic_baseline_person_24, title = "Account")
+                SettingsButtonItem(buttonText = "Edit Profile", onClick = onClickEditProfile)
+
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .padding(top = 30.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp)) {
+
+                SectionTitle(
+                    iconId = R.drawable.ic_baseline_settings_suggest_24,
+                    title = "Other Settings")
+
+                SettingsButtonItem(buttonText = "Privacy Policy", onClick = {
+
                 })
+                SettingsButtonItem(buttonText = "Rate this app", onClick = {
+
+                })
+
+
+            }
         }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .padding(top = 30.dp),
-            verticalArrangement = Arrangement.spacedBy(3.dp)) {
-
-
-
-
-            SectionTitle(iconId = R.drawable.ic_baseline_person_24, title = "Account")
-            SettingsButtonItem(buttonText = "Edit Profile", onClick = {
-                navController.navigateScreen(Screens.EditProfileScreen.route)
-            })
-
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth(0.9f)
-                .padding(top = 30.dp),
-            verticalArrangement = Arrangement.spacedBy(3.dp)) {
-
-            SectionTitle(iconId = R.drawable.ic_baseline_settings_suggest_24, title = "Other Settings")
-            SettingsButtonItem(buttonText = "Privacy Policy", onClick = {
-
-            })
-            SettingsButtonItem(buttonText = "Terms and Condition", onClick = {
-
-            })
-            SettingsButtonItem(buttonText = "Rate this app", onClick = {
-
-            })
-
-
-        }
-
 
     }
 }
@@ -99,7 +113,11 @@ fun SettingScreen(
 fun SettingScreenPreview() {
     CyclistanceTheme(true) {
         val navController = rememberNavController()
-        SettingScreen(isDarkTheme = true, onToggleTheme = {}, navController = navController, paddingValues = PaddingValues())
+        SettingScreen(
+            isDarkTheme = true,
+            onToggleTheme = {},
+            navController = navController,
+            paddingValues = PaddingValues())
     }
 }
 
