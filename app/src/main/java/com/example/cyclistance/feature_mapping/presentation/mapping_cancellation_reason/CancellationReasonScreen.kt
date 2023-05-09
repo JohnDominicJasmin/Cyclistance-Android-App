@@ -153,6 +153,7 @@ fun CancellationReasonScreenContent(
 
         ConstraintLayout(
             modifier = Modifier
+                .fillMaxSize()
                 .verticalScroll(rememberScrollState())) {
 
             val (radioButtonsSection, additionalMessageSection, buttonNavButtonSection, circularProgressBar, noInternetScreen) = createRefs()

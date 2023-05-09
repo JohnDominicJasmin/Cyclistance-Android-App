@@ -54,6 +54,8 @@ fun SettingScreenContent(
     Surface(modifier = modifier, color = MaterialTheme.colors.background) {
 
         Column(
+            modifier = Modifier
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally) {
 

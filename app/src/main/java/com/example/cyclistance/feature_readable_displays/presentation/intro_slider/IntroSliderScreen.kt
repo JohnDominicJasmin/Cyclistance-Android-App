@@ -58,26 +58,28 @@ fun IntroSliderScreen(
                 Screens.IntroSliderScreen.route)
         }
     }
-    val onClickNextButton = remember(pagerState.currentPage){{
-        if (pagerState.currentPage != 2) {
-            scope.launch {
-                pagerState.animateScrollToPage(
-                    page = pagerState.currentPage + 1
-                )
+    val onClickNextButton = remember(pagerState.currentPage) {
+        {
+            if (pagerState.currentPage != 2) {
+                scope.launch {
+                    pagerState.animateScrollToPage(
+                        page = pagerState.currentPage + 1
+                    )
+                }
+            } else {
+                introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
+                navController.navigateScreenInclusively(
+                    Screens.SignInScreen.route,
+                    Screens.IntroSliderScreen.route)
             }
-        } else {
-            introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
-            navController.navigateScreenInclusively(
-                Screens.SignInScreen.route,
-                Screens.IntroSliderScreen.route)
+            Unit
         }
-        Unit
-    }}
+    }
 
 
     IntroSliderContent(
         modifier = Modifier
-            .fillMaxSize()
+
             .padding(paddingValues),
         pagerState = pagerState,
         onClickSkipButton = onClickSkipButton,
@@ -93,7 +95,6 @@ fun IntroSliderPreview() {
     CyclistanceTheme(darkTheme = true) {
         IntroSliderContent(
             modifier = Modifier
-                .fillMaxSize()
                 .background(MaterialTheme.colors.background),
             pagerState = rememberPagerState(),
             onClickSkipButton = {},
@@ -111,19 +112,19 @@ private fun IntroSliderContent(
     onClickNextButton: () -> Unit) {
 
 
-    Surface(modifier = modifier, color = MaterialTheme.colors.background) {
+    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
+
             ConstraintLayout(
-                constraintSet = introSliderConstraints,
-                modifier = Modifier.background(MaterialTheme.colors.background)) {
+                constraintSet = introSliderConstraints) {
 
                 IntroSliderItem(pagerState = pagerState)
 
-                val isOnLastPage = remember(pagerState.currentPage) {
-                    pagerState.currentPage == 2
+                val isOnLastPage by remember {
+                    derivedStateOf { pagerState.currentPage == 2 }
                 }
 
                 IntroSliderButtons(

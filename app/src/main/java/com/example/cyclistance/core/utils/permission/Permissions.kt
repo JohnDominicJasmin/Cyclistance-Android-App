@@ -9,40 +9,60 @@ import com.google.accompanist.permissions.*
 inline fun MultiplePermissionsState.requestPermission(
     context: Context,
     rationalMessage: String,
+    deniedMessage: String = "Permission denied. Please grant the necessary permissions to use this feature.",
     onGranted: () -> Unit) {
 
-    if (allPermissionsGranted) {
-        onGranted()
+    val isDenied = !allPermissionsGranted && !shouldShowRationale
+
+    if(isDenied){
+        Toast.makeText(context, deniedMessage, Toast.LENGTH_LONG).show()
         return
     }
 
-    if (!shouldShowRationale) {
+    if (!allPermissionsGranted) {
+        launchMultiplePermissionRequest()
+        return
+    }
+
+    if (shouldShowRationale) {
         Toast.makeText(
             context,
             rationalMessage,
-            Toast.LENGTH_SHORT).show()
+            Toast.LENGTH_LONG).show()
         return
     }
-    launchMultiplePermissionRequest()
+
+
+
+    onGranted()
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
 inline fun PermissionState.requestPermission(
     context: Context,
     rationalMessage: String,
+    deniedMessage: String = "Permission denied. Please grant the necessary permissions to use this feature.",
     onGranted: () -> Unit) {
 
-    if(status.isGranted){
-        onGranted()
+    val isDenied = !status.isGranted && !status.shouldShowRationale
+
+    if(isDenied){
+        Toast.makeText(context, deniedMessage, Toast.LENGTH_LONG).show()
         return
     }
-    if(!status.shouldShowRationale){
-        Toast.makeText(
-            context,
-            rationalMessage,
-            Toast.LENGTH_SHORT).show()
+    if(!status.isGranted){
+        launchPermissionRequest()
         return
     }
-    launchPermissionRequest()
+    if(status.shouldShowRationale){
+        Toast.makeText(context, rationalMessage, Toast.LENGTH_LONG).show()
+        return
+    }
+
+
+
+    onGranted()
+
+
 
 }
