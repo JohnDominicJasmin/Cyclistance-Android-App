@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderButtons
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderItem
@@ -32,7 +33,7 @@ fun IntroSliderScreen(
     paddingValues: PaddingValues,
     navController: NavController) {
 
-    val introSliderState by introSliderViewModel.state.collectAsState()
+    val introSliderState by introSliderViewModel.state.collectAsStateWithLifecycle()
 
 
     val pagerState = rememberPagerState()

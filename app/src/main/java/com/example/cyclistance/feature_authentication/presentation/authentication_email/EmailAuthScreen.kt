@@ -17,7 +17,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
@@ -61,7 +61,7 @@ fun EmailAuthScreen(
 
     val context = LocalContext.current
 
-    val emailAuthState by emailAuthViewModel.state.collectAsState()
+    val emailAuthState by emailAuthViewModel.state.collectAsStateWithLifecycle()
     var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
     var isTimerRunning by rememberSaveable { mutableStateOf(false) }
     var alertDialogState by remember { mutableStateOf(AlertDialogState()) }

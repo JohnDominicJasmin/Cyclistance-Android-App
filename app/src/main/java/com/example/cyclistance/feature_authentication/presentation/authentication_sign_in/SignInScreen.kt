@@ -18,7 +18,6 @@ import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
@@ -76,8 +76,8 @@ fun SignInScreen(
     navController: NavController) {
 
     val scope = rememberCoroutineScope()
-    val signInState by signInViewModel.state.collectAsState()
-    val emailAuthState by emailAuthViewModel.state.collectAsState()
+    val signInState by signInViewModel.state.collectAsStateWithLifecycle()
+    val emailAuthState by emailAuthViewModel.state.collectAsStateWithLifecycle()
     val focusRequester = remember { FocusRequester() }
     var alertDialogState by remember { mutableStateOf(AlertDialogState()) }
     var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
