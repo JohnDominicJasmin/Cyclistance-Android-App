@@ -56,7 +56,7 @@ fun RescueRequestScreenContent(
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
-        Box(contentAlignment = Alignment.Center) {
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
 
             Column(
                 modifier = Modifier.fillMaxSize(),

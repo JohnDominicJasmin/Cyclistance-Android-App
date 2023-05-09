@@ -266,6 +266,7 @@ fun SignUpScreenContent(
     Surface(color = MaterialTheme.colors.background, modifier = modifier.fillMaxSize()){
 
     ConstraintLayout(
+        modifier = Modifier.fillMaxSize(),
         constraintSet = signUpConstraints) {
 
         Spacer(

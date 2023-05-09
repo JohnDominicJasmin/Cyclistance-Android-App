@@ -341,7 +341,7 @@ fun EditProfileScreenContent(
             bottomSheetScaffoldState = bottomSheetScaffoldState,
             editProfileState = state) {
 
-            ConstraintLayout {
+            ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
                 val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText, progressBar, noInternetDialog) = createRefs()
 

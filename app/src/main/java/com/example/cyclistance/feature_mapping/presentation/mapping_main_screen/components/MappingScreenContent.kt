@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -79,7 +80,7 @@ fun MappingScreenContent(
 
 
 
-    Surface(modifier = modifier.fillMaxSize()) {
+    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
         MappingBottomSheet(
             isDarkTheme = isDarkTheme,
@@ -94,7 +95,7 @@ fun MappingScreenContent(
             bottomSheetType = bottomSheetType,
         ) {
 
-            ConstraintLayout {
+            ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
                 val (mapScreen, requestHelpButton, circularProgressbar, noInternetScreen, respondToHelpButton, floatingButtonSection) = createRefs()
 

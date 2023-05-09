@@ -365,7 +365,7 @@ fun SignInScreenContent(
 
         ConstraintLayout(
             constraintSet = signInConstraints,
-            modifier = Modifier.verticalScroll(rememberScrollState())) {
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
 
             Spacer(modifier = Modifier.layoutId(AuthenticationConstraintsItem.TopSpacer.layoutId))
 
