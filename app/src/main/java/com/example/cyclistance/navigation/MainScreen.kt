@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
@@ -174,42 +175,48 @@ fun MainScreen(
 
     CyclistanceTheme(darkTheme = settingState.isDarkTheme) {
 
-        Scaffold(
-            drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
-            scaffoldState = scaffoldState,
-            topBar = {
+        Surface(
+            modifier = Modifier.fillMaxSize()) {
 
-                Column {
-                    TopAppBar(
-                        route = navBackStackEntry?.destination?.route,
-                        onClickMenuIcon = onClickMenuIcon,
-                        onClickArrowBackIcon = onClickArrowBackIcon,
-                        isNavigating = isNavigating)
+            Scaffold(
+                drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
+                scaffoldState = scaffoldState,
+                topBar = {
 
-                    NoInternetStatusBar(internetAvailable, navBackStackEntry?.destination?.route)
-                }
-            },
-            drawerContent = {
-                MappingDrawerContent(
-                    state = mappingState,
-                    onClickSettings = onClickSettings,
-                    onClickRescueRequest = onClickRescueRequest,
-                    onClickChat = onClickChat,
-                    onClickSignOut = onClickSignOut
+                    Column {
+                        TopAppBar(
+                            route = navBackStackEntry?.destination?.route,
+                            onClickMenuIcon = onClickMenuIcon,
+                            onClickArrowBackIcon = onClickArrowBackIcon,
+                            isNavigating = isNavigating)
+
+                        NoInternetStatusBar(
+                            internetAvailable,
+                            navBackStackEntry?.destination?.route)
+                    }
+                },
+                drawerContent = {
+                    MappingDrawerContent(
+                        state = mappingState,
+                        onClickSettings = onClickSettings,
+                        onClickRescueRequest = onClickRescueRequest,
+                        onClickChat = onClickChat,
+                        onClickSignOut = onClickSignOut
+                    )
+                },
+            ) { paddingValues ->
+                NavGraph(
+                    hasInternetConnection = internetAvailable,
+                    navController = navController,
+                    paddingValues = paddingValues,
+                    isDarkTheme = settingState.isDarkTheme,
+                    editProfileViewModel = editProfileViewModel,
+                    mappingViewModel = mappingViewModel,
+                    onChangeNavigatingState = onChangeNavigatingState,
+                    onToggleTheme = onToggleTheme,
+                    isNavigating = isNavigating,
                 )
-            },
-        ) { paddingValues ->
-            NavGraph(
-                hasInternetConnection = internetAvailable,
-                navController = navController,
-                paddingValues = paddingValues,
-                isDarkTheme = settingState.isDarkTheme,
-                editProfileViewModel = editProfileViewModel,
-                mappingViewModel = mappingViewModel,
-                onToggleTheme = onToggleTheme,
-                isNavigating = isNavigating,
-                onChangeNavigatingState = onChangeNavigatingState
-            )
+            }
         }
     }
 

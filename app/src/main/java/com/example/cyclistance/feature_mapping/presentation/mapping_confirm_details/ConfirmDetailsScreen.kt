@@ -15,6 +15,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
@@ -227,151 +228,155 @@ fun ConfirmDetailsContent(
     ) {
 
 
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .background(MaterialTheme.colors.background)) {
+    Surface(
+        modifier = modifier.fillMaxSize(),
+        color = MaterialTheme.colors.background
+    ) {
 
-
-        ConstraintLayout(
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background)) {
+                .verticalScroll(rememberScrollState())) {
 
-            val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText, noInternetScreen, circularProgressBar) = createRefs()
 
-            AddressTextField(
+            ConstraintLayout(
                 modifier = Modifier
-                    .constrainAs(addressTextField) {
-                        top.linkTo(parent.top, margin = 15.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        width = Dimension.percent(0.9f)
-                        height = Dimension.wrapContent
-                    },
-                address = address,
-                addressErrorMessage = addressErrorMessage,
-                onValueChange = onValueChangeAddress,
-                enabled = !state.isLoading
-            )
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.background)) {
 
-            DropDownBikeList(
-                modifier = Modifier
-                    .constrainAs(bikeTypeDropDownList) {
-                        top.linkTo(addressTextField.bottom, margin = 10.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        width = Dimension.percent(0.9f)
-                        height = Dimension.wrapContent
-                    },
-                errorMessage = bikeTypeErrorMessage,
-                selectedItem = bikeType,
-                onClickItem = onClickBikeType,
-                enabled = !state.isLoading)
+                val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText, noInternetScreen, circularProgressBar) = createRefs()
 
-            ButtonDescriptionDetails(
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .constrainAs(buttonDescriptionSection) {
-                        top.linkTo(bikeTypeDropDownList.bottom, margin = 15.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        height = Dimension.wrapContent
-                        width = Dimension.percent(0.9f)
-                    },
-                selectedOption = description,
-                errorMessage = descriptionErrorMessage,
-                onClickButton = onClickDescriptionButton,
-                state = state,
-            )
-
-            AdditionalMessage(
-                modifier = Modifier
-                    .constrainAs(additionalMessageSection) {
-                        top.linkTo(buttonDescriptionSection.bottom, margin = 15.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        height = Dimension.percent(0.25f)
-                        width = Dimension.percent(0.9f)
-
-                    },
-                message = message,
-                onChangeValueMessage = onValueChangeMessage,
-                enabled = !state.isLoading
-            )
-
-            Row(
-                modifier = Modifier.constrainAs(noteText) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    bottom.linkTo(buttonNavButtonSection.top)
-                },
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-
-                Icon(
-                    imageVector = Icons.Filled.Info,
-                    contentDescription = "Info icon",
-                    tint = Black440,
+                AddressTextField(
                     modifier = Modifier
-                        .size(22.dp)
-                        .padding(end = 2.dp)
-
-                )
-
-                Text(
-                    text = "Your location will be shared with Rescuer",
-                    color = Black440,
-                    style = MaterialTheme.typography.caption,
-
-                    )
-            }
-
-            MappingButtonNavigation(
-                modifier = Modifier
-                    .constrainAs(buttonNavButtonSection) {
-                        top.linkTo(additionalMessageSection.bottom, margin = 50.dp)
-                        bottom.linkTo(parent.bottom, margin = 12.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        height = Dimension.wrapContent
-                        width = Dimension.percent(0.9f)
-                    },
-                onClickCancelButton = onClickCancelButton,
-                onClickConfirmButton = onClickConfirmButton,
-                negativeButtonEnabled = !state.isLoading,
-                positiveButtonEnabled = !state.isLoading)
-
-
-            if (state.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .constrainAs(circularProgressBar) {
-                            top.linkTo(parent.top)
+                        .constrainAs(addressTextField) {
+                            top.linkTo(parent.top, margin = 15.dp)
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
-                            bottom.linkTo(parent.bottom)
-                            centerTo(parent)
-                        }
+                            width = Dimension.percent(0.9f)
+                            height = Dimension.wrapContent
+                        },
+                    address = address,
+                    addressErrorMessage = addressErrorMessage,
+                    onValueChange = onValueChangeAddress,
+                    enabled = !state.isLoading
                 )
-            }
-            if (isNoInternetDialogVisible) {
-                NoInternetDialog(
-                    onDismiss = onDismissNoInternetDialog,
-                    modifier = Modifier.constrainAs(noInternetScreen) {
-                        bottom.linkTo(parent.bottom)
+
+                DropDownBikeList(
+                    modifier = Modifier
+                        .constrainAs(bikeTypeDropDownList) {
+                            top.linkTo(addressTextField.bottom, margin = 10.dp)
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            width = Dimension.percent(0.9f)
+                            height = Dimension.wrapContent
+                        },
+                    errorMessage = bikeTypeErrorMessage,
+                    selectedItem = bikeType,
+                    onClickItem = onClickBikeType,
+                    enabled = !state.isLoading)
+
+                ButtonDescriptionDetails(
+                    modifier = Modifier
+                        .wrapContentHeight()
+                        .constrainAs(buttonDescriptionSection) {
+                            top.linkTo(bikeTypeDropDownList.bottom, margin = 15.dp)
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            height = Dimension.wrapContent
+                            width = Dimension.percent(0.9f)
+                        },
+                    selectedOption = description,
+                    errorMessage = descriptionErrorMessage,
+                    onClickButton = onClickDescriptionButton,
+                    state = state,
+                )
+
+                AdditionalMessage(
+                    modifier = Modifier
+                        .constrainAs(additionalMessageSection) {
+                            top.linkTo(buttonDescriptionSection.bottom, margin = 15.dp)
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            height = Dimension.percent(0.25f)
+                            width = Dimension.percent(0.9f)
+
+                        },
+                    message = message,
+                    onChangeValueMessage = onValueChangeMessage,
+                    enabled = !state.isLoading
+                )
+
+                Row(
+                    modifier = Modifier.constrainAs(noteText) {
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
-                        width = Dimension.matchParent
-                        height = Dimension.wrapContent
-                    })
+                        bottom.linkTo(buttonNavButtonSection.top)
+                    },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
 
+                    Icon(
+                        imageVector = Icons.Filled.Info,
+                        contentDescription = "Info icon",
+                        tint = Black440,
+                        modifier = Modifier
+                            .size(22.dp)
+                            .padding(end = 2.dp)
+
+                    )
+
+                    Text(
+                        text = "Your location will be shared with Rescuer",
+                        color = Black440,
+                        style = MaterialTheme.typography.caption,
+
+                        )
+                }
+
+                MappingButtonNavigation(
+                    modifier = Modifier
+                        .constrainAs(buttonNavButtonSection) {
+                            top.linkTo(additionalMessageSection.bottom, margin = 50.dp)
+                            bottom.linkTo(parent.bottom, margin = 12.dp)
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            height = Dimension.wrapContent
+                            width = Dimension.percent(0.9f)
+                        },
+                    onClickCancelButton = onClickCancelButton,
+                    onClickConfirmButton = onClickConfirmButton,
+                    negativeButtonEnabled = !state.isLoading,
+                    positiveButtonEnabled = !state.isLoading)
+
+
+                if (state.isLoading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .constrainAs(circularProgressBar) {
+                                top.linkTo(parent.top)
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                centerTo(parent)
+                            }
+                    )
+                }
+                if (isNoInternetDialogVisible) {
+                    NoInternetDialog(
+                        onDismiss = onDismissNoInternetDialog,
+                        modifier = Modifier.constrainAs(noInternetScreen) {
+                            bottom.linkTo(parent.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            width = Dimension.matchParent
+                            height = Dimension.wrapContent
+                        })
+
+                }
             }
-        }
 
+        }
     }
 
 }

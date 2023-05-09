@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -54,77 +54,78 @@ fun RescueRequestScreenContent(
         AlertDialog(alertDialog = alertDialogState, onDismissRequest = onDismissAlertDialog)
     }
 
-    Box( modifier = modifier
-        .fillMaxSize()
-        .background(MaterialTheme.colors.background),
-        contentAlignment = Alignment.Center) {
+    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
-        Column(modifier = Modifier.fillMaxSize(),horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(contentAlignment = Alignment.Center) {
 
-
-
-            if(respondents.isNotEmpty()) {
-                Text(
-                    text = "${respondents.size} NEW REQUEST",
-                    color = MaterialTheme.colors.onBackground,
-                    style = TextStyle(
-                        letterSpacing = 4.sp,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp),
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    textAlign = TextAlign.Center,
-
-                    )
-            }
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally) {
 
 
+                if (respondents.isNotEmpty()) {
+                    Text(
+                        text = "${respondents.size} NEW REQUEST",
+                        color = MaterialTheme.colors.onBackground,
+                        style = TextStyle(
+                            letterSpacing = 4.sp,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp),
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        textAlign = TextAlign.Center,
 
-            Box(
-                modifier = Modifier
-                    .weight(0.85f)
-                    .fillMaxSize(), contentAlignment = Alignment.Center) {
-
-                if (respondents.isEmpty()) {
-                    EmptyListPlaceholder()
-                } else {
-                    LazyColumn(
-                        modifier = Modifier
-                            .padding(bottom = 4.dp)
-                            .fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally) {
-
-                        items(items = respondents, key = { it.id ?: "-1" }) { respondent ->
-                            RequestItem(
-                                modifier = Modifier
-                                    .padding(start = 4.dp, end = 4.dp, top = 6.dp, bottom = 6.dp)
-
-                                    .fillMaxWidth(fraction = 0.95f)
-                                    .wrapContentHeight(), cardState = respondent,
-                                onClickCancelButton = {
-                                    onClickCancelButton(respondent.id ?: "")
-                                },
-                                onClickConfirmButton = {
-                                    onClickConfirmButton(respondent.id ?: "")
-                                }
-                            )
-                        }
-
-                    }
+                        )
                 }
 
+                Box(
+                    modifier = Modifier
+                        .weight(0.85f)
+                        .fillMaxSize(), contentAlignment = Alignment.Center) {
 
+                    if (respondents.isEmpty()) {
+                        EmptyListPlaceholder()
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .padding(bottom = 4.dp)
+                                .fillMaxSize(),
+                            horizontalAlignment = Alignment.CenterHorizontally) {
 
+                            items(items = respondents, key = { it.id ?: "-1" }) { respondent ->
+                                RequestItem(
+                                    modifier = Modifier
+                                        .padding(
+                                            start = 4.dp,
+                                            end = 4.dp,
+                                            top = 6.dp,
+                                            bottom = 6.dp)
+
+                                        .fillMaxWidth(fraction = 0.95f)
+                                        .wrapContentHeight(), cardState = respondent,
+                                    onClickCancelButton = {
+                                        onClickCancelButton(respondent.id ?: "")
+                                    },
+                                    onClickConfirmButton = {
+                                        onClickConfirmButton(respondent.id ?: "")
+                                    }
+                                )
+                            }
+
+                        }
+                    }
+
+                }
             }
-        }
 
-        if (mappingState.isLoading) {
-            CircularProgressIndicator()
-        }
+            if (mappingState.isLoading) {
+                CircularProgressIndicator()
+            }
 
-        if (isNoInternetDialogVisible) {
-            NoInternetDialog(onDismiss = onDismissNoInternetDialog)
-        }
+            if (isNoInternetDialogVisible) {
+                NoInternetDialog(onDismiss = onDismissNoInternetDialog)
+            }
 
+        }
     }
 }
 

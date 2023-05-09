@@ -1,12 +1,12 @@
 package com.example.cyclistance.feature_settings.presentation.setting_change_password
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -19,39 +19,44 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun ChangePasswordScreen(paddingValues: PaddingValues) {
-    ConstraintLayout(
+
+    Surface(
         modifier = Modifier
             .fillMaxSize()
-            .padding(paddingValues)
-            .verticalScroll(rememberScrollState())
-            .background(MaterialTheme.colors.background)) {
+            .padding(paddingValues),
+        color = MaterialTheme.colors.background) {
 
-        val (textFieldInputArea, buttonNavigationArea) = createRefs()
+        ConstraintLayout(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())) {
 
-        PasswordTextFieldArea(modifier = Modifier.constrainAs(textFieldInputArea) {
-            top.linkTo(parent.top, margin = 50.dp)
-            end.linkTo(parent.end)
-            start.linkTo(parent.start)
-            height = Dimension.percent(0.5f)
-            width = Dimension.percent(0.9f)
-        })
+            val (textFieldInputArea, buttonNavigationArea) = createRefs()
 
-        MappingButtonNavigation(
-            modifier = Modifier.constrainAs(buttonNavigationArea) {
-            top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-            height = Dimension.percent(0.1f)
-            width = Dimension.percent(0.8f)
-        },
-        positiveButtonText = "Save",
-        onClickCancelButton = {
+            PasswordTextFieldArea(modifier = Modifier.constrainAs(textFieldInputArea) {
+                top.linkTo(parent.top, margin = 50.dp)
+                end.linkTo(parent.end)
+                start.linkTo(parent.start)
+                height = Dimension.percent(0.5f)
+                width = Dimension.percent(0.9f)
+            })
 
-        },
-        onClickConfirmButton = {
+            MappingButtonNavigation(
+                modifier = Modifier.constrainAs(buttonNavigationArea) {
+                    top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
+                    start.linkTo(parent.start)
+                    end.linkTo(parent.end)
+                    height = Dimension.percent(0.1f)
+                    width = Dimension.percent(0.8f)
+                },
+                positiveButtonText = "Save",
+                onClickCancelButton = {
 
-        })
+                },
+                onClickConfirmButton = {
 
+                })
+
+        }
 
     }
 }

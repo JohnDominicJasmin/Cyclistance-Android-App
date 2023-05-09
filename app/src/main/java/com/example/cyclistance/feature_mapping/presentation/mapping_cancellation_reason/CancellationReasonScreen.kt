@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason
 
 import android.widget.Toast
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,6 +8,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -149,82 +149,84 @@ fun CancellationReasonScreenContent(
     onDismissNoInternetDialog: () -> Unit = {},
     onSelectReason: (String) -> Unit = {}) {
 
-    ConstraintLayout(
-        modifier = modifier
-            .verticalScroll(rememberScrollState())
-            .background(MaterialTheme.colors.background)) {
+    Surface(modifier = modifier, color = MaterialTheme.colors.background) {
 
-        val (radioButtonsSection, additionalMessageSection, buttonNavButtonSection, circularProgressBar, noInternetScreen) = createRefs()
-
-        RadioButtonsSection(
+        ConstraintLayout(
             modifier = Modifier
-                .constrainAs(radioButtonsSection) {
-                    top.linkTo(parent.top, margin = 15.dp)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.wrapContent
-                }, cancellationType = cancellationType,
-            selectedOption = selectedReason,
-            errorMessage = selectedReasonErrorMessage,
-            onSelectReason = onSelectReason)
+                .verticalScroll(rememberScrollState())) {
 
-        AdditionalMessage(
-            text = "Additional comments:",
-            modifier = Modifier
-                .constrainAs(additionalMessageSection) {
-                    top.linkTo(radioButtonsSection.bottom, margin = 15.dp)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    height = Dimension.percent(0.30f)
-                    width = Dimension.percent(0.9f)
+            val (radioButtonsSection, additionalMessageSection, buttonNavButtonSection, circularProgressBar, noInternetScreen) = createRefs()
 
-                },
-            message = message,
-            onChangeValueMessage = onChangeValueMessage,
-            enabled = state.isLoading.not()
-        )
-
-
-        MappingButtonNavigation(
-            modifier = Modifier
-                .constrainAs(buttonNavButtonSection) {
-                    top.linkTo(additionalMessageSection.bottom, margin = 50.dp)
-                    bottom.linkTo(parent.bottom, margin = 5.dp)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
-                    height = Dimension.percent(0.1f)
-                    width = Dimension.percent(0.9f)
-                },
-            onClickCancelButton = onClickCancelButton,
-            onClickConfirmButton = onClickConfirmButton,
-            negativeButtonEnabled = state.isLoading.not(),
-            positiveButtonEnabled = state.isLoading.not())
-
-
-        if (state.isLoading) {
-            CircularProgressIndicator(
+            RadioButtonsSection(
                 modifier = Modifier
-                    .constrainAs(circularProgressBar) {
-                        top.linkTo(parent.top)
+                    .constrainAs(radioButtonsSection) {
+                        top.linkTo(parent.top, margin = 15.dp)
                         end.linkTo(parent.end)
                         start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                        centerTo(parent)
-                    }
-            )
-        }
-        if (isNoInternetDialogVisible) {
-            NoInternetDialog(
-                onDismiss = onDismissNoInternetDialog,
-                modifier = Modifier.constrainAs(noInternetScreen) {
-                    bottom.linkTo(parent.bottom)
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    width = Dimension.matchParent
-                    height = Dimension.wrapContent
-                })
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    }, cancellationType = cancellationType,
+                selectedOption = selectedReason,
+                errorMessage = selectedReasonErrorMessage,
+                onSelectReason = onSelectReason)
 
+            AdditionalMessage(
+                text = "Additional comments:",
+                modifier = Modifier
+                    .constrainAs(additionalMessageSection) {
+                        top.linkTo(radioButtonsSection.bottom, margin = 15.dp)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                        height = Dimension.percent(0.30f)
+                        width = Dimension.percent(0.9f)
+
+                    },
+                message = message,
+                onChangeValueMessage = onChangeValueMessage,
+                enabled = state.isLoading.not()
+            )
+
+
+            MappingButtonNavigation(
+                modifier = Modifier
+                    .constrainAs(buttonNavButtonSection) {
+                        top.linkTo(additionalMessageSection.bottom, margin = 50.dp)
+                        bottom.linkTo(parent.bottom, margin = 5.dp)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                        height = Dimension.percent(0.1f)
+                        width = Dimension.percent(0.9f)
+                    },
+                onClickCancelButton = onClickCancelButton,
+                onClickConfirmButton = onClickConfirmButton,
+                negativeButtonEnabled = state.isLoading.not(),
+                positiveButtonEnabled = state.isLoading.not())
+
+
+            if (state.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .constrainAs(circularProgressBar) {
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            centerTo(parent)
+                        }
+                )
+            }
+            if (isNoInternetDialogVisible) {
+                NoInternetDialog(
+                    onDismiss = onDismissNoInternetDialog,
+                    modifier = Modifier.constrainAs(noInternetScreen) {
+                        bottom.linkTo(parent.bottom)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        width = Dimension.matchParent
+                        height = Dimension.wrapContent
+                    })
+
+            }
         }
     }
 }
