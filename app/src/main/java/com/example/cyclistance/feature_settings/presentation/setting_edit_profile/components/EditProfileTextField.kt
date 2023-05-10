@@ -105,7 +105,7 @@ private fun TextFieldCreator(
     content: @Composable () -> Unit
     ) {
 
-    val hasError by remember(errorMessage){ derivedStateOf { errorMessage.isNotEmpty() } }
+    val hasError by remember{ derivedStateOf { errorMessage.isNotEmpty() } }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
 
