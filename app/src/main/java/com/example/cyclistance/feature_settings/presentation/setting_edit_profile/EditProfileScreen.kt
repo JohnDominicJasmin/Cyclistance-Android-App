@@ -31,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.permission.requestPermission
@@ -51,7 +52,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun EditProfileScreen(
-    editProfileViewModel: EditProfileViewModel,
+    editProfileViewModel: EditProfileViewModel = hiltViewModel(),
     navController: NavController,
     paddingValues: PaddingValues
 ) {

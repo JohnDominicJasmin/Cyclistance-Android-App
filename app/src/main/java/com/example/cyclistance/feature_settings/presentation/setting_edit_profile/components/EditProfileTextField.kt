@@ -102,8 +102,7 @@ private fun TextFieldCreator(
     modifier: Modifier = Modifier,
     errorMessage: String = "",
     label: String,
-    content: @Composable () -> Unit
-    ) {
+    content: @Composable () -> Unit) {
 
     val hasError by remember{ derivedStateOf { errorMessage.isNotEmpty() } }
 

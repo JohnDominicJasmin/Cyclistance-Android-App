@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderButtons
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderItem
@@ -33,23 +32,13 @@ fun IntroSliderScreen(
     paddingValues: PaddingValues,
     navController: NavController) {
 
-    val introSliderState by introSliderViewModel.state.collectAsStateWithLifecycle()
+
 
 
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
-    val navigationDestinationChange = remember(introSliderState.navigationStartingDestination) {
-        introSliderState.navigationStartingDestination != Screens.IntroSliderScreen.route
-    }
 
-    if (navigationDestinationChange) {
-        LaunchedEffect(key1 = true) {
-            navController.navigateScreenInclusively(
-                destination = introSliderState.navigationStartingDestination,
-                popUpToDestination = Screens.IntroSliderScreen.route)
-        }
-        return
-    }
+
 
     val onClickSkipButton = remember {
         {
