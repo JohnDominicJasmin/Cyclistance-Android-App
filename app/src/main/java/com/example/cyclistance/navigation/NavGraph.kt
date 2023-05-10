@@ -1,7 +1,6 @@
 package com.example.cyclistance.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -29,7 +28,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_reque
 import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.IntroSliderScreen
 import com.example.cyclistance.feature_settings.presentation.setting_change_password.ChangePasswordScreen
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileScreen
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
@@ -40,14 +38,14 @@ fun NavGraph(
     hasInternetConnection: Boolean,
     navController: NavHostController,
     paddingValues: PaddingValues,
-    editProfileViewModel: EditProfileViewModel,
     mappingViewModel: MappingViewModel,
+    startingDestination: String,
     isDarkTheme: Boolean,
     isNavigating: Boolean,
     onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
     onToggleTheme: () -> Unit) {
 
-    NavHost(navController = navController, startDestination = Screens.IntroSliderScreen.route) {
+    NavHost(navController = navController, startDestination = startingDestination) {
 
         composable(Screens.IntroSliderScreen.route) {
             IntroSliderScreen(
@@ -141,8 +139,7 @@ fun NavGraph(
         composable(Screens.EditProfileScreen.route) {
             EditProfileScreen(
                 navController = navController,
-                paddingValues = paddingValues,
-                editProfileViewModel = editProfileViewModel)
+                paddingValues = paddingValues)
         }
 
         composable(Screens.SettingScreen.route) {

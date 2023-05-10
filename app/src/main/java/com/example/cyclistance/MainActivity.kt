@@ -8,7 +8,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.CompositionLocalProvider
 import com.example.cyclistance.feature_authentication.domain.util.ActivityResultCallbackManager
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
-import com.example.cyclistance.navigation.MainScreen
+import com.example.cyclistance.navigation.NavScreen
 import com.facebook.FacebookSdk.sdkInitialize
 import com.facebook.appevents.AppEventsLogger
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CompositionLocalProvider(LocalActivityResultCallbackManager provides callbackManager) {
-                MainScreen()
+                NavScreen()
             }
         }
     }

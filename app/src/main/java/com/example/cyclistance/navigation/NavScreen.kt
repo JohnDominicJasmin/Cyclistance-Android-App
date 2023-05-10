@@ -43,7 +43,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.MappingDrawerContent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.TitleTopAppBar
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.TopAppBarCreator
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingUiEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingViewModel
@@ -56,10 +55,11 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun MainScreen(
+fun NavScreen(
     settingViewModel: SettingViewModel = hiltViewModel(),
     mappingViewModel: MappingViewModel = hiltViewModel(),
-    editProfileViewModel: EditProfileViewModel = hiltViewModel()) {
+    navViewModel: NavViewModel = hiltViewModel()
+) {
 
 
     val navController = rememberNavController()
@@ -71,6 +71,7 @@ fun MainScreen(
     val coroutineScope = rememberCoroutineScope()
     val mappingState by mappingViewModel.state.collectAsStateWithLifecycle()
     val settingState by settingViewModel.state.collectAsStateWithLifecycle()
+    val navState by navViewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
 
     val onChangeNavigatingState = remember{{ navigating: Boolean ->
@@ -204,17 +205,19 @@ fun MainScreen(
                     )
                 },
             ) { paddingValues ->
-                NavGraph(
-                    hasInternetConnection = internetAvailable,
-                    navController = navController,
-                    paddingValues = paddingValues,
-                    isDarkTheme = settingState.isDarkTheme,
-                    editProfileViewModel = editProfileViewModel,
-                    mappingViewModel = mappingViewModel,
-                    onChangeNavigatingState = onChangeNavigatingState,
-                    onToggleTheme = onToggleTheme,
-                    isNavigating = isNavigating,
-                )
+                navState.navigationStartingDestination?.let {
+                    NavGraph(
+                        hasInternetConnection = internetAvailable,
+                        navController = navController,
+                        paddingValues = paddingValues,
+                        isDarkTheme = settingState.isDarkTheme,
+                        mappingViewModel = mappingViewModel,
+                        onChangeNavigatingState = onChangeNavigatingState,
+                        onToggleTheme = onToggleTheme,
+                        isNavigating = isNavigating,
+                        startingDestination = it
+                    )
+                }
             }
         }
     }

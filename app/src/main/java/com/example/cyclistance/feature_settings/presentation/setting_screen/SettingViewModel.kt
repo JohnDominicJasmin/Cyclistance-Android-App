@@ -66,17 +66,7 @@ class SettingViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: SettingEvent) {
-        when (event) {
-            is SettingEvent.ToggleTheme -> {
-                toggleTheme()
-            }
-            is SettingEvent.SignOut -> {
-                signOutAccount()
-            }
-        }
 
-    }
 
     private fun toggleTheme() {
         viewModelScope.launch(context = defaultDispatcher) {
@@ -88,4 +78,20 @@ class SettingViewModel @Inject constructor(
         }
     }
 
+
+
+
+
+
+    fun onEvent(event: SettingEvent) {
+        when (event) {
+            is SettingEvent.ToggleTheme -> {
+                toggleTheme()
+            }
+            is SettingEvent.SignOut -> {
+                signOutAccount()
+            }
+        }
+
+    }
 }
