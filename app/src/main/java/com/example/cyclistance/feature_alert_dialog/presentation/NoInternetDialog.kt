@@ -3,7 +3,6 @@ package com.example.cyclistance.feature_alert_dialog.presentation
 import android.content.Intent
 import android.provider.Settings
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
@@ -63,17 +63,14 @@ fun NoInternetDialog(
                 dismissOnClickOutside = true),
         ) {
 
-
+            Surface(
+                modifier = modifier
+                    .fillMaxWidth(0.90f)
+                    .wrapContentHeight(),
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colors.surface) {
 
                 Column(
-                    modifier = modifier
-                        .background(
-                            color = MaterialTheme.colors.surface,
-                            shape = RoundedCornerShape(16.dp)
-                        )
-
-                        .fillMaxWidth(0.90f)
-                        .wrapContentHeight(),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -89,7 +86,8 @@ fun NoInternetDialog(
 
                     Column(
                         modifier = Modifier.padding(4.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally, ) {
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
 
                         Spacer(modifier = Modifier.height(25.dp))
 
@@ -147,6 +145,7 @@ fun NoInternetDialog(
                     }
                 }
             }
+        }
 
     }
 }
