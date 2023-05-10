@@ -50,7 +50,7 @@ fun BottomSheetOnGoingRescue(
 
                     val (timeRemaining, roundedButtonSection) = createRefs()
 
-                    val estimatedTimeArrival = remember(estimatedTimeRemaining){
+                    val estimatedTimeArrival = remember{
                         derivedStateOf {
                             if (estimatedTimeRemaining.isNotEmpty()) {
                                 "Estimated time of arrival: $estimatedTimeRemaining"

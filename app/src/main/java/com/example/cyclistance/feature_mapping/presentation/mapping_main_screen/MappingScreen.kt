@@ -161,9 +161,7 @@ fun MappingScreen(
         }
     }
 
-    val userLocationAvailable by remember(
-        locationPermissionsState.allPermissionsGranted,
-        state.userLocation) {
+    val userLocationAvailable by remember {
         derivedStateOf {
             locationPermissionsState.allPermissionsGranted.and(state.userLocation != null)
         }
@@ -171,10 +169,7 @@ fun MappingScreen(
 
     val locationComponentOptions = MappingUtils.rememberLocationComponentOptions()
 
-    val pulsingEnabled by remember(
-        searchingAssistance,
-        locationPermissionsState.allPermissionsGranted) {
-
+    val pulsingEnabled by remember {
         derivedStateOf { searchingAssistance.and(locationPermissionsState.allPermissionsGranted) }
     }
 
