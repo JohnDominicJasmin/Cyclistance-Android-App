@@ -44,10 +44,10 @@ import com.example.cyclistance.feature_authentication.domain.model.SignInCredent
 import com.example.cyclistance.feature_authentication.domain.util.AuthResult
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthState
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthVmEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthState
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInButton
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInClickableText
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInGoogleAndFacebookSection
@@ -98,7 +98,7 @@ fun SignInScreen(
             account?.idToken?.let { token ->
                 scope.launch {
                     signInViewModel.onEvent(
-                        event = SignInVmEvent.SignInVmGoogle(
+                        event = SignInVmEvent.SignInGoogle(
                             authCredential = SignInCredential.Google(
                                 providerToken = token)))
                 }
@@ -125,7 +125,7 @@ fun SignInScreen(
             when (signInEvent) {
 
                 is SignInEvent.RefreshEmail -> {
-                    emailAuthViewModel.onEvent(EmailAuthEvent.RefreshEmail)
+                    emailAuthViewModel.onEvent(EmailAuthVmEvent.RefreshEmail)
                 }
 
                 is SignInEvent.SignInSuccess -> {
@@ -180,27 +180,27 @@ fun SignInScreen(
     LaunchedEffect(key1 = true) {
         emailAuthViewModel.eventFlow.collectLatest { emailAuthEvent ->
             when (emailAuthEvent) {
-                is EmailAuthUiEvent.EmailVerificationSuccess -> {
+                is EmailAuthEvent.EmailVerificationSuccess -> {
                     navController.navigateScreenInclusively(
                         Screens.MappingScreen.route,
                         Screens.SignInScreen.route)
                 }
 
-                is EmailAuthUiEvent.ReloadEmailFailed -> {
+                is EmailAuthEvent.ReloadEmailFailed -> {
                     Toast.makeText(context, emailAuthEvent.reason, Toast.LENGTH_LONG).show()
                 }
 
-                is EmailAuthUiEvent.EmailVerificationNotSent -> {
+                is EmailAuthEvent.EmailVerificationNotSent -> {
                     Toast.makeText(context, emailAuthEvent.reason, Toast.LENGTH_LONG).show()
                 }
 
-                is EmailAuthUiEvent.EmailVerificationFailed -> {
+                is EmailAuthEvent.EmailVerificationFailed -> {
                     navController.navigateScreenInclusively(
                         Screens.EmailAuthScreen.route,
                         Screens.SignInScreen.route)
                 }
 
-                is EmailAuthUiEvent.EmailVerificationSent -> {
+                is EmailAuthEvent.EmailVerificationSent -> {
                     alertDialogState = AlertDialogState(
                         title = "New Email Sent.",
                         description = "New verification email has been sent to your email address.",
@@ -208,7 +208,7 @@ fun SignInScreen(
 
                 }
 
-                is EmailAuthUiEvent.SendEmailVerificationFailed -> {
+                is EmailAuthEvent.SendEmailVerificationFailed -> {
                     alertDialogState = AlertDialogState(
                         title = "Email Verification Failed.",
                         description = "Failed to send verification email. Please try again later.",
@@ -229,7 +229,7 @@ fun SignInScreen(
     val onDoneKeyboardAction = remember {
         {
             signInViewModel.onEvent(
-                SignInVmEvent.SignInVmWithEmailAndPassword(
+                SignInVmEvent.SignInWithEmailAndPassword(
                     email = email,
                     password = password))
             focusManager.clearFocus()
@@ -259,7 +259,7 @@ fun SignInScreen(
 
     val onClickFacebookButton = remember {
         {
-            signInViewModel.onEvent(SignInVmEvent.SignInVmFacebook(activity = context.findActivity()))
+            signInViewModel.onEvent(SignInVmEvent.SignInFacebook(activity = context.findActivity()))
         }
     }
 
@@ -275,7 +275,7 @@ fun SignInScreen(
     val onClickSignInButton = remember {
         {
             signInViewModel.onEvent(
-                SignInVmEvent.SignInVmWithEmailAndPassword(
+                SignInVmEvent.SignInWithEmailAndPassword(
                     email = email,
                     password = password
                 ))
@@ -308,45 +308,16 @@ fun SignInScreen(
         isNoInternetVisible = isNoInternetDialogVisible,
         event = { event ->
             when (event) {
-                is SignUiEvent.DismissAlertDialog -> {
-                    onDismissAlertDialog()
-                }
-
-                is SignUiEvent.KeyboardActionDone -> {
-                    onDoneKeyboardAction()
-                }
-
-                is SignUiEvent.ChangeEmail -> {
-                    onValueChangeEmail(event.email)
-                }
-
-                is SignUiEvent.ChangePassword -> {
-                    onValueChangePassword(event.password)
-                }
-
-                is SignUiEvent.TogglePasswordVisibility -> {
-                    onClickPasswordVisibility()
-                }
-
-                is SignUiEvent.SignInWithFacebook -> {
-                    onClickFacebookButton()
-                }
-
-                is SignUiEvent.SignInWithGoogle -> {
-                    onClickGoogleButton()
-                }
-
-                is SignUiEvent.SignInWithEmailAndPassword -> {
-                    onClickSignInButton()
-                }
-
-                is SignUiEvent.NavigateToSignUp -> {
-                    onClickSignInText()
-                }
-
-                is SignUiEvent.DismissNoInternetDialog -> {
-                    onDismissNoInternetDialog()
-                }
+                is SignUiEvent.DismissAlertDialog -> onDismissAlertDialog()
+                is SignUiEvent.KeyboardActionDone -> onDoneKeyboardAction()
+                is SignUiEvent.ChangeEmail -> onValueChangeEmail(event.email)
+                is SignUiEvent.ChangePassword -> onValueChangePassword(event.password)
+                is SignUiEvent.TogglePasswordVisibility -> onClickPasswordVisibility()
+                is SignUiEvent.SignInWithFacebook -> onClickFacebookButton()
+                is SignUiEvent.SignInWithGoogle -> onClickGoogleButton()
+                is SignUiEvent.SignInWithEmailAndPassword -> onClickSignInButton()
+                is SignUiEvent.NavigateToSignUp -> onClickSignInText()
+                is SignUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
             }
         }
     )

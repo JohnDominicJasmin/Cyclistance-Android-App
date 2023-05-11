@@ -64,7 +64,7 @@ class SignInViewModel @Inject constructor(
 
 
         when (event) {
-            is SignInVmEvent.SignInVmFacebook -> {
+            is SignInVmEvent.SignInFacebook -> {
 
                 _state.update { it.copy(isLoading = true) }
                 event.activity?.let {
@@ -73,11 +73,11 @@ class SignInViewModel @Inject constructor(
                 }
             }
 
-            is SignInVmEvent.SignInVmGoogle -> {
+            is SignInVmEvent.SignInGoogle -> {
                 signInWithCredential(event.authCredential)
             }
 
-            is SignInVmEvent.SignInVmWithEmailAndPassword -> {
+            is SignInVmEvent.SignInWithEmailAndPassword -> {
                 signInWithEmailAndPassword(email = event.email, password = event.password)
             }
 
