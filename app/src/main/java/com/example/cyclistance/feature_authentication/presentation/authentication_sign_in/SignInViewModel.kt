@@ -11,6 +11,9 @@ import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_authentication.domain.util.ActivityResultCallbackI
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInVmEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInState
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -44,8 +47,8 @@ class SignInViewModel @Inject constructor(
     private val _state: MutableStateFlow<SignInState> = MutableStateFlow(savedStateHandle[SIGN_IN_VM_STATE_KEY] ?: SignInState())
     val state = _state.asStateFlow()
 
-    private val _eventFlow: MutableSharedFlow<SignInUiEvent> = MutableSharedFlow()
-    val eventFlow: SharedFlow<SignInUiEvent> = _eventFlow.asSharedFlow()
+    private val _eventFlow: MutableSharedFlow<SignInEvent> = MutableSharedFlow()
+    val eventFlow: SharedFlow<SignInEvent> = _eventFlow.asSharedFlow()
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
@@ -57,11 +60,11 @@ class SignInViewModel @Inject constructor(
         removeFacebookUserAccountPreviousToken()
     }
 
-    fun onEvent(event: SignInEvent) {
+    fun onEvent(event: SignInVmEvent) {
 
 
         when (event) {
-            is SignInEvent.SignInFacebook -> {
+            is SignInVmEvent.SignInVmFacebook -> {
 
                 _state.update { it.copy(isLoading = true) }
                 event.activity?.let {
@@ -70,11 +73,11 @@ class SignInViewModel @Inject constructor(
                 }
             }
 
-            is SignInEvent.SignInGoogle -> {
+            is SignInVmEvent.SignInVmGoogle -> {
                 signInWithCredential(event.authCredential)
             }
 
-            is SignInEvent.SignInWithEmailAndPassword -> {
+            is SignInVmEvent.SignInVmWithEmailAndPassword -> {
                 signInWithEmailAndPassword(email = event.email, password = event.password)
             }
 
@@ -98,9 +101,9 @@ class SignInViewModel @Inject constructor(
             }.onSuccess { isSignedIn ->
                 _state.update { it.copy(isLoading = false) }
                 if (isSignedIn) {
-                    _eventFlow.emit(SignInUiEvent.RefreshEmail)
+                    _eventFlow.emit(SignInEvent.RefreshEmail)
                 } else {
-                    _eventFlow.emit(SignInUiEvent.SignInFailed())
+                    _eventFlow.emit(SignInEvent.SignInFailed())
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
@@ -122,7 +125,7 @@ class SignInViewModel @Inject constructor(
             }.onSuccess { isSuccess ->
                 _state.update { it.copy(isLoading = false) }
                 if (isSuccess) {
-                    _eventFlow.emit(SignInUiEvent.SignInSuccess)
+                    _eventFlow.emit(SignInEvent.SignInSuccess)
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
@@ -139,27 +142,27 @@ class SignInViewModel @Inject constructor(
     private suspend fun handleException(exception: Throwable){
         when (exception) {
             is AuthExceptions.EmailException -> {
-                _eventFlow.emit(value = SignInUiEvent.InvalidEmail(exception.message ?: "Email is Invalid."))
+                _eventFlow.emit(value = SignInEvent.InvalidEmail(exception.message ?: "Email is Invalid."))
             }
             is AuthExceptions.PasswordException -> {
-                _eventFlow.emit(value = SignInUiEvent.InvalidPassword(exception.message ?: "Password is Invalid."))
+                _eventFlow.emit(value = SignInEvent.InvalidPassword(exception.message ?: "Password is Invalid."))
             }
 
             is AuthExceptions.TooManyRequestsException -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(value = SignInUiEvent.AccountBlockedTemporarily)
+                    _eventFlow.emit(value = SignInEvent.AccountBlockedTemporarily)
                 }
             }
 
             is AuthExceptions.NetworkException -> {
                 viewModelScope.launch {
-                    _eventFlow.emit(value = SignInUiEvent.NoInternetConnection)
+                    _eventFlow.emit(value = SignInEvent.NoInternetConnection)
                 }
             }
             is AuthExceptions.ConflictFBTokenException -> {
                 viewModelScope.launch {
                     removeFacebookUserAccountPreviousToken()
-                    _eventFlow.emit(value = SignInUiEvent.ConflictFbToken)
+                    _eventFlow.emit(value = SignInEvent.ConflictFbToken)
                 }
             }
 
@@ -203,11 +206,11 @@ class SignInViewModel @Inject constructor(
     private suspend fun Exception.handleFacebookSignInException() {
 
         if (message == FACEBOOK_CONNECTION_FAILURE) {
-            _eventFlow.emit(value = SignInUiEvent.NoInternetConnection)
+            _eventFlow.emit(value = SignInEvent.NoInternetConnection)
             return
         }
         message?.let {
-            _eventFlow.emit(value = SignInUiEvent.FacebookSignInFailed)
+            _eventFlow.emit(value = SignInEvent.FacebookSignInFailed)
             removeFacebookUserAccountPreviousToken()
         }
     }
