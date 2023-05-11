@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.presentation.authentication_email
+package com.example.cyclistance.feature_authentication.presentation.authentication_email.state
 
 import android.os.Parcelable
 import androidx.compose.runtime.Stable
