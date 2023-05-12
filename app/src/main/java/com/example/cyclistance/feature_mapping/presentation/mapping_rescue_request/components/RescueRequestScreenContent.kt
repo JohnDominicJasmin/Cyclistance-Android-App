@@ -29,7 +29,7 @@ import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialo
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_mapping.domain.model.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.domain.model.RescueRequestModel
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable

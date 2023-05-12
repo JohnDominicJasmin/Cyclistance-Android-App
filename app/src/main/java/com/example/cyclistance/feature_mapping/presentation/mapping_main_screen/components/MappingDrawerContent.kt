@@ -37,7 +37,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -52,7 +52,7 @@ fun MappingDrawerContent(
     onClickRescueRequest: () -> Unit = {},
     onClickSignOut: () -> Unit = {},
 
-) {
+    ) {
     val respondents = remember(state.newRescueRequest?.request?.size) {
         state.newRescueRequest?.request ?: emptyList()
     }

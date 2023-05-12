@@ -22,7 +22,7 @@ import com.example.cyclistance.databinding.ActivityMappingBinding
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.RouteDirection
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.*
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.setDefaultSettings
 import com.mapbox.geojson.Feature
