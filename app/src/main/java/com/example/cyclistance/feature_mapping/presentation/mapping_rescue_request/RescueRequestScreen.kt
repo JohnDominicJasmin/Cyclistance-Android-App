@@ -17,8 +17,8 @@ import androidx.navigation.NavHostController
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_SHEET_TYPE
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingEvent
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingUiEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.components.RescueRequestScreenContent
@@ -43,29 +43,29 @@ fun RescueRequestScreen(
         mappingViewModel.eventFlow.collectLatest { event ->
             when (event) {
 
-                is MappingUiEvent.AcceptRescueRequestSuccess -> {
+                is MappingEvent.AcceptRescueRequestSuccess -> {
                     navController.navigateScreen(
                         destination = Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE=${BottomSheetType.OnGoingRescue}")
                 }
 
-                is MappingUiEvent.LocationNotAvailable -> {
+                is MappingEvent.LocationNotAvailable -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is MappingUiEvent.RescuerLocationNotAvailable -> {
+                is MappingEvent.RescuerLocationNotAvailable -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is MappingUiEvent.UnexpectedError -> {
+                is MappingEvent.UnexpectedError -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is MappingUiEvent.NoInternetConnection -> {
+                is MappingEvent.NoInternetConnection -> {
                     isNoInternetDialogVisible = true
                 }
 
 
-                is MappingUiEvent.RescueHasTransaction -> {
+                is MappingEvent.RescueHasTransaction -> {
                     alertDialogState = AlertDialogState(
                         title = "Cannot Request",
                         description = "Unfortunately the Rescuer is currently in a Rescue.",
@@ -73,7 +73,7 @@ fun RescueRequestScreen(
                     )
                 }
 
-                is MappingUiEvent.UserHasCurrentTransaction -> {
+                is MappingEvent.UserHasCurrentTransaction -> {
 
                     alertDialogState = AlertDialogState(
                         title = "Cannot Request",
@@ -91,13 +91,13 @@ fun RescueRequestScreen(
 
     val onClickCancelButton = remember {
         { id: String ->
-            mappingViewModel.onEvent(MappingEvent.DeclineRescueRequest(id))
+            mappingViewModel.onEvent(MappingVmEvent.DeclineRescueRequest(id))
         }
     }
 
     val onClickConfirmButton = remember {
         { id: String ->
-            mappingViewModel.onEvent(MappingEvent.AcceptRescueRequest(id))
+            mappingViewModel.onEvent(MappingVmEvent.AcceptRescueRequest(id))
         }
     }
 
