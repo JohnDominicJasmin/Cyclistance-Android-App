@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason
+package com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.state
 
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable

@@ -12,6 +12,9 @@ import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transactio
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.event.CancellationReasonEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.event.CancellationReasonVmEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.state.CancellationReasonState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -32,19 +35,18 @@ class CancellationReasonViewModel @Inject constructor(
 
 
     private val _transactionId: String = savedStateHandle["transactionId"] ?: ""
-    private val _clientId: String = savedStateHandle["clientId"] ?: ""
 
     private val _state = MutableStateFlow(savedStateHandle[CANCELLATION_VM_STATE_KEY] ?: CancellationReasonState())
     val state = _state.asStateFlow()
     
-    private val _eventFlow: MutableSharedFlow<CancellationReasonUiEvent> = MutableSharedFlow()
+    private val _eventFlow: MutableSharedFlow<CancellationReasonEvent> = MutableSharedFlow()
     val eventFlow = _eventFlow.asSharedFlow()
 
 
-    fun onEvent(event: CancellationReasonEvent) {
+    fun onEvent(event: CancellationReasonVmEvent) {
         when (event) {
 
-            is CancellationReasonEvent.ConfirmCancellationReason -> {
+            is CancellationReasonVmEvent.ConfirmCancellationReason -> {
 
                 confirmCancellationReason(
                     reason = event.reason,
@@ -81,7 +83,7 @@ class CancellationReasonViewModel @Inject constructor(
                 broadcastRescueTransaction()
                 delay(500)
                 finishLoading()
-                _eventFlow.emit(value = CancellationReasonUiEvent.ConfirmCancellationReasonSuccess)
+                _eventFlow.emit(value = CancellationReasonEvent.ConfirmCancellationReasonSuccess)
             }.onFailure { exception ->
                 finishLoading()
                 exception.handleException()
@@ -115,23 +117,23 @@ class CancellationReasonViewModel @Inject constructor(
         when (this) {
 
             is MappingExceptions.UnexpectedErrorException -> {
-                _eventFlow.emit(value = CancellationReasonUiEvent.UnexpectedError(this.message!!))
+                _eventFlow.emit(value = CancellationReasonEvent.UnexpectedError(this.message!!))
             }
 
             is MappingExceptions.UserException -> {
-                _eventFlow.emit(value = CancellationReasonUiEvent.UserFailed(this.message!!))
+                _eventFlow.emit(value = CancellationReasonEvent.UserFailed(this.message!!))
             }
 
             is MappingExceptions.RescueTransactionNotFoundException -> {
-                _eventFlow.emit(value = CancellationReasonUiEvent.RescueTransactionFailed(this.message!!))
+                _eventFlow.emit(value = CancellationReasonEvent.RescueTransactionFailed(this.message!!))
             }
 
             is MappingExceptions.NetworkException -> {
-                _eventFlow.emit(value = CancellationReasonUiEvent.NoInternetConnection)
+                _eventFlow.emit(value = CancellationReasonEvent.NoInternetConnection)
             }
 
             is MappingExceptions.RescueTransactionReasonException -> {
-                _eventFlow.emit(value = CancellationReasonUiEvent.InvalidCancellationReason(this.message!!))
+                _eventFlow.emit(value = CancellationReasonEvent.InvalidCancellationReason(this.message!!))
             }
 
         }

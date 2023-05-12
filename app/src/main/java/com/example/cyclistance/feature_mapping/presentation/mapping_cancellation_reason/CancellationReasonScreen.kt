@@ -30,6 +30,11 @@ import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialo
 import com.example.cyclistance.feature_mapping.presentation.common.AdditionalMessage
 import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.components.RadioButtonsSection
+import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.event.CancellationReasonEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.event.CancellationReasonUiEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.event.CancellationReasonVmEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.state.CancellationReasonState
+import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.state.CancellationReasonUiState
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -45,39 +50,34 @@ fun CancellationReasonScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
-    var message by rememberSaveable { mutableStateOf("") }
-    var selectedReason by rememberSaveable { mutableStateOf("") }
-    var selectedReasonErrorMessage by rememberSaveable { mutableStateOf("") }
-
+    var uiState by rememberSaveable{ mutableStateOf(CancellationReasonUiState()) }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is CancellationReasonUiEvent.ConfirmCancellationReasonSuccess -> {
+                is CancellationReasonEvent.ConfirmCancellationReasonSuccess -> {
                     navController.navigateScreen(Screens.MappingScreen.route)
                 }
 
-                is CancellationReasonUiEvent.UnexpectedError -> {
+                is CancellationReasonEvent.UnexpectedError -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is CancellationReasonUiEvent.UserFailed -> {
+                is CancellationReasonEvent.UserFailed -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is CancellationReasonUiEvent.RescueTransactionFailed -> {
+                is CancellationReasonEvent.RescueTransactionFailed -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is CancellationReasonUiEvent.NoInternetConnection -> {
-                    isNoInternetDialogVisible = true
+                is CancellationReasonEvent.NoInternetConnection -> {
+                    uiState = uiState.copy(isNoInternetVisible = true)
                 }
 
-                is CancellationReasonUiEvent.InvalidCancellationReason -> {
-                    selectedReasonErrorMessage = event.reason
+                is CancellationReasonEvent.InvalidCancellationReason -> {
+                    uiState = uiState.copy(selectedReasonErrorMessage = event.reason)
                 }
-
             }
         }
     }
@@ -85,21 +85,21 @@ fun CancellationReasonScreen(
 
     val onDismissNoInternetDialog = remember {
         {
-            isNoInternetDialogVisible = false
+            uiState = uiState.copy(isNoInternetVisible = false)
         }
     }
 
     val onChangeValueMessage = remember {
         { messageInput: String ->
-            message = messageInput
+            uiState = uiState.copy(message = messageInput)
         }
     }
     val onClickConfirmButton = remember {
         {
             viewModel.onEvent(
-                event = CancellationReasonEvent.ConfirmCancellationReason(
-                    reason = selectedReason,
-                    message = message,
+                event = CancellationReasonVmEvent.ConfirmCancellationReason(
+                    reason = uiState.selectedReason,
+                    message = uiState.message,
                 ))
         }
     }
@@ -110,26 +110,24 @@ fun CancellationReasonScreen(
     }
     val onSelectReason = remember {
         { reason: String ->
-            selectedReason = reason
-            selectedReasonErrorMessage = ""
+            uiState = uiState.copy(selectedReason = reason, selectedReasonErrorMessage = "")
         }
     }
 
     CancellationReasonScreenContent(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues),
+        modifier = Modifier.fillMaxSize().padding(paddingValues),
         cancellationType = cancellationType,
         state = state,
-        onChangeValueMessage = onChangeValueMessage,
-        onClickConfirmButton = onClickConfirmButton,
-        onClickCancelButton = onClickCancelButton,
-        onDismissNoInternetDialog = onDismissNoInternetDialog,
-        onSelectReason = onSelectReason,
-        isNoInternetDialogVisible = isNoInternetDialogVisible,
-        selectedReason = selectedReason,
-        selectedReasonErrorMessage = selectedReasonErrorMessage,
-        message = message
+        uiState = uiState,
+        event = { event ->
+            when(event){
+                is CancellationReasonUiEvent.ChangeMessage ->  onChangeValueMessage(event.message)
+                is CancellationReasonUiEvent.ConfirmCancellationReason -> onClickConfirmButton()
+                is CancellationReasonUiEvent.NavigateToMapping ->  onClickCancelButton()
+                is CancellationReasonUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
+                is CancellationReasonUiEvent.SelectReason -> onSelectReason(event.reason)
+            }
+        }
     )
 
 }
@@ -139,15 +137,8 @@ fun CancellationReasonScreenContent(
     modifier: Modifier = Modifier,
     cancellationType: String = MappingConstants.SELECTION_RESCUEE_TYPE,
     state: CancellationReasonState = CancellationReasonState(),
-    selectedReason: String,
-    selectedReasonErrorMessage: String,
-    message: String,
-    isNoInternetDialogVisible: Boolean,
-    onChangeValueMessage: (String) -> Unit = {},
-    onClickConfirmButton: () -> Unit = {},
-    onClickCancelButton: () -> Unit = {},
-    onDismissNoInternetDialog: () -> Unit = {},
-    onSelectReason: (String) -> Unit = {}) {
+    uiState: CancellationReasonUiState,
+    event: (CancellationReasonUiEvent) -> Unit = {}) {
 
     Surface(modifier = modifier, color = MaterialTheme.colors.background) {
 
@@ -167,9 +158,11 @@ fun CancellationReasonScreenContent(
                         width = Dimension.fillToConstraints
                         height = Dimension.wrapContent
                     }, cancellationType = cancellationType,
-                selectedOption = selectedReason,
-                errorMessage = selectedReasonErrorMessage,
-                onSelectReason = onSelectReason)
+                selectedOption = uiState.selectedReason,
+                errorMessage = uiState.selectedReasonErrorMessage,
+                onSelectReason = {
+                    event(CancellationReasonUiEvent.SelectReason(it))
+                })
 
             AdditionalMessage(
                 text = "Additional comments:",
@@ -182,8 +175,10 @@ fun CancellationReasonScreenContent(
                         width = Dimension.percent(0.9f)
 
                     },
-                message = message,
-                onChangeValueMessage = onChangeValueMessage,
+                message = uiState.message,
+                onChangeValueMessage = {
+                    event(CancellationReasonUiEvent.ChangeMessage(it))
+                },
                 enabled = state.isLoading.not()
             )
 
@@ -198,8 +193,8 @@ fun CancellationReasonScreenContent(
                         height = Dimension.percent(0.1f)
                         width = Dimension.percent(0.9f)
                     },
-                onClickCancelButton = onClickCancelButton,
-                onClickConfirmButton = onClickConfirmButton,
+                onClickCancelButton = { event(CancellationReasonUiEvent.NavigateToMapping) },
+                onClickConfirmButton = { event(CancellationReasonUiEvent.ConfirmCancellationReason) },
                 negativeButtonEnabled = state.isLoading.not(),
                 positiveButtonEnabled = state.isLoading.not())
 
@@ -216,9 +211,11 @@ fun CancellationReasonScreenContent(
                         }
                 )
             }
-            if (isNoInternetDialogVisible) {
+
+
+            if (uiState.isNoInternetVisible) {
                 NoInternetDialog(
-                    onDismiss = onDismissNoInternetDialog,
+                    onDismiss = { event(CancellationReasonUiEvent.DismissNoInternetDialog) },
                     modifier = Modifier.constrainAs(noInternetScreen) {
                         bottom.linkTo(parent.bottom)
                         start.linkTo(parent.start)
@@ -226,8 +223,10 @@ fun CancellationReasonScreenContent(
                         width = Dimension.matchParent
                         height = Dimension.wrapContent
                     })
-
             }
+
+
+
         }
     }
 }
@@ -240,10 +239,8 @@ fun CancellationReasonPreview() {
         CancellationReasonScreenContent(
             modifier = Modifier.fillMaxSize(),
             state = CancellationReasonState(),
-            selectedReason = "Selected Reason",
-            isNoInternetDialogVisible = true,
-            message = "iindiansdioansdoiandioands",
-            selectedReasonErrorMessage = "Error Message")
+            uiState = CancellationReasonUiState()
+        )
     }
 }
 
