@@ -24,7 +24,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun RequestHelpButton(
     modifier: Modifier = Modifier,
-    onClickSearchButton: () -> Unit = {},
+    onClickRequestHelpButton: () -> Unit = {},
     state: MappingState = MappingState(),
     visible: Boolean = true
     ) {
@@ -39,7 +39,7 @@ fun RequestHelpButton(
         )) {
         Button(
             enabled = !state.isLoading,
-            onClick = onClickSearchButton,
+            onClick = onClickRequestHelpButton,
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
             modifier = Modifier) {
@@ -72,7 +72,7 @@ fun RequestHelpButtonPreview() {
 
     CyclistanceTheme(true) {
         RequestHelpButton(
-            onClickSearchButton = { },
+            onClickRequestHelpButton = { },
             modifier = Modifier,
             state = MappingState())
     }

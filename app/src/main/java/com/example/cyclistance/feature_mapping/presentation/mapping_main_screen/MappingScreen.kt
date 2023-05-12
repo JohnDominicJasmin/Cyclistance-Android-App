@@ -32,11 +32,13 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.permission.requestPermission
 import com.example.cyclistance.feature_mapping.domain.model.CameraState
-import com.example.cyclistance.feature_mapping.domain.model.MapSelectedRescuee
 import com.example.cyclistance.feature_mapping.domain.model.Role
-import com.example.cyclistance.feature_mapping.domain.model.RouteDirection
 import com.example.cyclistance.feature_mapping.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.*
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.animateCameraPosition
@@ -82,19 +84,7 @@ fun MappingScreen(
     val state by mappingViewModel.state.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
-
-    var rescueRequestAccepted by rememberSaveable { mutableStateOf(false) }
-
-    var requestHelpButtonVisible by rememberSaveable { mutableStateOf(true) }
-
-    var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
-    var searchingAssistance by rememberSaveable { mutableStateOf(false) }
-
-    var cameraState by remember { mutableStateOf(CameraState()) }
-    var mapSelectedRescuee by remember { mutableStateOf<MapSelectedRescuee?>(null) }
-    var routeDirection by remember { mutableStateOf<RouteDirection?>(null) }
-    var bottomSheetType by rememberSaveable { mutableStateOf("") }
-
+    var uiState by rememberSaveable { mutableStateOf(MappingUiState()) }
 
     var mapboxMap by remember<MutableState<MapboxMap?>> {
         mutableStateOf(null)
@@ -111,8 +101,6 @@ fun MappingScreen(
             mapboxMap = mbm
         }
     }
-
-
 
 
     val locationPermissionsState = if (Build.VERSION.SDK_INT >= Q) {
@@ -150,12 +138,12 @@ fun MappingScreen(
                     onDisabled = settingResultRequest::launch,
                     onEnabled = {
                         mappingViewModel.onEvent(
-                            event = MappingEvent.RequestHelp)
+                            event = MappingVmEvent.RequestHelp)
 
                     })
             } else {
                 mappingViewModel.onEvent(
-                    event = MappingEvent.RequestHelp)
+                    event = MappingVmEvent.RequestHelp)
 
             }
         }
@@ -170,7 +158,7 @@ fun MappingScreen(
     val locationComponentOptions = MappingUtils.rememberLocationComponentOptions()
 
     val pulsingEnabled by remember {
-        derivedStateOf { searchingAssistance.and(locationPermissionsState.allPermissionsGranted) }
+        derivedStateOf { uiState.searchingAssistance.and(locationPermissionsState.allPermissionsGranted) }
     }
 
     val onClickRequestHelpButton = remember {
@@ -223,10 +211,10 @@ fun MappingScreen(
     }
 
 
-    val showRouteDirection = remember(routeDirection, mapboxMap) {
+    val showRouteDirection = remember(uiState.routeDirection, mapboxMap) {
         {
 
-            routeDirection?.geometry?.let { geometry ->
+            uiState.routeDirection?.geometry?.let { geometry ->
 
                 mapboxMap?.getStyle { style ->
                     if (style.isFullyLoaded.not() || geometry.isEmpty()) {
@@ -333,8 +321,8 @@ fun MappingScreen(
             coroutineScope.launch {
                 bottomSheetScaffoldState.bottomSheetState.collapse()
             }.invokeOnCompletion {
-                mappingViewModel.onEvent(event = MappingEvent.CancelRequestHelp)
-                searchingAssistance = false
+                mappingViewModel.onEvent(event = MappingVmEvent.CancelRequestHelp)
+                uiState = uiState.copy(searchingAssistance = false)
             }
             Unit
         }
@@ -343,9 +331,11 @@ fun MappingScreen(
     val onChangeCameraPosition = remember {
         { cameraPosition: LatLng, zoom: Double ->
 
-            cameraState = CameraState(
-                cameraPosition = cameraPosition,
-                cameraZoom = zoom
+            uiState = uiState.copy(
+                cameraState = CameraState(
+                    cameraPosition = cameraPosition,
+                    cameraZoom = zoom
+                )
             )
 
         }
@@ -366,7 +356,9 @@ fun MappingScreen(
 
     val onDismissNoInternetDialog = remember {
         {
-            isNoInternetDialogVisible = false
+            uiState = uiState.copy(
+                isNoInternetVisible = false
+            )
         }
     }
 
@@ -430,30 +422,36 @@ fun MappingScreen(
 
     val onClickOkCancelledRescue = remember {
         {
-            mappingViewModel.onEvent(event = MappingEvent.CancelRescueTransaction)
+            mappingViewModel.onEvent(event = MappingVmEvent.CancelRescueTransaction)
         }
     }
 
     val onClickRescueeMapIcon = remember {
         { id: String ->
-            mappingViewModel.onEvent(event = MappingEvent.SelectRescueMapIcon(id))
+            mappingViewModel.onEvent(event = MappingVmEvent.SelectRescueMapIcon(id))
         }
     }
 
-    val onDismissRescueeBanner = remember {
-        {
-            val isRescueeBannerVisible = mapSelectedRescuee != null
-            if (isRescueeBannerVisible) {
-                mapSelectedRescuee = null
+    val onDismissRescueeBanner = remember{{
+        val isRescueeBannerVisible = uiState.mapSelectedRescuee != null
+        if (isRescueeBannerVisible) {
+            uiState = uiState.copy(
+                mapSelectedRescuee = null,
                 requestHelpButtonVisible = true
-            }
+            )
         }
     }
+    }
+
+    val onMapClick = remember {{
+        onDismissRescueeBanner()
+    }}
+
     val onClickRespondToHelpButton = remember {
         {
-            mapSelectedRescuee?.let {
+            uiState.mapSelectedRescuee?.let {
                 mappingViewModel.onEvent(
-                    event = MappingEvent.RespondToHelp(
+                    event = MappingVmEvent.RespondToHelp(
                         selectedRescuee = it
                     ))
             }
@@ -463,8 +461,10 @@ fun MappingScreen(
     val onClickOkAcceptedRescue = remember {
         {
             onChangeNavigatingState(true)
-            rescueRequestAccepted = false
-            bottomSheetType = BottomSheetType.OnGoingRescue.type
+            uiState = uiState.copy(
+                rescueRequestAccepted = false,
+                bottomSheetType = BottomSheetType.OnGoingRescue.type
+            )
         }
     }
 
@@ -475,91 +475,105 @@ fun MappingScreen(
             when (event) {
 
 
-                is MappingUiEvent.RequestHelpSuccess -> {
+                is MappingEvent.RequestHelpSuccess -> {
                     navController.navigateScreen(
                         Screens.ConfirmDetailsScreen.route + "?$LATITUDE=${state.userLocation?.latitude}&$LONGITUDE=${state.userLocation?.longitude}")
                 }
 
-                is MappingUiEvent.InsufficientUserCredential -> {
+                is MappingEvent.InsufficientUserCredential -> {
                     navController.navigateScreen(
                         Screens.EditProfileScreen.route)
                 }
 
-                is MappingUiEvent.LocationNotAvailable -> {
+                is MappingEvent.LocationNotAvailable -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is MappingUiEvent.RescuerLocationNotAvailable -> {
+                is MappingEvent.RescuerLocationNotAvailable -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is MappingUiEvent.UnexpectedError -> {
+                is MappingEvent.UnexpectedError -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is MappingUiEvent.UserFailed -> {
+                is MappingEvent.UserFailed -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is MappingUiEvent.RespondToHelpSuccess -> {
+                is MappingEvent.RespondToHelpSuccess -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is MappingUiEvent.AddressFailed -> {
+                is MappingEvent.AddressFailed -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is MappingUiEvent.NoInternetConnection -> {
-                    isNoInternetDialogVisible = true
+                is MappingEvent.NoInternetConnection -> {
+                    uiState = uiState.copy(
+                        isNoInternetVisible = true
+                    )
                 }
 
-                is MappingUiEvent.NewSelectedRescuee -> {
-                    mapSelectedRescuee = event.selectedRescuee
-                    requestHelpButtonVisible = false
+                is MappingEvent.NewSelectedRescuee -> {
+                    uiState = uiState.copy(
+                        mapSelectedRescuee = event.selectedRescuee,
+                        requestHelpButtonVisible = false
+                    )
                 }
 
-                is MappingUiEvent.NewRouteDirection -> {
-                    routeDirection = event.routeDirection
+                is MappingEvent.NewRouteDirection -> {
+                    uiState = uiState.copy(
+                        routeDirection = event.routeDirection
+                    )
                 }
 
-                is MappingUiEvent.RemoveAssignedTransactionSuccess -> {
-                    rescueRequestAccepted = false
-                    requestHelpButtonVisible = true
-                    searchingAssistance = false
+                is MappingEvent.RemoveAssignedTransactionSuccess -> {
+                    uiState = uiState.copy(
+                        rescueRequestAccepted = false,
+                        requestHelpButtonVisible = true,
+                        searchingAssistance = false,
+                        bottomSheetType = ""
+                    )
                     onChangeNavigatingState(false)
-                    bottomSheetType = ""
 
                 }
 
-                is MappingUiEvent.RescueRequestAccepted -> {
-                    rescueRequestAccepted = true
+                is MappingEvent.RescueRequestAccepted -> {
+                     uiState = uiState.copy(
+                         rescueRequestAccepted = true
+                     )
                 }
 
-                is MappingUiEvent.CancelHelpRequestSuccess -> {
-                    requestHelpButtonVisible = true
+                is MappingEvent.CancelHelpRequestSuccess -> {
+                    uiState = uiState.copy(
+                        requestHelpButtonVisible = true
+                    )
                 }
 
-                is MappingUiEvent.AcceptRescueRequestSuccess -> {
-                    requestHelpButtonVisible = false
+                is MappingEvent.AcceptRescueRequestSuccess -> {
+                    uiState = uiState.copy(
+                        requestHelpButtonVisible = false
+                    )
                 }
 
-                is MappingUiEvent.FailedToCalculateDistance -> {
+                is MappingEvent.FailedToCalculateDistance -> {
                     Toast.makeText(context, "Failed to Calculate Distance", Toast.LENGTH_SHORT)
                         .show()
                 }
 
-                is MappingUiEvent.DestinationReached -> {
+                is MappingEvent.DestinationReached -> {
                     val role = state.user.transaction?.role
                     val type = if (role == Role.RESCUEE.name.lowercase()) {
                         BottomSheetType.RescuerArrived.type
                     } else {
                         BottomSheetType.DestinationReached.type
                     }
-                    bottomSheetType = type
+                    uiState = uiState.copy(bottomSheetType = type)
 
                 }
 
-                is MappingUiEvent.RemoveRespondentFailed -> {
+                is MappingEvent.RemoveRespondentFailed -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
@@ -573,9 +587,9 @@ fun MappingScreen(
 
 
 
-    LaunchedEffect(key1 = routeDirection, key2 = mapboxMap) {
+    LaunchedEffect(key1 = uiState.routeDirection, key2 = mapboxMap) {
 
-        val route = routeDirection ?: return@LaunchedEffect
+        val route = uiState.routeDirection ?: return@LaunchedEffect
 
         if (route.geometry.isEmpty()) {
             removeRouteDirection()
@@ -596,7 +610,7 @@ fun MappingScreen(
 
 
         if (hasTransaction.not() || isRescueCancelled) {
-            routeDirection = null
+            uiState = uiState.copy(routeDirection = null)
             return@LaunchedEffect
         }
 
@@ -606,7 +620,7 @@ fun MappingScreen(
         destinationLocation.latitude ?: return@LaunchedEffect
 
         mappingViewModel.onEvent(
-            event = MappingEvent.GetRouteDirections(
+            event = MappingVmEvent.GetRouteDirections(
                 origin = Point.fromLngLat(startingLocation.longitude, startingLocation.latitude),
                 destination = Point.fromLngLat(
                     destinationLocation.longitude,
@@ -626,9 +640,9 @@ fun MappingScreen(
         }
 
         if (dataHaveBeenLoaded.not()) {
-            mappingViewModel.onEvent(MappingEvent.LoadData)
+            mappingViewModel.onEvent(MappingVmEvent.LoadData)
         }
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
     }
 
 
@@ -637,9 +651,9 @@ fun MappingScreen(
         showUserLocation()
     }
 
-    LaunchedEffect(key1 = bottomSheetType) {
+    LaunchedEffect(key1 = uiState.bottomSheetType) {
         coroutineScope.launch {
-            if (bottomSheetType.isNotEmpty()) {
+            if (uiState.bottomSheetType.isNotEmpty()) {
                 bottomSheetScaffoldState.bottomSheetState.expand()
             }
         }
@@ -649,10 +663,9 @@ fun MappingScreen(
     LaunchedEffect(key1 = typeBottomSheet) {
 
         if (typeBottomSheet == BottomSheetType.SearchAssistance.type) {
-            searchingAssistance = true
+            uiState = uiState.copy(searchingAssistance = true)
         }
-
-        bottomSheetType = typeBottomSheet
+        uiState = uiState.copy(bottomSheetType = typeBottomSheet)
 
 
     }
@@ -676,7 +689,7 @@ fun MappingScreen(
             return@LaunchedEffect
         }
 
-        with(cameraState) {
+        with(uiState.cameraState) {
             locateUser(cameraZoom, cameraPosition, FAST_CAMERA_ANIMATION_DURATION)
         }
     }
@@ -702,37 +715,40 @@ fun MappingScreen(
         modifier = Modifier.padding(paddingValues),
         isDarkTheme = isDarkTheme,
         state = state,
-        onClickRequestHelpButton = onClickRequestHelpButton,
         locationPermissionState = locationPermissionsState,
-        onClickCancelSearchButton = onClickCancelSearchButton,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
-        onChangeCameraState = onChangeCameraPosition,
-        onClickCancelRescueTransactionButton = onClickCancelRescueButton,
-        onDismissNoInternetDialog = onDismissNoInternetDialog,
         hasTransaction = hasTransaction,
         isRescueCancelled = isRescueCancelled,
-        onClickCallRescueTransactionButton = onClickCallButton,
-        onClickChatRescueTransactionButton = onClickChatButton,
-        onClickOkButtonCancelledRescue = onClickOkCancelledRescue,
-        onClickRescueeMapIcon = onClickRescueeMapIcon,
-        onMapClick = onDismissRescueeBanner,
-        onClickDismissBannerButton = onDismissRescueeBanner,
-        onClickRespondToHelpButton = onClickRespondToHelpButton,
-        onClickLocateUserButton = onClickLocateUserButton,
-        onClickRouteOverButton = onClickRouteOverViewButton,
-        onClickRecenterButton = onClickRecenterButton,
-        onClickOpenNavigationButton = onClickOpenNavigationButton,
-        onClickOkButtonRescueRequestAccepted = onClickOkAcceptedRescue,
-        onRequestNavigationCameraToOverview = onRequestNavigationCameraToOverview,
-        onInitializeMapboxMap = onInitializeMapboxMap,
         mapboxMap = mapboxMap,
-        bottomSheetType = bottomSheetType,
-        mapSelectedRescuee = mapSelectedRescuee,
-        routeDirection = routeDirection,
-        isNoInternetDialogVisible = isNoInternetDialogVisible,
         isNavigating = isNavigating,
-        rescueRequestAccepted = rescueRequestAccepted,
-        requestHelpButtonVisible = requestHelpButtonVisible
+        uiState = uiState,
+        event = { event ->
+            when(event){
+                is MappingUiEvent.OnClickRequestHelp -> onClickRequestHelpButton()
+                is MappingUiEvent.OnClickRespondToHelp -> onClickRespondToHelpButton()
+                is MappingUiEvent.OnClickCancelSearch -> onClickCancelSearchButton()
+                is MappingUiEvent.OnClickCallRescueTransaction -> onClickCallButton()
+                is MappingUiEvent.OnClickChatRescueTransaction -> onClickChatButton()
+                is MappingUiEvent.OnClickCancelRescueTransaction -> onClickCancelRescueButton()
+                is MappingUiEvent.OnClickOkCancelledRescue -> onClickOkCancelledRescue()
+                is MappingUiEvent.OnInitializeMap -> onInitializeMapboxMap(event.mapboxMap)
+                is MappingUiEvent.OnClickOkRescueRequestAccepted -> onClickOkAcceptedRescue()
+                is MappingUiEvent.OnChangeCameraState -> onChangeCameraPosition(event.position, event.zoomLevel)
+                is MappingUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
+                is MappingUiEvent.OnClickRescueeMapIcon -> onClickRescueeMapIcon(event.id)
+                is MappingUiEvent.OnMapClick -> onMapClick()
+                is MappingUiEvent.OnClickDismissBanner -> onDismissRescueeBanner()
+                is MappingUiEvent.OnClickLocate -> onClickLocateUserButton()
+                is MappingUiEvent.OnClickRouteOverviewButton -> onClickRouteOverViewButton()
+                is MappingUiEvent.OnClickRecenterButton -> onClickRecenterButton()
+                is MappingUiEvent.OnClickOpenNavigationButton -> onClickOpenNavigationButton()
+                is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
+
+                is MappingUiEvent.OnClickRescueArrived -> {}
+                is MappingUiEvent.OnClickDestinationReached -> {}
+            }
+        }
+
 
 
     )
