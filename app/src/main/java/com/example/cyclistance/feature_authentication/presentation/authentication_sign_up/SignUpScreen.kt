@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -39,6 +38,11 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpTextArea
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.SignUpTextFieldsArea
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.components.signUpConstraints
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpUiEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpVmEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state.SignUpState
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state.SignUpUiState
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.visible
@@ -57,40 +61,32 @@ fun SignUpScreen(
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
 
-    var email by rememberSaveable { mutableStateOf("") }
-    var emailErrorMessage by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var passwordErrorMessage by rememberSaveable { mutableStateOf("") }
-    var confirmPassword by rememberSaveable { mutableStateOf("") }
-    var confirmPasswordErrorMessage by rememberSaveable { mutableStateOf("") }
+    var uiState by rememberSaveable { mutableStateOf(SignUpUiState()) }
 
-    var alertDialogState by remember { mutableStateOf(AlertDialogState()) }
-    var passwordVisibility by rememberSaveable { mutableStateOf(false) }
-    var isNoInternetDialogVisible by remember { mutableStateOf(false) }
-
-
-    val signUpAccount = remember(key1 = email, key2 = signUpState.hasAccountSignedIn) {
+    val signUpAccount = remember(key1 = uiState.email, key2 = signUpState.hasAccountSignedIn) {
         {
-            val isUserCreatedNewAccount = email != signUpState.savedAccountEmail
+            val isUserCreatedNewAccount = uiState.email != signUpState.savedAccountEmail
             if (signUpState.hasAccountSignedIn && isUserCreatedNewAccount) {
-                signUpViewModel.onEvent(SignUpEvent.SignOut)
+                signUpViewModel.onEvent(SignUpVmEvent.SignOut)
             }
             signUpViewModel.onEvent(
-                SignUpEvent.SignUp(
-                    email = email,
-                    password = password,
-                    confirmPassword = confirmPassword))
+                SignUpVmEvent.SignUp(
+                    email = uiState.email,
+                    password = uiState.password,
+                    confirmPassword = uiState.confirmPassword))
         }
 
     }
 
     val onDismissAlertDialog = remember {
         {
-            alertDialogState = AlertDialogState()
+            uiState = uiState.copy(
+                alertDialogState = AlertDialogState()
+            )
         }
     }
 
-    val onDoneKeyboardAction = remember<KeyboardActionScope.() -> Unit> {
+    val onDoneKeyboardAction = remember{
         {
             signUpAccount()
             focusManager.clearFocus()
@@ -98,25 +94,33 @@ fun SignUpScreen(
     }
     val onValueChangeEmail = remember {
         { inputEmail: String ->
-            email = inputEmail
-            emailErrorMessage = ""
+            uiState = uiState.copy(
+                email = inputEmail,
+                emailErrorMessage = ""
+            )
         }
     }
     val onValueChangePassword = remember {
         { inputPassword: String ->
-            password = inputPassword
-            passwordErrorMessage = ""
+            uiState = uiState.copy(
+                password = inputPassword,
+                passwordErrorMessage = ""
+            )
         }
     }
     val onValueChangeConfirmPassword = remember {
         { inputConfirmPassword: String ->
-            confirmPassword = inputConfirmPassword
-            confirmPasswordErrorMessage = ""
+            uiState = uiState.copy(
+                confirmPassword = inputConfirmPassword,
+                confirmPasswordErrorMessage = ""
+            )
         }
     }
     val onClickPasswordVisibility = remember {
         {
-            passwordVisibility = !passwordVisibility
+            uiState = uiState.copy(
+                passwordVisible = !uiState.passwordVisible
+            )
         }
     }
     val onClickSignUpButton = remember {
@@ -133,7 +137,9 @@ fun SignUpScreen(
     }
     val onDismissNoInternetDialog = remember {
         {
-            isNoInternetDialogVisible = false
+            uiState = uiState.copy(
+                isNoInternetVisible = false
+            )
         }
     }
 
@@ -142,46 +148,57 @@ fun SignUpScreen(
         signUpViewModel.eventFlow.collectLatest { event ->
 
             when (event) {
-                is SignUpUiEvent.SignUpSuccess -> {
+                is SignUpEvent.SignUpSuccess -> {
                     navController.navigateScreenInclusively(
                         Screens.EmailAuthScreen.route,
                         Screens.SignUpScreen.route)
 
                 }
 
-                is SignUpUiEvent.CreateAccountFailed -> {
-                    alertDialogState = AlertDialogState(
-                        title = "Failed to create account",
-                        description = " Failed to create account. Check info and try again or contact support.",
-                        icon = R.raw.error
+                is SignUpEvent.CreateAccountFailed -> {
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Failed to create account",
+                            description = " Failed to create account. Check info and try again or contact support.",
+                            icon = R.raw.error
+                        )
+                    )
+
+                }
+
+                is SignUpEvent.NoInternetConnection -> {
+                    uiState = uiState.copy(
+                        isNoInternetVisible = true
                     )
                 }
 
-                is SignUpUiEvent.NoInternetConnection -> {
-                    isNoInternetDialogVisible = true
-                }
-
-                is SignUpUiEvent.AccountAlreadyTaken -> {
-                    alertDialogState = AlertDialogState(
-                        title = "Account already taken",
-                        description = "Account already taken. Try again or contact support.",
-                        icon = R.raw.error
+                is SignUpEvent.AccountAlreadyTaken -> {
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Account already taken",
+                            description = "Account already taken. Try again or contact support.",
+                            icon = R.raw.error
+                        )
                     )
                 }
 
-                is SignUpUiEvent.InvalidEmail -> {
-                    emailErrorMessage = event.reason
+                is SignUpEvent.InvalidEmail -> {
+                    uiState = uiState.copy(
+                        emailErrorMessage = event.reason
+                    )
                 }
 
-                is SignUpUiEvent.InvalidPassword -> {
-                    passwordErrorMessage = event.reason
+                is SignUpEvent.InvalidPassword -> {
+                    uiState = uiState.copy(
+                        passwordErrorMessage = event.reason
+                    )
                 }
 
-                is SignUpUiEvent.InvalidConfirmPassword -> {
-                    confirmPasswordErrorMessage = event.reason
+                is SignUpEvent.InvalidConfirmPassword -> {
+                    uiState = uiState.copy(
+                        confirmPasswordErrorMessage = event.reason
+                    )
                 }
-
-
             }
         }
     }
@@ -193,25 +210,21 @@ fun SignUpScreen(
         modifier = Modifier.padding(paddingValues),
         focusRequester = focusRequester,
         signUpState = signUpState,
-        onDismissAlertDialog = onDismissAlertDialog,
-        onDismissNoInternetDialog = onDismissNoInternetDialog,
-        keyboardActionOnDone = onDoneKeyboardAction,
-        onValueChangeEmail = onValueChangeEmail,
-        onValueChangePassword = onValueChangePassword,
-        onValueChangeConfirmPassword = onValueChangeConfirmPassword,
-        onClickPasswordVisibility = onClickPasswordVisibility,
-        onClickSignUpButton = onClickSignUpButton,
-        onClickSignUpText = onClickSignUpText,
-        alertDialogState = alertDialogState,
-        isInternetDialogVisible = isNoInternetDialogVisible,
-        email = email,
-        password = password,
-        confirmPassword = confirmPassword,
-        isPasswordVisible = passwordVisibility,
-        emailErrorMessage = emailErrorMessage,
-        passwordErrorMessage = passwordErrorMessage,
-        confirmPasswordErrorMessage = confirmPasswordErrorMessage,
-        )
+        uiState = uiState,
+        event = { event ->
+            when (event) {
+                is SignUpUiEvent.DismissAlertDialog -> onDismissAlertDialog()
+                is SignUpUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
+                is SignUpUiEvent.KeyboardActionDone -> onDoneKeyboardAction()
+                is SignUpUiEvent.ChangeEmail -> onValueChangeEmail(event.email)
+                is SignUpUiEvent.ChangePassword -> onValueChangePassword(event.password)
+                is SignUpUiEvent.ChangeConfirmPassword -> onValueChangeConfirmPassword(event.confirmPassword)
+                is SignUpUiEvent.TogglePasswordVisibility -> onClickPasswordVisibility()
+                is SignUpUiEvent.SignUpWithEmailAndPassword -> onClickSignUpButton()
+                is SignUpUiEvent.NavigateToSignIn -> onClickSignUpText()
+            }
+        }
+    )
 }
 
 
@@ -219,18 +232,7 @@ fun SignUpScreen(
 @Composable
 fun SignUpScreenPreview() {
     CyclistanceTheme(true) {
-        SignUpScreenContent(
-            signUpState = SignUpState(),
-            alertDialogState = AlertDialogState(),
-            email = "asddsadsadsadasw@gmail.com",
-            password = "Passwordasknaisd",
-            confirmPassword = "Confirm password",
-            isPasswordVisible = false,
-            isInternetDialogVisible = true,
-            emailErrorMessage = "Email error message",
-            passwordErrorMessage = "Password error message",
-            confirmPasswordErrorMessage = "Confirm password error message",
-            )
+        SignUpScreenContent(signUpState = SignUpState())
     }
 
 }
@@ -241,97 +243,97 @@ fun SignUpScreenContent(
     modifier: Modifier = Modifier,
     signUpState: SignUpState = SignUpState(),
     focusRequester: FocusRequester = FocusRequester(),
-    alertDialogState: AlertDialogState = AlertDialogState(),
-    isInternetDialogVisible: Boolean,
-    email: String,
-    emailErrorMessage: String,
-    password: String,
-    passwordErrorMessage: String,
-    confirmPassword: String,
-    confirmPasswordErrorMessage: String,
-    isPasswordVisible: Boolean,
-    onDismissAlertDialog: () -> Unit = {},
-    keyboardActionOnDone: (KeyboardActionScope.() -> Unit) = {},
-    onValueChangeEmail: (String) -> Unit = {},
-    onValueChangePassword: (String) -> Unit = { },
-    onValueChangeConfirmPassword: (String) -> Unit = {},
-    onClickPasswordVisibility: () -> Unit = {},
-    onClickSignUpButton: () -> Unit = {},
-    onClickSignUpText: () -> Unit = {},
-    onDismissNoInternetDialog: () -> Unit = {}
+    uiState: SignUpUiState = SignUpUiState(),
+    event: (SignUpUiEvent) -> Unit = {},
 ) {
 
+    Surface(color = MaterialTheme.colors.background, modifier = modifier.fillMaxSize()) {
 
+        ConstraintLayout(
+            modifier = Modifier.fillMaxSize(),
+            constraintSet = signUpConstraints) {
 
-    Surface(color = MaterialTheme.colors.background, modifier = modifier.fillMaxSize()){
+            Spacer(
+                modifier = Modifier.layoutId(
+                    AuthenticationConstraintsItem.TopSpacer.layoutId
+                ))
 
-    ConstraintLayout(
-        modifier = Modifier.fillMaxSize(),
-        constraintSet = signUpConstraints) {
-
-        Spacer(
-            modifier = Modifier.layoutId(
-                AuthenticationConstraintsItem.TopSpacer.layoutId
-            ))
-
-        Image(
-            contentDescription = "App Icon",
-            painter = painterResource(R.drawable.ic_app_icon_cyclistance),
-            modifier = Modifier
-                .height(100.dp)
-                .width(90.dp)
-                .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
-        )
-
-        SignUpTextArea()
-
-
-        Waves(
-            topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
-            bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId)
-
-
-
-        if (alertDialogState.visible()) {
-            AlertDialog(
-                alertDialog = alertDialogState,
-                onDismissRequest = onDismissAlertDialog)
-        }
-
-        SignUpTextFieldsArea(
-            focusRequester = focusRequester,
-            state = signUpState,
-            keyboardActionOnDone = keyboardActionOnDone,
-            onValueChangeEmail = onValueChangeEmail,
-            onValueChangePassword = onValueChangePassword,
-            onValueChangeConfirmPassword = onValueChangeConfirmPassword,
-            onClickPasswordVisibility = onClickPasswordVisibility,
-            email = email,
-            emailErrorMessage = emailErrorMessage,
-            password = password,
-            passwordErrorMessage = passwordErrorMessage,
-            confirmPassword = confirmPassword,
-            confirmPasswordErrorMessage = confirmPasswordErrorMessage,
-            passwordVisibility = isPasswordVisible
-        )
-
-
-        SignUpButton(enabled = !signUpState.isLoading, onClickSignUpButton = onClickSignUpButton)
-        SignUpClickableText(enabled = !signUpState.isLoading, onSignUpTextClick = onClickSignUpText)
-
-
-        if (signUpState.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId))
-        }
-
-        if (isInternetDialogVisible) {
-            NoInternetDialog(
-                onDismiss = onDismissNoInternetDialog,
-                modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+            Image(
+                contentDescription = "App Icon",
+                painter = painterResource(R.drawable.ic_app_icon_cyclistance),
+                modifier = Modifier
+                    .height(100.dp)
+                    .width(90.dp)
+                    .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
             )
-        }
 
-    }
+            SignUpTextArea()
+
+
+            Waves(
+                topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
+                bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId)
+
+
+
+            if (uiState.alertDialogState.visible()) {
+                AlertDialog(
+                    alertDialog = uiState.alertDialogState,
+                    onDismissRequest = {
+                        event(SignUpUiEvent.DismissAlertDialog)
+                    })
+            }
+
+            SignUpTextFieldsArea(
+                focusRequester = focusRequester,
+                state = signUpState,
+                keyboardActionOnDone = {
+                    event(SignUpUiEvent.KeyboardActionDone)
+                },
+                onValueChangeEmail = {
+                    event(SignUpUiEvent.ChangeEmail(it))
+                },
+                onValueChangePassword = {
+                    event(SignUpUiEvent.ChangePassword(it))
+                },
+                onValueChangeConfirmPassword = {
+                    event(SignUpUiEvent.ChangeConfirmPassword(it))
+                },
+                onClickPasswordVisibility = {
+                    event(SignUpUiEvent.TogglePasswordVisibility)
+                },
+                email = uiState.email,
+                emailErrorMessage = uiState.emailErrorMessage,
+                password = uiState.password,
+                passwordErrorMessage = uiState.passwordErrorMessage,
+                confirmPassword = uiState.confirmPassword,
+                confirmPasswordErrorMessage = uiState.confirmPasswordErrorMessage,
+                passwordVisibility = uiState.passwordVisible
+            )
+
+
+            SignUpButton(enabled = !signUpState.isLoading, onClickSignUpButton = {
+                event(SignUpUiEvent.SignUpWithEmailAndPassword)
+            })
+            SignUpClickableText(enabled = !signUpState.isLoading, onSignUpTextClick = {
+                event(SignUpUiEvent.NavigateToSignIn)
+            })
+
+
+            if (signUpState.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId))
+            }
+
+            if (uiState.isNoInternetVisible) {
+                NoInternetDialog(
+                    onDismiss = {
+                        event(SignUpUiEvent.DismissNoInternetDialog)
+                    },
+                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                )
+            }
+
+        }
     }
 }
 

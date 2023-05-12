@@ -58,6 +58,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInVmEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInState
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInUiState
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.visible
@@ -83,13 +84,9 @@ fun SignInScreen(
     val signInState by signInViewModel.state.collectAsStateWithLifecycle()
     val emailAuthState by emailAuthViewModel.state.collectAsStateWithLifecycle()
     val focusRequester = remember { FocusRequester() }
-    var alertDialogState by remember { mutableStateOf(AlertDialogState()) }
-    var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
-    var email by rememberSaveable { mutableStateOf("") }
-    var emailErrorMessage by rememberSaveable { mutableStateOf("") }
-    var password by rememberSaveable { mutableStateOf("") }
-    var passwordErrorMessage by rememberSaveable { mutableStateOf("") }
-    var isPasswordVisible by rememberSaveable { mutableStateOf(false) }
+    var uiState by rememberSaveable {
+        mutableStateOf(SignInUiState())
+    }
 
     val focusManager = LocalFocusManager.current
     val authResultLauncher = rememberLauncherForActivityResult(contract = AuthResult()) { task ->
@@ -139,37 +136,49 @@ fun SignInScreen(
                 }
 
                 is SignInEvent.NoInternetConnection -> {
-                    isNoInternetDialogVisible = true
+                    uiState = uiState.copy(
+                        isNoInternetVisible = true
+                    )
                 }
 
                 is SignInEvent.AccountBlockedTemporarily -> {
-                    alertDialogState = AlertDialogState(
-                        title = "Account Blocked Temporarily",
-                        description = "You have been blocked temporarily for too many failed attempts. Please try again later.",
-                        icon = R.raw.error,
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Account Blocked Temporarily",
+                            description = "You have been blocked temporarily for too many failed attempts. Please try again later.",
+                            icon = R.raw.error,
+                        )
                     )
                 }
 
                 is SignInEvent.ConflictFbToken -> {
-                    alertDialogState = AlertDialogState(
-                        title = "Conflict Facebook Account",
-                        description = "Sorry, something went wrong. Please try again.",
-                        icon = R.raw.error)
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Conflict Facebook Account",
+                            description = "Sorry, something went wrong. Please try again.",
+                            icon = R.raw.error)
+                    )
                 }
 
                 is SignInEvent.FacebookSignInFailed -> {
-                    alertDialogState = AlertDialogState(
-                        title = "Facebook Sign In Failed",
-                        description = "Failed to sign in with Facebook. Please try again.",
-                        icon = R.raw.error)
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Facebook Sign In Failed",
+                            description = "Failed to sign in with Facebook. Please try again.",
+                            icon = R.raw.error)
+                    )
                 }
 
                 is SignInEvent.InvalidEmail -> {
-                    emailErrorMessage = signInEvent.reason
+                    uiState = uiState.copy(
+                        emailErrorMessage = signInEvent.reason
+                    )
                 }
 
                 is SignInEvent.InvalidPassword -> {
-                    passwordErrorMessage = signInEvent.reason
+                    uiState = uiState.copy(
+                        passwordErrorMessage = signInEvent.reason
+                    )
                 }
 
             }
@@ -201,18 +210,21 @@ fun SignInScreen(
                 }
 
                 is EmailAuthEvent.EmailVerificationSent -> {
-                    alertDialogState = AlertDialogState(
-                        title = "New Email Sent.",
-                        description = "New verification email has been sent to your email address.",
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "New Email Sent.",
+                            description = "New verification email has been sent to your email address.",
+                        )
                     )
-
                 }
 
                 is EmailAuthEvent.SendEmailVerificationFailed -> {
-                    alertDialogState = AlertDialogState(
-                        title = "Email Verification Failed.",
-                        description = "Failed to send verification email. Please try again later.",
-                        icon = R.raw.error)
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Email Verification Failed.",
+                            description = "Failed to send verification email. Please try again later.",
+                            icon = R.raw.error)
+                    )
                 }
 
                 else -> {}
@@ -223,37 +235,44 @@ fun SignInScreen(
 
     val onDismissAlertDialog = remember {
         {
-            alertDialogState = AlertDialogState()
+            uiState = uiState.copy(
+                alertDialogState = AlertDialogState()
+            )
         }
     }
     val onDoneKeyboardAction = remember {
         {
             signInViewModel.onEvent(
                 SignInVmEvent.SignInWithEmailAndPassword(
-                    email = email,
-                    password = password))
+                    email = uiState.email,
+                    password = uiState.password))
             focusManager.clearFocus()
         }
     }
 
     val onValueChangeEmail = remember<(String) -> Unit> {
         {
-            email = it
-            emailErrorMessage = ""
+            uiState = uiState.copy(
+                email = it,
+                emailErrorMessage = ""
+            )
         }
     }
 
     val onValueChangePassword = remember<(String) -> Unit> {
         {
-            password = it
-            passwordErrorMessage = ""
-
+            uiState = uiState.copy(
+                password = it,
+                passwordErrorMessage = ""
+            )
         }
     }
 
     val onClickPasswordVisibility = remember {
         {
-            isPasswordVisible = !isPasswordVisible
+            uiState = uiState.copy(
+                isPasswordVisible = !uiState.isPasswordVisible
+            )
         }
     }
 
@@ -276,8 +295,8 @@ fun SignInScreen(
         {
             signInViewModel.onEvent(
                 SignInVmEvent.SignInWithEmailAndPassword(
-                    email = email,
-                    password = password
+                    email = uiState.email,
+                    password = uiState.password
                 ))
         }
     }
@@ -290,7 +309,9 @@ fun SignInScreen(
 
     val onDismissNoInternetDialog = remember {
         {
-            isNoInternetDialogVisible = false
+            uiState = uiState.copy(
+                isNoInternetVisible = false
+            )
         }
     }
 
@@ -299,13 +320,7 @@ fun SignInScreen(
         signInState = signInState,
         emailAuthState = emailAuthState,
         focusRequester = focusRequester,
-        alertDialogState = alertDialogState,
-        email = email,
-        emailErrorMessage = emailErrorMessage,
-        password = password,
-        passwordErrorMessage = passwordErrorMessage,
-        isPasswordVisible = isPasswordVisible,
-        isNoInternetVisible = isNoInternetDialogVisible,
+        uiState = uiState,
         event = { event ->
             when (event) {
                 is SignUiEvent.DismissAlertDialog -> onDismissAlertDialog()
@@ -327,15 +342,7 @@ fun SignInScreen(
 @Composable
 fun SignInScreenPreview() {
     CyclistanceTheme(true) {
-        SignInScreenContent(
-            alertDialogState = AlertDialogState(),
-            isNoInternetVisible = false,
-            email = "ausbdaiosbdoauwdb",
-            password = "aisntqiono9iqn",
-            isPasswordVisible = false,
-            emailErrorMessage = "asidnaiosdnaisd",
-            passwordErrorMessage = "asidnaiosdnaisd"
-        )
+        SignInScreenContent()
     }
 }
 
@@ -346,13 +353,7 @@ fun SignInScreenContent(
     focusRequester: FocusRequester = FocusRequester(),
     signInState: SignInState = SignInState(),
     emailAuthState: EmailAuthState = EmailAuthState(),
-    alertDialogState: AlertDialogState,
-    isNoInternetVisible: Boolean,
-    email: String,
-    emailErrorMessage: String,
-    password: String,
-    passwordErrorMessage: String,
-    isPasswordVisible: Boolean,
+    uiState: SignInUiState = SignInUiState(),
     event: (SignUiEvent) -> Unit = {}) {
 
 
@@ -378,9 +379,9 @@ fun SignInScreenContent(
 
             SignUpTextArea()
 
-            if (alertDialogState.visible()) {
+            if (uiState.alertDialogState.visible()) {
                 AlertDialog(
-                    alertDialog = alertDialogState,
+                    alertDialog = uiState.alertDialogState,
                     onDismissRequest = {
                         event(SignUiEvent.DismissAlertDialog)
                     })
@@ -400,11 +401,11 @@ fun SignInScreenContent(
                 onValueChangeEmail = { event(SignUiEvent.ChangeEmail(it)) },
                 onValueChangePassword = { event(SignUiEvent.ChangePassword(it)) },
                 onClickPasswordVisibility = { event(SignUiEvent.TogglePasswordVisibility) },
-                email = email,
-                emailErrorMessage = emailErrorMessage,
-                password = password,
-                passwordErrorMessage = passwordErrorMessage,
-                passwordVisible = isPasswordVisible
+                email = uiState.email,
+                emailErrorMessage = uiState.emailErrorMessage,
+                password = uiState.password,
+                passwordErrorMessage = uiState.passwordErrorMessage,
+                passwordVisible = uiState.isPasswordVisible
             )
 
             val isLoading = remember(signInState.isLoading, emailAuthState.isLoading) {
@@ -431,7 +432,7 @@ fun SignInScreenContent(
                 )
             }
 
-            if (isNoInternetVisible) {
+            if (uiState.isNoInternetVisible) {
                 NoInternetDialog(
                     onDismiss = {
                         event(SignUiEvent.DismissNoInternetDialog)
