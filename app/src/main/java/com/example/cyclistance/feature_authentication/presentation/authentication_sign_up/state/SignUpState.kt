@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up
+package com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
