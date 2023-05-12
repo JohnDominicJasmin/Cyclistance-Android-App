@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details
+package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

@@ -12,6 +12,9 @@ import com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetailsM
 import com.example.cyclistance.feature_mapping.domain.model.LiveLocationWSModel
 import com.example.cyclistance.feature_mapping.domain.model.UserItem
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsVmEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -37,7 +40,7 @@ class ConfirmDetailsViewModel @Inject constructor(
         MutableStateFlow(savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] ?: ConfirmDetailsState())
     val state = _state.asStateFlow()
 
-    private val _eventFlow: MutableSharedFlow<ConfirmDetailsUiEvent> = MutableSharedFlow()
+    private val _eventFlow: MutableSharedFlow<ConfirmDetailsEvent> = MutableSharedFlow()
     val eventFlow = _eventFlow.asSharedFlow()
 
 
@@ -53,7 +56,7 @@ class ConfirmDetailsViewModel @Inject constructor(
             runCatching {
                 mappingUseCase.getBikeTypeUseCase().first()
             }.onSuccess { bikeType ->
-                _eventFlow.emit(value = ConfirmDetailsUiEvent.GetSavedBikeType(bikeType))
+                _eventFlow.emit(value = ConfirmDetailsEvent.GetSavedBikeType(bikeType))
                 savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
             }.onFailure { exception ->
                 Timber.e(exception.message)
@@ -66,7 +69,7 @@ class ConfirmDetailsViewModel @Inject constructor(
             runCatching {
                 mappingUseCase.getAddressUseCase().first()
             }.onSuccess { address ->
-                _eventFlow.emit(value = ConfirmDetailsUiEvent.GetSavedAddress(address))
+                _eventFlow.emit(value = ConfirmDetailsEvent.GetSavedAddress(address))
                 savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
             }.onFailure { exception ->
                 Timber.e(exception.message)
@@ -74,9 +77,9 @@ class ConfirmDetailsViewModel @Inject constructor(
         }
     }
 
-    fun onEvent(event: ConfirmDetailsEvent) {
+    fun onEvent(event: ConfirmDetailsVmEvent) {
         when (event) {
-            is ConfirmDetailsEvent.ConfirmDetails -> {
+            is ConfirmDetailsVmEvent.ConfirmDetails -> {
                 confirmDetails(confirmationDetailsModel = event.confirmDetailsModel)
             }
         }
@@ -114,7 +117,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                 broadcastUser()
                 broadcastRescueTransaction()
                 _state.update { it.copy(isLoading = false) }
-                _eventFlow.emit(value = ConfirmDetailsUiEvent.ConfirmDetailsSuccess)
+                _eventFlow.emit(value = ConfirmDetailsEvent.ConfirmDetailsSuccess)
 
 
             }.onFailure { exception ->
@@ -155,27 +158,27 @@ class ConfirmDetailsViewModel @Inject constructor(
     private suspend fun Throwable.handleException() {
         when (this) {
             is MappingExceptions.UnexpectedErrorException -> {
-                _eventFlow.emit(value = ConfirmDetailsUiEvent.UnexpectedError(this.message!!))
+                _eventFlow.emit(value = ConfirmDetailsEvent.UnexpectedError(this.message!!))
             }
 
             is MappingExceptions.UserException -> {
-                _eventFlow.emit(value = ConfirmDetailsUiEvent.UserError(this.message!!))
+                _eventFlow.emit(value = ConfirmDetailsEvent.UserError(this.message!!))
             }
 
             is MappingExceptions.NetworkException -> {
-                _eventFlow.emit(value = ConfirmDetailsUiEvent.NoInternetConnection)
+                _eventFlow.emit(value = ConfirmDetailsEvent.NoInternetConnection)
             }
 
             is MappingExceptions.BikeTypeException -> {
-                _eventFlow.emit(value = ConfirmDetailsUiEvent.InvalidBikeType(this.message!!))
+                _eventFlow.emit(value = ConfirmDetailsEvent.InvalidBikeType(this.message!!))
             }
 
             is MappingExceptions.DescriptionException -> {
-                _eventFlow.emit(value = ConfirmDetailsUiEvent.InvalidDescription(this.message!!))
+                _eventFlow.emit(value = ConfirmDetailsEvent.InvalidDescription(this.message!!))
             }
 
             is MappingExceptions.AddressException -> {
-                _eventFlow.emit(value = ConfirmDetailsUiEvent.InvalidAddress(this.message!!))
+                _eventFlow.emit(value = ConfirmDetailsEvent.InvalidAddress(this.message!!))
             }
         }
         savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
