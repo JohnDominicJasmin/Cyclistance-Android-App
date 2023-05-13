@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
+package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
