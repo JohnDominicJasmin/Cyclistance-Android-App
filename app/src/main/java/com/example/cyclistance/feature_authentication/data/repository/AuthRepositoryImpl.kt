@@ -25,7 +25,6 @@ import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import timber.log.Timber
@@ -35,13 +34,14 @@ import kotlin.coroutines.resumeWithException
 
 class AuthRepositoryImpl(
     private val context: Context,
-    private val auth: FirebaseAuth) : AuthRepository {
+    private val auth: FirebaseAuth,
+    private val storage: FirebaseStorage
+    ) : AuthRepository {
 
     private var dataStore = context.dataStore
 
     override suspend fun uploadImage(v: String): String {
-        val firebaseStorageReference: StorageReference = FirebaseStorage.getInstance().reference
-        val reference = firebaseStorageReference.child("images/${getId()}")
+        val reference = storage.reference.child("images/${getId()}")
         val uploadTask = reference.putFile(Uri.parse(v))
         return suspendCancellableCoroutine { continuation ->
             uploadTask.addOnCompleteListener { task ->
