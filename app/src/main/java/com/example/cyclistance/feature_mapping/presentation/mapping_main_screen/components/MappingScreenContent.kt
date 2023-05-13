@@ -59,12 +59,12 @@ fun MappingScreenContent(
         MappingBottomSheet(
             isDarkTheme = isDarkTheme,
             state = state,
-            onClickRescueArrivedButton = { event(MappingUiEvent.OnClickRescueArrived) },
-            onClickReachedDestinationButton = { event(MappingUiEvent.OnClickDestinationReached) },
-            onClickCancelSearchButton = { event(MappingUiEvent.OnClickCancelSearch) },
-            onClickCallRescueTransactionButton = { event(MappingUiEvent.OnClickCallRescueTransaction) },
-            onClickChatRescueTransactionButton = { event(MappingUiEvent.OnClickChatRescueTransaction) },
-            onClickCancelRescueTransactionButton = { event(MappingUiEvent.OnClickCancelRescueTransaction) },
+            onClickRescueArrivedButton = { event(MappingUiEvent.RescueArrivedConfirmed) },
+            onClickReachedDestinationButton = { event(MappingUiEvent.DestinationReachedConfirmed) },
+            onClickCancelSearchButton = { event(MappingUiEvent.CancelSearchConfirmed) },
+            onClickCallRescueTransactionButton = { event(MappingUiEvent.CallRescueTransaction) },
+            onClickChatRescueTransactionButton = { event(MappingUiEvent.ChatRescueTransaction) },
+            onClickCancelRescueTransactionButton = { event(MappingUiEvent.CancelRescueTransaction) },
             bottomSheetScaffoldState = bottomSheetScaffoldState,
             bottomSheetType = uiState.bottomSheetType) {
 
@@ -92,7 +92,7 @@ fun MappingScreenContent(
                     },
                     hasTransaction = hasTransaction,
                     isRescueCancelled = isRescueCancelled,
-                    onClickRescueeMapIcon = { event(MappingUiEvent.OnClickRescueeMapIcon(it)) },
+                    onClickRescueeMapIcon = { event(MappingUiEvent.RescueeMapIconSelected(it)) },
                     onMapClick = { event(MappingUiEvent.OnMapClick) },
                     requestNavigationCameraToOverview = { event(MappingUiEvent.OnRequestNavigationCameraToOverview) },
                     mapboxMap = mapboxMap,
@@ -115,7 +115,7 @@ fun MappingScreenContent(
                             modifier = Modifier
                                 .padding(all = 6.dp)
                                 .fillMaxWidth(), banner = uiState.mapSelectedRescuee,
-                            onClickDismissButton = {event(MappingUiEvent.OnClickDismissBanner)})
+                            onClickDismissButton = {event(MappingUiEvent.DismissBanner)})
                     }
                 }
 
@@ -128,10 +128,10 @@ fun MappingScreenContent(
                                 margin = (configuration.screenHeightDp / 3).dp)
                         },
                     locationPermissionGranted = locationPermissionState.allPermissionsGranted,
-                    onClickLocateUserButton = {event(MappingUiEvent.OnClickLocate)},
-                    onClickRouteOverviewButton = {event(MappingUiEvent.OnClickRouteOverviewButton)},
-                    onClickRecenterButton = {event(MappingUiEvent.OnClickRecenterButton)},
-                    onClickOpenNavigationButton = {event(MappingUiEvent.OnClickOpenNavigationButton)},
+                    onClickLocateUserButton = {event(MappingUiEvent.LocateUser)},
+                    onClickRouteOverviewButton = {event(MappingUiEvent.RouteOverview)},
+                    onClickRecenterButton = {event(MappingUiEvent.RecenterRoute)},
+                    onClickOpenNavigationButton = {event(MappingUiEvent.OpenNavigation)},
                     isNavigating = isNavigating
                 )
 
@@ -140,7 +140,7 @@ fun MappingScreenContent(
                         bottom.linkTo(parent.bottom, margin = 15.dp)
                         end.linkTo(parent.end)
                         start.linkTo(parent.start)
-                    }, onClickRequestHelpButton = { event(MappingUiEvent.OnClickRequestHelp) },
+                    }, onClickRequestHelpButton = { event(MappingUiEvent.RequestHelp) },
                     state = state,
                     visible = uiState.requestHelpButtonVisible && isNavigating.not()
 
@@ -152,7 +152,7 @@ fun MappingScreenContent(
                         end.linkTo(parent.end)
                         start.linkTo(parent.start)
                     },
-                    onClickRespondButton = {event(MappingUiEvent.OnClickRespondToHelp)},
+                    onClickRespondButton = {event(MappingUiEvent.RespondToHelp)},
                     state = state,
                     visible = uiState.requestHelpButtonVisible.not() && isNavigating.not()
                 )
@@ -192,7 +192,7 @@ fun MappingScreenContent(
 
                     MappingCancelledRescue(
                         modifier = Modifier.fillMaxSize(),
-                        onClickOkButton = {event(MappingUiEvent.OnClickOkCancelledRescue)},
+                        onClickOkButton = {event(MappingUiEvent.CancelledRescueConfirmed)},
                         cancelledRescueModel = CancelledRescueModel(
                             transactionID = rescueTransaction.id,
                             rescueCancelledBy = cancellation.nameCancelledBy,
@@ -207,7 +207,7 @@ fun MappingScreenContent(
                     exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
                     RescueRequestAccepted(
                         modifier = Modifier.fillMaxSize(),
-                        onClickOkButton = { event(MappingUiEvent.OnClickOkRescueRequestAccepted) },
+                        onClickOkButton = { event(MappingUiEvent.RescueRequestAccepted) },
                         acceptedName = state.rescuee?.name ?: "Name placeholder",
                     )
                 }

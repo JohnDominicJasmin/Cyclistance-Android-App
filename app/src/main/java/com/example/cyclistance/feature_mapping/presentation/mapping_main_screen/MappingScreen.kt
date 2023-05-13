@@ -724,28 +724,28 @@ fun MappingScreen(
         uiState = uiState,
         event = { event ->
             when(event){
-                is MappingUiEvent.OnClickRequestHelp -> onClickRequestHelpButton()
-                is MappingUiEvent.OnClickRespondToHelp -> onClickRespondToHelpButton()
-                is MappingUiEvent.OnClickCancelSearch -> onClickCancelSearchButton()
-                is MappingUiEvent.OnClickCallRescueTransaction -> onClickCallButton()
-                is MappingUiEvent.OnClickChatRescueTransaction -> onClickChatButton()
-                is MappingUiEvent.OnClickCancelRescueTransaction -> onClickCancelRescueButton()
-                is MappingUiEvent.OnClickOkCancelledRescue -> onClickOkCancelledRescue()
+                is MappingUiEvent.RequestHelp -> onClickRequestHelpButton()
+                is MappingUiEvent.RespondToHelp -> onClickRespondToHelpButton()
+                is MappingUiEvent.CancelSearchConfirmed -> onClickCancelSearchButton()
+                is MappingUiEvent.CallRescueTransaction -> onClickCallButton()
+                is MappingUiEvent.ChatRescueTransaction -> onClickChatButton()
+                is MappingUiEvent.CancelRescueTransaction -> onClickCancelRescueButton()
+                is MappingUiEvent.CancelledRescueConfirmed -> onClickOkCancelledRescue()
                 is MappingUiEvent.OnInitializeMap -> onInitializeMapboxMap(event.mapboxMap)
-                is MappingUiEvent.OnClickOkRescueRequestAccepted -> onClickOkAcceptedRescue()
+                is MappingUiEvent.RescueRequestAccepted -> onClickOkAcceptedRescue()
                 is MappingUiEvent.OnChangeCameraState -> onChangeCameraPosition(event.position, event.zoomLevel)
                 is MappingUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
-                is MappingUiEvent.OnClickRescueeMapIcon -> onClickRescueeMapIcon(event.id)
+                is MappingUiEvent.RescueeMapIconSelected -> onClickRescueeMapIcon(event.id)
                 is MappingUiEvent.OnMapClick -> onMapClick()
-                is MappingUiEvent.OnClickDismissBanner -> onDismissRescueeBanner()
-                is MappingUiEvent.OnClickLocate -> onClickLocateUserButton()
-                is MappingUiEvent.OnClickRouteOverviewButton -> onClickRouteOverViewButton()
-                is MappingUiEvent.OnClickRecenterButton -> onClickRecenterButton()
-                is MappingUiEvent.OnClickOpenNavigationButton -> onClickOpenNavigationButton()
+                is MappingUiEvent.DismissBanner -> onDismissRescueeBanner()
+                is MappingUiEvent.LocateUser -> onClickLocateUserButton()
+                is MappingUiEvent.RouteOverview -> onClickRouteOverViewButton()
+                is MappingUiEvent.RecenterRoute -> onClickRecenterButton()
+                is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
 
-                is MappingUiEvent.OnClickRescueArrived -> {}
-                is MappingUiEvent.OnClickDestinationReached -> {}
+                is MappingUiEvent.RescueArrivedConfirmed -> {}
+                is MappingUiEvent.DestinationReachedConfirmed -> {}
             }
         }
 
