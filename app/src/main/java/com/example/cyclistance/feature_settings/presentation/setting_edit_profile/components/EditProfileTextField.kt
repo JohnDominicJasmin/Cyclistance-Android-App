@@ -27,7 +27,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileState
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileState
 import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.Black500
 

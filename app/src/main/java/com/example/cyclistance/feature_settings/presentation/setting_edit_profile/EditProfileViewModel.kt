@@ -7,6 +7,9 @@ import com.example.cyclistance.core.utils.constants.SettingConstants.EDIT_PROFIL
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileEvent
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,7 +32,7 @@ class EditProfileViewModel @Inject constructor(
         MutableStateFlow(savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] ?: EditProfileState())
     val state = _state.asStateFlow()
 
-    private val _eventFlow = MutableSharedFlow<EditProfileUiEvent>()
+    private val _eventFlow = MutableSharedFlow<EditProfileEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
 
@@ -39,10 +42,10 @@ class EditProfileViewModel @Inject constructor(
         loadPhoto()
     }
 
-    fun onEvent(event: EditProfileEvent) {
+    fun onEvent(event: EditProfileVmEvent) {
 
         when (event) {
-            is EditProfileEvent.Save -> {
+            is EditProfileVmEvent.Save -> {
                 updateUserProfile(
                     imageUri = event.imageUri,
                     phoneNumber = event.phoneNumber,
@@ -59,7 +62,7 @@ class EditProfileViewModel @Inject constructor(
                 startLoading()
                 getPhotoUrl()
             }.onSuccess { photoUrl ->
-                _eventFlow.emit(value = EditProfileUiEvent.GetPhotoUrlSuccess(photoUrl))
+                _eventFlow.emit(value = EditProfileEvent.GetPhotoUrlSuccess(photoUrl))
                 finishLoading()
             }.onFailure {
                 finishLoading()
@@ -74,12 +77,12 @@ class EditProfileViewModel @Inject constructor(
                 startLoading()
                 getName()
             }.onSuccess { name ->
-                _eventFlow.emit(value = EditProfileUiEvent.GetNameSuccess(name))
+                _eventFlow.emit(value = EditProfileEvent.GetNameSuccess(name))
                 _state.update { it.copy(nameSnapshot = name) }
                 finishLoading()
             }.onFailure { exception ->
                 finishLoading()
-                _eventFlow.emit(value = EditProfileUiEvent.GetNameFailed(exception.message!!))
+                _eventFlow.emit(value = EditProfileEvent.GetNameFailed(exception.message!!))
 
             }
         }
@@ -93,11 +96,11 @@ class EditProfileViewModel @Inject constructor(
                 getPhoneNumber()
             }.onSuccess { phoneNumber ->
                 finishLoading()
-                _eventFlow.emit(value = EditProfileUiEvent.GetPhoneNumberSuccess(phoneNumber))
+                _eventFlow.emit(value = EditProfileEvent.GetPhoneNumberSuccess(phoneNumber))
                 _state.update { it.copy(phoneNumberSnapshot = phoneNumber) }
             }.onFailure { exception ->
                 finishLoading()
-                _eventFlow.emit(value = EditProfileUiEvent.GetPhoneNumberFailed(reason = exception.message!!))
+                _eventFlow.emit(value = EditProfileEvent.GetPhoneNumberFailed(reason = exception.message!!))
             }
         }
 
@@ -122,20 +125,20 @@ class EditProfileViewModel @Inject constructor(
 
             }.onSuccess {
                 finishLoading()
-                _eventFlow.emit(EditProfileUiEvent.UpdateUserProfileSuccess(reason = "Successfully Updated!"))
+                _eventFlow.emit(EditProfileEvent.UpdateUserProfileSuccess(reason = "Successfully Updated!"))
             }.onFailure { exception ->
                 finishLoading()
                 when (exception) {
                     is MappingExceptions.PhoneNumberException -> {
-                        _eventFlow.emit(value = EditProfileUiEvent.GetPhoneNumberFailed(reason = exception.message!!))
+                        _eventFlow.emit(value = EditProfileEvent.GetPhoneNumberFailed(reason = exception.message!!))
                     }
 
                     is MappingExceptions.NameException -> {
-                        _eventFlow.emit(value = EditProfileUiEvent.GetNameFailed(reason = exception.message!!))
+                        _eventFlow.emit(value = EditProfileEvent.GetNameFailed(reason = exception.message!!))
                     }
 
                     is AuthExceptions.NetworkException -> {
-                        _eventFlow.emit(value = EditProfileUiEvent.NoInternetConnection)
+                        _eventFlow.emit(value = EditProfileEvent.NoInternetConnection)
                     }
                 }
             }

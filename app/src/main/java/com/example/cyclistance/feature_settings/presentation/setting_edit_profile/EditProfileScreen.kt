@@ -41,6 +41,11 @@ import com.example.cyclistance.feature_mapping.presentation.common.MappingButton
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.ProfilePictureArea
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.SelectImageBottomSheet
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.TextFieldInputArea
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileEvent
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileUiEvent
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileState
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileUiState
 import com.example.cyclistance.theme.Blue600
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.*
@@ -63,34 +68,12 @@ fun EditProfileScreen(
     val context = LocalContext.current
 
     var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    val (selectedImageUri, onChangeSelectedImageUri) = remember { mutableStateOf("") }
-
-    val (photoUrl, onChangePhotoUrl) = remember { mutableStateOf("") }
-
-
-
-    val (name, onChangeName) = remember { mutableStateOf("") }
-    val (nameErrorMessage, onChangeNameError) = remember { mutableStateOf("") }
-
-    val (phoneNumber, onChangePhoneNumber) = remember { mutableStateOf("") }
-    val (phoneNumberErrorMessage, onChangePhoneNumberError) = remember { mutableStateOf("") }
-
-    val (isNoInternetVisible, onChangeNoInternetVisibility) = rememberSaveable {
-        mutableStateOf(false)
-    }
-
-    val isUserInformationChanges by remember {
-        derivedStateOf {
-            name != state.nameSnapshot ||
-            phoneNumber != state.phoneNumberSnapshot ||
-            selectedImageUri.isNotEmpty()
-        }
-    }
+    var uiState by rememberSaveable{ mutableStateOf(EditProfileUiState()) }
 
 
     val openGalleryResultLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-            onChangeSelectedImageUri(uri.toString())
+            uiState = uiState.copy(selectedImageUri = uri.toString())
             uri?.let { selectedUri ->
                 imageBitmap =
                     when {
@@ -117,7 +100,7 @@ fun EditProfileScreen(
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
             val uri = bitmap?.toImageUri(context).toString()
             imageBitmap = bitmap
-            onChangeSelectedImageUri(uri)
+            uiState = uiState.copy(selectedImageUri = uri)
 
         }
 
@@ -149,33 +132,33 @@ fun EditProfileScreen(
 
         editProfileViewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is EditProfileUiEvent.UpdateUserProfileSuccess -> {
+                is EditProfileEvent.UpdateUserProfileSuccess -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                     navController.popBackStack()
                 }
 
-                is EditProfileUiEvent.GetPhotoUrlSuccess -> {
-                    onChangePhotoUrl(event.photoUrl)
+                is EditProfileEvent.GetPhotoUrlSuccess -> {
+                    uiState = uiState.copy(photoUrl = event.photoUrl)
                 }
 
-                is EditProfileUiEvent.GetNameSuccess -> {
-                    onChangeName(event.name)
+                is EditProfileEvent.GetNameSuccess -> {
+                    uiState = uiState.copy(name = event.name)
                 }
 
-                is EditProfileUiEvent.GetNameFailed -> {
-                    onChangeNameError(event.reason)
+                is EditProfileEvent.GetNameFailed -> {
+                    uiState = uiState.copy(nameErrorMessage = event.reason)
                 }
 
-                is EditProfileUiEvent.GetPhoneNumberSuccess -> {
-                    onChangePhoneNumber(event.phoneNumber)
+                is EditProfileEvent.GetPhoneNumberSuccess -> {
+                    uiState = uiState.copy(phoneNumber = event.phoneNumber)
                 }
 
-                is EditProfileUiEvent.GetPhoneNumberFailed -> {
-                    onChangePhoneNumberError(event.reason)
+                is EditProfileEvent.GetPhoneNumberFailed -> {
+                    uiState = uiState.copy(phoneNumberErrorMessage = event.reason)
                 }
 
-                is EditProfileUiEvent.NoInternetConnection -> {
-                    onChangeNoInternetVisibility(true)
+                is EditProfileEvent.NoInternetConnection -> {
+                    uiState = uiState.copy(noInternetVisible = true)
                 }
 
 
@@ -185,7 +168,7 @@ fun EditProfileScreen(
     }
 
 
-    val onClickGalleryButton = remember {
+    val openGallery = remember {
         {
             accessStoragePermissionState.requestPermission(
                 context = context,
@@ -196,7 +179,7 @@ fun EditProfileScreen(
         }
     }
 
-    val onClickCameraButton = remember {
+    val openCamera = remember {
         {
             openCameraPermissionState.requestPermission(
                 context = context,
@@ -208,64 +191,64 @@ fun EditProfileScreen(
 
     val onValueChangeName = remember {
         { name: String ->
-            onChangeName(name)
+            uiState = uiState.copy(name = name)
         }
     }
     val onValueChangePhoneNumber = remember {
         { phoneNumber: String ->
-            onChangePhoneNumberError(phoneNumber)
+            uiState = uiState.copy(phoneNumber = phoneNumber)
         }
     }
     val keyboardActions = remember {
         KeyboardActions(onDone = {
             editProfileViewModel.onEvent(
-                event = EditProfileEvent.Save(
-                    imageUri = selectedImageUri,
-                    name = name,
-                    phoneNumber = phoneNumber))
+                event = EditProfileVmEvent.Save(
+                    imageUri = uiState.selectedImageUri,
+                    name = uiState.name,
+                    phoneNumber = uiState.phoneNumber))
         })
     }
-    val onClickCancelButton = remember {
+    val cancelEditProfile = remember {
         {
             navController.popBackStack()
             Unit
         }
     }
-    val onClickConfirmButton = remember {
+    val confirmEditProfile = remember {
         {
             editProfileViewModel.onEvent(
-                event = EditProfileEvent.Save(
-                    imageUri = selectedImageUri,
-                    name = name,
-                    phoneNumber = phoneNumber))
+                event = EditProfileVmEvent.Save(
+                    imageUri = uiState.selectedImageUri,
+                    name = uiState.name,
+                    phoneNumber = uiState.phoneNumber))
         }
     }
 
     val onDismissNoInternetDialog = remember {
         {
-            onChangeNoInternetVisibility(false)
+            uiState = uiState.copy(noInternetVisible = false)
         }
     }
 
     EditProfileScreenContent(
         modifier = Modifier
             .padding(paddingValues),
-        photoUrl = imageBitmap?.asImageBitmap() ?: photoUrl,
-        onClickGalleryButton = onClickGalleryButton,
-        onClickCameraButton = onClickCameraButton,
+        photoUrl = imageBitmap?.asImageBitmap() ?: uiState.photoUrl,
         state = state,
-        onValueChangeName = onValueChangeName,
-        onValueChangePhoneNumber = onValueChangePhoneNumber,
         keyboardActions = keyboardActions,
-        onClickCancelButton = onClickCancelButton,
-        onClickConfirmButton = onClickConfirmButton,
-        onDismissNoInternetDialog = onDismissNoInternetDialog,
-        isNoInternetVisible = isNoInternetVisible,
-        name = name,
-        nameErrorMessage = nameErrorMessage,
-        phoneNumber = phoneNumber,
-        phoneNumberErrorMessage = phoneNumberErrorMessage,
-        isUserInformationChanges = isUserInformationChanges
+        event = { event ->
+            when(event){
+                is EditProfileUiEvent.SelectImageFromGallery -> openGallery()
+                is EditProfileUiEvent.OpenCamera -> openCamera()
+                is EditProfileUiEvent.ChangeName -> onValueChangeName(event.name)
+                is EditProfileUiEvent.ChangePhoneNumber -> onValueChangePhoneNumber(event.phoneNumber)
+                is EditProfileUiEvent.CancelEditProfile -> cancelEditProfile()
+                is EditProfileUiEvent.ConfirmEditProfile -> confirmEditProfile()
+                is EditProfileUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
+            }
+        }
+
+
     )
 
 }
@@ -273,19 +256,13 @@ fun EditProfileScreen(
 @Preview
 @Composable
 fun EditProfilePreview() {
+
     CyclistanceTheme(true) {
         EditProfileScreenContent(
             modifier = Modifier,
             photoUrl = "",
-            state = EditProfileState(
-                isLoading = false),
-            isNoInternetVisible = false,
-            name = "John Doe",
-            nameErrorMessage = "Sample Error",
-            phoneNumber = "09123456789",
-            phoneNumberErrorMessage = "Sample Error",
-            isUserInformationChanges = true
-        )
+            state = EditProfileState(isLoading = false),
+            uiState = EditProfileUiState())
     }
 }
 
@@ -296,20 +273,9 @@ fun EditProfileScreenContent(
     modifier: Modifier,
     photoUrl: Any,
     state: EditProfileState = EditProfileState(),
-    isNoInternetVisible: Boolean,
-    isUserInformationChanges: Boolean,
-    name: String,
-    nameErrorMessage: String,
-    phoneNumber: String,
-    phoneNumberErrorMessage: String,
-    onClickGalleryButton: () -> Unit = {},
-    onClickCameraButton: () -> Unit = {},
-    onValueChangeName: (String) -> Unit = {},
-    onValueChangePhoneNumber: (String) -> Unit = {},
     keyboardActions: KeyboardActions = KeyboardActions { },
-    onClickCancelButton: () -> Unit = {},
-    onClickConfirmButton: () -> Unit = {},
-    onDismissNoInternetDialog: () -> Unit = {},
+    uiState: EditProfileUiState = EditProfileUiState(),
+    event : (EditProfileUiEvent) -> Unit = {}
 ) {
 
 
@@ -327,6 +293,13 @@ fun EditProfileScreenContent(
         }
     }
 
+    val isUserInformationChanges by remember {
+        derivedStateOf {
+            uiState.name != state.nameSnapshot ||
+            uiState.phoneNumber != state.phoneNumberSnapshot ||
+            uiState.selectedImageUri.isNotEmpty()
+        }
+    }
 
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
@@ -334,11 +307,11 @@ fun EditProfileScreenContent(
         SelectImageBottomSheet(
             onClickGalleryButton = {
                 toggleBottomSheet()
-                onClickGalleryButton()
+                event(EditProfileUiEvent.SelectImageFromGallery)
             },
             onClickCameraButton = {
                 toggleBottomSheet()
-                onClickCameraButton()
+                event(EditProfileUiEvent.OpenCamera)
             },
             bottomSheetScaffoldState = bottomSheetScaffoldState,
             editProfileState = state) {
@@ -397,13 +370,13 @@ fun EditProfileScreenContent(
 
                         },
                     state = state,
-                    onValueChangeName = onValueChangeName,
-                    onValueChangePhoneNumber = onValueChangePhoneNumber,
+                    onValueChangeName = {event(EditProfileUiEvent.ChangeName(it))},
+                    onValueChangePhoneNumber = {event(EditProfileUiEvent.ChangePhoneNumber(it))},
                     keyboardActions = keyboardActions,
-                    name = name,
-                    nameErrorMessage = nameErrorMessage,
-                    phoneNumber = phoneNumber,
-                    phoneNumberErrorMessage = phoneNumberErrorMessage,
+                    name = uiState.name,
+                    nameErrorMessage = uiState.nameErrorMessage,
+                    phoneNumber = uiState.phoneNumber,
+                    phoneNumberErrorMessage = uiState.phoneNumberErrorMessage,
 
                     )
 
@@ -420,13 +393,13 @@ fun EditProfileScreenContent(
                             width = Dimension.percent(0.8f)
                         },
                     positiveButtonText = "Save",
-                    onClickCancelButton = onClickCancelButton,
-                    onClickConfirmButton = onClickConfirmButton,
+                    onClickCancelButton = {event(EditProfileUiEvent.CancelEditProfile)},
+                    onClickConfirmButton = {event(EditProfileUiEvent.ConfirmEditProfile)},
                     negativeButtonEnabled = !state.isLoading,
                     positiveButtonEnabled = !state.isLoading && isUserInformationChanges,
                 )
 
-                if (isNoInternetVisible) {
+                if (uiState.noInternetVisible) {
 
                     NoInternetDialog(
                         modifier = Modifier.constrainAs(noInternetDialog) {
@@ -435,7 +408,7 @@ fun EditProfileScreenContent(
                             bottom.linkTo(parent.bottom)
                             width = Dimension.matchParent
                             height = Dimension.wrapContent
-                        }, onDismiss = onDismissNoInternetDialog
+                        }, onDismiss = {event(EditProfileUiEvent.DismissNoInternetDialog)}
                     )
 
                 }
