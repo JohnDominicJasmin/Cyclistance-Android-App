@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.BottomSheetReachedDestination
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.BottomSheetRescueArrived
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.BottomSheetSearchingAssistance

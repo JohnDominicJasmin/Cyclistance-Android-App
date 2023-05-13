@@ -7,6 +7,9 @@ import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_UP_VM_STA
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpVmEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state.SignUpState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,8 +32,8 @@ class SignUpViewModel @Inject constructor(
     private val _state: MutableStateFlow<SignUpState> = MutableStateFlow(savedStateHandle[SIGN_UP_VM_STATE_KEY] ?: SignUpState())
     val state = _state.asStateFlow()
 
-    private val _eventFlow: MutableSharedFlow<SignUpUiEvent> = MutableSharedFlow()
-    val eventFlow: SharedFlow<SignUpUiEvent> = _eventFlow.asSharedFlow()
+    private val _eventFlow: MutableSharedFlow<SignUpEvent> = MutableSharedFlow()
+    val eventFlow: SharedFlow<SignUpEvent> = _eventFlow.asSharedFlow()
 
     init {
         _state.update {
@@ -43,10 +46,10 @@ class SignUpViewModel @Inject constructor(
 
     }
 
-    fun onEvent(event: SignUpEvent) {
+    fun onEvent(event: SignUpVmEvent) {
         when (event) {
 
-            is SignUpEvent.SignUp -> {
+            is SignUpVmEvent.SignUp -> {
                 signUp(
                     email = event.email,
                     password = event.password,
@@ -54,7 +57,7 @@ class SignUpViewModel @Inject constructor(
                 )
             }
 
-            is SignUpEvent.SignOut -> {
+            is SignUpVmEvent.SignOut -> {
                 authUseCase.signOutUseCase()
             }
         }
@@ -81,9 +84,9 @@ class SignUpViewModel @Inject constructor(
             }.onSuccess { isAccountCreated ->
                 _state.update { it.copy(isLoading = false) }
                 if (isAccountCreated) {
-                    _eventFlow.emit(SignUpUiEvent.SignUpSuccess)
+                    _eventFlow.emit(SignUpEvent.SignUpSuccess)
                 } else {
-                    _eventFlow.emit(SignUpUiEvent.CreateAccountFailed())
+                    _eventFlow.emit(SignUpEvent.CreateAccountFailed())
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
@@ -97,19 +100,19 @@ class SignUpViewModel @Inject constructor(
     private suspend fun handleException(exception: Throwable) {
         when (exception) {
             is AuthExceptions.EmailException -> {
-                _eventFlow.emit(value = SignUpUiEvent.InvalidEmail(reason = exception.message ?: "Invalid email. Please try again."))
+                _eventFlow.emit(value = SignUpEvent.InvalidEmail(reason = exception.message ?: "Invalid email. Please try again."))
             }
             is AuthExceptions.PasswordException -> {
-                _eventFlow.emit(value = SignUpUiEvent.InvalidPassword(reason = exception.message ?: "Invalid password. Please try again."))
+                _eventFlow.emit(value = SignUpEvent.InvalidPassword(reason = exception.message ?: "Invalid password. Please try again."))
             }
             is AuthExceptions.ConfirmPasswordException -> {
-                _eventFlow.emit(value = SignUpUiEvent.InvalidConfirmPassword(reason = exception.message ?: "Passwords do not match. Please try again."))
+                _eventFlow.emit(value = SignUpEvent.InvalidConfirmPassword(reason = exception.message ?: "Passwords do not match. Please try again."))
             }
             is AuthExceptions.NetworkException -> {
-                _eventFlow.emit(value = SignUpUiEvent.NoInternetConnection)
+                _eventFlow.emit(value = SignUpEvent.NoInternetConnection)
             }
             is AuthExceptions.UserAlreadyExistsException -> {
-                _eventFlow.emit(value = SignUpUiEvent.AccountAlreadyTaken)
+                _eventFlow.emit(value = SignUpEvent.AccountAlreadyTaken)
             }
             else -> {
                 Timber.e("${this@SignUpViewModel.javaClass.name}: ${exception.message}")

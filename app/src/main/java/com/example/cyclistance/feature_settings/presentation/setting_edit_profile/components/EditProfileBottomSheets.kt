@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileState
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileState
 
 @ExperimentalMaterialApi
 @Composable

@@ -23,15 +23,14 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_mapping.domain.model.CancelledRescueModel
-import com.example.cyclistance.feature_mapping.domain.model.MapSelectedRescuee
-import com.example.cyclistance.feature_mapping.domain.model.RouteDirection
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.FloatingButtonSection
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
 
 
@@ -44,36 +43,11 @@ fun MappingScreenContent(
     state: MappingState,
     mapboxMap: MapboxMap?,
     hasTransaction: Boolean = false,
-    bottomSheetType: String,
     isRescueCancelled: Boolean = false,
-    mapSelectedRescuee: MapSelectedRescuee?,
-    routeDirection: RouteDirection?,
     isNavigating: Boolean,
-    isNoInternetDialogVisible: Boolean,
-    rescueRequestAccepted: Boolean,
-    requestHelpButtonVisible: Boolean,
+    uiState: MappingUiState,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
-    onClickRequestHelpButton: () -> Unit = {},
-    onClickRespondToHelpButton: () -> Unit = {},
-    onClickRescueArrivedButton: () -> Unit = {},
-    onClickReachedDestinationButton: () -> Unit = {},
-    onClickCancelSearchButton: () -> Unit = {},
-    onClickCallRescueTransactionButton: () -> Unit = {},
-    onClickChatRescueTransactionButton: () -> Unit = {},
-    onClickCancelRescueTransactionButton: () -> Unit = {},
-    onClickOkButtonCancelledRescue: () -> Unit = {},
-    onInitializeMapboxMap: (MapboxMap) -> Unit = {},
-    onClickOkButtonRescueRequestAccepted: () -> Unit = {},
-    onChangeCameraState: (LatLng, Double) -> Unit = { _, _ -> },
-    onDismissNoInternetDialog: () -> Unit = {},
-    onClickRescueeMapIcon: (String) -> Unit = {},
-    onMapClick: () -> Unit = {},
-    onClickDismissBannerButton: () -> Unit = {},
-    onClickLocateUserButton: () -> Unit = {},
-    onClickRouteOverButton: () -> Unit = {},
-    onClickRecenterButton: () -> Unit = {},
-    onClickOpenNavigationButton: () -> Unit = {},
-    onRequestNavigationCameraToOverview: () -> Unit = {},
+    event: (MappingUiEvent) -> Unit = {}
 ) {
 
     val configuration = LocalConfiguration.current
@@ -85,15 +59,15 @@ fun MappingScreenContent(
         MappingBottomSheet(
             isDarkTheme = isDarkTheme,
             state = state,
-            onClickRescueArrivedButton = onClickRescueArrivedButton,
-            onClickReachedDestinationButton = onClickReachedDestinationButton,
-            onClickCancelSearchButton = onClickCancelSearchButton,
-            onClickCallRescueTransactionButton = onClickCallRescueTransactionButton,
-            onClickChatRescueTransactionButton = onClickChatRescueTransactionButton,
-            onClickCancelRescueTransactionButton = onClickCancelRescueTransactionButton,
+            onClickRescueArrivedButton = { event(MappingUiEvent.RescueArrivedConfirmed) },
+            onClickReachedDestinationButton = { event(MappingUiEvent.DestinationReachedConfirmed) },
+            onClickCancelSearchButton = { event(MappingUiEvent.CancelSearchConfirmed) },
+            onClickCallRescueTransactionButton = { event(MappingUiEvent.CallRescueTransaction) },
+            onClickChatRescueTransactionButton = { event(MappingUiEvent.ChatRescueTransaction) },
+            onClickCancelRescueTransactionButton = { event(MappingUiEvent.CancelRescueTransaction) },
             bottomSheetScaffoldState = bottomSheetScaffoldState,
-            bottomSheetType = bottomSheetType,
-        ) {
+            bottomSheetType = uiState.bottomSheetType) {
+
 
             ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
@@ -109,15 +83,20 @@ fun MappingScreenContent(
                         bottom.linkTo(parent.bottom)
                     },
                     isDarkTheme = isDarkTheme,
-                    onInitializeMapboxMap = onInitializeMapboxMap,
-                    onChangeCameraState = onChangeCameraState,
+                    onInitializeMapboxMap = {event(MappingUiEvent.OnInitializeMap(it))},
+                    onChangeCameraState = { position, zoomLevel ->
+                        event(
+                            MappingUiEvent.OnChangeCameraState(
+                                position = position,
+                                zoomLevel = zoomLevel))
+                    },
                     hasTransaction = hasTransaction,
                     isRescueCancelled = isRescueCancelled,
-                    onClickRescueeMapIcon = onClickRescueeMapIcon,
-                    onMapClick = onMapClick,
-                    requestNavigationCameraToOverview = onRequestNavigationCameraToOverview,
+                    onClickRescueeMapIcon = { event(MappingUiEvent.RescueeMapIconSelected(it)) },
+                    onMapClick = { event(MappingUiEvent.OnMapClick) },
+                    requestNavigationCameraToOverview = { event(MappingUiEvent.OnRequestNavigationCameraToOverview) },
                     mapboxMap = mapboxMap,
-                    routeDirection = routeDirection,
+                    routeDirection = uiState.routeDirection,
                     isNavigating = isNavigating
                 )
 
@@ -125,18 +104,18 @@ fun MappingScreenContent(
 
 
                 AnimatedVisibility(
-                    visible = mapSelectedRescuee != null,
+                    visible = uiState.mapSelectedRescuee != null,
                     enter = expandVertically(expandFrom = Alignment.Top) { 20 },
                     exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
                         fullHeight / 2
                     },
                 ) {
-                    if (mapSelectedRescuee != null) {
+                    if (uiState.mapSelectedRescuee != null) {
                         MappingExpandableBanner(
                             modifier = Modifier
                                 .padding(all = 6.dp)
-                                .fillMaxWidth(), banner = mapSelectedRescuee,
-                            onClickDismissButton = onClickDismissBannerButton)
+                                .fillMaxWidth(), banner = uiState.mapSelectedRescuee,
+                            onClickDismissButton = {event(MappingUiEvent.DismissBanner)})
                     }
                 }
 
@@ -149,10 +128,10 @@ fun MappingScreenContent(
                                 margin = (configuration.screenHeightDp / 3).dp)
                         },
                     locationPermissionGranted = locationPermissionState.allPermissionsGranted,
-                    onClickLocateUserButton = onClickLocateUserButton,
-                    onClickRouteOverButton = onClickRouteOverButton,
-                    onClickRecenterButton = onClickRecenterButton,
-                    onClickOpenNavigationButton = onClickOpenNavigationButton,
+                    onClickLocateUserButton = {event(MappingUiEvent.LocateUser)},
+                    onClickRouteOverviewButton = {event(MappingUiEvent.RouteOverview)},
+                    onClickRecenterButton = {event(MappingUiEvent.RecenterRoute)},
+                    onClickOpenNavigationButton = {event(MappingUiEvent.OpenNavigation)},
                     isNavigating = isNavigating
                 )
 
@@ -161,9 +140,9 @@ fun MappingScreenContent(
                         bottom.linkTo(parent.bottom, margin = 15.dp)
                         end.linkTo(parent.end)
                         start.linkTo(parent.start)
-                    }, onClickSearchButton = onClickRequestHelpButton,
+                    }, onClickRequestHelpButton = { event(MappingUiEvent.RequestHelp) },
                     state = state,
-                    visible = requestHelpButtonVisible && isNavigating.not()
+                    visible = uiState.requestHelpButtonVisible && isNavigating.not()
 
                 )
 
@@ -173,9 +152,9 @@ fun MappingScreenContent(
                         end.linkTo(parent.end)
                         start.linkTo(parent.start)
                     },
-                    onClickRespondButton = onClickRespondToHelpButton,
+                    onClickRespondButton = {event(MappingUiEvent.RespondToHelp)},
                     state = state,
-                    visible = requestHelpButtonVisible.not() && isNavigating.not()
+                    visible = uiState.requestHelpButtonVisible.not() && isNavigating.not()
                 )
 
                 if (state.isLoading) {
@@ -188,9 +167,9 @@ fun MappingScreenContent(
                     })
                 }
 
-                if (isNoInternetDialogVisible) {
+                if (uiState.isNoInternetVisible) {
                     NoInternetDialog(
-                        onDismiss = onDismissNoInternetDialog,
+                        onDismiss = { event(MappingUiEvent.DismissNoInternetDialog) },
                         modifier = Modifier.constrainAs(noInternetScreen) {
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
@@ -202,7 +181,7 @@ fun MappingScreenContent(
                 }
 
                 AnimatedVisibility(
-                    visible = isRescueCancelled && rescueRequestAccepted.not(),
+                    visible = isRescueCancelled && uiState.rescueRequestAccepted.not(),
                     enter = fadeIn(),
                     exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
 
@@ -211,10 +190,9 @@ fun MappingScreenContent(
                     val cancellationReason =
                         cancellation?.cancellationReason ?: return@AnimatedVisibility
 
-
                     MappingCancelledRescue(
                         modifier = Modifier.fillMaxSize(),
-                        onClickOkButton = onClickOkButtonCancelledRescue,
+                        onClickOkButton = {event(MappingUiEvent.CancelledRescueConfirmed)},
                         cancelledRescueModel = CancelledRescueModel(
                             transactionID = rescueTransaction.id,
                             rescueCancelledBy = cancellation.nameCancelledBy,
@@ -224,12 +202,12 @@ fun MappingScreenContent(
                 }
 
                 AnimatedVisibility(
-                    visible = rescueRequestAccepted && isRescueCancelled.not(),
+                    visible = uiState.rescueRequestAccepted && isRescueCancelled.not(),
                     enter = fadeIn(),
                     exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
                     RescueRequestAccepted(
                         modifier = Modifier.fillMaxSize(),
-                        onClickOkButton = onClickOkButtonRescueRequestAccepted,
+                        onClickOkButton = { event(MappingUiEvent.RescueRequestAccepted) },
                         acceptedName = state.rescuee?.name ?: "Name placeholder",
                     )
                 }

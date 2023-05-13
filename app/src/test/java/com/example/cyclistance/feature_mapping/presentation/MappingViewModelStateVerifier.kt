@@ -6,8 +6,8 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LON
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_MAP_ZOOM_LEVEL
 import com.example.cyclistance.feature_mapping.domain.model.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingEvent
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingUiEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.mapbox.geojson.Point
@@ -29,8 +29,8 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
 
     suspend fun nearbyCyclistsAvailable(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
         delay(1000)
         state.test {
             val nearbyCyclists = awaitItem().nearbyCyclists?.users
@@ -41,8 +41,8 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun nearbyCyclistsNotAvailable(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
         state.test {
             val nearbyCyclists = awaitItem().nearbyCyclists?.users
             Assert.assertTrue(nearbyCyclists == null || nearbyCyclists.isEmpty())
@@ -53,11 +53,11 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
     suspend fun requestHelp_ToastMessageSearchingGps_IsShown(): MappingViewModelStateVerifier {
 
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
         event.test(timeout = 1.5.minutes) {
-            mappingViewModel.onEvent(event = MappingEvent.RequestHelp)
-            Assert.assertEquals(MappingUiEvent.ShowToastMessage("Searching for GPS"), awaitItem())
+            mappingViewModel.onEvent(event = MappingVmEvent.RequestHelp)
+            Assert.assertEquals(MappingEvent.ShowToastMessage("Searching for GPS"), awaitItem())
         }
 
         return this
@@ -65,14 +65,14 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
 
     suspend fun requestHelp_ConfirmDetailScreen_IsShown(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
 
         event.test(timeout = 1.5.minutes) {
-            mappingViewModel.onEvent(event = MappingEvent.RequestHelp)
+            mappingViewModel.onEvent(event = MappingVmEvent.RequestHelp)
             val result = awaitItem()
-            Assert.assertEquals(MappingUiEvent.RequestHelpSuccess, result)
-            Assert.assertNotEquals(MappingUiEvent.ShowToastMessage("Searching for GPS"), result)
+            Assert.assertEquals(MappingEvent.RequestHelpSuccess, result)
+            Assert.assertNotEquals(MappingEvent.ShowToastMessage("Searching for GPS"), result)
         }
 
         return this
@@ -80,7 +80,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
     suspend fun requestHelp_profileUploadedState_returnsTrue(): MappingViewModelStateVerifier {
         state.test(timeout = 1.5.minutes) {
-            mappingViewModel.onEvent(event = MappingEvent.RequestHelp)
+            mappingViewModel.onEvent(event = MappingVmEvent.RequestHelp)
             delay(1000)
             Assert.assertTrue("Profile Uploaded", awaitItem().profileUploaded)
         }
@@ -90,31 +90,31 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
 
     suspend fun acceptRescueRequest_CantReachRescuer_ToastMessage_IsShown(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
         event.test(timeout = 1.minutes) {
-            mappingViewModel.onEvent(event = MappingEvent.AcceptRescueRequest(id = "2"))
-            Assert.assertEquals(MappingUiEvent.ShowToastMessage("Can't reach Rescuer"), awaitItem())
+            mappingViewModel.onEvent(event = MappingVmEvent.AcceptRescueRequest(id = "2"))
+            Assert.assertEquals(MappingEvent.ShowToastMessage("Can't reach Rescuer"), awaitItem())
         }
         return this
     }
 
 
     suspend fun acceptRescueRequest_LocationNotFound_ToastMessage_IsShown(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
         event.test(timeout = 1.minutes) {
-            mappingViewModel.onEvent(event = MappingEvent.AcceptRescueRequest(id = "2"))
-            Assert.assertEquals(MappingUiEvent.ShowToastMessage("Location not found"), awaitItem())
+            mappingViewModel.onEvent(event = MappingVmEvent.AcceptRescueRequest(id = "2"))
+            Assert.assertEquals(MappingEvent.ShowToastMessage("Location not found"), awaitItem())
         }
         return this
     }
 
     suspend fun acceptRescueRequest_userHasCurrentTransaction_returnsTrue() {
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
         delay(2000)
-        mappingViewModel.onEvent(event = MappingEvent.AcceptRescueRequest(id = "2"))
+        mappingViewModel.onEvent(event = MappingVmEvent.AcceptRescueRequest(id = "2"))
         state.test {
             val transaction = awaitItem().user.transaction
             Assert.assertTrue(
@@ -125,10 +125,10 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun acceptRescueRequest_rescuerHasCurrentTransaction_returnsTrue() {
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
         delay(200)
-        mappingViewModel.onEvent(event = MappingEvent.AcceptRescueRequest(id = "2"))
+        mappingViewModel.onEvent(event = MappingVmEvent.AcceptRescueRequest(id = "2"))
         delay(200)
         state.test {
             val transaction = awaitItem().rescueRequestAcceptedUser?.transaction
@@ -140,12 +140,12 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun acceptRescueRequest_MappingScreen_IsShown(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
         delay(5000)
         event.test(timeout = 1.5.minutes) {
-            mappingViewModel.onEvent(event = MappingEvent.AcceptRescueRequest(id = "2"))
-            Assert.assertEquals(MappingUiEvent.AcceptRescueRequestSuccess, awaitItem())
+            mappingViewModel.onEvent(event = MappingVmEvent.AcceptRescueRequest(id = "2"))
+            Assert.assertEquals(MappingEvent.AcceptRescueRequestSuccess, awaitItem())
         }
         return this
     }
@@ -153,7 +153,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
     suspend fun changeCameraState_cameraStateChanges_returnsTrue():MappingViewModelStateVerifier {
         mappingViewModel.onEvent(
-            event = MappingEvent.ChangeCameraPosition(
+            event = MappingVmEvent.ChangeCameraPosition(
                 cameraPosition = LatLng(14.000, 14.000,), cameraZoomLevel = 10.0
             )
         )
@@ -169,14 +169,14 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
 
     suspend fun selectRescueeMapIcon_ToastMessageIsShown():MappingViewModelStateVerifier{
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
         delay(2000)
 
         event.test(timeout = 1.minutes) {
-            mappingViewModel.onEvent(event = MappingEvent.SelectRescueMapIcon(id = "2"))
+            mappingViewModel.onEvent(event = MappingVmEvent.SelectRescueMapIcon(id = "2"))
             delay(2000)
-            Assert.assertEquals(MappingUiEvent.ShowToastMessage("Tracking your Location"), awaitItem())
+            Assert.assertEquals(MappingEvent.ShowToastMessage("Tracking your Location"), awaitItem())
         }
         return this
 
@@ -184,10 +184,10 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
     suspend fun selectRescueMapIcon_SelectedRescueeMapIconStateUpdated():MappingViewModelStateVerifier{
 
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
         delay(200)
-        mappingViewModel.onEvent(event = MappingEvent.SelectRescueMapIcon(id = "2"))
+        mappingViewModel.onEvent(event = MappingVmEvent.SelectRescueMapIcon(id = "2"))
         delay(300)
         val result = state.value.selectedRescueeMapIcon
         Assert.assertNotNull(result)
@@ -197,12 +197,12 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
     suspend fun dismissRescueeBanner_SelectedRescueeMapIconStateUpdated():MappingViewModelStateVerifier{
 
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
         delay(200)
-        mappingViewModel.onEvent(event = MappingEvent.SelectRescueMapIcon(id = "2"))
+        mappingViewModel.onEvent(event = MappingVmEvent.SelectRescueMapIcon(id = "2"))
         delay(300)
-        mappingViewModel.onEvent(event = MappingEvent.DismissRescueeBanner)
+        mappingViewModel.onEvent(event = MappingVmEvent.DismissRescueeBanner)
         delay(300)
         val result = state.value.selectedRescueeMapIcon
         Assert.assertNull(result)
@@ -211,7 +211,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun startNavigation_isNavigationState_returnsTrue():MappingViewModelStateVerifier{
-        mappingViewModel.onEvent(event = MappingEvent.StartNavigation)
+        mappingViewModel.onEvent(event = MappingVmEvent.StartNavigation)
         delay(300)
         val result = state.value.isNavigating
         Assert.assertTrue(result)
@@ -220,7 +220,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun stopNavigation_isNavigatingState_returnsFalse():MappingViewModelStateVerifier{
-        mappingViewModel.onEvent(event = MappingEvent.StopNavigation)
+        mappingViewModel.onEvent(event = MappingVmEvent.StopNavigation)
         delay(300)
         val result = state.value.isNavigating
         Assert.assertFalse(result)
@@ -229,7 +229,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun showRouteDirections_hasInternetState_isFalse(): MappingViewModelStateVerifier{
-        mappingViewModel.onEvent(event = MappingEvent.GetRouteDirections(
+        mappingViewModel.onEvent(event = MappingVmEvent.GetRouteDirections(
             origin = Point.fromLngLat(14.000, 14.000),
             destination = Point.fromLngLat(14.000, 14.000)
         ))
@@ -239,7 +239,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
         return this
     }
     suspend fun showRouteDirections_hasInternetState_isTrue(): MappingViewModelStateVerifier{
-        mappingViewModel.onEvent(event = MappingEvent.GetRouteDirections(
+        mappingViewModel.onEvent(event = MappingVmEvent.GetRouteDirections(
             origin = Point.fromLngLat(14.000, 14.000),
             destination = Point.fromLngLat(14.000, 14.000)
         ))
@@ -250,7 +250,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun showRouteDirections_routeDirectionStateUpdated(): MappingViewModelStateVerifier{
-        mappingViewModel.onEvent(event = MappingEvent.GetRouteDirections(
+        mappingViewModel.onEvent(event = MappingVmEvent.GetRouteDirections(
             origin = Point.fromLngLat(14.000, 14.000),
             destination = Point.fromLngLat(14.000, 14.000)
         ))
@@ -266,9 +266,9 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
     suspend fun signOutSignInScreen_IsShown(): MappingViewModelStateVerifier {
         event.test {
-            mappingViewModel.onEvent(event = MappingEvent.SignOut)
+            mappingViewModel.onEvent(event = MappingVmEvent.SignOut)
             when (awaitItem()) {
-                is MappingUiEvent.SignOutSuccess -> {
+                is MappingEvent.SignOutSuccess -> {
                     Assert.assertTrue("Showing sign in screen", true)
                 }
                 else -> {
@@ -281,19 +281,19 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
 
     fun startPinging_searchingAssistance_returnsTrue(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingEvent.StartPinging)
+        mappingViewModel.onEvent(event = MappingVmEvent.StartPinging)
         Assert.assertTrue("Searching Assistance", state.value.searchingAssistance)
         return this
     }
 
     fun stopPinging_searchingAssistance_returnsFalse(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingEvent.StopPinging)
+        mappingViewModel.onEvent(event = MappingVmEvent.StopPinging)
         Assert.assertFalse("Searching Assistance", state.value.searchingAssistance)
         return this
     }
 
     suspend fun loadUserProfile_userProfileAvailable_returnsTrue(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingEvent.LoadUserProfile)
+        mappingViewModel.onEvent(event = MappingVmEvent.LoadUserProfile)
         delay(1000)
         val name = state.value.name
         val photoUrl = state.value.photoUrl
@@ -305,7 +305,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun loadUserProfile_userProfileAvailable_returnsFalse(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingEvent.LoadUserProfile)
+        mappingViewModel.onEvent(event = MappingVmEvent.LoadUserProfile)
         delay(1000)
         val name = state.value.name
         val photoUrl = state.value.photoUrl
@@ -317,28 +317,28 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun changeBottomSheet_stateReturnsOnGoingRescueType(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(bottomSheetType = BottomSheetType.OnGoingRescue.type))
+        mappingViewModel.onEvent(event = MappingVmEvent.ChangeBottomSheet(bottomSheetType = BottomSheetType.OnGoingRescue.type))
         delay(1000)
         Assert.assertEquals(BottomSheetType.OnGoingRescue.type, state.value.bottomSheetType)
         return this
     }
 
     suspend fun changeBottomSheet_stateReturnsOnRescuerArrivedType(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(bottomSheetType = BottomSheetType.RescuerArrived.type))
+        mappingViewModel.onEvent(event = MappingVmEvent.ChangeBottomSheet(bottomSheetType = BottomSheetType.RescuerArrived.type))
         delay(1000)
         Assert.assertEquals(BottomSheetType.RescuerArrived.type, state.value.bottomSheetType)
         return this
     }
 
     suspend fun changeBottomSheet_stateReturnsDestinationReachedType(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(bottomSheetType = BottomSheetType.DestinationReached.type))
+        mappingViewModel.onEvent(event = MappingVmEvent.ChangeBottomSheet(bottomSheetType = BottomSheetType.DestinationReached.type))
         delay(1000)
         Assert.assertEquals(BottomSheetType.DestinationReached.type, state.value.bottomSheetType)
         return this
     }
 
     suspend fun changeBottomSheet_stateReturnsSearchAssistanceType(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingEvent.ChangeBottomSheet(bottomSheetType = BottomSheetType.SearchAssistance.type))
+        mappingViewModel.onEvent(event = MappingVmEvent.ChangeBottomSheet(bottomSheetType = BottomSheetType.SearchAssistance.type))
         delay(1000)
         Assert.assertEquals(BottomSheetType.SearchAssistance.type, state.value.bottomSheetType)
         return this
@@ -347,7 +347,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
 
     fun dismissAlertDialog_returnsTrue(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingEvent.DismissAlertDialog)
+        mappingViewModel.onEvent(event = MappingVmEvent.DismissAlertDialog)
         val dialogDismissed =  state.value.alertDialogModel.run {
             this.title.isEmpty() && this.description.isEmpty()
         }
@@ -356,13 +356,13 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     fun dismissNoInternetDialog_returnsTrue(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingEvent.DismissNoInternetDialog)
+        mappingViewModel.onEvent(event = MappingVmEvent.DismissNoInternetDialog)
         Assert.assertTrue(state.value.hasInternet)
         return this
     }
 
     suspend fun cancelRequestHelp_requestHelpButtonIsShown_And_rescueRequestAcceptedIsNull(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingEvent.CancelRequestHelp)
+        mappingViewModel.onEvent(event = MappingVmEvent.CancelRequestHelp)
 
         delay(1000)
         Assert.assertTrue(state.value.requestHelpButtonVisible)
@@ -372,18 +372,18 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun cancelRequestHelp_hasInternetState_isFalse(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingEvent.CancelRequestHelp)
+        mappingViewModel.onEvent(event = MappingVmEvent.CancelRequestHelp)
         delay(1000)
         Assert.assertFalse(state.value.hasInternet)
         return this
     }
 
     suspend fun declineRescueRequest_rescueRespondentsRemoved_returnsTrue(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(MappingEvent.LoadData)
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
         delay(2000)
         val originalSize = state.value.userActiveRescueRequests.respondents.size
-        mappingViewModel.onEvent(event = MappingEvent.DeclineRescueRequest(id = "3"))
+        mappingViewModel.onEvent(event = MappingVmEvent.DeclineRescueRequest(id = "3"))
         delay(2000)
         val sizeAfterDeclineRequest = state.value.userActiveRescueRequests.respondents.size
         Assert.assertTrue((originalSize - sizeAfterDeclineRequest) == 1)
@@ -391,29 +391,29 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun declineRescueRequest_rescueRespondentsRemoved_returnsFalse(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
         delay(2500)
         val originalSize = state.value.userActiveRescueRequests.respondents.size
-        mappingViewModel.onEvent(event = MappingEvent.DeclineRescueRequest(id = "124 this id doesn't exist"))
+        mappingViewModel.onEvent(event = MappingVmEvent.DeclineRescueRequest(id = "124 this id doesn't exist"))
         val sizeAfterDeclineRequest = state.value.userActiveRescueRequests.respondents.size
         Assert.assertFalse((originalSize - sizeAfterDeclineRequest) == 1)
         event.test(timeout = 1.5.minutes) {
             val result = awaitItem()
-            Assert.assertEquals(MappingUiEvent.ShowToastMessage(message = "Failed to Remove Respondent"), result)
+            Assert.assertEquals(MappingEvent.ShowToastMessage(message = "Failed to Remove Respondent"), result)
         }
         return this
     }
 
     suspend fun declineRescueRequest_NoInternet_ToastMessageIsShown(): MappingViewModelStateVerifier {
 
-        mappingViewModel.onEvent(MappingEvent.SubscribeToDataChanges)
-        mappingViewModel.onEvent(MappingEvent.LoadData)
+        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(MappingVmEvent.LoadData)
         delay(2500)
-        mappingViewModel.onEvent(event = MappingEvent.DeclineRescueRequest(id = "1"))
+        mappingViewModel.onEvent(event = MappingVmEvent.DeclineRescueRequest(id = "1"))
         event.test(timeout = 1.5.minutes) {
             when (val result = awaitItem()) {
-                is MappingUiEvent.ShowToastMessage -> {
+                is MappingEvent.ShowToastMessage -> {
                     Assert.assertEquals("No Internet Connection", result.message)
                 }
                 else -> {
@@ -425,14 +425,14 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun removeRouteDirection_routeDirectionStateIsNull(){
-        mappingViewModel.onEvent(event = MappingEvent.RemoveRouteDirections)
+        mappingViewModel.onEvent(event = MappingVmEvent.RemoveRouteDirections)
         delay(1000)
         val routeDirection = state.value.routeDirection
         Assert.assertNull(routeDirection)
     }
 
    suspend fun respondToHelp_hasInternetState_returnsFalse(){
-        mappingViewModel.onEvent(event = MappingEvent.RespondToHelp)
+        mappingViewModel.onEvent(event = MappingVmEvent.RespondToHelp)
         delay(1000)
         Assert.assertFalse(state.value.hasInternet)
 
@@ -440,25 +440,25 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
 
     suspend fun respondToHelp_RescueRequestSent_ToastMessageIsShown(){
         event.test(timeout = 1.5.minutes) {
-            mappingViewModel.onEvent(event = MappingEvent.RespondToHelp)
+            mappingViewModel.onEvent(event = MappingVmEvent.RespondToHelp)
             val result = awaitItem()
-            Assert.assertEquals(MappingUiEvent.ShowToastMessage("Rescue request sent"), result)
+            Assert.assertEquals(MappingEvent.ShowToastMessage("Rescue request sent"), result)
         }
     }
 
     suspend fun respondToHelp_AddressNotFound_ToastMessageIsShown(){
         event.test(timeout = 1.5.minutes) {
-            mappingViewModel.onEvent(event = MappingEvent.RespondToHelp)
+            mappingViewModel.onEvent(event = MappingVmEvent.RespondToHelp)
             val result = awaitItem()
-            Assert.assertEquals(MappingUiEvent.ShowToastMessage("Address not found"), result)
+            Assert.assertEquals(MappingEvent.ShowToastMessage("Address not found"), result)
         }
     }
 
     suspend fun cancelRescueTransaction_resetUiState(){
-        mappingViewModel.onEvent(event = MappingEvent.LoadData)
-        mappingViewModel.onEvent(event = MappingEvent.SubscribeToDataChanges)
+        mappingViewModel.onEvent(event = MappingVmEvent.LoadData)
+        mappingViewModel.onEvent(event = MappingVmEvent.SubscribeToDataChanges)
         delay(200)
-        mappingViewModel.onEvent(event = MappingEvent.CancelRescueTransaction)
+        mappingViewModel.onEvent(event = MappingVmEvent.CancelRescueTransaction)
         delay(200)
         val result = state.value
         Assert.assertFalse(result.isRescueRequestAccepted)

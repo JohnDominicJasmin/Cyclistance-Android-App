@@ -22,7 +22,7 @@ fun FloatingButtonSection(
     locationPermissionGranted: Boolean = true,
     isNavigating: Boolean,
     onClickLocateUserButton: () -> Unit = {},
-    onClickRouteOverButton: () -> Unit = {},
+    onClickRouteOverviewButton: () -> Unit = {},
     onClickRecenterButton: () -> Unit = {},
     onClickOpenNavigationButton: () -> Unit = {}) {
 
@@ -30,7 +30,7 @@ fun FloatingButtonSection(
         MappingUtils.FabAnimated(isNavigating) {
             RouteOverViewButton(
                 modifier = Modifier.size(53.dp),
-                onClick = onClickRouteOverButton
+                onClick = onClickRouteOverviewButton
             )
         }
 

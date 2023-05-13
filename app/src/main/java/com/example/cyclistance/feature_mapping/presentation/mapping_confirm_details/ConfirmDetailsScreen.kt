@@ -45,6 +45,11 @@ import com.example.cyclistance.feature_mapping.presentation.common.MappingButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.AddressTextField
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.ButtonDescriptionDetails
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.DropDownBikeList
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsUiEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsVmEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsState
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsUiState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
@@ -61,54 +66,55 @@ fun ConfirmDetailsScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    var address by rememberSaveable { mutableStateOf("") }
-    var addressErrorMessage by rememberSaveable { mutableStateOf("") }
-    var message by rememberSaveable { mutableStateOf("") }
-    var bikeType by rememberSaveable { mutableStateOf("") }
-    var bikeTypeErrorMessage by rememberSaveable { mutableStateOf("") }
-    var description by rememberSaveable { mutableStateOf("") }
-    var descriptionErrorMessage by rememberSaveable { mutableStateOf("") }
-    var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
-    var alertDialogState by remember { mutableStateOf(AlertDialogState()) }
-
+    /*    var address by rememberSaveable { mutableStateOf("") }
+        var addressErrorMessage by rememberSaveable { mutableStateOf("") }
+        var message by rememberSaveable { mutableStateOf("") }
+        var bikeType by rememberSaveable { mutableStateOf("") }
+        var bikeTypeErrorMessage by rememberSaveable { mutableStateOf("") }
+        var description by rememberSaveable { mutableStateOf("") }
+        var descriptionErrorMessage by rememberSaveable { mutableStateOf("") }
+        var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
+        var alertDialogState by remember { mutableStateOf(AlertDialogState()) }*/
+    var uiState by rememberSaveable { mutableStateOf(ConfirmDetailsUiState()) }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
-                is ConfirmDetailsUiEvent.ConfirmDetailsSuccess -> {
+                is ConfirmDetailsEvent.ConfirmDetailsSuccess -> {
                     navController.navigateScreen(Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE=${BottomSheetType.SearchAssistance.type}")
                 }
 
-                is ConfirmDetailsUiEvent.UserError -> {
+                is ConfirmDetailsEvent.UserError -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is ConfirmDetailsUiEvent.UnexpectedError -> {
+                is ConfirmDetailsEvent.UnexpectedError -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is ConfirmDetailsUiEvent.GetSavedBikeType -> {
-                    bikeType = event.bikeType
+                is ConfirmDetailsEvent.GetSavedBikeType -> {
+                    uiState = uiState.copy(bikeType = event.bikeType)
                 }
 
-                is ConfirmDetailsUiEvent.GetSavedAddress -> {
-                    address = event.address
+                is ConfirmDetailsEvent.GetSavedAddress -> {
+                    uiState = uiState.copy(address = event.address)
                 }
 
-                is ConfirmDetailsUiEvent.NoInternetConnection -> {
-                    isNoInternetDialogVisible = true
+                is ConfirmDetailsEvent.NoInternetConnection -> {
+                    uiState = uiState.copy(isNoInternetVisible = true)
                 }
 
-                is ConfirmDetailsUiEvent.InvalidBikeType -> {
-                    bikeTypeErrorMessage = event.reason
+                is ConfirmDetailsEvent.InvalidBikeType -> {
+                    uiState = uiState.copy(bikeTypeErrorMessage = event.reason)
                 }
 
-                is ConfirmDetailsUiEvent.InvalidDescription -> {
-                    descriptionErrorMessage = event.reason
+                is ConfirmDetailsEvent.InvalidDescription -> {
+                    uiState = uiState.copy(descriptionErrorMessage = event.reason)
                 }
 
-                is ConfirmDetailsUiEvent.InvalidAddress -> {
-                    addressErrorMessage = event.reason
+                is ConfirmDetailsEvent.InvalidAddress -> {
+                    uiState = uiState.copy(addressErrorMessage = event.reason)
+
                 }
 
             }
@@ -118,26 +124,34 @@ fun ConfirmDetailsScreen(
 
     val onValueChangeAddress = remember {
         { addressInput: String ->
-            address = addressInput
-            addressErrorMessage = ""
+            uiState = uiState.copy(
+                address = addressInput,
+                addressErrorMessage = ""
+            )
         }
     }
     val onValueChangeMessage = remember {
         { messageInput: String ->
-            message = messageInput
+            uiState = uiState.copy(
+                message = messageInput
+            )
         }
     }
     val onClickBikeType = remember {
         { bikeTypeInput: String ->
-            bikeType = bikeTypeInput
-            bikeTypeErrorMessage = ""
-
+            uiState = uiState.copy(
+                bikeType = bikeTypeInput,
+                bikeTypeErrorMessage = ""
+            )
         }
     }
     val onClickDescriptionButton = remember {
         { descriptionInput: String ->
-            description = descriptionInput
-            descriptionErrorMessage = ""
+
+            uiState = uiState.copy(
+                description = descriptionInput,
+                descriptionErrorMessage = ""
+            )
         }
     }
     val onClickCancelButton = remember {
@@ -148,40 +162,58 @@ fun ConfirmDetailsScreen(
     val onClickConfirmButton = remember {
         {
             viewModel.onEvent(
-                event = ConfirmDetailsEvent.ConfirmDetails(
+                event = ConfirmDetailsVmEvent.ConfirmDetails(
                     confirmDetailsModel = ConfirmationDetailsModel(
-                        address = address,
-                        bikeType = bikeType,
-                        description = description,
-                        message = message
+                        address = uiState.address,
+                        bikeType = uiState.bikeType,
+                        description = uiState.description,
+                        message = uiState.message
                     )
                 ))
         }
     }
     val onDismissNoInternetDialog = remember {
         {
-            alertDialogState = AlertDialogState()
+            uiState = uiState.copy(
+                alertDialogState = AlertDialogState()
+            )
         }
     }
 
     ConfirmDetailsContent(
         modifier = Modifier.padding(paddingValues),
         state = state,
-        onValueChangeAddress = onValueChangeAddress,
-        onValueChangeMessage = onValueChangeMessage,
-        onClickBikeType = onClickBikeType,
-        onClickDescriptionButton = onClickDescriptionButton,
-        onClickConfirmButton = onClickConfirmButton,
-        onClickCancelButton = onClickCancelButton,
-        onDismissNoInternetDialog = onDismissNoInternetDialog,
-        address = address,
-        addressErrorMessage = addressErrorMessage,
-        bikeType = bikeType,
-        bikeTypeErrorMessage = bikeTypeErrorMessage,
-        description = description,
-        descriptionErrorMessage = descriptionErrorMessage,
-        message = message,
-        isNoInternetDialogVisible = isNoInternetDialogVisible
+        event = { event ->
+            when (event) {
+                is ConfirmDetailsUiEvent.ChangeAddress -> {
+                    onValueChangeAddress(event.address)
+                }
+
+                is ConfirmDetailsUiEvent.ChangeBikeType -> {
+                    onClickBikeType(event.bikeType)
+                }
+
+                is ConfirmDetailsUiEvent.ChangeDescription -> {
+                    onClickDescriptionButton(event.description)
+                }
+
+                is ConfirmDetailsUiEvent.ChangeMessage -> {
+                    onValueChangeMessage(event.message)
+                }
+
+                is ConfirmDetailsUiEvent.ConfirmDetails -> {
+                    onClickConfirmButton()
+                }
+
+                is ConfirmDetailsUiEvent.CancelConfirmation -> {
+                    onClickCancelButton()
+                }
+
+                is ConfirmDetailsUiEvent.DismissNoInternetDialog -> {
+                    onDismissNoInternetDialog()
+                }
+            }
+        }
     )
 }
 
@@ -193,14 +225,7 @@ fun PreviewConfirmDetailsScreen() {
         ConfirmDetailsContent(
             modifier = Modifier,
             state = ConfirmDetailsState(),
-            address = "Address sample",
-            addressErrorMessage = "Invalid Address",
-            bikeType = "Mountain Bike",
-            bikeTypeErrorMessage = "",
-            description = "Flat tire",
-            descriptionErrorMessage = "",
-            message = "bla bla",
-            isNoInternetDialogVisible = false)
+            uiState = ConfirmDetailsUiState())
     }
 }
 
@@ -209,23 +234,8 @@ fun PreviewConfirmDetailsScreen() {
 fun ConfirmDetailsContent(
     modifier: Modifier,
     state: ConfirmDetailsState = ConfirmDetailsState(),
-    address: String,
-    addressErrorMessage: String,
-    bikeType: String,
-    bikeTypeErrorMessage: String,
-    description: String,
-    descriptionErrorMessage: String,
-    message: String,
-    isNoInternetDialogVisible: Boolean,
-    onValueChangeAddress: (String) -> Unit = {},
-    onClickBikeType: (String) -> Unit = {},
-    onClickDescriptionButton: (String) -> Unit = {},
-    onValueChangeMessage: (String) -> Unit = {},
-    onClickCancelButton: () -> Unit = {},
-    onClickConfirmButton: () -> Unit = {},
-    onDismissNoInternetDialog: () -> Unit = {},
-
-    ) {
+    uiState: ConfirmDetailsUiState = ConfirmDetailsUiState(),
+    event: (ConfirmDetailsUiEvent) -> Unit = {}) {
 
 
     Surface(
@@ -256,9 +266,9 @@ fun ConfirmDetailsContent(
                             width = Dimension.percent(0.9f)
                             height = Dimension.wrapContent
                         },
-                    address = address,
-                    addressErrorMessage = addressErrorMessage,
-                    onValueChange = onValueChangeAddress,
+                    address = uiState.address,
+                    addressErrorMessage = uiState.addressErrorMessage,
+                    onValueChange = { event(ConfirmDetailsUiEvent.ChangeAddress(it)) },
                     enabled = !state.isLoading
                 )
 
@@ -271,9 +281,11 @@ fun ConfirmDetailsContent(
                             width = Dimension.percent(0.9f)
                             height = Dimension.wrapContent
                         },
-                    errorMessage = bikeTypeErrorMessage,
-                    selectedItem = bikeType,
-                    onClickItem = onClickBikeType,
+                    errorMessage = uiState.bikeTypeErrorMessage,
+                    selectedItem = uiState.bikeType,
+                    onClickItem = {
+                        event(ConfirmDetailsUiEvent.ChangeBikeType(it))
+                    },
                     enabled = !state.isLoading)
 
                 ButtonDescriptionDetails(
@@ -286,9 +298,11 @@ fun ConfirmDetailsContent(
                             height = Dimension.wrapContent
                             width = Dimension.percent(0.9f)
                         },
-                    selectedOption = description,
-                    errorMessage = descriptionErrorMessage,
-                    onClickButton = onClickDescriptionButton,
+                    selectedOption = uiState.description,
+                    errorMessage = uiState.descriptionErrorMessage,
+                    onClickButton = {
+                        event(ConfirmDetailsUiEvent.ChangeDescription(it))
+                    },
                     state = state,
                 )
 
@@ -302,8 +316,10 @@ fun ConfirmDetailsContent(
                             width = Dimension.percent(0.9f)
 
                         },
-                    message = message,
-                    onChangeValueMessage = onValueChangeMessage,
+                    message = uiState.message,
+                    onChangeValueMessage = {
+                        event(ConfirmDetailsUiEvent.ChangeMessage(it))
+                    },
                     enabled = !state.isLoading
                 )
 
@@ -344,8 +360,12 @@ fun ConfirmDetailsContent(
                             height = Dimension.wrapContent
                             width = Dimension.percent(0.9f)
                         },
-                    onClickCancelButton = onClickCancelButton,
-                    onClickConfirmButton = onClickConfirmButton,
+                    onClickCancelButton = {
+                        event(ConfirmDetailsUiEvent.CancelConfirmation)
+                    },
+                    onClickConfirmButton = {
+                        event(ConfirmDetailsUiEvent.ConfirmDetails)
+                    },
                     negativeButtonEnabled = !state.isLoading,
                     positiveButtonEnabled = !state.isLoading)
 
@@ -362,9 +382,9 @@ fun ConfirmDetailsContent(
                             }
                     )
                 }
-                if (isNoInternetDialogVisible) {
+                if (uiState.isNoInternetVisible) {
                     NoInternetDialog(
-                        onDismiss = onDismissNoInternetDialog,
+                        onDismiss = { event(ConfirmDetailsUiEvent.DismissNoInternetDialog) },
                         modifier = Modifier.constrainAs(noInternetScreen) {
                             bottom.linkTo(parent.bottom)
                             start.linkTo(parent.start)

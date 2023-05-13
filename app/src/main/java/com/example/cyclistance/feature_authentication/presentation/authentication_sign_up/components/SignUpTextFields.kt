@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpState
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state.SignUpState
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.ConfirmPasswordTextField
 import com.example.cyclistance.feature_authentication.presentation.common.EmailTextField

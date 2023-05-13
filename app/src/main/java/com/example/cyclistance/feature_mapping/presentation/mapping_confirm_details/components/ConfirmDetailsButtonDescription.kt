@@ -1,9 +1,22 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -27,7 +40,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.INCIDENT_TE
 import com.example.cyclistance.core.utils.constants.MappingConstants.INJURY_TEXT
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
 import com.example.cyclistance.feature_mapping.domain.model.ButtonDescriptionModel
-import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.ConfirmDetailsState
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsState
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.flowlayout.FlowRow
@@ -39,7 +52,7 @@ fun ButtonDescriptionDetails(
     modifier: Modifier,
     errorMessage: String,
     selectedOption: String,
-    state: ConfirmDetailsState ,
+    state: ConfirmDetailsState,
     onClickButton: (String) -> Unit) {
 
     val hasError = remember(errorMessage){ errorMessage.isNotEmpty() }

@@ -18,13 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun RequestHelpButton(
     modifier: Modifier = Modifier,
-    onClickSearchButton: () -> Unit = {},
+    onClickRequestHelpButton: () -> Unit = {},
     state: MappingState = MappingState(),
     visible: Boolean = true
     ) {
@@ -39,7 +39,7 @@ fun RequestHelpButton(
         )) {
         Button(
             enabled = !state.isLoading,
-            onClick = onClickSearchButton,
+            onClick = onClickRequestHelpButton,
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
             modifier = Modifier) {
@@ -72,7 +72,7 @@ fun RequestHelpButtonPreview() {
 
     CyclistanceTheme(true) {
         RequestHelpButton(
-            onClickSearchButton = { },
+            onClickRequestHelpButton = { },
             modifier = Modifier,
             state = MappingState())
     }

@@ -23,25 +23,24 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_mapping.domain.model.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.domain.model.RescueRequestModel
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.event.RescueRequestUiEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.state.RescueRequestUiState
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun RescueRequestScreenContent(
     modifier: Modifier = Modifier,
     mappingState: MappingState = MappingState(),
-    alertDialogState: AlertDialogState,
-    isNoInternetDialogVisible: Boolean,
-    onClickCancelButton: (String) -> Unit = {},
-    onClickConfirmButton: (String) -> Unit = {},
-    onDismissAlertDialog: () -> Unit = {},
-    onDismissNoInternetDialog: () -> Unit = {},
+    uiState: RescueRequestUiState = RescueRequestUiState(),
+    event: (RescueRequestUiEvent) -> Unit
+
+
 ) {
 
     val respondents = remember(mappingState.newRescueRequest?.request?.size) {
@@ -50,8 +49,10 @@ fun RescueRequestScreenContent(
 
 
 
-    if(alertDialogState.visible()){
-        AlertDialog(alertDialog = alertDialogState, onDismissRequest = onDismissAlertDialog)
+    if(uiState.alertDialogState.visible()){
+        AlertDialog(
+            alertDialog = uiState.alertDialogState,
+            onDismissRequest = { event(RescueRequestUiEvent.DismissAlertDialog) })
     }
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
@@ -102,12 +103,8 @@ fun RescueRequestScreenContent(
 
                                         .fillMaxWidth(fraction = 0.95f)
                                         .wrapContentHeight(), cardState = respondent,
-                                    onClickCancelButton = {
-                                        onClickCancelButton(respondent.id ?: "")
-                                    },
-                                    onClickConfirmButton = {
-                                        onClickConfirmButton(respondent.id ?: "")
-                                    }
+                                    onClickCancelButton = { event(RescueRequestUiEvent.CancelRequestHelp(respondent.id ?: "")) },
+                                    onClickConfirmButton = { event(RescueRequestUiEvent.ConfirmRequestHelp(respondent.id ?: "")) }
                                 )
                             }
 
@@ -121,8 +118,8 @@ fun RescueRequestScreenContent(
                 CircularProgressIndicator()
             }
 
-            if (isNoInternetDialogVisible) {
-                NoInternetDialog(onDismiss = onDismissNoInternetDialog)
+            if (uiState.isNoInternetAvailable) {
+                NoInternetDialog(onDismiss = {event(RescueRequestUiEvent.DismissNoInternetDialog)})
             }
 
         }
@@ -151,9 +148,7 @@ fun PreviewRescueRequest() {
                     ),
                 ))
             ),
-            alertDialogState = AlertDialogState(),
-            isNoInternetDialogVisible = false,
-
+            event = {}
             )
     }
 }
