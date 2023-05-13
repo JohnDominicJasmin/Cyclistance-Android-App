@@ -17,11 +17,13 @@ import androidx.navigation.NavHostController
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_SHEET_TYPE
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.components.RescueRequestScreenContent
+import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.event.RescueRequestUiEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.state.RescueRequestUiState
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import kotlinx.coroutines.flow.collectLatest
@@ -36,8 +38,8 @@ fun RescueRequestScreen(
 
     val mappingState by mappingViewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
-    var alertDialogState by remember { mutableStateOf(AlertDialogState()) }
+
+    var uiState by rememberSaveable { mutableStateOf(RescueRequestUiState()) }
 
     LaunchedEffect(key1 = true) {
         mappingViewModel.eventFlow.collectLatest { event ->
@@ -61,24 +63,29 @@ fun RescueRequestScreen(
                 }
 
                 is MappingEvent.NoInternetConnection -> {
-                    isNoInternetDialogVisible = true
+                    uiState = uiState.copy(
+                        isNoInternetAvailable = true
+                    )
                 }
 
 
                 is MappingEvent.RescueHasTransaction -> {
-                    alertDialogState = AlertDialogState(
-                        title = "Cannot Request",
-                        description = "Unfortunately the Rescuer is currently in a Rescue.",
-                        icon = R.raw.error
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Cannot Request",
+                            description = "Unfortunately the Rescuer is currently in a Rescue.",
+                            icon = R.raw.error
+                        )
                     )
                 }
 
                 is MappingEvent.UserHasCurrentTransaction -> {
-
-                    alertDialogState = AlertDialogState(
-                        title = "Cannot Request",
-                        description = "You can only have one transaction at a time",
-                        icon = R.raw.error
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Cannot Request",
+                            description = "You can only have one transaction at a time",
+                            icon = R.raw.error
+                        )
                     )
                 }
 
@@ -103,12 +110,16 @@ fun RescueRequestScreen(
 
     val onDismissAlertDialog = remember {
         {
-            alertDialogState = AlertDialogState()
+            uiState = uiState.copy(
+                alertDialogState = AlertDialogState()
+            )
         }
     }
     val onDismissNoInternetDialog = remember {
         {
-            isNoInternetDialogVisible = false
+            uiState = uiState.copy(
+                isNoInternetAvailable = false
+            )
         }
     }
 
@@ -116,12 +127,16 @@ fun RescueRequestScreen(
         modifier = Modifier
             .padding(paddingValues = paddingValues),
         mappingState = mappingState,
-        onClickCancelButton = onClickCancelButton,
-        onClickConfirmButton = onClickConfirmButton,
-        onDismissAlertDialog = onDismissAlertDialog,
-        onDismissNoInternetDialog = onDismissNoInternetDialog,
-        alertDialogState = alertDialogState,
-        isNoInternetDialogVisible = isNoInternetDialogVisible
+        uiState = uiState,
+        event = { event ->
+            when(event){
+                is RescueRequestUiEvent.CancelRequestHelp -> onClickCancelButton(event.id)
+                is RescueRequestUiEvent.ConfirmRequestHelp -> onClickConfirmButton(event.id)
+                is RescueRequestUiEvent.DismissAlertDialog -> onDismissAlertDialog()
+                is RescueRequestUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
+            }
+        }
+
     )
 }
 
