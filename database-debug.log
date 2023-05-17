@@ -7,3 +7,7 @@ WARNING: All illegal access operations will be denied in a future release
 23:15:37.044 [main] INFO com.firebase.server.forge.App$ - Listening at 0.0.0.0:3103
 23:15:46.033 [NamespaceSystem-akka.actor.default-dispatcher-6] INFO com.firebase.core.namespace.NamespaceActor - cyclistance-cc715-default-rtdb successfully activated FBKV (SurveyIdle(0)) wait: 138ms, init: 0ms
 23:15:46.084 [NamespaceSystem-blocking-namespace-operation-dispatcher-7:cyclistance-cc715-default-rtdb$1650447997:] INFO com.firebase.core.namespace.StateManager - Namespace cyclistance-cc715-default-rtdb status Active to Active
+01:50:34.414 [Thread-0] INFO com.firebase.server.forge.App$ - Attempting graceful shutdown.
+01:50:34.464 [NamespaceSystem-akka.actor.default-dispatcher-11] INFO com.firebase.core.namespace.Terminator$Terminator - 1 actors left to terminate: cyclistance-cc715-default-rtdb
+01:50:34.545 [NamespaceSystem-akka.actor.default-dispatcher-11] INFO com.firebase.core.namespace.NamespaceActor - stopped namespace actor for cyclistance-cc715-default-rtdb
+01:50:34.576 [Thread-0] INFO com.firebase.server.forge.App$ - Graceful shutdown complete.
