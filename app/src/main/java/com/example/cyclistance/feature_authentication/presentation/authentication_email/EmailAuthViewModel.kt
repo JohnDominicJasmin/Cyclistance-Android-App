@@ -160,7 +160,7 @@ class EmailAuthViewModel @Inject constructor(
 
                 override fun onFinish() {
                     stopTimer()
-                    this@launch.launch {
+                    viewModelScope.launch(Dispatchers.Main) {
                         _eventFlow.emit(value = EmailAuthEvent.TimerStopped)
                     }
                     savedStateHandle[EMAIL_AUTH_VM_STATE_KEY] = state.value

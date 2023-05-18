@@ -10,6 +10,7 @@ import com.example.cyclistance.feature_authentication.domain.use_case.read_accou
 import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.*
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,15 +21,16 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
- object AuthenticationModule {
+object AuthenticationModule {
+
+    //emulator host = 10.0.2.2
 
 
     @Provides
     @Singleton
-    fun provideFirebaseAuth():FirebaseAuth{
-        return FirebaseAuth.getInstance().apply{
-            if(BuildConfig.DEBUG){
-//                emulator host = 10.0.2.2
+    fun provideFirebaseAuth(): FirebaseAuth {
+        return FirebaseAuth.getInstance().apply {
+            if (BuildConfig.DEBUG) {
                 useEmulator("192.168.18.21", 9099)
             }
         }
@@ -36,15 +38,31 @@ import javax.inject.Singleton
 
     @Provides
     @Singleton
-     fun provideAuthRepository(@ApplicationContext context:Context, firebaseAuth: FirebaseAuth): AuthRepository{
-         return AuthRepositoryImpl(context = context, auth = firebaseAuth)
-     }
+    fun providesFirebaseStorage(): FirebaseStorage {
+        return FirebaseStorage.getInstance().apply {
+            if (BuildConfig.DEBUG) {
+                useEmulator("192.168.18.21", 9199)
+            }
+        }
+    }
 
+    @Provides
+    @Singleton
+    fun provideAuthRepository(
+        @ApplicationContext context: Context,
+        firebaseAuth: FirebaseAuth,
+        firebaseStorage: FirebaseStorage): AuthRepository {
+
+        return AuthRepositoryImpl(
+            context = context,
+            auth = firebaseAuth,
+            storage = firebaseStorage)
+    }
 
 
     @Provides
     @Singleton
-    fun provideAuthenticationUseCase(repository: AuthRepository):AuthenticationUseCase =
+    fun provideAuthenticationUseCase(repository: AuthRepository): AuthenticationUseCase =
         AuthenticationUseCase(
             reloadEmailUseCase = ReloadEmailUseCase(repository = repository),
             signOutUseCase = SignOutUseCase(repository = repository),
@@ -64,8 +82,6 @@ import javax.inject.Singleton
             updatePhoneNumberUseCase = UpdatePhoneNumberUseCase(repository = repository),
             uploadImageUseCase = UploadImageUseCase(repository = repository)
         )
-
-
 
 
 }

@@ -43,14 +43,19 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.MappingDrawerContent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.TitleTopAppBar
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.TopAppBarCreator
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileEvent
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingUiEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingViewModel
+import com.example.cyclistance.navigation.state.NavUiState
 import com.example.cyclistance.theme.Black900
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.theme.White50
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -58,25 +63,29 @@ import kotlinx.coroutines.launch
 fun NavScreen(
     settingViewModel: SettingViewModel = hiltViewModel(),
     mappingViewModel: MappingViewModel = hiltViewModel(),
-    navViewModel: NavViewModel = hiltViewModel()
+    navViewModel: NavViewModel = hiltViewModel(),
+    editProfileViewModel: EditProfileViewModel = hiltViewModel()
 ) {
 
 
+    var navUiState by rememberSaveable { mutableStateOf(NavUiState()) }
     val navController = rememberNavController()
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
-    var internetAvailable by rememberSaveable { mutableStateOf(true) }
-    var isNavigating by rememberSaveable{ mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
     val mappingState by mappingViewModel.state.collectAsStateWithLifecycle()
     val settingState by settingViewModel.state.collectAsStateWithLifecycle()
     val navState by navViewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    val onChangeNavigatingState = remember{{ navigating: Boolean ->
-        isNavigating = navigating
-    }}
+    val onChangeNavigatingState = remember {
+        { navigating: Boolean ->
+            navUiState = navUiState.copy(
+                isNavigating = navigating
+            )
+        }
+    }
 
 
     BackHandler(enabled = true, onBack = {
@@ -96,7 +105,7 @@ fun NavScreen(
             Lifecycle.Event.ON_CREATE -> {
                 NetworkConnectivityChecker.observe(lifecycleOwner) { isConnected ->
                     isConnected?.let {
-                        internetAvailable = isConnected
+                        navUiState = navUiState.copy(internetAvailable = isConnected)
                     }
                 }
             }
@@ -109,69 +118,116 @@ fun NavScreen(
         }
 
     }
+
+
+
+    LaunchedEffect(key1 = true) {
+
+        editProfileViewModel.eventFlow.distinctUntilChanged().collect{ event ->
+            when (event) {
+                is EditProfileEvent.GetNameSuccess -> {
+                    navUiState = navUiState.copy(name = event.name)
+                }
+
+                is EditProfileEvent.GetPhotoUrlSuccess -> {
+                    navUiState = navUiState.copy(photoUrl = event.photoUrl)
+                }
+
+                else -> {}
+            }
+        }
+    }
+
     LaunchedEffect(key1 = true) {
 
         settingViewModel.eventFlow.collectLatest { event ->
             when (event) {
+
                 is SettingUiEvent.SignOutSuccess -> {
                     navController.popBackStack()
                     navController.navigate(Screens.SignInScreen.route)
                 }
+
                 is SettingUiEvent.SignOutFailed -> {
                     Toast.makeText(context, "Failed to Sign out account", Toast.LENGTH_SHORT).show()
                 }
+
             }
         }
     }
 
 
-    val onClickSettings = remember{{
-        coroutineScope.launch {
-            scaffoldState.drawerState.close()
+    val onClickSettings = remember {
+        {
+            coroutineScope.launch {
+                scaffoldState.drawerState.close()
+            }
+            navController.navigateScreen(
+                Screens.SettingScreen.route)
         }
-        navController.navigateScreen(
-            Screens.SettingScreen.route)
-    }}
-    val onClickRescueRequest = remember(scaffoldState.drawerState){{
-        coroutineScope.launch {
-            scaffoldState.drawerState.close()
-        }
-        navController.navigateScreen(
-            Screens.RescueRequestScreen.route)
-    }}
-    val onClickChat = remember{{
-        coroutineScope.launch {
-            scaffoldState.drawerState.close()
-        }
-        Intent(ACTION_MAIN).apply {
-            flags =
-                Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS or Intent.FLAG_ACTIVITY_NEW_TASK
-            addCategory(Intent.CATEGORY_APP_MESSAGING)
-        }.also {
-            context.startActivity(it)
-        }
-        Unit
-    }}
+    }
 
-    val onClickSignOut = remember{{
-        coroutineScope.launch {
-            scaffoldState.drawerState.close()
+    val onClickRescueRequest = remember(scaffoldState.drawerState) {
+        {
+            coroutineScope.launch {
+                scaffoldState.drawerState.close()
+            }
+            navController.navigateScreen(
+                Screens.RescueRequestScreen.route)
         }
-        settingViewModel.onEvent(event = SettingEvent.SignOut)
-    }}
+    }
 
-    val onToggleTheme = remember{{
-        settingViewModel.onEvent(event = SettingEvent.ToggleTheme)
-    }}
-    val onClickArrowBackIcon = remember{{
-        navController.navigateScreen(Screens.MappingScreen.route)
-    }}
-    val onClickMenuIcon = remember{{
-        coroutineScope.launch {
-            scaffoldState.drawerState.open()
+    val onClickChat = remember {
+        {
+            coroutineScope.launch {
+                scaffoldState.drawerState.close()
+            }
+            Intent(ACTION_MAIN).apply {
+                flags =
+                    Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS or Intent.FLAG_ACTIVITY_NEW_TASK
+                addCategory(Intent.CATEGORY_APP_MESSAGING)
+            }.also {
+                context.startActivity(it)
+            }
+            Unit
         }
-        Unit
-    }}
+    }
+
+    val onClickSignOut = remember {
+        {
+            coroutineScope.launch {
+                scaffoldState.drawerState.close()
+            }
+            settingViewModel.onEvent(event = SettingEvent.SignOut)
+        }
+    }
+
+    val onToggleTheme = remember {
+        {
+            settingViewModel.onEvent(event = SettingEvent.ToggleTheme)
+        }
+    }
+
+    val onClickArrowBackIcon = remember {
+        {
+            navController.navigateScreen(Screens.MappingScreen.route)
+        }
+    }
+
+    val onClickMenuIcon = remember {
+        {
+            coroutineScope.launch {
+                editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadProfile)
+                scaffoldState.drawerState.open()
+            }
+            Unit
+        }
+    }
+
+    val respondentCount by remember(mappingState.newRescueRequest?.request?.size) {
+        derivedStateOf { (mappingState.newRescueRequest?.request ?: emptyList()).size }
+    }
+
 
     CyclistanceTheme(darkTheme = settingState.isDarkTheme) {
 
@@ -188,33 +244,34 @@ fun NavScreen(
                             route = navBackStackEntry?.destination?.route,
                             onClickMenuIcon = onClickMenuIcon,
                             onClickArrowBackIcon = onClickArrowBackIcon,
-                            isNavigating = isNavigating)
+                            isNavigating = navUiState.isNavigating)
 
                         NoInternetStatusBar(
-                            internetAvailable,
+                            navUiState.internetAvailable,
                             navBackStackEntry?.destination?.route)
                     }
                 },
                 drawerContent = {
                     MappingDrawerContent(
-                        state = mappingState,
+                        respondentCount = respondentCount,
                         onClickSettings = onClickSettings,
                         onClickRescueRequest = onClickRescueRequest,
                         onClickChat = onClickChat,
-                        onClickSignOut = onClickSignOut
+                        onClickSignOut = onClickSignOut,
+                        uiState = navUiState
                     )
                 },
             ) { paddingValues ->
                 navState.navigationStartingDestination?.let {
                     NavGraph(
-                        hasInternetConnection = internetAvailable,
+                        hasInternetConnection = navUiState.internetAvailable,
                         navController = navController,
                         paddingValues = paddingValues,
                         isDarkTheme = settingState.isDarkTheme,
                         mappingViewModel = mappingViewModel,
                         onChangeNavigatingState = onChangeNavigatingState,
                         onToggleTheme = onToggleTheme,
-                        isNavigating = isNavigating,
+                        isNavigating = navUiState.isNavigating,
                         startingDestination = it
                     )
                 }
@@ -270,6 +327,7 @@ private fun TopAppBar(
                     TitleTopAppBar(title = "Rescue Requests")
                 })
         }
+
         Screens.ChangePasswordScreen.route -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
@@ -278,12 +336,16 @@ private fun TopAppBar(
                     TitleTopAppBar(title = "Change Password")
                 })
         }
+
         Screens.EditProfileScreen.route -> {
             TopAppBarCreator(
-                icon = Icons.Default.ArrowBack, onClickIcon = onClickArrowBackIcon, topAppBarTitle = {
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
                     TitleTopAppBar(title = "Edit Profile")
                 })
         }
+
         Screens.SettingScreen.route -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,

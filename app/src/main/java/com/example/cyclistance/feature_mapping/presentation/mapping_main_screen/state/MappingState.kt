@@ -26,9 +26,6 @@ data class MappingState(
     val respondedToHelp: Boolean = false,
     val transactionLocation: Location? = null,
     val rescuerETA: String = "",
-    val name: String = "",
-    val photoUrl: String = "",
     val nearbyCyclists: NearbyCyclist? = null,
     val newRescueRequest: NewRescueRequestsModel? = null,
-//    val
     ) : Parcelable

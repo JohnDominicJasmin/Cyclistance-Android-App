@@ -3,10 +3,11 @@ package com.example.cyclistance.navigation
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.NavConstants.STARTING_DESTINATION_SCREEN
+import com.example.cyclistance.core.utils.constants.NavConstants.NAV_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.NavigationConstants
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_readable_displays.domain.use_case.IntroSliderUseCase
+import com.example.cyclistance.navigation.state.NavState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +26,7 @@ class NavViewModel @Inject constructor(
 ):ViewModel() {
 
 
-    private val _state = MutableStateFlow(savedStateHandle[STARTING_DESTINATION_SCREEN] ?: NavState())
+    private val _state = MutableStateFlow(savedStateHandle[NAV_VM_STATE_KEY] ?: NavState())
     val state = _state.asStateFlow()
 
     init {
@@ -56,7 +57,7 @@ class NavViewModel @Inject constructor(
                 Timber.e("IntroSlider DataStore Reading Failed: ${it.localizedMessage}")
             }
         }.invokeOnCompletion {
-            savedStateHandle[STARTING_DESTINATION_SCREEN] = state.value
+            savedStateHandle[NAV_VM_STATE_KEY] = state.value
         }
 
     }

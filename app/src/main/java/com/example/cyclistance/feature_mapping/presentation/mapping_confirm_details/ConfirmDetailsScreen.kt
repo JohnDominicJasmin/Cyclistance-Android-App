@@ -55,7 +55,7 @@ import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.CyclistanceTheme
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 
 
 @Composable
@@ -66,19 +66,10 @@ fun ConfirmDetailsScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    /*    var address by rememberSaveable { mutableStateOf("") }
-        var addressErrorMessage by rememberSaveable { mutableStateOf("") }
-        var message by rememberSaveable { mutableStateOf("") }
-        var bikeType by rememberSaveable { mutableStateOf("") }
-        var bikeTypeErrorMessage by rememberSaveable { mutableStateOf("") }
-        var description by rememberSaveable { mutableStateOf("") }
-        var descriptionErrorMessage by rememberSaveable { mutableStateOf("") }
-        var isNoInternetDialogVisible by rememberSaveable { mutableStateOf(false) }
-        var alertDialogState by remember { mutableStateOf(AlertDialogState()) }*/
     var uiState by rememberSaveable { mutableStateOf(ConfirmDetailsUiState()) }
 
     LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.collectLatest { event ->
+        viewModel.eventFlow.distinctUntilChanged().collect { event ->
             when (event) {
                 is ConfirmDetailsEvent.ConfirmDetailsSuccess -> {
                     navController.navigateScreen(Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE=${BottomSheetType.SearchAssistance.type}")

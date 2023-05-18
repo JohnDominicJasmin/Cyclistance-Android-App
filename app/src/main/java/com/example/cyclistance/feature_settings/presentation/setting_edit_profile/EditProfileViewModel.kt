@@ -7,8 +7,8 @@ import com.example.cyclistance.core.utils.constants.SettingConstants.EDIT_PROFIL
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileEvent
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -32,32 +32,42 @@ class EditProfileViewModel @Inject constructor(
         MutableStateFlow(savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] ?: EditProfileState())
     val state = _state.asStateFlow()
 
-    private val _eventFlow = MutableSharedFlow<EditProfileEvent>()
+    private val _eventFlow = MutableSharedFlow<EditProfileEvent>(replay = 5, extraBufferCapacity = 5)
     val eventFlow = _eventFlow.asSharedFlow()
 
 
     init {
-        loadName()
-        loadPhoneNumber()
-        loadPhoto()
+        loadProfile()
+    }
+
+    private fun loadProfile(){
+        viewModelScope.launch(context = defaultDispatcher) {
+            loadName()
+            loadPhoneNumber()
+            loadPhoto()
+        }
     }
 
     fun onEvent(event: EditProfileVmEvent) {
 
         when (event) {
+
             is EditProfileVmEvent.Save -> {
                 updateUserProfile(
                     imageUri = event.imageUri,
                     phoneNumber = event.phoneNumber,
                     name = event.name)
             }
+
+            is EditProfileVmEvent.LoadProfile -> {
+                loadProfile()
+            }
         }
+
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
-
-    private fun loadPhoto() {
-        viewModelScope.launch(context = defaultDispatcher) {
+    private suspend fun loadPhoto() {
             runCatching {
                 startLoading()
                 getPhotoUrl()
@@ -67,12 +77,10 @@ class EditProfileViewModel @Inject constructor(
             }.onFailure {
                 finishLoading()
             }
-        }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
-    private fun loadName() {
-        viewModelScope.launch(context = defaultDispatcher) {
+    private suspend fun loadName() {
             runCatching {
                 startLoading()
                 getName()
@@ -83,14 +91,11 @@ class EditProfileViewModel @Inject constructor(
             }.onFailure { exception ->
                 finishLoading()
                 _eventFlow.emit(value = EditProfileEvent.GetNameFailed(exception.message!!))
-
             }
-        }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
-    private fun loadPhoneNumber() {
-        viewModelScope.launch(context = defaultDispatcher) {
+    private suspend fun loadPhoneNumber() {
             runCatching {
                 startLoading()
                 getPhoneNumber()
@@ -102,7 +107,6 @@ class EditProfileViewModel @Inject constructor(
                 finishLoading()
                 _eventFlow.emit(value = EditProfileEvent.GetPhoneNumberFailed(reason = exception.message!!))
             }
-        }
 
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
@@ -111,14 +115,11 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 startLoading()
-                val photoUri = imageUri?.let { authUseCase.uploadImageUseCase(it) }
+                val photoUri = imageUri.let { authUseCase.uploadImageUseCase(it) }
                 val phoneNumberChanges = phoneNumber != state.value.phoneNumberSnapshot
-
-
                 if (phoneNumberChanges) {
                     authUseCase.updatePhoneNumberUseCase(phoneNumber.trim())
                 }
-
                 authUseCase.updateProfileUseCase(
                     photoUri = photoUri,
                     name = name.trim())

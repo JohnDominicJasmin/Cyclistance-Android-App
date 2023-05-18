@@ -7,7 +7,7 @@ import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogStat
 
 @Composable
 fun AlertDialogState.visible(): Boolean {
-    return remember{
+    return remember(this.title, this.description){
         derivedStateOf {
             this.run { title.isNotEmpty() || description.isNotEmpty() }
         }

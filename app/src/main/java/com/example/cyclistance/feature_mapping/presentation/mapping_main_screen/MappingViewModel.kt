@@ -31,8 +31,8 @@ import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionIte
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.UserItem
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
 import com.mapbox.geojson.Point
@@ -80,7 +80,6 @@ class MappingViewModel @Inject constructor(
     init {
         loadData()
         observeDataChanges()
-        loadUserProfile()
     }
 
     private fun observeDataChanges() {
@@ -635,44 +634,6 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-
-    private fun loadUserProfile() {
-        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
-            loadName()
-            loadPhoto()
-        }.invokeOnCompletion {
-            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-        }
-    }
-
-    private suspend fun loadName() {
-        coroutineScope {
-            runCatching {
-                getName()
-            }.onSuccess { name ->
-                _state.update {
-                    it.copy(name = name)
-                }
-            }.onFailure {
-                _eventFlow.emit(value = MappingEvent.GetUserNameFailed)
-            }
-        }
-
-    }
-
-    private suspend fun loadPhoto() {
-        coroutineScope {
-            runCatching {
-                getPhotoUrl()
-            }.onSuccess { photoUrl ->
-                _state.update {
-                    it.copy(photoUrl = photoUrl)
-                }
-            }.onFailure {
-                _eventFlow.emit(value = MappingEvent.GetUserPhotoFailed)
-            }
-        }
-    }
 
     private fun cancelHelpRequest() {
         viewModelScope.launch(context = defaultDispatcher) {
