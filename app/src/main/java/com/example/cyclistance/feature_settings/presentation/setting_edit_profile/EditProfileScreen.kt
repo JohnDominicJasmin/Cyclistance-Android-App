@@ -49,7 +49,7 @@ import com.example.cyclistance.feature_settings.presentation.setting_edit_profil
 import com.example.cyclistance.theme.Blue600
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.*
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 
@@ -68,7 +68,7 @@ fun EditProfileScreen(
     val context = LocalContext.current
 
     var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var uiState by rememberSaveable{ mutableStateOf(EditProfileUiState()) }
+    var uiState by rememberSaveable { mutableStateOf(EditProfileUiState()) }
 
 
     val openGalleryResultLauncher =
@@ -125,7 +125,9 @@ fun EditProfileScreen(
         }
 
 
-
+    LaunchedEffect(key1 = true){
+        editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadProfile)
+    }
 
     LaunchedEffect(true) {
 
@@ -145,12 +147,12 @@ fun EditProfileScreen(
                     uiState = uiState.copy(name = event.name)
                 }
 
-                is EditProfileEvent.GetNameFailed -> {
-                    uiState = uiState.copy(nameErrorMessage = event.reason)
-                }
-
                 is EditProfileEvent.GetPhoneNumberSuccess -> {
                     uiState = uiState.copy(phoneNumber = event.phoneNumber)
+                }
+
+                is EditProfileEvent.GetNameFailed -> {
+                    uiState = uiState.copy(nameErrorMessage = event.reason)
                 }
 
                 is EditProfileEvent.GetPhoneNumberFailed -> {
@@ -237,7 +239,7 @@ fun EditProfileScreen(
         state = state,
         keyboardActions = keyboardActions,
         event = { event ->
-            when(event){
+            when (event) {
                 is EditProfileUiEvent.SelectImageFromGallery -> openGallery()
                 is EditProfileUiEvent.OpenCamera -> openCamera()
                 is EditProfileUiEvent.ChangeName -> onValueChangeName(event.name)
@@ -246,9 +248,8 @@ fun EditProfileScreen(
                 is EditProfileUiEvent.ConfirmEditProfile -> confirmEditProfile()
                 is EditProfileUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
             }
-        }
-
-
+        },
+        uiState = uiState
     )
 
 }
@@ -274,8 +275,8 @@ fun EditProfileScreenContent(
     photoUrl: Any,
     state: EditProfileState = EditProfileState(),
     keyboardActions: KeyboardActions = KeyboardActions { },
-    uiState: EditProfileUiState = EditProfileUiState(),
-    event : (EditProfileUiEvent) -> Unit = {}
+    uiState: EditProfileUiState,
+    event: (EditProfileUiEvent) -> Unit = {}
 ) {
 
 
@@ -373,15 +374,11 @@ fun EditProfileScreenContent(
 
                         },
                     state = state,
-                    onValueChangeName = {event(EditProfileUiEvent.ChangeName(it))},
-                    onValueChangePhoneNumber = {event(EditProfileUiEvent.ChangePhoneNumber(it))},
+                    onValueChangeName = { event(EditProfileUiEvent.ChangeName(it)) },
+                    onValueChangePhoneNumber = { event(EditProfileUiEvent.ChangePhoneNumber(it)) },
                     keyboardActions = keyboardActions,
-                    name = uiState.name,
-                    nameErrorMessage = uiState.nameErrorMessage,
-                    phoneNumber = uiState.phoneNumber,
-                    phoneNumberErrorMessage = uiState.phoneNumberErrorMessage,
-
-                    )
+                    uiState = uiState,
+                )
 
 
 
@@ -396,8 +393,8 @@ fun EditProfileScreenContent(
                             width = Dimension.percent(0.8f)
                         },
                     positiveButtonText = "Save",
-                    onClickCancelButton = {event(EditProfileUiEvent.CancelEditProfile)},
-                    onClickConfirmButton = {event(EditProfileUiEvent.ConfirmEditProfile)},
+                    onClickCancelButton = { event(EditProfileUiEvent.CancelEditProfile) },
+                    onClickConfirmButton = { event(EditProfileUiEvent.ConfirmEditProfile) },
                     negativeButtonEnabled = !state.isLoading,
                     positiveButtonEnabled = !state.isLoading && isUserInformationChanges,
                 )
@@ -411,7 +408,7 @@ fun EditProfileScreenContent(
                             bottom.linkTo(parent.bottom)
                             width = Dimension.matchParent
                             height = Dimension.wrapContent
-                        }, onDismiss = {event(EditProfileUiEvent.DismissNoInternetDialog)}
+                        }, onDismiss = { event(EditProfileUiEvent.DismissNoInternetDialog) }
                     )
 
                 }
