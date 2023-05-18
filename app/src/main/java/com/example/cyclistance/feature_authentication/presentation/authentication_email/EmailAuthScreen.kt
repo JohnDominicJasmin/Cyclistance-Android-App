@@ -115,73 +115,65 @@ fun EmailAuthScreen(
         }
     }
 
+    LaunchedEffect(key1 = true) {
+        emailAuthViewModel.onEvent(EmailAuthVmEvent.StartTimer)
+        emailAuthViewModel.onEvent(EmailAuthVmEvent.SendEmailVerification)
+        emailAuthViewModel.onEvent(EmailAuthVmEvent.SubscribeEmailVerification)
+    }
 
 
 
     LaunchedEffect(key1 = true) {
 
-        with(emailAuthViewModel) {
-            onEvent(EmailAuthVmEvent.StartTimer)
-            onEvent(EmailAuthVmEvent.SendEmailVerification)
-            onEvent(EmailAuthVmEvent.SubscribeEmailVerification)
+        emailAuthViewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is EmailAuthEvent.EmailVerificationSuccess -> {
+                    navController.navigateScreenInclusively(
+                        Screens.MappingScreen.route,
+                        Screens.EmailAuthScreen.route)
+                }
 
-            eventFlow.collectLatest { event ->
-                when (event) {
-                    is EmailAuthEvent.EmailVerificationSuccess -> {
-                        navController.navigateScreenInclusively(
-                            Screens.MappingScreen.route,
-                            Screens.EmailAuthScreen.route)
-                    }
+                is EmailAuthEvent.ReloadEmailFailed -> {
+                    Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()
+                }
 
-                    is EmailAuthEvent.ReloadEmailFailed -> {
-                        Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()
-                    }
+                is EmailAuthEvent.EmailVerificationNotSent -> {
+                    Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()
+                }
 
-                    is EmailAuthEvent.EmailVerificationNotSent -> {
-                        Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()
-                    }
+                is EmailAuthEvent.NoInternetConnection -> {
+                    uiState = uiState.copy(isNoInternetVisible = true)
+                }
 
-                    is EmailAuthEvent.NoInternetConnection -> {
-                        uiState = uiState.copy(
-                            isNoInternetVisible = true
+                is EmailAuthEvent.TimerStarted -> {
+                    uiState = uiState.copy(isTimerRunning = true)
+                }
+
+                is EmailAuthEvent.TimerStopped -> {
+                    uiState = uiState.copy(isTimerRunning = false)
+                }
+
+                is EmailAuthEvent.EmailVerificationSent -> {
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "New Email Sent.",
+                            description = "New verification email has been sent to your email address.",
+                            icon = R.raw.success
                         )
-                    }
+                    )
+                }
 
-                    is EmailAuthEvent.TimerStarted -> {
+                is EmailAuthEvent.SendEmailVerificationFailed -> {
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Email Verification Failed.",
+                            description = "Failed to send verification email. Please try again later.",
+                            icon = R.raw.error)
+                    )
+                }
 
-                        uiState = uiState.copy(
-                            isTimerRunning = true
-                        )
-                    }
-
-                    is EmailAuthEvent.TimerStopped -> {
-                        uiState = uiState.copy(
-                            isTimerRunning = false
-                        )
-                    }
-
-                    is EmailAuthEvent.EmailVerificationSent -> {
-                        uiState = uiState.copy(
-                            alertDialogState = AlertDialogState(
-                                title = "New Email Sent.",
-                                description = "New verification email has been sent to your email address.",
-                                icon = R.raw.success
-                            )
-                        )
-                    }
-
-                    is EmailAuthEvent.SendEmailVerificationFailed -> {
-                        uiState = uiState.copy(
-                            alertDialogState = AlertDialogState(
-                                title = "Email Verification Failed.",
-                                description = "Failed to send verification email. Please try again later.",
-                                icon = R.raw.error)
-                        )
-                    }
-
-                    else -> {
-                        Timber.d("User email is not verified yet. Verification is not success.")
-                    }
+                else -> {
+                    Timber.d("User email is not verified yet. Verification is not success.")
                 }
             }
         }
@@ -301,9 +293,7 @@ fun EmailAuthScreenContent(
                         modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
                     )
                 }
-
             }
-
 
         }
     }
