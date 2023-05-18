@@ -293,7 +293,10 @@ fun EditProfileScreenContent(
         }
     }
 
-    val isUserInformationChanges by remember {
+    val isUserInformationChanges by remember(
+        uiState.name,
+        uiState.phoneNumber,
+        uiState.selectedImageUri) {
         derivedStateOf {
             uiState.name != state.nameSnapshot ||
             uiState.phoneNumber != state.phoneNumberSnapshot ||
