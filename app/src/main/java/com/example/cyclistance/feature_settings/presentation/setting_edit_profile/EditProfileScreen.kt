@@ -131,8 +131,7 @@ fun EditProfileScreen(
 
     LaunchedEffect(true) {
 
-
-        editProfileViewModel.eventFlow.collectLatest { event ->
+        editProfileViewModel.eventFlow.distinctUntilChanged().collect { event ->
             when (event) {
                 is EditProfileEvent.UpdateUserProfileSuccess -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
