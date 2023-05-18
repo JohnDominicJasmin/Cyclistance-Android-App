@@ -19,7 +19,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
@@ -49,7 +48,6 @@ import com.example.cyclistance.feature_settings.presentation.setting_edit_profil
 import com.example.cyclistance.theme.Blue600
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.*
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
 
@@ -68,7 +66,7 @@ fun EditProfileScreen(
     val context = LocalContext.current
 
     var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var uiState by rememberSaveable { mutableStateOf(EditProfileUiState()) }
+    var uiState by remember { mutableStateOf(EditProfileUiState()) }
 
 
     val openGalleryResultLauncher =
@@ -131,8 +129,9 @@ fun EditProfileScreen(
 
     LaunchedEffect(true) {
 
-        editProfileViewModel.eventFlow.distinctUntilChanged().collect { event ->
+        editProfileViewModel.eventFlow.collect { event ->
             when (event) {
+
                 is EditProfileEvent.UpdateUserProfileSuccess -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                     navController.popBackStack()
@@ -162,6 +161,9 @@ fun EditProfileScreen(
                     uiState = uiState.copy(noInternetVisible = true)
                 }
 
+                is EditProfileEvent.InternalServerError -> {
+                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
+                }
 
             }
         }

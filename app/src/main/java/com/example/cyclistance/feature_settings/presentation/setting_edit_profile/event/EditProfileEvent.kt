@@ -11,4 +11,7 @@ sealed class EditProfileEvent {
     data class GetPhoneNumberFailed(val reason: String) : EditProfileEvent()
     object NoInternetConnection: EditProfileEvent()
 
+    data class InternalServerError(val reason: String) : EditProfileEvent()
+
+
 }

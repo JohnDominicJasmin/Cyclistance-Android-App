@@ -16,4 +16,5 @@
     <string name="tooManyFailedAttempts">Too many failed attempts.</string>
     <string name="userAlreadyExists">User already exist.</string>
     <string name="accountAlreadyInUse">This account is Already in Use.</string>
+    <string name="somethingWentWrong">Sorry, something went wrong. Please try again.</string>
 </resources>
