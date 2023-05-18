@@ -23,8 +23,7 @@ sealed class MappingEvent{
 
 
     object GetUserIdFailed: MappingEvent()
-    object GetUserNameFailed: MappingEvent()
-    object GetUserPhotoFailed: MappingEvent()
+
 
     data class NewRouteDirection(val routeDirection: RouteDirection): MappingEvent()
     object RemoveAssignedTransactionSuccess: MappingEvent()
