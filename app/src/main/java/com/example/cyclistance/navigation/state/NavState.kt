@@ -1,4 +1,4 @@
-package com.example.cyclistance.navigation
+package com.example.cyclistance.navigation.state
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize

@@ -21,7 +21,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,7 +36,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
+import com.example.cyclistance.navigation.state.NavUiState
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -46,16 +45,14 @@ import com.example.cyclistance.theme.Red710
 
 @Composable
 fun MappingDrawerContent(
-    state: MappingState = MappingState(),
     onClickSettings: () -> Unit = {},
     onClickChat: () -> Unit = {},
     onClickRescueRequest: () -> Unit = {},
     onClickSignOut: () -> Unit = {},
-
+    respondentCount: Int = 0,
+    uiState: NavUiState = NavUiState()
     ) {
-    val respondents = remember(state.newRescueRequest?.request?.size) {
-        state.newRescueRequest?.request ?: emptyList()
-    }
+
 
 
     ConstraintLayout(
@@ -77,7 +74,7 @@ fun MappingDrawerContent(
 
 
                 AsyncImage(
-                    model = state.photoUrl, contentDescription = "User Profile Image",
+                    model = uiState.photoUrl, contentDescription = "User Profile Image",
                     modifier = Modifier
                         .clip(CircleShape)
                         .size(105.dp)
@@ -92,7 +89,7 @@ fun MappingDrawerContent(
                 )
 
                 Text(
-                    text = state.name,
+                    text = uiState.name,
                     color = MaterialTheme.colors.onSecondary,
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(top = 7.dp, bottom = 10.dp))
@@ -134,7 +131,7 @@ fun MappingDrawerContent(
                 buttonText = "Rescue Request",
                 onClick = onClickRescueRequest,
                 badgeCountEnabled = true,
-                badgeCount = respondents.size
+                badgeCount = respondentCount
                 )
 
             DrawerContentButtonItem(
