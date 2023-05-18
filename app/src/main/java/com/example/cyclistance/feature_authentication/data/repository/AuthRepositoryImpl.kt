@@ -15,6 +15,7 @@ import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExce
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_mapping.data.repository.dataStore
+import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FacebookAuthProvider
@@ -52,11 +53,13 @@ class AuthRepositoryImpl(
                                 message = context.getString(R.string.no_internet_message)))
                     }
                 }
+
                 if (task.isSuccessful) {
                     reference.downloadUrl.addOnSuccessListener{
                         continuation.resume(it.toString())
                     }
                 }
+
             }
         }
     }
@@ -253,21 +256,36 @@ class AuthRepositoryImpl(
     }
 
 
-    override suspend fun updateProfile(s: String?, name: String?): Boolean {
+    override suspend fun updateProfile(photoUrl: String?, name: String?): Boolean {
         val profileUpdates = userProfileChangeRequest {
             name?.let { this.displayName = it }
-            s?.let { this.photoUri = Uri.parse(s) }
+            photoUrl?.let { this.photoUri = Uri.parse(photoUrl) }
+        }
+
+
+        if(!context.hasInternetConnection()){
+            throw AuthExceptions.NetworkException(message = context.getString(R.string.no_internet_message))
         }
 
         return suspendCancellableCoroutine { continuation ->
             auth.currentUser?.updateProfile(profileUpdates)
                 ?.addOnCompleteListener { updateProfile ->
                     updateProfile.exception?.let { exception ->
+
                         if (exception is FirebaseNetworkException) {
                             continuation.resumeWithException(
                                 AuthExceptions.NetworkException(
                                     message = context.getString(R.string.no_internet_message)))
                         }
+
+                        if(exception is FirebaseException){
+
+                            continuation.resumeWithException(
+                                AuthExceptions.InternalServerException(
+                                    message = exception.message ?: context.getString(R.string.somethingWentWrong))
+                                )
+                        }
+
                     }
                     if (continuation.isActive) {
                         continuation.resume(updateProfile.isSuccessful)

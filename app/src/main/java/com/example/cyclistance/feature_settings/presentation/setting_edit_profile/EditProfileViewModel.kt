@@ -32,7 +32,8 @@ class EditProfileViewModel @Inject constructor(
         MutableStateFlow(savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] ?: EditProfileState())
     val state = _state.asStateFlow()
 
-    private val _eventFlow = MutableSharedFlow<EditProfileEvent>(replay = 5, extraBufferCapacity = 5)
+    private val _eventFlow =
+        MutableSharedFlow<EditProfileEvent>(replay = 5, extraBufferCapacity = 5)
     val eventFlow = _eventFlow.asSharedFlow()
 
 
@@ -40,7 +41,7 @@ class EditProfileViewModel @Inject constructor(
         loadProfile()
     }
 
-    private fun loadProfile(){
+    private fun loadProfile() {
         viewModelScope.launch(context = defaultDispatcher) {
             loadName()
             loadPhoneNumber()
@@ -68,45 +69,45 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private suspend fun loadPhoto() {
-            runCatching {
-                startLoading()
-                getPhotoUrl()
-            }.onSuccess { photoUrl ->
-                _eventFlow.emit(value = EditProfileEvent.GetPhotoUrlSuccess(photoUrl))
-                finishLoading()
-            }.onFailure {
-                finishLoading()
-            }
+        runCatching {
+            startLoading()
+            getPhotoUrl()
+        }.onSuccess { photoUrl ->
+            _eventFlow.emit(value = EditProfileEvent.GetPhotoUrlSuccess(photoUrl))
+            finishLoading()
+        }.onFailure {
+            finishLoading()
+        }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
     private suspend fun loadName() {
-            runCatching {
-                startLoading()
-                getName()
-            }.onSuccess { name ->
-                _eventFlow.emit(value = EditProfileEvent.GetNameSuccess(name))
-                _state.update { it.copy(nameSnapshot = name) }
-                finishLoading()
-            }.onFailure { exception ->
-                finishLoading()
-                _eventFlow.emit(value = EditProfileEvent.GetNameFailed(exception.message!!))
-            }
+        runCatching {
+            startLoading()
+            getName()
+        }.onSuccess { name ->
+            _eventFlow.emit(value = EditProfileEvent.GetNameSuccess(name))
+            _state.update { it.copy(nameSnapshot = name) }
+            finishLoading()
+        }.onFailure { exception ->
+            finishLoading()
+            _eventFlow.emit(value = EditProfileEvent.GetNameFailed(exception.message!!))
+        }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
     private suspend fun loadPhoneNumber() {
-            runCatching {
-                startLoading()
-                getPhoneNumber()
-            }.onSuccess { phoneNumber ->
-                finishLoading()
-                _eventFlow.emit(value = EditProfileEvent.GetPhoneNumberSuccess(phoneNumber))
-                _state.update { it.copy(phoneNumberSnapshot = phoneNumber) }
-            }.onFailure { exception ->
-                finishLoading()
-                _eventFlow.emit(value = EditProfileEvent.GetPhoneNumberFailed(reason = exception.message!!))
-            }
+        runCatching {
+            startLoading()
+            getPhoneNumber()
+        }.onSuccess { phoneNumber ->
+            finishLoading()
+            _eventFlow.emit(value = EditProfileEvent.GetPhoneNumberSuccess(phoneNumber))
+            _state.update { it.copy(phoneNumberSnapshot = phoneNumber) }
+        }.onFailure { exception ->
+            finishLoading()
+            _eventFlow.emit(value = EditProfileEvent.GetPhoneNumberFailed(reason = exception.message!!))
+        }
 
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
@@ -115,8 +116,10 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 startLoading()
-                val photoUri = imageUri.let { authUseCase.uploadImageUseCase(it) }
+                val uri = imageUri.takeIf { it.isNotEmpty() }
+                val photoUri: String? = uri?.let { authUseCase.uploadImageUseCase(it) }
                 val phoneNumberChanges = phoneNumber != state.value.phoneNumberSnapshot
+
                 if (phoneNumberChanges) {
                     authUseCase.updatePhoneNumberUseCase(phoneNumber.trim())
                 }
@@ -138,8 +141,12 @@ class EditProfileViewModel @Inject constructor(
                         _eventFlow.emit(value = EditProfileEvent.GetNameFailed(reason = exception.message!!))
                     }
 
-                    is AuthExceptions.NetworkException -> {
+                    is AuthExceptions.NetworkException, is MappingExceptions.NetworkException -> {
                         _eventFlow.emit(value = EditProfileEvent.NoInternetConnection)
+                    }
+
+                    is AuthExceptions.InternalServerException -> {
+                        _eventFlow.emit(value = EditProfileEvent.InternalServerError(reason = exception.message!!))
                     }
                 }
             }

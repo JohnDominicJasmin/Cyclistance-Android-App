@@ -9,4 +9,5 @@ sealed class AuthExceptions {
     class PasswordException(message: String) : RuntimeException(message)
     class ConfirmPasswordException(message: String) : RuntimeException(message)
     class EmailException(message: String) : RuntimeException(message)
+    class InternalServerException(message: String) : RuntimeException(message)
 }
