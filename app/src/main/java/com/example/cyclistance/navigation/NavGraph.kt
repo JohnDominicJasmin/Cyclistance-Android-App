@@ -25,7 +25,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.RescueRequestScreen
-import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.IntroSliderScreen
+import com.example.cyclistance.feature_readable_displays.presentation.IntroSliderScreen
 import com.example.cyclistance.feature_settings.presentation.setting_change_password.ChangePasswordScreen
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileScreen
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingScreen
