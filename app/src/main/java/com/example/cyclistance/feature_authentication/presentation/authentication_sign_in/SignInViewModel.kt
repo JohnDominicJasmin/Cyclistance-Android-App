@@ -62,7 +62,6 @@ class SignInViewModel @Inject constructor(
 
     fun onEvent(event: SignInVmEvent) {
 
-
         when (event) {
             is SignInVmEvent.SignInFacebook -> {
 
@@ -136,7 +135,6 @@ class SignInViewModel @Inject constructor(
                 savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
             }
         }
-
     }
 
     private suspend fun handleException(exception: Throwable){
@@ -217,7 +215,8 @@ class SignInViewModel @Inject constructor(
 
     //todo move this to repository
     private fun removeFacebookUserAccountPreviousToken() {
-        if (AccessToken.getCurrentAccessToken() != null) {
+        val token = AccessToken.getCurrentAccessToken()
+        if (token != null && !token.isExpired) {
             LoginManager.getInstance().logOut()
         }
     }
@@ -226,4 +225,5 @@ class SignInViewModel @Inject constructor(
         super.onCleared()
         LoginManager.getInstance().unregisterCallback(callbackManager)
     }
+
 }
