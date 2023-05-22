@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalPagerApi::class)
 
-package com.example.cyclistance.feature_readable_displays.presentation.intro_slider
+package com.example.cyclistance.feature_readable_displays.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -13,9 +13,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderButtons
-import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.IntroSliderItem
-import com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components.introSliderConstraints
+import com.example.cyclistance.feature_readable_displays.presentation.components.IntroSliderButtons
+import com.example.cyclistance.feature_readable_displays.presentation.components.IntroSliderItem
+import com.example.cyclistance.feature_readable_displays.presentation.components.introSliderConstraints
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -32,35 +32,34 @@ fun IntroSliderScreen(
     paddingValues: PaddingValues,
     navController: NavController) {
 
-
-
-
     val pagerState = rememberPagerState()
     val scope = rememberCoroutineScope()
+    val isOnLastPage by remember {
+        derivedStateOf { pagerState.currentPage == 2 }
+    }
 
-
-
-    val onClickSkipButton = remember {
-        {
+    val onClickSkipButton = remember {{
             introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
             navController.navigateScreenInclusively(
                 Screens.SignInScreen.route,
                 Screens.IntroSliderScreen.route)
         }
     }
+
+
     val onClickNextButton = remember(pagerState.currentPage) {
         {
-            if (pagerState.currentPage != 2) {
+            if(isOnLastPage){
+                introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
+                navController.navigateScreenInclusively(
+                    Screens.SignInScreen.route,
+                    Screens.IntroSliderScreen.route)
+            }else{
                 scope.launch {
                     pagerState.animateScrollToPage(
                         page = pagerState.currentPage + 1
                     )
                 }
-            } else {
-                introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
-                navController.navigateScreenInclusively(
-                    Screens.SignInScreen.route,
-                    Screens.IntroSliderScreen.route)
             }
             Unit
         }
@@ -69,11 +68,11 @@ fun IntroSliderScreen(
 
     IntroSliderContent(
         modifier = Modifier
-
             .padding(paddingValues),
         pagerState = pagerState,
         onClickSkipButton = onClickSkipButton,
-        onClickNextButton = onClickNextButton)
+        onClickNextButton = onClickNextButton,
+        isOnLastPage = isOnLastPage)
 
 }
 
@@ -88,7 +87,8 @@ fun IntroSliderPreview() {
                 .background(MaterialTheme.colors.background),
             pagerState = rememberPagerState(),
             onClickSkipButton = {},
-            onClickNextButton = {}
+            onClickNextButton = {},
+            isOnLastPage = true
         )
     }
 }
@@ -98,6 +98,7 @@ fun IntroSliderPreview() {
 private fun IntroSliderContent(
     modifier: Modifier,
     pagerState: PagerState,
+    isOnLastPage: Boolean,
     onClickSkipButton: () -> Unit,
     onClickNextButton: () -> Unit) {
 
@@ -112,11 +113,6 @@ private fun IntroSliderContent(
                 constraintSet = introSliderConstraints) {
 
                 IntroSliderItem(pagerState = pagerState)
-
-                val isOnLastPage by remember {
-                    derivedStateOf { pagerState.currentPage == 2 }
-                }
-
                 IntroSliderButtons(
                     text = if (isOnLastPage) "Let's get Started!" else "Next",
                     onClickSkipButton = onClickSkipButton,
