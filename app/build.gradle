@@ -108,25 +108,25 @@ android {
 
 dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
-    implementation 'androidx.core:core-ktx:1.10.0'
-    implementation "androidx.compose.ui:ui:1.5.0-alpha03"
-    implementation "androidx.compose.material:material:1.5.0-alpha03"
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation "androidx.compose.ui:ui:1.5.0-alpha04"
+    implementation "androidx.compose.material:material:1.5.0-alpha04"
     implementation "androidx.compose.ui:ui-tooling-preview:1.4.3"
     implementation "androidx.navigation:navigation-compose:2.5.3"
-    implementation "androidx.compose.material:material-icons-extended:1.4.0"
+    implementation "androidx.compose.material:material-icons-extended:1.4.3"
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
-    implementation 'androidx.activity:activity-compose:1.7.0'
+    implementation 'androidx.activity:activity-compose:1.7.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'com.google.android.gms:play-services-auth:20.4.1'
+    implementation 'com.google.android.gms:play-services-auth:20.5.0'
     implementation 'com.google.android.gms:play-services-maps:18.1.0'
-    implementation("androidx.compose.material:material:1.4.0")
+    implementation("androidx.compose.material:material:1.4.3")
 //    implementation "androidx.compose.material3:material3:1.1.0-alpha03"
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
-    implementation 'androidx.core:core-ktx:1.9.0'
-    debugImplementation "androidx.compose.ui:ui-tooling:1.4.0"
-    implementation "androidx.compose.compiler:compiler:1.4.4"
+    implementation 'androidx.core:core-ktx:1.10.1'
+    debugImplementation "androidx.compose.ui:ui-tooling:1.4.3"
+    implementation "androidx.compose.compiler:compiler:1.4.7"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
 
@@ -186,10 +186,10 @@ dependencies {
     implementation "com.google.accompanist:accompanist-systemuicontroller:0.24.2-alpha"
 
     //paging
-    implementation "com.google.accompanist:accompanist-pager:0.24.3-alpha"
+    implementation "com.google.accompanist:accompanist-pager:0.26.4-beta"
 
     //paging indicator
-    implementation "com.google.accompanist:accompanist-pager-indicators:0.24.3-alpha"
+    implementation "com.google.accompanist:accompanist-pager-indicators:0.26.4-beta"
 
     //datastore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
@@ -210,21 +210,23 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
 
 
-    //firebase auth
-    implementation platform('com.google.firebase:firebase-bom:29.1.0')
-    implementation 'com.google.firebase:firebase-auth'
+
 
 
 
     //lottie animation
-    implementation "com.airbnb.android:lottie-compose:5.0.3"
+    implementation "com.airbnb.android:lottie-compose:5.2.0"
 
     //Facebook Login
     implementation 'com.facebook.android:facebook-android-sdk:latest.release'
+
+
     implementation "com.google.maps.android:maps-compose:2.0.0"
     implementation "com.google.accompanist:accompanist-permissions:0.24.9-beta"
 
     //Firebase
+    implementation platform('com.google.firebase:firebase-bom:29.1.0')
+    implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.gms:google-services:4.3.15'
     implementation 'com.google.firebase:firebase-crashlytics'
     implementation 'com.google.firebase:firebase-analytics'
@@ -234,7 +236,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-common-ktx'
 
     //livedata
-    implementation 'androidx.compose.runtime:runtime-livedata:1.5.0-alpha03'
+    implementation 'androidx.compose.runtime:runtime-livedata:1.5.0-alpha04'
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1"
 
     //IOSocket Websocket
