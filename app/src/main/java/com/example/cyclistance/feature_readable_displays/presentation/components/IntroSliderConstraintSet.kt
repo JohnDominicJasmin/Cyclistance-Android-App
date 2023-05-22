@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_readable_displays.presentation.intro_slider.components
+package com.example.cyclistance.feature_readable_displays.presentation.components
 
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet

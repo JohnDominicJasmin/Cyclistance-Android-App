@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_readable_displays.presentation.intro_slider
+package com.example.cyclistance.feature_readable_displays.presentation
 
 sealed class IntroSliderEvent {
     object UserCompletedWalkThrough: IntroSliderEvent()
