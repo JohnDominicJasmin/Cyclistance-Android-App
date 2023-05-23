@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_authentication.data.repository
 
 import android.content.Context
 import android.net.Uri
+import android.os.Bundle
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.AuthConstants.DATA_STORE_PHONE_NUMBER_KEY
@@ -15,6 +16,8 @@ import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExce
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_mapping.data.repository.dataStore
+import com.facebook.AccessToken
+import com.facebook.GraphRequest
 import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
@@ -28,6 +31,7 @@ import com.google.firebase.auth.ktx.userProfileChangeRequest
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.suspendCancellableCoroutine
+import org.json.JSONObject
 import timber.log.Timber
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -197,6 +201,7 @@ class AuthRepositoryImpl(
                 is SignInCredential.Facebook -> FacebookAuthProvider.getCredential(credential.providerToken)
             }
 
+
             auth.signInWithCredential(signInCredential)
                 .addOnCompleteListener { signInWithCredential ->
                     signInWithCredential.exception?.let { exception ->
@@ -238,14 +243,37 @@ class AuthRepositoryImpl(
         return auth.currentUser?.email
     }
 
-    override fun getName(): String? {
-        return auth.currentUser?.displayName
+
+
+    private suspend fun getUserFacebookInformation(): String{
+        return suspendCancellableCoroutine { continuation ->
+            val request = GraphRequest.newMeRequest(getFacebookToken()) { jsonObject: JSONObject?, _ ->
+                continuation.resume(jsonObject.toString())
+            }
+            val parameters = Bundle()
+            parameters.putString("fields", "id,name, email, link, picture.type(large)")
+            request.parameters = parameters
+            request.executeAsync()
+        }
     }
 
+    private fun getFacebookToken(): AccessToken?{
+        return AccessToken.getCurrentAccessToken()
+    }
 
-    override fun getPhotoUrl(): String {
-        return auth.currentUser?.photoUrl.toString()
-            .replace(oldValue = IMAGE_SMALL_SIZE, newValue = IMAGE_LARGE_SIZE)
+    override suspend fun getName(): String? {
+        val infoString = getUserFacebookInformation()
+        val jsonObject = JSONObject(infoString)
+        val fbName = jsonObject.getString("name")
+        return auth.currentUser?.displayName?.takeIf { it.isNotEmpty() } ?: fbName
+    }
+
+    override suspend fun getPhotoUrl(): String {
+        val infoString = getUserFacebookInformation()
+        val jsonObject = JSONObject(infoString)
+        val fbPhotoUrl = jsonObject.getJSONObject("picture").getJSONObject("data").getString("url")
+        return auth.currentUser?.photoUrl.toString().replace(oldValue = IMAGE_SMALL_SIZE, newValue = IMAGE_LARGE_SIZE).takeIf { it.isNotEmpty() } ?: fbPhotoUrl
+
     }
 
     override fun isSignedInWithProvider(): Boolean? {
