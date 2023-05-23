@@ -8,9 +8,9 @@ interface AuthRepository {
     fun signOut()
     fun getEmail(): String?
     suspend fun sendEmailVerification(): Boolean
-    fun getName(): String?
+    suspend fun getName(): String?
     fun getId(): String?
-    fun getPhotoUrl(): String?
+    suspend fun getPhotoUrl(): String?
     fun isSignedInWithProvider(): Boolean?
     fun isEmailVerified(): Boolean?
     fun hasAccountSignedIn(): Boolean

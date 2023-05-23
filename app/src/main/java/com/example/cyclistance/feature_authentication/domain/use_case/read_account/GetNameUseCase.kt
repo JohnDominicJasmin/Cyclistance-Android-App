@@ -5,10 +5,9 @@ import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptio
 
 class GetNameUseCase(private val repository: AuthRepository) {
 
-     operator fun invoke(): String {
+     suspend operator fun invoke(): String {
 
-        return repository.getName().takeIf { !it.isNullOrEmpty() }
-             ?: throw MappingExceptions.NameException()
+        return repository.getName().takeIf { !it.isNullOrEmpty() } ?: throw MappingExceptions.NameException()
 
     }
 }

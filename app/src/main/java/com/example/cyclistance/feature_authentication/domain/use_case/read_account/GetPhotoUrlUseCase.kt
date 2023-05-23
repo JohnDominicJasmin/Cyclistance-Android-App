@@ -4,7 +4,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACE
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 
 class GetPhotoUrlUseCase(private val repository: AuthRepository) {
-    operator fun invoke(): String {
+    suspend operator fun invoke(): String {
         return repository.getPhotoUrl().takeIf { it != "null" } ?: IMAGE_PLACEHOLDER_URL
     }
 }

@@ -140,6 +140,6 @@ class CancellationReasonViewModel @Inject constructor(
         savedStateHandle[CANCELLATION_VM_STATE_KEY] = state.value
     }
     private fun getId() = authUseCase.getIdUseCase()
-    private fun getName() = authUseCase.getNameUseCase()
+    private suspend fun getName() = authUseCase.getNameUseCase()
 
 }

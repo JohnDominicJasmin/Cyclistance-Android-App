@@ -164,8 +164,8 @@ class EditProfileViewModel @Inject constructor(
     }
 
 
-    private fun getName() = authUseCase.getNameUseCase()
-    private fun getPhotoUrl() = authUseCase.getPhotoUrlUseCase()
+    private suspend fun getName() = authUseCase.getNameUseCase()
+    private suspend fun getPhotoUrl() = authUseCase.getPhotoUrlUseCase()
     private suspend fun getPhoneNumber() = authUseCase.getPhoneNumberUseCase()
 
 }

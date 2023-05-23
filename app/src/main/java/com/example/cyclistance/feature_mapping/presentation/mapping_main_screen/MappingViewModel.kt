@@ -1073,18 +1073,18 @@ class MappingViewModel @Inject constructor(
         unSubscribeToNearbyUsersChanges()
         unSubscribeToRescueTransactionUpdates()
         unSubscribeToTransactionLocationUpdates()
-//        onEvent(event = MappingEvent.StopPinging)
+
     }
 
 
     private fun getId(): String = authUseCase.getIdUseCase()
 
-    private fun getName(): String = authUseCase.getNameUseCase()
+    private suspend fun getName(): String = authUseCase.getNameUseCase()
 
     private suspend fun getPhoneNumber(): String =
         authUseCase.getPhoneNumberUseCase()
 
-    private fun getPhotoUrl() = authUseCase.getPhotoUrlUseCase()
+    private suspend fun getPhotoUrl() = authUseCase.getPhotoUrlUseCase()
 
 
 }

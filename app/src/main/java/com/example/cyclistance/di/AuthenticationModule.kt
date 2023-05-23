@@ -31,7 +31,7 @@ object AuthenticationModule {
     fun provideFirebaseAuth(): FirebaseAuth {
         return FirebaseAuth.getInstance().apply {
             if (BuildConfig.DEBUG) {
-                useEmulator("192.168.18.21", 9099)
+//                useEmulator("192.168.18.21", 9099)
             }
         }
     }
@@ -41,7 +41,7 @@ object AuthenticationModule {
     fun providesFirebaseStorage(): FirebaseStorage {
         return FirebaseStorage.getInstance().apply {
             if (BuildConfig.DEBUG) {
-                useEmulator("192.168.18.21", 9199)
+//                useEmulator("192.168.18.21", 9199)
             }
         }
     }
