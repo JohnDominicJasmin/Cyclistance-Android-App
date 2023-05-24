@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class MappingUiState(
     val rescueRequestAccepted: Boolean= false,
-    val requestHelpButtonVisible: Boolean= false,
+    val requestHelpButtonVisible: Boolean= true,
     val searchingAssistance: Boolean= false,
     val isNoInternetVisible: Boolean= false,
     val cameraState: CameraState= CameraState(),
@@ -19,4 +19,4 @@ data class MappingUiState(
     val bottomSheetType:String = ""
 
 
-    ): Parcelable
+): Parcelable
