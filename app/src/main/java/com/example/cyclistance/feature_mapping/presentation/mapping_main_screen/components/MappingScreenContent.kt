@@ -83,21 +83,12 @@ fun MappingScreenContent(
                         bottom.linkTo(parent.bottom)
                     },
                     isDarkTheme = isDarkTheme,
-                    onInitializeMapboxMap = {event(MappingUiEvent.OnInitializeMap(it))},
-                    onChangeCameraState = { position, zoomLevel ->
-                        event(
-                            MappingUiEvent.OnChangeCameraState(
-                                position = position,
-                                zoomLevel = zoomLevel))
-                    },
                     hasTransaction = hasTransaction,
                     isRescueCancelled = isRescueCancelled,
-                    onClickRescueeMapIcon = { event(MappingUiEvent.RescueeMapIconSelected(it)) },
-                    onMapClick = { event(MappingUiEvent.OnMapClick) },
-                    requestNavigationCameraToOverview = { event(MappingUiEvent.OnRequestNavigationCameraToOverview) },
                     mapboxMap = mapboxMap,
                     routeDirection = uiState.routeDirection,
-                    isNavigating = isNavigating
+                    isNavigating = isNavigating,
+                    event = event
                 )
 
 

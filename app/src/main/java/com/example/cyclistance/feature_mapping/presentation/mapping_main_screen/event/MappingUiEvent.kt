@@ -1,6 +1,6 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event
 
-import com.mapbox.mapboxsdk.geometry.LatLng
+import com.example.cyclistance.feature_mapping.domain.model.CameraState
 import com.mapbox.mapboxsdk.maps.MapboxMap
 
 sealed class MappingUiEvent{
@@ -15,7 +15,7 @@ sealed class MappingUiEvent{
     object CancelledRescueConfirmed: MappingUiEvent()
     data class OnInitializeMap(val mapboxMap: MapboxMap): MappingUiEvent()
     object RescueRequestAccepted: MappingUiEvent()
-    data class OnChangeCameraState(val position: LatLng, val zoomLevel: Double): MappingUiEvent()
+    data class OnChangeCameraState(val cameraState: CameraState): MappingUiEvent()
     object DismissNoInternetDialog : MappingUiEvent()
     data class RescueeMapIconSelected(val id: String): MappingUiEvent()
     object OnMapClick: MappingUiEvent()

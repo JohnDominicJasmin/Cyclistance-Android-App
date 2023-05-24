@@ -85,23 +85,15 @@ fun MappingScreen(
     val coroutineScope = rememberCoroutineScope()
 
     var uiState by rememberSaveable { mutableStateOf(MappingUiState()) }
-
+    var cameraState by rememberSaveable{ mutableStateOf(CameraState()) }
+    val locationComponentOptions = MappingUtils.rememberLocationComponentOptions()
     var mapboxMap by remember<MutableState<MapboxMap?>> {
         mutableStateOf(null)
     }
 
-
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
     )
-
-
-    val onInitializeMapboxMap = remember {
-        { mbm: MapboxMap ->
-            mapboxMap = mbm
-        }
-    }
-
 
     val locationPermissionsState = if (Build.VERSION.SDK_INT >= Q) {
         rememberMultiplePermissionsState(
@@ -117,38 +109,6 @@ fun MappingScreen(
     }
 
 
-    RequestMultiplePermissions(
-        multiplePermissionsState = locationPermissionsState)
-
-    val settingResultRequest = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartIntentSenderForResult()
-    ) { activityResult ->
-        if (activityResult.resultCode == RESULT_OK) {
-            context.startLocationServiceIntentAction()
-            Timber.d("GPS Setting Request Accepted")
-            return@rememberLauncherForActivityResult
-        }
-        Timber.d("GPS Setting Request Denied")
-    }
-
-    val requestHelp = remember {
-        {
-            if (!context.hasGPSConnection()) {
-                context.checkLocationSetting(
-                    onDisabled = settingResultRequest::launch,
-                    onEnabled = {
-                        mappingViewModel.onEvent(
-                            event = MappingVmEvent.RequestHelp)
-
-                    })
-            } else {
-                mappingViewModel.onEvent(
-                    event = MappingVmEvent.RequestHelp)
-
-            }
-        }
-    }
-
     val userLocationAvailable by remember(
         locationPermissionsState.allPermissionsGranted,
         state.userLocation) {
@@ -157,7 +117,6 @@ fun MappingScreen(
         }
     }
 
-    val locationComponentOptions = MappingUtils.rememberLocationComponentOptions()
 
     val pulsingEnabled by remember(
         uiState.searchingAssistance,
@@ -166,16 +125,7 @@ fun MappingScreen(
         derivedStateOf { uiState.searchingAssistance.and(locationPermissionsState.allPermissionsGranted) }
     }
 
-    val onClickRequestHelpButton = remember {
-        {
-            locationPermissionsState.requestPermission(
-                context = context,
-                rationalMessage = "Location permission is not yet granted.") {
-                context.startLocationServiceIntentAction()
-                requestHelp()
-            }
-        }
-    }
+
 
     val showUserLocation = remember(mapboxMap, isNavigating, userLocationAvailable) {
         {
@@ -216,6 +166,83 @@ fun MappingScreen(
     }
 
 
+    val locateUser =
+        remember(userLocationAvailable, mapboxMap) {
+            { zoomLevel: Double, latLng: LatLng, cameraAnimationDuration: Int ->
+
+                val mapboxLoaded =
+                    (mapboxMap?.locationComponent != null) && (mapboxMap?.style?.isFullyLoaded
+                                                               ?: false)
+                if (userLocationAvailable && mapboxLoaded) {
+                    showUserLocation()
+                    mapboxMap?.animateCameraPosition(
+                        latLng = latLng,
+                        zoomLevel = zoomLevel,
+                        cameraAnimationDuration = cameraAnimationDuration)
+                }
+            }
+        }
+
+
+    val onInitializeMapboxMap = remember(userLocationAvailable) {
+        { mbm: MapboxMap ->
+            if(mapboxMap == null){
+                mapboxMap = mbm
+            }
+
+            if (userLocationAvailable) {
+                val camera = cameraState
+                locateUser(camera.zoom, camera.position, FAST_CAMERA_ANIMATION_DURATION)
+
+            }
+        }
+    }
+
+    RequestMultiplePermissions(
+        multiplePermissionsState = locationPermissionsState)
+
+    val settingResultRequest = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult()
+    ) { activityResult ->
+        if (activityResult.resultCode == RESULT_OK) {
+            context.startLocationServiceIntentAction()
+            Timber.d("GPS Setting Request Accepted")
+            return@rememberLauncherForActivityResult
+        }
+        Timber.d("GPS Setting Request Denied")
+    }
+
+    val requestHelp = remember {
+        {
+            if (!context.hasGPSConnection()) {
+                context.checkLocationSetting(
+                    onDisabled = settingResultRequest::launch,
+                    onEnabled = {
+                        mappingViewModel.onEvent(
+                            event = MappingVmEvent.RequestHelp)
+
+                    })
+            } else {
+                mappingViewModel.onEvent(
+                    event = MappingVmEvent.RequestHelp)
+
+            }
+        }
+    }
+
+    val onClickRequestHelpButton = remember {
+        {
+            locationPermissionsState.requestPermission(
+                context = context,
+                rationalMessage = "Location permission is not yet granted.") {
+                context.startLocationServiceIntentAction()
+                requestHelp()
+            }
+        }
+    }
+
+
+
     val showRouteDirection = remember(uiState.routeDirection, mapboxMap) {
         {
 
@@ -253,20 +280,7 @@ fun MappingScreen(
     }
 
 
-    val locateUser =
-        remember(userLocationAvailable, mapboxMap) {
-            { zoomLevel: Double, latLng: LatLng, cameraAnimationDuration: Int ->
 
-                val mapboxLoaded = mapboxMap?.locationComponent != null && mapboxMap?.style != null
-                if (userLocationAvailable && mapboxLoaded) {
-                    showUserLocation()
-                    mapboxMap?.animateCameraPosition(
-                        latLng = latLng,
-                        zoomLevel = zoomLevel,
-                        cameraAnimationDuration = cameraAnimationDuration)
-                }
-            }
-        }
 
     val onClickLocateUserButton = remember {
         {
@@ -278,7 +292,6 @@ fun MappingScreen(
                         context.checkLocationSetting(
                             onDisabled = settingResultRequest::launch)
                     }
-
                     state.userLocation?.let {
                         it.latitude ?: return@let
                         it.longitude ?: return@let
@@ -334,14 +347,8 @@ fun MappingScreen(
     }
 
     val onChangeCameraPosition = remember {
-        { cameraPosition: LatLng, zoom: Double ->
-
-            uiState = uiState.copy(
-                cameraState = CameraState(
-                    cameraPosition = cameraPosition,
-                    cameraZoom = zoom
-                )
-            )
+        { _cameraState: CameraState ->
+            cameraState = _cameraState
 
         }
     }
@@ -688,16 +695,6 @@ fun MappingScreen(
 
     }
 
-    LaunchedEffect(key1 = userLocationAvailable, key2 = mapboxMap) {
-
-        if (userLocationAvailable.not()) {
-            return@LaunchedEffect
-        }
-
-        with(uiState.cameraState) {
-            locateUser(cameraZoom, cameraPosition, FAST_CAMERA_ANIMATION_DURATION)
-        }
-    }
 
     LaunchedEffect(key1 = locationPermissionsState.allPermissionsGranted) {
         if (!locationPermissionsState.allPermissionsGranted) {
@@ -738,7 +735,7 @@ fun MappingScreen(
                 is MappingUiEvent.CancelledRescueConfirmed -> onClickOkCancelledRescue()
                 is MappingUiEvent.OnInitializeMap -> onInitializeMapboxMap(event.mapboxMap)
                 is MappingUiEvent.RescueRequestAccepted -> onClickOkAcceptedRescue()
-                is MappingUiEvent.OnChangeCameraState -> onChangeCameraPosition(event.position, event.zoomLevel)
+                is MappingUiEvent.OnChangeCameraState -> onChangeCameraPosition(event.cameraState)
                 is MappingUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
                 is MappingUiEvent.RescueeMapIconSelected -> onClickRescueeMapIcon(event.id)
                 is MappingUiEvent.OnMapClick -> onMapClick()
@@ -748,7 +745,6 @@ fun MappingScreen(
                 is MappingUiEvent.RecenterRoute -> onClickRecenterButton()
                 is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
-
                 is MappingUiEvent.RescueArrivedConfirmed -> {}
                 is MappingUiEvent.DestinationReachedConfirmed -> {}
             }
