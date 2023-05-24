@@ -210,14 +210,15 @@ fun NavScreen(
 
     val onClickArrowBackIcon = remember {
         {
-            navController.navigateScreen(Screens.MappingScreen.route)
+            navController.popBackStack()
+            Unit
         }
     }
 
     val onClickMenuIcon = remember {
         {
+            editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadProfile)
             coroutineScope.launch {
-                editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadProfile)
                 scaffoldState.drawerState.open()
             }
             Unit
