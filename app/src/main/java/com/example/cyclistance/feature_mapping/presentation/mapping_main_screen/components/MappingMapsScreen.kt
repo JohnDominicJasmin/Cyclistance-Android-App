@@ -20,8 +20,10 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.TRANSACTION
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getMapIconImageDescription
 import com.example.cyclistance.databinding.ActivityMappingBinding
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
+import com.example.cyclistance.feature_mapping.domain.model.CameraState
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.RouteDirection
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.*
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.setDefaultSettings
@@ -30,7 +32,6 @@ import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
-import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
@@ -55,51 +56,51 @@ fun MappingMapsScreen(
     isNavigating: Boolean,
     routeDirection: RouteDirection?,
     isRescueCancelled: Boolean,
-    onInitializeMapboxMap: (MapboxMap) -> Unit,
-    onChangeCameraState: (LatLng, Double) -> Unit,
-    onClickRescueeMapIcon:(String) -> Unit,
-    requestNavigationCameraToOverview:() -> Unit, //todo use this one
-    onMapClick: () -> Unit
+    event: (MappingUiEvent) -> Unit = {}
+//    requestNavigationCameraToOverview: () -> Unit, //todo use this one
 ) {
 
 
     val context = LocalContext.current
 
 
-
-    val nearbyCyclists = remember(state.nearbyCyclists?.users?.size, mapboxMap){
+    val nearbyCyclists = remember(state.nearbyCyclists?.users?.size, mapboxMap) {
         state.nearbyCyclists?.users
     }
-    val dismissNearbyCyclistsIcon = remember(mapboxMap){{
-        mapboxMap?.removeAnnotations()
-    }}
+    val dismissNearbyCyclistsIcon = remember(mapboxMap) {
+        {
+            mapboxMap?.removeAnnotations()
+        }
+    }
 
-    val showNearbyCyclistsIcon = remember(nearbyCyclists, mapboxMap){{
-        dismissNearbyCyclistsIcon()
+    val showNearbyCyclistsIcon = remember(nearbyCyclists, mapboxMap) {
+        {
+            dismissNearbyCyclistsIcon()
 
-        nearbyCyclists?.filter{
-            it.userAssistance?.needHelp == true
-        }?.forEach { cyclist ->
-            val location = cyclist.location
-            val latitude = location?.latitude ?: return@forEach
-            val longitude = location.longitude ?: return@forEach
-            val description = cyclist.userAssistance?.confirmationDetail?.description
-            val iconImage = description?.getMapIconImageDescription(context)
-                ?.toBitmap(width = 120, height = 120)
-            iconImage?.let { bitmap ->
-                mapboxMap?:return@let
-                val icon = IconFactory.getInstance(context).fromBitmap(bitmap)
-                MarkerOptions().apply {
-                    setIcon(icon)
-                    position(LatLng(latitude, longitude))
-                    title = cyclist.id
-                }.also(mapboxMap::addMarker)
+            nearbyCyclists?.filter {
+                it.userAssistance?.needHelp == true
+            }?.forEach { cyclist ->
+                val location = cyclist.location
+                val latitude = location?.latitude ?: return@forEach
+                val longitude = location.longitude ?: return@forEach
+                val description = cyclist.userAssistance?.confirmationDetail?.description
+                val iconImage = description?.getMapIconImageDescription(context)
+                    ?.toBitmap(width = 120, height = 120)
+                iconImage?.let { bitmap ->
+                    mapboxMap ?: return@let
+                    val icon = IconFactory.getInstance(context).fromBitmap(bitmap)
+                    MarkerOptions().apply {
+                        setIcon(icon)
+                        position(LatLng(latitude, longitude))
+                        title = cyclist.id
+                    }.also(mapboxMap::addMarker)
+                }
             }
         }
-    }}
+    }
 
 
-    val hasActiveTransaction = remember(hasTransaction, isRescueCancelled){
+    val hasActiveTransaction = remember(hasTransaction, isRescueCancelled) {
         hasTransaction || isRescueCancelled.not()
     }
 
@@ -108,9 +109,9 @@ fun MappingMapsScreen(
         isNavigating || geometry?.isNotEmpty() == true
     }
 
-    LaunchedEffect(key1 = nearbyCyclists, key2= isNavigating, key3 = hasTransaction){
+    LaunchedEffect(key1 = nearbyCyclists, key2 = isNavigating, key3 = hasTransaction) {
 
-        if(isNavigating || hasTransaction){
+        if (isNavigating || hasTransaction) {
             dismissNearbyCyclistsIcon()
             return@LaunchedEffect
         }
@@ -119,13 +120,13 @@ fun MappingMapsScreen(
     }
 
 
-    LaunchedEffect(key1 = mapboxMap){
+    LaunchedEffect(key1 = mapboxMap) {
         mapboxMap?.setOnMarkerClickListener {
-            onClickRescueeMapIcon(it.title)
+            event(MappingUiEvent.RescueeMapIconSelected(it.title))
             true
         }
         mapboxMap?.addOnMapClickListener {
-            onMapClick()
+            event(MappingUiEvent.OnMapClick)
             true
         }
 
@@ -143,34 +144,39 @@ fun MappingMapsScreen(
         clientLocation != null
     }
 
-    val dismissTransactionLocationIcon = remember(mapboxMap){{
-        mapboxMap?.getStyle { style ->
-            style.removeImage(TRANSACTION_ICON_ID)
-            val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
-            geoJsonSource?.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
-        }
-    }}
-
-    val showTransactionLocationIcon = remember(mapboxMap, state.user){{ location: Location ->
-        dismissTransactionLocationIcon()
-        val role = state.user.transaction?.role
-        val mapIcon = if(role == Role.RESCUEE.name.lowercase()){
-            R.drawable.ic_map_rescuer
-        }else{
-            R.drawable.ic_map_rescuee
-        }
-        mapboxMap?.getStyle { style ->
-            val longitude = location.longitude ?: return@getStyle
-            val latitude = location.latitude ?: return@getStyle
-            style.removeImage(TRANSACTION_ICON_ID)
-            ContextCompat.getDrawable(context, mapIcon)?.toBitmap(width = 100, height = 100)?.let{ iconBitmap ->
-                style.addImage(TRANSACTION_ICON_ID, iconBitmap)
+    val dismissTransactionLocationIcon = remember(mapboxMap) {
+        {
+            mapboxMap?.getStyle { style ->
+                style.removeImage(TRANSACTION_ICON_ID)
                 val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
-                val feature = Feature.fromGeometry(Point.fromLngLat(longitude, latitude))
-                geoJsonSource?.setGeoJson(feature)
+                geoJsonSource?.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
             }
         }
-    }}
+    }
+
+    val showTransactionLocationIcon = remember(mapboxMap, state.user) {
+        { location: Location ->
+            dismissTransactionLocationIcon()
+            val role = state.user.transaction?.role
+            val mapIcon = if (role == Role.RESCUEE.name.lowercase()) {
+                R.drawable.ic_map_rescuer
+            } else {
+                R.drawable.ic_map_rescuee
+            }
+            mapboxMap?.getStyle { style ->
+                val longitude = location.longitude ?: return@getStyle
+                val latitude = location.latitude ?: return@getStyle
+                style.removeImage(TRANSACTION_ICON_ID)
+                ContextCompat.getDrawable(context, mapIcon)?.toBitmap(width = 100, height = 100)
+                    ?.let { iconBitmap ->
+                        style.addImage(TRANSACTION_ICON_ID, iconBitmap)
+                        val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
+                        val feature = Feature.fromGeometry(Point.fromLngLat(longitude, latitude))
+                        geoJsonSource?.setGeoJson(feature)
+                    }
+            }
+        }
+    }
 
     LaunchedEffect(
         key1 = hasActiveTransaction,
@@ -182,7 +188,6 @@ fun MappingMapsScreen(
             return@LaunchedEffect
         }
 
-
         clientLocation?.latitude ?: return@LaunchedEffect
         showTransactionLocationIcon(clientLocation)
     }
@@ -190,9 +195,7 @@ fun MappingMapsScreen(
     Map(
         modifier = modifier,
         isDarkTheme = isDarkTheme,
-        onInitializeMapboxMap = onInitializeMapboxMap,
-        onChangeCameraState = onChangeCameraState,
-    )
+        event = event)
 
 }
 
@@ -201,19 +204,21 @@ fun MappingMapsScreen(
 private fun Map(
     modifier: Modifier,
     isDarkTheme: Boolean,
-    onInitializeMapboxMap: (MapboxMap) -> Unit,
-    onChangeCameraState: (LatLng, Double) -> Unit) {
+    event: (MappingUiEvent) -> Unit
+) {
+
 
     Box(modifier = modifier) {
 
-        AndroidViewBinding(factory = ActivityMappingBinding::inflate, modifier = Modifier.fillMaxSize()) {
+        AndroidViewBinding(
+            factory = ActivityMappingBinding::inflate,
+            modifier = Modifier.fillMaxSize()) {
             val viewContext = this.root.context
             var mapboxMap: MapboxMap? = null
 
             val initSource = { loadedMapStyle: Style ->
                 loadedMapStyle.addSource(GeoJsonSource(ICON_SOURCE_ID));
                 loadedMapStyle.addSource(GeoJsonSource(ROUTE_SOURCE_ID));
-
             }
 
             val initLayers = { loadedMapStyle: Style ->
@@ -255,44 +260,64 @@ private fun Map(
 
                             Timber.v("Lifecycle Event: ON_CREATE")
                             mapView.getMapAsync {
-                                onInitializeMapboxMap(it)
-                                mapboxMap = it
+
+
+
                                 it.setStyle(if (isDarkTheme) Style.DARK else Style.LIGHT) { loadedStyle ->
 
                                     if (loadedStyle.isFullyLoaded) {
+                                        event(MappingUiEvent.OnInitializeMap(it))
+                                        mapboxMap = it
                                         initSource(loadedStyle)
                                         initLayers(loadedStyle)
-
-
                                     }
                                 }
                                 it.setDefaultSettings()
                             }
-
                         }
 
                         Lifecycle.Event.ON_START -> {
                             Timber.v("Lifecycle Event: ON_START")
                             mapView.onStart()
                         }
+
                         Lifecycle.Event.ON_RESUME -> {
                             Timber.v("Lifecycle Event: ON_RESUME")
                         }
+
                         Lifecycle.Event.ON_PAUSE -> {
-                            val camera = mapboxMap?.cameraPosition ?: CameraPosition.DEFAULT
-                            val cameraCenter = camera.target
-                            val cameraZoom = camera.zoom
-                            onChangeCameraState(cameraCenter, cameraZoom)
+                            val camera = mapboxMap?.cameraPosition
+                            val cameraCenter = camera?.target
+                            val cameraZoom = camera?.zoom
+                            cameraCenter?.let {
+                                cameraZoom?.let {
+                                    val cameraMoved = cameraCenter.latitude != 0.0 && cameraCenter.longitude != 0.0 && cameraZoom != 3.0
+
+                                    if (!cameraMoved) {
+                                        return@let
+                                    }
+
+
+                                    event(
+                                        MappingUiEvent.OnChangeCameraState(
+                                            cameraState = CameraState(
+                                                position = cameraCenter,
+                                                zoom = cameraZoom)))
+                                }
+                            }
                         }
+
                         Lifecycle.Event.ON_STOP -> {
                             Timber.v("Lifecycle Event: ON_STOP")
 
                             mapView.onStop()
                         }
+
                         Lifecycle.Event.ON_DESTROY -> {
 
                             mapView.onDestroy()
                         }
+
                         else -> {}
 
                     }
