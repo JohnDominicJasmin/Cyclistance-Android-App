@@ -13,6 +13,6 @@ import kotlinx.parcelize.Parcelize
 @Immutable
 @Parcelize
 data class CameraState(
-    val cameraPosition: LatLng = LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
-    val cameraZoom: Double = DEFAULT_MAP_ZOOM_LEVEL,
+    val position: LatLng = LatLng(DEFAULT_LATITUDE, DEFAULT_LONGITUDE),
+    val zoom: Double = DEFAULT_MAP_ZOOM_LEVEL,
 ):Parcelable
