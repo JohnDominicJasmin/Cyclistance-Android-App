@@ -11,6 +11,7 @@ import com.example.cyclistance.core.utils.validation.FormatterUtils.findUser
 import com.example.cyclistance.core.utils.validation.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedETA
 import com.example.cyclistance.core.utils.validation.FormatterUtils.isLocationAvailable
+import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toCardModel
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Route
@@ -35,6 +36,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
+import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
 import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -58,6 +60,7 @@ import javax.inject.Inject
 class MappingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase,
+    private val settingUseCase: SettingUseCase,
     private val mappingUseCase: MappingUseCase,
     private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
@@ -1028,7 +1031,7 @@ class MappingViewModel @Inject constructor(
                     ))
             }
 
-            is MappingExceptions.UserException -> {
+            is AuthExceptions.UserException -> {
                 _eventFlow.emit(
                     MappingEvent.UserFailed(
                         reason = this.message
@@ -1079,12 +1082,12 @@ class MappingViewModel @Inject constructor(
 
     private fun getId(): String = authUseCase.getIdUseCase()
 
-    private suspend fun getName(): String = authUseCase.getNameUseCase()
+    private suspend fun getName(): String = settingUseCase.getNameUseCase()
 
     private suspend fun getPhoneNumber(): String =
-        authUseCase.getPhoneNumberUseCase()
+        settingUseCase.getPhoneNumberUseCase()
 
-    private suspend fun getPhotoUrl() = authUseCase.getPhotoUrlUseCase()
+    private suspend fun getPhotoUrl() = settingUseCase.getPhotoUrlUseCase()
 
 
 }

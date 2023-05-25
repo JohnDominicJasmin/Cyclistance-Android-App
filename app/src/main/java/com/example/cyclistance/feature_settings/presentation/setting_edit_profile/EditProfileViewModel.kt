@@ -4,9 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.SettingConstants.EDIT_PROFILE_VM_STATE_KEY
-import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
-import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_settings.domain.exceptions.SettingExceptions
+import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileState
@@ -24,7 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditProfileViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val authUseCase: AuthenticationUseCase,
+    private val settingUseCase: SettingUseCase,
     private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -117,13 +116,13 @@ class EditProfileViewModel @Inject constructor(
             runCatching {
                 startLoading()
                 val uri = imageUri.takeIf { it.isNotEmpty() }
-                val photoUri: String? = uri?.let { authUseCase.uploadImageUseCase(it) }
+                val photoUri: String? = uri?.let { settingUseCase.uploadImageUseCase(it) }
                 val phoneNumberChanges = phoneNumber != state.value.phoneNumberSnapshot
 
                 if (phoneNumberChanges) {
-                    authUseCase.updatePhoneNumberUseCase(phoneNumber.trim())
+                    settingUseCase.updatePhoneNumberUseCase(phoneNumber.trim())
                 }
-                authUseCase.updateProfileUseCase(
+                settingUseCase.updateProfileUseCase(
                     photoUri = photoUri,
                     name = name.trim())
 
@@ -133,19 +132,19 @@ class EditProfileViewModel @Inject constructor(
             }.onFailure { exception ->
                 finishLoading()
                 when (exception) {
-                    is MappingExceptions.PhoneNumberException -> {
+                    is SettingExceptions.PhoneNumberException -> {
                         _eventFlow.emit(value = EditProfileEvent.GetPhoneNumberFailed(reason = exception.message!!))
                     }
 
-                    is MappingExceptions.NameException -> {
+                    is SettingExceptions.NameException -> {
                         _eventFlow.emit(value = EditProfileEvent.GetNameFailed(reason = exception.message!!))
                     }
 
-                    is AuthExceptions.NetworkException, is MappingExceptions.NetworkException -> {
+                    is SettingExceptions.NetworkException -> {
                         _eventFlow.emit(value = EditProfileEvent.NoInternetConnection)
                     }
 
-                    is AuthExceptions.InternalServerException -> {
+                    is SettingExceptions.InternalServerException -> {
                         _eventFlow.emit(value = EditProfileEvent.InternalServerError(reason = exception.message!!))
                     }
                 }
@@ -164,8 +163,8 @@ class EditProfileViewModel @Inject constructor(
     }
 
 
-    private suspend fun getName() = authUseCase.getNameUseCase()
-    private suspend fun getPhotoUrl() = authUseCase.getPhotoUrlUseCase()
-    private suspend fun getPhoneNumber() = authUseCase.getPhoneNumberUseCase()
+    private suspend fun getName() = settingUseCase.getNameUseCase()
+    private suspend fun getPhotoUrl() = settingUseCase.getPhotoUrlUseCase()
+    private suspend fun getPhoneNumber() = settingUseCase.getPhoneNumberUseCase()
 
 }

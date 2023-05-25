@@ -1,21 +1,21 @@
-package com.example.cyclistance.feature_authentication.domain.use_case.create_account
+package com.example.cyclistance.feature_settings.domain.use_case
 
 import com.example.cyclistance.core.utils.validation.InputValidate.containsNumeric
 import com.example.cyclistance.core.utils.validation.InputValidate.containsSpecialCharacters
 import com.example.cyclistance.core.utils.validation.InputValidate.numberOfCharactersEnough
-import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
-import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_settings.domain.exceptions.SettingExceptions
+import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
 
-class UpdateProfileUseCase(private val repository: AuthRepository) {
+class UpdateProfileUseCase(private val repository: SettingRepository) {
     suspend operator fun invoke(photoUri: String?, name: String){
         if(name.isEmpty()){
-           throw MappingExceptions.NameException()
+           throw SettingExceptions.NameException()
         }
         if(name.containsNumeric() || name.containsSpecialCharacters()){
-            throw MappingExceptions.NameException("Name must not contain Numbers or Special Characters.")
+            throw SettingExceptions.NameException("Name must not contain Numbers or Special Characters.")
         }
         if(!name.numberOfCharactersEnough()){
-            throw MappingExceptions.NameException("Name is too short.")
+            throw SettingExceptions.NameException("Name is too short.")
         }
         repository.updateProfile(photoUri, name)
     }
