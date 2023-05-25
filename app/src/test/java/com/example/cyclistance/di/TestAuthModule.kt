@@ -6,6 +6,8 @@ import com.example.cyclistance.feature_authentication.domain.use_case.create_acc
 import com.example.cyclistance.feature_authentication.domain.use_case.read_account.*
 import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.*
+import com.example.cyclistance.feature_settings.domain.use_case.GetNameUseCase
+import com.example.cyclistance.feature_settings.domain.use_case.GetPhotoUrlUseCase
 
 object TestAuthModule {
     private val fakeAuthRepository: FakeAuthRepository = FakeAuthRepository()
@@ -20,9 +22,6 @@ object TestAuthModule {
             signOutUseCase = SignOutUseCase(repository = repository),
             createWithEmailAndPasswordUseCase = CreateWithEmailAndPasswordUseCase(repository = repository),
             getEmailUseCase = GetEmailUseCase(repository = repository),
-            getNameUseCase = GetNameUseCase(repository = repository),
-            getPhoneNumberUseCase = GetPhoneNumberUseCase(repository = repository),
-            getPhotoUrlUseCase = GetPhotoUrlUseCase(repository = repository),
             getIdUseCase = GetIdUseCase(repository = repository),
             hasAccountSignedInUseCase = HasAccountSignedInUseCase(repository = repository),
             isEmailVerifiedUseCase = IsEmailVerifiedUseCase(repository = repository),
@@ -30,9 +29,6 @@ object TestAuthModule {
             sendEmailVerificationUseCase = SendEmailVerificationUseCase(repository = repository),
             signInWithEmailAndPasswordUseCase = SignInWithEmailAndPasswordUseCase(repository = repository),
             signInWithCredentialUseCase = SignInWithCredentialUseCase(repository = repository),
-            updateProfileUseCase = UpdateProfileUseCase(repository = repository),
-            updatePhoneNumberUseCase = UpdatePhoneNumberUseCase(repository = repository),
-            uploadImageUseCase = UploadImageUseCase(repository = repository)
         )
     }
 }

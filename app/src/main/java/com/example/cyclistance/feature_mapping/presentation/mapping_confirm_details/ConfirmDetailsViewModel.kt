@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.CONFIRM_DETAILS_VM_STATE_KEY
+import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.ConfirmationDetail
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserAssistance
@@ -12,8 +13,8 @@ import com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetailsM
 import com.example.cyclistance.feature_mapping.domain.model.LiveLocationWSModel
 import com.example.cyclistance.feature_mapping.domain.model.UserItem
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -161,7 +162,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                 _eventFlow.emit(value = ConfirmDetailsEvent.UnexpectedError(this.message!!))
             }
 
-            is MappingExceptions.UserException -> {
+            is AuthExceptions.UserException -> {
                 _eventFlow.emit(value = ConfirmDetailsEvent.UserError(this.message!!))
             }
 

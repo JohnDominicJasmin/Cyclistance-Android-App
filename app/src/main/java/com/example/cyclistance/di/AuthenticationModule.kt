@@ -10,7 +10,6 @@ import com.example.cyclistance.feature_authentication.domain.use_case.read_accou
 import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.*
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -31,32 +30,21 @@ object AuthenticationModule {
     fun provideFirebaseAuth(): FirebaseAuth {
         return FirebaseAuth.getInstance().apply {
             if (BuildConfig.DEBUG) {
-//                useEmulator("192.168.18.21", 9099)
+                useEmulator("192.168.18.21", 9099)
             }
         }
     }
 
-    @Provides
-    @Singleton
-    fun providesFirebaseStorage(): FirebaseStorage {
-        return FirebaseStorage.getInstance().apply {
-            if (BuildConfig.DEBUG) {
-//                useEmulator("192.168.18.21", 9199)
-            }
-        }
-    }
 
     @Provides
     @Singleton
     fun provideAuthRepository(
         @ApplicationContext context: Context,
-        firebaseAuth: FirebaseAuth,
-        firebaseStorage: FirebaseStorage): AuthRepository {
+        firebaseAuth: FirebaseAuth): AuthRepository {
 
         return AuthRepositoryImpl(
             context = context,
-            auth = firebaseAuth,
-            storage = firebaseStorage)
+            auth = firebaseAuth)
     }
 
 
@@ -68,9 +56,6 @@ object AuthenticationModule {
             signOutUseCase = SignOutUseCase(repository = repository),
             createWithEmailAndPasswordUseCase = CreateWithEmailAndPasswordUseCase(repository = repository),
             getEmailUseCase = GetEmailUseCase(repository = repository),
-            getNameUseCase = GetNameUseCase(repository = repository),
-            getPhoneNumberUseCase = GetPhoneNumberUseCase(repository = repository),
-            getPhotoUrlUseCase = GetPhotoUrlUseCase(repository = repository),
             getIdUseCase = GetIdUseCase(repository = repository),
             hasAccountSignedInUseCase = HasAccountSignedInUseCase(repository = repository),
             isEmailVerifiedUseCase = IsEmailVerifiedUseCase(repository = repository),
@@ -78,9 +63,6 @@ object AuthenticationModule {
             sendEmailVerificationUseCase = SendEmailVerificationUseCase(repository = repository),
             signInWithEmailAndPasswordUseCase = SignInWithEmailAndPasswordUseCase(repository = repository),
             signInWithCredentialUseCase = SignInWithCredentialUseCase(repository = repository),
-            updateProfileUseCase = UpdateProfileUseCase(repository = repository),
-            updatePhoneNumberUseCase = UpdatePhoneNumberUseCase(repository = repository),
-            uploadImageUseCase = UploadImageUseCase(repository = repository)
         )
 
 

@@ -1,9 +1,9 @@
-package com.example.cyclistance.feature_authentication.domain.use_case.read_account
+package com.example.cyclistance.feature_settings.domain.use_case
 
-import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
+import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
 
-class GetNameUseCase(private val repository: AuthRepository) {
+class GetNameUseCase(private val repository: SettingRepository) {
 
      suspend operator fun invoke(): String {
 

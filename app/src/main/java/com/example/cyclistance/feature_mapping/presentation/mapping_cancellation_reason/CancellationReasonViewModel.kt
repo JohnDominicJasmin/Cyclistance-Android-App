@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.CANCELLATION_VM_STATE_KEY
+import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Cancellation
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.CancellationReason
@@ -15,6 +16,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.event.CancellationReasonEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.event.CancellationReasonVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.state.CancellationReasonState
+import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -31,6 +33,7 @@ class CancellationReasonViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val mappingUseCase: MappingUseCase,
     private val authUseCase: AuthenticationUseCase,
+    private val settingUseCase: SettingUseCase
 ): ViewModel() {
 
 
@@ -120,7 +123,7 @@ class CancellationReasonViewModel @Inject constructor(
                 _eventFlow.emit(value = CancellationReasonEvent.UnexpectedError(this.message!!))
             }
 
-            is MappingExceptions.UserException -> {
+            is AuthExceptions.UserException -> {
                 _eventFlow.emit(value = CancellationReasonEvent.UserFailed(this.message!!))
             }
 
@@ -140,6 +143,6 @@ class CancellationReasonViewModel @Inject constructor(
         savedStateHandle[CANCELLATION_VM_STATE_KEY] = state.value
     }
     private fun getId() = authUseCase.getIdUseCase()
-    private suspend fun getName() = authUseCase.getNameUseCase()
+    private suspend fun getName() = settingUseCase.getNameUseCase()
 
 }

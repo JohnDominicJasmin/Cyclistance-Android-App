@@ -4,6 +4,6 @@ import com.example.cyclistance.feature_authentication.domain.repository.AuthRepo
 
 class GetEmailUseCase(private val repository: AuthRepository){
      operator fun invoke():String? {
-      return repository.getEmail()
+        return repository.getEmail()
      }
 }
