@@ -1,8 +1,8 @@
-package com.example.cyclistance.feature_mapping.data.remote.dto.websockets
+package com.example.cyclistance.feature_mapping.data.remote.websockets
 
 import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_LOCATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.JOIN_LIVE_LOCATION_UPDATES
-import com.example.cyclistance.feature_mapping.domain.model.LiveLocationWSModel
+import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
 import com.example.cyclistance.feature_mapping.domain.websockets.WebSocketClient
 import com.google.gson.Gson
 import io.socket.client.Socket

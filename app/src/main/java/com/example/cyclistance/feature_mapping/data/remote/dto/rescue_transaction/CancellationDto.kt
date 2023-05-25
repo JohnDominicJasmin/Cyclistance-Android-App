@@ -8,9 +8,9 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-data class Cancellation(
+data class CancellationDto(
     @SerializedName("cancellation_reason")
-    val cancellationReason: CancellationReason = CancellationReason(),
+    val cancellationReason: CancellationReasonDto = CancellationReasonDto(),
     @SerializedName("id_cancelled_by")
     val idCancelledBy: String = "",
     @SerializedName("name_cancelled_by")

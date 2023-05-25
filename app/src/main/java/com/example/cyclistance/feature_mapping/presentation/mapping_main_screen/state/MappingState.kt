@@ -3,11 +3,11 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import android.os.Parcelable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
-import com.example.cyclistance.feature_mapping.domain.model.NearbyCyclist
-import com.example.cyclistance.feature_mapping.domain.model.NewRescueRequestsModel
-import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
-import com.example.cyclistance.feature_mapping.domain.model.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -16,7 +16,7 @@ import kotlinx.parcelize.Parcelize
 data class MappingState(
 
     val isLoading: Boolean = false,
-    val userLocation: Location? = null,
+    val userLocation: LocationModel? = null,
     val rescueTransaction: RescueTransactionItem? = null,
     val user: UserItem = UserItem(),
     val rescueRequestAcceptedUser: UserItem? = null,
@@ -24,7 +24,7 @@ data class MappingState(
     val rescuee: UserItem? = null,
     val profileUploaded: Boolean = false,
     val respondedToHelp: Boolean = false,
-    val transactionLocation: Location? = null,
+    val transactionLocation: LocationModel? = null,
     val rescuerETA: String = "",
     val nearbyCyclists: NearbyCyclist? = null,
     val newRescueRequest: NewRescueRequestsModel? = null,

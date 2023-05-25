@@ -2,13 +2,13 @@ package com.example.cyclistance.feature_mapping.data.remote.dto.user_dto
 
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-data class ConfirmationDetail(
+data class ConfirmationDetailDto(
     @SerializedName("bike_type")
     val bikeType: String = "",
     @SerializedName("description")

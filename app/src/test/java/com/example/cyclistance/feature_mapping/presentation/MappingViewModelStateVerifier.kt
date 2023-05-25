@@ -4,8 +4,8 @@ import app.cash.turbine.test
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_MAP_ZOOM_LEVEL
-import com.example.cyclistance.feature_mapping.domain.model.NewRescueRequestsModel
-import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel

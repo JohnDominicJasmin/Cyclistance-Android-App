@@ -31,8 +31,8 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_R
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.permission.requestPermission
-import com.example.cyclistance.feature_mapping.domain.model.CameraState
 import com.example.cyclistance.feature_mapping.domain.model.Role
+import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
 import com.example.cyclistance.feature_mapping.presentation.common.RequestMultiplePermissions
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.*
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent

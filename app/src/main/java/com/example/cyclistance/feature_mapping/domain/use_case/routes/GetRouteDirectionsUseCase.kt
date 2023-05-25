@@ -1,6 +1,6 @@
 package com.example.cyclistance.feature_mapping.domain.use_case.routes
 
-import com.example.cyclistance.feature_mapping.domain.model.RouteDirection
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.mapbox.geojson.Point
 

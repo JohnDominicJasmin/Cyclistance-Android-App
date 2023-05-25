@@ -31,7 +31,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_mapping.domain.model.MapSelectedRescuee
+import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.Black500

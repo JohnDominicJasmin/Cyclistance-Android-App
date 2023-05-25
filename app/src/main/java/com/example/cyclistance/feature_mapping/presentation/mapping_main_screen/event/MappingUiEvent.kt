@@ -1,6 +1,6 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event
 
-import com.example.cyclistance.feature_mapping.domain.model.CameraState
+import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
 import com.mapbox.mapboxsdk.maps.MapboxMap
 
 sealed class MappingUiEvent{

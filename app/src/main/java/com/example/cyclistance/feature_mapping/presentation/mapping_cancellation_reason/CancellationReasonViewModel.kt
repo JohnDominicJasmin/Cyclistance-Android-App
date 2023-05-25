@@ -6,12 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.CANCELLATION_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Cancellation
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.CancellationReason
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Route
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Status
+
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.CancellationModel
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.CancellationReasonModel
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteModel
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.StatusModel
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.event.CancellationReasonEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.event.CancellationReasonVmEvent
@@ -68,8 +69,8 @@ class CancellationReasonViewModel @Inject constructor(
                 mappingUseCase.confirmCancellationUseCase(
                     rescueTransaction = RescueTransactionItem(
                         id = _transactionId,
-                        cancellation = Cancellation(
-                            cancellationReason = CancellationReason(
+                        cancellation = CancellationModel(
+                            cancellationReason = CancellationReasonModel(
                                 reason = reason,
                                 message = message
                             ),
@@ -77,8 +78,8 @@ class CancellationReasonViewModel @Inject constructor(
                             nameCancelledBy = getName(),
                             rescueCancelled = true,
                         ),
-                        status = Status(),
-                        route = Route()
+                        status = StatusModel(),
+                        route = RouteModel()
                     )
                 )
 

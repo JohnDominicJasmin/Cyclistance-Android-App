@@ -13,24 +13,24 @@ import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculate
 import com.example.cyclistance.core.utils.validation.FormatterUtils.isLocationAvailable
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toCardModel
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Route
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Status
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.ConfirmationDetail
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.RescueRequest
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Transaction
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserAssistance
+import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toRescueRequest
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping.domain.model.LiveLocationWSModel
-import com.example.cyclistance.feature_mapping.domain.model.MapSelectedRescuee
-import com.example.cyclistance.feature_mapping.domain.model.NearbyCyclist
-import com.example.cyclistance.feature_mapping.domain.model.NewRescueRequestsModel
-import com.example.cyclistance.feature_mapping.domain.model.RescueRequestModel
-import com.example.cyclistance.feature_mapping.domain.model.RescueTransaction
-import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.Role
-import com.example.cyclistance.feature_mapping.domain.model.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteModel
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.StatusModel
+import com.example.cyclistance.feature_mapping.domain.model.api.user.ConfirmationDetailModel
+import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.api.user.RescueRequest
+import com.example.cyclistance.feature_mapping.domain.model.api.user.TransactionModel
+import com.example.cyclistance.feature_mapping.domain.model.api.user.UserAssistanceModel
+import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
+import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
+import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
@@ -299,7 +299,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private suspend fun calculateSelectedRescueeDistance(userLocation: Location?, id: String) {
+    private suspend fun calculateSelectedRescueeDistance(userLocation: LocationModel?, id: String) {
         val selectedRescuee = state.value.nearbyCyclists?.findUser(id) ?: return
         val selectedRescueeLocation = selectedRescuee.location
         val confirmationDetail = selectedRescuee.userAssistance?.confirmationDetail
@@ -307,10 +307,10 @@ class MappingViewModel @Inject constructor(
         runCatching {
             startLoading()
             mappingUseCase.getCalculatedDistanceUseCase(
-                startingLocation = Location(
+                startingLocation = LocationModel(
                     latitude = userLocation?.latitude,
                     longitude = userLocation?.longitude
-                ), destinationLocation = Location(
+                ), destinationLocation = LocationModel(
                     latitude = selectedRescueeLocation!!.latitude,
                     longitude = selectedRescueeLocation.longitude
                 )
@@ -344,8 +344,8 @@ class MappingViewModel @Inject constructor(
         mappingUseCase.createUserUseCase(
             user = UserItem(
                 id = this,
-                transaction = Transaction(),
-                userAssistance = UserAssistance(needHelp = false),
+                transaction = TransactionModel(),
+                userAssistance = UserAssistanceModel(needHelp = false),
                 rescueRequest = RescueRequest()))
     }
 
@@ -400,8 +400,8 @@ class MappingViewModel @Inject constructor(
             rescueTransaction?.let { transaction ->
 
                 val distance = mappingUseCase.getCalculatedDistanceUseCase(
-                    startingLocation = Location(latitude, longitude),
-                    destinationLocation = Location(transaction.latitude, transaction.longitude)
+                    startingLocation = LocationModel(latitude, longitude),
+                    destinationLocation = LocationModel(transaction.latitude, transaction.longitude)
                 ).toInt()
 
 
@@ -420,7 +420,7 @@ class MappingViewModel @Inject constructor(
         this.latitude ?: return
         _state.update {
             it.copy(
-                transactionLocation = Location(
+                transactionLocation = LocationModel(
                     latitude = this.latitude,
                     longitude = this.longitude))
         }
@@ -433,13 +433,13 @@ class MappingViewModel @Inject constructor(
         this.longitude ?: return
 
         val eta = getETABetweenTwoPoints(
-            startingLocation = Location(
+            startingLocation = LocationModel(
                 latitude = this.latitude,
                 longitude = this.longitude), endLocation = userLocation)
         _state.update { it.copy(rescuerETA = eta) }
     }
 
-    private fun getETABetweenTwoPoints(startingLocation: Location, endLocation: Location): String {
+    private fun getETABetweenTwoPoints(startingLocation: LocationModel, endLocation: LocationModel): String {
         val distance = mappingUseCase.getCalculatedDistanceUseCase(
             startingLocation = startingLocation,
             destinationLocation = endLocation
@@ -455,10 +455,10 @@ class MappingViewModel @Inject constructor(
         crossinline noCurrentTransaction: suspend () -> Unit) {
 
         val userHasCurrentTransaction =
-            (user.transaction ?: Transaction()).transactionId.isNotEmpty()
+            (user.transaction ?: TransactionModel()).transactionId.isNotEmpty()
 
         val rescuerHasCurrentTransaction =
-            (rescuer.transaction ?: Transaction()).transactionId.isNotEmpty()
+            (rescuer.transaction ?: TransactionModel()).transactionId.isNotEmpty()
 
         val rescuerLocationAvailable = rescuer.location.isLocationAvailable()
         val userLocationAvailable = user.location.isLocationAvailable()
@@ -504,12 +504,12 @@ class MappingViewModel @Inject constructor(
                             id = transactionId,
                             rescuerId = rescuer.id,
                             rescueeId = user.id,
-                            status = Status(started = true, ongoing = true),
-                            route = Route(
-                                startingLocation = Location(
+                            status = StatusModel(started = true, onGoing = true),
+                            route = RouteModel(
+                                startingLocation = LocationModel(
                                     latitude = rescuer.location!!.latitude,
                                     longitude = rescuer.location.longitude),
-                                destinationLocation = Location(
+                                destinationLocation = LocationModel(
                                     latitude = user.location!!.latitude,
                                     longitude = user.location.longitude)
                             )).apply {
@@ -661,18 +661,18 @@ class MappingViewModel @Inject constructor(
         mappingUseCase.createUserUseCase(
             user = UserItem(
                 id = getId(),
-                userAssistance = UserAssistance(
+                userAssistance = UserAssistanceModel(
                     needHelp = false,
-                    confirmationDetail = ConfirmationDetail()))
+                    confirmationDetail = ConfirmationDetailModel()))
         )
     }
 
-    private fun updateLocation(location: Location) {
+    private fun updateLocation(location: LocationModel) {
         val latitude = location.latitude.takeIf { it != 0.0 } ?: return
         val longitude = location.longitude.takeIf { it != 0.0 } ?: return
         _state.update { state ->
             state.copy(
-                userLocation = Location(
+                userLocation = LocationModel(
                     latitude = latitude,
                     longitude = longitude))
         }
@@ -699,8 +699,8 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun UserItem.getUserRescueRespondents(nearbyCyclist: NearbyCyclist): List<RescueRequestModel> {
-        val rescueRespondentsSnapShot: MutableList<RescueRequestModel> = mutableListOf()
+    private fun UserItem.getUserRescueRespondents(nearbyCyclist: NearbyCyclist): List<RescueRequestItemModel> {
+        val rescueRespondentsSnapShot: MutableList<RescueRequestItemModel> = mutableListOf()
 
         rescueRequest?.respondents?.forEach { respondent ->
             val userRespondent = nearbyCyclist.findUser(id = respondent.clientId)
@@ -711,11 +711,11 @@ class MappingViewModel @Inject constructor(
                     end.latitude ?: return@forEach
                     end.longitude ?: return@forEach
                     mappingUseCase.getCalculatedDistanceUseCase(
-                        startingLocation = Location(
+                        startingLocation = LocationModel(
                             latitude = start.latitude,
                             longitude = start.longitude
                         ),
-                        destinationLocation = Location(
+                        destinationLocation = LocationModel(
                             latitude = end.latitude,
                             longitude = end.longitude
                         )
@@ -726,7 +726,7 @@ class MappingViewModel @Inject constructor(
             distance?.let {
                 val formattedETA = getCalculatedETA(distanceMeters = distance)
                 rescueRespondentsSnapShot.add(
-                    element = userRespondent.toCardModel(
+                    element = userRespondent.toRescueRequest(
                         distance = distance.formatToDistanceKm(),
                         eta = formattedETA))
             }
@@ -741,7 +741,7 @@ class MappingViewModel @Inject constructor(
         _state.update { it.copy(nearbyCyclists = this.apply { users.distinct() }) }
     }
 
-    private suspend fun broadcastRescueTransactionToRespondent(location: Location) {
+    private suspend fun broadcastRescueTransactionToRespondent(location: LocationModel) {
         val rescueTransaction = state.value.rescueTransaction ?: return
         runCatching {
 
@@ -955,7 +955,7 @@ class MappingViewModel @Inject constructor(
         }
     }
     private suspend inline fun getFullAddress(
-        location: Location,
+        location: LocationModel,
         crossinline onSuccess: suspend () -> Unit) {
 
         location.latitude ?: return
@@ -974,7 +974,7 @@ class MappingViewModel @Inject constructor(
 
 
     private suspend inline fun uploadProfile(
-        location: Location,
+        location: LocationModel,
         fullAddress: String,
         crossinline onSuccess: suspend () -> Unit
     ) {
@@ -996,10 +996,10 @@ class MappingViewModel @Inject constructor(
                         address = fullAddress,
                         profilePictureUrl = getPhotoUrl(),
                         contactNumber = getPhoneNumber(),
-                        location = Location(
+                        location = LocationModel(
                             latitude = location.latitude,
                             longitude = location.longitude),
-                        rescueRequest = RescueRequest(), userAssistance = UserAssistance()))
+                        rescueRequest = RescueRequest(), userAssistance = UserAssistanceModel()))
                 mappingUseCase.setAddressUseCase(fullAddress)
 
             }.onSuccess {

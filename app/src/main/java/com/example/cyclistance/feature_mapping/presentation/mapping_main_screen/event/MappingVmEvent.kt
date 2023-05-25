@@ -1,6 +1,6 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event
 
-import com.example.cyclistance.feature_mapping.domain.model.MapSelectedRescuee
+import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 import com.mapbox.geojson.Point
 
 

@@ -1,11 +1,11 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event
 
-import com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetailsModel
+import com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetails
 
 
 sealed class ConfirmDetailsVmEvent{
     data class ConfirmDetails(
-      val confirmDetailsModel: ConfirmationDetailsModel
+      val confirmDetailsModel: ConfirmationDetails
     ): ConfirmDetailsVmEvent()
 
 }

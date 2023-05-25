@@ -39,7 +39,7 @@ import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_SHEET_TYPE
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
-import com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetailsModel
+import com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetails
 import com.example.cyclistance.feature_mapping.presentation.common.AdditionalMessage
 import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.AddressTextField
@@ -154,7 +154,7 @@ fun ConfirmDetailsScreen(
         {
             viewModel.onEvent(
                 event = ConfirmDetailsVmEvent.ConfirmDetails(
-                    confirmDetailsModel = ConfirmationDetailsModel(
+                    confirmDetailsModel = ConfirmationDetails(
                         address = uiState.address,
                         bikeType = uiState.bikeType,
                         description = uiState.description,

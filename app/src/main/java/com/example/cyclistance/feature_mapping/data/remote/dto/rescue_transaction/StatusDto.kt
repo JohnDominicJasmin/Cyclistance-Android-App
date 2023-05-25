@@ -2,13 +2,13 @@ package com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transacti
 
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-data class Status(
+data class StatusDto(
     @SerializedName("finished")
     val finished: Boolean = false,
     @SerializedName("ongoing")

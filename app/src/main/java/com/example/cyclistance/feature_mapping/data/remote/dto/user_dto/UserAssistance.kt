@@ -2,15 +2,15 @@ package com.example.cyclistance.feature_mapping.data.remote.dto.user_dto
 
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-data class UserAssistance(
+data class UserAssistanceDto(
     @SerializedName("confirmationDetail")
-    val confirmationDetail: ConfirmationDetail = ConfirmationDetail(),
+    val confirmationDetail: ConfirmationDetailDto = ConfirmationDetailDto(),
     @SerializedName("need_help")
     val needHelp: Boolean = false
 ):Parcelable
