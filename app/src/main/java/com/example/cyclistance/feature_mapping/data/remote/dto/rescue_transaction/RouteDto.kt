@@ -2,17 +2,17 @@ package com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transacti
 
 import android.os.Parcelable
 import androidx.annotation.Keep
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
+import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.LocationDto
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-data class Route(
+data class RouteDto(
     @SerializedName("starting_location")
-    val startingLocation: Location = Location(),
+    val startingLocation: LocationDto = LocationDto(),
     @SerializedName("destination_location")
-    val destinationLocation: Location = Location()
+    val destinationLocation: LocationDto = LocationDto()
 
 
     ):Parcelable

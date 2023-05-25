@@ -6,12 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.CONFIRM_DETAILS_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.ConfirmationDetail
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserAssistance
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetailsModel
-import com.example.cyclistance.feature_mapping.domain.model.LiveLocationWSModel
-import com.example.cyclistance.feature_mapping.domain.model.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetails
+import com.example.cyclistance.feature_mapping.domain.model.api.user.ConfirmationDetailModel
+import com.example.cyclistance.feature_mapping.domain.model.api.user.UserAssistanceModel
+import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsVmEvent
@@ -81,37 +81,37 @@ class ConfirmDetailsViewModel @Inject constructor(
     fun onEvent(event: ConfirmDetailsVmEvent) {
         when (event) {
             is ConfirmDetailsVmEvent.ConfirmDetails -> {
-                confirmDetails(confirmationDetailsModel = event.confirmDetailsModel)
+                confirmDetails(confirmationDetail = event.confirmDetailsModel)
             }
         }
         savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
     }
 
 
-    private fun confirmDetails(confirmationDetailsModel: ConfirmationDetailsModel) {
+    private fun confirmDetails(confirmationDetail: ConfirmationDetails) {
 
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
 
+                val confirmedDetails = ConfirmationDetailModel(
+                    bikeType = confirmationDetail.bikeType,
+                    description = confirmationDetail.description,
+                    message = confirmationDetail.message
+                )
                 _state.update { it.copy(isLoading = true) }
 
-                with(confirmationDetailsModel) {
                     mappingUseCase.confirmDetailsUseCase(
                         user = UserItem(
                             id = getId(),
-                            address = address.trim(),
-                            userAssistance = UserAssistance(
-                                confirmationDetail = ConfirmationDetail(
-                                    bikeType = bikeType,
-                                    description = description,
-                                    message = message.trim()),
+                            address = confirmationDetail.address.trim(),
+                            userAssistance = UserAssistanceModel(
+                                confirmationDetail = confirmedDetails,
                                 needHelp = true
                             ))).also {
 
-                        mappingUseCase.setAddressUseCase(address = address)
-                        mappingUseCase.setBikeTypeUseCase(bikeType = bikeType)
+                        mappingUseCase.setAddressUseCase(address = confirmationDetail.address)
+                        mappingUseCase.setBikeTypeUseCase(bikeType = confirmationDetail.bikeType)
                     }
-                }
 
 
             }.onSuccess {

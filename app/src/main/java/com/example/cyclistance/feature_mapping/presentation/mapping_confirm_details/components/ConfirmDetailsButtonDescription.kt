@@ -39,7 +39,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.FLAT_TIRES_
 import com.example.cyclistance.core.utils.constants.MappingConstants.INCIDENT_TEXT
 import com.example.cyclistance.core.utils.constants.MappingConstants.INJURY_TEXT
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
-import com.example.cyclistance.feature_mapping.domain.model.ButtonDescriptionModel
+import com.example.cyclistance.feature_mapping.domain.model.ui.button.ButtonDescriptionModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsState
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.CyclistanceTheme

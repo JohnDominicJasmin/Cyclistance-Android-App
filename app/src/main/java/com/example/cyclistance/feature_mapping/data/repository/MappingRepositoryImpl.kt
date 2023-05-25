@@ -20,9 +20,15 @@ import com.example.cyclistance.feature_mapping.data.mapper.RouteDirectionMapper.
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUser
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItem
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItemDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.model.*
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
+import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping.domain.websockets.WebSocketClient
 import com.example.cyclistance.service.LocationService
@@ -100,8 +106,8 @@ class MappingRepositoryImpl(
     }
 
     override fun getCalculateDistance(
-        startingLocation: Location,
-        destinationLocation: Location,
+        startingLocation: LocationModel,
+        destinationLocation: LocationModel,
     ): Double {
 
         startingLocation.latitude ?: throw MappingExceptions.LocationException()
@@ -178,7 +184,7 @@ class MappingRepositoryImpl(
             }
         }
 
-    override suspend fun getUserLocation(): Flow<Location> {
+    override suspend fun getUserLocation(): Flow<LocationModel> {
         return withContext(scope) { LocationService.address }
     }
 

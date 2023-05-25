@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.common.visible
-import com.example.cyclistance.feature_mapping.domain.model.NewRescueRequestsModel
-import com.example.cyclistance.feature_mapping.domain.model.RescueRequestModel
+import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.event.RescueRequestUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.state.RescueRequestUiState
@@ -138,7 +138,7 @@ fun PreviewRescueRequest() {
             mappingState = MappingState(
                 isLoading = true,
                 newRescueRequest = NewRescueRequestsModel(request = listOf(
-                    RescueRequestModel(
+                    RescueRequestItemModel(
                         id = "2",
                         name = "Jane Doe",
                         profileImageUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",

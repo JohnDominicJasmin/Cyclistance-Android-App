@@ -11,14 +11,18 @@ import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_START
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_STOP
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATION_SERVICE_CHANNEL_ID
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import com.example.cyclistance.feature_mapping.domain.location.LocationClient
+import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -34,7 +38,7 @@ class LocationService(
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     companion object {
-        val address: MutableStateFlow<Location> = MutableStateFlow(Location())
+        val address: MutableStateFlow<LocationModel> = MutableStateFlow(LocationModel())
     }
 
     override fun onCreate() {
@@ -77,7 +81,7 @@ class LocationService(
             .catch {
                 Timber.e("Start Service: ${it.message}")
             }.onEach { location ->
-                address.emit(Location(latitude = location.latitude, longitude = location.longitude))
+                address.emit(LocationModel(latitude = location.latitude, longitude = location.longitude))
             }.launchIn(serviceScope)
     }
 

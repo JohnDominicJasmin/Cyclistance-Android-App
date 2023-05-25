@@ -2,13 +2,13 @@ package com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transacti
 
 
 import android.os.Parcelable
-import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-data class CancellationReason(
+data class CancellationReasonDto(
     @SerializedName("message")
     val message: String = "",
     @SerializedName("reason")

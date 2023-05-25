@@ -19,10 +19,10 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_SOURC
 import com.example.cyclistance.core.utils.constants.MappingConstants.TRANSACTION_ICON_ID
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getMapIconImageDescription
 import com.example.cyclistance.databinding.ActivityMappingBinding
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
-import com.example.cyclistance.feature_mapping.domain.model.CameraState
 import com.example.cyclistance.feature_mapping.domain.model.Role
-import com.example.cyclistance.feature_mapping.domain.model.RouteDirection
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
+import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.*
@@ -155,7 +155,7 @@ fun MappingMapsScreen(
     }
 
     val showTransactionLocationIcon = remember(mapboxMap, state.user) {
-        { location: Location ->
+        { location: LocationModel ->
             dismissTransactionLocationIcon()
             val role = state.user.transaction?.role
             val mapIcon = if (role == Role.RESCUEE.name.lowercase()) {

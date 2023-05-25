@@ -12,7 +12,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @Immutable
 @Stable
-data class Location(
+data class LocationDto(
     @SerializedName("latitude")
     val latitude: Double? = null,
     @SerializedName("longitude")

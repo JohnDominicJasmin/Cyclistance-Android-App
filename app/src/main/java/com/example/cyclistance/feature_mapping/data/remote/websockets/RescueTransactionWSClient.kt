@@ -1,10 +1,10 @@
-package com.example.cyclistance.feature_mapping.data.remote.dto.websockets
+package com.example.cyclistance.feature_mapping.data.remote.websockets
 
 import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_RESCUE_TRANSACTION
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.RescueTransactionDto
-import com.example.cyclistance.feature_mapping.domain.model.LiveLocationWSModel
-import com.example.cyclistance.feature_mapping.domain.model.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
 import com.example.cyclistance.feature_mapping.domain.websockets.WebSocketClient
 import com.google.gson.Gson
 import io.socket.client.Socket

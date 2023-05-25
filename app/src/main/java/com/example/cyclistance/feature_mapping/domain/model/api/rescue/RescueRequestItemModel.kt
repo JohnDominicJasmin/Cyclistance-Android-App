@@ -1,11 +1,11 @@
-package com.example.cyclistance.feature_mapping.domain.model
+package com.example.cyclistance.feature_mapping.domain.model.api.rescue
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 
 
 @Parcelize
-data class RescueRequestModel(
+data class RescueRequestItemModel(
     val id: String? = null,
     val name: String? = null,
     val profileImageUrl:String? = null,

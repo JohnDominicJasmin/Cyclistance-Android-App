@@ -16,16 +16,16 @@ data class UserItemDto(
     @SerializedName("id")
     val id: String?,
     @SerializedName("location")
-    val location: Location?,
+    val location: LocationDto?,
     @SerializedName("name")
     val name: String?,
     @SerializedName("profile_picture_url")
     val profilePictureUrl: String?,
     @SerializedName("rescue_request")
-    val rescueRequest: RescueRequest?,
+    val rescueRequest: RescueRequestDto?,
     @SerializedName("transaction")
-    val transaction: Transaction?,
+    val transaction: TransactionDto?,
     @SerializedName("user_assistance")
-    val userAssistance: UserAssistance?
+    val userAssistance: UserAssistanceDto?
 ):Parcelable
 

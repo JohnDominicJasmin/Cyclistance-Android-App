@@ -1,7 +1,12 @@
 package com.example.cyclistance.feature_mapping.domain.repository
 
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
-import com.example.cyclistance.feature_mapping.domain.model.*
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
+import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
 import com.mapbox.geojson.Point
 import kotlinx.coroutines.flow.Flow
 
@@ -29,7 +34,7 @@ interface MappingRepository {
     suspend fun getAddress(): Flow<String>
     suspend fun setAddress(address: String)
 
-    suspend fun getUserLocation(): Flow<Location>
+    suspend fun getUserLocation(): Flow<LocationModel>
 
 
     suspend fun getUserUpdates():Flow<NearbyCyclist>
@@ -42,6 +47,6 @@ interface MappingRepository {
 
 
     suspend fun getRouteDirections(origin: Point, destination: Point): RouteDirection
-    fun getCalculateDistance(startingLocation: Location, destinationLocation: Location):Double
+    fun getCalculateDistance(startingLocation: LocationModel, destinationLocation: LocationModel):Double
 
 }

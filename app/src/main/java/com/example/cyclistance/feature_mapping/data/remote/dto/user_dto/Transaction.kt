@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @Keep
 @Parcelize
-data class Transaction(
+data class TransactionDto(
     @SerializedName("role")
     val role: String = "",
     @SerializedName("transaction_id")

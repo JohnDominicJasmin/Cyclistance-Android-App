@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.domain.model
+package com.example.cyclistance.feature_mapping.domain.model.api.user
 
 import android.os.Parcelable
 import androidx.compose.runtime.Stable

@@ -1,7 +1,7 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event
 
-import com.example.cyclistance.feature_mapping.domain.model.MapSelectedRescuee
-import com.example.cyclistance.feature_mapping.domain.model.RouteDirection
+import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
 
 
 sealed class MappingEvent{

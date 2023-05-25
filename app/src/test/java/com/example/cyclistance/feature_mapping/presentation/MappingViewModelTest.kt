@@ -6,10 +6,10 @@ import com.example.cyclistance.di.TestAuthModule
 import com.example.cyclistance.di.TestMappingModule
 import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.Route
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.*
-import com.example.cyclistance.feature_mapping.domain.model.NearbyCyclist
-import com.example.cyclistance.feature_mapping.domain.model.RescueTransaction
-import com.example.cyclistance.feature_mapping.domain.model.RescueTransactionItem
-import com.example.cyclistance.feature_mapping.domain.model.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
 import com.example.cyclistance.test_rule.MainDispatcherRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
