@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,15 +23,15 @@ import androidx.compose.ui.unit.sp
 
 
 @Composable
-fun IntroSliderButtons(
+fun IntroSliderButtonSection(
+    modifier: Modifier = Modifier,
     text: String,
     onClickSkipButton: () -> Unit,
     onClickNextButton: () -> Unit) {
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth(0.8f)
-            .layoutId(IntroSliderConstraintsItem.ButtonSection.layoutId),
+        modifier = modifier
+            .fillMaxWidth(0.8f),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center) {
 
@@ -59,7 +58,7 @@ fun IntroSliderButtons(
 
 
         TextButton(
-            onClick = { onClickSkipButton() },
+            onClick = onClickSkipButton,
             modifier = Modifier
                 .wrapContentSize()) {
             Text(

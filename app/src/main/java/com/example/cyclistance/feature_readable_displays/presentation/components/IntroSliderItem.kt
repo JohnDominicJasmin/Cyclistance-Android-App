@@ -4,11 +4,13 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -28,60 +30,76 @@ private val introSliderItems  =
     )
 
 
-
-
-
 @ExperimentalPagerApi
 @Composable
 fun IntroSliderItem(
-    pagerState: PagerState) {
+    pagerState: PagerState,
+    modifier: Modifier = Modifier) {
 
+    Surface(color = MaterialTheme.colors.background, modifier = modifier) {
 
-            Column(
-            modifier = Modifier.layoutId(IntroSliderConstraintsItem.HorizontalPager.layoutId)) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,) {
 
             HorizontalPager(
+                modifier = Modifier.weight(0.7f),
                 count = introSliderItems.size,
                 state = pagerState) { page ->
 
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+                Column(horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,) {
+
+                    Spacer(modifier = Modifier.weight(0.2f))
 
                     Image(
                         painter = painterResource(id = introSliderItems[page].image),
                         contentDescription = introSliderItems[page].title + " Images",
                         alignment = Alignment.Center,
-                        modifier = Modifier.wrapContentSize(),
+                        contentScale = ContentScale.Fit,
+                        modifier = Modifier
+                            .padding(horizontal = 12.dp, vertical = 24.dp)
+                            .scale(1.2f)
+                            .weight(0.8f),
                     )
 
 
-                    Spacer(modifier = Modifier.height(22.dp))
+                    Spacer(modifier = Modifier.weight(0.15f))
 
-                    Text(modifier = Modifier.padding(all = 10.dp),
+                    Text(
+                        modifier = Modifier
+                            .padding(all = 10.dp)
+                            .weight(0.2f),
                         text = introSliderItems[page].title,
                         fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colors.onBackground)
 
-                    Spacer(modifier = Modifier.height(15.dp))
-
                     Text(
+
                         text = introSliderItems[page].description,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Normal, lineHeight = 14.sp,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colors.onBackground,
-                    modifier = Modifier.fillMaxWidth(0.76f))
+                        modifier = Modifier
+                            .fillMaxWidth(0.76f)
+                            .weight(0.3f)
+                    )
+                    Spacer(modifier = Modifier.weight(0.2f))
 
 
                 }
             }
-            Spacer(modifier = Modifier.height(15.dp))
-            PagerIndicator(pagerState = pagerState, modifier = Modifier
-                .align(Alignment.CenterHorizontally)
-                .padding(16.dp))
 
+            PagerIndicator(
+                pagerState = pagerState, modifier = Modifier
+                    .align(Alignment.CenterHorizontally)
+                    .padding(16.dp))
         }
+    }
 
 
 
