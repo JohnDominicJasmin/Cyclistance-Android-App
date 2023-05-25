@@ -10,12 +10,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_readable_displays.presentation.components.IntroSliderButtons
+import com.example.cyclistance.feature_readable_displays.presentation.components.IntroSliderButtonSection
 import com.example.cyclistance.feature_readable_displays.presentation.components.IntroSliderItem
-import com.example.cyclistance.feature_readable_displays.presentation.components.introSliderConstraints
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -109,15 +107,21 @@ private fun IntroSliderContent(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
 
-            ConstraintLayout(
-                constraintSet = introSliderConstraints) {
 
-                IntroSliderItem(pagerState = pagerState)
-                IntroSliderButtons(
-                    text = if (isOnLastPage) "Let's get Started!" else "Next",
-                    onClickSkipButton = onClickSkipButton,
-                    onClickNextButton = onClickNextButton)
-            }
+            IntroSliderItem(
+                pagerState = pagerState,
+                modifier = Modifier
+                    .weight(0.7f)
+            )
+
+
+
+            IntroSliderButtonSection(
+                modifier = Modifier
+                    .weight(0.3f),
+                text = if (isOnLastPage) "Let's get Started!" else "Next",
+                onClickSkipButton = onClickSkipButton,
+                onClickNextButton = onClickNextButton)
         }
     }
 }
