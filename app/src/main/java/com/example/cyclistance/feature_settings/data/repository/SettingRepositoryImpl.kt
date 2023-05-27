@@ -6,6 +6,8 @@ import android.os.Bundle
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.AuthConstants
+import com.example.cyclistance.core.utils.constants.AuthConstants.IMAGE_LARGE_SIZE
+import com.example.cyclistance.core.utils.constants.AuthConstants.IMAGE_SMALL_SIZE
 import com.example.cyclistance.core.utils.constants.SettingConstants.DATA_STORE_THEME_KEY
 import com.example.cyclistance.core.utils.extension.editData
 import com.example.cyclistance.core.utils.extension.getData
@@ -120,10 +122,11 @@ class SettingRepositoryImpl(
         return AccessToken.getCurrentAccessToken()
     }
 
-    private suspend fun getUserFacebookInformation(): String{
+    private suspend fun getUserFacebookInformation(): String?{
         return suspendCancellableCoroutine { continuation ->
             val request = GraphRequest.newMeRequest(getFacebookToken()) { jsonObject: JSONObject?, _ ->
-                continuation.resume(jsonObject.toString())
+                val result = jsonObject.toString().takeUnless { it == "null" }
+                continuation.resume(result)
             }
             val parameters = Bundle()
             parameters.putString("fields", "id,name, email, link, picture.type(large)")
@@ -135,16 +138,20 @@ class SettingRepositoryImpl(
 
     override suspend fun getName(): String? {
         val infoString = getUserFacebookInformation()
-        val jsonObject = JSONObject(infoString)
-        val fbName = jsonObject.getString("name")
-        return auth.currentUser?.displayName?.takeIf { it.isNotEmpty() } ?: fbName
+        val jsonObject = infoString?.let(::JSONObject)
+        val fbName = jsonObject?.getString("name")
+        val authName: String? = auth.currentUser?.displayName
+        return authName?.takeIf { it.isNotEmpty() } ?: fbName
     }
 
-    override suspend fun getPhotoUrl(): String {
+    override suspend fun getPhotoUrl(): String? {
         val infoString = getUserFacebookInformation()
-        val jsonObject = JSONObject(infoString)
-        val fbPhotoUrl = jsonObject.getJSONObject("picture").getJSONObject("data").getString("url")
-        return auth.currentUser?.photoUrl.toString().replace(oldValue = AuthConstants.IMAGE_SMALL_SIZE, newValue = AuthConstants.IMAGE_LARGE_SIZE).takeIf { it.isNotEmpty() } ?: fbPhotoUrl
+        val jsonObject = infoString?.let(::JSONObject)
+        val fbPhotoUrl = jsonObject?.getJSONObject("picture")?.getJSONObject("data")?.getString("url")
+        val authPhotoUrl: String = auth.currentUser?.photoUrl.toString().apply {
+            replace(oldValue = IMAGE_SMALL_SIZE, newValue = IMAGE_LARGE_SIZE)
+        }
+        return authPhotoUrl.takeIf { it.isNotEmpty() } ?: fbPhotoUrl
 
     }
 }
