@@ -1,11 +1,13 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state
 
 import android.os.Parcelable
+import com.example.cyclistance.core.utils.annotations.StableState
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
 import kotlinx.parcelize.Parcelize
 
 
 @Parcelize
+@StableState
 data class ConfirmDetailsUiState(
     val address: String = "",
     val addressErrorMessage: String = "",

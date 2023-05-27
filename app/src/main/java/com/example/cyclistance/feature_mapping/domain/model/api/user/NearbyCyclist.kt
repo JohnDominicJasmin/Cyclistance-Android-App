@@ -1,12 +1,10 @@
 package com.example.cyclistance.feature_mapping.domain.model.api.user
 
 import android.os.Parcelable
-import androidx.compose.runtime.Stable
+import com.example.cyclistance.core.utils.annotations.StableState
 import kotlinx.parcelize.Parcelize
-import javax.annotation.concurrent.Immutable
 
-@Stable
-@Immutable
+@StableState
 @Parcelize
 data class NearbyCyclist(
     val users: List<UserItem> = emptyList()

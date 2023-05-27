@@ -1,13 +1,11 @@
 package com.example.cyclistance.feature_alert_dialog.domain.model
 
 import android.os.Parcelable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
+import com.example.cyclistance.core.utils.annotations.StableState
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-@Immutable
-@Stable
+@StableState
 data class AlertDialogState(
     val title: String = "",
     val description: String = "",

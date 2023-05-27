@@ -1,12 +1,10 @@
 package com.example.cyclistance.feature_mapping.domain.model.ui.rescue
 
 import android.os.Parcelable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
+import com.example.cyclistance.core.utils.annotations.StableState
 import kotlinx.parcelize.Parcelize
 
-@Stable
-@Immutable
+@StableState
 @Parcelize
 data class CancelledRescueModel(
     val transactionID:String? = null,

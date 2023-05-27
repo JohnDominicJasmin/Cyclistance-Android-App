@@ -1,8 +1,7 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state
 
 import android.os.Parcelable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
+import com.example.cyclistance.core.utils.annotations.StableState
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
 import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
@@ -11,10 +10,8 @@ import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueR
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-@Immutable
-@Stable
+@StableState
 data class MappingState(
-
     val isLoading: Boolean = false,
     val userLocation: LocationModel? = null,
     val rescueTransaction: RescueTransactionItem? = null,
