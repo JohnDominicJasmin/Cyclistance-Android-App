@@ -1,8 +1,5 @@
 {
   "projects": {
-    "default": "cyclistance-cc715",
-    "cyclistance-testing": "cyclistance-cc715"
-  },
-  "targets": {},
-  "etags": {}
+    "default": "cyclistance-cc715"
+  }
 }
