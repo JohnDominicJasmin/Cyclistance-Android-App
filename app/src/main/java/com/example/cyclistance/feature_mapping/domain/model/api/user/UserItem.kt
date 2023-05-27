@@ -1,13 +1,11 @@
 package com.example.cyclistance.feature_mapping.domain.model.api.user
 
 import android.os.Parcelable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
+import com.example.cyclistance.core.utils.annotations.StableState
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-@Immutable
-@Stable
+@StableState
 data class UserItem(
     val address: String? = null,
     val contactNumber: String? = null,

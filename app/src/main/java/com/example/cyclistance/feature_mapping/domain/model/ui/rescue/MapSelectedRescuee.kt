@@ -1,12 +1,10 @@
 package com.example.cyclistance.feature_mapping.domain.model.ui.rescue
 
 import android.os.Parcelable
-import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
+import com.example.cyclistance.core.utils.annotations.StableState
 import kotlinx.parcelize.Parcelize
 @Parcelize
-@Immutable
-@Stable
+@StableState
 data class MapSelectedRescuee(
     val userId: String = "",
     val userProfileImage: String = "",

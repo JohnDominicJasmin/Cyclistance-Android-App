@@ -1,10 +1,10 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_email.state
 
 import android.os.Parcelable
-import androidx.compose.runtime.Stable
+import com.example.cyclistance.core.utils.annotations.StableState
 import kotlinx.parcelize.Parcelize
 
-@Stable
+@StableState
 @Parcelize
 data class EmailAuthState(
     val secondsLeft: Int = 0,
