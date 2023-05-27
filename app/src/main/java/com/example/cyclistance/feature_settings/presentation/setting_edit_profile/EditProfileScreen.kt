@@ -19,9 +19,11 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -52,7 +54,8 @@ import kotlinx.coroutines.launch
 
 
 @SuppressLint("MissingPermission")
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalComposeUiApi::class,
+    ExperimentalMaterialApi::class)
 @Composable
 fun EditProfileScreen(
     editProfileViewModel: EditProfileViewModel = hiltViewModel(),
@@ -62,12 +65,29 @@ fun EditProfileScreen(
 
     val state by editProfileViewModel.state.collectAsStateWithLifecycle()
 
-
+    val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
 
     var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
     var uiState by remember { mutableStateOf(EditProfileUiState()) }
+    val scope = rememberCoroutineScope()
+    val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val toggleBottomSheet = remember(bottomSheetScaffoldState, state.isLoading) {
+        {
+            scope.launch {
 
+                if (!state.isLoading) {
+                    with(bottomSheetScaffoldState) {
+                        if (isVisible) {
+                            hide()
+                        } else {
+                            show()
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     val openGalleryResultLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -248,13 +268,19 @@ fun EditProfileScreen(
                 is EditProfileUiEvent.CancelEditProfile -> cancelEditProfile()
                 is EditProfileUiEvent.ConfirmEditProfile -> confirmEditProfile()
                 is EditProfileUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
+                is EditProfileUiEvent.ToggleBottomSheet -> {
+                    toggleBottomSheet()
+                    keyboardController?.hide()
+                }
             }
         },
-        uiState = uiState
+        uiState = uiState,
+        bottomSheetScaffoldState = bottomSheetScaffoldState
     )
 
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun EditProfilePreview() {
@@ -264,7 +290,11 @@ fun EditProfilePreview() {
             modifier = Modifier,
             photoUrl = "",
             state = EditProfileState(isLoading = false),
-            uiState = EditProfileUiState())
+            uiState = EditProfileUiState(),
+            bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
+            event = {}
+
+        )
     }
 }
 
@@ -277,23 +307,12 @@ fun EditProfileScreenContent(
     state: EditProfileState = EditProfileState(),
     keyboardActions: KeyboardActions = KeyboardActions { },
     uiState: EditProfileUiState,
+    bottomSheetScaffoldState: ModalBottomSheetState,
     event: (EditProfileUiEvent) -> Unit = {}
 ) {
 
 
-    val scope = rememberCoroutineScope()
-    val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-    val toggleBottomSheet = remember(bottomSheetScaffoldState, state.isLoading) {
-        {
-            scope.launch {
-                if (!state.isLoading) {
-                    with(bottomSheetScaffoldState) {
-                        if (isVisible) hide() else show()
-                    }
-                }
-            }
-        }
-    }
+
 
     val isUserInformationChanges by remember(
         uiState.name,
@@ -311,11 +330,11 @@ fun EditProfileScreenContent(
 
         SelectImageBottomSheet(
             onClickGalleryButton = {
-                toggleBottomSheet()
+                event(EditProfileUiEvent.ToggleBottomSheet)
                 event(EditProfileUiEvent.SelectImageFromGallery)
             },
             onClickCameraButton = {
-                toggleBottomSheet()
+                event(EditProfileUiEvent.ToggleBottomSheet)
                 event(EditProfileUiEvent.OpenCamera)
             },
             bottomSheetScaffoldState = bottomSheetScaffoldState,
@@ -337,7 +356,7 @@ fun EditProfileScreenContent(
 
                         },
                     onClick = {
-                        toggleBottomSheet()
+                        event(EditProfileUiEvent.ToggleBottomSheet)
                     })
 
 
@@ -357,7 +376,7 @@ fun EditProfileScreenContent(
                     },
                     style = MaterialTheme.typography.body2,
                     onClick = {
-                        toggleBottomSheet()
+                        event(EditProfileUiEvent.ToggleBottomSheet)
                     })
 
 

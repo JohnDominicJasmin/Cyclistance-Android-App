@@ -8,5 +8,7 @@ sealed class EditProfileUiEvent{
     object CancelEditProfile: EditProfileUiEvent()
     object ConfirmEditProfile: EditProfileUiEvent()
     object DismissNoInternetDialog: EditProfileUiEvent()
+    object ToggleBottomSheet: EditProfileUiEvent()
+
 
 }
