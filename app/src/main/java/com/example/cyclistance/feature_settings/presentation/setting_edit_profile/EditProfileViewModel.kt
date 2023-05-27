@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 
@@ -75,6 +76,7 @@ class EditProfileViewModel @Inject constructor(
             _eventFlow.emit(value = EditProfileEvent.GetPhotoUrlSuccess(photoUrl))
             finishLoading()
         }.onFailure {
+            Timber.e(it.message)
             finishLoading()
         }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
