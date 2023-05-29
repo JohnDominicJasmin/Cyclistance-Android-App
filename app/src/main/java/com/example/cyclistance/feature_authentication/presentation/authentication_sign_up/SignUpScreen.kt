@@ -4,9 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -18,13 +16,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -228,7 +225,7 @@ fun SignUpScreen(
 }
 
 
-@Preview(device = Devices.PIXEL_4)
+@Preview(device = "id:Galaxy Nexus")
 @Composable
 fun SignUpScreenPreview() {
     CyclistanceTheme(true) {
@@ -262,8 +259,7 @@ fun SignUpScreenContent(
                 contentDescription = "App Icon",
                 painter = painterResource(R.drawable.ic_app_icon_cyclistance),
                 modifier = Modifier
-                    .height(100.dp)
-                    .width(90.dp)
+                    .scale(1f)
                     .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
             )
 

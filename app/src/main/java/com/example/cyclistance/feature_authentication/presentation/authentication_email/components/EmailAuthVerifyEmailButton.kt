@@ -1,6 +1,8 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_email.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -14,7 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -40,11 +41,13 @@ fun EmailAuthVerifyEmailButton(enabled: Boolean = false, onClickVerifyButton: ()
         shape = RoundedCornerShape(12.dp)) {
         Text(
             text = "Verify Email",
-            fontSize = 16.sp,
-            textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.button.copy(
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+            ),
 
-        )
+
+            )
     }
 }
 

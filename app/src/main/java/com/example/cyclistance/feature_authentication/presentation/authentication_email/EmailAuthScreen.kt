@@ -9,9 +9,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -24,11 +22,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -198,7 +196,7 @@ fun EmailAuthScreen(
 
 }
 
-@Preview()
+@Preview(device = "id:Galaxy Nexus")
 @Composable
 fun EmailAuthScreenPreview() {
     CyclistanceTheme(true) {
@@ -242,8 +240,7 @@ fun EmailAuthScreenContent(
                     contentDescription = "App Icon",
                     painter = painterResource(id = if (isDarkTheme) R.drawable.ic_dark_email else R.drawable.ic_light_email),
                     modifier = Modifier
-                        .height(165.dp)
-                        .width(155.dp)
+                        .scale(1f)
                         .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
 
                 )

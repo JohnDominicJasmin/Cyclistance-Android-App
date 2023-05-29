@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -26,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -80,7 +79,7 @@ fun NoInternetDialog(
                         contentDescription = "No Internet Image",
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
-                            .size(115.dp)
+                            .scale(1f)
                             .padding(top = 20.dp)
                     )
 
@@ -93,18 +92,19 @@ fun NoInternetDialog(
 
                         Text(
                             text = "No Internet Connection",
-                            style = MaterialTheme.typography.h6,
-                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.h6.copy(
+                                textAlign = TextAlign.Center,
+                                color = MaterialTheme.colors.onSurface),
                             modifier = Modifier,
-                            color = MaterialTheme.colors.onSurface,
                         )
 
                         Text(
                             text = "No Internet connection. Make sure Wi-Fi \n" +
                                    "or mobile data is turned on, then try again.",
-                            style = MaterialTheme.typography.subtitle1,
-                            fontSize = 14.sp,
-                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.subtitle1.copy(
+                                fontSize = 14.sp,
+                                textAlign = TextAlign.Center,
+                            ),
                             modifier = Modifier
                                 .padding(top = 6.dp, start = 25.dp, end = 25.dp),
                             color = Black500,
@@ -118,7 +118,7 @@ fun NoInternetDialog(
                             },
                             shape = RoundedCornerShape(12.dp),
                             modifier = Modifier
-                                .width(80.dp),
+                                .fillMaxWidth(0.28f),
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = MaterialTheme.colors.primary,
                                 contentColor = MaterialTheme.colors.onPrimary)) {
@@ -150,7 +150,7 @@ fun NoInternetDialog(
     }
 }
 
-@Preview
+@Preview(device = "id:pixel_3")
 @Composable
 fun PreviewInfoDialog() {
     CyclistanceTheme(true) {

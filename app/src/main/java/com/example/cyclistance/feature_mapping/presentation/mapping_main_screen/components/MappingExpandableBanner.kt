@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -77,7 +78,7 @@ fun MappingExpandableBanner(
                     .alpha(ContentAlpha.medium)
                     .rotate(rotationState)
                     .clip(CircleShape)
-                    .size(30.dp)
+                    .scale(1.5f)
                     .clickable {
                         expandedState = !expandedState
                     })
@@ -99,6 +100,7 @@ fun MappingExpandableBanner(
                     contentDescription = "User Picture",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
+                        .padding(top = 4.dp)
                         .size(60.dp)
                         .clip(CircleShape)
                         .constrainAs(roundedImage) {
@@ -225,8 +227,8 @@ fun MappingExpandableBanner(
                         }
 
 
-                        val hasMessage = remember(banner.message) {
-                            banner.message.isNotEmpty()
+                        val hasMessage by remember(banner.message) {
+                            derivedStateOf { banner.message.isNotEmpty() }
                         }
 
                         if (hasMessage) {

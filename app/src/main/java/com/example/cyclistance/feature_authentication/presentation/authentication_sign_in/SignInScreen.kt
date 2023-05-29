@@ -6,9 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
@@ -24,13 +22,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -50,7 +48,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthState
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInButton
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInClickableText
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInGoogleAndFacebookSection
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInCredentialsSection
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInTextFieldsArea
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignUpTextArea
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.signInConstraints
@@ -338,7 +336,7 @@ fun SignInScreen(
     )
 }
 
-@Preview
+@Preview(device = "id:Galaxy Nexus")
 @Composable
 fun SignInScreenPreview() {
     CyclistanceTheme(true) {
@@ -371,8 +369,7 @@ fun SignInScreenContent(
                 contentDescription = "App Icon",
                 painter = painterResource(R.drawable.ic_app_icon_cyclistance),
                 modifier = Modifier
-                    .height(100.dp)
-                    .width(90.dp)
+                    .scale(1f)
                     .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
             )
 
@@ -412,7 +409,7 @@ fun SignInScreenContent(
                 (signInState.isLoading || emailAuthState.isLoading)
             }
 
-            SignInGoogleAndFacebookSection(
+            SignInCredentialsSection(
                 onClickFacebookButton = { event(SignUiEvent.SignInWithFacebook) },
                 onClickGoogleButton = { event(SignUiEvent.SignInWithGoogle) },
                 enabled = !isLoading

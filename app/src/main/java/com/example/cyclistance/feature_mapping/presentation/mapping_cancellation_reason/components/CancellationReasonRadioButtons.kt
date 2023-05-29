@@ -1,6 +1,11 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.RadioButton
@@ -45,15 +50,14 @@ fun RadioButtonsSection(
     errorMessage: String,
     onSelectReason: (String) -> Unit) {
 
-    val hasError = remember(errorMessage){ errorMessage.isNotEmpty() }
+    val hasError = remember(errorMessage) { errorMessage.isNotEmpty() }
 
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.Start) {
 
-        val selectionType =
-            remember(cancellationType) { (if (cancellationType == SELECTION_RESCUEE_TYPE) rescueeCancellationReasons else rescuerCancellationReasons) }
+        val selectionType = remember(cancellationType) { (if (cancellationType == SELECTION_RESCUEE_TYPE) rescueeCancellationReasons else rescuerCancellationReasons) }
         selectionType.forEach { text ->
             SelectionButton(
                 selectionText = text,
@@ -108,10 +112,11 @@ private fun SelectionButton(
                 selectedColor = MaterialTheme.colors.primary,
                 unselectedColor = Black450)
         )
+
         Text(
             text = selectionText,
             modifier = Modifier.padding(start = 8.dp, end = 4.dp),
-            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.body1.copy(color = MaterialTheme.colors.onBackground,)
         )
     }
 }

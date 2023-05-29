@@ -12,8 +12,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-
-import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 @Preview
 @Composable
@@ -28,9 +26,11 @@ fun SignUpTextArea() {
                 }
             },
             textAlign = TextAlign.Center,
-            fontSize = 16.sp,
-            color = MaterialTheme.colors.onBackground,
-            fontWeight = FontWeight.Bold
+            style = MaterialTheme.typography.subtitle1.copy(
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colors.onBackground,
+            ),
+
         )
     }
 }

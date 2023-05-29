@@ -26,8 +26,7 @@ fun RequestHelpButton(
     modifier: Modifier = Modifier,
     onClickRequestHelpButton: () -> Unit = {},
     state: MappingState = MappingState(),
-    visible: Boolean = true
-    ) {
+    visible: Boolean = true) {
 
 
     AnimatedVisibility(
@@ -37,6 +36,7 @@ fun RequestHelpButton(
         exit = fadeOut(
             animationSpec = tween(durationMillis = 100)
         )) {
+
         Button(
             enabled = !state.isLoading,
             onClick = onClickRequestHelpButton,

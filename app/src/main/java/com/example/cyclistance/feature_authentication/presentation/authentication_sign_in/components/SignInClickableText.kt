@@ -9,32 +9,32 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.theme.Blue600
 
 @Composable
-fun SignInClickableText(enabled: Boolean, onClickSignInText:()->Unit) {
+fun SignInClickableText(enabled: Boolean, onClickSignInText: () -> Unit) {
 
-    Box(modifier = Modifier
-        .wrapContentSize()
-        .layoutId(AuthenticationConstraintsItem.ClickableTextSection.layoutId)){
-
-        ClickableText(text = buildAnnotatedString {
-            withStyle(style = SpanStyle(color = MaterialTheme.colors.onBackground, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)){
-                append(text = "Don't have an account?" )
-            }
-            withStyle(style = SpanStyle(color = Blue600, fontWeight = FontWeight.SemiBold,fontSize = 14.sp)){
-                append(" ")
-                append(text = "Sign up")
-            }
-        }, onClick = {
-            if(enabled) {
-                onClickSignInText()
-            }
-        })
+    Box(
+        modifier = Modifier
+            .wrapContentSize()
+            .layoutId(AuthenticationConstraintsItem.ClickableTextSection.layoutId)) {
+        ClickableText(
+            style = MaterialTheme.typography.subtitle2,
+            text = buildAnnotatedString {
+                withStyle(style = SpanStyle(color = MaterialTheme.colors.onBackground)) {
+                    append(text = "Don't have an account?")
+                }
+                withStyle(style = SpanStyle(color = Blue600)) {
+                    append(" ")
+                    append(text = "Sign up")
+                }
+            }, onClick = {
+                if (enabled) {
+                    onClickSignInText()
+                }
+            })
     }
 
 }

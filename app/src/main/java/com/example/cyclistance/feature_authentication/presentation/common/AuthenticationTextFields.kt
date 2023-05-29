@@ -30,13 +30,16 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.cyclistance.theme.Black500
 
 
@@ -155,9 +158,12 @@ private fun SetupTextField(
             placeholder = {
                 Text(
                     text = placeholderText,
-                    color = if (hasError) MaterialTheme.colors.error else Black500,
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Center
+                    style = MaterialTheme.typography.subtitle2.copy(
+                        fontWeight = FontWeight.Normal,
+                        color = if (hasError) MaterialTheme.colors.error else Black500,
+                        textAlign = TextAlign.Center
+                        ),
+
                 )
             },
             trailingIcon = trailingIcon,
@@ -173,7 +179,11 @@ private fun SetupTextField(
             keyboardOptions = keyboardOptions,
             colors = textFieldColors(),
             visualTransformation = visualTransformation,
-            keyboardActions = keyboardActions
+            keyboardActions = keyboardActions,
+            textStyle = TextStyle(
+                fontSize = TextUnit(value = 14f, type = TextUnitType.Sp)
+            )
+
 
         )
         if (hasError) {

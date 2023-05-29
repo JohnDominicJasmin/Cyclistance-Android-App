@@ -14,11 +14,11 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.common.visible
-import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
+import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.event.RescueRequestUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.state.RescueRequestUiState
@@ -46,6 +46,12 @@ fun RescueRequestScreenContent(
     val respondents = remember(mappingState.newRescueRequest?.request?.size) {
         mappingState.newRescueRequest?.request ?: emptyList()
     }
+    val hasRespondents by remember{
+        derivedStateOf { respondents.isNotEmpty() }
+    }
+    val numberOfRespondents by remember{ derivedStateOf {
+        respondents.size
+    }}
 
 
 
@@ -64,17 +70,13 @@ fun RescueRequestScreenContent(
                 horizontalAlignment = Alignment.CenterHorizontally) {
 
 
-                if (respondents.isNotEmpty()) {
+                if (hasRespondents) {
                     Text(
-                        text = "${respondents.size} NEW REQUEST",
+                        text = "$numberOfRespondents NEW REQUEST",
                         color = MaterialTheme.colors.onBackground,
-                        style = TextStyle(
-                            letterSpacing = 4.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp),
+                        style = MaterialTheme.typography.h6.copy(letterSpacing = 3.sp),
                         modifier = Modifier.padding(vertical = 12.dp),
                         textAlign = TextAlign.Center,
-
                         )
                 }
 
@@ -100,7 +102,6 @@ fun RescueRequestScreenContent(
                                             end = 4.dp,
                                             top = 6.dp,
                                             bottom = 6.dp)
-
                                         .fillMaxWidth(fraction = 0.95f)
                                         .wrapContentHeight(), cardState = respondent,
                                     onClickCancelButton = { event(RescueRequestUiEvent.CancelRequestHelp(respondent.id ?: "")) },
