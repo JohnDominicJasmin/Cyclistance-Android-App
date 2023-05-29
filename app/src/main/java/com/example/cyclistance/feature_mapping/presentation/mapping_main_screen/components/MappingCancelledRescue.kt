@@ -1,21 +1,31 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidthIn
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.cyclistance.R
@@ -25,7 +35,7 @@ import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.theme.Red610
 
-@OptIn(ExperimentalComposeUiApi::class)
+
 @Composable
 fun MappingCancelledRescue(
     modifier: Modifier = Modifier,
@@ -72,7 +82,9 @@ private fun MappingCancelledRescueContent(
         contentAlignment = Alignment.TopCenter) {
 
         Column(
-            modifier = Modifier.padding(bottom = 10.dp).fillMaxWidth(0.94f),
+            modifier = Modifier
+                .padding(bottom = 10.dp)
+                .fillMaxWidth(0.94f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)) {
 
@@ -83,14 +95,12 @@ private fun MappingCancelledRescueContent(
                 title = "Rescue Cancelled"
             )
 
+            CancellationDetails(cancelledRescueModel)
 
-
-                CancellationDetails(cancelledRescueModel)
-
-                OutlinedActionButton(
-                    text = "Ok",
-                    onClick = onClickOkButton,
-                    modifier = Modifier.width(100.dp))
+            OutlinedActionButton(
+                text = "Ok",
+                onClick = onClickOkButton,
+                modifier = Modifier.width(100.dp))
 
         }
     }
@@ -110,8 +120,7 @@ private fun CancellationDetails(cancelledRescueModel: CancelledRescueModel) {
             modifier = Modifier.padding(top = 12.dp, bottom = 6.dp),
             text = "Cancellation Details",
             color = MaterialTheme.colors.onSurface,
-            fontSize = 16.sp,
-            fontWeight = FontWeight.Medium)
+            style = MaterialTheme.typography.subtitle1)
 
         cancelledRescueModel.transactionID?.let {
             DetailsItem(
@@ -174,8 +183,7 @@ fun TopBanner(modifier: Modifier, color: Color, iconId: Int, title: String) {
             Text(
                 text = title,
                 color = Color.White,
-                fontSize = 20.sp,
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.h6,
                 textAlign = TextAlign.Start,
                 fontWeight = FontWeight.Medium
             )
@@ -192,27 +200,29 @@ private fun DetailsItem(modifier: Modifier = Modifier, itemTitle: String, itemVa
     Row(
         modifier = modifier.wrapContentHeight(),
         verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.spacedBy(18.dp,
+        horizontalArrangement = Arrangement.spacedBy(
+            18.dp,
             alignment = Alignment.CenterHorizontally)) {
 
         Text(
             text = itemTitle,
-            color = Black440,
-            fontWeight = FontWeight.Normal,
-            fontSize = 14.sp,
-            textAlign = TextAlign.Start
-        )
+            style = MaterialTheme.typography.subtitle2.copy(
+                fontWeight = FontWeight.Normal,
+                color = Black440,
+                textAlign = TextAlign.Start
+            ),
+
+            )
 
         Spacer(modifier = Modifier.weight(0.1f))
 
         Text(
             text = itemValue,
-            color = MaterialTheme.colors.onSurface,
             textAlign = TextAlign.End,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-
+            style = MaterialTheme.typography.subtitle2.copy(
+                color = MaterialTheme.colors.onSurface,
             )
+        )
 
     }
 }
@@ -228,7 +238,7 @@ private fun PreviewDetailsItem() {
     }
 }
 
-@Preview(name = "MappingCancelledRescue", device = Devices.PIXEL_3A, widthDp = 400)
+@Preview(name = "MappingCancelledRescue", device = "id:Galaxy Nexus", widthDp = 400)
 @Composable
 private fun PreviewMappingCancelledRescue() {
     CyclistanceTheme(true) {

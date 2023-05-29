@@ -23,7 +23,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -239,8 +238,8 @@ fun NavScreen(
                 drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
                 scaffoldState = scaffoldState,
                 topBar = {
-
                     Column {
+
                         TopAppBar(
                             route = navBackStackEntry?.destination?.route,
                             onClickMenuIcon = onClickMenuIcon,
@@ -250,6 +249,7 @@ fun NavScreen(
                         NoInternetStatusBar(
                             navUiState.internetAvailable,
                             navBackStackEntry?.destination?.route)
+
                     }
                 },
                 drawerContent = {
@@ -379,7 +379,7 @@ private fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
             Text(
                 text = "No Connection",
                 color = White50,
-                fontSize = 13.sp,
+                style = MaterialTheme.typography.body2,
                 modifier = Modifier.padding(vertical = 1.5.dp))
         }
     }

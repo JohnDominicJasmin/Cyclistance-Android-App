@@ -41,13 +41,17 @@ fun EmailAuthTextStatus(email: String) {
 
 @Composable
 private fun EmailStatus(modifier: Modifier = Modifier, text: String, fontWeight: FontWeight) {
+
     Text(
         modifier = modifier,
         text = text,
-        color = MaterialTheme.colors.onBackground,
-        fontSize = 16.sp,
-        fontWeight = fontWeight,
-        textAlign = TextAlign.Center)
+        style = MaterialTheme.typography.body1.copy(
+            lineHeight = 24.sp,
+            letterSpacing = 0.15.sp,
+            fontWeight = fontWeight,
+            color = MaterialTheme.colors.onBackground,
+            textAlign = TextAlign.Center)
+        )
 
 }
 

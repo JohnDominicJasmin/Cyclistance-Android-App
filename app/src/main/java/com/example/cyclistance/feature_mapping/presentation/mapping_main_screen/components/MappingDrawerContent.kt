@@ -31,7 +31,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
@@ -52,8 +51,6 @@ fun MappingDrawerContent(
     respondentCount: Int = 0,
     uiState: NavUiState = NavUiState()
     ) {
-
-
 
     ConstraintLayout(
         modifier = Modifier
@@ -93,8 +90,6 @@ fun MappingDrawerContent(
                     color = MaterialTheme.colors.onSecondary,
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(top = 7.dp, bottom = 10.dp))
-
-
             }
         }
 
@@ -159,6 +154,10 @@ fun MappingDrawerContentPreview() {
             onClickSettings = {},
             onClickChat = {},
             onClickSignOut = {},
+            uiState = NavUiState(
+                name = "John Doe",
+                photoUrl = "https://www.w3schools.com/howto/img_avatar.png"
+            )
         )
     }
 }
@@ -218,7 +217,7 @@ fun BadgeCount(modifier: Modifier = Modifier, count: String) {
             Text(
                 text = count,
                 textAlign = TextAlign.Center,
-                fontSize = 14.sp)
+                fontSize = MaterialTheme.typography.subtitle2.fontSize)
         }
     }
 

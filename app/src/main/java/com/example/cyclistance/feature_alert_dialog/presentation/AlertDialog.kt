@@ -1,6 +1,11 @@
 package com.example.cyclistance.feature_alert_dialog.presentation
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -11,12 +16,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
 import com.example.cyclistance.feature_alert_dialog.presentation.utils.DialogCreator
@@ -46,16 +48,14 @@ fun AlertDialog(
             Text(
                 alertDialog.title,
                 textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.onSurface)
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
                 alertDialog.description,
-                style = TextStyle(fontSize = 14.sp),
+                style = MaterialTheme.typography.body2,
                 textAlign = TextAlign.Center,
                 color = Black500)
 
@@ -75,7 +75,8 @@ fun AlertDialog(
                 Text(
                     text = "Ok",
                     color = MaterialTheme.colors.onPrimary,
-                    style = MaterialTheme.typography.button)
+                    style = MaterialTheme.typography.button,
+                )
 
             }
         }

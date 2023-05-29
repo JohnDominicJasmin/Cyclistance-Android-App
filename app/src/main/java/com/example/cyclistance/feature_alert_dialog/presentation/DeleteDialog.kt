@@ -2,7 +2,14 @@ package com.example.cyclistance.feature_alert_dialog.presentation
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -19,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.ParagraphStyle
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -63,9 +69,7 @@ fun DeleteAccountDialog(
             Text(
                 "Delete Account?",
                 textAlign = TextAlign.Center,
-                style = TextStyle(
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold),
+                style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.onSurface,
                 modifier = Modifier.padding(bottom = 9.dp))
 
@@ -74,10 +78,7 @@ fun DeleteAccountDialog(
             Text(
                 text = "You'll permanently lose your:",
                 color = Black500,
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight(500),
-                    textAlign = TextAlign.Center),
+                style = MaterialTheme.typography.subtitle2.copy(textAlign = TextAlign.Center),
                 modifier = Modifier.padding(bottom = 6.5.dp))
 
 
@@ -93,17 +94,15 @@ fun DeleteAccountDialog(
                     }
                 },
                 color = Black500,
-                style = TextStyle(fontSize = 14.sp),
+                style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Normal),
                 modifier = Modifier.padding(bottom = 8.dp))
 
 
             Text(
                 text = "Type \"delete account\" to confirm",
                 color = Black500,
-                style = TextStyle(
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Center),
-            )
+                style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Normal))
+
             BasicTextField(
                 value = text,
                 onValueChange = onValueChangeText,
@@ -123,9 +122,7 @@ fun DeleteAccountDialog(
                     autoCorrect = false,
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done),
-                textStyle = TextStyle(
-                    color = MaterialTheme.colors.onSurface
-                )
+                textStyle = MaterialTheme.typography.subtitle2.copy(color = MaterialTheme.colors.onSurface)
             )
 
 
@@ -149,9 +146,7 @@ fun DeleteAccountDialog(
                     Text(
                         text = "Cancel",
                         color = Black500,
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium))
+                        style = MaterialTheme.typography.subtitle2)
                 }
 
 
@@ -167,9 +162,7 @@ fun DeleteAccountDialog(
                     Text(
                         text = "Confirm",
                         color = Color.White,
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium))
+                        style = MaterialTheme.typography.subtitle2)
                 }
             }
         }
@@ -178,7 +171,7 @@ fun DeleteAccountDialog(
 
 
 
-@Preview(name = "DeleteDialog")
+@Preview(name = "DeleteDialog", device = "id:pixel")
 @Composable
 private fun PreviewDeleteDialog() {
 

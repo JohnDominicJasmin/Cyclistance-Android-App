@@ -8,10 +8,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.LocateUserButton
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.OpenNavigationButton
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.RecenterButton
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.RouteOverViewButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils
 import com.example.cyclistance.theme.CyclistanceTheme
 

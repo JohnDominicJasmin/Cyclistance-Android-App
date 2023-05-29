@@ -1,19 +1,28 @@
 package com.example.cyclistance.feature_mapping.presentation.common
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.core.utils.constants.MappingConstants.CHARACTER_LIMIT
@@ -29,8 +38,6 @@ fun AdditionalMessage(
     enabled: Boolean,
     onChangeValueMessage: (String) -> Unit) {
     Column(modifier = modifier) {
-
-
 
 
         Text(
@@ -51,7 +58,7 @@ fun AdditionalMessage(
 
 
                 val (textField, numberOfCharactersText) = createRefs()
-                val numberOfCharacters = remember { mutableStateOf(0) }
+                var numberOfCharacters by remember { mutableStateOf(0) }
 
                 TextField(
                     enabled = enabled,
@@ -67,7 +74,7 @@ fun AdditionalMessage(
                     value = message,
                     onValueChange = { newText ->
                         if (newText.length <= CHARACTER_LIMIT) {
-                            numberOfCharacters.value = newText.length
+                            numberOfCharacters = newText.length
                             onChangeValueMessage(newText)
                         }
                     },
@@ -86,11 +93,15 @@ fun AdditionalMessage(
                             color = Black500,
                             style = MaterialTheme.typography.body2)
                     },
+                    textStyle = TextStyle(
+                        fontSize = TextUnit(value = 14f, type = TextUnitType.Sp)
+                    )
                 )
 
                 Text(
-                    text = "${numberOfCharacters.value}/$CHARACTER_LIMIT",
+                    text = "${numberOfCharacters}/$CHARACTER_LIMIT",
                     color = Black440,
+                    style = MaterialTheme.typography.caption,
                     modifier = Modifier
                         .padding(top = 5.dp, bottom = 5.dp)
                         .constrainAs(numberOfCharactersText) {

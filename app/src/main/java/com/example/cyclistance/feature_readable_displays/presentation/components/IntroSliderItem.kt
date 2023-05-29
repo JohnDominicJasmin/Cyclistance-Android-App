@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -72,18 +71,17 @@ fun IntroSliderItem(
                             .padding(all = 10.dp)
                             .weight(0.2f),
                         text = introSliderItems[page].title,
-                        fontSize = 22.sp,
-                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.h6,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colors.onBackground)
 
                     Text(
-
                         text = introSliderItems[page].description,
-                        fontSize = 13.sp,
-                        fontWeight = FontWeight.Normal, lineHeight = 14.sp,
-                        textAlign = TextAlign.Center,
-                        color = MaterialTheme.colors.onBackground,
+                        style = MaterialTheme.typography.body2.copy(
+                            lineHeight = 14.sp,
+                            textAlign = TextAlign.Center,
+                            color = MaterialTheme.colors.onBackground,
+                        ),
                         modifier = Modifier
                             .fillMaxWidth(0.76f)
                             .weight(0.3f)

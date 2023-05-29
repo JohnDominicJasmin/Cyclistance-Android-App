@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.common
+package com.example.cyclistance.core.utils.permissions
 
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button

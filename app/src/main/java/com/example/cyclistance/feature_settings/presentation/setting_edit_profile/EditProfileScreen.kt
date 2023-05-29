@@ -281,7 +281,7 @@ fun EditProfileScreen(
 }
 
 @OptIn(ExperimentalMaterialApi::class)
-@Preview
+@Preview(device = "id:Galaxy Nexus")
 @Composable
 fun EditProfilePreview() {
 

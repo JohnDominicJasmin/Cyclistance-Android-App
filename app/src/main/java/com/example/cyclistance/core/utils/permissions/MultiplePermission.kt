@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.common
+package com.example.cyclistance.core.utils.permissions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf

@@ -1,7 +1,12 @@
 package com.example.cyclistance.feature_settings.presentation.setting_screen.components
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -29,7 +34,6 @@ fun SectionTitle(@DrawableRes iconId: Int, title: String) {
                 contentDescription = "Account Icon",
                 tint = Color.Unspecified,
                 modifier = Modifier.size(18.dp)
-
             )
 
             Text(

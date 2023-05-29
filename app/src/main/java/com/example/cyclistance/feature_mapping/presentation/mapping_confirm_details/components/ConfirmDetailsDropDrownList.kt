@@ -12,21 +12,21 @@ import androidx.compose.material.icons.filled.PedalBike
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
 sealed class BikeType(
-    val type : String,
+    val type: String,
 ) {
     object RoadBike : BikeType(type = "Road Bike")
     object MountainBike : BikeType(type = "Mountain Bike")
     object FatBike : BikeType(type = "Fat Bike")
-    object TouringBike : BikeType(type ="Touring Bike")
+    object TouringBike : BikeType(type = "Touring Bike")
     object FixedGear : BikeType(type = "Fixed Gear")
     object BMX : BikeType(type = "BMX")
     object JapaneseBike : BikeType(type = "Japanese Bike")
@@ -80,7 +80,7 @@ fun DropDownBikeList(
                     Text(
                         "Bike Type",
                         color = Black500,
-                        fontSize = 14.sp,
+                        fontSize = MaterialTheme.typography.subtitle2.fontSize,
                         textAlign = TextAlign.Center)
                 },
                 trailingIcon = {
@@ -102,6 +102,7 @@ fun DropDownBikeList(
                     trailingIconColor = Black500
 
                 ),
+                textStyle = TextStyle(fontSize = MaterialTheme.typography.subtitle2.fontSize)
             )
 
 

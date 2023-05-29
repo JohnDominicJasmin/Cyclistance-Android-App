@@ -18,11 +18,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.cyclistance.R
+import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun TopAppBarCreator(
@@ -48,20 +47,16 @@ fun TopAppBarCreator(
 
 @Composable
 fun TitleTopAppBar(title: String) {
-
-        Text(
-            text = title,
-            color = MaterialTheme.colors.onBackground,
-            fontWeight = FontWeight.Medium,
-            fontSize = 20.sp)
+    Text(
+        text = title,
+        color = MaterialTheme.colors.onBackground,
+        style = MaterialTheme.typography.h6)
 
 }
 
 
-
-
 @Composable
-fun DefaultTopBar(onClickIcon: () -> Unit) {
+fun DefaultTopBar(onClickIcon: () -> Unit = {}) {
     TopAppBarCreator(
         icon = Icons.Filled.Menu,
         onClickIcon = onClickIcon,
@@ -80,23 +75,20 @@ fun DefaultTopBar(onClickIcon: () -> Unit) {
                         .align(alignment = Alignment.CenterVertically)
                         .padding(top = 5.dp)
                 )
-                Text(
-                    "Cyclistance",
-                    color = MaterialTheme.colors.onBackground,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp)
+                TitleTopAppBar(title = "Cyclistance")
             }
         })
 
 }
 
 
-
-
-
-
-
-
+@Preview
+@Composable
+fun PreviewDefaultTopBar() {
+    CyclistanceTheme {
+        DefaultTopBar()
+    }
+}
 
 
 @Preview

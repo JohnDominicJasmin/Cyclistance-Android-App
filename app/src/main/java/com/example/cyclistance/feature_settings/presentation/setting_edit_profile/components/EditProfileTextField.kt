@@ -1,9 +1,12 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.BasicTextField
@@ -31,6 +34,7 @@ import com.example.cyclistance.feature_settings.presentation.setting_edit_profil
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileUiState
 import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.Black500
+import com.example.cyclistance.theme.CyclistanceTheme
 
 
 @Composable
@@ -70,6 +74,7 @@ fun TextFieldInputArea(
                     text = "+63 | ",
                     color = Black500,
                     fontWeight = FontWeight.Bold,
+                    fontSize = MaterialTheme.typography.subtitle2.fontSize
                 )
 
                 TextFieldItem(
@@ -146,7 +151,8 @@ private fun TextFieldItem(
         maxLines = 1,
         onValueChange = onValueChange,
         textStyle = TextStyle(
-            color = MaterialTheme.colors.onBackground
+            color = MaterialTheme.colors.onBackground,
+            fontSize = MaterialTheme.typography.subtitle2.fontSize,
         ),
         cursorBrush = Brush.verticalGradient(
             0.00f to MaterialTheme.colors.onBackground,
@@ -161,12 +167,17 @@ private fun TextFieldItem(
 @Preview
 @Composable
 fun EditProfileTextFieldPreview() {
-    TextFieldInputArea(
-        modifier = Modifier, state = EditProfileState(),
-        onValueChangeName = { },
-        onValueChangePhoneNumber = {},
-        keyboardActions = KeyboardActions { },
-        uiState = EditProfileUiState(),
-    )
+    CyclistanceTheme(darkTheme = true) {
+
+        Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
+            TextFieldInputArea(
+                modifier = Modifier, state = EditProfileState(),
+                onValueChangeName = { },
+                onValueChangePhoneNumber = {},
+                keyboardActions = KeyboardActions { },
+                uiState = EditProfileUiState(),
+            )
+        }
+    }
 
 }
