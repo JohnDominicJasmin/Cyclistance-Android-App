@@ -1,7 +1,5 @@
 package com.example.cyclistance.navigation
 
-import android.content.Intent
-import android.content.Intent.ACTION_MAIN
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.*
@@ -180,13 +178,6 @@ fun NavScreen(
         {
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
-            }
-            Intent(ACTION_MAIN).apply {
-                flags =
-                    Intent.FLAG_ACTIVITY_RETAIN_IN_RECENTS or Intent.FLAG_ACTIVITY_NEW_TASK
-                addCategory(Intent.CATEGORY_APP_MESSAGING)
-            }.also {
-                context.startActivity(it)
             }
             Unit
         }
