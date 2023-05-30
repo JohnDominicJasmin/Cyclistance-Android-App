@@ -30,7 +30,6 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_R
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUER_TYPE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
-import com.example.cyclistance.core.utils.permissions.RequestMultiplePermissions
 import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
@@ -198,8 +197,6 @@ fun MappingScreen(
         }
     }
 
-    RequestMultiplePermissions(
-        multiplePermissionsState = locationPermissionsState)
 
     val settingResultRequest = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartIntentSenderForResult()
