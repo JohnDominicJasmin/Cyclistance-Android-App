@@ -20,7 +20,6 @@ import com.example.cyclistance.feature_settings.presentation.setting_screen.comp
 import com.example.cyclistance.feature_settings.presentation.setting_screen.components.SettingSwitchButton
 import com.example.cyclistance.feature_settings.presentation.setting_screen.components.SettingsButtonItem
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.navigation.navigateScreen
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
@@ -38,7 +37,7 @@ fun SettingScreen(
         isDarkTheme = isDarkTheme,
         onToggleTheme = onToggleTheme,
         onClickEditProfile = {
-            navController.navigateScreen(Screens.EditProfileScreen.route)
+            navController.navigate(Screens.EditProfileScreen.route)
         }
     )
 
