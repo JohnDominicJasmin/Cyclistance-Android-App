@@ -35,7 +35,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.cyclistance.core.utils.permission.requestPermission
+import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.core.utils.save_images.ImageUtils.toImageUri
 import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
 import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation

@@ -1,5 +1,5 @@
 
-package com.example.cyclistance.core.utils.permission
+package com.example.cyclistance.core.utils.permissions
 
 import android.content.Context
 import android.widget.Toast
