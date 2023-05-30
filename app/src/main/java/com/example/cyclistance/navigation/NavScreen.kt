@@ -159,7 +159,7 @@ fun NavScreen(
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
-            navController.navigateScreen(
+            navController.navigate(
                 Screens.SettingScreen.route)
         }
     }
@@ -169,7 +169,7 @@ fun NavScreen(
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
-            navController.navigateScreen(
+            navController.navigate(
                 Screens.RescueRequestScreen.route)
         }
     }
