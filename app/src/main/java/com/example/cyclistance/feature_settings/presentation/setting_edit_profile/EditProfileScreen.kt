@@ -116,7 +116,7 @@ fun EditProfileScreen(
 
     val openCameraResultLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
-            val uri = bitmap?.toImageUri(context).toString()
+            val uri = bitmap?.toImageUri().toString()
             imageBitmap = bitmap
             uiState = uiState.copy(selectedImageUri = uri)
 

@@ -1,0 +1,37 @@
+Index: app/src/main/java/com/example/cyclistance/core/utils/permission/Permissions.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>\npackage com.example.cyclistance.core.utils.permission\n\nimport android.content.Context\nimport android.widget.Toast\nimport com.google.accompanist.permissions.*\n\n@OptIn(ExperimentalPermissionsApi::class)\ninline fun MultiplePermissionsState.requestPermission(\n    context: Context,\n    rationalMessage: String,\n    deniedMessage: String = \"Permission denied. Please grant the necessary permissions to use this feature.\",\n    onGranted: () -> Unit) {\n\n    val isDenied = !allPermissionsGranted && !shouldShowRationale\n\n    if(isDenied){\n        Toast.makeText(context, deniedMessage, Toast.LENGTH_LONG).show()\n        return\n    }\n\n    if (!allPermissionsGranted) {\n        launchMultiplePermissionRequest()\n        return\n    }\n\n    if (shouldShowRationale) {\n        Toast.makeText(\n            context,\n            rationalMessage,\n            Toast.LENGTH_LONG).show()\n        return\n    }\n\n\n\n    onGranted()\n}\n\n@OptIn(ExperimentalPermissionsApi::class)\ninline fun PermissionState.requestPermission(\n    context: Context,\n    rationalMessage: String,\n    deniedMessage: String = \"Permission denied. Please grant the necessary permissions to use this feature.\",\n    onGranted: () -> Unit) {\n\n    val isDenied = !status.isGranted && !status.shouldShowRationale\n\n    if(isDenied){\n        Toast.makeText(context, deniedMessage, Toast.LENGTH_LONG).show()\n        return\n    }\n    if(!status.isGranted){\n        launchPermissionRequest()\n        return\n    }\n    if(status.shouldShowRationale){\n        Toast.makeText(context, rationalMessage, Toast.LENGTH_LONG).show()\n        return\n    }\n\n\n\n    onGranted()\n\n\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/core/utils/permission/Permissions.kt b/app/src/main/java/com/example/cyclistance/core/utils/permission/Permissions.kt
+--- a/app/src/main/java/com/example/cyclistance/core/utils/permission/Permissions.kt	(revision eca498fe54b0d0e16ddf02ce5f3f38246121e7f0)
++++ b/app/src/main/java/com/example/cyclistance/core/utils/permission/Permissions.kt	(date 1685447939319)
+@@ -46,18 +46,20 @@
+ 
+     val isDenied = !status.isGranted && !status.shouldShowRationale
+ 
+-    if(isDenied){
+-        Toast.makeText(context, deniedMessage, Toast.LENGTH_LONG).show()
+-        return
+-    }
+-    if(!status.isGranted){
+-        launchPermissionRequest()
++
++    if(status.isGranted){
+         return
+     }
+     if(status.shouldShowRationale){
+         Toast.makeText(context, rationalMessage, Toast.LENGTH_LONG).show()
+         return
+     }
++    if(isDenied){
++        Toast.makeText(context, deniedMessage, Toast.LENGTH_LONG).show()
++        return
++    }
++
++    launchPermissionRequest()
+ 
+ 
+ 
