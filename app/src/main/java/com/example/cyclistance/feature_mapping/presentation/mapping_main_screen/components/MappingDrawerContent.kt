@@ -86,7 +86,7 @@ fun MappingDrawerContent(
                 )
 
                 Text(
-                    text = uiState.name,
+                    text = uiState.name.takeIf { it.isNotEmpty() } ?: "-----",
                     color = MaterialTheme.colors.onSecondary,
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(top = 7.dp, bottom = 10.dp))
