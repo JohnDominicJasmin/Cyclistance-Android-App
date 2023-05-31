@@ -329,12 +329,16 @@ class MappingRepositoryImpl(
 }
 
 private fun Response<OptimizationResponse>.getRoute():DirectionsRoute{
-    return body()!!.trips()!![0]
+    return body()!!.trips()!!.first()
 }
 
 
 private fun Response<OptimizationResponse>.routesAvailable(): Boolean{
-    return (this.body() != null && this.body()!!.trips()?.isNotEmpty() == true)
+
+    val body = this.body()
+    val hasBody = body != null
+    val hasTrips = body?.trips()?.isNotEmpty() == true
+    return (hasBody && hasTrips)
 }
 
 
