@@ -122,7 +122,7 @@ fun NoInternetDialog(
                             colors = ButtonDefaults.buttonColors(
                                 backgroundColor = MaterialTheme.colors.primary,
                                 contentColor = MaterialTheme.colors.onPrimary)) {
-                            Text(text = "Ok", style = MaterialTheme.typography.button)
+                            Text(text = "Okay", style = MaterialTheme.typography.button)
                         }
 
 

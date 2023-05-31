@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
@@ -102,6 +103,16 @@ fun MappingDrawerContent(
             verticalArrangement = Arrangement.spacedBy(space = 1.5.dp, alignment = Alignment.Top)) {
 
 
+
+
+            DrawerContentButtonItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                iconId = R.drawable.ic_emergency_call,
+                buttonText = "Emergency Call",
+                onClick = {})
+
             DrawerContentButtonItem(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -110,13 +121,6 @@ fun MappingDrawerContent(
                 buttonText = "Settings",
                 onClick = onClickSettings)
 
-            DrawerContentButtonItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                iconId = R.drawable.ic_baseline_chat_bubble_outline_24,
-                buttonText = "Chat",
-                onClick = onClickChat)
 
             DrawerContentButtonItem(
                 modifier = Modifier
@@ -127,7 +131,26 @@ fun MappingDrawerContent(
                 onClick = onClickRescueRequest,
                 badgeCountEnabled = true,
                 badgeCount = respondentCount
-                )
+            )
+
+            DrawerContentButtonItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                iconId = R.drawable.ic_ride_history,
+                buttonText = "Ride History",
+                onClick = onClickChat)
+
+
+            DrawerContentButtonItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                iconId = R.drawable.ic_baseline_chat_bubble_outline_24,
+                buttonText = "Chat",
+                onClick = onClickChat)
+
+
 
             DrawerContentButtonItem(
                 modifier = Modifier
@@ -182,7 +205,7 @@ private fun DrawerContentButtonItem(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .weight(1f)
-                .size(26.dp), tint = Black440)
+                .scale(1.1f), tint = Black440)
 
 
         Text(
