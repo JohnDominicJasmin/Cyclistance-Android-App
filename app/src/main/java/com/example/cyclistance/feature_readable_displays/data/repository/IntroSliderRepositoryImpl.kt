@@ -6,10 +6,15 @@ import com.example.cyclistance.core.utils.extension.editData
 import com.example.cyclistance.core.utils.extension.getData
 import com.example.cyclistance.feature_mapping.data.repository.dataStore
 import com.example.cyclistance.feature_readable_displays.domain.repository.IntroSliderRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 
 
-class IntroSliderRepositoryImpl(context: Context) : IntroSliderRepository {
+class IntroSliderRepositoryImpl(
+    context: Context,
+    private val scope: CoroutineContext = Dispatchers.IO) : IntroSliderRepository {
     private var dataStore = context.dataStore
 
     override fun userCompletedWalkThrough(): Flow<Boolean> {
@@ -17,7 +22,9 @@ class IntroSliderRepositoryImpl(context: Context) : IntroSliderRepository {
     }
 
     override suspend fun setUserCompletedWalkThrough() {
-        dataStore.editData(DATA_STORE_INTRO_SLIDER_KEY, true)
+        withContext(scope) {
+            dataStore.editData(DATA_STORE_INTRO_SLIDER_KEY, true)
+        }
     }
 
 }
