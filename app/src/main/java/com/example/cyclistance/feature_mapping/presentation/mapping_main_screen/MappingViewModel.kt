@@ -523,7 +523,7 @@ class MappingViewModel @Inject constructor(
                             user = user,
                             rescuer = rescuer,
                             transactionId = transactionId)
-
+                        user.location?.let { broadcastRescueTransactionToRespondent(it) }
                     }.onFailure { exception ->
                         finishLoading()
                         exception.handleException()
