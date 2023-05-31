@@ -139,7 +139,7 @@ fun MappingDrawerContent(
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_ride_history,
                 buttonText = "Ride History",
-                onClick = onClickChat)
+                onClick = {})
 
 
             DrawerContentButtonItem(

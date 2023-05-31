@@ -55,11 +55,6 @@ import javax.inject.Singleton
 object MappingModule {
 
 
-    @Provides
-    @Singleton
-    fun getBaseUrl(@ApplicationContext context: Context): String{
-        return context.getString(R.string.CyclistanceApiBaseUrl)
-    }
 
     @Provides
     @Singleton
@@ -69,7 +64,7 @@ object MappingModule {
 
         return lazy {
             Retrofit.Builder()
-                .baseUrl(getBaseUrl(context))
+                .baseUrl(context.getString(R.string.CyclistanceApiBaseUrl))
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .client(okHttpClient)
                 .build()
@@ -96,7 +91,7 @@ object MappingModule {
         api: CyclistanceApi,
         mapboxDirections: MapboxOptimization.Builder): MappingRepository {
 
-        val socket = IO.socket(getBaseUrl(context))
+        val socket = IO.socket(context.getString(R.string.CyclistanceApiBaseUrl))
         val userWSClient = UserWSClient(socket)
         val rescueTransactionWSClient = RescueTransactionWSClient(socket)
         val liveLocation = TransactionLiveLocationWSClient(socket)
