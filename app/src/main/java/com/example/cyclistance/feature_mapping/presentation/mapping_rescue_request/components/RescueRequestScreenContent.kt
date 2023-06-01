@@ -23,8 +23,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
-import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
+import com.example.cyclistance.feature_dialogs.presentation.alert_dialog.AlertDialog
+import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel

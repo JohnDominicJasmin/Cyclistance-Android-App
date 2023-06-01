@@ -21,7 +21,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
+import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.FloatingButtonSection

@@ -33,9 +33,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
-import com.example.cyclistance.feature_alert_dialog.presentation.AlertDialog
-import com.example.cyclistance.feature_alert_dialog.presentation.NoInternetDialog
+import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
+import com.example.cyclistance.feature_dialogs.presentation.alert_dialog.AlertDialog
+import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthResendButton
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthTextStatus
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthVerifyEmailButton
