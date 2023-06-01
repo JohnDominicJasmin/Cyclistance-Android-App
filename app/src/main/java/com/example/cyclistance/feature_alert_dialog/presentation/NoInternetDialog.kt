@@ -29,6 +29,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.cyclistance.R
+import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -112,6 +114,22 @@ fun NoInternetDialog(
                         Spacer(modifier = Modifier.height(24.dp))
 
                         Button(
+                            modifier = Modifier.wrapContentWidth(),
+                            onClick = {
+                                dialogOpen.value = false
+                                context.startActivity(Intent(Settings.ACTION_WIFI_SETTINGS))
+                            }, colors = ButtonDefaults.textButtonColors(
+                                backgroundColor = MaterialTheme.colors.primary,
+                                contentColor = MaterialTheme.colors.onPrimary),
+                            shape = RoundedCornerShape(12.dp)) {
+                            Text(
+                                text = "Go to Settings",
+                                style = MaterialTheme.typography.button.copy(fontWeight = FontWeight.Medium),
+                                )
+                        }
+
+
+                        TextButton(
                             onClick = {
                                 dialogOpen.value = false
                                 onDismiss()
@@ -120,25 +138,13 @@ fun NoInternetDialog(
                             modifier = Modifier
                                 .fillMaxWidth(0.28f),
                             colors = ButtonDefaults.buttonColors(
-                                backgroundColor = MaterialTheme.colors.primary,
-                                contentColor = MaterialTheme.colors.onPrimary)) {
+                                backgroundColor = Color.Transparent,
+                                contentColor = Black440)) {
                             Text(text = "Okay", style = MaterialTheme.typography.button)
                         }
 
 
-                        TextButton(
-                            onClick = {
-                                dialogOpen.value = false
-                                context.startActivity(Intent(Settings.ACTION_SETTINGS))
-                            }, colors = ButtonDefaults.textButtonColors(
-                                backgroundColor = Color.Transparent,
-                                contentColor = MaterialTheme.colors.primary),
-                            modifier = Modifier.wrapContentWidth()) {
-                            Text(
-                                text = "Go to Settings",
-                                style = MaterialTheme.typography.button,
-                                color = MaterialTheme.colors.primary)
-                        }
+
 
                         Spacer(modifier = Modifier.height(16.dp))
 
@@ -150,7 +156,7 @@ fun NoInternetDialog(
     }
 }
 
-@Preview(device = "id:pixel_3")
+@Preview(device = "id:Galaxy Nexus")
 @Composable
 fun PreviewInfoDialog() {
     CyclistanceTheme(true) {
