@@ -9,8 +9,8 @@ import com.example.cyclistance.core.utils.constants.AuthConstants
 import com.example.cyclistance.core.utils.constants.AuthConstants.IMAGE_LARGE_SIZE
 import com.example.cyclistance.core.utils.constants.AuthConstants.IMAGE_SMALL_SIZE
 import com.example.cyclistance.core.utils.constants.SettingConstants.DATA_STORE_THEME_KEY
-import com.example.cyclistance.core.utils.extension.editData
-import com.example.cyclistance.core.utils.extension.getData
+import com.example.cyclistance.core.utils.data_store_ext.editData
+import com.example.cyclistance.core.utils.data_store_ext.getData
 import com.example.cyclistance.feature_mapping.data.repository.dataStore
 import com.example.cyclistance.feature_settings.domain.exceptions.SettingExceptions
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository

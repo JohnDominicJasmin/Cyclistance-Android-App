@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_alert_dialog.presentation.utils
+package com.example.cyclistance.feature_dialogs.presentation.common
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes
@@ -38,7 +38,7 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 
 @Composable
-fun DialogCreator(
+fun DialogAnimatedIconCreator(
     icon: Int,
     isDialogOpen: Boolean,
     onDialogVisibilityToggle: () -> Unit,
@@ -113,7 +113,7 @@ fun DialogCreator(
 
 
 @Composable
-fun AnimatedDrawableResIcon(modifier: Modifier, @DrawableRes resId: Int) {
+private fun AnimatedDrawableResIcon(modifier: Modifier, @DrawableRes resId: Int) {
 
     Image(
         painter = painterResource(id = resId),
@@ -123,7 +123,7 @@ fun AnimatedDrawableResIcon(modifier: Modifier, @DrawableRes resId: Int) {
 }
 
 @Composable
-fun AnimatedRawResIcon(modifier: Modifier, @RawRes resId: Int) {
+private fun AnimatedRawResIcon(modifier: Modifier, @RawRes resId: Int) {
 
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(resId))
     val progress by animateLottieCompositionAsState(composition)

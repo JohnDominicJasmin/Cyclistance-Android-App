@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_alert_dialog.presentation
+package com.example.cyclistance.feature_dialogs.presentation.alert_dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,8 +20,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
-import com.example.cyclistance.feature_alert_dialog.presentation.utils.DialogCreator
+import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
+import com.example.cyclistance.feature_dialogs.presentation.common.DialogAnimatedIconCreator
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -33,7 +33,7 @@ fun AlertDialog(
 
     val (isDialogOpen, onDialogVisibilityToggle) = rememberSaveable { mutableStateOf(true) }
 
-    DialogCreator(
+    DialogAnimatedIconCreator(
         icon = alertDialog.icon,
         isDialogOpen = isDialogOpen,
         onDialogVisibilityToggle = { onDialogVisibilityToggle(!isDialogOpen) },

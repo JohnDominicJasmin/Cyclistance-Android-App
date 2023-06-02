@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_alert_dialog.domain.model
+package com.example.cyclistance.feature_dialogs.domain.model
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState

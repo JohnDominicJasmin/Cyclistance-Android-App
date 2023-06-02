@@ -2,7 +2,7 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_det
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState
-import com.example.cyclistance.feature_alert_dialog.domain.model.AlertDialogState
+import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import kotlinx.parcelize.Parcelize
 
 

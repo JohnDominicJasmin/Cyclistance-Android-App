@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_alert_dialog.presentation
+package com.example.cyclistance.feature_dialogs.presentation.delete_dialog
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_alert_dialog.presentation.utils.DialogCreator
+import com.example.cyclistance.feature_dialogs.presentation.common.DialogAnimatedIconCreator
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.theme.Red700
@@ -51,7 +51,7 @@ fun DeleteAccountDialog(
     val (text, onValueChangeText) = rememberSaveable { mutableStateOf("") }
     val isDeletingAccountConfirm = remember(text) { text == "delete account" }
 
-    DialogCreator(
+    DialogAnimatedIconCreator(
         icon = icon,
         isDialogOpen = isDialogOpen,
         onDialogVisibilityToggle = {
