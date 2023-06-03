@@ -391,7 +391,7 @@ fun MappingScreen(
             clientPhoneNumber?.let(context::callPhoneNumber)
         }
     }
-    val callPhonePermissionState =
+    val phonePermissionState =
         rememberPermissionState(permission = Manifest.permission.CALL_PHONE) { permissionGranted ->
             if (permissionGranted) {
                 callClient()
