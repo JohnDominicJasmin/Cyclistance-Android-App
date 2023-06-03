@@ -399,10 +399,8 @@ fun MappingScreen(
         }
     val onClickChatButton = remember(clientPhoneNumber) {
         {
-            val intent = Intent(Intent.ACTION_SENDTO)
-            intent.flags = FLAG_ACTIVITY_NEW_TASK
-            intent.data = Uri.parse("smsto:$clientPhoneNumber")
-            context.startActivity(intent)
+
+
         }
     }
 
