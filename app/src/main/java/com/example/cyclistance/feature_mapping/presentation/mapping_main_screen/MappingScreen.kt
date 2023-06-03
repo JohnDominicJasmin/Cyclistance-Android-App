@@ -229,13 +229,16 @@ fun MappingScreen(
         {
             locationPermissionsState.requestPermission(
                 context = context,
-                rationalMessage = "Location permission is not yet granted.") {
-                context.startLocationServiceIntentAction()
-                requestHelp()
-            }
+                rationalMessage = "Location permission is not yet granted.",
+                onGranted = {
+                    context.startLocationServiceIntentAction()
+                    requestHelp()
+                }, onDenied = {
+                    uiState = uiState.copy(locationPermissionDialogVisible = true)
+                })
+
         }
     }
-
 
 
     val showRouteDirection = remember(uiState.routeDirection, mapboxMap) {
@@ -294,6 +297,8 @@ fun MappingScreen(
                         locateUser(LOCATE_USER_ZOOM_LEVEL, point, DEFAULT_CAMERA_ANIMATION_DURATION)
                     }
 
+                }, onDenied = {
+                    uiState = uiState.copy(locationPermissionDialogVisible = true)
                 })
         }
     }
@@ -406,11 +411,15 @@ fun MappingScreen(
 
     val onClickCallButton = remember(clientPhoneNumber) {
         {
-            callPhonePermissionState.requestPermission(
+            phonePermissionState.requestPermission(
                 context = context,
-                rationalMessage = "Phone call permission is not yet granted.") {
-                callClient()
-            }
+                rationalMessage = "Phone call permission is not yet granted.",
+                onGranted = {
+                    callClient()
+                },
+                onDenied = {
+                    uiState = uiState.copy(phonePermissionDialogVisible = true)
+                })
         }
     }
 
@@ -466,6 +475,18 @@ fun MappingScreen(
                 rescueRequestAccepted = false,
                 bottomSheetType = BottomSheetType.OnGoingRescue.type
             )
+        }
+    }
+
+    val onDismissLocationPermissionDialog = remember {
+        {
+            uiState = uiState.copy(locationPermissionDialogVisible = false)
+        }
+    }
+
+    val onDismissPhonePermissionDialog = remember {
+        {
+            uiState = uiState.copy(phonePermissionDialogVisible = false)
         }
     }
 
@@ -736,9 +757,11 @@ fun MappingScreen(
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
                 is MappingUiEvent.RescueArrivedConfirmed -> {}
                 is MappingUiEvent.DestinationReachedConfirmed -> {}
+                is MappingUiEvent.DismissLocationPermission -> onDismissLocationPermissionDialog()
+                is MappingUiEvent.DismissPhonePermission -> onDismissPhonePermissionDialog()
+
             }
         }
-
 
 
     )

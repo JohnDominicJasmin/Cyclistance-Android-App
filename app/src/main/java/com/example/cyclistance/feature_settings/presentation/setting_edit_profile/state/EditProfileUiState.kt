@@ -14,5 +14,7 @@ data class EditProfileUiState(
     val nameErrorMessage: String = "",
     val phoneNumber: String = "",
     val phoneNumberErrorMessage: String = "",
-    val noInternetVisible: Boolean = false
+    val noInternetVisible: Boolean = false,
+    val cameraPermissionDialogVisible: Boolean = false,
+    val filesAndMediaDialogVisible: Boolean = false,
 ):Parcelable

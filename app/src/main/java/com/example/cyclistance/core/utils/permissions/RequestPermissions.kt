@@ -9,18 +9,18 @@ import com.google.accompanist.permissions.*
 inline fun MultiplePermissionsState.requestPermission(
     context: Context,
     rationalMessage: String,
-    deniedMessage: String = "Permission denied. Please grant the necessary permissions to use this feature.",
-    onGranted: () -> Unit) {
+    onGranted: () -> Unit,
+    onDenied: () -> Unit) {
 
     val isDenied = !allPermissionsGranted && !shouldShowRationale
 
-    if(isDenied){
-        Toast.makeText(context, deniedMessage, Toast.LENGTH_LONG).show()
+    if (isDenied) {
+        onDenied()
         return
     }
 
     if (!allPermissionsGranted) {
-        launchMultiplePermissionRequest()
+        this.launchMultiplePermissionRequest()
         return
     }
 
@@ -41,16 +41,16 @@ inline fun MultiplePermissionsState.requestPermission(
 inline fun PermissionState.requestPermission(
     context: Context,
     rationalMessage: String,
-    deniedMessage: String = "Permission denied. Please grant the necessary permissions to use this feature.",
-    onGranted: () -> Unit) {
+    onGranted: () -> Unit,
+    onDenied: () -> Unit) {
 
     val isDenied = !status.isGranted && !status.shouldShowRationale
 
-    if(isDenied){
-        Toast.makeText(context, deniedMessage, Toast.LENGTH_LONG).show()
+    if (isDenied) {
+        onDenied()
         return
     }
-    if(!status.isGranted){
+    if (!status.isGranted) {
         launchPermissionRequest()
         return
     }

@@ -172,14 +172,27 @@ fun EditProfileScreen(
 
     }
 
+    val onDismissFilesAndMediaPermissionDialog = remember {
+        {
+            uiState = uiState.copy(filesAndMediaDialogVisible = false)
+        }
+    }
+
+    val onDismissCameraPermissionDialog = remember {
+        {
+            uiState = uiState.copy(cameraPermissionDialogVisible = false)
+        }
+    }
 
     val openGallery = remember {
         {
-            accessStoragePermissionState.requestPermission(
+            filesAndMediaPermissionState.requestPermission(
                 context = context,
-                rationalMessage = "Storage permission is not yet granted.") {
-                openGalleryResultLauncher.launch("image/*")
-            }
+                rationalMessage = "Storage permission is not yet granted.", onGranted = {
+                    openGalleryResultLauncher.launch("image/*")
+                }, onDenied = {
+                    uiState = uiState.copy(filesAndMediaDialogVisible = true)
+                })
 
         }
     }
@@ -188,9 +201,12 @@ fun EditProfileScreen(
         {
             openCameraPermissionState.requestPermission(
                 context = context,
-                rationalMessage = "Camera permission is not yet granted.") {
-                openCameraResultLauncher.launch()
-            }
+                rationalMessage = "Camera permission is not yet granted.",
+                onGranted = {
+                    openCameraResultLauncher.launch()
+                }, onDenied = {
+                    uiState = uiState.copy(cameraPermissionDialogVisible = true)
+                })
         }
     }
 
@@ -254,6 +270,9 @@ fun EditProfileScreen(
                     toggleBottomSheet()
                     keyboardController?.hide()
                 }
+
+                is EditProfileUiEvent.DismissCameraDialog -> onDismissCameraPermissionDialog()
+                is EditProfileUiEvent.DismissFilesAndMediaDialog -> onDismissFilesAndMediaPermissionDialog()
             }
         },
         uiState = uiState,
