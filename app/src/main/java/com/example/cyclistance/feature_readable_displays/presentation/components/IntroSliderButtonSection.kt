@@ -48,8 +48,6 @@ fun IntroSliderButtonSection(
                 color = MaterialTheme.colors.onPrimary,
                 style = MaterialTheme.typography.button,
                 textAlign = TextAlign.Center,
-
-
             )
         }
 

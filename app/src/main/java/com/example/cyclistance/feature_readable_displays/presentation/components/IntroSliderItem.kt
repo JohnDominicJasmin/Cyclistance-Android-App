@@ -9,7 +9,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -23,9 +22,9 @@ import com.google.accompanist.pager.*
 
 private val introSliderItems  =
     listOf(
-        IntroSliderScreenItem.LiveLocation,
-        IntroSliderScreenItem.HelpAndRescue,
-        IntroSliderScreenItem.RealTimeMessaging
+        IntroSliderScreenItems.LiveLocation,
+        IntroSliderScreenItems.HelpAndRescue,
+        IntroSliderScreenItems.RealTimeMessaging
     )
 
 
@@ -56,20 +55,17 @@ fun IntroSliderItem(
                         painter = painterResource(id = introSliderItems[page].image),
                         contentDescription = introSliderItems[page].title + " Images",
                         alignment = Alignment.Center,
-                        contentScale = ContentScale.Fit,
+                        contentScale = ContentScale.FillBounds,
                         modifier = Modifier
-                            .padding(horizontal = 12.dp, vertical = 24.dp)
-                            .scale(1.2f)
-                            .weight(0.8f),
+                            .padding(horizontal = 4.dp, vertical = 12.dp)
+                            .weight(1.7f, fill = true),
                     )
 
-
-                    Spacer(modifier = Modifier.weight(0.15f))
 
                     Text(
                         modifier = Modifier
                             .padding(all = 10.dp)
-                            .weight(0.2f),
+                            .weight(0.4f, fill = false),
                         text = introSliderItems[page].title,
                         style = MaterialTheme.typography.h6,
                         textAlign = TextAlign.Center,
@@ -84,7 +80,7 @@ fun IntroSliderItem(
                         ),
                         modifier = Modifier
                             .fillMaxWidth(0.76f)
-                            .weight(0.3f)
+                            .weight(0.4f)
                     )
                     Spacer(modifier = Modifier.weight(0.2f))
 

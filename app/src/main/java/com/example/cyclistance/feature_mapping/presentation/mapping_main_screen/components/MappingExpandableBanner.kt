@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -52,7 +51,6 @@ fun MappingExpandableBanner(
     )
 
 
-
     Card(
         modifier = modifier
             .shadow(elevation = 12.dp, shape = RoundedCornerShape(12.dp))
@@ -68,20 +66,18 @@ fun MappingExpandableBanner(
 
         Column(modifier = Modifier.fillMaxWidth()) {
 
-
             Icon(
                 imageVector = Icons.Default.ArrowDropDown,
                 tint = MaterialTheme.colors.onSurface,
                 contentDescription = "Drop down icon",
                 modifier = Modifier
                     .padding(start = 4.dp)
+                    .size(36.dp)
                     .alpha(ContentAlpha.medium)
                     .rotate(rotationState)
                     .clip(CircleShape)
-                    .scale(1.5f)
-                    .clickable {
-                        expandedState = !expandedState
-                    })
+                    .clickable { expandedState = !expandedState })
+
 
 
 
@@ -93,7 +89,7 @@ fun MappingExpandableBanner(
 
             ) {
 
-                val (roundedImage, nameText, issueText, distanceAndTime, expandedSection, ) = createRefs()
+                val (roundedImage, nameText, issueText, distanceAndTime, expandedSection) = createRefs()
 
 
                 AsyncImage(model = banner.userProfileImage,
@@ -291,7 +287,7 @@ fun MappingExpandableBannerPreview() {
                 bikeType = "Road Bike",
 
                 )
-        ){}
+        ) {}
     }
 
 }

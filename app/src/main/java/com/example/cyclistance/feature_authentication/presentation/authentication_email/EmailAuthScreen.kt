@@ -22,7 +22,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.scale
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -33,9 +33,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
-import com.example.cyclistance.feature_dialogs.presentation.alert_dialog.AlertDialog
-import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthResendButton
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthTextStatus
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthVerifyEmailButton
@@ -47,6 +44,9 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthUiState
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.visible
+import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
+import com.example.cyclistance.feature_dialogs.presentation.alert_dialog.AlertDialog
+import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -196,7 +196,7 @@ fun EmailAuthScreen(
 
 }
 
-@Preview(device = "id:Galaxy Nexus")
+@Preview(device = "id:pixel_xl")
 @Composable
 fun EmailAuthScreenPreview() {
     CyclistanceTheme(true) {
@@ -240,9 +240,8 @@ fun EmailAuthScreenContent(
                     contentDescription = "App Icon",
                     painter = painterResource(id = if (isDarkTheme) R.drawable.ic_dark_email else R.drawable.ic_light_email),
                     modifier = Modifier
-                        .scale(1f)
-                        .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
-
+                        .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId),
+                    contentScale = ContentScale.FillBounds
                 )
 
                 EmailAuthTextStatus(email = emailAuthState.savedAccountEmail)

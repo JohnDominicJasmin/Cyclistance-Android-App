@@ -17,8 +17,8 @@ val emailAuthConstraints = ConstraintSet {
         top.linkTo(parent.top, margin = 10.dp)
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-        width = Dimension.wrapContent
-        height = Dimension.wrapContent
+        width = Dimension.percent(0.5f)
+        height = Dimension.percent(0.24f)
     }
 
     constrain(progressBar){
