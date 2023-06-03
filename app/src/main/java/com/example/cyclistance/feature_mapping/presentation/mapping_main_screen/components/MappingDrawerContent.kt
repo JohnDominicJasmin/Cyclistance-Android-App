@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
@@ -24,7 +25,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
@@ -185,6 +185,25 @@ fun MappingDrawerContentPreview() {
     }
 }
 
+@Preview
+@Composable
+fun PreviewDrawerButtonItem() {
+    CyclistanceTheme(darkTheme = true) {
+        Surface(modifier = Modifier.wrapContentSize(), color = MaterialTheme.colors.background) {
+            DrawerContentButtonItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight(),
+                iconId = R.drawable.ic_rescue_request,
+                buttonText = "Rescue Request",
+                onClick = {},
+                badgeCountEnabled = true,
+                badgeCount = 1
+            )
+        }
+    }
+}
+
 @Composable
 private fun DrawerContentButtonItem(
     modifier: Modifier,
@@ -204,8 +223,7 @@ private fun DrawerContentButtonItem(
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .weight(1f)
-                .scale(1.1f), tint = Black440)
+                .weight(1.6f, fill = false), tint = Black440)
 
 
         Text(
