@@ -3,9 +3,6 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
-import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-import android.net.Uri
 import android.os.Build
 import android.os.Build.VERSION_CODES.Q
 import android.widget.Toast
@@ -30,6 +27,8 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_R
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUER_TYPE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
+import com.example.cyclistance.core.utils.contexts.callPhoneNumber
+import com.example.cyclistance.core.utils.contexts.startLocationServiceIntentAction
 import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
@@ -43,7 +42,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.animateCameraPosition
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.changeToNormalPuckIcon
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.openNavigationApp
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.startLocationServiceIntentAction
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -136,7 +134,7 @@ fun MappingScreen(
                             .locationComponentOptions(locationComponentOptions.build())
                             .build()
                     mapboxMap?.locationComponent?.apply {
-                        activateLocationComponent(buildLocationComponentActivationOptions);
+                        activateLocationComponent(buildLocationComponentActivationOptions)
                         isLocationComponentEnabled = userLocationAvailable
                         cameraMode = CameraMode.NONE
                         renderMode = RenderMode.GPS
@@ -153,7 +151,7 @@ fun MappingScreen(
                                     .build())
                             .build()
                     mapboxMap?.locationComponent?.apply {
-                        activateLocationComponent(buildLocationComponentActivationOptions);
+                        activateLocationComponent(buildLocationComponentActivationOptions)
                         isLocationComponentEnabled = userLocationAvailable
                         cameraMode = CameraMode.NONE
                         renderMode = RenderMode.NORMAL
@@ -390,11 +388,7 @@ fun MappingScreen(
 
     val callClient = remember(clientPhoneNumber) {
         {
-            val intent = Intent(Intent.ACTION_CALL)
-
-            intent.data = Uri.parse("tel:$clientPhoneNumber")
-            intent.flags = FLAG_ACTIVITY_NEW_TASK
-            context.startActivity(intent)
+            clientPhoneNumber?.let(context::callPhoneNumber)
         }
     }
     val callPhonePermissionState =
