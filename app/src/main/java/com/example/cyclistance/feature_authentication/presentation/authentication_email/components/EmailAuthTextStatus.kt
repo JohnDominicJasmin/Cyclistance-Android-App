@@ -2,7 +2,9 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun EmailAuthTextStatus(email: String) {
@@ -51,12 +54,26 @@ private fun EmailStatus(modifier: Modifier = Modifier, text: String, fontWeight:
             fontWeight = fontWeight,
             color = MaterialTheme.colors.onBackground,
             textAlign = TextAlign.Center)
-        )
+    )
 
 }
 
-@Preview
+@Preview(device = "id:Galaxy Nexus")
 @Composable
-fun EmailStatusPreview() {
-    EmailAuthTextStatus("sampleEmail@gmail.com")
+fun EmailStatusPreviewDark() {
+    CyclistanceTheme(darkTheme = true) {
+        Surface(modifier = Modifier.wrapContentSize(), color = MaterialTheme.colors.background) {
+            EmailAuthTextStatus("sampleEmail@gmail.com")
+        }
+    }
+}
+
+@Preview(device = "id:Galaxy Nexus")
+@Composable
+fun EmailStatusPreviewLight() {
+    CyclistanceTheme(darkTheme = false) {
+        Surface(modifier = Modifier.wrapContentSize(), color = MaterialTheme.colors.background) {
+            EmailAuthTextStatus("sampleEmail@gmail.com")
+        }
+    }
 }

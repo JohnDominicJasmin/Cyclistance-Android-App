@@ -95,7 +95,7 @@ fun AlertDialog(
 
 @Preview
 @Composable
-fun AlertDialogPreview() {
+fun PreviewAlertDialogDark() {
 
     CyclistanceTheme(true) {
         AlertDialog(
@@ -106,6 +106,18 @@ fun AlertDialogPreview() {
             onDismissRequest = {})
 
     }
+}
 
+@Preview
+@Composable
+fun PreviewAlertDialogLight() {
+    CyclistanceTheme(false) {
+        AlertDialog(
+            alertDialog = AlertDialogState(
+                title = "Success!",
+                description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
+                icon = R.raw.info),
+            onDismissRequest = {})
+    }
 }
 

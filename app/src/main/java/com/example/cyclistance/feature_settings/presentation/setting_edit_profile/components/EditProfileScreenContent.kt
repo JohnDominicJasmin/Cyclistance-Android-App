@@ -38,8 +38,25 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @OptIn(ExperimentalMaterialApi::class)
 @Preview(device = "id:Galaxy Nexus")
 @Composable
-fun EditProfilePreview() {
+fun PreviewEditProfileDark() {
     CyclistanceTheme(true) {
+        EditProfileScreenContent(
+            modifier = Modifier,
+            photoUrl = "",
+            state = EditProfileState(isLoading = false),
+            uiState = EditProfileUiState(cameraPermissionDialogVisible = true),
+            bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
+            event = {}
+        )
+    }
+}
+
+
+@OptIn(ExperimentalMaterialApi::class)
+@Preview(device = "id:Galaxy Nexus")
+@Composable
+fun PreviewEditProfileLight() {
+    CyclistanceTheme(false) {
         EditProfileScreenContent(
             modifier = Modifier,
             photoUrl = "",

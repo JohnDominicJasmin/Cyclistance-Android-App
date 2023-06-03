@@ -51,13 +51,20 @@ fun EmailAuthVerifyEmailButton(enabled: Boolean = false, onClickVerifyButton: ()
     }
 }
 
-@Preview
+@Preview(name = "Email Verify Dark Theme")
 @Composable
-fun EmailAuthVerifyEmailButtonPreview() {
+fun PreviewVerifyEmailDark() {
     CyclistanceTheme(true) {
-        EmailAuthVerifyEmailButton() {
-
-        }
+        EmailAuthVerifyEmailButton(onClickVerifyButton = {})
     }
-
 }
+
+@Preview(name = "Email Verify Light Theme")
+@Composable
+fun PreviewVerifyEmailLight() {
+    CyclistanceTheme(false) {
+        EmailAuthVerifyEmailButton(onClickVerifyButton = {})
+    }
+}
+
+
