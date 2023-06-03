@@ -80,7 +80,7 @@ fun DialogCreator(
                         contentDescription = dialogModel.iconContentDescription,
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
-                            .weight(0.06f, fill = false)
+                            .weight(0.07f, fill = false)
                             .padding(vertical = 12.dp)
                     )
 
@@ -90,6 +90,7 @@ fun DialogCreator(
                     Text(
                         text = dialogModel.title,
                         style = MaterialTheme.typography.subtitle1.copy(
+                            fontWeight = FontWeight.Medium,
                             textAlign = TextAlign.Center,
                             color = MaterialTheme.colors.onSurface),
                         modifier = Modifier
