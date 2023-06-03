@@ -10,13 +10,15 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @StableState
 data class MappingUiState(
-    val rescueRequestAccepted: Boolean= false,
-    val requestHelpButtonVisible: Boolean= true,
-    val searchingAssistance: Boolean= false,
-    val isNoInternetVisible: Boolean= false,
+    val rescueRequestAccepted: Boolean = false,
+    val requestHelpButtonVisible: Boolean = true,
+    val searchingAssistance: Boolean = false,
+    val isNoInternetVisible: Boolean = false,
     val mapSelectedRescuee: MapSelectedRescuee? = null,
     val routeDirection: RouteDirection? = null,
-    val bottomSheetType:String = ""
+    val bottomSheetType: String = "",
+    val locationPermissionDialogVisible: Boolean = false,
+    val phonePermissionDialogVisible: Boolean = false
 
 
 ): Parcelable

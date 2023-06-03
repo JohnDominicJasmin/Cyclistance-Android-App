@@ -18,7 +18,6 @@ import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LOCATION_CIRCLE_PULSE_RADIUS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAX_ZOOM_LEVEL_MAPS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MIN_ZOOM_LEVEL_MAPS
-import com.example.cyclistance.service.LocationService
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -28,13 +27,6 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 
 internal object MappingUtils {
 
-
-    fun Context.startLocationServiceIntentAction(intentAction: String = MappingConstants.ACTION_START) {
-        Intent(this, LocationService::class.java).apply {
-            action = intentAction
-            startService(this)
-        }
-    }
 
 
 

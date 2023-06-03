@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
+import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogLocationPermission
+import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogPhonePermission
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.FloatingButtonSection
@@ -71,7 +73,7 @@ fun MappingScreenContent(
 
             ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
-                val (mapScreen, requestHelpButton, circularProgressbar, noInternetScreen, respondToHelpButton, floatingButtonSection) = createRefs()
+                val (mapScreen, requestHelpButton, circularProgressbar, noInternetScreen, respondToHelpButton, floatingButtonSection, permissionDialog) = createRefs()
 
 
                 MappingMapsScreen(
@@ -106,7 +108,7 @@ fun MappingScreenContent(
                             modifier = Modifier
                                 .padding(all = 6.dp)
                                 .fillMaxWidth(), banner = uiState.mapSelectedRescuee,
-                            onClickDismissButton = {event(MappingUiEvent.DismissBanner)})
+                            onClickDismissButton = { event(MappingUiEvent.DismissBanner) })
                     }
                 }
 
@@ -119,10 +121,10 @@ fun MappingScreenContent(
                                 margin = (configuration.screenHeightDp / 3).dp)
                         },
                     locationPermissionGranted = locationPermissionState.allPermissionsGranted,
-                    onClickLocateUserButton = {event(MappingUiEvent.LocateUser)},
-                    onClickRouteOverviewButton = {event(MappingUiEvent.RouteOverview)},
-                    onClickRecenterButton = {event(MappingUiEvent.RecenterRoute)},
-                    onClickOpenNavigationButton = {event(MappingUiEvent.OpenNavigation)},
+                    onClickLocateUserButton = { event(MappingUiEvent.LocateUser) },
+                    onClickRouteOverviewButton = { event(MappingUiEvent.RouteOverview) },
+                    onClickRecenterButton = { event(MappingUiEvent.RecenterRoute) },
+                    onClickOpenNavigationButton = { event(MappingUiEvent.OpenNavigation) },
                     isNavigating = isNavigating
                 )
 
@@ -143,7 +145,7 @@ fun MappingScreenContent(
                         end.linkTo(parent.end)
                         start.linkTo(parent.start)
                     },
-                    onClickRespondButton = {event(MappingUiEvent.RespondToHelp)},
+                    onClickRespondButton = { event(MappingUiEvent.RespondToHelp) },
                     state = state,
                     visible = uiState.requestHelpButtonVisible.not() && isNavigating.not()
                 )
@@ -171,6 +173,27 @@ fun MappingScreenContent(
 
                 }
 
+                if (uiState.locationPermissionDialogVisible) {
+                    DialogLocationPermission(modifier = Modifier.constrainAs(permissionDialog) {
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                        bottom.linkTo(parent.bottom)
+                        height = Dimension.wrapContent
+                        centerTo(parent)
+                    }, onDismiss = { event(MappingUiEvent.DismissLocationPermission) }
+                    )
+                }
+
+                if (uiState.phonePermissionDialogVisible) {
+                    DialogPhonePermission(modifier = Modifier.constrainAs(permissionDialog) {
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                        bottom.linkTo(parent.bottom)
+                        height = Dimension.wrapContent
+                        centerTo(parent)
+                    }, onDismiss = { event(MappingUiEvent.DismissPhonePermission) })
+                }
+
                 AnimatedVisibility(
                     visible = isRescueCancelled && uiState.rescueRequestAccepted.not(),
                     enter = fadeIn(),
@@ -183,7 +206,7 @@ fun MappingScreenContent(
 
                     MappingCancelledRescue(
                         modifier = Modifier.fillMaxSize(),
-                        onClickOkButton = {event(MappingUiEvent.CancelledRescueConfirmed)},
+                        onClickOkButton = { event(MappingUiEvent.CancelledRescueConfirmed) },
                         cancelledRescueModel = CancelledRescueModel(
                             transactionID = rescueTransaction.id,
                             rescueCancelledBy = cancellation.nameCancelledBy,

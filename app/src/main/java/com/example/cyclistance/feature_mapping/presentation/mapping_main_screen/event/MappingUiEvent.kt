@@ -15,19 +15,18 @@ sealed class MappingUiEvent{
     object CancelledRescueConfirmed: MappingUiEvent()
     data class OnInitializeMap(val mapboxMap: MapboxMap): MappingUiEvent()
     object RescueRequestAccepted: MappingUiEvent()
-    data class OnChangeCameraState(val cameraState: CameraState): MappingUiEvent()
+    data class OnChangeCameraState(val cameraState: CameraState) : MappingUiEvent()
     object DismissNoInternetDialog : MappingUiEvent()
-    data class RescueeMapIconSelected(val id: String): MappingUiEvent()
-    object OnMapClick: MappingUiEvent()
-    object DismissBanner: MappingUiEvent()
-    object LocateUser: MappingUiEvent()
-    object RouteOverview: MappingUiEvent()
-    object RecenterRoute: MappingUiEvent()
-    object OpenNavigation: MappingUiEvent()
-    object OnRequestNavigationCameraToOverview: MappingUiEvent()
-
-
-
+    data class RescueeMapIconSelected(val id: String) : MappingUiEvent()
+    object OnMapClick : MappingUiEvent()
+    object DismissBanner : MappingUiEvent()
+    object LocateUser : MappingUiEvent()
+    object RouteOverview : MappingUiEvent()
+    object RecenterRoute : MappingUiEvent()
+    object OpenNavigation : MappingUiEvent()
+    object OnRequestNavigationCameraToOverview : MappingUiEvent()
+    object DismissLocationPermission : MappingUiEvent()
+    object DismissPhonePermission : MappingUiEvent()
 
 
 }
