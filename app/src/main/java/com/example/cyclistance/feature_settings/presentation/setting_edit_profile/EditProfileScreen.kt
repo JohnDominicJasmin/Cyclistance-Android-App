@@ -105,7 +105,7 @@ fun EditProfileScreen(
         }
 
 
-    val accessStoragePermissionState =
+    val filesAndMediaPermissionState =
         rememberMultiplePermissionsState(
             permissions = listOf(
                 Manifest.permission.READ_EXTERNAL_STORAGE,
