@@ -16,6 +16,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -49,6 +50,7 @@ fun RequestItem(
 
     Card(
         modifier = modifier,
+        elevation = 7.dp,
         shape = RoundedCornerShape(15.dp),
         backgroundColor = MaterialTheme.colors.surface) {
         Column(
@@ -152,22 +154,48 @@ fun RequestItem(
 
 @Preview(device = "id:Galaxy Nexus")
 @Composable
-fun RequestItemPreview() {
+fun RequestItemPreviewDark() {
 
     CyclistanceTheme(true) {
 
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-            RequestItem(
-                modifier = Modifier
-                    .fillMaxWidth(fraction = 0.9f)
-                    .wrapContentHeight(),
-                cardState = RescueRequestItemModel(
-                    profileImageUrl = "https://i.imgur.com/7bMqysJ.jpg",
-                    name = "John Doe",
-                    distance = "1.2 km",
-                    estimatedTimeTravel = "5 min",
-                    address = "1234, Street Name, City Name, Country Name"),
-            )
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+                RequestItem(
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = 0.9f)
+                        .wrapContentHeight(),
+                    cardState = RescueRequestItemModel(
+                        profileImageUrl = "https://i.imgur.com/7bMqysJ.jpg",
+                        name = "John Doe",
+                        distance = "1.2 km",
+                        estimatedTimeTravel = "5 min",
+                        address = "1234, Street Name, City Name, Country Name"),
+                )
+            }
         }
+    }
+}
+
+@Preview(device = "id:Galaxy Nexus")
+@Composable
+fun RequestItemPreviewLight() {
+    CyclistanceTheme(false) {
+
+        Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+                RequestItem(
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = 0.9f)
+                        .wrapContentHeight(),
+                    cardState = RescueRequestItemModel(
+                        profileImageUrl = "https://i.imgur.com/7bMqysJ.jpg",
+                        name = "John Doe",
+                        distance = "1.2 km",
+                        estimatedTimeTravel = "5 min",
+                        address = "1234, Street Name, City Name, Country Name"),
+                )
+            }
         }
+    }
 }

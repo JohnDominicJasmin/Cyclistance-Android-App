@@ -3,8 +3,10 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_rescue_requ
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,9 +25,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_dialogs.presentation.alert_dialog.AlertDialog
 import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
-import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
@@ -104,9 +106,21 @@ fun RescueRequestScreenContent(
                                             bottom = 6.dp)
                                         .fillMaxWidth(fraction = 0.95f)
                                         .wrapContentHeight(), cardState = respondent,
-                                    onClickCancelButton = { event(RescueRequestUiEvent.CancelRequestHelp(respondent.id ?: "")) },
-                                    onClickConfirmButton = { event(RescueRequestUiEvent.ConfirmRequestHelp(respondent.id ?: "")) }
+                                    onClickCancelButton = {
+                                        event(
+                                            RescueRequestUiEvent.CancelRequestHelp(
+                                                respondent.id ?: ""))
+                                    },
+                                    onClickConfirmButton = {
+                                        event(
+                                            RescueRequestUiEvent.ConfirmRequestHelp(
+                                                respondent.id ?: ""))
+                                    }
                                 )
+                            }
+
+                            item {
+                                Spacer(modifier = Modifier.height(12.dp))
                             }
 
                         }
@@ -128,28 +142,70 @@ fun RescueRequestScreenContent(
 }
 
 
+private val rescueRequests = listOf(
+    RescueRequestItemModel(
+        id = "2",
+        name = "Jane Doe",
+        profileImageUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+        estimatedTimeTravel = "5 mins",
+        distance = "500m",
+        address = "1234, 5th Street, New York, NY 10001",
+    ),
+    RescueRequestItemModel(
+        id = "3",
+        name = "Jane Doe",
+        profileImageUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+        estimatedTimeTravel = "5 mins",
+        distance = "500m",
+        address = "1234, 5th Street, New York, NY 10001",
+    ),
+    RescueRequestItemModel(
+        id = "4",
+        name = "Jane Doe",
+        profileImageUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+        estimatedTimeTravel = "5 mins",
+        distance = "500m",
+        address = "1234, 5th Street, New York, NY 10001",
+    ),
+    RescueRequestItemModel(
+        id = "5",
+        name = "Jane Doe",
+        profileImageUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+        estimatedTimeTravel = "5 mins",
+        distance = "500m",
+        address = "1234, 5th Street, New York, NY 10001",
+    ),
+)
 
-@Preview
+
+@Preview(device = "id:pixel_3")
 @Composable
-fun PreviewRescueRequest() {
+fun PreviewRescueRequestDark() {
     CyclistanceTheme(true) {
         RescueRequestScreenContent(
             modifier = Modifier
                 .padding(PaddingValues(all = 0.dp)),
             mappingState = MappingState(
                 isLoading = true,
-                newRescueRequest = NewRescueRequestsModel(request = listOf(
-                    RescueRequestItemModel(
-                        id = "2",
-                        name = "Jane Doe",
-                        profileImageUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                        estimatedTimeTravel = "5 mins",
-                        distance = "500m",
-                        address = "1234, 5th Street, New York, NY 10001",
-                    ),
-                ))
+                newRescueRequest = NewRescueRequestsModel(request = rescueRequests)
             ),
             event = {}
-            )
+        )
+    }
+}
+
+@Preview(device = "id:pixel_3")
+@Composable
+fun PreviewRescueRequestLight() {
+    CyclistanceTheme(false) {
+        RescueRequestScreenContent(
+            modifier = Modifier
+                .padding(PaddingValues(all = 0.dp)),
+            mappingState = MappingState(
+                isLoading = true,
+                newRescueRequest = NewRescueRequestsModel(request = rescueRequests)
+            ),
+            event = {}
+        )
     }
 }

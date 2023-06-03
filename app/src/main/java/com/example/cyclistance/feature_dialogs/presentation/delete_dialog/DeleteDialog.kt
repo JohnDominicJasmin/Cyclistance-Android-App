@@ -171,11 +171,22 @@ fun DeleteAccountDialog(
 
 
 
-@Preview(name = "DeleteDialog", device = "id:pixel")
+@Preview(name = "DeleteDialog Dark", device = "id:pixel")
 @Composable
-private fun PreviewDeleteDialog() {
+private fun PreviewDeleteDialogDark() {
 
     CyclistanceTheme(true) {
+        DeleteAccountDialog(
+            icon = R.drawable.ic_trash_can
+        )
+    }
+}
+
+@Preview(name = "DeleteDialog Light", device = "id:pixel")
+@Composable
+private fun PreviewDeleteDialogLight() {
+
+    CyclistanceTheme(false) {
         DeleteAccountDialog(
             icon = R.drawable.ic_trash_can
         )

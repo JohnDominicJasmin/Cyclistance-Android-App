@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,7 +57,7 @@ fun IntroSliderItem(
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier
                             .padding(horizontal = 4.dp, vertical = 12.dp)
-                            .weight(1.7f, fill = true),
+                            .weight(0.8f, fill = true),
                     )
 
 
@@ -115,7 +114,7 @@ fun PagerIndicator(pagerState: PagerState,modifier: Modifier) {
 }
 
 @OptIn(ExperimentalPagerApi::class)
-@Preview(device = Devices.PIXEL)
+@Preview(device = "id:Galaxy Nexus")
 @Composable
 fun IntroSliderItemPreview() {
     IntroSliderItem(PagerState(currentPage = 0))
