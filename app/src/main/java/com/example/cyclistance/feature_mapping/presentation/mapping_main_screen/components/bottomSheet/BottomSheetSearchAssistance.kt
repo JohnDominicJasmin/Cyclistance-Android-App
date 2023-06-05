@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -17,8 +18,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.common.AnimatedImage
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.OutlinedActionButton
+import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.launch
 
@@ -26,14 +26,13 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomSheetSearchingAssistance(
-    modifier : Modifier = Modifier,
-    isDarkTheme: Boolean,
+    modifier: Modifier = Modifier,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     content: @Composable (PaddingValues) -> Unit,
     onClickCancelSearchButton: () -> Unit) {
 
     val scope = rememberCoroutineScope()
-
+    val isDarkTheme = IsDarkTheme.current
 
     MappingBottomSheet(
         modifier = modifier,
@@ -44,7 +43,9 @@ fun BottomSheetSearchingAssistance(
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.92f)
-                    .shadow(shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp), elevation = 8.dp)
+                    .shadow(
+                        shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+                        elevation = 8.dp)
                     .align(Alignment.CenterHorizontally),
                 shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)) {
 
@@ -107,14 +108,16 @@ fun BottomSheetSearchingAssistance(
 @Composable
 fun SearchingAssistancePreview() {
     val isDarkTheme = true
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = rememberBottomSheetState(
-        initialValue =BottomSheetValue.Expanded))
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberBottomSheetState(
+            initialValue = BottomSheetValue.Expanded))
 
-    CyclistanceTheme(isDarkTheme) {
-        BottomSheetSearchingAssistance(
-            isDarkTheme = isDarkTheme,
-            onClickCancelSearchButton = {},
-            content = {},
-            bottomSheetScaffoldState = bottomSheetScaffoldState)
+    CompositionLocalProvider(IsDarkTheme provides true) {
+        CyclistanceTheme(isDarkTheme) {
+            BottomSheetSearchingAssistance(
+                onClickCancelSearchButton = {},
+                content = {},
+                bottomSheetScaffoldState = bottomSheetScaffoldState)
+        }
     }
 }

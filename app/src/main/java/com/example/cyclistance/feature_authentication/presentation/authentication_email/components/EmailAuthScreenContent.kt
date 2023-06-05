@@ -10,6 +10,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,34 +27,37 @@ import com.example.cyclistance.feature_authentication.presentation.common.Authen
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_dialogs.presentation.alert_dialog.AlertDialog
 import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
+import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
 @Preview(device = "id:pixel_xl")
 @Composable
 fun PreviewEmailAuthScreenDark() {
-    CyclistanceTheme(true) {
-        EmailAuthScreenContent(
-            isDarkTheme = true,
-            emailAuthState = EmailAuthState(
-                savedAccountEmail = "johndoe@gmail.com",
-                secondsLeft = 10,
-            ),
-        )
+    CompositionLocalProvider(IsDarkTheme provides true) {
+        CyclistanceTheme(true) {
+            EmailAuthScreenContent(
+                emailAuthState = EmailAuthState(
+                    savedAccountEmail = "johndoe@gmail.com",
+                    secondsLeft = 10,
+                ),
+            )
+        }
     }
 }
 
 @Preview(device = "id:pixel_xl")
 @Composable
 fun PreviewEmailAuthScreenLight() {
-    CyclistanceTheme(false) {
-        EmailAuthScreenContent(
-            isDarkTheme = false,
-            emailAuthState = EmailAuthState(
-                savedAccountEmail = "johndoe@gmail.com",
-                secondsLeft = 10,
-            ),
-        )
+    CompositionLocalProvider(IsDarkTheme provides false) {
+        CyclistanceTheme(false) {
+            EmailAuthScreenContent(
+                emailAuthState = EmailAuthState(
+                    savedAccountEmail = "johndoe@gmail.com",
+                    secondsLeft = 10,
+                ),
+            )
+        }
     }
 }
 
@@ -62,10 +66,10 @@ fun PreviewEmailAuthScreenLight() {
 fun EmailAuthScreenContent(
     modifier: Modifier = Modifier,
     emailAuthState: EmailAuthState = EmailAuthState(),
-    isDarkTheme: Boolean,
     uiState: EmailAuthUiState = EmailAuthUiState(),
     event: (EmailUiEvent) -> Unit = {}) {
 
+    val isDarkTheme = IsDarkTheme.current
 
     Surface(
         color = MaterialTheme.colors.background,

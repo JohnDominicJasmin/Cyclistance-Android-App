@@ -40,7 +40,6 @@ fun NavGraph(
     paddingValues: PaddingValues,
     mappingViewModel: MappingViewModel,
     startingDestination: String,
-    isDarkTheme: Boolean,
     isNavigating: Boolean,
     onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
     onToggleTheme: () -> Unit) {
@@ -67,7 +66,6 @@ fun NavGraph(
 
         composable(Screens.EmailAuthScreen.route) {
             EmailAuthScreen(
-                isDarkTheme = isDarkTheme,
                 navController = navController,
                 paddingValues = paddingValues)
         }
@@ -86,13 +84,13 @@ fun NavGraph(
                 MappingScreen(
                     hasInternetConnection = hasInternetConnection,
                     typeBottomSheet = bottomSheetType,
-                    isDarkTheme = isDarkTheme,
                     navController = navController,
                     paddingValues = paddingValues,
                     mappingViewModel = mappingViewModel,
                     isNavigating = isNavigating,
                     onChangeNavigatingState = onChangeNavigatingState
                     )
+
             }
         }
 
@@ -144,7 +142,6 @@ fun NavGraph(
 
         composable(Screens.SettingScreen.route) {
             SettingScreen(
-                isDarkTheme = isDarkTheme,
                 onToggleTheme = onToggleTheme,
                 navController = navController,
                 paddingValues = paddingValues)

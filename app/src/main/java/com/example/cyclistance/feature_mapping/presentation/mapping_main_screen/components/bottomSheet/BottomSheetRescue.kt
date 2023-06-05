@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,8 +16,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.common.AnimatedImage
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.OutlinedActionButton
+import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.Black440
 import kotlinx.coroutines.launch
 
@@ -25,7 +24,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun BottomSheetRescue(
     modifier : Modifier = Modifier,
-    isDarkTheme: Boolean,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     onClickOkButton: () -> Unit,
     content: @Composable (PaddingValues) -> Unit,
@@ -33,7 +31,7 @@ fun BottomSheetRescue(
 
 
     val scope = rememberCoroutineScope()
-
+    val isDarkTheme = IsDarkTheme.current
 
     MappingBottomSheet(
         modifier = modifier,
@@ -42,7 +40,9 @@ fun BottomSheetRescue(
             Card(
                 modifier = Modifier
                     .fillMaxWidth(0.92f)
-                    .shadow(shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp), elevation = 12.dp)
+                    .shadow(
+                        shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+                        elevation = 12.dp)
                     .align(Alignment.CenterHorizontally),
                 shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)) {
 

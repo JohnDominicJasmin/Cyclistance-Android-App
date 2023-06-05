@@ -40,7 +40,6 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 @Composable
 fun MappingScreenContent(
     modifier: Modifier,
-    isDarkTheme: Boolean,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     state: MappingState,
     mapboxMap: MapboxMap?,
@@ -59,7 +58,6 @@ fun MappingScreenContent(
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
         MappingBottomSheet(
-            isDarkTheme = isDarkTheme,
             state = state,
             onClickRescueArrivedButton = { event(MappingUiEvent.RescueArrivedConfirmed) },
             onClickReachedDestinationButton = { event(MappingUiEvent.DestinationReachedConfirmed) },
@@ -84,7 +82,6 @@ fun MappingScreenContent(
                         start.linkTo(parent.start)
                         bottom.linkTo(parent.bottom)
                     },
-                    isDarkTheme = isDarkTheme,
                     hasTransaction = hasTransaction,
                     isRescueCancelled = isRescueCancelled,
                     mapboxMap = mapboxMap,

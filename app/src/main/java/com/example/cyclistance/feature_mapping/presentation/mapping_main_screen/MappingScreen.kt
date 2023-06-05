@@ -68,7 +68,6 @@ import timber.log.Timber
 fun MappingScreen(
     hasInternetConnection: Boolean,
     typeBottomSheet: String,
-    isDarkTheme: Boolean,
     mappingViewModel: MappingViewModel,
     paddingValues: PaddingValues,
     isNavigating: Boolean,
@@ -709,7 +708,6 @@ fun MappingScreen(
 
     MappingScreenContent(
         modifier = Modifier.padding(paddingValues),
-        isDarkTheme = isDarkTheme,
         state = state,
         locationPermissionState = foregroundLocationPermissionsState,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
