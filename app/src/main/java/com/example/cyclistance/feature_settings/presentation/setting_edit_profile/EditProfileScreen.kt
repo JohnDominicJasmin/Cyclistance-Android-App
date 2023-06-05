@@ -187,10 +187,9 @@ fun EditProfileScreen(
     val openGallery = remember {
         {
             filesAndMediaPermissionState.requestPermission(
-                context = context,
-                rationalMessage = "Storage permission is not yet granted.", onGranted = {
+                onGranted = {
                     openGalleryResultLauncher.launch("image/*")
-                }, onDenied = {
+                }, onExplain = {
                     uiState = uiState.copy(filesAndMediaDialogVisible = true)
                 })
 
@@ -200,11 +199,9 @@ fun EditProfileScreen(
     val openCamera = remember {
         {
             openCameraPermissionState.requestPermission(
-                context = context,
-                rationalMessage = "Camera permission is not yet granted.",
                 onGranted = {
                     openCameraResultLauncher.launch()
-                }, onDenied = {
+                }, onExplain = {
                     uiState = uiState.copy(cameraPermissionDialogVisible = true)
                 })
         }

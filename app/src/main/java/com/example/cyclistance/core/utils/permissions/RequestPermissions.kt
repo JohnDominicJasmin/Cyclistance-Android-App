@@ -1,68 +1,43 @@
-
 package com.example.cyclistance.core.utils.permissions
 
-import android.content.Context
-import android.widget.Toast
+import android.os.Build
 import com.google.accompanist.permissions.*
 
 @OptIn(ExperimentalPermissionsApi::class)
 inline fun MultiplePermissionsState.requestPermission(
-    context: Context,
-    rationalMessage: String,
     onGranted: () -> Unit,
-    onDenied: () -> Unit) {
+    onExplain: () -> Unit) {
 
-    val isDenied = !allPermissionsGranted && !shouldShowRationale
+    val version = Build.VERSION.SDK_INT
+    val android30 = Build.VERSION_CODES.R
 
-    if (isDenied) {
-        onDenied()
-        return
+    when {
+        allPermissionsGranted -> onGranted()
+        shouldShowRationale -> launchMultiplePermissionRequest()
+        version >= android30 && !shouldShowRationale -> launchMultiplePermissionRequest()
+        else -> onExplain()
+
     }
-
-    if (!allPermissionsGranted) {
-        this.launchMultiplePermissionRequest()
-        return
-    }
-
-    if (shouldShowRationale) {
-        Toast.makeText(
-            context,
-            rationalMessage,
-            Toast.LENGTH_LONG).show()
-        return
-    }
-
-
-
-    onGranted()
 }
+
 
 @OptIn(ExperimentalPermissionsApi::class)
 inline fun PermissionState.requestPermission(
-    context: Context,
-    rationalMessage: String,
     onGranted: () -> Unit,
-    onDenied: () -> Unit) {
+    onExplain: () -> Unit) {
 
-    val isDenied = !status.isGranted && !status.shouldShowRationale
 
-    if (isDenied) {
-        onDenied()
-        return
+    val version = Build.VERSION.SDK_INT
+    val android30 = Build.VERSION_CODES.R
+
+
+    when {
+        status.isGranted -> onGranted()
+        status.shouldShowRationale -> launchPermissionRequest()
+        (version >= android30 && !status.shouldShowRationale) -> launchPermissionRequest()
+        else -> onExplain()
     }
-    if (!status.isGranted) {
-        launchPermissionRequest()
-        return
-    }
-    if(status.shouldShowRationale){
-        Toast.makeText(context, rationalMessage, Toast.LENGTH_LONG).show()
-        return
-    }
-
-
-
-    onGranted()
-
-
 
 }
+
+
