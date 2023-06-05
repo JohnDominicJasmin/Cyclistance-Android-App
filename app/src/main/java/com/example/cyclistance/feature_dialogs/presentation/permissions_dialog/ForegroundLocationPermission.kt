@@ -14,21 +14,19 @@ import com.example.cyclistance.feature_dialogs.presentation.common.DialogCreator
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun DialogLocationPermission(
+fun DialogForegroundLocationPermission(
     modifier: Modifier = Modifier,
-    onDismiss: () -> Unit,
-) {
+    onDismiss: () -> Unit) {
 
     val context = LocalContext.current
-
 
     DialogCreator(
         modifier = modifier,
         dialogModel = DialogModel(
-            icon = R.drawable.ic_location_permission,
-            iconContentDescription = "Enable Location Permission",
-            title = "Enable Location Permission",
-            description = "By enabling your device's location you can track your real-time location.",
+            icon = R.drawable.ic_foreground_location_permission,
+            iconContentDescription = "Enable Foreground Location Permission",
+            title = "Enable Foreground Location Permission",
+            description = " Allows the app to access your device's location while it is in the foreground, ensuring accurate and relevant information based on your current whereabouts.",
             firstButtonText = "Go to Settings",
             secondButtonText = "Not now"
         ),
@@ -42,7 +40,7 @@ fun DialogLocationPermission(
 fun PreviewDialogLocationPermissionDark() {
     CyclistanceTheme(darkTheme = true) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-            DialogLocationPermission(onDismiss = {})
+            DialogForegroundLocationPermission(onDismiss = {})
         }
     }
 }
@@ -52,7 +50,7 @@ fun PreviewDialogLocationPermissionDark() {
 fun PreviewDialogLocationPermissionLight() {
     CyclistanceTheme(darkTheme = false) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-            DialogLocationPermission(onDismiss = {})
+            DialogForegroundLocationPermission(onDismiss = {})
         }
     }
 }
