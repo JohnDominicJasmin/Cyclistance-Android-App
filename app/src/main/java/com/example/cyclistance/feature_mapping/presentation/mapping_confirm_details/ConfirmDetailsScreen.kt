@@ -1,5 +1,8 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details
 
+import android.Manifest
+import android.os.Build
+import android.os.Build.VERSION_CODES.Q
 import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -16,6 +19,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_SHEET_TYPE
+import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetails
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.ConfirmDetailsContent
@@ -26,9 +30,13 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_deta
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ConfirmDetailsScreen(
     viewModel: ConfirmDetailsViewModel = hiltViewModel(),
@@ -38,6 +46,15 @@ fun ConfirmDetailsScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var uiState by rememberSaveable { mutableStateOf(ConfirmDetailsUiState()) }
+
+    val foregroundLocationPermissionsState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION))
+
+    val backgroundLocationPermissionState =
+        rememberPermissionState(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.distinctUntilChanged().collect { event ->
@@ -116,22 +133,65 @@ fun ConfirmDetailsScreen(
             )
         }
     }
+
     val onClickCancelButton = remember {
         {
             navController.navigateScreen(Screens.MappingScreen.route)
         }
     }
+
     val onClickConfirmButton = remember {
         {
-            viewModel.onEvent(
-                event = ConfirmDetailsVmEvent.ConfirmDetails(
-                    confirmDetailsModel = ConfirmationDetails(
-                        address = uiState.address,
-                        bikeType = uiState.bikeType,
-                        description = uiState.description,
-                        message = uiState.message
-                    )
-                ))
+
+            if (Build.VERSION.SDK_INT >= Q) {
+
+
+                foregroundLocationPermissionsState.requestPermission(onGranted = {
+                    backgroundLocationPermissionState.requestPermission(onGranted = {
+                        viewModel.onEvent(
+                            event = ConfirmDetailsVmEvent.ConfirmDetails(
+                                confirmDetailsModel = ConfirmationDetails(
+                                    address = uiState.address,
+                                    bikeType = uiState.bikeType,
+                                    description = uiState.description,
+                                    message = uiState.message
+                                )
+                            ))
+                    }, onExplain = {
+                        uiState = uiState.copy(
+                            backgroundLocationPermissionDialogVisible = true,
+                            foregroundLocationPermissionDialogVisible = false)
+                    })
+
+                }, onExplain = {
+                    uiState = uiState.copy(
+                        foregroundLocationPermissionDialogVisible = true,
+                        backgroundLocationPermissionDialogVisible = false)
+                })
+
+
+            } else {
+                foregroundLocationPermissionsState.requestPermission(
+                    onGranted = {
+                        viewModel.onEvent(
+                            event = ConfirmDetailsVmEvent.ConfirmDetails(
+                                confirmDetailsModel = ConfirmationDetails(
+                                    address = uiState.address,
+                                    bikeType = uiState.bikeType,
+                                    description = uiState.description,
+                                    message = uiState.message
+                                )
+                            ))
+                    },
+                    onExplain = {
+                        uiState = uiState.copy(
+                            foregroundLocationPermissionDialogVisible = true,
+                            backgroundLocationPermissionDialogVisible = false)
+                    }
+                )
+            }
+
+
         }
     }
     val onDismissNoInternetDialog = remember {
@@ -142,38 +202,34 @@ fun ConfirmDetailsScreen(
         }
     }
 
+    val onDismissBackgroundLocationDialog = remember {
+        {
+            uiState = uiState.copy(backgroundLocationPermissionDialogVisible = false)
+        }
+    }
+
+    val onDismissForegroundLocationDialog = remember {
+        {
+            uiState = uiState.copy(foregroundLocationPermissionDialogVisible = false)
+        }
+    }
+
+
+
     ConfirmDetailsContent(
         modifier = Modifier.padding(paddingValues),
         state = state,
         event = { event ->
             when (event) {
-                is ConfirmDetailsUiEvent.ChangeAddress -> {
-                    onValueChangeAddress(event.address)
-                }
-
-                is ConfirmDetailsUiEvent.ChangeBikeType -> {
-                    onClickBikeType(event.bikeType)
-                }
-
-                is ConfirmDetailsUiEvent.ChangeDescription -> {
-                    onClickDescriptionButton(event.description)
-                }
-
-                is ConfirmDetailsUiEvent.ChangeMessage -> {
-                    onValueChangeMessage(event.message)
-                }
-
-                is ConfirmDetailsUiEvent.ConfirmDetails -> {
-                    onClickConfirmButton()
-                }
-
-                is ConfirmDetailsUiEvent.CancelConfirmation -> {
-                    onClickCancelButton()
-                }
-
-                is ConfirmDetailsUiEvent.DismissNoInternetDialog -> {
-                    onDismissNoInternetDialog()
-                }
+                is ConfirmDetailsUiEvent.ChangeAddress -> onValueChangeAddress(event.address)
+                is ConfirmDetailsUiEvent.ChangeBikeType -> onClickBikeType(event.bikeType)
+                is ConfirmDetailsUiEvent.ChangeDescription -> onClickDescriptionButton(event.description)
+                is ConfirmDetailsUiEvent.ChangeMessage -> onValueChangeMessage(event.message)
+                is ConfirmDetailsUiEvent.ConfirmDetails -> onClickConfirmButton()
+                is ConfirmDetailsUiEvent.CancelConfirmation -> onClickCancelButton()
+                is ConfirmDetailsUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
+                is ConfirmDetailsUiEvent.DismissBackgroundLocationDialog -> onDismissBackgroundLocationDialog()
+                is ConfirmDetailsUiEvent.DismissForegroundLocationDialog -> onDismissForegroundLocationDialog()
             }
         }
     )
