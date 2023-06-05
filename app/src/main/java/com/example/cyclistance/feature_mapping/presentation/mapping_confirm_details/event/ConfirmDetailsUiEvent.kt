@@ -8,5 +8,7 @@ sealed class ConfirmDetailsUiEvent {
     object ConfirmDetails : ConfirmDetailsUiEvent()
     object CancelConfirmation : ConfirmDetailsUiEvent()
     object DismissNoInternetDialog : ConfirmDetailsUiEvent()
+    object DismissBackgroundLocationDialog : ConfirmDetailsUiEvent()
+    object DismissForegroundLocationDialog : ConfirmDetailsUiEvent()
 
 }
