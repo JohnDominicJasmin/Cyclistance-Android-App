@@ -2,17 +2,8 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 
 import android.content.Intent
 import android.widget.Toast
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -20,43 +11,27 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.content.ContextCompat.startActivity
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthResendButton
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthTextStatus
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthVerifyEmailButton
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.emailAuthConstraints
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthScreenContent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthVmEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailUiEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthState
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthUiState
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
-import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
-import com.example.cyclistance.feature_dialogs.presentation.alert_dialog.AlertDialog
-import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
-import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
 
 @Composable
 fun EmailAuthScreen(
-    isDarkTheme: Boolean,
     emailAuthViewModel: EmailAuthViewModel = hiltViewModel(),
     paddingValues: PaddingValues,
     navController: NavController) {
@@ -182,7 +157,6 @@ fun EmailAuthScreen(
     EmailAuthScreenContent(
         modifier = Modifier.padding(paddingValues),
         emailAuthState = emailAuthState,
-        isDarkTheme = isDarkTheme,
         uiState = uiState,
         event = { event ->
             when (event) {
@@ -194,103 +168,4 @@ fun EmailAuthScreen(
         }
     )
 
-}
-
-@Preview(device = "id:pixel_xl")
-@Composable
-fun EmailAuthScreenPreview() {
-    CyclistanceTheme(true) {
-        EmailAuthScreenContent(
-            isDarkTheme = true,
-            emailAuthState = EmailAuthState(
-                savedAccountEmail = "johndoe@gmail.com",
-                secondsLeft = 10,
-            ),
-        )
-    }
-
-}
-
-
-@Composable
-fun EmailAuthScreenContent(
-    modifier: Modifier = Modifier,
-    emailAuthState: EmailAuthState = EmailAuthState(),
-    isDarkTheme: Boolean,
-    uiState: EmailAuthUiState = EmailAuthUiState(),
-    event: (EmailUiEvent) -> Unit = {}) {
-
-
-    Surface(
-        color = MaterialTheme.colors.background,
-        modifier = modifier.fillMaxSize()
-    ) {
-
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center) {
-
-            ConstraintLayout(
-                constraintSet = emailAuthConstraints,
-                modifier = Modifier
-                    .fillMaxHeight(0.9f)
-                    .fillMaxWidth()) {
-
-                Image(
-                    contentDescription = "App Icon",
-                    painter = painterResource(id = if (isDarkTheme) R.drawable.ic_dark_email else R.drawable.ic_light_email),
-                    modifier = Modifier
-                        .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId),
-                    contentScale = ContentScale.FillBounds
-                )
-
-                EmailAuthTextStatus(email = emailAuthState.savedAccountEmail)
-
-
-                if (uiState.alertDialogState.visible()) {
-                    AlertDialog(
-                        alertDialog = uiState.alertDialogState,
-                        onDismissRequest = {
-                            event(EmailUiEvent.DismissAlertDialog)
-                        }
-                    )
-                }
-
-                if (emailAuthState.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.layoutId(
-                            AuthenticationConstraintsItem.ProgressBar.layoutId))
-                }
-
-
-                val secondsRemainingText =
-                    remember(uiState.isTimerRunning, emailAuthState.secondsLeft) {
-                        if (uiState.isTimerRunning) "Resend Email in ${emailAuthState.secondsLeft}s" else "Resend Email"
-                    }
-
-                EmailAuthVerifyEmailButton(
-                    onClickVerifyButton = {
-                        event(EmailUiEvent.VerifyEmail)
-                    },
-                    enabled = !emailAuthState.isLoading)
-
-                EmailAuthResendButton(
-                    text = secondsRemainingText,
-                    isEnabled = !uiState.isTimerRunning && !emailAuthState.isLoading,
-                    onClickResendButton = {
-                        event(EmailUiEvent.ResendEmail)
-                    })
-
-                if (uiState.isNoInternetVisible) {
-                    NoInternetDialog(
-                        onDismiss = {
-                            event(EmailUiEvent.DismissNoInternetDialog)
-                        },
-                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
-                    )
-                }
-            }
-
-        }
-    }
 }

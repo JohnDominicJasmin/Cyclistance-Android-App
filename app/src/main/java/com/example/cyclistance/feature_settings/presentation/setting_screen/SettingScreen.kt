@@ -11,7 +11,7 @@ import com.example.cyclistance.navigation.Screens
 
 @Composable
 fun SettingScreen(
-    isDarkTheme: Boolean,
+
     onToggleTheme: () -> Unit,
     paddingValues: PaddingValues,
     navController: NavController) {
@@ -21,7 +21,6 @@ fun SettingScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues),
-        isDarkTheme = isDarkTheme,
         onToggleTheme = onToggleTheme,
         onClickEditProfile = {
             navController.navigate(Screens.EditProfileScreen.route)

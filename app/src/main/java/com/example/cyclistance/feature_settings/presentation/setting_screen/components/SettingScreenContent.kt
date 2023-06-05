@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,16 +17,17 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingScreen
+import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
 @Composable
 fun SettingScreenContent(
     modifier: Modifier = Modifier,
-    isDarkTheme: Boolean = false,
     onToggleTheme: () -> Unit = {},
     onClickEditProfile: () -> Unit = {}) {
 
+    val isDarkTheme = IsDarkTheme.current
     Surface(modifier = modifier, color = MaterialTheme.colors.background) {
 
         Column(
@@ -88,13 +90,14 @@ fun SettingScreenContent(
 @Preview
 @Composable
 fun PreviewSettingScreenDark() {
-    CyclistanceTheme(true) {
-        val navController = rememberNavController()
-        SettingScreen(
-            isDarkTheme = true,
-            onToggleTheme = {},
-            navController = navController,
-            paddingValues = PaddingValues())
+    CompositionLocalProvider(IsDarkTheme provides true) {
+        CyclistanceTheme(true) {
+            val navController = rememberNavController()
+            SettingScreen(
+                onToggleTheme = {},
+                navController = navController,
+                paddingValues = PaddingValues())
+        }
     }
 }
 
@@ -102,12 +105,13 @@ fun PreviewSettingScreenDark() {
 @Preview
 @Composable
 fun PreviewSettingScreenLight() {
-    CyclistanceTheme(false) {
-        val navController = rememberNavController()
-        SettingScreen(
-            isDarkTheme = true,
-            onToggleTheme = {},
-            navController = navController,
-            paddingValues = PaddingValues())
+    CompositionLocalProvider(IsDarkTheme provides true) {
+        CyclistanceTheme(false) {
+            val navController = rememberNavController()
+            SettingScreen(
+                onToggleTheme = {},
+                navController = navController,
+                paddingValues = PaddingValues())
+        }
     }
 }

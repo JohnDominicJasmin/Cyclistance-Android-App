@@ -27,6 +27,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.*
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.setDefaultSettings
+import com.example.cyclistance.navigation.IsDarkTheme
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
@@ -50,7 +51,6 @@ import timber.log.Timber
 fun MappingMapsScreen(
     modifier: Modifier,
     state: MappingState,
-    isDarkTheme: Boolean,
     mapboxMap: MapboxMap?,
     hasTransaction: Boolean,
     isNavigating: Boolean,
@@ -194,7 +194,6 @@ fun MappingMapsScreen(
 
     Map(
         modifier = modifier,
-        isDarkTheme = isDarkTheme,
         event = event)
 
 }
@@ -203,11 +202,10 @@ fun MappingMapsScreen(
 @Composable
 private fun Map(
     modifier: Modifier,
-    isDarkTheme: Boolean,
-    event: (MappingUiEvent) -> Unit
-) {
+    event: (MappingUiEvent) -> Unit) {
 
 
+    val isDarkTheme = IsDarkTheme.current
     Box(modifier = modifier) {
 
         AndroidViewBinding(
@@ -217,8 +215,8 @@ private fun Map(
             var mapboxMap: MapboxMap? = null
 
             val initSource = { loadedMapStyle: Style ->
-                loadedMapStyle.addSource(GeoJsonSource(ICON_SOURCE_ID));
-                loadedMapStyle.addSource(GeoJsonSource(ROUTE_SOURCE_ID));
+                loadedMapStyle.addSource(GeoJsonSource(ICON_SOURCE_ID))
+                loadedMapStyle.addSource(GeoJsonSource(ROUTE_SOURCE_ID))
             }
 
             val initLayers = { loadedMapStyle: Style ->

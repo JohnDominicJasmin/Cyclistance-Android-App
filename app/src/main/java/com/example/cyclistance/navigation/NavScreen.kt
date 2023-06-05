@@ -36,6 +36,9 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 
+
+val IsDarkTheme = compositionLocalOf { false }
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NavScreen(
@@ -44,6 +47,7 @@ fun NavScreen(
     navViewModel: NavViewModel = hiltViewModel(),
     editProfileViewModel: EditProfileViewModel = hiltViewModel()
 ) {
+
 
 
     var navUiState by rememberSaveable { mutableStateOf(NavUiState()) }
@@ -201,52 +205,54 @@ fun NavScreen(
     }
 
 
-    CyclistanceTheme(darkTheme = settingState.isDarkTheme) {
+    CompositionLocalProvider(IsDarkTheme provides settingState.isDarkTheme) {
 
-        Surface(
-            modifier = Modifier.fillMaxSize()) {
+        CyclistanceTheme(darkTheme = settingState.isDarkTheme) {
 
-            Scaffold(
-                drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
-                scaffoldState = scaffoldState,
-                topBar = {
-                    Column {
+            Surface(
+                modifier = Modifier.fillMaxSize()) {
 
-                        TopAppBar(
-                            route = navBackStackEntry?.destination?.route,
-                            onClickMenuIcon = onClickMenuIcon,
-                            onClickArrowBackIcon = onClickArrowBackIcon,
-                            isNavigating = navUiState.isNavigating)
+                Scaffold(
+                    drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
+                    scaffoldState = scaffoldState,
+                    topBar = {
+                        Column {
 
-                        NoInternetStatusBar(
-                            navUiState.internetAvailable,
-                            navBackStackEntry?.destination?.route)
+                            TopAppBar(
+                                route = navBackStackEntry?.destination?.route,
+                                onClickMenuIcon = onClickMenuIcon,
+                                onClickArrowBackIcon = onClickArrowBackIcon,
+                                isNavigating = navUiState.isNavigating)
 
+                            NoInternetStatusBar(
+                                navUiState.internetAvailable,
+                                navBackStackEntry?.destination?.route)
+
+                        }
+                    },
+                    drawerContent = {
+                        MappingDrawerContent(
+                            respondentCount = respondentCount,
+                            onClickSettings = onClickSettings,
+                            onClickRescueRequest = onClickRescueRequest,
+                            onClickChat = onClickChat,
+                            onClickSignOut = onClickSignOut,
+                            uiState = navUiState
+                        )
+                    },
+                ) { paddingValues ->
+                    navState.navigationStartingDestination?.let {
+                        NavGraph(
+                            hasInternetConnection = navUiState.internetAvailable,
+                            navController = navController,
+                            paddingValues = paddingValues,
+                            mappingViewModel = mappingViewModel,
+                            onChangeNavigatingState = onChangeNavigatingState,
+                            onToggleTheme = onToggleTheme,
+                            isNavigating = navUiState.isNavigating,
+                            startingDestination = it
+                        )
                     }
-                },
-                drawerContent = {
-                    MappingDrawerContent(
-                        respondentCount = respondentCount,
-                        onClickSettings = onClickSettings,
-                        onClickRescueRequest = onClickRescueRequest,
-                        onClickChat = onClickChat,
-                        onClickSignOut = onClickSignOut,
-                        uiState = navUiState
-                    )
-                },
-            ) { paddingValues ->
-                navState.navigationStartingDestination?.let {
-                    NavGraph(
-                        hasInternetConnection = navUiState.internetAvailable,
-                        navController = navController,
-                        paddingValues = paddingValues,
-                        isDarkTheme = settingState.isDarkTheme,
-                        mappingViewModel = mappingViewModel,
-                        onChangeNavigatingState = onChangeNavigatingState,
-                        onToggleTheme = onToggleTheme,
-                        isNavigating = navUiState.isNavigating,
-                        startingDestination = it
-                    )
                 }
             }
         }
