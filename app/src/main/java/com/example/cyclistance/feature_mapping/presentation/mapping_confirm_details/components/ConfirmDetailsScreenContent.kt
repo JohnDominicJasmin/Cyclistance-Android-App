@@ -25,6 +25,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
+import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogBackgroundLocationPermission
+import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogForegroundLocationPermission
 import com.example.cyclistance.feature_mapping.presentation.common.AdditionalMessage
 import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsUiEvent
@@ -51,7 +53,7 @@ fun PreviewConfirmDetailsScreenLight() {
         ConfirmDetailsContent(
             modifier = Modifier,
             state = ConfirmDetailsState(),
-            uiState = ConfirmDetailsUiState())
+            uiState = ConfirmDetailsUiState(backgroundLocationPermissionDialogVisible = true))
     }
 }
 
@@ -81,7 +83,7 @@ fun ConfirmDetailsContent(
                     .fillMaxSize()
                     .background(MaterialTheme.colors.background)) {
 
-                val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText, noInternetScreen, circularProgressBar) = createRefs()
+                val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText, noInternetScreen, circularProgressBar, permissionDialog) = createRefs()
 
                 AddressTextField(
                     modifier = Modifier
@@ -219,6 +221,35 @@ fun ConfirmDetailsContent(
                             height = Dimension.wrapContent
                         })
 
+                }
+
+
+                if (uiState.backgroundLocationPermissionDialogVisible) {
+                    DialogBackgroundLocationPermission(
+                        modifier = Modifier.constrainAs(permissionDialog) {
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            height = Dimension.wrapContent
+                            centerTo(parent)
+                        }, onDismiss = {
+                            event(ConfirmDetailsUiEvent.DismissBackgroundLocationDialog)
+                        })
+                }
+
+                if (uiState.foregroundLocationPermissionDialogVisible) {
+                    DialogForegroundLocationPermission(
+                        modifier = Modifier.constrainAs(permissionDialog) {
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            height = Dimension.wrapContent
+                            centerTo(parent)
+                        },
+                        onDismiss = {
+                            event(ConfirmDetailsUiEvent.DismissForegroundLocationDialog)
+                        }
+                    )
                 }
             }
 

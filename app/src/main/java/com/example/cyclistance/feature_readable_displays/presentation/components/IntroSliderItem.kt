@@ -57,7 +57,7 @@ fun IntroSliderItem(
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier
                             .padding(horizontal = 4.dp, vertical = 12.dp)
-                            .weight(0.8f, fill = true),
+                            .weight(1.35f, fill = true),
                     )
 
 

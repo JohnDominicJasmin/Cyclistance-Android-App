@@ -32,7 +32,7 @@ val signInConstraints = ConstraintSet {
         top.linkTo(topSpacer.bottom, margin = 12.dp)
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-        width = Dimension.percent(0.3f)
+        width = Dimension.percent(0.2f)
         height = Dimension.wrapContent
     }
 

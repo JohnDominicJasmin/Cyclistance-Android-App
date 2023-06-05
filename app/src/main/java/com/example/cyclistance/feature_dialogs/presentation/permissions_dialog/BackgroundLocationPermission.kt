@@ -14,21 +14,20 @@ import com.example.cyclistance.feature_dialogs.presentation.common.DialogCreator
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun DialogLocationPermission(
+fun DialogBackgroundLocationPermission(
     modifier: Modifier = Modifier,
-    onDismiss: () -> Unit,
+    onDismiss: () -> Unit
 ) {
 
     val context = LocalContext.current
 
-
     DialogCreator(
         modifier = modifier,
         dialogModel = DialogModel(
-            icon = R.drawable.ic_location_permission,
-            iconContentDescription = "Enable Location Permission",
-            title = "Enable Location Permission",
-            description = "By enabling your device's location you can track your real-time location.",
+            icon = R.drawable.ic_background_location_permission,
+            iconContentDescription = "Enable Background Location Permission",
+            title = "Enable Background Location Permission",
+            description = "Ensures that the app can deliver uninterrupted location-based services, guaranteeing timely notifications, even when the app is in the background or not actively in use.",
             firstButtonText = "Go to Settings",
             secondButtonText = "Not now"
         ),
@@ -37,22 +36,25 @@ fun DialogLocationPermission(
 
 }
 
-@Preview(device = "id:Galaxy Nexus", name = "Location Permission Dialog Dark Theme")
+@Preview(device = "id:Galaxy Nexus")
 @Composable
-fun PreviewDialogLocationPermissionDark() {
+fun PreviewDialogBackgroundLocationPermissionDark() {
     CyclistanceTheme(darkTheme = true) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-            DialogLocationPermission(onDismiss = {})
+            DialogBackgroundLocationPermission(onDismiss = {})
         }
     }
 }
 
-@Preview(device = "id:Galaxy Nexus", name = "Location Permission Dialog Light Theme")
+
+@Preview(device = "id:Galaxy Nexus")
 @Composable
-fun PreviewDialogLocationPermissionLight() {
+fun PreviewDialogBackgroundLocationPermissionLight() {
     CyclistanceTheme(darkTheme = false) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-            DialogLocationPermission(onDismiss = {})
+            DialogBackgroundLocationPermission(onDismiss = {})
         }
     }
 }
+
+

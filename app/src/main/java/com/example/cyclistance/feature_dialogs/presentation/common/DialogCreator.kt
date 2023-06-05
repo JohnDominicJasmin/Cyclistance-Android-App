@@ -80,7 +80,7 @@ fun DialogCreator(
                         contentDescription = dialogModel.iconContentDescription,
                         contentScale = ContentScale.Fit,
                         modifier = Modifier
-                            .weight(0.07f, fill = false)
+                            .weight(0.085f, fill = false)
                             .padding(vertical = 12.dp)
                     )
 
@@ -95,7 +95,7 @@ fun DialogCreator(
                             color = MaterialTheme.colors.onSurface),
                         modifier = Modifier
                             .weight(0.1f, fill = false)
-                            .padding(horizontal = 12.dp),
+                            .padding(horizontal = 16.dp),
                     )
 
 
@@ -107,7 +107,8 @@ fun DialogCreator(
                             textAlign = TextAlign.Center,
                         ),
                         modifier = Modifier
-                            .padding(top = 6.dp, start = 25.dp, end = 25.dp)
+                            .padding(top = 6.dp)
+                            .padding(horizontal = 30.dp)
                             .weight(0.15f, fill = false),
                         color = Black500,
                     )

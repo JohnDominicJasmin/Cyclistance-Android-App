@@ -16,7 +16,7 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 
 @OptIn(ExperimentalPagerApi::class)
-@Preview
+@Preview(device = "id:Galaxy Nexus")
 @Composable
 fun PreviewIntroSliderDark() {
     CyclistanceTheme(darkTheme = true) {
@@ -33,10 +33,10 @@ fun PreviewIntroSliderDark() {
 
 
 @OptIn(ExperimentalPagerApi::class)
-@Preview
+@Preview(device = "id:Galaxy Nexus")
 @Composable
 fun PreviewIntroSliderLight() {
-    CyclistanceTheme(darkTheme = true) {
+    CyclistanceTheme(darkTheme = false) {
         IntroSliderContent(
             modifier = Modifier
                 .background(MaterialTheme.colors.background),

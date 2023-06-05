@@ -14,7 +14,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
-
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun IntroSliderScreen(
@@ -39,12 +38,12 @@ fun IntroSliderScreen(
 
     val onClickNextButton = remember(pagerState.currentPage) {
         {
-            if(isOnLastPage){
+            if (isOnLastPage) {
                 introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
                 navController.navigateScreenInclusively(
                     Screens.SignInScreen.route,
                     Screens.IntroSliderScreen.route)
-            }else{
+            } else {
                 scope.launch {
                     pagerState.animateScrollToPage(
                         page = pagerState.currentPage + 1

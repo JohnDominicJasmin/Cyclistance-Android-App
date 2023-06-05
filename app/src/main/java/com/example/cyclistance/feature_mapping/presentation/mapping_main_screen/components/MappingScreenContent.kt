@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
-import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogLocationPermission
+import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogForegroundLocationPermission
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogPhonePermission
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
@@ -174,13 +174,15 @@ fun MappingScreenContent(
                 }
 
                 if (uiState.locationPermissionDialogVisible) {
-                    DialogLocationPermission(modifier = Modifier.constrainAs(permissionDialog) {
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                        height = Dimension.wrapContent
-                        centerTo(parent)
-                    }, onDismiss = { event(MappingUiEvent.DismissLocationPermission) }
+                    DialogForegroundLocationPermission(
+                        modifier = Modifier.constrainAs(
+                            permissionDialog) {
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            height = Dimension.wrapContent
+                            centerTo(parent)
+                        }, onDismiss = { event(MappingUiEvent.DismissLocationPermission) }
                     )
                 }
 
