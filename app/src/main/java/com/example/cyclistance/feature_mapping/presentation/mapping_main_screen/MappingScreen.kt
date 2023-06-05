@@ -3,8 +3,6 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
-import android.os.Build
-import android.os.Build.VERSION_CODES.Q
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -82,7 +80,7 @@ fun MappingScreen(
     val coroutineScope = rememberCoroutineScope()
 
     var uiState by rememberSaveable { mutableStateOf(MappingUiState()) }
-    var cameraState by rememberSaveable{ mutableStateOf(CameraState()) }
+    var cameraState by rememberSaveable { mutableStateOf(CameraState()) }
     val locationComponentOptions = MappingUtils.rememberLocationComponentOptions()
     var mapboxMap by remember<MutableState<MapboxMap?>> {
         mutableStateOf(null)
@@ -92,34 +90,26 @@ fun MappingScreen(
         bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
     )
 
-    val locationPermissionsState = if (Build.VERSION.SDK_INT >= Q) {
-        rememberMultiplePermissionsState(
-            permissions = listOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
-                Manifest.permission.ACCESS_BACKGROUND_LOCATION))
-    } else {
-        rememberMultiplePermissionsState(
-            permissions = listOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION))
-    }
+    val foregroundLocationPermissionsState = rememberMultiplePermissionsState(
+        permissions = listOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION))
 
 
     val userLocationAvailable by remember(
-        locationPermissionsState.allPermissionsGranted,
+        foregroundLocationPermissionsState.allPermissionsGranted,
         state.userLocation) {
         derivedStateOf {
-            locationPermissionsState.allPermissionsGranted.and(state.userLocation != null)
+            foregroundLocationPermissionsState.allPermissionsGranted.and(state.userLocation != null)
         }
     }
 
 
     val pulsingEnabled by remember(
         uiState.searchingAssistance,
-        locationPermissionsState.allPermissionsGranted
+        foregroundLocationPermissionsState.allPermissionsGranted
     ) {
-        derivedStateOf { uiState.searchingAssistance.and(locationPermissionsState.allPermissionsGranted) }
+        derivedStateOf { uiState.searchingAssistance.and(foregroundLocationPermissionsState.allPermissionsGranted) }
     }
 
 
@@ -227,13 +217,11 @@ fun MappingScreen(
 
     val onClickRequestHelpButton = remember {
         {
-            locationPermissionsState.requestPermission(
-                context = context,
-                rationalMessage = "Location permission is not yet granted.",
+            foregroundLocationPermissionsState.requestPermission(
                 onGranted = {
                     context.startLocationServiceIntentAction()
                     requestHelp()
-                }, onDenied = {
+                }, onExplain = {
                     uiState = uiState.copy(locationPermissionDialogVisible = true)
                 })
 
@@ -282,9 +270,7 @@ fun MappingScreen(
 
     val onClickLocateUserButton = remember {
         {
-            locationPermissionsState.requestPermission(
-                context = context,
-                rationalMessage = "Location permission is not yet granted.",
+            foregroundLocationPermissionsState.requestPermission(
                 onGranted = {
                     if (!context.hasGPSConnection()) {
                         context.checkLocationSetting(
@@ -297,7 +283,7 @@ fun MappingScreen(
                         locateUser(LOCATE_USER_ZOOM_LEVEL, point, DEFAULT_CAMERA_ANIMATION_DURATION)
                     }
 
-                }, onDenied = {
+                }, onExplain = {
                     uiState = uiState.copy(locationPermissionDialogVisible = true)
                 })
         }
@@ -412,12 +398,10 @@ fun MappingScreen(
     val onClickCallButton = remember(clientPhoneNumber) {
         {
             phonePermissionState.requestPermission(
-                context = context,
-                rationalMessage = "Phone call permission is not yet granted.",
                 onGranted = {
                     callClient()
                 },
-                onDenied = {
+                onExplain = {
                     uiState = uiState.copy(phonePermissionDialogVisible = true)
                 })
         }
@@ -706,8 +690,8 @@ fun MappingScreen(
     }
 
 
-    LaunchedEffect(key1 = locationPermissionsState.allPermissionsGranted) {
-        if (!locationPermissionsState.allPermissionsGranted) {
+    LaunchedEffect(key1 = foregroundLocationPermissionsState.allPermissionsGranted) {
+        if (!foregroundLocationPermissionsState.allPermissionsGranted) {
             return@LaunchedEffect
         }
 
@@ -727,7 +711,7 @@ fun MappingScreen(
         modifier = Modifier.padding(paddingValues),
         isDarkTheme = isDarkTheme,
         state = state,
-        locationPermissionState = locationPermissionsState,
+        locationPermissionState = foregroundLocationPermissionsState,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         hasTransaction = hasTransaction,
         isRescueCancelled = isRescueCancelled,
@@ -735,7 +719,7 @@ fun MappingScreen(
         isNavigating = isNavigating,
         uiState = uiState,
         event = { event ->
-            when(event){
+            when (event) {
                 is MappingUiEvent.RequestHelp -> onClickRequestHelpButton()
                 is MappingUiEvent.RespondToHelp -> onClickRespondToHelpButton()
                 is MappingUiEvent.CancelSearchConfirmed -> onClickCancelSearchButton()
