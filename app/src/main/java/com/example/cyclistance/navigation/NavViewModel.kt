@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.NavConstants.NAV_VM_STATE_KEY
-import com.example.cyclistance.core.utils.constants.NavigationConstants
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_readable_displays.domain.use_case.IntroSliderUseCase
 import com.example.cyclistance.navigation.state.NavState
@@ -46,7 +45,7 @@ class NavViewModel @Inject constructor(
                     }
 
                     if (isUserSignedIn()) {
-                        _state.update { it.copy(navigationStartingDestination = Screens.MappingScreen.route + "?${NavigationConstants.BOTTOM_SHEET_TYPE}={${NavigationConstants.BOTTOM_SHEET_TYPE}}") }
+                        _state.update { it.copy(navigationStartingDestination = Screens.MappingScreen.route) }
                         return@collect
                     }
 

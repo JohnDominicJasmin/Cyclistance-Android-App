@@ -25,7 +25,7 @@ fun TopAppBar(
     route: String?) {
 
     when (route) {
-        Screens.MappingScreen.route + "?${NavigationConstants.BOTTOM_SHEET_TYPE}={${NavigationConstants.BOTTOM_SHEET_TYPE}}" -> {
+        Screens.MappingScreen.route -> {
             AnimatedVisibility(
                 visible = isNavigating.not(),
                 enter = fadeIn(initialAlpha = 0.4f),
