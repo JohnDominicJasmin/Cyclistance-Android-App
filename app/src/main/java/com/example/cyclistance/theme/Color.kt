@@ -14,7 +14,7 @@ val Black300 = Color(0xFF919191)
 
 
 val Orange300 = Color(0xFFEBAD52)
-val Orange30 = Color(0x4DD6B27B)
+val Orange30 = Color(0xFFFFCC82)
 
 val Red900 = Color(0xFFFF424E)
 val Red700 = Color(0xFFF53649)
