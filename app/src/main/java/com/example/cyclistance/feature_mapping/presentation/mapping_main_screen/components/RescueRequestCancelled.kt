@@ -37,7 +37,7 @@ import com.example.cyclistance.theme.Red610
 
 
 @Composable
-fun MappingCancelledRescue(
+fun RescueRequestCancelled(
     modifier: Modifier = Modifier,
     cancelledRescueModel: CancelledRescueModel = CancelledRescueModel(),
     onClickOkButton: () -> Unit,
@@ -57,7 +57,7 @@ fun MappingCancelledRescue(
                     color = Color.Transparent,
                 )
         ) {
-            MappingCancelledRescueContent(
+            RescueRequestCancelledContent(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth(),
@@ -69,7 +69,7 @@ fun MappingCancelledRescue(
 }
 
 @Composable
-private fun MappingCancelledRescueContent(
+private fun RescueRequestCancelledContent(
     modifier: Modifier = Modifier,
     cancelledRescueModel: CancelledRescueModel = CancelledRescueModel(),
     onClickOkButton: () -> Unit) {
@@ -242,7 +242,7 @@ private fun PreviewDetailsItem() {
 @Composable
 private fun PreviewMappingCancelledRescue() {
     CyclistanceTheme(true) {
-        MappingCancelledRescue(
+        RescueRequestCancelled(
             modifier = Modifier.fillMaxSize(),
             cancelledRescueModel = CancelledRescueModel(
                 transactionID = "02i4n93j09",
