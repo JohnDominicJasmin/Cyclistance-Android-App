@@ -38,7 +38,6 @@ fun NavGraph(
     hasInternetConnection: Boolean,
     navController: NavHostController,
     paddingValues: PaddingValues,
-    mappingViewModel: MappingViewModel,
     startingDestination: String,
     isNavigating: Boolean,
     onChangeNavigatingState: (isNavigating: Boolean) -> Unit,

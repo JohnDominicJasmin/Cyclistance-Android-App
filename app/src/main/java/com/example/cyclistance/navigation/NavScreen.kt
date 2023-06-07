@@ -42,7 +42,6 @@ val IsDarkTheme = compositionLocalOf { false }
 @Composable
 fun NavScreen(
     settingViewModel: SettingViewModel = hiltViewModel(),
-    mappingViewModel: MappingViewModel = hiltViewModel(),
     navViewModel: NavViewModel = hiltViewModel(),
     editProfileViewModel: EditProfileViewModel = hiltViewModel()
 ) {
@@ -55,7 +54,6 @@ fun NavScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
-    val mappingState by mappingViewModel.state.collectAsStateWithLifecycle()
     val settingState by settingViewModel.state.collectAsStateWithLifecycle()
     val navState by navViewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -245,7 +243,6 @@ fun NavScreen(
                             hasInternetConnection = navUiState.internetAvailable,
                             navController = navController,
                             paddingValues = paddingValues,
-                            mappingViewModel = mappingViewModel,
                             onChangeNavigatingState = onChangeNavigatingState,
                             onToggleTheme = onToggleTheme,
                             isNavigating = navUiState.isNavigating,
