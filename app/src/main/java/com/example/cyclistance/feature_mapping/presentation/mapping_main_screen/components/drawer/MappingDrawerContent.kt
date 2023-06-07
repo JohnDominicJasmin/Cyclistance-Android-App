@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.drawer
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -47,9 +48,7 @@ import com.example.cyclistance.theme.Red710
 fun MappingDrawerContent(
     onClickSettings: () -> Unit = {},
     onClickChat: () -> Unit = {},
-    onClickRescueRequest: () -> Unit = {},
     onClickSignOut: () -> Unit = {},
-    respondentCount: Int = 0,
     uiState: NavUiState = NavUiState()
     ) {
 
@@ -61,7 +60,7 @@ fun MappingDrawerContent(
 
         Box(
             modifier = Modifier
-                .layoutId(MappingConstraintItem.UpperSection.layoutId)
+                .layoutId(MappingDrawerConstraintItem.UpperSection.layoutId)
                 .background(MaterialTheme.colors.secondaryVariant)) {
 
 
@@ -98,7 +97,7 @@ fun MappingDrawerContent(
 
         Column(
             modifier = Modifier
-                .layoutId(MappingConstraintItem.BottomSection.layoutId),
+                .layoutId(MappingDrawerConstraintItem.BottomSection.layoutId),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(space = 1.5.dp, alignment = Alignment.Top)) {
 
@@ -120,18 +119,6 @@ fun MappingDrawerContent(
                 iconId = R.drawable.ic_setting,
                 buttonText = "Settings",
                 onClick = onClickSettings)
-
-
-            DrawerContentButtonItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                iconId = R.drawable.ic_rescue_request,
-                buttonText = "Rescue Request",
-                onClick = onClickRescueRequest,
-                badgeCountEnabled = true,
-                badgeCount = respondentCount
-            )
 
             DrawerContentButtonItem(
                 modifier = Modifier
@@ -223,23 +210,28 @@ private fun DrawerContentButtonItem(
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .weight(1.6f, fill = false), tint = Black440)
+                .weight(2f, fill = true), tint = Black440)
 
+        Spacer(modifier = Modifier.weight(1f))
 
         Text(
             text = buttonText,
             modifier = Modifier
-                .weight(10f)
-                .padding(start = 20.dp),
+                .weight(10f),
             style = MaterialTheme.typography.subtitle1,
             color = MaterialTheme.colors.onBackground
 
         )
 
-        AnimatedVisibility(visible = badgeCountEnabled, enter = fadeIn(), exit = fadeOut()) {
+        AnimatedVisibility(
+            modifier = Modifier.weight(1f),
+            visible = badgeCountEnabled,
+            enter = fadeIn(),
+            exit = fadeOut()) {
+
             BadgeCount(
                 modifier = Modifier.padding(end = 5.dp),
-                count  = badgeCount.toString()
+                count = badgeCount.toString()
             )
         }
     }
