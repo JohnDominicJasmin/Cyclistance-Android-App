@@ -28,5 +28,18 @@ sealed class MappingUiEvent{
     object DismissLocationPermission : MappingUiEvent()
     object DismissPhonePermission : MappingUiEvent()
 
+    object OnToggleExpandableFAB : MappingUiEvent()
+    object OnCollapseExpandableFAB : MappingUiEvent()
+
+    object OpenEmergencyCall : MappingUiEvent()
+    object OpenFamilyTracker : MappingUiEvent()
+    object ShowRescueRequestDialog : MappingUiEvent()
+    object DismissRescueRequestDialog : MappingUiEvent()
+
+
+    data class CancelRequestHelp(val id: String) : MappingUiEvent()
+    data class ConfirmRequestHelp(val id: String) : MappingUiEvent()
+    object DismissAlertDialog : MappingUiEvent()
+
 
 }

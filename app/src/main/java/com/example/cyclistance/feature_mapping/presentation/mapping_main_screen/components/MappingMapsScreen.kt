@@ -25,6 +25,7 @@ import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationMod
 import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.*
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.setDefaultSettings
 import com.example.cyclistance.navigation.IsDarkTheme
@@ -51,12 +52,13 @@ import timber.log.Timber
 fun MappingMapsScreen(
     modifier: Modifier,
     state: MappingState,
+    uiState: MappingUiState,
     mapboxMap: MapboxMap?,
     hasTransaction: Boolean,
     isNavigating: Boolean,
     routeDirection: RouteDirection?,
     isRescueCancelled: Boolean,
-    event: (MappingUiEvent) -> Unit = {}
+    event: (MappingUiEvent) -> Unit
 //    requestNavigationCameraToOverview: () -> Unit, //todo use this one
 ) {
 
@@ -120,7 +122,7 @@ fun MappingMapsScreen(
     }
 
 
-    LaunchedEffect(key1 = mapboxMap) {
+    LaunchedEffect(key1 = mapboxMap, uiState.isFabExpanded) {
         mapboxMap?.setOnMarkerClickListener {
             event(MappingUiEvent.RescueeMapIconSelected(it.title))
             true
@@ -128,6 +130,12 @@ fun MappingMapsScreen(
         mapboxMap?.addOnMapClickListener {
             event(MappingUiEvent.OnMapClick)
             true
+        }
+
+        mapboxMap?.addOnCameraMoveListener {
+            if (uiState.isFabExpanded) {
+                event(MappingUiEvent.OnCollapseExpandableFAB)
+            }
         }
 
     }
