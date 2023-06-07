@@ -55,15 +55,6 @@ fun TopAppBar(
         }
 
 
-        Screens.RescueRequestScreen.route -> {
-            TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
-                onClickIcon = onClickArrowBackIcon,
-                topAppBarTitle = {
-                    TitleTopAppBar(title = "Rescue Requests")
-                })
-        }
-
         Screens.ChangePasswordScreen.route -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,

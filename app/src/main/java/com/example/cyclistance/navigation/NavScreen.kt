@@ -146,15 +146,6 @@ fun NavScreen(
         }
     }
 
-    val onClickRescueRequest = remember(scaffoldState.drawerState) {
-        {
-            coroutineScope.launch {
-                scaffoldState.drawerState.close()
-            }
-            navController.navigate(
-                Screens.RescueRequestScreen.route)
-        }
-    }
 
     val onClickChat = remember {
         {
@@ -197,9 +188,7 @@ fun NavScreen(
         }
     }
 
-    val respondentCount by remember(mappingState.newRescueRequest?.request?.size) {
-        derivedStateOf { (mappingState.newRescueRequest?.request ?: emptyList()).size }
-    }
+
 
 
     CompositionLocalProvider(IsDarkTheme provides settingState.isDarkTheme) {
@@ -229,9 +218,7 @@ fun NavScreen(
                     },
                     drawerContent = {
                         MappingDrawerContent(
-                            respondentCount = respondentCount,
                             onClickSettings = onClickSettings,
-                            onClickRescueRequest = onClickRescueRequest,
                             onClickChat = onClickChat,
                             onClickSignOut = onClickSignOut,
                             uiState = navUiState
