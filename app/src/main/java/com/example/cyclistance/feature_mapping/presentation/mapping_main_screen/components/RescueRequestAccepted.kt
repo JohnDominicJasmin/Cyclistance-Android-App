@@ -46,7 +46,7 @@ fun RescueRequestAccepted(
                     color = Color.Transparent,
                 )
         ) {
-            MappingRequestAcceptedContent(
+            RequestAcceptedContent(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth(),
@@ -57,9 +57,9 @@ fun RescueRequestAccepted(
 }
 
 @Composable
-private fun MappingRequestAcceptedContent(
+private fun RequestAcceptedContent(
     modifier: Modifier = Modifier,
-    acceptedName:String = "placeholder",
+    acceptedName: String = "placeholder",
     onClickOkButton: () -> Unit
 ) {
 
@@ -71,7 +71,9 @@ private fun MappingRequestAcceptedContent(
         contentAlignment = Alignment.TopCenter) {
 
         Column(
-            modifier = Modifier.padding(bottom = 10.dp).fillMaxWidth(0.94f),
+            modifier = Modifier
+                .padding(bottom = 10.dp)
+                .fillMaxWidth(0.94f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(12.dp)) {
 

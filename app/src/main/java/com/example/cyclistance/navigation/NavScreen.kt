@@ -19,8 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.core.utils.composable_utils.ComposableLifecycle
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping.data.local.network_observer.NetworkConnectivityChecker
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingViewModel
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.MappingDrawerContent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.drawer.MappingDrawerContent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
@@ -43,7 +42,6 @@ val IsDarkTheme = compositionLocalOf { false }
 @Composable
 fun NavScreen(
     settingViewModel: SettingViewModel = hiltViewModel(),
-    mappingViewModel: MappingViewModel = hiltViewModel(),
     navViewModel: NavViewModel = hiltViewModel(),
     editProfileViewModel: EditProfileViewModel = hiltViewModel()
 ) {
@@ -56,7 +54,6 @@ fun NavScreen(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
-    val mappingState by mappingViewModel.state.collectAsStateWithLifecycle()
     val settingState by settingViewModel.state.collectAsStateWithLifecycle()
     val navState by navViewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -149,15 +146,6 @@ fun NavScreen(
         }
     }
 
-    val onClickRescueRequest = remember(scaffoldState.drawerState) {
-        {
-            coroutineScope.launch {
-                scaffoldState.drawerState.close()
-            }
-            navController.navigate(
-                Screens.RescueRequestScreen.route)
-        }
-    }
 
     val onClickChat = remember {
         {
@@ -200,9 +188,7 @@ fun NavScreen(
         }
     }
 
-    val respondentCount by remember(mappingState.newRescueRequest?.request?.size) {
-        derivedStateOf { (mappingState.newRescueRequest?.request ?: emptyList()).size }
-    }
+
 
 
     CompositionLocalProvider(IsDarkTheme provides settingState.isDarkTheme) {
@@ -232,9 +218,7 @@ fun NavScreen(
                     },
                     drawerContent = {
                         MappingDrawerContent(
-                            respondentCount = respondentCount,
                             onClickSettings = onClickSettings,
-                            onClickRescueRequest = onClickRescueRequest,
                             onClickChat = onClickChat,
                             onClickSignOut = onClickSignOut,
                             uiState = navUiState
@@ -246,7 +230,6 @@ fun NavScreen(
                             hasInternetConnection = navUiState.internetAvailable,
                             navController = navController,
                             paddingValues = paddingValues,
-                            mappingViewModel = mappingViewModel,
                             onChangeNavigatingState = onChangeNavigatingState,
                             onToggleTheme = onToggleTheme,
                             isNavigating = navUiState.isNavigating,

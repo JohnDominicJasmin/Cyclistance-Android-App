@@ -1,35 +1,29 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.drawer
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -40,16 +34,13 @@ import com.example.cyclistance.navigation.state.NavUiState
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.CyclistanceTheme
-import com.example.cyclistance.theme.Red710
 
 
 @Composable
 fun MappingDrawerContent(
     onClickSettings: () -> Unit = {},
     onClickChat: () -> Unit = {},
-    onClickRescueRequest: () -> Unit = {},
     onClickSignOut: () -> Unit = {},
-    respondentCount: Int = 0,
     uiState: NavUiState = NavUiState()
     ) {
 
@@ -61,7 +52,7 @@ fun MappingDrawerContent(
 
         Box(
             modifier = Modifier
-                .layoutId(MappingConstraintItem.UpperSection.layoutId)
+                .layoutId(MappingDrawerConstraintItem.UpperSection.layoutId)
                 .background(MaterialTheme.colors.secondaryVariant)) {
 
 
@@ -98,7 +89,7 @@ fun MappingDrawerContent(
 
         Column(
             modifier = Modifier
-                .layoutId(MappingConstraintItem.BottomSection.layoutId),
+                .layoutId(MappingDrawerConstraintItem.BottomSection.layoutId),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(space = 1.5.dp, alignment = Alignment.Top)) {
 
@@ -120,18 +111,6 @@ fun MappingDrawerContent(
                 iconId = R.drawable.ic_setting,
                 buttonText = "Settings",
                 onClick = onClickSettings)
-
-
-            DrawerContentButtonItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                iconId = R.drawable.ic_rescue_request,
-                buttonText = "Rescue Request",
-                onClick = onClickRescueRequest,
-                badgeCountEnabled = true,
-                badgeCount = respondentCount
-            )
 
             DrawerContentButtonItem(
                 modifier = Modifier
@@ -185,33 +164,15 @@ fun MappingDrawerContentPreview() {
     }
 }
 
-@Preview
-@Composable
-fun PreviewDrawerButtonItem() {
-    CyclistanceTheme(darkTheme = true) {
-        Surface(modifier = Modifier.wrapContentSize(), color = MaterialTheme.colors.background) {
-            DrawerContentButtonItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                iconId = R.drawable.ic_rescue_request,
-                buttonText = "Rescue Request",
-                onClick = {},
-                badgeCountEnabled = true,
-                badgeCount = 1
-            )
-        }
-    }
-}
+
 
 @Composable
 private fun DrawerContentButtonItem(
     modifier: Modifier,
     iconId: Int,
-    badgeCountEnabled: Boolean = false,
     buttonText: String,
     onClick: () -> Unit,
-    badgeCount: Int = -1) {
+) {
 
     TextButton(
         colors = ButtonDefaults.textButtonColors(contentColor = Black450),
@@ -223,44 +184,21 @@ private fun DrawerContentButtonItem(
             contentDescription = null,
             modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .weight(1.6f, fill = false), tint = Black440)
+                .weight(2f, fill = true), tint = Black440)
 
+        Spacer(modifier = Modifier.weight(1f))
 
         Text(
             text = buttonText,
             modifier = Modifier
-                .weight(10f)
-                .padding(start = 20.dp),
+                .weight(10f),
             style = MaterialTheme.typography.subtitle1,
             color = MaterialTheme.colors.onBackground
 
         )
 
-        AnimatedVisibility(visible = badgeCountEnabled, enter = fadeIn(), exit = fadeOut()) {
-            BadgeCount(
-                modifier = Modifier.padding(end = 5.dp),
-                count  = badgeCount.toString()
-            )
-        }
+
     }
 }
 
-@Composable
-fun BadgeCount(modifier: Modifier = Modifier, count: String) {
-
-    Surface(
-        shape = CircleShape,
-        color = Red710,
-        contentColor = Color.White,
-        modifier = modifier.size(22.dp)) {
-
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text(
-                text = count,
-                textAlign = TextAlign.Center,
-                fontSize = MaterialTheme.typography.subtitle2.fontSize)
-        }
-    }
-
-}
 

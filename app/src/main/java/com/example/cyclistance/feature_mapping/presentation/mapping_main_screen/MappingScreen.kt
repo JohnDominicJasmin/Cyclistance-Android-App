@@ -13,8 +13,10 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
@@ -28,6 +30,7 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUD
 import com.example.cyclistance.core.utils.contexts.callPhoneNumber
 import com.example.cyclistance.core.utils.contexts.startLocationServiceIntentAction
 import com.example.cyclistance.core.utils.permissions.requestPermission
+import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.*
@@ -67,8 +70,7 @@ import timber.log.Timber
 @Composable
 fun MappingScreen(
     hasInternetConnection: Boolean,
-    typeBottomSheet: String,
-    mappingViewModel: MappingViewModel,
+    mappingViewModel: MappingViewModel = hiltViewModel(),
     paddingValues: PaddingValues,
     isNavigating: Boolean,
     onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
@@ -436,9 +438,29 @@ fun MappingScreen(
     }
     }
 
-    val onMapClick = remember {{
-        onDismissRescueeBanner()
-    }}
+
+    val onCollapseExpandableFAB = remember {
+        {
+            uiState = uiState.copy(
+                isFabExpanded = false
+            )
+        }
+    }
+
+    val onToggleExpandedFAB = remember {
+        {
+            uiState = uiState.copy(
+                isFabExpanded = !uiState.isFabExpanded
+            )
+        }
+    }
+
+    val onMapClick = remember {
+        {
+            onDismissRescueeBanner()
+            onCollapseExpandableFAB()
+        }
+    }
 
     val onClickRespondToHelpButton = remember {
         {
@@ -470,6 +492,41 @@ fun MappingScreen(
     val onDismissPhonePermissionDialog = remember {
         {
             uiState = uiState.copy(phonePermissionDialogVisible = false)
+        }
+    }
+    val onClickCancelButton = remember {
+        { id: String ->
+            mappingViewModel.onEvent(MappingVmEvent.DeclineRescueRequest(id))
+        }
+    }
+
+    val onClickConfirmButton = remember {
+        { id: String ->
+            mappingViewModel.onEvent(MappingVmEvent.AcceptRescueRequest(id))
+        }
+    }
+
+    val onDismissAlertDialog = remember {
+        {
+            uiState = uiState.copy(
+                alertDialogState = AlertDialogState()
+            )
+        }
+    }
+
+    val onShowRescueRequestDialog = remember {
+        {
+            uiState = uiState.copy(
+                isRescueRequestDialogVisible = true
+            )
+        }
+    }
+
+    val onDismissRescueRequestDialog = remember {
+        {
+            uiState = uiState.copy(
+                isRescueRequestDialogVisible = false
+            )
         }
     }
 
@@ -558,7 +615,8 @@ fun MappingScreen(
 
                 is MappingEvent.AcceptRescueRequestSuccess -> {
                     uiState = uiState.copy(
-                        requestHelpButtonVisible = false
+                        requestHelpButtonVisible = false,
+                        bottomSheetType = BottomSheetType.OnGoingRescue.type
                     )
                 }
 
@@ -581,6 +639,27 @@ fun MappingScreen(
                 is MappingEvent.RemoveRespondentFailed -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
+
+                is MappingEvent.RescueHasTransaction -> {
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Cannot Request",
+                            description = "Unfortunately the Rescuer is currently in a Rescue.",
+                            icon = R.raw.error
+                        )
+                    )
+                }
+
+                is MappingEvent.UserHasCurrentTransaction -> {
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Cannot Request",
+                            description = "You can only have one transaction at a time",
+                            icon = R.raw.error
+                        )
+                    )
+                }
+
 
                 else -> {}
             }
@@ -665,15 +744,7 @@ fun MappingScreen(
     }
 
 
-    LaunchedEffect(key1 = typeBottomSheet) {
 
-        if (typeBottomSheet == BottomSheetType.SearchAssistance.type) {
-            uiState = uiState.copy(searchingAssistance = true)
-        }
-        uiState = uiState.copy(bottomSheetType = typeBottomSheet)
-
-
-    }
     LaunchedEffect(key1 = hasTransaction, key2 = isRescueCancelled) {
 
         if (hasTransaction.not()) {
@@ -741,6 +812,15 @@ fun MappingScreen(
                 is MappingUiEvent.DestinationReachedConfirmed -> {}
                 is MappingUiEvent.DismissLocationPermission -> onDismissLocationPermissionDialog()
                 is MappingUiEvent.DismissPhonePermission -> onDismissPhonePermissionDialog()
+                is MappingUiEvent.OnToggleExpandableFAB -> onToggleExpandedFAB()
+                is MappingUiEvent.OpenEmergencyCall -> {}
+                is MappingUiEvent.OpenFamilyTracker -> {}
+                is MappingUiEvent.ShowRescueRequestDialog -> onShowRescueRequestDialog()
+                is MappingUiEvent.DismissRescueRequestDialog -> onDismissRescueRequestDialog()
+                is MappingUiEvent.CancelRequestHelp -> onClickCancelButton(event.id)
+                is MappingUiEvent.ConfirmRequestHelp -> onClickConfirmButton(event.id)
+                is MappingUiEvent.DismissAlertDialog -> onDismissAlertDialog()
+                is MappingUiEvent.OnCollapseExpandableFAB -> onCollapseExpandableFAB()
 
             }
         }

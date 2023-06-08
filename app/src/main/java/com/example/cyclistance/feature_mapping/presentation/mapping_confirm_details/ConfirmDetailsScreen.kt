@@ -18,7 +18,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.cyclistance.core.utils.constants.NavigationConstants.BOTTOM_SHEET_TYPE
 import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetails
@@ -27,7 +26,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_deta
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsUiState
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -60,7 +58,7 @@ fun ConfirmDetailsScreen(
         viewModel.eventFlow.distinctUntilChanged().collect { event ->
             when (event) {
                 is ConfirmDetailsEvent.ConfirmDetailsSuccess -> {
-                    navController.navigateScreen(Screens.MappingScreen.route + "?$BOTTOM_SHEET_TYPE=${BottomSheetType.SearchAssistance.type}")
+                    navController.navigateScreen(Screens.MappingScreen.route)
                 }
 
                 is ConfirmDetailsEvent.UserError -> {

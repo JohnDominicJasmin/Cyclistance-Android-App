@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween

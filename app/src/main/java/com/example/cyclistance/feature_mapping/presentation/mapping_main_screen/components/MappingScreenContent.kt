@@ -15,6 +15,9 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -25,8 +28,13 @@ import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.N
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogForegroundLocationPermission
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogPhonePermission
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.banner.MappingExpandableBanner
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RequestHelpButton
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RespondToHelpButton
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.ExpandableFABSection
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.FloatingButtonSection
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_request.RescueRequestDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
@@ -50,12 +58,29 @@ fun MappingScreenContent(
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     event: (MappingUiEvent) -> Unit = {}
 ) {
+    val respondentCount by remember(state.newRescueRequest?.request?.size) {
+        derivedStateOf { (state.newRescueRequest?.request)?.size ?: 0 }
+    }
+
 
     val configuration = LocalConfiguration.current
 
+    Surface(
+        modifier = modifier
+            .fillMaxSize(),
+        color = MaterialTheme.colors.background) {
 
 
-    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+        if (uiState.isRescueRequestDialogVisible) {
+            RescueRequestDialog(
+                modifier = Modifier
+                    .fillMaxSize(),
+                mappingState = state,
+                uiState = uiState,
+                event = event
+            )
+        }
+
 
         MappingBottomSheet(
             state = state,
@@ -71,7 +96,7 @@ fun MappingScreenContent(
 
             ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
-                val (mapScreen, requestHelpButton, circularProgressbar, noInternetScreen, respondToHelpButton, floatingButtonSection, permissionDialog) = createRefs()
+                val (mapScreen, requestHelpButton, circularProgressbar, noInternetScreen, respondToHelpButton, fabSection, permissionDialog, expandableFabSection) = createRefs()
 
 
                 MappingMapsScreen(
@@ -87,7 +112,8 @@ fun MappingScreenContent(
                     mapboxMap = mapboxMap,
                     routeDirection = uiState.routeDirection,
                     isNavigating = isNavigating,
-                    event = event
+                    event = event,
+                    uiState = uiState
                 )
 
 
@@ -111,11 +137,11 @@ fun MappingScreenContent(
 
                 FloatingButtonSection(
                     modifier = Modifier
-                        .constrainAs(floatingButtonSection) {
-                            end.linkTo(parent.end, margin = 4.dp)
+                        .constrainAs(fabSection) {
+                            end.linkTo(parent.end, margin = 8.dp)
                             bottom.linkTo(
                                 parent.bottom,
-                                margin = (configuration.screenHeightDp / 3).dp)
+                                margin = (configuration.screenHeightDp / 2.5).dp)
                         },
                     locationPermissionGranted = locationPermissionState.allPermissionsGranted,
                     onClickLocateUserButton = { event(MappingUiEvent.LocateUser) },
@@ -123,6 +149,22 @@ fun MappingScreenContent(
                     onClickRecenterButton = { event(MappingUiEvent.RecenterRoute) },
                     onClickOpenNavigationButton = { event(MappingUiEvent.OpenNavigation) },
                     isNavigating = isNavigating
+                )
+
+
+
+                ExpandableFABSection(
+                    modifier = Modifier
+                        .constrainAs(expandableFabSection) {
+                            end.linkTo(parent.end, margin = 8.dp)
+                            bottom.linkTo(parent.bottom, margin = 15.dp)
+                        },
+                    onClickEmergencyCall = { event(MappingUiEvent.OpenEmergencyCall) },
+                    onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
+                    onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
+                    onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
+                    isFabExpanded = uiState.isFabExpanded,
+                    badgeCount = respondentCount
                 )
 
                 RequestHelpButton(
@@ -148,13 +190,15 @@ fun MappingScreenContent(
                 )
 
                 if (state.isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.constrainAs(circularProgressbar) {
-                        top.linkTo(parent.top)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                        this.centerTo(parent)
-                    })
+                    CircularProgressIndicator(
+                        modifier = Modifier.constrainAs(
+                            circularProgressbar) {
+                            top.linkTo(parent.top)
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            this.centerTo(parent)
+                        })
                 }
 
                 if (uiState.isNoInternetVisible) {
@@ -203,7 +247,7 @@ fun MappingScreenContent(
                     val cancellationReason =
                         cancellation?.cancellationReason ?: return@AnimatedVisibility
 
-                    MappingCancelledRescue(
+                    RescueRequestCancelled(
                         modifier = Modifier.fillMaxSize(),
                         onClickOkButton = { event(MappingUiEvent.CancelledRescueConfirmed) },
                         cancelledRescueModel = CancelledRescueModel(

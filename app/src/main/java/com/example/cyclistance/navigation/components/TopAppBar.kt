@@ -11,9 +11,9 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.cyclistance.core.utils.constants.NavigationConstants
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.DefaultTopBar
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.TitleTopAppBar
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.TopAppBarCreator
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.topAppBar.DefaultTopBar
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.topAppBar.TitleTopAppBar
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.topAppBar.TopAppBarCreator
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -25,7 +25,7 @@ fun TopAppBar(
     route: String?) {
 
     when (route) {
-        Screens.MappingScreen.route + "?${NavigationConstants.BOTTOM_SHEET_TYPE}={${NavigationConstants.BOTTOM_SHEET_TYPE}}" -> {
+        Screens.MappingScreen.route -> {
             AnimatedVisibility(
                 visible = isNavigating.not(),
                 enter = fadeIn(initialAlpha = 0.4f),
@@ -54,15 +54,6 @@ fun TopAppBar(
                 })
         }
 
-
-        Screens.RescueRequestScreen.route -> {
-            TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
-                onClickIcon = onClickArrowBackIcon,
-                topAppBarTitle = {
-                    TitleTopAppBar(title = "Rescue Requests")
-                })
-        }
 
         Screens.ChangePasswordScreen.route -> {
             TopAppBarCreator(

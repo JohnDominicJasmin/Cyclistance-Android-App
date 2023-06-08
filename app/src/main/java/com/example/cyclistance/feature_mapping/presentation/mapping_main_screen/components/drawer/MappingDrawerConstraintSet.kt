@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.drawer
 
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet
@@ -7,12 +7,12 @@ import androidx.constraintlayout.compose.Dimension
 val drawerMappingConstraintSet = ConstraintSet {
 
 
-    val upperSection = createRefFor(id = MappingConstraintItem.UpperSection.layoutId)
-    val bottomSection = createRefFor(id = MappingConstraintItem.BottomSection.layoutId)
+    val upperSection = createRefFor(id = MappingDrawerConstraintItem.UpperSection.layoutId)
+    val bottomSection = createRefFor(id = MappingDrawerConstraintItem.BottomSection.layoutId)
 
 
 
-    constrain(upperSection){
+    constrain(upperSection) {
         top.linkTo(parent.top)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
