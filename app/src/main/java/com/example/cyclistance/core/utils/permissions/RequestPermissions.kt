@@ -14,7 +14,7 @@ inline fun MultiplePermissionsState.requestPermission(
     when {
         allPermissionsGranted -> onGranted()
         shouldShowRationale -> launchMultiplePermissionRequest()
-        version >= android30 && !shouldShowRationale -> launchMultiplePermissionRequest()
+        version >= android30 && !shouldShowRationale -> onExplain()
         else -> onExplain()
 
     }
@@ -34,7 +34,7 @@ inline fun PermissionState.requestPermission(
     when {
         status.isGranted -> onGranted()
         status.shouldShowRationale -> launchPermissionRequest()
-        (version >= android30 && !status.shouldShowRationale) -> launchPermissionRequest()
+        (version >= android30 && !status.shouldShowRationale) -> onExplain()
         else -> onExplain()
     }
 
