@@ -135,16 +135,25 @@ class MappingViewModel @Inject constructor(
     }
 
     private suspend fun getNearbyCyclist() {
+        val userLocation = state.value.user.location ?: state.value.userLocation
+
+        userLocation?.latitude ?: return
+        userLocation.longitude ?: return
+
         if (state.value.nearbyCyclists != null) {
             return
         }
 
         coroutineScope {
             runCatching {
-                mappingUseCase.getUsersUseCase().distinctUntilChanged().collect {
+                mappingUseCase.getUsersUseCase(
+                    latitude = userLocation.latitude,
+                    longitude = userLocation.longitude).distinctUntilChanged().collect {
+
                     it.getUser()
                     it.getNearbyCyclist()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+
                 }
             }.onFailure {
                 it.handleException()
@@ -373,7 +382,8 @@ class MappingViewModel @Inject constructor(
         if (getRescueTransactionUpdatesJob?.isActive == true) {
             return
         }
-        getTransactionLocationUpdatesJob = viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
+        getTransactionLocationUpdatesJob =
+            viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
                 runCatching {
                     mappingUseCase.getTransactionLocationUpdatesUseCase().distinctUntilChanged()
@@ -439,7 +449,9 @@ class MappingViewModel @Inject constructor(
         _state.update { it.copy(rescuerETA = eta) }
     }
 
-    private fun getETABetweenTwoPoints(startingLocation: LocationModel, endLocation: LocationModel): String {
+    private fun getETABetweenTwoPoints(
+        startingLocation: LocationModel,
+        endLocation: LocationModel): String {
         val distance = mappingUseCase.getCalculatedDistanceUseCase(
             startingLocation = startingLocation,
             destinationLocation = endLocation
@@ -924,8 +936,6 @@ class MappingViewModel @Inject constructor(
     }
 
 
-
-
     private fun requestHelp() {
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
@@ -954,6 +964,7 @@ class MappingViewModel @Inject constructor(
 
         }
     }
+
     private suspend inline fun getFullAddress(
         location: LocationModel,
         crossinline onSuccess: suspend () -> Unit) {

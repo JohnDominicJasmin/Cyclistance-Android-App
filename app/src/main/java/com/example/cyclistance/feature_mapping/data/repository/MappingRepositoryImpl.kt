@@ -188,10 +188,10 @@ class MappingRepositoryImpl(
         return withContext(scope) { LocationService.address }
     }
 
-    override suspend fun getUsers(): NearbyCyclist =
+    override suspend fun getUsers(latitude: Double, longitude: Double): NearbyCyclist =
         withContext(scope) {
             handleException {
-                api.getUsers(latitude = 14.0835, longitude = 121.1476).toUser()
+                api.getUsers(latitude = latitude, longitude = longitude).toUser()
             }
         }
 

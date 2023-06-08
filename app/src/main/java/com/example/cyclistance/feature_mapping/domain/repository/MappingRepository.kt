@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface MappingRepository {
     suspend fun getUserById(userId: String): UserItem
-    suspend fun getUsers(): NearbyCyclist
+    suspend fun getUsers(latitude: Double, longitude: Double): NearbyCyclist
     suspend fun createUser(userItem: UserItem)
     suspend fun deleteUser(id: String)
 
