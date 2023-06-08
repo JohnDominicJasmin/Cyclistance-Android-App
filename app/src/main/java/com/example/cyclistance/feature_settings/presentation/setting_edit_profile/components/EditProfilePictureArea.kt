@@ -3,7 +3,10 @@ package com.example.cyclistance.feature_settings.presentation.setting_edit_profi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -32,9 +35,7 @@ fun ProfilePictureArea(photoUrl: Any, modifier: Modifier, onClick: () -> Unit) {
         shape = CircleShape,
     ) {
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(6.5.dp, alignment = Alignment.CenterVertically),
-            horizontalAlignment = Alignment.CenterHorizontally) {
+
 
             Box(modifier = Modifier.padding(all = 10.dp)) {
 
@@ -82,7 +83,6 @@ fun ProfilePictureArea(photoUrl: Any, modifier: Modifier, onClick: () -> Unit) {
                     contentScale = ContentScale.Crop)
             }
 
-        }
     }
 }
 
@@ -90,10 +90,11 @@ fun ProfilePictureArea(photoUrl: Any, modifier: Modifier, onClick: () -> Unit) {
 @Composable
 fun ProfilePictureAreaPreview() {
 
-    CyclistanceTheme(false) {
-        Column(modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)) {
+    CyclistanceTheme(true) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)) {
 
             ProfilePictureArea(
                 photoUrl = MappingConstants.IMAGE_PLACEHOLDER_URL,
