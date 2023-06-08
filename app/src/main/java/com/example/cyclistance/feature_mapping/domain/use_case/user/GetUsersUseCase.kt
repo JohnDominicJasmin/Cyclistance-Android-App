@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class GetUsersUseCase(private val repository: MappingRepository) {
-    operator fun invoke(): Flow<NearbyCyclist> = flow{
-        emit(repository.getUsers())
+    operator fun invoke(latitude: Double, longitude: Double): Flow<NearbyCyclist> = flow {
+        emit(repository.getUsers(latitude = latitude, longitude = longitude))
     }
 }
