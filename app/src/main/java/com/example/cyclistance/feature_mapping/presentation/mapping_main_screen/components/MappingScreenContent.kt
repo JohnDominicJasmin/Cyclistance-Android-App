@@ -15,6 +15,9 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -55,6 +58,10 @@ fun MappingScreenContent(
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     event: (MappingUiEvent) -> Unit = {}
 ) {
+    val respondentCount by remember(state.newRescueRequest?.request?.size) {
+        derivedStateOf { (state.newRescueRequest?.request)?.size ?: 0 }
+    }
+
 
     val configuration = LocalConfiguration.current
 
@@ -144,6 +151,8 @@ fun MappingScreenContent(
                     isNavigating = isNavigating
                 )
 
+
+
                 ExpandableFABSection(
                     modifier = Modifier
                         .constrainAs(expandableFabSection) {
@@ -154,8 +163,8 @@ fun MappingScreenContent(
                     onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
                     onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
                     onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
-                    isFabExpanded = uiState.isFabExpanded
-
+                    isFabExpanded = uiState.isFabExpanded,
+                    badgeCount = respondentCount
                 )
 
                 RequestHelpButton(
