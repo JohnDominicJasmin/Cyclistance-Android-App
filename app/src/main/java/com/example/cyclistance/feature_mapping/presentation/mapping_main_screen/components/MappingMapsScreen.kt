@@ -106,14 +106,14 @@ fun MappingMapsScreen(
         hasTransaction || isRescueCancelled.not()
     }
 
-    val isNavigating = remember(key1 = isNavigating, key2 = routeDirection?.geometry) {
+    val isUserNavigating = remember(key1 = isNavigating, key2 = routeDirection?.geometry) {
         val geometry = routeDirection?.geometry
         isNavigating || geometry?.isNotEmpty() == true
     }
 
-    LaunchedEffect(key1 = nearbyCyclists, key2 = isNavigating, key3 = hasTransaction) {
+    LaunchedEffect(key1 = nearbyCyclists, key2 = isUserNavigating, key3 = hasActiveTransaction) {
 
-        if (isNavigating || hasTransaction) {
+        if (isUserNavigating || hasActiveTransaction) {
             dismissNearbyCyclistsIcon()
             return@LaunchedEffect
         }
