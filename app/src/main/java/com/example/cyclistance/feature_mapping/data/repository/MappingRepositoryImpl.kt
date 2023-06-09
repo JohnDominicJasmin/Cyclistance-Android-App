@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants.ADDRESS_KEY
+import com.example.cyclistance.core.utils.constants.MappingConstants.API_CALL_RETRY_COUNT
 import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_KEY
 import com.example.cyclistance.core.utils.data_store_ext.editData
 import com.example.cyclistance.core.utils.data_store_ext.getData
@@ -40,6 +41,10 @@ import com.mapbox.geojson.Point
 import im.delight.android.location.SimpleLocation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
@@ -81,7 +86,7 @@ class MappingRepositoryImpl(
         }
     }
 
-     @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION")
     @WorkerThread
     private inline fun Geocoder.getAddress(
         latitude: Double,
@@ -140,11 +145,8 @@ class MappingRepositoryImpl(
 
     override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {
 
-        if(context.hasInternetConnection().not()){
-            throw MappingExceptions.NetworkException()
-        }
-        return withContext(scope) {
-             liveLocation.getResult()
+        return liveLocation.getResult().retry(API_CALL_RETRY_COUNT) {
+            return@retry context.hasInternetConnection().not()
         }
     }
 
@@ -164,7 +166,7 @@ class MappingRepositoryImpl(
     }
 
     override suspend fun setBikeType(bikeType: String) {
-        return withContext(scope){ dataStore.editData (BIKE_TYPE_KEY, bikeType) }
+        return withContext(scope) { dataStore.editData(BIKE_TYPE_KEY, bikeType) }
     }
 
     override suspend fun getAddress(): Flow<String> {
@@ -177,23 +179,37 @@ class MappingRepositoryImpl(
         }
     }
 
-    override suspend fun getUserById(userId: String): UserItem =
-        withContext(scope) {
-            handleException {
-                api.getUserById(userId).toUserItem()
+    override suspend fun getUserById(userId: String): Flow<UserItem> =
+        flow {
+            val user = api.getUserById(userId)
+            emit(user)
+        }.retry(API_CALL_RETRY_COUNT) { cause ->
+            return@retry cause is IOException || cause is HttpException
+        }.catch { cause ->
+            if (cause is IOException || cause is HttpException) {
+                throw MappingExceptions.NetworkException()
             }
-        }
+        }.map { it.toUserItem() }
+
 
     override suspend fun getUserLocation(): Flow<LocationModel> {
         return withContext(scope) { LocationService.address }
     }
 
-    override suspend fun getUsers(latitude: Double, longitude: Double): NearbyCyclist =
-        withContext(scope) {
-            handleException {
-                api.getUsers(latitude = latitude, longitude = longitude).toUser()
+    override suspend fun getUsers(latitude: Double, longitude: Double): Flow<NearbyCyclist> =
+        flow {
+            val users = api.getUsers(latitude = latitude, longitude = longitude)
+            emit(users)
+        }.retry(API_CALL_RETRY_COUNT) { cause ->
+            return@retry cause is IOException || cause is HttpException
+        }.catch { cause ->
+            if (cause is IOException || cause is HttpException) {
+                throw MappingExceptions.NetworkException()
             }
+        }.map {
+            it.toUser()
         }
+
 
     override suspend fun createUser(userItem: UserItem) =
         withContext(scope) {
@@ -209,12 +225,18 @@ class MappingRepositoryImpl(
             }
         }
 
-    override suspend fun getRescueTransactionById(transactionId: String): RescueTransactionItem =
-        withContext(scope) {
-            handleException {
-                api.getRescueTransactionById(transactionId).toRescueTransaction()
+    override suspend fun getRescueTransactionById(transactionId: String): Flow<RescueTransactionItem> =
+
+        flow {
+            val transaction = api.getRescueTransactionById(transactionId)
+            emit(transaction)
+        }.retry(API_CALL_RETRY_COUNT) { cause ->
+            return@retry cause is IOException || cause is HttpException
+        }.catch {
+            if (it is IOException || it is HttpException) {
+                throw MappingExceptions.NetworkException()
             }
-        }
+        }.map { it.toRescueTransaction() }
 
 
     override suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem) =
@@ -223,7 +245,6 @@ class MappingRepositoryImpl(
                 api.createRescueTransaction(rescueTransaction.toRescueTransactionDto())
             }
         }
-
 
 
     override suspend fun deleteRescueTransaction(transactionId: String) {
@@ -235,21 +256,20 @@ class MappingRepositoryImpl(
     }
 
     override suspend fun getUserUpdates(): Flow<NearbyCyclist> {
-        if(context.hasInternetConnection().not()){
-            throw MappingExceptions.NetworkException()
+        return nearbyCyclistClient.getResult().retry(API_CALL_RETRY_COUNT) {
+            return@retry context.hasInternetConnection().not()
         }
-        return withContext(scope) { nearbyCyclistClient.getResult() }
     }
 
     override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel) {
-        if(context.hasInternetConnection().not()){
+        if (context.hasInternetConnection().not()) {
             throw MappingExceptions.NetworkException()
         }
         withContext(scope) { nearbyCyclistClient.broadcastEvent(locationModel) }
     }
 
     override suspend fun broadcastRescueTransactionToRespondent() {
-        if(context.hasInternetConnection().not()){
+        if (context.hasInternetConnection().not()) {
             throw MappingExceptions.NetworkException()
         }
 
@@ -259,11 +279,10 @@ class MappingRepositoryImpl(
     }
 
     override suspend fun getRescueTransactionUpdates(): Flow<RescueTransaction> {
-        if(context.hasInternetConnection().not()){
-            throw MappingExceptions.NetworkException()
-        }
 
-        return withContext(scope) { rescueTransactionClient.getResult() }
+        return rescueTransactionClient.getResult().retry(API_CALL_RETRY_COUNT) {
+            return@retry context.hasInternetConnection().not()
+        }
     }
 
     override suspend fun deleteRescueRespondent(userId: String, respondentId: String) {
@@ -292,7 +311,7 @@ class MappingRepositoryImpl(
 
     override suspend fun getRouteDirections(origin: Point, destination: Point): RouteDirection {
 
-        if(context.hasInternetConnection().not()){
+        if (context.hasInternetConnection().not()) {
             throw MappingExceptions.NetworkException()
         }
 
@@ -328,12 +347,12 @@ class MappingRepositoryImpl(
     }
 }
 
-private fun Response<OptimizationResponse>.getRoute():DirectionsRoute{
+private fun Response<OptimizationResponse>.getRoute(): DirectionsRoute {
     return body()!!.trips()!!.first()
 }
 
 
-private fun Response<OptimizationResponse>.routesAvailable(): Boolean{
+private fun Response<OptimizationResponse>.routesAvailable(): Boolean {
 
     val body = this.body()
     val hasBody = body != null

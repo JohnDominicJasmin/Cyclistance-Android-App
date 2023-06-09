@@ -150,6 +150,7 @@ class MappingViewModel @Inject constructor(
                     latitude = userLocation.latitude,
                     longitude = userLocation.longitude).distinctUntilChanged().collect {
 
+
                     it.getUser()
                     it.getNearbyCyclist()
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
@@ -171,8 +172,10 @@ class MappingViewModel @Inject constructor(
             }
             runCatching {
                 mappingUseCase.getRescueTransactionByIdUseCase(transactionId)
-            }.onSuccess { rescueTransaction ->
-                _state.update { it.copy(rescueTransaction = rescueTransaction) }
+                    .collect { rescueTransaction ->
+                        _state.update { it.copy(rescueTransaction = rescueTransaction) }
+                    }
+            }.onSuccess {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }.onFailure {
                 it.handleException()

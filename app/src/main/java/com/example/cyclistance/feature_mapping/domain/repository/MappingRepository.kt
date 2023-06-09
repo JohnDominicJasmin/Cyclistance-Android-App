@@ -11,8 +11,8 @@ import com.mapbox.geojson.Point
 import kotlinx.coroutines.flow.Flow
 
 interface MappingRepository {
-    suspend fun getUserById(userId: String): UserItem
-    suspend fun getUsers(latitude: Double, longitude: Double): NearbyCyclist
+    suspend fun getUserById(userId: String): Flow<UserItem>
+    suspend fun getUsers(latitude: Double, longitude: Double): Flow<NearbyCyclist>
     suspend fun createUser(userItem: UserItem)
     suspend fun deleteUser(id: String)
 
@@ -22,8 +22,8 @@ interface MappingRepository {
     suspend fun deleteAllRespondents(userId: String)
 
 
-    suspend fun getFullAddress(latitude: Double, longitude: Double):String
-    suspend fun getRescueTransactionById(transactionId: String): RescueTransactionItem
+    suspend fun getFullAddress(latitude: Double, longitude: Double): String
+    suspend fun getRescueTransactionById(transactionId: String): Flow<RescueTransactionItem>
     suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem)
     suspend fun deleteRescueTransaction(transactionId: String)
 
