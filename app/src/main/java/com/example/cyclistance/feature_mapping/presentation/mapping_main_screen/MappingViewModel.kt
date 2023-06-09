@@ -260,16 +260,20 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun clearTransactionRoles() =
+    private fun clearTransactionRoles() {
         _state.update {
             it.copy(
                 respondedToHelp = true,
                 rescueTransaction = RescueTransactionItem(),
                 rescuee = null,
                 rescuer = null,
-                newRescueRequest = NewRescueRequestsModel()
+                newRescueRequest = NewRescueRequestsModel(),
+                user = it.user.copy(transaction = TransactionModel())
             )
         }
+
+
+    }
 
 
     private fun respondToHelp(selectedRescuee: MapSelectedRescuee) {
@@ -351,7 +355,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private suspend fun String.removeAssignedTransaction() {
+    private suspend fun String.removeUserTransaction() {
         //todo: create api breakpoint
         mappingUseCase.createUserUseCase(
             user = UserItem(
@@ -365,7 +369,7 @@ class MappingViewModel @Inject constructor(
     private fun removeAssignedTransaction() {
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
-                getId().removeAssignedTransaction()
+                getId().removeUserTransaction()
             }.onSuccess {
                 broadcastToNearbyCyclists()
                 broadcastRescueTransaction()

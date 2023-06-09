@@ -595,7 +595,9 @@ fun MappingScreen(
                         rescueRequestAccepted = false,
                         requestHelpButtonVisible = true,
                         searchingAssistance = false,
-                        bottomSheetType = ""
+                        bottomSheetType = "",
+                        routeDirection = null,
+                        mapSelectedRescuee = null,
                     )
                     onChangeNavigatingState(false)
 
@@ -784,8 +786,8 @@ fun MappingScreen(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         hasTransaction = hasTransaction,
         isRescueCancelled = isRescueCancelled,
-        mapboxMap = mapboxMap,
         isNavigating = isNavigating,
+        mapboxMap = mapboxMap,
         uiState = uiState,
         event = { event ->
             when (event) {
