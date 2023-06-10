@@ -1,13 +1,13 @@
 @file:OptIn(ExperimentalPagerApi::class)
 
-package com.example.cyclistance.feature_readable_displays.presentation
+package com.example.cyclistance.feature_intro_slider.presentation
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_readable_displays.presentation.components.IntroSliderContent
+import com.example.cyclistance.feature_intro_slider.presentation.components.IntroSliderContent
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.navigateScreenInclusively
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -50,7 +50,6 @@ fun IntroSliderScreen(
                     )
                 }
             }
-            Unit
         }
     }
 

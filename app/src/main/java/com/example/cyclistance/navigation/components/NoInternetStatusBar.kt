@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.Black900
 import com.example.cyclistance.theme.CyclistanceTheme
-import com.example.cyclistance.theme.White50
+import com.example.cyclistance.theme.White900
 
 @Composable
 fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
@@ -38,7 +38,7 @@ fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 
             Text(
                 text = "No Connection",
-                color = White50,
+                color = White900,
                 style = MaterialTheme.typography.body2,
                 modifier = Modifier.padding(vertical = 1.5.dp))
         }
