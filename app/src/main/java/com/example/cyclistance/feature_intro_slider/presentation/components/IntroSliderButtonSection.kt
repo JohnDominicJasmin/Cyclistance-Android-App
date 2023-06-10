@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_readable_displays.presentation.components
+package com.example.cyclistance.feature_intro_slider.presentation.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
