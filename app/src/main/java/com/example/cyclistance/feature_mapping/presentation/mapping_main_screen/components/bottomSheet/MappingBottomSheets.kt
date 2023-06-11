@@ -17,8 +17,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.theme.Black300
 import com.example.cyclistance.theme.Black440
+import com.example.cyclistance.theme.Black500
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -40,8 +40,6 @@ fun MappingBottomSheet(
         modifier = modifier,
         sheetBackgroundColor = Color.Transparent,
         sheetElevation = 0.dp,
-
-
         )
 
 
@@ -65,7 +63,7 @@ fun OutlinedActionButton(
         onClick = onClick,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 4.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
-        border = BorderStroke(width = 1.dp, color = Black300),
+        border = BorderStroke(width = 1.dp, color = Black500),
         shape = RoundedCornerShape(8.dp),
         modifier = modifier) {
         Text(
@@ -95,7 +93,7 @@ fun RoundedButtonItem(
 
         Button(
             modifier = Modifier
-                .size(56.dp)
+                .size(48.dp)
                 .shadow(elevation = 8.dp, shape = CircleShape),
             onClick = onClick,
             shape = CircleShape,
@@ -105,10 +103,8 @@ fun RoundedButtonItem(
 
             Icon(
                 painter = painterResource(id = imageId),
-                contentDescription = null,
-                modifier = Modifier.size(45.dp))
+                contentDescription = null, modifier = Modifier.fillMaxSize())
         }
-
 
         Text(
             text = buttonSubtitle,
