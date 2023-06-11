@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.example.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 
@@ -54,12 +55,17 @@ fun MappingBottomSheet(
         BottomSheetType.OnGoingRescue.type -> {
             BottomSheetOnGoingRescue(
                 modifier = modifier,
-                estimatedTimeRemaining = state.rescuerETA,
                 content = content,
                 onClickCallButton = onClickCallRescueTransactionButton,
                 onClickChatButton = onClickChatRescueTransactionButton,
                 onClickCancelButton = onClickCancelRescueTransactionButton,
-                bottomSheetScaffoldState = bottomSheetScaffoldState)
+                bottomSheetScaffoldState = bottomSheetScaffoldState,
+                onGoingRescueModel = OnGoingRescueModel(
+                    estimatedTime = state.rescuerETA,
+                    estimatedDistance = state.rescuerDistance
+                )
+
+            )
         }
 
         BottomSheetType.Collapsed.type -> {

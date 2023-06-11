@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.theme.Black300
+import com.example.cyclistance.theme.Black500
 
 
 @Composable
@@ -43,7 +43,7 @@ fun MappingButtonNavigation(
             OutlinedButton(
                 enabled = negativeButtonEnabled,
                 onClick = onClickCancelButton,
-                border = BorderStroke(1.dp, Black300),
+                border = BorderStroke(1.dp, Black500),
                 modifier = Modifier
                     .wrapContentHeight()
                     .weight(0.5f)
