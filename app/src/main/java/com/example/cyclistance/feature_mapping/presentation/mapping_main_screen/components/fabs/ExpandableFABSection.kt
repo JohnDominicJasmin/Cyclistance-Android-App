@@ -50,16 +50,16 @@ fun ExpandableFABSection(
     )
     val density = LocalDensity.current.density
     val offsetRescueRequestY = animateFloatAsState(
-        targetValue = if (isFabExpanded) -500f * density / 2.75f else 0f,
+        targetValue = if (isFabExpanded) -475f * density / 2.75f else 0f,
         animationSpec = animationSpec
     )
     val offsetFamilyTrackerY = animateFloatAsState(
-        targetValue = if (isFabExpanded) -350f * density / 2.75f else 0f,
+        targetValue = if (isFabExpanded) -325f * density / 2.75f else 0f,
         animationSpec = animationSpec
     )
 
     val offsetEmergencyCallY = animateFloatAsState(
-        targetValue = if (isFabExpanded) -200f * density / 2.75f else 0f,
+        targetValue = if (isFabExpanded) -175f * density / 2.75f else 0f,
         animationSpec = animationSpec
     )
     val rotationAngle = animateFloatAsState(
