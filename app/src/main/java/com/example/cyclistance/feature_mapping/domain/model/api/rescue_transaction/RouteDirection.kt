@@ -8,5 +8,4 @@ import kotlinx.parcelize.Parcelize
 @StableState
 data class RouteDirection(
     val geometry: String = "",
-    val duration: Double = 0.00
 ):Parcelable
