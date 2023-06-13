@@ -9,7 +9,11 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
@@ -32,16 +36,77 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Preview(device = "id:Galaxy Nexus")
 @Composable
 fun PreviewSignInScreenDark() {
+
+    var uiState by rememberSaveable {
+        mutableStateOf(SignInUiState())
+    }
+
+
+    val onValueChangeEmail = remember<(String) -> Unit> {
+        {
+            uiState = uiState.copy(
+                email = it,
+                emailErrorMessage = ""
+            )
+        }
+    }
+
+    val onValueChangePassword = remember<(String) -> Unit> {
+        {
+            uiState = uiState.copy(
+                password = it,
+                passwordErrorMessage = ""
+            )
+        }
+    }
+
     CyclistanceTheme(true) {
-        SignInScreenContent()
+        SignInScreenContent(uiState = uiState, event = {
+            when (it) {
+                is SignUiEvent.ChangeEmail -> onValueChangeEmail(it.email)
+                is SignUiEvent.ChangePassword -> onValueChangePassword(it.password)
+                else -> {}
+            }
+        })
     }
 }
 
 @Preview(device = "id:Galaxy Nexus")
 @Composable
 fun PreviewSignInScreenLight() {
+
+    var uiState by rememberSaveable {
+        mutableStateOf(SignInUiState())
+    }
+
+
+    val onValueChangeEmail = remember<(String) -> Unit> {
+        {
+            uiState = uiState.copy(
+                email = it,
+                emailErrorMessage = ""
+            )
+        }
+    }
+
+    val onValueChangePassword = remember<(String) -> Unit> {
+        {
+            uiState = uiState.copy(
+                password = it,
+                passwordErrorMessage = ""
+            )
+        }
+    }
+
+
     CyclistanceTheme(false) {
-        SignInScreenContent()
+        SignInScreenContent(uiState = uiState, event = {
+            when (it) {
+                is SignUiEvent.ChangeEmail -> onValueChangeEmail(it.email)
+                is SignUiEvent.ChangePassword -> onValueChangePassword(it.password)
+                else -> {}
+            }
+        })
     }
 }
 
