@@ -94,7 +94,7 @@ fun RoundedButtonItem(
         Button(
             modifier = Modifier
                 .size(48.dp)
-                .shadow(elevation = 8.dp, shape = CircleShape),
+                .shadow(elevation = 2.dp, shape = CircleShape),
             onClick = onClick,
             shape = CircleShape,
             colors = ButtonDefaults.buttonColors(

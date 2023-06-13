@@ -148,7 +148,7 @@ private fun SetupTextField(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight()
-                .shadow(10.dp, shape = RoundedCornerShape(12.dp), clip = true)
+                .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp), clip = true)
                 .focusRequester(focusRequester),
             value = textFieldValue,
             onValueChange = onValueChange,
