@@ -36,6 +36,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
+import com.example.cyclistance.feature_settings.domain.exceptions.SettingExceptions
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
 import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -279,11 +280,12 @@ class MappingViewModel @Inject constructor(
     private fun respondToHelp(selectedRescuee: MapSelectedRescuee) {
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
-
                 uploadUserProfile(onSuccess = {
-                    mappingUseCase.addRescueRespondentUseCase(
-                        userId = selectedRescuee.userId,
-                        respondentId = getId())
+                    viewModelScope.launch(context = defaultDispatcher) {
+                        mappingUseCase.addRescueRespondentUseCase(
+                            userId = selectedRescuee.userId,
+                            respondentId = getId())
+                    }
                 })
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.RespondToHelpSuccess())
@@ -947,7 +949,9 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 uploadUserProfile(onSuccess = {
-                    _eventFlow.emit(MappingEvent.RequestHelpSuccess)
+                    viewModelScope.launch(context = defaultDispatcher) {
+                        _eventFlow.emit(MappingEvent.RequestHelpSuccess)
+                    }
                 })
             }.onFailure {
                 it.handleException()
@@ -958,7 +962,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private suspend inline fun uploadUserProfile(crossinline onSuccess: suspend () -> Unit) {
+    private suspend inline fun uploadUserProfile(crossinline onSuccess: () -> Unit) {
         coroutineScope {
             val userLocation = state.value.userLocation
 
@@ -974,7 +978,7 @@ class MappingViewModel @Inject constructor(
 
     private suspend inline fun getFullAddress(
         location: LocationModel,
-        crossinline onSuccess: suspend () -> Unit) {
+        crossinline onSuccess: () -> Unit) {
 
         location.latitude ?: return
         location.longitude ?: return
@@ -994,7 +998,7 @@ class MappingViewModel @Inject constructor(
     private suspend inline fun uploadProfile(
         location: LocationModel,
         fullAddress: String,
-        crossinline onSuccess: suspend () -> Unit
+        crossinline onSuccess: () -> Unit
     ) {
 
         val isProfileUploaded = state.value.profileUploaded
@@ -1063,7 +1067,7 @@ class MappingViewModel @Inject constructor(
                     ))
             }
 
-            is MappingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
+            is SettingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
                 _eventFlow.emit(MappingEvent.InsufficientUserCredential)
             }
 
