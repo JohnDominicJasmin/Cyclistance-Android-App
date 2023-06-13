@@ -3,6 +3,8 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,8 +19,8 @@ fun LocateUserButton(
     locationPermissionGranted: Boolean,
     onClick: () -> Unit
 ) {
-    val iconId = remember(locationPermissionGranted) {
-        if (locationPermissionGranted) R.drawable.ic_baseline_my_location_24 else R.drawable.ic_locate_user_position
+    val iconId by remember(locationPermissionGranted) {
+        derivedStateOf { if (locationPermissionGranted) R.drawable.ic_baseline_my_location_24 else R.drawable.ic_locate_user_position }
     }
 
     FabFactory(

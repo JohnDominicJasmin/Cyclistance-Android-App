@@ -148,7 +148,8 @@ fun MappingScreenContent(
                     onClickRouteOverviewButton = { event(MappingUiEvent.RouteOverview) },
                     onClickRecenterButton = { event(MappingUiEvent.RecenterRoute) },
                     onClickOpenNavigationButton = { event(MappingUiEvent.OpenNavigation) },
-                    isNavigating = isNavigating
+                    isNavigating = isNavigating,
+                    uiState = uiState
                 )
 
 

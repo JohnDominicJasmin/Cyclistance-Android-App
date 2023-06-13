@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -17,6 +18,7 @@ fun FloatingButtonSection(
     modifier: Modifier = Modifier,
     locationPermissionGranted: Boolean = true,
     isNavigating: Boolean,
+    uiState: MappingUiState,
     onClickLocateUserButton: () -> Unit = {},
     onClickRouteOverviewButton: () -> Unit = {},
     onClickRecenterButton: () -> Unit = {},
@@ -38,12 +40,14 @@ fun FloatingButtonSection(
 
         Box {
             MappingUtils.FabAnimated(visible = isNavigating) {
+
                 OpenNavigationButton(
                     modifier = Modifier.size(53.dp),
                     onClick = onClickOpenNavigationButton
                 )
             }
-            MappingUtils.FabAnimated(isNavigating.not()) {
+
+            MappingUtils.FabAnimated(isNavigating.not() && uiState.isFabExpanded.not()) {
                 LocateUserButton(
                     modifier = Modifier.size(53.dp),
                     locationPermissionGranted = locationPermissionGranted,
@@ -58,7 +62,7 @@ fun FloatingButtonSection(
 @Composable
 fun PreviewFloatingButtons() {
     CyclistanceTheme(true) {
-        FloatingButtonSection(isNavigating = true)
+        FloatingButtonSection(isNavigating = true, uiState = MappingUiState())
     }
 }
 
