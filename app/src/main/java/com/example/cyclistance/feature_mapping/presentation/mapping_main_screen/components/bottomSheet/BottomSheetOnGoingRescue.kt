@@ -166,19 +166,7 @@ fun BottomSheetOnGoingRescue(
 }
 
 
-@Preview
-@Composable
-fun PreviewSpeedometer() {
-    CyclistanceTheme(darkTheme = true) {
-        Box(modifier = Modifier.background(MaterialTheme.colors.surface)) {
-            SpeedometerSection(
-                currentSpeed = "13.3",
-                distance = "0.0 KM",
-                maxSpeed = "0.0",
-                time = "0.0")
-        }
-    }
-}
+
 
 @Composable
 fun SpeedometerSection(
@@ -210,7 +198,7 @@ fun SpeedometerSection(
                 append(currentSpeed)
             }
             withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.overline.fontSize)) {
-                append(" KM/h")
+                append(" km/h")
             }
         }, style = MaterialTheme.typography.subtitle1, modifier = Modifier.padding(vertical = 1.dp))
 
@@ -225,7 +213,7 @@ fun SpeedometerSection(
             Divider(
                 modifier = Modifier.fillMaxWidth(),
                 color = MaterialTheme.colors.onSurface,
-                thickness = 1.5.dp,
+                thickness = 1.dp,
             )
 
             Row(
@@ -271,7 +259,7 @@ fun SpeedometerSection(
             Divider(
                 modifier = Modifier.fillMaxWidth(),
                 color = MaterialTheme.colors.onSurface,
-                thickness = 1.5.dp,
+                thickness = 1.dp,
             )
         }
     }
@@ -318,14 +306,14 @@ private fun RoundButtonSection(
 
         RoundedButtonItem(
             backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSurface,
+            contentColor = MaterialTheme.colors.onSecondary,
             imageId = R.drawable.ic_call,
             buttonSubtitle = "Call", onClick = onClickCallButton)
 
 
         RoundedButtonItem(
             backgroundColor = MaterialTheme.colors.secondary,
-            contentColor = MaterialTheme.colors.onSurface,
+            contentColor = MaterialTheme.colors.onSecondary,
             imageId = R.drawable.ic_chat,
             buttonSubtitle = "Chat", onClick = onClickChatButton)
 
@@ -338,10 +326,11 @@ private fun RoundButtonSection(
     }
 }
 
+
 @OptIn(ExperimentalMaterialApi::class)
 @Preview(name = "BottomSheetOnGoingRescue", device = "id:Galaxy Nexus")
 @Composable
-private fun PreviewBottomSheetOnGoingRescue() {
+private fun PreviewBottomSheetOnGoingRescueDark() {
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberBottomSheetState(
             initialValue = BottomSheetValue.Expanded))
@@ -363,3 +352,32 @@ private fun PreviewBottomSheetOnGoingRescue() {
                 ))
     }
 }
+
+
+@OptIn(ExperimentalMaterialApi::class)
+@Preview(name = "BottomSheetOnGoingRescue", device = "id:Galaxy Nexus")
+@Composable
+private fun PreviewBottomSheetOnGoingRescueLight() {
+    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberBottomSheetState(
+            initialValue = BottomSheetValue.Expanded))
+    CyclistanceTheme(false) {
+        BottomSheetOnGoingRescue(
+            content = {},
+            onClickCancelButton = {},
+            onClickCallButton = {},
+            onClickChatButton = {},
+            bottomSheetScaffoldState = bottomSheetScaffoldState,
+            onGoingRescueModel = OnGoingRescueModel(
+                currentSpeed = "13.3",
+                ridingDistance = "10.0 km",
+                maxSpeed = "36 km/h",
+                ridingTime = "1:30:00",
+                estimatedDistance = "9.0 km",
+                estimatedTime = "1h 20m",
+
+                ))
+    }
+}
+
+
