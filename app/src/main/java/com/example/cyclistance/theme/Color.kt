@@ -7,7 +7,7 @@ val Black900 = Color(0xFF303234)
 val Black850 = Color(0xFF5A5A5A)
 val Black800 = Color(0xFF484848)
 val Black500 = Color(0xFFA5A5A5)//should be use for textFields, neutral color
-val Black450 = Color(0xFF8C8C8C)
+val Black450 = Color(0xFF8C8C8C)//  neutral color
 val Black445 = Color(0xFF4D4D4D)
 val Black440 = Color(0xFF979797)// should be use for surfaces
 
@@ -29,6 +29,6 @@ val Blue500 = Color(0xFF3B5998)
 val White200 = Color(0xFFEDEDED)
 val White100 = Color(0xFFF2F2F2)
 val White900 = Color(0xFFFDFDFD)
-val White800 = Color(0xFFEBEBEB)
+val White800 = Color(0xFFB8B8B8)
 val Green678 = Color(0xFF3FC5B3)
 
