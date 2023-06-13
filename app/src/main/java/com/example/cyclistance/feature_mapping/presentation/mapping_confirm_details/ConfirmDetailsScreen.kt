@@ -217,6 +217,7 @@ fun ConfirmDetailsScreen(
     ConfirmDetailsContent(
         modifier = Modifier.padding(paddingValues),
         state = state,
+        uiState = uiState,
         event = { event ->
             when (event) {
                 is ConfirmDetailsUiEvent.ChangeAddress -> onValueChangeAddress(event.address)
