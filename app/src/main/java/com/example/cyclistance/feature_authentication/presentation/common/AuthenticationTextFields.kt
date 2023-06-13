@@ -1,10 +1,14 @@
-
 package com.example.cyclistance.feature_authentication.presentation.common
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -54,7 +58,6 @@ fun ConfirmPasswordTextField(
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
 
 
-
     SetupTextField(
         enabled = enabled,
         textFieldValue = password,
@@ -69,7 +72,10 @@ fun ConfirmPasswordTextField(
             }
         },
         visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrect = false, imeAction = ImeAction.Done),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            autoCorrect = false,
+            imeAction = ImeAction.Done),
         keyboardActions = KeyboardActions(onDone = keyboardActionOnDone)
 
     )
@@ -93,14 +99,23 @@ fun PasswordTextField(
         onValueChange = onValueChange,
         placeholderText = "Password",
         trailingIcon = {
-            if (hasError) {
+
+            AnimatedVisibility(
+                visible = hasError,
+                enter = fadeIn(animationSpec = tween(durationMillis = 100)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
+
                 Icon(
                     imageVector = Icons.Filled.Error,
                     contentDescription = "error",
                     tint = MaterialTheme.colors.error)
             }
 
-            if(password.isNotEmpty() && !hasError){
+            AnimatedVisibility(
+                visible = password.isNotEmpty() && !hasError,
+                enter = fadeIn(animationSpec = tween(durationMillis = 100)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
+
                 IconButton(onClick = clearIconOnClick) {
                     Icon(
                         imageVector = Icons.Default.Cancel,
@@ -111,14 +126,13 @@ fun PasswordTextField(
                 }
             }
         },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password, autoCorrect = false, imeAction = ImeAction.Next),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Password,
+            autoCorrect = false,
+            imeAction = ImeAction.Next),
         visualTransformation = PasswordVisualTransformation()
     )
 }
-
-
-
-
 
 
 @Composable
@@ -132,7 +146,7 @@ private fun SetupTextField(
     leadingIcon: ImageVector = Icons.Default.Lock,
     trailingIcon: @Composable (() -> Unit)? = null,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    keyboardOptions:KeyboardOptions,
+    keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions = KeyboardActions()
 ) {
 
@@ -157,13 +171,12 @@ private fun SetupTextField(
             shape = RoundedCornerShape(12.dp),
             placeholder = {
                 Text(
+                    modifier = Modifier.padding(horizontal = 3.dp),
                     text = placeholderText,
                     style = MaterialTheme.typography.subtitle2.copy(
                         fontWeight = FontWeight.Normal,
                         color = if (hasError) MaterialTheme.colors.error else Black500,
-                        textAlign = TextAlign.Center
-                        ),
-
+                        textAlign = TextAlign.Center),
                 )
             },
             trailingIcon = trailingIcon,
@@ -171,7 +184,7 @@ private fun SetupTextField(
                 Icon(
                     imageVector = leadingIcon,
                     contentDescription = "Password Icon",
-                    tint = if(hasError) MaterialTheme.colors.error else Black500,
+                    tint = if (hasError) MaterialTheme.colors.error else Black500,
                     modifier = Modifier.size(18.dp)
                 )
             },
@@ -186,13 +199,17 @@ private fun SetupTextField(
 
 
         )
-        if (hasError) {
+
+        AnimatedVisibility(
+            visible = hasError,
+            enter = fadeIn(animationSpec = tween(durationMillis = 100)),
+            exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
 
             Text(
                 text = failureMessage,
                 color = MaterialTheme.colors.error,
                 style = MaterialTheme.typography.caption,
-                )
+            )
         }
     }
 }
@@ -204,7 +221,7 @@ fun EmailTextField(
     focusRequester: FocusRequester,
     email: String,
     emailErrorMessage: String,
-    clearIconOnClick: ()-> Unit,
+    clearIconOnClick: () -> Unit,
     onValueChange: (String) -> Unit) {
 
     val hasError = emailErrorMessage.isNotEmpty()
@@ -218,33 +235,45 @@ fun EmailTextField(
         placeholderText = "Email",
         leadingIcon = Icons.Default.Email,
         trailingIcon = {
-            if(hasError){
+
+            AnimatedVisibility(
+                visible = hasError,
+                enter = fadeIn(animationSpec = tween(durationMillis = 100)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
+
                 Icon(
                     imageVector = Icons.Filled.Error,
-                    contentDescription = "",
+                    contentDescription = "Error Icon",
                     tint = MaterialTheme.colors.error,
                     modifier = Modifier.size(20.dp)
                 )
             }
 
-            if(email.isNotEmpty() && !hasError){
+            AnimatedVisibility(
+                visible = email.isNotEmpty() && !hasError,
+                enter = fadeIn(animationSpec = tween(durationMillis = 100)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
+
                 IconButton(onClick = clearIconOnClick) {
                     Icon(
                         imageVector = Icons.Default.Cancel,
-                        contentDescription = "",
+                        contentDescription = "Clear Icon",
                         tint = Black500,
                         modifier = Modifier.size(20.dp)
                     )
                 }
             }
+
         },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email, imeAction = ImeAction.Next),
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next),
     )
 }
 
 
 @Composable
- fun ErrorMessage(errorMessage: String, modifier: Modifier = Modifier){
+fun ErrorMessage(errorMessage: String, modifier: Modifier = Modifier) {
 
     Row(
         modifier = modifier,
@@ -260,7 +289,7 @@ fun EmailTextField(
             color = MaterialTheme.colors.error,
             style = MaterialTheme.typography.caption,
 
-        )
+            )
     }
 }
 

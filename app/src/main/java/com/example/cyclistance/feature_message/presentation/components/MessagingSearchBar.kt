@@ -50,7 +50,7 @@ fun MessagingSearchBar(
                 text = "Search",
                 style = MaterialTheme.typography.subtitle1,
                 color = Black500,
-                modifier = Modifier.padding(horizontal = 2.dp))
+                modifier = Modifier.padding(horizontal = 3.dp))
         }, leadingIcon = {
             Icon(
                 imageVector = Icons.Default.Search,
@@ -79,11 +79,10 @@ fun MessagingSearchBar(
         colors = TextFieldDefaults.outlinedTextFieldColors(
             textColor = MaterialTheme.colors.onSecondary,
             backgroundColor = MaterialTheme.colors.secondary,
-            cursorColor = MaterialTheme.colors.onSecondary,
+            cursorColor = MaterialTheme.colors.onSecondary.copy(alpha = 0.5f),
             focusedBorderColor = MaterialTheme.colors.secondary,
             unfocusedBorderColor = MaterialTheme.colors.secondary,
-
-            )
+        )
 
     )
 }
