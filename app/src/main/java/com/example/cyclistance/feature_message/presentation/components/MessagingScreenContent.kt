@@ -82,10 +82,13 @@ fun MessagingScreenContent(modifier: Modifier = Modifier, messagesModel: Message
 private fun MessagesSection(modifier: Modifier = Modifier, messagesModel: MessagesModel) {
 
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()) {
+        items(messagesModel.messages, key = {
+            it.messageId
 
-        items(messagesModel.messages) { item ->
+        }) { item ->
+
             MessagingItem(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -103,9 +106,10 @@ private val messages = MessagesModel(
             userImage = "https://www.liquidsandsolids.com/wp-content/uploads/2022/09/talking-to-a-dead-person.jpg",
             name = "John Doe",
             message = "Hey there! How are you?",
-            time = "12:00",
+            timeStamp = "12:00",
             unreadMessages = 4,
-            isMessageSent = false
+            isMessageSent = false,
+            messageId = "1"
         ),
         MessageItemModel(
             userImage = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
@@ -114,9 +118,10 @@ private val messages = MessagesModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            time = "12:00",
+            timeStamp = "12:00",
             unreadMessages = 10,
-            isMessageSent = true
+            isMessageSent = true,
+            messageId = "2"
         ),
         MessageItemModel(
             userImage = "https://www.diethelmtravel.com/wp-content/uploads/2016/04/bill-gates-wealthiest-person.jpg",
@@ -125,17 +130,19 @@ private val messages = MessagesModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            time = "12:00",
+            timeStamp = "12:00",
             unreadMessages = 0,
-            isMessageSent = true
+            isMessageSent = true,
+            messageId = "3"
         ),
         MessageItemModel(
             userImage = "https://www.harleytherapy.co.uk/counselling/wp-content/uploads/16297800391_5c6e812832.jpg",
             name = "John Doe",
             message = "Hello",
-            time = "12:00",
+            timeStamp = "12:00",
             unreadMessages = 0,
-            isMessageSent = true
+            isMessageSent = true,
+            messageId = "4"
         ),
         MessageItemModel(
             userImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREz8aDOvFn1m2fCQ020dcrr-RCxey0NyF_XG6JOG1HzYoQRdBwB8U3fQJKEwG7t6Yr72Q",
@@ -144,9 +151,10 @@ private val messages = MessagesModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            time = "12:00",
+            timeStamp = "12:00",
             unreadMessages = 0,
-            isMessageSent = false
+            isMessageSent = false,
+            messageId = "5"
         ),
 
         )
