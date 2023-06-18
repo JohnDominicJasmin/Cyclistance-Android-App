@@ -8,10 +8,11 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class MessageContent(
+    val messageId: String,
     val senderId: String,
     val recipientId: String,
     val content: String,
-    val dateSent: String,
+    val dateSent: String? = null,
     val duration: Duration? = null,
 ) : Parcelable
 
