@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 
-//hours, days and month
 
 @Composable
 fun MessagingTimeStamp(value: String, modifier: Modifier = Modifier) {
