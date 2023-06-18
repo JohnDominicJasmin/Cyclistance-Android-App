@@ -27,7 +27,7 @@ import com.example.cyclistance.feature_message.domain.model.ui.MessagesModel
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun MessagingScreenContent(modifier: Modifier = Modifier, messagesModel: MessagesModel) {
+fun MessagingScreen(modifier: Modifier = Modifier, messagesModel: MessagesModel) {
 
 
     val messageAvailable by remember { derivedStateOf { messagesModel.messages.isNotEmpty() } }
@@ -164,7 +164,7 @@ private val messages = MessagesModel(
 @Composable
 fun PreviewMessagingScreenContentDark() {
     CyclistanceTheme(darkTheme = true) {
-        MessagingScreenContent(messagesModel = MessagesModel())
+        MessagingScreen(messagesModel = MessagesModel())
     }
 }
 
@@ -172,7 +172,7 @@ fun PreviewMessagingScreenContentDark() {
 @Composable
 fun PreviewMessagingScreenContentLight() {
     CyclistanceTheme(darkTheme = false) {
-        MessagingScreenContent(
+        MessagingScreen(
             messagesModel = messages)
     }
 }
