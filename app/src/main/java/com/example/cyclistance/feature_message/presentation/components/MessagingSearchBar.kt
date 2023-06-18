@@ -26,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.theme.Black500
@@ -48,7 +49,7 @@ fun MessagingSearchBar(
         placeholder = {
             Text(
                 text = "Search",
-                style = MaterialTheme.typography.subtitle1,
+                style = MaterialTheme.typography.body2,
                 color = Black500,
                 modifier = Modifier.padding(horizontal = 3.dp))
         }, leadingIcon = {
@@ -57,8 +58,6 @@ fun MessagingSearchBar(
                 contentDescription = "Search",
                 tint = Black500
             )
-
-
         }, trailingIcon = {
             AnimatedVisibility(
                 visible = value.isNotEmpty(),
@@ -79,9 +78,9 @@ fun MessagingSearchBar(
         colors = TextFieldDefaults.outlinedTextFieldColors(
             textColor = MaterialTheme.colors.onSecondary,
             backgroundColor = MaterialTheme.colors.secondary,
-            cursorColor = MaterialTheme.colors.onSecondary.copy(alpha = 0.5f),
-            focusedBorderColor = MaterialTheme.colors.secondary,
-            unfocusedBorderColor = MaterialTheme.colors.secondary,
+            cursorColor = MaterialTheme.colors.primary,
+            focusedBorderColor = Color.Transparent,
+            unfocusedBorderColor = Color.Transparent,
         )
 
     )
