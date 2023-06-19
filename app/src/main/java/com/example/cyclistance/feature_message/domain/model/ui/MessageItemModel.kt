@@ -12,7 +12,7 @@ data class MessageItemModel(
     val userImage: String = "",
     val name: String = "",
     val message: String = "",
-    val time: String = "",
+    val timeStamp: String = "",
     val unreadMessages: Int = 0,
     val isMessageSent: Boolean = false,
 
