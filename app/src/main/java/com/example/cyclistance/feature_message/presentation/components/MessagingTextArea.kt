@@ -33,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
@@ -43,15 +44,15 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun MessagingTextArea(
     modifier: Modifier = Modifier,
-    message: String,
-    onValueChange: (String) -> Unit,
+    message: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
     onClickSend: () -> Unit = {},
     onToggleExpand: () -> Unit = {},
     isExpanded: Boolean = false
 
 ) {
 
-    val isMessageEmpty by remember(message) { derivedStateOf { message.isEmpty() } }
+    val isMessageEmpty by remember(message) { derivedStateOf { message.text.isEmpty() } }
 
 
     Surface(
@@ -144,7 +145,7 @@ fun MessagingTextArea(
 @Preview
 @Composable
 fun PreviewMessagingTextAreaDark() {
-    var value by remember { mutableStateOf("") }
+    var value by remember { mutableStateOf(TextFieldValue("")) }
     CyclistanceTheme(darkTheme = true) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
             MessagingTextArea(message = value, onValueChange = { value = it }, onClickSend = {})
@@ -155,7 +156,7 @@ fun PreviewMessagingTextAreaDark() {
 @Preview
 @Composable
 fun PreviewMessagingTextAreaLight() {
-    var value by remember { mutableStateOf("") }
+    var value by remember { mutableStateOf(TextFieldValue("")) }
     CyclistanceTheme(darkTheme = false) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
             MessagingTextArea(message = value, onValueChange = { value = it }, onClickSend = {})

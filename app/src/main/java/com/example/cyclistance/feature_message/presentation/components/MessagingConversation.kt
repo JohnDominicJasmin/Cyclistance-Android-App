@@ -2,10 +2,11 @@ package com.example.cyclistance.feature_message.presentation.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,9 +29,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
@@ -173,7 +174,10 @@ private val conversation = MessageConversation(
 fun MessagingConversation() {
 
     var selectedIndex by rememberSaveable { mutableIntStateOf(-1) }
-    var message by remember { mutableStateOf("") }
+    var message by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(
+            TextFieldValue(""))
+    }
     var messageAreaExpanded by rememberSaveable { mutableStateOf(false) }
     val listState =
         rememberLazyListState(initialFirstVisibleItemIndex = conversation.messages.indices.last)
@@ -185,7 +189,7 @@ fun MessagingConversation() {
             messageAreaExpanded = !messageAreaExpanded
         }
     }
-    val onChangeValueMessage = remember<(String) -> Unit> {
+    val onChangeValueMessage = remember<(TextFieldValue) -> Unit> {
         {
             message = it
         }
@@ -250,77 +254,73 @@ fun MessagingConversation() {
                 }
                 focusManager.clearFocus()
             },
-        color = MaterialTheme.colors.background,
-    ) {
+        color = MaterialTheme.colors.background) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()) {
-
-
-            LazyColumn(
-                state = listState,
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.weight(1f),
-                contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)
-            ) {
-
-                itemsIndexed(
-                    items = conversation.messages,
-                    key = { _, item -> item.messageId }) { index, message ->
-
-                    val isSender by remember { derivedStateOf { message.senderId != USER_ID } }
-                    val timeStampAvailable by remember { derivedStateOf { message.duration != null && message.dateSent != null } }
-
-                    AnimatedVisibility(visible = timeStampAvailable) {
-
-                        MessagingTimeStamp(
-                            value = message.dateSent!!,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp))
-                    }
-
-
-                    ChatItem(
-                        message = message,
-                        isSender = isSender,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 6.dp),
-                        contentAlignment = if (isSender) Alignment.CenterStart else Alignment.CenterEnd,
-                        currentIndex = index,
-                        selectedIndex = selectedIndex,
-                        onClick = onClickChatItem
-                    )
-                }
-
-            }
-
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
 
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.background(
-                    Color.Transparent)) {
+                modifier = Modifier.fillMaxSize()) {
 
-                ScrollToBottomButton(isVisible = isScrollingUp, onClick = {
+                LazyColumn(
+                    state = listState,
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)
+                ) {
 
-                })
+                    itemsIndexed(
+                        items = conversation.messages,
+                        key = { _, item -> item.messageId }) { index, message ->
+
+                        val isSender by remember { derivedStateOf { message.senderId != USER_ID } }
+                        val timeStampAvailable by remember { derivedStateOf { message.duration != null && message.dateSent != null } }
+
+                        AnimatedVisibility(visible = timeStampAvailable) {
+
+                            MessagingTimeStamp(
+                                value = message.dateSent!!,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp))
+                        }
+
+
+                        ChatItem(
+                            message = message,
+                            isSender = isSender,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp, horizontal = 6.dp),
+                            contentAlignment = if (isSender) Alignment.CenterStart else Alignment.CenterEnd,
+                            currentIndex = index,
+                            selectedIndex = selectedIndex,
+                            onClick = onClickChatItem
+                        )
+                    }
+
+                }
 
                 MessagingTextArea(
                     message = message,
                     onValueChange = { onChangeValueMessage(it) },
                     modifier = Modifier.wrapContentHeight(),
-                    onClickSend = {
-
-                    },
+                    onClickSend = {},
                     onToggleExpand = onToggleExpand,
                     isExpanded = messageAreaExpanded)
 
-
             }
-        }
 
+            ScrollToBottomButton(
+                modifier = Modifier.absoluteOffset(y = (-85).dp),
+                isVisible = isScrollingUp,
+                onClick = {
+                    scope.launch {
+                        listState.animateScrollToItem(index = conversation.messages.indices.last)
+                    }
+                })
+
+        }
     }
 
 }
