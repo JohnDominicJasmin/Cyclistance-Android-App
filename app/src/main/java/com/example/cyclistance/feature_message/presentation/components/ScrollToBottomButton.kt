@@ -1,6 +1,8 @@
 package com.example.cyclistance.feature_message.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -23,23 +25,24 @@ fun ScrollToBottomButton(
     isVisible: Boolean,
     onClick: () -> Unit = {}) {
 
-    AnimatedVisibility(visible = isVisible, modifier = modifier) {
+    AnimatedVisibility(
+        visible = isVisible,
+        modifier = modifier,
+        enter = scaleIn(),
+        exit = scaleOut()) {
 
         Surface(
-            modifier = Modifier
-                .size(40.dp),
+            modifier = Modifier.size(40.dp),
             onClick = onClick,
             shape = CircleShape,
             contentColor = MaterialTheme.colors.primary,
-            color = MaterialTheme.colors.surface) {
-
+            color = MaterialTheme.colors.surface,
+            elevation = 1.5.dp) {
 
             Icon(
                 imageVector = Icons.Default.ArrowDownward,
                 contentDescription = "Scroll to bottom",
-                modifier = Modifier.padding(all = 10.dp)
-
-            )
+                modifier = Modifier.padding(all = 10.dp))
         }
 
     }
