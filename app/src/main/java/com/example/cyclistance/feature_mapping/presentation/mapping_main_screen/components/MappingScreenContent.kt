@@ -58,6 +58,7 @@ fun MappingScreenContent(
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     event: (MappingUiEvent) -> Unit = {}
 ) {
+
     val respondentCount by remember(state.newRescueRequest?.request?.size) {
         derivedStateOf { (state.newRescueRequest?.request)?.size ?: 0 }
     }
@@ -80,6 +81,8 @@ fun MappingScreenContent(
                 event = event
             )
         }
+
+
 
 
         MappingBottomSheet(
@@ -154,6 +157,7 @@ fun MappingScreenContent(
 
 
 
+
                 ExpandableFABSection(
                     modifier = Modifier
                         .constrainAs(expandableFabSection) {
@@ -168,6 +172,10 @@ fun MappingScreenContent(
                     badgeCount = respondentCount
                 )
 
+                val buttonVisible = isNavigating.not() && uiState.isFabExpanded.not()
+                val requestHelpVisible = uiState.requestHelpButtonVisible && buttonVisible
+                val respondToHelpVisible = uiState.requestHelpButtonVisible.not() && buttonVisible
+
                 RequestHelpButton(
                     modifier = Modifier.constrainAs(requestHelpButton) {
                         bottom.linkTo(parent.bottom, margin = 15.dp)
@@ -175,7 +183,7 @@ fun MappingScreenContent(
                         start.linkTo(parent.start)
                     }, onClickRequestHelpButton = { event(MappingUiEvent.RequestHelp) },
                     state = state,
-                    visible = uiState.requestHelpButtonVisible && isNavigating.not()
+                    visible = requestHelpVisible
 
                 )
 
@@ -187,7 +195,7 @@ fun MappingScreenContent(
                     },
                     onClickRespondButton = { event(MappingUiEvent.RespondToHelp) },
                     state = state,
-                    visible = uiState.requestHelpButtonVisible.not() && isNavigating.not()
+                    visible = respondToHelpVisible
                 )
 
                 if (state.isLoading) {
