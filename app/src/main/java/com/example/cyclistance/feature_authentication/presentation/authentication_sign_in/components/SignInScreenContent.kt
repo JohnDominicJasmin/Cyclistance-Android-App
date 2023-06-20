@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
@@ -42,7 +43,7 @@ fun PreviewSignInScreenDark() {
     }
 
 
-    val onValueChangeEmail = remember<(String) -> Unit> {
+    val onValueChangeEmail = remember<(TextFieldValue) -> Unit> {
         {
             uiState = uiState.copy(
                 email = it,
@@ -51,7 +52,7 @@ fun PreviewSignInScreenDark() {
         }
     }
 
-    val onValueChangePassword = remember<(String) -> Unit> {
+    val onValueChangePassword = remember<(TextFieldValue) -> Unit> {
         {
             uiState = uiState.copy(
                 password = it,
@@ -80,7 +81,7 @@ fun PreviewSignInScreenLight() {
     }
 
 
-    val onValueChangeEmail = remember<(String) -> Unit> {
+    val onValueChangeEmail = remember<(TextFieldValue) -> Unit> {
         {
             uiState = uiState.copy(
                 email = it,
@@ -89,7 +90,7 @@ fun PreviewSignInScreenLight() {
         }
     }
 
-    val onValueChangePassword = remember<(String) -> Unit> {
+    val onValueChangePassword = remember<(TextFieldValue) -> Unit> {
         {
             uiState = uiState.copy(
                 password = it,

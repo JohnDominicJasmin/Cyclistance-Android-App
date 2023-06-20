@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -112,7 +113,7 @@ fun ConfirmDetailsContent(
                     errorMessage = uiState.bikeTypeErrorMessage,
                     selectedItem = uiState.bikeType,
                     onClickItem = {
-                        event(ConfirmDetailsUiEvent.ChangeBikeType(it))
+                        event(ConfirmDetailsUiEvent.ChangeBikeType(TextFieldValue(text = it)))
                     },
                     enabled = !state.isLoading)
 

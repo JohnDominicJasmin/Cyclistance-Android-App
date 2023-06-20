@@ -39,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
@@ -50,11 +51,11 @@ import com.example.cyclistance.theme.Black500
 @Composable
 fun ConfirmPasswordTextField(
     enabled: Boolean,
-    password: String,
+    password: TextFieldValue,
     passwordErrorMessage: String,
     isPasswordVisible: Boolean,
     passwordVisibilityIconOnClick: () -> Unit,
-    onValueChange: (String) -> Unit,
+    onValueChange: (TextFieldValue) -> Unit,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit)) {
 
 
@@ -84,10 +85,10 @@ fun ConfirmPasswordTextField(
 @Composable
 fun PasswordTextField(
     enabled: Boolean,
-    password: String,
+    password: TextFieldValue,
     passwordExceptionMessage: String,
     clearIconOnClick: () -> Unit,
-    onValueChange: (String) -> Unit) {
+    onValueChange: (TextFieldValue) -> Unit) {
 
     val hasError = passwordExceptionMessage.isNotEmpty()
 
@@ -112,7 +113,7 @@ fun PasswordTextField(
             }
 
             AnimatedVisibility(
-                visible = password.isNotEmpty() && !hasError,
+                visible = password.text.isNotEmpty() && !hasError,
                 enter = fadeIn(animationSpec = tween(durationMillis = 100)),
                 exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
 
@@ -139,9 +140,9 @@ fun PasswordTextField(
 private fun SetupTextField(
     enabled: Boolean,
     focusRequester: FocusRequester = FocusRequester(),
-    textFieldValue: String,
+    textFieldValue: TextFieldValue,
     failureMessage: String,
-    onValueChange: (String) -> Unit,
+    onValueChange: (TextFieldValue) -> Unit,
     placeholderText: String,
     leadingIcon: ImageVector = Icons.Default.Lock,
     trailingIcon: @Composable (() -> Unit)? = null,
@@ -219,10 +220,10 @@ private fun SetupTextField(
 fun EmailTextField(
     enabled: Boolean,
     focusRequester: FocusRequester,
-    email: String,
+    email: TextFieldValue,
     emailErrorMessage: String,
     clearIconOnClick: () -> Unit,
-    onValueChange: (String) -> Unit) {
+    onValueChange: (TextFieldValue) -> Unit) {
 
     val hasError = emailErrorMessage.isNotEmpty()
 
@@ -250,7 +251,7 @@ fun EmailTextField(
             }
 
             AnimatedVisibility(
-                visible = email.isNotEmpty() && !hasError,
+                visible = email.text.isNotEmpty() && !hasError,
                 enter = fadeIn(animationSpec = tween(durationMillis = 100)),
                 exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
 

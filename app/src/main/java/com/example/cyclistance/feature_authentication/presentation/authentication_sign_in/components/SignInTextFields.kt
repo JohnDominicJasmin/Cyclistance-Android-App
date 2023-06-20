@@ -9,6 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInState
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
@@ -19,14 +20,14 @@ import com.example.cyclistance.feature_authentication.presentation.common.EmailT
 @Composable
 fun SignInTextFieldsArea(
     state: SignInState,
-    email: String,
+    email: TextFieldValue,
     emailErrorMessage: String,
-    password: String,
+    password: TextFieldValue,
     passwordErrorMessage: String,
     passwordVisible: Boolean,
     focusRequester: FocusRequester,
-    onValueChangeEmail: (String) -> Unit,
-    onValueChangePassword: (String) -> Unit,
+    onValueChangeEmail: (TextFieldValue) -> Unit,
+    onValueChangePassword: (TextFieldValue) -> Unit,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit),
     onClickPasswordVisibility: () -> Unit) {
 
@@ -45,7 +46,7 @@ fun SignInTextFieldsArea(
             emailErrorMessage = emailErrorMessage,
             onValueChange = onValueChangeEmail,
             clearIconOnClick = {
-                onValueChangeEmail("")
+                onValueChangeEmail(TextFieldValue(""))
             },
             enabled = !state.isLoading)
 
