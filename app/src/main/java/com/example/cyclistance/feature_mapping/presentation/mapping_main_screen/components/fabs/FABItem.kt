@@ -22,9 +22,8 @@ import com.example.cyclistance.core.utils.composable_utils.drawColoredShadow
 @Composable
 fun FABItem(
     modifier: Modifier = Modifier,
-    offset: IntOffset = IntOffset(0, 0),
     onClick: () -> Unit,
-    iconSize: Dp,
+    iconSize: Dp = 25.dp,
     @DrawableRes resId: Int,
     backgroundColor: Color,
     iconColor: Color
@@ -32,7 +31,6 @@ fun FABItem(
 
     FloatingActionButton(
         modifier = modifier
-            .offset { offset }
             .size(68.dp)
             .apply {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
