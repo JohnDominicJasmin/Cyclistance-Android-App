@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,10 +30,10 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun AddressTextField(
     modifier: Modifier = Modifier,
-    address: String,
+    address: TextFieldValue,
     addressErrorMessage: String,
     enabled: Boolean = true,
-    onValueChange: (String) -> Unit) {
+    onValueChange: (TextFieldValue) -> Unit) {
 
     val hasError = addressErrorMessage.isNotEmpty()
 
@@ -88,7 +89,7 @@ fun AddressTextField(
 fun AddressTextFieldPreview() {
     CyclistanceTheme(true) {
         AddressTextField(
-            address = "Tanauan City Batangas",
+            address = TextFieldValue("Tanauan City Batangas"),
             addressErrorMessage = "Invalid Address",
             onValueChange = {})
     }

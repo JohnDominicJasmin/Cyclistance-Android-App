@@ -15,6 +15,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -70,11 +71,11 @@ fun ConfirmDetailsScreen(
                 }
 
                 is ConfirmDetailsEvent.GetSavedBikeType -> {
-                    uiState = uiState.copy(bikeType = event.bikeType)
+                    uiState = uiState.copy(bikeType = TextFieldValue(text = event.bikeType))
                 }
 
                 is ConfirmDetailsEvent.GetSavedAddress -> {
-                    uiState = uiState.copy(address = event.address)
+                    uiState = uiState.copy(address = TextFieldValue(text = event.address))
                 }
 
                 is ConfirmDetailsEvent.NoInternetConnection -> {
@@ -100,7 +101,7 @@ fun ConfirmDetailsScreen(
 
 
     val onValueChangeAddress = remember {
-        { addressInput: String ->
+        { addressInput: TextFieldValue ->
             uiState = uiState.copy(
                 address = addressInput,
                 addressErrorMessage = ""
@@ -108,14 +109,14 @@ fun ConfirmDetailsScreen(
         }
     }
     val onValueChangeMessage = remember {
-        { messageInput: String ->
+        { messageInput: TextFieldValue ->
             uiState = uiState.copy(
                 message = messageInput
             )
         }
     }
     val onClickBikeType = remember {
-        { bikeTypeInput: String ->
+        { bikeTypeInput: TextFieldValue ->
             uiState = uiState.copy(
                 bikeType = bikeTypeInput,
                 bikeTypeErrorMessage = ""
@@ -149,10 +150,10 @@ fun ConfirmDetailsScreen(
                         viewModel.onEvent(
                             event = ConfirmDetailsVmEvent.ConfirmDetails(
                                 confirmDetailsModel = ConfirmationDetails(
-                                    address = uiState.address,
-                                    bikeType = uiState.bikeType,
+                                    address = uiState.address.text,
+                                    bikeType = uiState.bikeType.text,
                                     description = uiState.description,
-                                    message = uiState.message
+                                    message = uiState.message.text
                                 )
                             ))
                     }, onExplain = {
@@ -174,10 +175,10 @@ fun ConfirmDetailsScreen(
                         viewModel.onEvent(
                             event = ConfirmDetailsVmEvent.ConfirmDetails(
                                 confirmDetailsModel = ConfirmationDetails(
-                                    address = uiState.address,
-                                    bikeType = uiState.bikeType,
+                                    address = uiState.address.text,
+                                    bikeType = uiState.bikeType.text,
                                     description = uiState.description,
-                                    message = uiState.message
+                                    message = uiState.message.text
                                 )
                             ))
                     },

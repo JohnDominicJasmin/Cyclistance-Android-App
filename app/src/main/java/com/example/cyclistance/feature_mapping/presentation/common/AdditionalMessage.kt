@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -34,9 +35,9 @@ import com.example.cyclistance.theme.Black500
 fun AdditionalMessage(
     text: String = "Message",
     modifier: Modifier,
-    message: String,
+    message: TextFieldValue,
     enabled: Boolean,
-    onChangeValueMessage: (String) -> Unit) {
+    onChangeValueMessage: (TextFieldValue) -> Unit) {
     Column(modifier = modifier) {
 
 
@@ -73,8 +74,8 @@ fun AdditionalMessage(
                         },
                     value = message,
                     onValueChange = { newText ->
-                        if (newText.length <= CHARACTER_LIMIT) {
-                            numberOfCharacters = newText.length
+                        if (newText.text.length <= CHARACTER_LIMIT) {
+                            numberOfCharacters = newText.text.length
                             onChangeValueMessage(newText)
                         }
                     },

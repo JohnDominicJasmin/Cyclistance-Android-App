@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_message.presentation.components
+    package com.example.cyclistance.feature_message.presentation.components
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
@@ -179,8 +179,7 @@ fun MessagingConversation() {
             TextFieldValue(""))
     }
     var messageAreaExpanded by rememberSaveable { mutableStateOf(false) }
-    val listState =
-        rememberLazyListState(initialFirstVisibleItemIndex = conversation.messages.indices.last)
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = conversation.messages.indices.last)
     val focusManager = LocalFocusManager.current
     val keyboardState by keyboardAsState()
 
