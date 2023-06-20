@@ -36,11 +36,12 @@ import kotlin.math.roundToInt
 
 @Composable
 fun ExpandableFABSection(
-    onClickRescueRequest: () -> Unit,
-    onClickFamilyTracker: () -> Unit,
-    onClickEmergencyCall: () -> Unit,
+    onClickRescueRequest: () -> Unit = {},
+    onClickFamilyTracker: () -> Unit = {},
+    onClickEmergencyCall: () -> Unit = {},
+    onClickBikeTracker: () -> Unit = {},
     isFabExpanded: Boolean,
-    onClickFab: () -> Unit,
+    onClickFab: () -> Unit = {},
     badgeCount: Int,
     modifier: Modifier = Modifier
 ) {
@@ -48,18 +49,25 @@ fun ExpandableFABSection(
         stiffness = Spring.StiffnessLow,
         dampingRatio = Spring.DampingRatioNoBouncy
     )
+
     val density = LocalDensity.current.density
     val offsetRescueRequestY = animateFloatAsState(
-        targetValue = if (isFabExpanded) -475f * density / 2.75f else 0f,
+        targetValue = -365f * density / 2.75f,
         animationSpec = animationSpec
     )
+
+    val offsetBikeTrackerY = animateFloatAsState(
+        targetValue = -290f * density / 2.7f,
+        animationSpec = animationSpec
+    )
+
     val offsetFamilyTrackerY = animateFloatAsState(
-        targetValue = if (isFabExpanded) -325f * density / 2.75f else 0f,
+        targetValue = -155f * density / 2.75f,
         animationSpec = animationSpec
     )
 
     val offsetEmergencyCallY = animateFloatAsState(
-        targetValue = if (isFabExpanded) -175f * density / 2.75f else 0f,
+        targetValue = 0f * density / 2.75f,
         animationSpec = animationSpec
     )
     val rotationAngle = animateFloatAsState(
@@ -74,62 +82,103 @@ fun ExpandableFABSection(
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
 
-        Box(contentAlignment = Alignment.TopEnd) {
-            FABItem(
-                modifier = Modifier.size(47.dp),
-                offset = IntOffset(0, offsetRescueRequestY.value.roundToInt()),
-                onClick = {
-                    onClickFab()
-                    onClickRescueRequest()
-                },
-                iconSize = 25.dp,
-                resId = R.drawable.ic_rescue_request,
-                backgroundColor = MaterialTheme.colors.surface,
-                iconColor = MaterialTheme.colors.onSurface
-            )
-            AnimatedVisibility(
-                modifier = Modifier.offset {
-                    IntOffset(
-                        0,
-                        offsetRescueRequestY.value.roundToInt())
-                },
-                visible = isFabExpanded && hasRespondents,
-                enter = fadeIn(),
-                exit = fadeOut()) {
+        AnimatedVisibility(
+            visible = isFabExpanded,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.offset {
+                IntOffset(0, offsetRescueRequestY.value.roundToInt())
+            }) {
 
-                BadgeCount(
-                    modifier = Modifier.padding(bottom = 20.dp),
-                    count = badgeCount.toString()
+
+            Box(contentAlignment = Alignment.TopEnd) {
+
+                FABItem(
+                    modifier = Modifier.size(47.dp),
+                    onClick = {
+                        onClickFab()
+                        onClickRescueRequest()
+                    },
+                    resId = R.drawable.ic_rescue_request,
+                    backgroundColor = MaterialTheme.colors.surface,
+                    iconColor = MaterialTheme.colors.onSurface
                 )
+                AnimatedVisibility(
+                    visible = isFabExpanded && hasRespondents,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+
+                    BadgeCount(
+                        modifier = Modifier.padding(bottom = 20.dp),
+                        count = badgeCount.toString()
+                    )
+                }
             }
         }
 
-        FABItem(
-            modifier = Modifier.size(47.dp),
-            offset = IntOffset(0, offsetFamilyTrackerY.value.roundToInt()),
-            onClick = {
-                onClickFab()
-                onClickFamilyTracker()
-            },
-            iconSize = 25.dp,
-            resId = R.drawable.ic_family_tracker,
-            backgroundColor = MaterialTheme.colors.surface,
-            iconColor = MaterialTheme.colors.onSurface
-        )
 
-        FABItem(
-            modifier = Modifier.size(47.dp),
-            offset = IntOffset(0, offsetEmergencyCallY.value.roundToInt()),
-            onClick = {
-                onClickFab()
-                onClickEmergencyCall()
-            },
-            iconSize = 25.dp,
-            resId = R.drawable.ic_emergency_call,
-            backgroundColor = MaterialTheme.colors.surface,
-            iconColor = MaterialTheme.colors.onSurface
-        )
+        AnimatedVisibility(
+            visible = isFabExpanded,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.offset { IntOffset(-155, offsetBikeTrackerY.value.roundToInt()) }
+        ) {
+            FABItem(
+                modifier = Modifier.size(47.dp),
+                onClick = {
+                    onClickFab()
+                    onClickBikeTracker()
+                },
+                resId = R.drawable.ic_bike_tracker,
+                backgroundColor = MaterialTheme.colors.surface,
+                iconColor = MaterialTheme.colors.onSurface
+            )
+        }
 
+
+        AnimatedVisibility(
+            visible = isFabExpanded,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.offset { IntOffset(-250, offsetFamilyTrackerY.value.roundToInt()) }
+        ) {
+
+            FABItem(
+                modifier = Modifier.size(47.dp),
+                onClick = {
+                    onClickFab()
+                    onClickFamilyTracker()
+                },
+                resId = R.drawable.ic_family_tracker,
+                backgroundColor = MaterialTheme.colors.surface,
+                iconColor = MaterialTheme.colors.onSurface
+            )
+
+        }
+
+        AnimatedVisibility(visible = isFabExpanded,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.offset {
+                IntOffset(
+                    -310,
+                    offsetEmergencyCallY.value.roundToInt()
+                )
+            }) {
+
+            FABItem(
+                modifier = Modifier.size(47.dp),
+                onClick = {
+                    onClickFab()
+                    onClickEmergencyCall()
+                },
+                resId = R.drawable.ic_emergency_call,
+                backgroundColor = MaterialTheme.colors.surface,
+                iconColor = MaterialTheme.colors.onSurface
+            )
+
+        }
 
         Box(contentAlignment = Alignment.TopEnd) {
             FABItem(
@@ -147,7 +196,8 @@ fun ExpandableFABSection(
                 modifier = Modifier,
                 visible = !isFabExpanded && hasRespondents,
                 enter = fadeIn(animationSpec = spring(stiffness = Spring.StiffnessHigh)),
-                exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessHigh))) {
+                exit = fadeOut(animationSpec = spring(stiffness = Spring.StiffnessHigh))
+            ) {
 
                 BadgeCount(
                     modifier = Modifier.padding(bottom = 20.dp),
@@ -165,13 +215,16 @@ fun ExpandableFABSection(
 fun PreviewExpandableFABSection() {
 
     var isFabExpanded by remember { mutableStateOf(false) }
+
     CyclistanceTheme(darkTheme = true) {
         Box(
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.BottomEnd,
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color.DarkGray)) {
+                .background(MaterialTheme.colors.background)
+        ) {
             ExpandableFABSection(
+                modifier = Modifier.padding(end = 12.dp, bottom = 12.dp),
                 onClickRescueRequest = { },
                 onClickFamilyTracker = { },
                 onClickEmergencyCall = { },
