@@ -70,7 +70,7 @@ object MappingConstants {
     const val DEFAULT_LOCATION_CIRCLE_PULSE_DURATION_MS = 1500f
     const val DEFAULT_LOCATION_CIRCLE_PULSE_RADIUS = 50f
 
-
+    const val NUMBER_OF_STARS = 5
     const val ROUTE_LAYER_ID = "route-layer-id"
     const val ROUTE_SOURCE_ID = "route-source-id"
     const val ICON_SOURCE_ID = "icon-source-id"
