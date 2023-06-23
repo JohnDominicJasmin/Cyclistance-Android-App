@@ -38,11 +38,13 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun MappingDrawerContent(
+    onClickEmergencyCall: () -> Unit = {},
     onClickSettings: () -> Unit = {},
+    onClickRideHistory: () -> Unit = {},
     onClickChat: () -> Unit = {},
     onClickSignOut: () -> Unit = {},
     uiState: NavUiState = NavUiState()
-    ) {
+) {
 
     ConstraintLayout(
         modifier = Modifier
@@ -102,7 +104,7 @@ fun MappingDrawerContent(
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_emergency_call,
                 buttonText = "Emergency Call",
-                onClick = {})
+                onClick = onClickEmergencyCall)
 
             DrawerContentButtonItem(
                 modifier = Modifier
@@ -118,7 +120,7 @@ fun MappingDrawerContent(
                     .wrapContentHeight(),
                 iconId = R.drawable.ic_ride_history,
                 buttonText = "Ride History",
-                onClick = {})
+                onClick = onClickRideHistory)
 
 
             DrawerContentButtonItem(

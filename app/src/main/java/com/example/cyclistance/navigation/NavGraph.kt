@@ -1,5 +1,6 @@
 package com.example.cyclistance.navigation
 
+import MessagingConversationScreen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
@@ -22,6 +23,7 @@ import com.example.cyclistance.feature_intro_slider.presentation.IntroSliderScre
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.CancellationReasonScreen
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.ConfirmDetailsScreen
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingScreen
+import com.example.cyclistance.feature_message.presentation.messaging_main_screen.MessagingScreen
 import com.example.cyclistance.feature_settings.presentation.setting_change_password.ChangePasswordScreen
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileScreen
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingScreen
@@ -126,6 +128,19 @@ fun NavGraph(
                 navController = navController,
                 paddingValues = paddingValues)
 
+        }
+
+        composable(Screens.MessagingScreen.route) {
+            MessagingScreen(
+                navController = navController,
+                paddingValues = paddingValues
+            )
+        }
+
+        composable(Screens.MessagingConversationScreen.route) {
+            MessagingConversationScreen(
+                navController = navController,
+                paddingValues = paddingValues)
         }
 
     }
