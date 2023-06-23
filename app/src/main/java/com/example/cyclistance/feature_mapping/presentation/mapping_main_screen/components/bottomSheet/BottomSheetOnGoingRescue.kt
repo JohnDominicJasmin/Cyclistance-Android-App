@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
+import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.theme.Red900
 
@@ -212,7 +213,7 @@ fun SpeedometerSection(
 
             Divider(
                 modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colors.onSurface,
+                color = Black440,
                 thickness = 1.dp,
             )
 
@@ -231,7 +232,7 @@ fun SpeedometerSection(
                     content = distance)
 
                 Divider(
-                    color = MaterialTheme.colors.onSurface, modifier = Modifier
+                    color = Black440, modifier = Modifier
                         .fillMaxHeight()
                         .width(1.dp))
 
@@ -244,7 +245,7 @@ fun SpeedometerSection(
                     content = maxSpeed)
 
                 Divider(
-                    color = MaterialTheme.colors.onSurface, modifier = Modifier
+                    color = Black440, modifier = Modifier
                         .fillMaxHeight()
                         .width(1.dp))
 
@@ -258,7 +259,7 @@ fun SpeedometerSection(
             }
             Divider(
                 modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colors.onSurface,
+                color = Black440,
                 thickness = 1.dp,
             )
         }

@@ -28,8 +28,9 @@ import kotlinx.coroutines.launch
 fun BottomSheetSearchingAssistance(
     modifier: Modifier = Modifier,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
+    onClickCancelSearchButton: () -> Unit,
     content: @Composable (PaddingValues) -> Unit,
-    onClickCancelSearchButton: () -> Unit) {
+) {
 
     val scope = rememberCoroutineScope()
     val isDarkTheme = IsDarkTheme.current
@@ -112,7 +113,7 @@ fun SearchingAssistancePreview() {
         bottomSheetState = rememberBottomSheetState(
             initialValue = BottomSheetValue.Expanded))
 
-    CompositionLocalProvider(IsDarkTheme provides true) {
+    CompositionLocalProvider(IsDarkTheme provides isDarkTheme) {
         CyclistanceTheme(isDarkTheme) {
             BottomSheetSearchingAssistance(
                 onClickCancelSearchButton = {},
