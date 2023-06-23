@@ -152,7 +152,7 @@ fun NavScreen(
             coroutineScope.launch {
                 scaffoldState.drawerState.close()
             }
-            Unit
+            navController.navigateScreen(Screens.MessagingScreen.route)
         }
     }
 

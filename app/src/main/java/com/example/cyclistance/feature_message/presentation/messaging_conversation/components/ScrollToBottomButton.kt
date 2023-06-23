@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_message.presentation.components
+package com.example.cyclistance.feature_message.presentation.messaging_conversation.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
