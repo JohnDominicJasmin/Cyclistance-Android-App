@@ -193,6 +193,11 @@ dependencies {
     //datastore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    //flowrow
+    implementation "androidx.compose.foundation:foundation:<compose-version>"
+
+    //permissions
+    implementation "com.google.accompanist:accompanist-permissions:0.31.3-beta"
 
     //mapbox
 
@@ -221,7 +226,7 @@ dependencies {
 
 
     implementation "com.google.maps.android:maps-compose:2.0.0"
-    implementation "com.google.accompanist:accompanist-permissions:0.31.3-beta"
+
 
     //Firebase
     implementation platform('com.google.firebase:firebase-bom:29.1.0')
