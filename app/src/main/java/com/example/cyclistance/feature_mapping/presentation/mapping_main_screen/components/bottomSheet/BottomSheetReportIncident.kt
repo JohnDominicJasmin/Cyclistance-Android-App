@@ -63,7 +63,7 @@ fun BottomSheetReportIncident(
         sheetContent = {
             Card(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(0.92f)
                     .shadow(
                         shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
                         elevation = 8.dp)
