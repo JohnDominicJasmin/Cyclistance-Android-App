@@ -1,14 +1,16 @@
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_message.presentation.messaging_conversation.MessagingConversationContent
+import com.example.cyclistance.feature_message.presentation.messaging_conversation.components.MessagingConversationContent
 import com.example.cyclistance.feature_message.presentation.messaging_conversation.event.MessagingConversationUiEvent
 import com.example.cyclistance.feature_message.presentation.messaging_conversation.state.MessagingConversationUiState
 
@@ -62,6 +64,7 @@ fun MessagingConversationScreen(navController: NavController, paddingValues: Pad
 
 
     MessagingConversationContent(
+        modifier = Modifier.padding(paddingValues),
         uiState = uiState,
         event = { event ->
             when (event) {
