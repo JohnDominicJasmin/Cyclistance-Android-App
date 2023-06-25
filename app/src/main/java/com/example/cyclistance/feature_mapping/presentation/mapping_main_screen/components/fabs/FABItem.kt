@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
 import android.os.Build
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.FloatingActionButton
@@ -14,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.core.utils.composable_utils.drawColoredShadow
 
@@ -22,9 +20,8 @@ import com.example.cyclistance.core.utils.composable_utils.drawColoredShadow
 @Composable
 fun FABItem(
     modifier: Modifier = Modifier,
-    offset: IntOffset = IntOffset(0, 0),
     onClick: () -> Unit,
-    iconSize: Dp,
+    iconSize: Dp = 25.dp,
     @DrawableRes resId: Int,
     backgroundColor: Color,
     iconColor: Color
@@ -32,7 +29,6 @@ fun FABItem(
 
     FloatingActionButton(
         modifier = modifier
-            .offset { offset }
             .size(68.dp)
             .apply {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

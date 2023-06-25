@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -216,13 +217,13 @@ fun SignInScreen(
         {
             signInViewModel.onEvent(
                 SignInVmEvent.SignInWithEmailAndPassword(
-                    email = uiState.email,
-                    password = uiState.password))
+                    email = uiState.email.text,
+                    password = uiState.password.text))
             focusManager.clearFocus()
         }
     }
 
-    val onValueChangeEmail = remember<(String) -> Unit> {
+    val onValueChangeEmail = remember<(TextFieldValue) -> Unit> {
         {
             uiState = uiState.copy(
                 email = it,
@@ -231,7 +232,7 @@ fun SignInScreen(
         }
     }
 
-    val onValueChangePassword = remember<(String) -> Unit> {
+    val onValueChangePassword = remember<(TextFieldValue) -> Unit> {
         {
             uiState = uiState.copy(
                 password = it,
@@ -265,10 +266,12 @@ fun SignInScreen(
 
     val onClickSignInButton = remember {
         {
+
+
             signInViewModel.onEvent(
                 SignInVmEvent.SignInWithEmailAndPassword(
-                    email = uiState.email,
-                    password = uiState.password
+                    email = uiState.email.text,
+                    password = uiState.password.text
                 ))
         }
     }
@@ -297,8 +300,8 @@ fun SignInScreen(
             when (event) {
                 is SignUiEvent.DismissAlertDialog -> onDismissAlertDialog()
                 is SignUiEvent.KeyboardActionDone -> onDoneKeyboardAction()
-                is SignUiEvent.ChangeEmail -> onValueChangeEmail(event.email)
-                is SignUiEvent.ChangePassword -> onValueChangePassword(event.password)
+                is SignUiEvent.OnChangeEmail -> onValueChangeEmail(event.email)
+                is SignUiEvent.OnChangePassword -> onValueChangePassword(event.password)
                 is SignUiEvent.TogglePasswordVisibility -> onClickPasswordVisibility()
                 is SignUiEvent.SignInWithFacebook -> onClickFacebookButton()
                 is SignUiEvent.SignInWithGoogle -> onClickGoogleButton()

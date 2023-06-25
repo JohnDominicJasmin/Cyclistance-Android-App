@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -49,7 +50,7 @@ private val bikeList = listOf(
 fun DropDownBikeList(
     modifier: Modifier,
     errorMessage: String,
-    selectedItem: String,
+    selectedItem: TextFieldValue,
     enabled: Boolean,
     onClickItem: (String) -> Unit) {
 
@@ -143,7 +144,7 @@ fun DropDownListPreview() {
     CyclistanceTheme(false) {
         DropDownBikeList(modifier = Modifier
             .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
-            selectedItem = "Mountain Bike",
+            selectedItem = TextFieldValue("Mountain Bike"),
             errorMessage = "Field cannot be left blank",
             enabled = true,
             onClickItem = {

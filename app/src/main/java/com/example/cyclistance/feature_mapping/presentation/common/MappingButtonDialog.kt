@@ -24,7 +24,7 @@ import com.example.cyclistance.theme.Black500
 
 
 @Composable
-fun MappingButtonNavigation(
+fun ButtonNavigation(
     modifier: Modifier,
     negativeButtonEnabled: Boolean = true,
     positiveButtonEnabled: Boolean = true,

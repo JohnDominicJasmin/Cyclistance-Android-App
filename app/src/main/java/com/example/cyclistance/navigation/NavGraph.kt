@@ -1,5 +1,9 @@
 package com.example.cyclistance.navigation
 
+import MessagingConversationScreen
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
@@ -18,10 +22,13 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACT
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpScreen
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.EmergencyAddEditContactScreen
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.EmergencyCallScreen
 import com.example.cyclistance.feature_intro_slider.presentation.IntroSliderScreen
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.CancellationReasonScreen
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.ConfirmDetailsScreen
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingScreen
+import com.example.cyclistance.feature_message.presentation.messaging_main_screen.MessagingScreen
 import com.example.cyclistance.feature_settings.presentation.setting_change_password.ChangePasswordScreen
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileScreen
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingScreen
@@ -39,7 +46,19 @@ fun NavGraph(
     onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
     onToggleTheme: () -> Unit) {
 
-    NavHost(navController = navController, startDestination = startingDestination) {
+    NavHost(
+        navController = navController,
+        startDestination = startingDestination,
+        enterTransition = {
+            fadeIn(
+                animationSpec = tween(
+                    durationMillis = 300))
+        },
+        exitTransition = {
+            fadeOut(
+                animationSpec = tween(
+                    durationMillis = 300))
+        }) {
 
         composable(Screens.IntroSliderScreen.route) {
             IntroSliderScreen(
@@ -126,6 +145,31 @@ fun NavGraph(
                 navController = navController,
                 paddingValues = paddingValues)
 
+        }
+
+        composable(Screens.MessagingScreen.route) {
+            MessagingScreen(
+                navController = navController,
+                paddingValues = paddingValues
+            )
+        }
+
+        composable(Screens.MessagingConversationScreen.route) {
+            MessagingConversationScreen(
+                navController = navController,
+                paddingValues = paddingValues)
+        }
+
+        composable(Screens.EmergencyCallScreen.route) {
+            EmergencyCallScreen(
+                navController = navController, paddingValues = paddingValues
+            )
+        }
+
+        composable(Screens.EmergencyAddNewContact.route) {
+            EmergencyAddEditContactScreen(
+                navController = navController, paddingValues = paddingValues
+            )
         }
 
     }

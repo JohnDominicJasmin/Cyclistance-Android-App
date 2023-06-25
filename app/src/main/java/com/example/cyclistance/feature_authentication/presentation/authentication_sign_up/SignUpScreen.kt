@@ -12,6 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -40,15 +41,15 @@ fun SignUpScreen(
 
     val signUpAccount = remember(key1 = uiState.email, key2 = signUpState.hasAccountSignedIn) {
         {
-            val isUserCreatedNewAccount = uiState.email != signUpState.savedAccountEmail
+            val isUserCreatedNewAccount = uiState.email.text != signUpState.savedAccountEmail
             if (signUpState.hasAccountSignedIn && isUserCreatedNewAccount) {
                 signUpViewModel.onEvent(SignUpVmEvent.SignOut)
             }
             signUpViewModel.onEvent(
                 SignUpVmEvent.SignUp(
-                    email = uiState.email,
-                    password = uiState.password,
-                    confirmPassword = uiState.confirmPassword))
+                    email = uiState.email.text,
+                    password = uiState.password.text,
+                    confirmPassword = uiState.confirmPassword.text))
         }
 
     }
@@ -61,14 +62,14 @@ fun SignUpScreen(
         }
     }
 
-    val onDoneKeyboardAction = remember{
+    val onDoneKeyboardAction = remember {
         {
             signUpAccount()
             focusManager.clearFocus()
         }
     }
     val onValueChangeEmail = remember {
-        { inputEmail: String ->
+        { inputEmail: TextFieldValue ->
             uiState = uiState.copy(
                 email = inputEmail,
                 emailErrorMessage = ""
@@ -76,7 +77,7 @@ fun SignUpScreen(
         }
     }
     val onValueChangePassword = remember {
-        { inputPassword: String ->
+        { inputPassword: TextFieldValue ->
             uiState = uiState.copy(
                 password = inputPassword,
                 passwordErrorMessage = ""
@@ -84,7 +85,7 @@ fun SignUpScreen(
         }
     }
     val onValueChangeConfirmPassword = remember {
-        { inputConfirmPassword: String ->
+        { inputConfirmPassword: TextFieldValue ->
             uiState = uiState.copy(
                 confirmPassword = inputConfirmPassword,
                 confirmPasswordErrorMessage = ""
@@ -191,9 +192,9 @@ fun SignUpScreen(
                 is SignUpUiEvent.DismissAlertDialog -> onDismissAlertDialog()
                 is SignUpUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
                 is SignUpUiEvent.KeyboardActionDone -> onDoneKeyboardAction()
-                is SignUpUiEvent.ChangeEmail -> onValueChangeEmail(event.email)
-                is SignUpUiEvent.ChangePassword -> onValueChangePassword(event.password)
-                is SignUpUiEvent.ChangeConfirmPassword -> onValueChangeConfirmPassword(event.confirmPassword)
+                is SignUpUiEvent.OnChangeEmail -> onValueChangeEmail(event.email)
+                is SignUpUiEvent.OnChangePassword -> onValueChangePassword(event.password)
+                is SignUpUiEvent.OnChangeConfirmPassword -> onValueChangeConfirmPassword(event.confirmPassword)
                 is SignUpUiEvent.TogglePasswordVisibility -> onClickPasswordVisibility()
                 is SignUpUiEvent.SignUpWithEmailAndPassword -> onClickSignUpButton()
                 is SignUpUiEvent.NavigateToSignIn -> onClickSignUpText()

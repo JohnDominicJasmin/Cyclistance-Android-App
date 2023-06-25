@@ -13,6 +13,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -76,7 +77,7 @@ fun CancellationReasonScreen(
     }
 
     val onChangeValueMessage = remember {
-        { messageInput: String ->
+        { messageInput: TextFieldValue ->
             uiState = uiState.copy(message = messageInput)
         }
     }
@@ -85,7 +86,7 @@ fun CancellationReasonScreen(
             viewModel.onEvent(
                 event = CancellationReasonVmEvent.ConfirmCancellationReason(
                     reason = uiState.selectedReason,
-                    message = uiState.message,
+                    message = uiState.message.text,
                 ))
         }
     }
@@ -109,7 +110,7 @@ fun CancellationReasonScreen(
         uiState = uiState,
         event = { event ->
             when(event){
-                is CancellationReasonUiEvent.ChangeMessage ->  onChangeValueMessage(event.message)
+                is CancellationReasonUiEvent.OnChangeMessage -> onChangeValueMessage(event.message)
                 is CancellationReasonUiEvent.ConfirmCancellationReason -> onClickConfirmButton()
                 is CancellationReasonUiEvent.NavigateToMapping ->  onClickCancelButton()
                 is CancellationReasonUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()

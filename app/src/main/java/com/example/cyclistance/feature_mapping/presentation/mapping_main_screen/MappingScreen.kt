@@ -595,7 +595,7 @@ fun MappingScreen(
                         rescueRequestAccepted = false,
                         requestHelpButtonVisible = true,
                         searchingAssistance = false,
-                        bottomSheetType = "",
+                        bottomSheetType = BottomSheetType.Collapsed.type,
                         routeDirection = null,
                         mapSelectedRescuee = null,
                     )

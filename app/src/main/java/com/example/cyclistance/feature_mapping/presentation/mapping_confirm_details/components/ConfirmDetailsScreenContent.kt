@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -28,7 +29,7 @@ import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.N
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogBackgroundLocationPermission
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogForegroundLocationPermission
 import com.example.cyclistance.feature_mapping.presentation.common.AdditionalMessage
-import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsState
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsUiState
@@ -96,7 +97,7 @@ fun ConfirmDetailsContent(
                         },
                     address = uiState.address,
                     addressErrorMessage = uiState.addressErrorMessage,
-                    onValueChange = { event(ConfirmDetailsUiEvent.ChangeAddress(it)) },
+                    onValueChange = { event(ConfirmDetailsUiEvent.OnChangeAddress(it)) },
                     enabled = !state.isLoading
                 )
 
@@ -112,7 +113,7 @@ fun ConfirmDetailsContent(
                     errorMessage = uiState.bikeTypeErrorMessage,
                     selectedItem = uiState.bikeType,
                     onClickItem = {
-                        event(ConfirmDetailsUiEvent.ChangeBikeType(it))
+                        event(ConfirmDetailsUiEvent.OnChangeBikeType(TextFieldValue(text = it)))
                     },
                     enabled = !state.isLoading)
 
@@ -129,7 +130,7 @@ fun ConfirmDetailsContent(
                     selectedOption = uiState.description,
                     errorMessage = uiState.descriptionErrorMessage,
                     onClickButton = {
-                        event(ConfirmDetailsUiEvent.ChangeDescription(it))
+                        event(ConfirmDetailsUiEvent.OnChangeDescription(it))
                     },
                     state = state,
                 )
@@ -146,7 +147,7 @@ fun ConfirmDetailsContent(
                         },
                     message = uiState.message,
                     onChangeValueMessage = {
-                        event(ConfirmDetailsUiEvent.ChangeMessage(it))
+                        event(ConfirmDetailsUiEvent.OnChangeMessage(it))
                     },
                     enabled = !state.isLoading
                 )
@@ -178,7 +179,7 @@ fun ConfirmDetailsContent(
                         )
                 }
 
-                MappingButtonNavigation(
+                ButtonNavigation(
                     modifier = Modifier
                         .constrainAs(buttonNavButtonSection) {
                             top.linkTo(additionalMessageSection.bottom, margin = 50.dp)

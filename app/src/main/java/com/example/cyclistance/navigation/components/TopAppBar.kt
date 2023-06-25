@@ -78,9 +78,20 @@ fun TopAppBar(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
-                    TitleTopAppBar(title = "Setting Screen")
+                    TitleTopAppBar(title = "Settings")
                 })
         }
+
+        Screens.EmergencyCallScreen.route -> {
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Emergency Call")
+                })
+        }
+
+
     }
 
 }

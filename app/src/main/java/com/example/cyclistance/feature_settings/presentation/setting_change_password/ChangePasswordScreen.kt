@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_change_password.components.PasswordTextFieldArea
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -40,7 +40,7 @@ fun ChangePasswordScreen(paddingValues: PaddingValues) {
                 width = Dimension.percent(0.9f)
             })
 
-            MappingButtonNavigation(
+            ButtonNavigation(
                 modifier = Modifier.constrainAs(buttonNavigationArea) {
                     top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
                     start.linkTo(parent.start)
