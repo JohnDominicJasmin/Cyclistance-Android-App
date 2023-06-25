@@ -258,8 +258,8 @@ fun EditProfileScreen(
             when (event) {
                 is EditProfileUiEvent.SelectImageFromGallery -> openGallery()
                 is EditProfileUiEvent.OpenCamera -> openCamera()
-                is EditProfileUiEvent.ChangeName -> onValueChangeName(event.name)
-                is EditProfileUiEvent.ChangePhoneNumber -> onValueChangePhoneNumber(event.phoneNumber)
+                is EditProfileUiEvent.OnChangeName -> onValueChangeName(event.name)
+                is EditProfileUiEvent.OnChangePhoneNumber -> onValueChangePhoneNumber(event.phoneNumber)
                 is EditProfileUiEvent.CancelEditProfile -> cancelEditProfile()
                 is EditProfileUiEvent.ConfirmEditProfile -> confirmEditProfile()
                 is EditProfileUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()

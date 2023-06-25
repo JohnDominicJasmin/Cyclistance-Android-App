@@ -27,7 +27,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogCameraPermission
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogFilesAndMediaPermission
-import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileUiEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileState
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileUiState
@@ -106,7 +106,7 @@ fun EditProfileScreenContent(
                 event(EditProfileUiEvent.OpenCamera)
             },
             bottomSheetScaffoldState = bottomSheetScaffoldState,
-            editProfileState = state) {
+            isLoading = state.isLoading) {
 
             ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
@@ -162,8 +162,8 @@ fun EditProfileScreenContent(
 
                         },
                     state = state,
-                    onValueChangeName = { event(EditProfileUiEvent.ChangeName(it)) },
-                    onValueChangePhoneNumber = { event(EditProfileUiEvent.ChangePhoneNumber(it)) },
+                    onValueChangeName = { event(EditProfileUiEvent.OnChangeName(it)) },
+                    onValueChangePhoneNumber = { event(EditProfileUiEvent.OnChangePhoneNumber(it)) },
                     keyboardActions = keyboardActions,
                     uiState = uiState,
                 )

@@ -268,7 +268,7 @@ fun MessagingConversationContent(
 
                 MessagingTextArea(
                     message = uiState.message,
-                    onValueChange = { event(MessagingConversationUiEvent.ChangeMessage(it)) },
+                    onValueChange = { event(MessagingConversationUiEvent.OnChangeMessage(it)) },
                     modifier = Modifier.wrapContentHeight(),
                     onClickSend = {},
                     onToggleExpand = { event(MessagingConversationUiEvent.ToggleMessageArea) },

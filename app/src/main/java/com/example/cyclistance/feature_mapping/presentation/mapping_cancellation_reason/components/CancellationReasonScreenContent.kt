@@ -66,7 +66,7 @@ fun CancellationReasonScreenContent(
                     },
                 message = uiState.message,
                 onChangeValueMessage = {
-                    event(CancellationReasonUiEvent.ChangeMessage(it))
+                    event(CancellationReasonUiEvent.OnChangeMessage(it))
                 },
                 enabled = state.isLoading.not()
             )

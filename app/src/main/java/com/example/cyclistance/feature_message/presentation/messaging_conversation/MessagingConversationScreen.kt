@@ -71,7 +71,7 @@ fun MessagingConversationScreen(navController: NavController, paddingValues: Pad
                 is MessagingConversationUiEvent.ToggleMessageArea -> onToggleExpand()
                 is MessagingConversationUiEvent.ResetSelectedIndex -> resetSelectedIndex()
                 is MessagingConversationUiEvent.SelectChatItem -> onClickChatItem(event.index)
-                is MessagingConversationUiEvent.ChangeMessage -> onChangeValueMessage(event.message)
+                is MessagingConversationUiEvent.OnChangeMessage -> onChangeValueMessage(event.message)
             }
         }
     )

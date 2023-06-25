@@ -93,13 +93,13 @@ fun SignUpScreenContent(
                     event(SignUpUiEvent.KeyboardActionDone)
                 },
                 onValueChangeEmail = {
-                    event(SignUpUiEvent.ChangeEmail(it))
+                    event(SignUpUiEvent.OnChangeEmail(it))
                 },
                 onValueChangePassword = {
-                    event(SignUpUiEvent.ChangePassword(it))
+                    event(SignUpUiEvent.OnChangePassword(it))
                 },
                 onValueChangeConfirmPassword = {
-                    event(SignUpUiEvent.ChangeConfirmPassword(it))
+                    event(SignUpUiEvent.OnChangeConfirmPassword(it))
                 },
                 onClickPasswordVisibility = {
                     event(SignUpUiEvent.TogglePasswordVisibility)
