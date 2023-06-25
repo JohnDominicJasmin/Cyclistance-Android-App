@@ -61,6 +61,12 @@ fun MessagingConversationScreen(navController: NavController, paddingValues: Pad
         }
     })
 
+    val onCloseMessageConversationScreen = remember {
+        {
+            navController.popBackStack()
+        }
+    }
+
 
 
     MessagingConversationContent(
@@ -72,6 +78,7 @@ fun MessagingConversationScreen(navController: NavController, paddingValues: Pad
                 is MessagingConversationUiEvent.ResetSelectedIndex -> resetSelectedIndex()
                 is MessagingConversationUiEvent.SelectChatItem -> onClickChatItem(event.index)
                 is MessagingConversationUiEvent.OnChangeMessage -> onChangeValueMessage(event.message)
+                is MessagingConversationUiEvent.CloseMessagingConversationScreen -> onCloseMessageConversationScreen()
             }
         }
     )

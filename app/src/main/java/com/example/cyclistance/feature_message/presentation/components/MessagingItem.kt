@@ -117,7 +117,7 @@ fun MessagingItem(
                 horizontalAlignment = Alignment.End) {
 
                 Text(
-                    text = messageItemModel.time,
+                    text = messageItemModel.timeStamp,
                     color = MaterialTheme.colors.onBackground,
                     style = MaterialTheme.typography.body2.copy(
                         fontWeight = FontWeight.Light,
@@ -186,7 +186,7 @@ fun PreviewMessagingItemDark() {
                               "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                               "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                               "optio, eaque rerum! Provident similique accusantium nemo autem.",
-                    time = "12:00",
+                    timeStamp = "12:00",
                     unreadMessages = 4,
                 )
             )
@@ -216,7 +216,7 @@ fun PreviewMessagingItemLight() {
                               "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                               "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                               "optio, eaque rerum! Provident similique accusantium nemo autem.",
-                    time = "12:00",
+                    timeStamp = "12:00",
                     unreadMessages = 0,
                     isMessageSent = false
                 )

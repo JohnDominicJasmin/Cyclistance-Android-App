@@ -82,7 +82,7 @@ fun MessagingScreenContent(modifier: Modifier = Modifier, messagesModel: Message
 private fun MessagesSection(modifier: Modifier = Modifier, messagesModel: MessagesModel) {
 
     LazyColumn(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()) {
 
         items(messagesModel.messages) { item ->
@@ -103,7 +103,7 @@ private val messages = MessagesModel(
             userImage = "https://www.liquidsandsolids.com/wp-content/uploads/2022/09/talking-to-a-dead-person.jpg",
             name = "John Doe",
             message = "Hey there! How are you?",
-            time = "12:00",
+            timeStamp = "12:00",
             unreadMessages = 4,
             isMessageSent = false
         ),
@@ -114,7 +114,7 @@ private val messages = MessagesModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            time = "12:00",
+            timeStamp = "12:00",
             unreadMessages = 10,
             isMessageSent = true
         ),
@@ -125,7 +125,7 @@ private val messages = MessagesModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            time = "12:00",
+            timeStamp = "12:00",
             unreadMessages = 0,
             isMessageSent = true
         ),
@@ -133,7 +133,7 @@ private val messages = MessagesModel(
             userImage = "https://www.harleytherapy.co.uk/counselling/wp-content/uploads/16297800391_5c6e812832.jpg",
             name = "John Doe",
             message = "Hello",
-            time = "12:00",
+            timeStamp = "12:00",
             unreadMessages = 0,
             isMessageSent = true
         ),
@@ -144,7 +144,7 @@ private val messages = MessagesModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            time = "12:00",
+            timeStamp = "12:00",
             unreadMessages = 0,
             isMessageSent = false
         ),
