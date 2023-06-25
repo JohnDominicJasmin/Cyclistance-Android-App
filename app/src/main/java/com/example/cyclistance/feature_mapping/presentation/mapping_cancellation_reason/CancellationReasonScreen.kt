@@ -110,7 +110,7 @@ fun CancellationReasonScreen(
         uiState = uiState,
         event = { event ->
             when(event){
-                is CancellationReasonUiEvent.ChangeMessage ->  onChangeValueMessage(event.message)
+                is CancellationReasonUiEvent.OnChangeMessage -> onChangeValueMessage(event.message)
                 is CancellationReasonUiEvent.ConfirmCancellationReason -> onClickConfirmButton()
                 is CancellationReasonUiEvent.NavigateToMapping ->  onClickCancelButton()
                 is CancellationReasonUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()

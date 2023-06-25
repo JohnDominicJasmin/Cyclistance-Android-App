@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_message.presentation.messaging_conversation
+package com.example.cyclistance.feature_message.presentation.messaging_conversation.components
 
 
 import androidx.compose.animation.AnimatedVisibility
@@ -37,10 +37,6 @@ import com.example.cyclistance.core.utils.composable_utils.noRippleClickable
 import com.example.cyclistance.feature_message.domain.model.ui.Duration
 import com.example.cyclistance.feature_message.domain.model.ui.MessageContent
 import com.example.cyclistance.feature_message.domain.model.ui.MessageConversation
-import com.example.cyclistance.feature_message.presentation.messaging_conversation.components.ChatItem
-import com.example.cyclistance.feature_message.presentation.messaging_conversation.components.MessagingTextArea
-import com.example.cyclistance.feature_message.presentation.messaging_conversation.components.MessagingTimeStamp
-import com.example.cyclistance.feature_message.presentation.messaging_conversation.components.ScrollToBottomButton
 import com.example.cyclistance.feature_message.presentation.messaging_conversation.event.MessagingConversationUiEvent
 import com.example.cyclistance.feature_message.presentation.messaging_conversation.state.MessagingConversationUiState
 import com.example.cyclistance.navigation.IsDarkTheme
@@ -174,6 +170,7 @@ private val conversation = MessageConversation(
 
 @Composable
 fun MessagingConversationContent(
+    modifier: Modifier = Modifier,
     uiState: MessagingConversationUiState,
     event: (MessagingConversationUiEvent) -> Unit) {
 
@@ -212,7 +209,7 @@ fun MessagingConversationContent(
 
 
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .noRippleClickable {
 
@@ -271,7 +268,7 @@ fun MessagingConversationContent(
 
                 MessagingTextArea(
                     message = uiState.message,
-                    onValueChange = { event(MessagingConversationUiEvent.ChangeMessage(it)) },
+                    onValueChange = { event(MessagingConversationUiEvent.OnChangeMessage(it)) },
                     modifier = Modifier.wrapContentHeight(),
                     onClickSend = {},
                     onToggleExpand = { event(MessagingConversationUiEvent.ToggleMessageArea) },

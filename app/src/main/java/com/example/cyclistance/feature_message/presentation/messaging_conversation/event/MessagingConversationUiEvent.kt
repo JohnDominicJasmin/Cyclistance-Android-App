@@ -6,6 +6,6 @@ sealed class MessagingConversationUiEvent {
     object ToggleMessageArea : MessagingConversationUiEvent()
     object ResetSelectedIndex : MessagingConversationUiEvent()
     data class SelectChatItem(val index: Int) : MessagingConversationUiEvent()
-    data class ChangeMessage(val message: TextFieldValue) : MessagingConversationUiEvent()
+    data class OnChangeMessage(val message: TextFieldValue) : MessagingConversationUiEvent()
 
 }

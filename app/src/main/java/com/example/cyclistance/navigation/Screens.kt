@@ -12,6 +12,10 @@ sealed class Screens(val route:String){
     object ChangePasswordScreen : Screens(route = "change_password_screen")
     object EditProfileScreen : Screens(route = "edit_profile_screen")
     object SettingScreen : Screens(route = "setting_screen")
+
     object MessagingScreen : Screens(route = "messaging_screen")
     object MessagingConversationScreen : Screens(route = "messaging_conversation_screen")
+
+    object EmergencyCallScreen : Screens(route = "emergency_call_screen")
+    object EmergencyAddNewContact : Screens(route = "emergency_add_new_contact")
 }

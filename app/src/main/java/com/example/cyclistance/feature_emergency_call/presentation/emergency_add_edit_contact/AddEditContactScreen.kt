@@ -1,58 +1,59 @@
-package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
+package com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.material.*
-import androidx.compose.runtime.*
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.core.utils.save_images.ImageUtils.toImageUri
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.EditProfileScreenContent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileEvent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileUiEvent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileUiState
-import com.google.accompanist.permissions.*
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.components.AddEditContactContent
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.event.AddEditContactUiEvent
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.state.AddEditContactUiState
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.launch
 
-
-@SuppressLint("MissingPermission")
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalComposeUiApi::class,
-    ExperimentalMaterialApi::class)
+@OptIn(
+    ExperimentalComposeUiApi::class, ExperimentalMaterialApi::class,
+    ExperimentalPermissionsApi::class)
 @Composable
-fun EditProfileScreen(
-    editProfileViewModel: EditProfileViewModel = hiltViewModel(),
+fun EmergencyAddEditContactScreen(
     navController: NavController,
-    paddingValues: PaddingValues
-) {
+    paddingValues: PaddingValues,
+    viewModel: AddEditContactViewModel = viewModel()) {
 
-    val state by editProfileViewModel.state.collectAsStateWithLifecycle()
-
+    val state by viewModel.state.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
-
     var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var uiState by remember { mutableStateOf(EditProfileUiState()) }
     val scope = rememberCoroutineScope()
+    var uiState by remember { mutableStateOf(AddEditContactUiState()) }
     val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     val toggleBottomSheet = remember(bottomSheetScaffoldState, state.isLoading) {
         {
@@ -70,7 +71,6 @@ fun EditProfileScreen(
             }
         }
     }
-
     val openGalleryResultLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
             uiState = uiState.copy(selectedImageUri = uri.toString())
@@ -125,53 +125,6 @@ fun EditProfileScreen(
         }
 
 
-    LaunchedEffect(key1 = true){
-        editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadProfile)
-    }
-
-    LaunchedEffect(true) {
-
-        editProfileViewModel.eventFlow.collect { event ->
-            when (event) {
-
-                is EditProfileEvent.UpdateUserProfileSuccess -> {
-                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
-                    navController.popBackStack()
-                }
-
-                is EditProfileEvent.GetPhotoUrlSuccess -> {
-                    uiState = uiState.copy(photoUrl = event.photoUrl)
-                }
-
-                is EditProfileEvent.GetNameSuccess -> {
-                    uiState = uiState.copy(name = event.name)
-                }
-
-                is EditProfileEvent.GetPhoneNumberSuccess -> {
-                    uiState = uiState.copy(phoneNumber = event.phoneNumber)
-                }
-
-                is EditProfileEvent.GetNameFailed -> {
-                    uiState = uiState.copy(nameErrorMessage = event.reason)
-                }
-
-                is EditProfileEvent.GetPhoneNumberFailed -> {
-                    uiState = uiState.copy(phoneNumberErrorMessage = event.reason)
-                }
-
-                is EditProfileEvent.NoInternetConnection -> {
-                    uiState = uiState.copy(noInternetVisible = true)
-                }
-
-                is EditProfileEvent.InternalServerError -> {
-                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
-                }
-
-            }
-        }
-
-    }
-
     val onDismissFilesAndMediaPermissionDialog = remember {
         {
             uiState = uiState.copy(filesAndMediaDialogVisible = false)
@@ -219,61 +172,55 @@ fun EditProfileScreen(
     }
     val keyboardActions = remember {
         KeyboardActions(onDone = {
-            editProfileViewModel.onEvent(
-                event = EditProfileVmEvent.Save(
-                    imageUri = uiState.selectedImageUri,
-                    name = uiState.name,
-                    phoneNumber = uiState.phoneNumber))
+
         })
     }
-    val cancelEditProfile = remember {
+    val cancelAddEditContact = remember {
         {
             navController.popBackStack()
             Unit
         }
     }
-    val confirmEditProfile = remember {
+    val saveAddEditContact = remember {
         {
-            editProfileViewModel.onEvent(
-                event = EditProfileVmEvent.Save(
-                    imageUri = uiState.selectedImageUri,
-                    name = uiState.name,
-                    phoneNumber = uiState.phoneNumber))
+
         }
     }
 
-    val onDismissNoInternetDialog = remember {
+    val onCloseEditContactScreen = remember {
         {
-            uiState = uiState.copy(noInternetVisible = false)
+            navController.popBackStack()
         }
     }
 
-    EditProfileScreenContent(
-        modifier = Modifier
-            .padding(paddingValues),
-        photoUrl = imageBitmap?.asImageBitmap() ?: uiState.photoUrl,
-        state = state,
+
+
+    AddEditContactContent(
+        modifier = Modifier.padding(paddingValues),
+        bottomSheetScaffoldState = bottomSheetScaffoldState,
         keyboardActions = keyboardActions,
+        state = state,
+        uiState = uiState,
+        photoUrl = imageBitmap?.asImageBitmap() ?: uiState.photoUrl,
         event = { event ->
             when (event) {
-                is EditProfileUiEvent.SelectImageFromGallery -> openGallery()
-                is EditProfileUiEvent.OpenCamera -> openCamera()
-                is EditProfileUiEvent.OnChangeName -> onValueChangeName(event.name)
-                is EditProfileUiEvent.OnChangePhoneNumber -> onValueChangePhoneNumber(event.phoneNumber)
-                is EditProfileUiEvent.CancelEditProfile -> cancelEditProfile()
-                is EditProfileUiEvent.ConfirmEditProfile -> confirmEditProfile()
-                is EditProfileUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
-                is EditProfileUiEvent.ToggleBottomSheet -> {
+                is AddEditContactUiEvent.SelectImageFromGallery -> openGallery()
+                is AddEditContactUiEvent.OpenCamera -> openCamera()
+                is AddEditContactUiEvent.OnChangeName -> onValueChangeName(event.name)
+                is AddEditContactUiEvent.OnChangePhoneNumber -> onValueChangePhoneNumber(event.phoneNumber)
+                is AddEditContactUiEvent.CancelEditContact -> cancelAddEditContact()
+                is AddEditContactUiEvent.SaveEditContact -> saveAddEditContact()
+                is AddEditContactUiEvent.ToggleBottomSheet -> {
                     toggleBottomSheet()
                     keyboardController?.hide()
                 }
 
-                is EditProfileUiEvent.DismissCameraDialog -> onDismissCameraPermissionDialog()
-                is EditProfileUiEvent.DismissFilesAndMediaDialog -> onDismissFilesAndMediaPermissionDialog()
+                is AddEditContactUiEvent.DismissFilesAndMediaDialog -> onDismissCameraPermissionDialog()
+                is AddEditContactUiEvent.DismissCameraDialog -> onDismissFilesAndMediaPermissionDialog()
+                is AddEditContactUiEvent.CloseEditContactScreen -> onCloseEditContactScreen()
             }
-        },
-        uiState = uiState,
-        bottomSheetScaffoldState = bottomSheetScaffoldState
+        }
+
     )
 
 }

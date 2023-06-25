@@ -1,6 +1,9 @@
 package com.example.cyclistance.navigation
 
 import MessagingConversationScreen
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
@@ -19,6 +22,8 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACT
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpScreen
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.EmergencyAddEditContactScreen
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.EmergencyCallScreen
 import com.example.cyclistance.feature_intro_slider.presentation.IntroSliderScreen
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.CancellationReasonScreen
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.ConfirmDetailsScreen
@@ -41,7 +46,19 @@ fun NavGraph(
     onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
     onToggleTheme: () -> Unit) {
 
-    NavHost(navController = navController, startDestination = startingDestination) {
+    NavHost(
+        navController = navController,
+        startDestination = startingDestination,
+        enterTransition = {
+            fadeIn(
+                animationSpec = tween(
+                    durationMillis = 300))
+        },
+        exitTransition = {
+            fadeOut(
+                animationSpec = tween(
+                    durationMillis = 300))
+        }) {
 
         composable(Screens.IntroSliderScreen.route) {
             IntroSliderScreen(
@@ -141,6 +158,18 @@ fun NavGraph(
             MessagingConversationScreen(
                 navController = navController,
                 paddingValues = paddingValues)
+        }
+
+        composable(Screens.EmergencyCallScreen.route) {
+            EmergencyCallScreen(
+                navController = navController, paddingValues = paddingValues
+            )
+        }
+
+        composable(Screens.EmergencyAddNewContact.route) {
+            EmergencyAddEditContactScreen(
+                navController = navController, paddingValues = paddingValues
+            )
         }
 
     }

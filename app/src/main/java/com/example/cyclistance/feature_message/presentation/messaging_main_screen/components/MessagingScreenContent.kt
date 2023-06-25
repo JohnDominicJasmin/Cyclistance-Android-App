@@ -34,7 +34,7 @@ fun MessagingScreenContent(
     event: (MessageUiEvent) -> Unit) {
 
 
-    val messageAvailable by remember { derivedStateOf { messagesModel.messages.isNotEmpty() } }
+    val messageAvailable by remember(messagesModel.messages) { derivedStateOf { messagesModel.messages.isNotEmpty() } }
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 

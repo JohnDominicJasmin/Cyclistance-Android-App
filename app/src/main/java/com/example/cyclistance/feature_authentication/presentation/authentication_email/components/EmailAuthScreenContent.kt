@@ -20,7 +20,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailUiEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthState
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthUiState
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
@@ -67,7 +67,7 @@ fun EmailAuthScreenContent(
     modifier: Modifier = Modifier,
     emailAuthState: EmailAuthState = EmailAuthState(),
     uiState: EmailAuthUiState = EmailAuthUiState(),
-    event: (EmailUiEvent) -> Unit = {}) {
+    event: (EmailAuthUiEvent) -> Unit = {}) {
 
     val isDarkTheme = IsDarkTheme.current
 
@@ -101,7 +101,7 @@ fun EmailAuthScreenContent(
                     AlertDialog(
                         alertDialog = uiState.alertDialogState,
                         onDismissRequest = {
-                            event(EmailUiEvent.DismissAlertDialog)
+                            event(EmailAuthUiEvent.DismissAlertDialog)
                         }
                     )
                 }
@@ -120,7 +120,7 @@ fun EmailAuthScreenContent(
 
                 EmailAuthVerifyEmailButton(
                     onClickVerifyButton = {
-                        event(EmailUiEvent.VerifyEmail)
+                        event(EmailAuthUiEvent.VerifyEmailAuth)
                     },
                     enabled = !emailAuthState.isLoading)
 
@@ -128,13 +128,13 @@ fun EmailAuthScreenContent(
                     text = secondsRemainingText,
                     isEnabled = !uiState.isTimerRunning && !emailAuthState.isLoading,
                     onClickResendButton = {
-                        event(EmailUiEvent.ResendEmail)
+                        event(EmailAuthUiEvent.ResendEmailAuth)
                     })
 
                 if (uiState.isNoInternetVisible) {
                     NoInternetDialog(
                         onDismiss = {
-                            event(EmailUiEvent.DismissNoInternetDialog)
+                            event(EmailAuthUiEvent.DismissNoInternetDialog)
                         },
                         modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
                     )

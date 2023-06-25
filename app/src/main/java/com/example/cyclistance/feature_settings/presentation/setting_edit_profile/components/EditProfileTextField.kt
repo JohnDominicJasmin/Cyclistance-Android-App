@@ -89,24 +89,18 @@ fun TextFieldInputArea(
                     onValueChange = onValueChangePhoneNumber)
 
             }
-
         }
-
-
-
-
-
 
     }
 }
 
 @Composable
-private fun TextFieldCreator(
+fun TextFieldCreator(
     modifier: Modifier = Modifier,
     errorMessage: String = "",
     label: String,
     content: @Composable () -> Unit) {
-    val hasError by remember(errorMessage){ derivedStateOf { errorMessage.isNotEmpty() } }
+    val hasError by remember(errorMessage) { derivedStateOf { errorMessage.isNotEmpty() } }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
 
@@ -132,7 +126,7 @@ private fun TextFieldCreator(
 }
 
 @Composable
-private fun TextFieldItem(
+fun TextFieldItem(
     value: String,
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions = KeyboardActions(),
@@ -169,7 +163,9 @@ private fun TextFieldItem(
 fun EditProfileTextFieldPreview() {
     CyclistanceTheme(darkTheme = true) {
 
-        Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)) {
             TextFieldInputArea(
                 modifier = Modifier, state = EditProfileState(),
                 onValueChangeName = { },

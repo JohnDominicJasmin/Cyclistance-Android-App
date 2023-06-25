@@ -301,8 +301,8 @@ fun SignInScreen(
             when (event) {
                 is SignUiEvent.DismissAlertDialog -> onDismissAlertDialog()
                 is SignUiEvent.KeyboardActionDone -> onDoneKeyboardAction()
-                is SignUiEvent.ChangeEmail -> onValueChangeEmail(event.email)
-                is SignUiEvent.ChangePassword -> onValueChangePassword(event.password)
+                is SignUiEvent.OnChangeEmail -> onValueChangeEmail(event.email)
+                is SignUiEvent.OnChangePassword -> onValueChangePassword(event.password)
                 is SignUiEvent.TogglePasswordVisibility -> onClickPasswordVisibility()
                 is SignUiEvent.SignInWithFacebook -> onClickFacebookButton()
                 is SignUiEvent.SignInWithGoogle -> onClickGoogleButton()
