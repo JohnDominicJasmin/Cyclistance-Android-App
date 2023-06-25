@@ -170,14 +170,14 @@ fun EditProfileScreenContent(
 
 
 
-                MappingButtonNavigation(
+                ButtonNavigation(
                     modifier = Modifier
                         .constrainAs(buttonNavigationArea) {
                             top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                             bottom.linkTo(parent.bottom, margin = 50.dp)
-                            height = Dimension.percent(0.1f)
+                            height = Dimension.wrapContent
                             width = Dimension.percent(0.8f)
                         },
                     positiveButtonText = "Save",

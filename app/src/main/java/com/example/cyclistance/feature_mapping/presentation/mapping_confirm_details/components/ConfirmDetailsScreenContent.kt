@@ -29,7 +29,7 @@ import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.N
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogBackgroundLocationPermission
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogForegroundLocationPermission
 import com.example.cyclistance.feature_mapping.presentation.common.AdditionalMessage
-import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsState
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsUiState
@@ -179,7 +179,7 @@ fun ConfirmDetailsContent(
                         )
                 }
 
-                MappingButtonNavigation(
+                ButtonNavigation(
                     modifier = Modifier
                         .constrainAs(buttonNavButtonSection) {
                             top.linkTo(additionalMessageSection.bottom, margin = 50.dp)

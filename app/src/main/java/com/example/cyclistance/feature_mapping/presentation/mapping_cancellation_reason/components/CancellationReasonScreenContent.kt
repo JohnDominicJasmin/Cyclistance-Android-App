@@ -15,7 +15,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_mapping.presentation.common.AdditionalMessage
-import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.event.CancellationReasonUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.state.CancellationReasonState
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.state.CancellationReasonUiState
@@ -72,7 +72,7 @@ fun CancellationReasonScreenContent(
             )
 
 
-            MappingButtonNavigation(
+            ButtonNavigation(
                 modifier = Modifier
                     .constrainAs(buttonNavButtonSection) {
                         top.linkTo(additionalMessageSection.bottom, margin = 50.dp)
