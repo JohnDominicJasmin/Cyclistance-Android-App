@@ -6,5 +6,4 @@ sealed class BottomSheetType(val type: String) {
     object ReportIncident : BottomSheetType(type = "report_incident")
     object SearchAssistance : BottomSheetType(type = "search_assistance")
     object OnGoingRescue : BottomSheetType(type = "on_going_rescue")
-    object Collapsed : BottomSheetType(type = "collapsed")
 }
