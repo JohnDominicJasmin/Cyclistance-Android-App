@@ -91,6 +91,23 @@ fun MappingScreen(
         bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
     )
 
+    val collapseBottomSheet = remember {
+        {
+            coroutineScope.launch {
+                bottomSheetScaffoldState.bottomSheetState.collapse()
+            }
+        }
+    }
+
+    val expandBottomSheet = remember {
+        {
+            coroutineScope.launch {
+                bottomSheetScaffoldState.bottomSheetState.expand()
+            }
+        }
+    }
+
+
     val foregroundLocationPermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -112,7 +129,6 @@ fun MappingScreen(
     ) {
         derivedStateOf { uiState.searchingAssistance.and(foregroundLocationPermissionsState.allPermissionsGranted) }
     }
-
 
 
     val showUserLocation = remember(mapboxMap, isNavigating, userLocationAvailable) {
@@ -174,7 +190,7 @@ fun MappingScreen(
 
     val onInitializeMapboxMap = remember(userLocationAvailable) {
         { mbm: MapboxMap ->
-            if(mapboxMap == null){
+            if (mapboxMap == null) {
                 mapboxMap = mbm
             }
 
@@ -267,8 +283,6 @@ fun MappingScreen(
     }
 
 
-
-
     val onClickLocateUserButton = remember {
         {
             foregroundLocationPermissionsState.requestPermission(
@@ -324,7 +338,7 @@ fun MappingScreen(
     val onClickCancelSearchButton = remember {
         {
             coroutineScope.launch {
-                bottomSheetScaffoldState.bottomSheetState.collapse()
+                collapseBottomSheet()
             }.invokeOnCompletion {
                 mappingViewModel.onEvent(event = MappingVmEvent.CancelRequestHelp)
                 uiState = uiState.copy(searchingAssistance = false)
@@ -427,15 +441,16 @@ fun MappingScreen(
         }
     }
 
-    val onDismissRescueeBanner = remember{{
-        val isRescueeBannerVisible = uiState.mapSelectedRescuee != null
-        if (isRescueeBannerVisible) {
-            uiState = uiState.copy(
-                mapSelectedRescuee = null,
-                requestHelpButtonVisible = true
-            )
+    val onDismissRescueeBanner = remember {
+        {
+            val isRescueeBannerVisible = uiState.mapSelectedRescuee != null
+            if (isRescueeBannerVisible) {
+                uiState = uiState.copy(
+                    mapSelectedRescuee = null,
+                    requestHelpButtonVisible = true
+                )
+            }
         }
-    }
     }
 
 
@@ -447,6 +462,7 @@ fun MappingScreen(
         }
     }
 
+
     val onToggleExpandedFAB = remember {
         {
             uiState = uiState.copy(
@@ -457,8 +473,27 @@ fun MappingScreen(
 
     val onMapClick = remember {
         {
+            if (uiState.bottomSheetType == BottomSheetType.ReportIncident.type) {
+                uiState = uiState.copy(bottomSheetType = BottomSheetType.Collapsed.type).also {
+
+                }
+
+            }
             onDismissRescueeBanner()
             onCollapseExpandableFAB()
+
+        }
+    }
+
+    val onMapLongClick = remember {
+        {
+            onDismissRescueeBanner()
+            onCollapseExpandableFAB()
+            uiState = uiState.copy(bottomSheetType = BottomSheetType.ReportIncident.type).also {
+
+                expandBottomSheet()
+
+            }
         }
     }
 
@@ -604,9 +639,9 @@ fun MappingScreen(
                 }
 
                 is MappingEvent.RescueRequestAccepted -> {
-                     uiState = uiState.copy(
-                         rescueRequestAccepted = true
-                     )
+                    uiState = uiState.copy(
+                        rescueRequestAccepted = true
+                    )
                 }
 
                 is MappingEvent.CancelHelpRequestSuccess -> {
@@ -740,7 +775,7 @@ fun MappingScreen(
     LaunchedEffect(key1 = uiState.bottomSheetType) {
         coroutineScope.launch {
             if (uiState.bottomSheetType.isNotEmpty()) {
-                bottomSheetScaffoldState.bottomSheetState.expand()
+                expandBottomSheet()
             }
         }
     }
@@ -823,6 +858,7 @@ fun MappingScreen(
                 is MappingUiEvent.ConfirmRequestHelp -> onClickConfirmButton(event.id)
                 is MappingUiEvent.DismissAlertDialog -> onDismissAlertDialog()
                 is MappingUiEvent.OnCollapseExpandableFAB -> onCollapseExpandableFAB()
+                is MappingUiEvent.OnMapLongClick -> onMapLongClick()
 
             }
         }
