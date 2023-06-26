@@ -94,7 +94,9 @@ fun MappingScreen(
     val collapseBottomSheet = remember {
         {
             coroutineScope.launch {
-                bottomSheetScaffoldState.bottomSheetState.collapse()
+                if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+                    bottomSheetScaffoldState.bottomSheetState.collapse()
+                }
             }
         }
     }
@@ -102,7 +104,9 @@ fun MappingScreen(
     val expandBottomSheet = remember {
         {
             coroutineScope.launch {
-                bottomSheetScaffoldState.bottomSheetState.expand()
+                if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {
+                    bottomSheetScaffoldState.bottomSheetState.expand()
+                }
             }
         }
     }
@@ -474,10 +478,7 @@ fun MappingScreen(
     val onMapClick = remember {
         {
             if (uiState.bottomSheetType == BottomSheetType.ReportIncident.type) {
-                uiState = uiState.copy(bottomSheetType = BottomSheetType.Collapsed.type).also {
-
-                }
-
+                collapseBottomSheet()
             }
             onDismissRescueeBanner()
             onCollapseExpandableFAB()
@@ -490,9 +491,7 @@ fun MappingScreen(
             onDismissRescueeBanner()
             onCollapseExpandableFAB()
             uiState = uiState.copy(bottomSheetType = BottomSheetType.ReportIncident.type).also {
-
                 expandBottomSheet()
-
             }
         }
     }
@@ -514,7 +513,9 @@ fun MappingScreen(
             uiState = uiState.copy(
                 rescueRequestAccepted = false,
                 bottomSheetType = BottomSheetType.OnGoingRescue.type
-            )
+            ).also {
+                expandBottomSheet()
+            }
         }
     }
 
@@ -538,6 +539,12 @@ fun MappingScreen(
     val onClickConfirmButton = remember {
         { id: String ->
             mappingViewModel.onEvent(MappingVmEvent.AcceptRescueRequest(id))
+        }
+    }
+
+    val onClickReportIncident = remember {
+        {
+
         }
     }
 
@@ -630,10 +637,11 @@ fun MappingScreen(
                         rescueRequestAccepted = false,
                         requestHelpButtonVisible = true,
                         searchingAssistance = false,
-                        bottomSheetType = BottomSheetType.Collapsed.type,
                         routeDirection = null,
                         mapSelectedRescuee = null,
-                    )
+                    ).also {
+                        collapseBottomSheet()
+                    }
                     onChangeNavigatingState(false)
 
                 }
@@ -654,7 +662,9 @@ fun MappingScreen(
                     uiState = uiState.copy(
                         requestHelpButtonVisible = false,
                         bottomSheetType = BottomSheetType.OnGoingRescue.type
-                    )
+                    ).also {
+                        expandBottomSheet()
+                    }
                 }
 
                 is MappingEvent.FailedToCalculateDistance -> {
@@ -669,7 +679,9 @@ fun MappingScreen(
                     } else {
                         BottomSheetType.DestinationReached.type
                     }
-                    uiState = uiState.copy(bottomSheetType = type)
+                    uiState = uiState.copy(bottomSheetType = type).also {
+                        expandBottomSheet()
+                    }
 
                 }
 
@@ -774,7 +786,7 @@ fun MappingScreen(
 
     LaunchedEffect(key1 = uiState.bottomSheetType) {
         coroutineScope.launch {
-            if (uiState.bottomSheetType.isNotEmpty()) {
+            if (uiState.bottomSheetType?.isNotEmpty() == true) {
                 expandBottomSheet()
             }
         }
@@ -859,6 +871,7 @@ fun MappingScreen(
                 is MappingUiEvent.DismissAlertDialog -> onDismissAlertDialog()
                 is MappingUiEvent.OnCollapseExpandableFAB -> onCollapseExpandableFAB()
                 is MappingUiEvent.OnMapLongClick -> onMapLongClick()
+                is MappingUiEvent.OnReportIncident -> onClickReportIncident()
 
             }
         }

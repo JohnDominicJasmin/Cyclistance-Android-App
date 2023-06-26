@@ -34,6 +34,7 @@ fun BottomSheetOnGoingRescue(
     onClickCallButton: () -> Unit,
     onClickChatButton: () -> Unit,
     onClickCancelButton: () -> Unit,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
     onGoingRescueModel: OnGoingRescueModel,
 ) {
 
@@ -325,6 +326,7 @@ private fun PreviewBottomSheetOnGoingRescueDark() {
             onClickCancelButton = {},
             onClickCallButton = {},
             onClickChatButton = {},
+            bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
             onGoingRescueModel = OnGoingRescueModel(
                 currentSpeed = "13.3",
                 ridingDistance = "10.0 km",
@@ -348,6 +350,7 @@ private fun PreviewBottomSheetOnGoingRescueLight() {
             onClickCancelButton = {},
             onClickCallButton = {},
             onClickChatButton = {},
+            bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
             onGoingRescueModel = OnGoingRescueModel(
                 currentSpeed = "13.3",
                 ridingDistance = "10.0 km",

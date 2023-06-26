@@ -28,7 +28,7 @@ sealed class MappingUiEvent{
     object OnRequestNavigationCameraToOverview : MappingUiEvent()
     object DismissLocationPermission : MappingUiEvent()
     object DismissPhonePermission : MappingUiEvent()
-
+    data class OnReportIncident(val incident: String) : MappingUiEvent()
     object OnToggleExpandableFAB : MappingUiEvent()
     object OnCollapseExpandableFAB : MappingUiEvent()
 
