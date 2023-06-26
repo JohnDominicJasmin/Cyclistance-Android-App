@@ -19,6 +19,7 @@ sealed class MappingUiEvent{
     object DismissNoInternetDialog : MappingUiEvent()
     data class RescueeMapIconSelected(val id: String) : MappingUiEvent()
     object OnMapClick : MappingUiEvent()
+    object OnMapLongClick : MappingUiEvent()
     object DismissBanner : MappingUiEvent()
     object LocateUser : MappingUiEvent()
     object RouteOverview : MappingUiEvent()
