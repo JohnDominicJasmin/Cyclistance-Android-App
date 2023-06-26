@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_screen
+package com.example.cyclistance.feature_settings.presentation.setting_screen.state
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState

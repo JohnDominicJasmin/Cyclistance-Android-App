@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_message.presentation.components
+package com.example.cyclistance.feature_message.presentation.messaging_main_screen.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,13 +24,17 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_message.domain.model.ui.MessageItemModel
 import com.example.cyclistance.feature_message.domain.model.ui.MessagesModel
+import com.example.cyclistance.feature_message.presentation.messaging_main_screen.event.MessageUiEvent
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun MessagingScreen(modifier: Modifier = Modifier, messagesModel: MessagesModel) {
+fun MessagingScreenContent(
+    modifier: Modifier = Modifier,
+    messagesModel: MessagesModel,
+    event: (MessageUiEvent) -> Unit) {
 
 
-    val messageAvailable by remember { derivedStateOf { messagesModel.messages.isNotEmpty() } }
+    val messageAvailable by remember(messagesModel.messages) { derivedStateOf { messagesModel.messages.isNotEmpty() } }
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
@@ -61,7 +65,10 @@ fun MessagingScreen(modifier: Modifier = Modifier, messagesModel: MessagesModel)
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
                     )
 
-                    MessagesSection(messagesModel = messagesModel)
+                    MessagesSection(messagesModel = messagesModel, onClick = {
+                        event(MessageUiEvent.OnMessageClicked(it))
+
+                    })
                 }
             }
         } else {
@@ -79,7 +86,10 @@ fun MessagingScreen(modifier: Modifier = Modifier, messagesModel: MessagesModel)
 }
 
 @Composable
-private fun MessagesSection(modifier: Modifier = Modifier, messagesModel: MessagesModel) {
+private fun MessagesSection(
+    modifier: Modifier = Modifier,
+    messagesModel: MessagesModel,
+    onClick: (String) -> Unit) {
 
     LazyColumn(
         modifier = modifier
@@ -93,14 +103,15 @@ private fun MessagesSection(modifier: Modifier = Modifier, messagesModel: Messag
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
-                messageItemModel = item
+                messageItemModel = item,
+                onClick = onClick
             )
         }
     }
 }
 
 
-private val messages = MessagesModel(
+val fakeMessages = MessagesModel(
     listOf(
         MessageItemModel(
             userImage = "https://www.liquidsandsolids.com/wp-content/uploads/2022/09/talking-to-a-dead-person.jpg",
@@ -164,7 +175,7 @@ private val messages = MessagesModel(
 @Composable
 fun PreviewMessagingScreenContentDark() {
     CyclistanceTheme(darkTheme = true) {
-        MessagingScreen(messagesModel = MessagesModel())
+        MessagingScreenContent(messagesModel = MessagesModel(), event = {})
     }
 }
 
@@ -172,8 +183,8 @@ fun PreviewMessagingScreenContentDark() {
 @Composable
 fun PreviewMessagingScreenContentLight() {
     CyclistanceTheme(darkTheme = false) {
-        MessagingScreen(
-            messagesModel = messages)
+        MessagingScreenContent(
+            messagesModel = fakeMessages, event = {})
     }
 }
 

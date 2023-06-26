@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
-import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
 import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -137,7 +137,7 @@ fun RequestItem(
                 Text(text = cardState.address ?: "----", color = MaterialTheme.colors.onSurface)
             }
 
-            MappingButtonNavigation(
+            ButtonNavigation(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
                     .padding(top = 7.dp)

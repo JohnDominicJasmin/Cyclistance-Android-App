@@ -38,8 +38,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun
-        RescueRequestScreenContent(
+fun RescueRequestScreenContent(
     modifier: Modifier = Modifier,
     mappingState: MappingState = MappingState(),
     uiState: MappingUiState = MappingUiState(),

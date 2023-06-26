@@ -27,7 +27,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogCameraPermission
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogFilesAndMediaPermission
-import com.example.cyclistance.feature_mapping.presentation.common.MappingButtonNavigation
+import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileUiEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileState
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileUiState
@@ -106,7 +106,7 @@ fun EditProfileScreenContent(
                 event(EditProfileUiEvent.OpenCamera)
             },
             bottomSheetScaffoldState = bottomSheetScaffoldState,
-            editProfileState = state) {
+            isLoading = state.isLoading) {
 
             ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
@@ -162,22 +162,22 @@ fun EditProfileScreenContent(
 
                         },
                     state = state,
-                    onValueChangeName = { event(EditProfileUiEvent.ChangeName(it)) },
-                    onValueChangePhoneNumber = { event(EditProfileUiEvent.ChangePhoneNumber(it)) },
+                    onValueChangeName = { event(EditProfileUiEvent.OnChangeName(it)) },
+                    onValueChangePhoneNumber = { event(EditProfileUiEvent.OnChangePhoneNumber(it)) },
                     keyboardActions = keyboardActions,
                     uiState = uiState,
                 )
 
 
 
-                MappingButtonNavigation(
+                ButtonNavigation(
                     modifier = Modifier
                         .constrainAs(buttonNavigationArea) {
                             top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                             bottom.linkTo(parent.bottom, margin = 50.dp)
-                            height = Dimension.percent(0.1f)
+                            height = Dimension.wrapContent
                             width = Dimension.percent(0.8f)
                         },
                     positiveButtonText = "Save",

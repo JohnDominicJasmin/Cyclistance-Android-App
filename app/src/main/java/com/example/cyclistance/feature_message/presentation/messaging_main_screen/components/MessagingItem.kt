@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_message.presentation.components
+package com.example.cyclistance.feature_message.presentation.messaging_main_screen.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,7 +47,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun MessagingItem(
     modifier: Modifier = Modifier,
     messageItemModel: MessageItemModel = MessageItemModel(),
-    onClick: (String) -> Unit = {}) {
+    onClick: (String) -> Unit) {
 
 
     val hasUnreadMessage by remember {
@@ -55,6 +55,7 @@ fun MessagingItem(
             messageItemModel.unreadMessages > 0
         }
     }
+
     Surface(
         onClick = { onClick(messageItemModel.messageId) },
         modifier = modifier.fillMaxWidth(),
@@ -188,8 +189,11 @@ fun PreviewMessagingItemDark() {
                               "optio, eaque rerum! Provident similique accusantium nemo autem.",
                     timeStamp = "12:00",
                     unreadMessages = 4,
-                )
+                ),
+                onClick = {}
+
             )
+
         }
     }
 }
@@ -219,7 +223,8 @@ fun PreviewMessagingItemLight() {
                     timeStamp = "12:00",
                     unreadMessages = 0,
                     isMessageSent = false
-                )
+                ),
+                onClick = {}
             )
         }
     }

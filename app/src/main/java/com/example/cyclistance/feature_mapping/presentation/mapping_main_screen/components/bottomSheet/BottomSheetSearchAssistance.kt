@@ -27,6 +27,7 @@ fun BottomSheetSearchingAssistance(
     modifier: Modifier = Modifier,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     onClickCancelSearchButton: () -> Unit,
+
 ) {
 
     val scope = rememberCoroutineScope()
