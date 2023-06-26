@@ -5,6 +5,7 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import com.example.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import kotlinx.coroutines.launch
@@ -14,7 +15,7 @@ import kotlinx.coroutines.launch
 fun MappingBottomSheet(
     modifier: Modifier = Modifier,
     state: MappingState = MappingState(),
-    bottomSheetType: String,
+    bottomSheetType: String?,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     onClickRescueArrivedButton: () -> Unit = {},
     onClickReachedDestinationButton: () -> Unit = {},
@@ -22,6 +23,7 @@ fun MappingBottomSheet(
     onClickCallRescueTransactionButton: () -> Unit = {},
     onClickChatRescueTransactionButton: () -> Unit = {},
     onClickCancelRescueTransactionButton: () -> Unit = {},
+    onClickReportIncident: (label: String) -> Unit = {},
     content: @Composable (PaddingValues) -> Unit = {},
 ) {
 
@@ -57,6 +59,7 @@ fun MappingBottomSheet(
                         bottomSheetScaffoldState = bottomSheetScaffoldState,
                         modifier = modifier,
                         onClick = {
+                            onClickReportIncident(it)
                             scope.launch {
                                 bottomSheetScaffoldState.bottomSheetState.collapse()
                             }
@@ -65,68 +68,29 @@ fun MappingBottomSheet(
 
                 }
 
-                BottomSheetType.SearchAssistance.type -> {}
-                BottomSheetType.OnGoingRescue.type -> {}
-                BottomSheetType.Collapsed.type -> {}
+                BottomSheetType.SearchAssistance.type -> {
+
+                    BottomSheetSearchingAssistance(
+                        modifier = modifier,
+                        onClickCancelSearchButton = onClickCancelSearchButton,
+                        bottomSheetScaffoldState = bottomSheetScaffoldState)
+                }
+
+                BottomSheetType.OnGoingRescue.type -> {
+
+                    BottomSheetOnGoingRescue(
+                        modifier = modifier,
+                        onClickCallButton = onClickCallRescueTransactionButton,
+                        onClickChatButton = onClickChatRescueTransactionButton,
+                        onClickCancelButton = onClickCancelRescueTransactionButton,
+                        bottomSheetScaffoldState = bottomSheetScaffoldState,
+                        onGoingRescueModel = OnGoingRescueModel(
+                            estimatedTime = state.rescuerETA,
+                            estimatedDistance = state.rescuerDistance
+                        )
+                    )
+                }
 
             }
         }, content = content)
-
-
-    /*    when (bottomSheetType) {
-            BottomSheetType.RescuerArrived.type -> {
-                BottomSheetRescueArrived(
-                    modifier = modifier,
-                    content = content,
-                    onClickOkButton = onClickRescueArrivedButton,
-                    bottomSheetScaffoldState = bottomSheetScaffoldState)
-            }
-
-            BottomSheetType.DestinationReached.type -> {
-                BottomSheetReachedDestination(
-                    modifier = modifier,
-                    content = content,
-                    onClickOkButton = onClickReachedDestinationButton,
-                    bottomSheetScaffoldState = bottomSheetScaffoldState)
-
-            }
-
-            BottomSheetType.SearchAssistance.type -> {
-                BottomSheetSearchingAssistance(
-                    modifier = modifier,
-                    onClickCancelSearchButton = onClickCancelSearchButton,
-                    content = content,
-                    bottomSheetScaffoldState = bottomSheetScaffoldState)
-
-            }
-
-            BottomSheetType.OnGoingRescue.type -> {
-                BottomSheetOnGoingRescue(
-                    modifier = modifier,
-                    content = content,
-                    onClickCallButton = onClickCallRescueTransactionButton,
-                    onClickChatButton = onClickChatRescueTransactionButton,
-                    onClickCancelButton = onClickCancelRescueTransactionButton,
-                    bottomSheetScaffoldState = bottomSheetScaffoldState,
-                    onGoingRescueModel = OnGoingRescueModel(
-                        estimatedTime = state.rescuerETA,
-                        estimatedDistance = state.rescuerDistance
-                    )
-
-                )
-            }
-
-            BottomSheetType.ReportIncident.type -> {
-                BottomSheetReportIncident(
-                    modifier = modifier,
-                    content = content,
-                    bottomSheetScaffoldState = bottomSheetScaffoldState
-                )
-            }
-
-            BottomSheetType.Collapsed.type -> {
-                content(PaddingValues())
-            }
-        }*/
-
 }
