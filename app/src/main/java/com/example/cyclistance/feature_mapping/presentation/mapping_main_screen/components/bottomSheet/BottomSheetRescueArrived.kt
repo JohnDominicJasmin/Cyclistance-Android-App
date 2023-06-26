@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -15,13 +14,11 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun BottomSheetRescueArrived(
     modifier: Modifier = Modifier,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-    content: @Composable (PaddingValues) -> Unit,
     onClickOkButton: () -> Unit) {
 
     BottomSheetRescue(
         modifier = modifier,
         displayedText = "Your rescuer has arrived.",
-        content = content,
         onClickOkButton = onClickOkButton,
         bottomSheetScaffoldState = bottomSheetScaffoldState)
 }
@@ -38,7 +35,6 @@ fun BottomSheetRescuerArrivedPreview() {
     CompositionLocalProvider(IsDarkTheme provides true) {
         CyclistanceTheme(isDarkTheme) {
             BottomSheetRescueArrived(
-                content = {},
                 onClickOkButton = {},
                 bottomSheetScaffoldState = bottomSheetScaffoldState)
         }
