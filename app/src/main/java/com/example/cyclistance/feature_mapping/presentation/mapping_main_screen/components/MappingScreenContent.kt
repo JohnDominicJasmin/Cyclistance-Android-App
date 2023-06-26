@@ -56,7 +56,7 @@ fun MappingScreenContent(
     isNavigating: Boolean,
     uiState: MappingUiState,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
-    event: (MappingUiEvent) -> Unit = {}
+    event: (MappingUiEvent) -> Unit = {},
 ) {
 
     val respondentCount by remember(state.newRescueRequest?.request?.size) {
@@ -94,7 +94,11 @@ fun MappingScreenContent(
             onClickChatRescueTransactionButton = { event(MappingUiEvent.ChatRescueTransaction) },
             onClickCancelRescueTransactionButton = { event(MappingUiEvent.CancelRescueTransaction) },
             bottomSheetScaffoldState = bottomSheetScaffoldState,
-            bottomSheetType = uiState.bottomSheetType) {
+            bottomSheetType = uiState.bottomSheetType,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
+            onClickReportIncident = { event(MappingUiEvent.OnReportIncident(it)) }) {
 
 
             ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -158,23 +162,30 @@ fun MappingScreenContent(
 
 
 
-                ExpandableFABSection(
-                    modifier = Modifier
-                        .constrainAs(expandableFabSection) {
-                            end.linkTo(parent.end, margin = 8.dp)
-                            bottom.linkTo(parent.bottom, margin = 15.dp)
-                        },
-                    onClickEmergencyCall = { event(MappingUiEvent.OpenEmergencyCall) },
-                    onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
-                    onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
-                    onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
-                    isFabExpanded = uiState.isFabExpanded,
-                    badgeCount = respondentCount
-                )
+                AnimatedVisibility(
+                    visible = bottomSheetScaffoldState.bottomSheetState.isCollapsed,
+                    enter = fadeIn(),
+                    exit = fadeOut(), modifier = Modifier.constrainAs(expandableFabSection) {
+                        end.linkTo(parent.end, margin = 8.dp)
+                        bottom.linkTo(parent.bottom, margin = 15.dp)
+                    }) {
 
-                val buttonVisible = isNavigating.not() && uiState.isFabExpanded.not()
+                    ExpandableFABSection(
+                        onClickEmergencyCall = { event(MappingUiEvent.OpenEmergencyCall) },
+                        onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
+                        onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
+                        onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
+                        isFabExpanded = uiState.isFabExpanded,
+                        badgeCount = respondentCount
+                    )
+                }
+
+
+                val buttonVisible =
+                    isNavigating.not() && uiState.isFabExpanded.not() && bottomSheetScaffoldState.bottomSheetState.isCollapsed
                 val requestHelpVisible = uiState.requestHelpButtonVisible && buttonVisible
-                val respondToHelpVisible = uiState.requestHelpButtonVisible.not() && buttonVisible
+                val respondToHelpVisible =
+                    uiState.requestHelpButtonVisible.not() && buttonVisible
 
                 RequestHelpButton(
                     modifier = Modifier.constrainAs(requestHelpButton) {
@@ -278,7 +289,6 @@ fun MappingScreenContent(
                     )
                 }
             }
-
         }
     }
 }

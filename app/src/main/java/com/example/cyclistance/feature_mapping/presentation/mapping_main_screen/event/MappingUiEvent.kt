@@ -19,6 +19,7 @@ sealed class MappingUiEvent{
     object DismissNoInternetDialog : MappingUiEvent()
     data class RescueeMapIconSelected(val id: String) : MappingUiEvent()
     object OnMapClick : MappingUiEvent()
+    object OnMapLongClick : MappingUiEvent()
     object DismissBanner : MappingUiEvent()
     object LocateUser : MappingUiEvent()
     object RouteOverview : MappingUiEvent()
@@ -27,7 +28,7 @@ sealed class MappingUiEvent{
     object OnRequestNavigationCameraToOverview : MappingUiEvent()
     object DismissLocationPermission : MappingUiEvent()
     object DismissPhonePermission : MappingUiEvent()
-
+    data class OnReportIncident(val incident: String) : MappingUiEvent()
     object OnToggleExpandableFAB : MappingUiEvent()
     object OnCollapseExpandableFAB : MappingUiEvent()
 
