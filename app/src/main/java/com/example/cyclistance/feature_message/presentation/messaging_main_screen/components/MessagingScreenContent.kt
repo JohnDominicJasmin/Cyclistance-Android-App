@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_message.presentation.messaging_main_scre
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -90,29 +92,35 @@ fun MessagingScreenContent(
                     textAlign = TextAlign.Center, lineHeight = TextUnit(20f, TextUnitType.Sp))
 
 
-
-                Surface(
-                    color = MaterialTheme.colors.primary,
-                    contentColor = MaterialTheme.colors.background,
-                    modifier = Modifier
-                        .padding(all = 12.dp)
-                        .align(Alignment.BottomEnd),
-                    shape = CircleShape) {
-
-
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_edit_24),
-                        contentDescription = "Add Message",
-                        modifier = Modifier
-                            .padding(12.dp)
-                            .size(28.dp),
-
-                        )
-                }
+                AddMessageButton(onClick = {})
 
             }
         }
 
+    }
+}
+
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun BoxScope.AddMessageButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
+    Surface(
+        color = MaterialTheme.colors.primary,
+        contentColor = MaterialTheme.colors.background,
+        modifier = modifier
+            .padding(all = 12.dp)
+            .align(Alignment.BottomEnd),
+        shape = CircleShape,
+        onClick = onClick) {
+
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_edit_24),
+            contentDescription = "Add Message",
+            modifier = Modifier
+                .padding(12.dp)
+                .size(28.dp),
+
+            )
     }
 }
 
@@ -206,7 +214,9 @@ val fakeMessages = MessagesModel(
 @Composable
 fun PreviewMessagingScreenContentDark() {
     CyclistanceTheme(darkTheme = true) {
-        MessagingScreenContent(messagesModel = MessagesModel(), event = {})
+        MessagingScreenContent(
+            messagesModel = MessagesModel(),
+            event = {})
     }
 }
 
@@ -215,7 +225,8 @@ fun PreviewMessagingScreenContentDark() {
 fun PreviewMessagingScreenContentLight() {
     CyclistanceTheme(darkTheme = false) {
         MessagingScreenContent(
-            messagesModel = fakeMessages, event = {})
+            messagesModel = fakeMessages,
+            event = {})
     }
 }
 
