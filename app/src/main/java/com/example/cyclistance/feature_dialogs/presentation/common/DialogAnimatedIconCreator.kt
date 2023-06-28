@@ -69,7 +69,7 @@ fun DialogAnimatedIconCreator(
                         .zIndex(100f)
                         .size(72.dp)
                         .align(Alignment.TopCenter)
-                        .shadow(elevation = 20.dp, shape = CircleShape, clip = true)
+                        .shadow(elevation = 0.dp, shape = CircleShape, clip = true)
                         .border(
                             border = BorderStroke(width = 2.dp, color = Color.Transparent),
                             shape = CircleShape)
