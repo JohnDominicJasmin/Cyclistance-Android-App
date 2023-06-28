@@ -17,6 +17,7 @@ sealed class MappingUiEvent{
     object RescueRequestAccepted: MappingUiEvent()
     data class OnChangeCameraState(val cameraState: CameraState) : MappingUiEvent()
     object DismissNoInternetDialog : MappingUiEvent()
+    object DismissEmergencyCallDialog : MappingUiEvent()
     data class RescueeMapIconSelected(val id: String) : MappingUiEvent()
     object OnMapClick : MappingUiEvent()
     object OnMapLongClick : MappingUiEvent()
@@ -32,7 +33,7 @@ sealed class MappingUiEvent{
     object OnToggleExpandableFAB : MappingUiEvent()
     object OnCollapseExpandableFAB : MappingUiEvent()
 
-    object OpenEmergencyCall : MappingUiEvent()
+    object ShowEmergencyCallDialog : MappingUiEvent()
     object OpenFamilyTracker : MappingUiEvent()
     object ShowRescueRequestDialog : MappingUiEvent()
     object DismissRescueRequestDialog : MappingUiEvent()

@@ -23,5 +23,7 @@ data class MappingUiState(
     val isFabExpanded: Boolean = false,
     val alertDialogState: AlertDialogState = AlertDialogState(),
     val isRescueRequestDialogVisible: Boolean = false,
+    val isEmergencyCallDialogVisible: Boolean = false,
+
 
     ) : Parcelable

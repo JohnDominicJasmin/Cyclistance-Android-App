@@ -548,6 +548,22 @@ fun MappingScreen(
         }
     }
 
+    val showEmergencyCallDialog = remember {
+        {
+            uiState = uiState.copy(
+                isEmergencyCallDialogVisible = true
+            )
+        }
+    }
+
+    val dismissEmergencyCallDialog = remember {
+        {
+            uiState = uiState.copy(
+                isEmergencyCallDialogVisible = false
+            )
+        }
+    }
+
     val onDismissAlertDialog = remember {
         {
             uiState = uiState.copy(
@@ -862,7 +878,8 @@ fun MappingScreen(
                 is MappingUiEvent.DismissLocationPermission -> onDismissLocationPermissionDialog()
                 is MappingUiEvent.DismissPhonePermission -> onDismissPhonePermissionDialog()
                 is MappingUiEvent.OnToggleExpandableFAB -> onToggleExpandedFAB()
-                is MappingUiEvent.OpenEmergencyCall -> {}
+                is MappingUiEvent.ShowEmergencyCallDialog -> showEmergencyCallDialog()
+                is MappingUiEvent.DismissEmergencyCallDialog -> dismissEmergencyCallDialog()
                 is MappingUiEvent.OpenFamilyTracker -> {}
                 is MappingUiEvent.ShowRescueRequestDialog -> onShowRescueRequestDialog()
                 is MappingUiEvent.DismissRescueRequestDialog -> onDismissRescueRequestDialog()
