@@ -1,7 +1,9 @@
 package com.example.cyclistance.feature_mapping.presentation.common
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,19 +21,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.theme.Black500
+import com.example.cyclistance.theme.CyclistanceTheme
 
 
 @Composable
-fun MappingButtonNavigation(
+fun ButtonNavigation(
     modifier: Modifier,
     negativeButtonEnabled: Boolean = true,
     positiveButtonEnabled: Boolean = true,
     negativeButtonText: String = "Cancel",
     positiveButtonText: String = "Confirm",
-    onClickCancelButton: () -> Unit,
-    onClickConfirmButton: () -> Unit) {
+    onClickCancelButton: () -> Unit = {},
+    onClickConfirmButton: () -> Unit = {}) {
 
     Column(modifier = modifier) {
 
@@ -49,12 +53,14 @@ fun MappingButtonNavigation(
                     .weight(0.5f)
                     .align(Alignment.CenterVertically)
                     .padding(all = 7.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = Color.Transparent,
+                    contentColor = MaterialTheme.colors.onBackground,
+                ),
                 shape = RoundedCornerShape(12.dp)) {
 
                 Text(
                     text = negativeButtonText,
-                    color = MaterialTheme.colors.onBackground,
                     style = MaterialTheme.typography.button,
                     textAlign = TextAlign.Center)
             }
@@ -68,7 +74,10 @@ fun MappingButtonNavigation(
                     .weight(0.5f)
                     .align(Alignment.CenterVertically)
                     .padding(all = 5.dp),
-                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = MaterialTheme.colors.primary,
+                    disabledBackgroundColor = Black500,
+                    contentColor = MaterialTheme.colors.background),
                 shape = RoundedCornerShape(12.dp)) {
 
                 Text(
@@ -82,6 +91,24 @@ fun MappingButtonNavigation(
             }
 
 
+        }
+    }
+}
+
+@Preview
+@Composable
+fun PreviewButtonNavigation() {
+    CyclistanceTheme(darkTheme = true) {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colors.background)
+                .fillMaxWidth(),
+            contentAlignment = Alignment.Center) {
+
+            ButtonNavigation(
+                modifier = Modifier.fillMaxWidth(0.8f),
+                negativeButtonEnabled = true,
+                positiveButtonEnabled = false)
         }
     }
 }

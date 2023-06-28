@@ -20,8 +20,8 @@ import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthScreenContent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthVmEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthUiState
 import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.navigation.Screens
@@ -160,10 +160,10 @@ fun EmailAuthScreen(
         uiState = uiState,
         event = { event ->
             when (event) {
-                is EmailUiEvent.DismissAlertDialog -> onDismissAlertDialog()
-                is EmailUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
-                is EmailUiEvent.VerifyEmail -> onClickVerifyButton()
-                is EmailUiEvent.ResendEmail -> onClickResendButton()
+                is EmailAuthUiEvent.DismissAlertDialog -> onDismissAlertDialog()
+                is EmailAuthUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
+                is EmailAuthUiEvent.VerifyEmailAuth -> onClickVerifyButton()
+                is EmailAuthUiEvent.ResendEmailAuth -> onClickResendButton()
             }
         }
     )

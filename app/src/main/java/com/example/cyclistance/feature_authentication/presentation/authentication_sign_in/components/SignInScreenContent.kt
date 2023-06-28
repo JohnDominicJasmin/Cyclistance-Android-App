@@ -64,8 +64,8 @@ fun PreviewSignInScreenDark() {
     CyclistanceTheme(true) {
         SignInScreenContent(uiState = uiState, event = {
             when (it) {
-                is SignUiEvent.ChangeEmail -> onValueChangeEmail(it.email)
-                is SignUiEvent.ChangePassword -> onValueChangePassword(it.password)
+                is SignUiEvent.OnChangeEmail -> onValueChangeEmail(it.email)
+                is SignUiEvent.OnChangePassword -> onValueChangePassword(it.password)
                 else -> {}
             }
         })
@@ -103,8 +103,8 @@ fun PreviewSignInScreenLight() {
     CyclistanceTheme(false) {
         SignInScreenContent(uiState = uiState, event = {
             when (it) {
-                is SignUiEvent.ChangeEmail -> onValueChangeEmail(it.email)
-                is SignUiEvent.ChangePassword -> onValueChangePassword(it.password)
+                is SignUiEvent.OnChangeEmail -> onValueChangeEmail(it.email)
+                is SignUiEvent.OnChangePassword -> onValueChangePassword(it.password)
                 else -> {}
             }
         })
@@ -161,8 +161,8 @@ fun SignInScreenContent(
                 keyboardActionOnDone = {
                     event(SignUiEvent.KeyboardActionDone)
                 },
-                onValueChangeEmail = { event(SignUiEvent.ChangeEmail(it)) },
-                onValueChangePassword = { event(SignUiEvent.ChangePassword(it)) },
+                onValueChangeEmail = { event(SignUiEvent.OnChangeEmail(it)) },
+                onValueChangePassword = { event(SignUiEvent.OnChangePassword(it)) },
                 onClickPasswordVisibility = { event(SignUiEvent.TogglePasswordVisibility) },
                 email = uiState.email,
                 emailErrorMessage = uiState.emailErrorMessage,

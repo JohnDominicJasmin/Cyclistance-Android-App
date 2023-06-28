@@ -1,6 +1,6 @@
-    package com.example.cyclistance.feature_message.presentation.components
+package com.example.cyclistance.feature_message.presentation.messaging_conversation.components
 
-import androidx.activity.compose.BackHandler
+
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -22,25 +22,23 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
 import com.example.cyclistance.core.utils.composable_utils.keyboardAsState
 import com.example.cyclistance.core.utils.composable_utils.noRippleClickable
-import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_message.domain.model.ui.Duration
 import com.example.cyclistance.feature_message.domain.model.ui.MessageContent
 import com.example.cyclistance.feature_message.domain.model.ui.MessageConversation
+import com.example.cyclistance.feature_message.presentation.messaging_conversation.event.MessagingConversationUiEvent
+import com.example.cyclistance.feature_message.presentation.messaging_conversation.state.MessagingConversationUiState
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.launch
@@ -171,49 +169,24 @@ private val conversation = MessageConversation(
 
 
 @Composable
-fun MessagingConversation() {
+fun MessagingConversationContent(
+    modifier: Modifier = Modifier,
+    uiState: MessagingConversationUiState,
+    event: (MessagingConversationUiEvent) -> Unit) {
 
-    var selectedIndex by rememberSaveable { mutableIntStateOf(-1) }
-    var message by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(
-            TextFieldValue(""))
-    }
-    var messageAreaExpanded by rememberSaveable { mutableStateOf(false) }
-    val listState = rememberLazyListState(initialFirstVisibleItemIndex = conversation.messages.indices.last)
+
+    val listState =
+        rememberLazyListState(initialFirstVisibleItemIndex = conversation.messages.indices.last)
     val focusManager = LocalFocusManager.current
     val keyboardState by keyboardAsState()
 
-    val onToggleExpand = remember {
-        {
-            messageAreaExpanded = !messageAreaExpanded
-        }
-    }
-    val onChangeValueMessage = remember<(TextFieldValue) -> Unit> {
-        {
-            message = it
-        }
-    }
-
-    val resetSelectedIndex = remember {
-        {
-            selectedIndex = -1
-        }
-    }
 
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-    val onClickChatItem = remember {
-        { index: Int ->
-            selectedIndex = if (selectedIndex == index) {
-                -1
-            } else {
-                index
-            }
-        }
-    }
+
+
     val stateFirstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
     var farthestVisibleItemIndex by rememberSaveable { mutableIntStateOf(0) }
-    val isScrollingUp by remember { derivedStateOf { farthestVisibleItemIndex > stateFirstVisibleItemIndex + 3 } }
+    val isScrollingUp by remember { derivedStateOf { farthestVisibleItemIndex > stateFirstVisibleItemIndex + 4 } }
 
     LaunchedEffect(key1 = listState.isScrollInProgress) {
         if (stateFirstVisibleItemIndex > farthestVisibleItemIndex) {
@@ -225,31 +198,24 @@ fun MessagingConversation() {
         if (keyboardState == Keyboard.Opened) {
             return@LaunchedEffect
         }
-        if (!messageAreaExpanded) {
+        if (!uiState.messageAreaExpanded) {
             return@LaunchedEffect
         }
-        onToggleExpand()
+        event(MessagingConversationUiEvent.ToggleMessageArea)
 
     }
 
-    BackHandler(enabled = true, onBack = {
-        if (messageAreaExpanded) {
-            onToggleExpand()
-        } else {
-            scope.launch {
-                context.findActivity()?.finish()
-            }
-        }
-    })
+
 
 
     Surface(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .noRippleClickable {
-                resetSelectedIndex()
-                if (messageAreaExpanded) {
-                    onToggleExpand()
+
+                event(MessagingConversationUiEvent.ResetSelectedIndex)
+                if (uiState.messageAreaExpanded) {
+                    event(MessagingConversationUiEvent.ToggleMessageArea)
                 }
                 focusManager.clearFocus()
             },
@@ -293,20 +259,20 @@ fun MessagingConversation() {
                                 .padding(vertical = 8.dp, horizontal = 6.dp),
                             contentAlignment = if (isSender) Alignment.CenterStart else Alignment.CenterEnd,
                             currentIndex = index,
-                            selectedIndex = selectedIndex,
-                            onClick = onClickChatItem
+                            selectedIndex = uiState.chatItemSelectedIndex,
+                            onClick = { event(MessagingConversationUiEvent.SelectChatItem(index = it)) }
                         )
                     }
 
                 }
 
                 MessagingTextArea(
-                    message = message,
-                    onValueChange = { onChangeValueMessage(it) },
+                    message = uiState.message,
+                    onValueChange = { event(MessagingConversationUiEvent.OnChangeMessage(it)) },
                     modifier = Modifier.wrapContentHeight(),
                     onClickSend = {},
-                    onToggleExpand = onToggleExpand,
-                    isExpanded = messageAreaExpanded)
+                    onToggleExpand = { event(MessagingConversationUiEvent.ToggleMessageArea) },
+                    isExpanded = uiState.messageAreaExpanded)
 
             }
 
@@ -330,7 +296,9 @@ fun MessagingConversation() {
 fun PreviewMessagingConversationContentDark() {
     CompositionLocalProvider(IsDarkTheme provides true) {
         CyclistanceTheme(darkTheme = true) {
-            MessagingConversation()
+            MessagingConversationContent(
+                uiState = MessagingConversationUiState(messageAreaExpanded = true),
+                event = {})
         }
     }
 }
@@ -340,7 +308,9 @@ fun PreviewMessagingConversationContentDark() {
 fun PreviewMessagingConversationContentLight() {
     CompositionLocalProvider(IsDarkTheme provides false) {
         CyclistanceTheme(darkTheme = false) {
-            MessagingConversation()
+            MessagingConversationContent(
+                uiState = MessagingConversationUiState(messageAreaExpanded = true),
+                event = {})
         }
     }
 }

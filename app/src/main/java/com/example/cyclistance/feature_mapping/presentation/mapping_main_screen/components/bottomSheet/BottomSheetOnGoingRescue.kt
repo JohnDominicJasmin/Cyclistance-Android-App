@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
+import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.theme.Red900
 
@@ -30,142 +31,130 @@ import com.example.cyclistance.theme.Red900
 @Composable
 fun BottomSheetOnGoingRescue(
     modifier: Modifier = Modifier,
-    bottomSheetScaffoldState: BottomSheetScaffoldState,
     onClickCallButton: () -> Unit,
     onClickChatButton: () -> Unit,
     onClickCancelButton: () -> Unit,
-    content: @Composable (PaddingValues) -> Unit,
+    bottomSheetScaffoldState: BottomSheetScaffoldState,
     onGoingRescueModel: OnGoingRescueModel,
 ) {
 
 
-    MappingBottomSheet(
-        modifier = modifier,
-        bottomSheetScaffoldState = bottomSheetScaffoldState,
-        sheetPeekHeight = 0.dp,
-        sheetContent = {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth(0.92f)
-                    .shadow(
-                        elevation = 12.dp,
-                        shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp))
-                    .align(Alignment.CenterHorizontally),
-                shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
-                backgroundColor = MaterialTheme.colors.surface) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth(0.92f)
+            .shadow(
+                elevation = 12.dp,
+                shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
+        shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),
+        backgroundColor = MaterialTheme.colors.surface) {
 
 
-                ConstraintLayout(
-                    modifier = Modifier
-                        .fillMaxWidth()) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxWidth()) {
 
-                    val (time, roundedButtonSection, lineGrip, distance, etaIcon, speedometer) = createRefs()
+            val (time, roundedButtonSection, lineGrip, distance, etaIcon, speedometer) = createRefs()
 
-                    val etaAvailable by remember(onGoingRescueModel.estimatedTime) {
-                        derivedStateOf {
-                            onGoingRescueModel.estimatedTime.isNotEmpty()
-                        }
-                    }
-
-                    Divider(modifier = Modifier
-                        .fillMaxWidth(0.1f)
-                        .constrainAs(lineGrip) {
-                            top.linkTo(parent.top, margin = 10.dp)
-                            end.linkTo(parent.end, margin = 0.dp)
-                            start.linkTo(parent.start, margin = 0.dp)
-                        }, color = MaterialTheme.colors.primary, thickness = 1.5.dp)
-
-
-                    if (!etaAvailable) {
-
-                        Text(
-                            text = "Calculating estimated time of arrival...",
-                            color = MaterialTheme.colors.onSurface,
-                            style = MaterialTheme.typography.subtitle2,
-                            modifier = Modifier.constrainAs(time) {
-                                top.linkTo(lineGrip.bottom, margin = 10.dp)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            }
-                        )
-
-                    }
-
-                    if (etaAvailable) {
-                        SpeedometerSection(
-                            modifier = Modifier.constrainAs(speedometer) {
-                                top.linkTo(lineGrip.bottom, margin = 4.dp)
-                                start.linkTo(parent.start)
-                                end.linkTo(parent.end)
-                            },
-                            currentSpeed = onGoingRescueModel.currentSpeed,
-                            distance = onGoingRescueModel.ridingDistance,
-                            maxSpeed = onGoingRescueModel.maxSpeed,
-                            time = onGoingRescueModel.ridingTime
-                        )
-
-                        Text(
-                            text = onGoingRescueModel.estimatedTime,
-                            color = MaterialTheme.colors.onSurface,
-                            style = MaterialTheme.typography.subtitle2,
-                            modifier = Modifier
-                                .padding(horizontal = 12.dp)
-                                .constrainAs(time) {
-                                    top.linkTo(speedometer.bottom, margin = 5.dp)
-                                    end.linkTo(etaIcon.start)
-                                }
-                        )
-
-
-                        Image(
-                            painter = painterResource(id = R.drawable.ic_eta),
-                            contentDescription = "ETA",
-                            modifier = Modifier
-                                .size(20.dp)
-                                .constrainAs(etaIcon) {
-                                    top.linkTo(speedometer.bottom, margin = 5.dp)
-                                    start.linkTo(parent.start)
-                                    end.linkTo(parent.end)
-
-                                }
-                        )
-
-
-                        Text(
-                            text = onGoingRescueModel.estimatedDistance,
-                            color = MaterialTheme.colors.onSurface,
-                            style = MaterialTheme.typography.subtitle2,
-                            modifier = Modifier
-                                .padding(horizontal = 12.dp)
-                                .constrainAs(distance) {
-                                    top.linkTo(speedometer.bottom, margin = 5.dp)
-                                    start.linkTo(etaIcon.end)
-                                }
-                        )
-                    }
-
-
-                    RoundButtonSection(
-                        modifier = Modifier.constrainAs(roundedButtonSection) {
-                            val anchor = if (etaAvailable) etaIcon else time
-                            top.linkTo(anchor.bottom, margin = 10.dp)
-                            end.linkTo(parent.end)
-                            start.linkTo(parent.start)
-                            bottom.linkTo(parent.bottom, margin = 10.dp)
-                        },
-                        onClickCallButton = onClickCallButton,
-                        onClickChatButton = onClickChatButton,
-                        onClickCancelButton = onClickCancelButton)
-
-
+            val etaAvailable by remember(onGoingRescueModel.estimatedTime) {
+                derivedStateOf {
+                    onGoingRescueModel.estimatedTime.isNotEmpty()
                 }
             }
-        },
-        content = content)
 
+            Divider(modifier = Modifier
+                .fillMaxWidth(0.1f)
+                .constrainAs(lineGrip) {
+                    top.linkTo(parent.top, margin = 10.dp)
+                    end.linkTo(parent.end, margin = 0.dp)
+                    start.linkTo(parent.start, margin = 0.dp)
+                }, color = MaterialTheme.colors.primary, thickness = 1.5.dp)
+
+
+            if (!etaAvailable) {
+
+                Text(
+                    text = "Calculating estimated time of arrival...",
+                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.subtitle2,
+                    modifier = Modifier.constrainAs(time) {
+                        top.linkTo(lineGrip.bottom, margin = 10.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    }
+                )
+
+            }
+
+            if (etaAvailable) {
+                SpeedometerSection(
+                    modifier = Modifier.constrainAs(speedometer) {
+                        top.linkTo(lineGrip.bottom, margin = 4.dp)
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                    },
+                    currentSpeed = onGoingRescueModel.currentSpeed,
+                    distance = onGoingRescueModel.ridingDistance,
+                    maxSpeed = onGoingRescueModel.maxSpeed,
+                    time = onGoingRescueModel.ridingTime
+                )
+
+                Text(
+                    text = onGoingRescueModel.estimatedTime,
+                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.subtitle2,
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .constrainAs(time) {
+                            top.linkTo(speedometer.bottom, margin = 5.dp)
+                            end.linkTo(etaIcon.start)
+                        }
+                )
+
+
+                Image(
+                    painter = painterResource(id = R.drawable.ic_eta),
+                    contentDescription = "ETA",
+                    modifier = Modifier
+                        .size(20.dp)
+                        .constrainAs(etaIcon) {
+                            top.linkTo(speedometer.bottom, margin = 5.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+
+                        }
+                )
+
+
+                Text(
+                    text = onGoingRescueModel.estimatedDistance,
+                    color = MaterialTheme.colors.onSurface,
+                    style = MaterialTheme.typography.subtitle2,
+                    modifier = Modifier
+                        .padding(horizontal = 12.dp)
+                        .constrainAs(distance) {
+                            top.linkTo(speedometer.bottom, margin = 5.dp)
+                            start.linkTo(etaIcon.end)
+                        }
+                )
+            }
+
+
+            RoundButtonSection(
+                modifier = Modifier.constrainAs(roundedButtonSection) {
+                    val anchor = if (etaAvailable) etaIcon else time
+                    top.linkTo(anchor.bottom, margin = 10.dp)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom, margin = 10.dp)
+                },
+                onClickCallButton = onClickCallButton,
+                onClickChatButton = onClickChatButton,
+                onClickCancelButton = onClickCancelButton)
+
+
+        }
+    }
 }
-
-
 
 
 @Composable
@@ -212,7 +201,7 @@ fun SpeedometerSection(
 
             Divider(
                 modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colors.onSurface,
+                color = Black440,
                 thickness = 1.dp,
             )
 
@@ -231,7 +220,7 @@ fun SpeedometerSection(
                     content = distance)
 
                 Divider(
-                    color = MaterialTheme.colors.onSurface, modifier = Modifier
+                    color = Black440, modifier = Modifier
                         .fillMaxHeight()
                         .width(1.dp))
 
@@ -244,7 +233,7 @@ fun SpeedometerSection(
                     content = maxSpeed)
 
                 Divider(
-                    color = MaterialTheme.colors.onSurface, modifier = Modifier
+                    color = Black440, modifier = Modifier
                         .fillMaxHeight()
                         .width(1.dp))
 
@@ -258,7 +247,7 @@ fun SpeedometerSection(
             }
             Divider(
                 modifier = Modifier.fillMaxWidth(),
-                color = MaterialTheme.colors.onSurface,
+                color = Black440,
                 thickness = 1.dp,
             )
         }
@@ -331,16 +320,13 @@ private fun RoundButtonSection(
 @Preview(name = "BottomSheetOnGoingRescue", device = "id:Galaxy Nexus")
 @Composable
 private fun PreviewBottomSheetOnGoingRescueDark() {
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberBottomSheetState(
-            initialValue = BottomSheetValue.Expanded))
+
     CyclistanceTheme(true) {
         BottomSheetOnGoingRescue(
-            content = {},
             onClickCancelButton = {},
             onClickCallButton = {},
             onClickChatButton = {},
-            bottomSheetScaffoldState = bottomSheetScaffoldState,
+            bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
             onGoingRescueModel = OnGoingRescueModel(
                 currentSpeed = "13.3",
                 ridingDistance = "10.0 km",
@@ -358,16 +344,13 @@ private fun PreviewBottomSheetOnGoingRescueDark() {
 @Preview(name = "BottomSheetOnGoingRescue", device = "id:Galaxy Nexus")
 @Composable
 private fun PreviewBottomSheetOnGoingRescueLight() {
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberBottomSheetState(
-            initialValue = BottomSheetValue.Expanded))
+
     CyclistanceTheme(false) {
         BottomSheetOnGoingRescue(
-            content = {},
             onClickCancelButton = {},
             onClickCallButton = {},
             onClickChatButton = {},
-            bottomSheetScaffoldState = bottomSheetScaffoldState,
+            bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
             onGoingRescueModel = OnGoingRescueModel(
                 currentSpeed = "13.3",
                 ridingDistance = "10.0 km",

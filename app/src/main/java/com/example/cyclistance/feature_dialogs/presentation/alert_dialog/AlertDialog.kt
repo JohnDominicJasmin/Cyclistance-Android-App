@@ -102,7 +102,7 @@ fun PreviewAlertDialogDark() {
             alertDialog = AlertDialogState(
                 title = "Success!",
                 description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
-                icon = R.raw.info),
+                icon = R.raw.question),
             onDismissRequest = {})
 
     }
@@ -116,7 +116,7 @@ fun PreviewAlertDialogLight() {
             alertDialog = AlertDialogState(
                 title = "Success!",
                 description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
-                icon = R.raw.info),
+                icon = R.raw.question),
             onDismissRequest = {})
     }
 }

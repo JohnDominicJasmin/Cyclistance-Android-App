@@ -221,10 +221,10 @@ fun ConfirmDetailsScreen(
         uiState = uiState,
         event = { event ->
             when (event) {
-                is ConfirmDetailsUiEvent.ChangeAddress -> onValueChangeAddress(event.address)
-                is ConfirmDetailsUiEvent.ChangeBikeType -> onClickBikeType(event.bikeType)
-                is ConfirmDetailsUiEvent.ChangeDescription -> onClickDescriptionButton(event.description)
-                is ConfirmDetailsUiEvent.ChangeMessage -> onValueChangeMessage(event.message)
+                is ConfirmDetailsUiEvent.OnChangeAddress -> onValueChangeAddress(event.address)
+                is ConfirmDetailsUiEvent.OnChangeBikeType -> onClickBikeType(event.bikeType)
+                is ConfirmDetailsUiEvent.OnChangeDescription -> onClickDescriptionButton(event.description)
+                is ConfirmDetailsUiEvent.OnChangeMessage -> onValueChangeMessage(event.message)
                 is ConfirmDetailsUiEvent.ConfirmDetails -> onClickConfirmButton()
                 is ConfirmDetailsUiEvent.CancelConfirmation -> onClickCancelButton()
                 is ConfirmDetailsUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()

@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
@@ -42,8 +43,8 @@ fun TextFieldInputArea(
     modifier: Modifier,
     state: EditProfileState,
     uiState: EditProfileUiState,
-    onValueChangeName: (String) -> Unit,
-    onValueChangePhoneNumber: (String) -> Unit,
+    onValueChangeName: (TextFieldValue) -> Unit,
+    onValueChangePhoneNumber: (TextFieldValue) -> Unit,
     keyboardActions: KeyboardActions
 ) {
 
@@ -89,24 +90,18 @@ fun TextFieldInputArea(
                     onValueChange = onValueChangePhoneNumber)
 
             }
-
         }
-
-
-
-
-
 
     }
 }
 
 @Composable
-private fun TextFieldCreator(
+fun TextFieldCreator(
     modifier: Modifier = Modifier,
     errorMessage: String = "",
     label: String,
     content: @Composable () -> Unit) {
-    val hasError by remember(errorMessage){ derivedStateOf { errorMessage.isNotEmpty() } }
+    val hasError by remember(errorMessage) { derivedStateOf { errorMessage.isNotEmpty() } }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
 
@@ -132,11 +127,11 @@ private fun TextFieldCreator(
 }
 
 @Composable
-private fun TextFieldItem(
-    value: String,
+fun TextFieldItem(
+    value: TextFieldValue,
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions = KeyboardActions(),
-    onValueChange: (String) -> Unit,
+    onValueChange: (TextFieldValue) -> Unit,
     enabled: Boolean = true,
     onClick: () -> Unit = {}) {
 
@@ -169,7 +164,9 @@ private fun TextFieldItem(
 fun EditProfileTextFieldPreview() {
     CyclistanceTheme(darkTheme = true) {
 
-        Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colors.background)) {
             TextFieldInputArea(
                 modifier = Modifier, state = EditProfileState(),
                 onValueChangeName = { },
