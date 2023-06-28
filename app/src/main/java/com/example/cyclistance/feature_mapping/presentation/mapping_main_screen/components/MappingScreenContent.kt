@@ -27,6 +27,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogForegroundLocationPermission
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogPhonePermission
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.EmergencyCallDialog
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.banner.MappingExpandableBanner
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
@@ -103,7 +104,7 @@ fun MappingScreenContent(
 
             ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
-                val (mapScreen, requestHelpButton, circularProgressbar, noInternetScreen, respondToHelpButton, fabSection, permissionDialog, expandableFabSection) = createRefs()
+                val (mapScreen, requestHelpButton, circularProgressbar, dialog, respondToHelpButton, fabSection, expandableFabSection) = createRefs()
 
 
                 MappingMapsScreen(
@@ -171,7 +172,7 @@ fun MappingScreenContent(
                     }) {
 
                     ExpandableFABSection(
-                        onClickEmergencyCall = { event(MappingUiEvent.OpenEmergencyCall) },
+                        onClickEmergencyCall = { event(MappingUiEvent.ShowEmergencyCallDialog) },
                         onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
                         onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
                         onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
@@ -221,23 +222,36 @@ fun MappingScreenContent(
                         })
                 }
 
+
+                if (uiState.isEmergencyCallDialogVisible) {
+                    EmergencyCallDialog(
+                        modifier = Modifier.constrainAs(dialog) {
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            width = Dimension.matchParent
+                            height = Dimension.wrapContent
+                        },
+                        onDismiss = { event(MappingUiEvent.DismissEmergencyCallDialog) }
+                    )
+                }
+
                 if (uiState.isNoInternetVisible) {
                     NoInternetDialog(
                         onDismiss = { event(MappingUiEvent.DismissNoInternetDialog) },
-                        modifier = Modifier.constrainAs(noInternetScreen) {
+                        modifier = Modifier.constrainAs(dialog) {
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
                             bottom.linkTo(parent.bottom)
                             width = Dimension.matchParent
                             height = Dimension.wrapContent
                         })
-
                 }
 
                 if (uiState.locationPermissionDialogVisible) {
                     DialogForegroundLocationPermission(
                         modifier = Modifier.constrainAs(
-                            permissionDialog) {
+                            dialog) {
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
                             bottom.linkTo(parent.bottom)
@@ -248,7 +262,7 @@ fun MappingScreenContent(
                 }
 
                 if (uiState.phonePermissionDialogVisible) {
-                    DialogPhonePermission(modifier = Modifier.constrainAs(permissionDialog) {
+                    DialogPhonePermission(modifier = Modifier.constrainAs(dialog) {
                         end.linkTo(parent.end)
                         start.linkTo(parent.start)
                         bottom.linkTo(parent.bottom)

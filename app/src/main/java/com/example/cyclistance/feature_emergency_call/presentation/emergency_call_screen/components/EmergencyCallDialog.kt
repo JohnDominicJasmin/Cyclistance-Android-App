@@ -132,11 +132,16 @@ fun EmergencyCallDialog(
                             .fillMaxWidth()
                             .padding(vertical = 8.dp, horizontal = 4.dp), color = Black500)
 
-                    ContactSection(modifier = Modifier, emergencyCallModel = emergencyContactModel)
+                    ContactSection(
+                        modifier = Modifier,
+                        emergencyCallModel = emergencyContactModel,
+                        onClick = {
+                            onDismiss()
+                        })
 
 
                     OutlinedButton(
-                        onClick = { /*TODO*/ },
+                        onClick = onDismiss,
                         border = BorderStroke(1.dp, Black500),
                         modifier = Modifier
                             .wrapContentHeight()
@@ -165,7 +170,7 @@ fun EmergencyCallDialog(
 private fun ContactSection(
     modifier: Modifier = Modifier,
     emergencyCallModel: EmergencyCallModel,
-    onClick: (String) -> Unit = {}) {
+    onClick: (String) -> Unit) {
     Column(
         modifier = modifier.padding(vertical = 4.dp, horizontal = 2.dp),
         verticalArrangement = Arrangement.spacedBy(7.dp)) {
@@ -192,7 +197,7 @@ private fun ContactSection(
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             maxItemsInEachRow = 3,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
             val contacts = emergencyCallModel.contacts
