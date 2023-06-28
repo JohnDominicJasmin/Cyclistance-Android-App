@@ -2,20 +2,31 @@ package com.example.cyclistance.feature_message.presentation.messaging_conversat
 
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -28,18 +39,28 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
 import com.example.cyclistance.core.utils.composable_utils.keyboardAsState
 import com.example.cyclistance.core.utils.composable_utils.noRippleClickable
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.topAppBar.TitleTopAppBar
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.topAppBar.TopAppBarCreator
 import com.example.cyclistance.feature_message.domain.model.ui.Duration
 import com.example.cyclistance.feature_message.domain.model.ui.MessageContent
 import com.example.cyclistance.feature_message.domain.model.ui.MessageConversation
 import com.example.cyclistance.feature_message.presentation.messaging_conversation.event.MessagingConversationUiEvent
+import com.example.cyclistance.feature_message.presentation.messaging_conversation.state.MessagingConversationState
 import com.example.cyclistance.feature_message.presentation.messaging_conversation.state.MessagingConversationUiState
 import com.example.cyclistance.navigation.IsDarkTheme
+import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.launch
 
@@ -172,11 +193,14 @@ private val conversation = MessageConversation(
 fun MessagingConversationContent(
     modifier: Modifier = Modifier,
     uiState: MessagingConversationUiState,
+    state: MessagingConversationState,
     event: (MessagingConversationUiEvent) -> Unit) {
 
-
+    val conversationAvailable by remember(state.conversation) {
+        derivedStateOf { state.conversation.messages.isNotEmpty() }
+    }
     val listState =
-        rememberLazyListState(initialFirstVisibleItemIndex = conversation.messages.indices.last)
+        rememberLazyListState(initialFirstVisibleItemIndex = state.conversation.messages.indices.last)
     val focusManager = LocalFocusManager.current
     val keyboardState by keyboardAsState()
 
@@ -207,87 +231,173 @@ fun MessagingConversationContent(
 
 
 
+    Scaffold(modifier = modifier, backgroundColor = MaterialTheme.colors.background, topBar = {
+        TopAppBarCreator(
+            icon = Icons.Default.Close,
+            onClickIcon = { event(MessagingConversationUiEvent.CloseMessagingConversationScreen) },
+            topAppBarTitle = {
+                Row(
+                    modifier = Modifier.wrapContentSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(5.dp)) {
 
-    Surface(
-        modifier = modifier
-            .fillMaxSize()
-            .noRippleClickable {
-
-                event(MessagingConversationUiEvent.ResetSelectedIndex)
-                if (uiState.messageAreaExpanded) {
-                    event(MessagingConversationUiEvent.ToggleMessageArea)
+                    AsyncImage(
+                        model = "https://t3.ftcdn.net/jpg/02/99/04/20/360_F_299042079_vGBD7wIlSeNl7vOevWHiL93G4koMM967.jpg",
+                        alignment = Alignment.Center,
+                        contentDescription = "User Profile Image",
+                        modifier = Modifier
+                            .clip(CircleShape)
+                            .size(35.dp)
+                            .clickable { event(MessagingConversationUiEvent.CloseMessagingConversationScreen) },
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
+                        error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
+                        fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
+                    TitleTopAppBar(title = "John Doe", modifier = Modifier.padding(start = 5.dp))
                 }
-                focusManager.clearFocus()
-            },
-        color = MaterialTheme.colors.background) {
+            })
+    }) { paddingValues ->
 
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+        Surface(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+                .noRippleClickable {
 
-            Column(
-                modifier = Modifier.fillMaxSize()) {
+                    event(MessagingConversationUiEvent.ResetSelectedIndex)
 
-                LazyColumn(
-                    state = listState,
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)
-                ) {
+                    if (uiState.messageAreaExpanded) {
+                        event(MessagingConversationUiEvent.ToggleMessageArea)
+                    }
+                    focusManager.clearFocus()
+                },
+            color = MaterialTheme.colors.background) {
 
-                    itemsIndexed(
-                        items = conversation.messages,
-                        key = { _, item -> item.messageId }) { index, message ->
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = if (conversationAvailable) Alignment.BottomCenter else Alignment.Center) {
 
-                        val isSender by remember { derivedStateOf { message.senderId != USER_ID } }
-                        val timeStampAvailable by remember { derivedStateOf { message.duration != null && message.dateSent != null } }
 
-                        AnimatedVisibility(visible = timeStampAvailable) {
+                Column(
+                    modifier = Modifier.fillMaxSize()) {
 
-                            MessagingTimeStamp(
-                                value = message.dateSent!!,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp))
+
+                    if (conversationAvailable) {
+
+                        LazyColumn(
+                            state = listState,
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.weight(1f),
+                            contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)
+                        ) {
+
+                            itemsIndexed(
+                                items = state.conversation.messages,
+                                key = { _, item -> item.messageId }) { index, message ->
+
+                                val isSender by remember { derivedStateOf { message.senderId != USER_ID } }
+                                val timeStampAvailable by remember { derivedStateOf { message.duration != null && message.dateSent != null } }
+
+                                AnimatedVisibility(visible = timeStampAvailable) {
+
+                                    MessagingTimeStamp(
+                                        value = message.dateSent!!,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp))
+                                }
+
+
+                                ChatItem(
+                                    message = message,
+                                    isSender = isSender,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp, horizontal = 6.dp),
+                                    contentAlignment = if (isSender) Alignment.CenterStart else Alignment.CenterEnd,
+                                    currentIndex = index,
+                                    selectedIndex = uiState.chatItemSelectedIndex,
+                                    onClick = {
+                                        event(
+                                            MessagingConversationUiEvent.SelectChatItem(
+                                                index = it))
+                                    }
+                                )
+                            }
+
                         }
 
-
-                        ChatItem(
-                            message = message,
-                            isSender = isSender,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp, horizontal = 6.dp),
-                            contentAlignment = if (isSender) Alignment.CenterStart else Alignment.CenterEnd,
-                            currentIndex = index,
-                            selectedIndex = uiState.chatItemSelectedIndex,
-                            onClick = { event(MessagingConversationUiEvent.SelectChatItem(index = it)) }
-                        )
+                    } else {
+                        PlaceholderEmptyConversation(modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize())
                     }
+
+
+
+
+                    MessagingTextArea(
+                        message = uiState.message,
+                        onValueChange = { event(MessagingConversationUiEvent.OnChangeMessage(it)) },
+                        modifier = Modifier.wrapContentHeight(),
+                        onClickSend = {},
+                        onToggleExpand = { event(MessagingConversationUiEvent.ToggleMessageArea) },
+                        isExpanded = uiState.messageAreaExpanded)
 
                 }
 
-                MessagingTextArea(
-                    message = uiState.message,
-                    onValueChange = { event(MessagingConversationUiEvent.OnChangeMessage(it)) },
-                    modifier = Modifier.wrapContentHeight(),
-                    onClickSend = {},
-                    onToggleExpand = { event(MessagingConversationUiEvent.ToggleMessageArea) },
-                    isExpanded = uiState.messageAreaExpanded)
+                ScrollToBottomButton(
+                    modifier = Modifier.absoluteOffset(y = (-85).dp),
+                    isVisible = isScrollingUp,
+                    onClick = {
+                        scope.launch {
+                            listState.animateScrollToItem(index = state.conversation.messages.indices.last)
+                        }
+                    })
 
             }
-
-            ScrollToBottomButton(
-                modifier = Modifier.absoluteOffset(y = (-85).dp),
-                isVisible = isScrollingUp,
-                onClick = {
-                    scope.launch {
-                        listState.animateScrollToItem(index = conversation.messages.indices.last)
-                    }
-                })
 
         }
     }
 
+}
+
+
+@Composable
+fun PlaceholderEmptyConversation(modifier: Modifier = Modifier) {
+    val isDarkTheme = IsDarkTheme.current
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "No messages here yet...",
+            color = Black500,
+            style = MaterialTheme.typography.subtitle1,
+            modifier = Modifier.padding(all = 4.dp)
+        )
+
+        Icon(
+            painter = painterResource(id = if (isDarkTheme) R.drawable.ic_mailbox_dark else R.drawable.ic_mailbox_light),
+            contentDescription = "No Conversation Available",
+            tint = Color.Unspecified
+        )
+
+
+    }
+}
+
+@Preview
+@Composable
+fun PreviewPlaceholderEmptyConversation() {
+    CompositionLocalProvider(IsDarkTheme provides false) {
+        CyclistanceTheme(darkTheme = false) {
+            Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                PlaceholderEmptyConversation()
+            }
+        }
+    }
 }
 
 
@@ -298,7 +408,7 @@ fun PreviewMessagingConversationContentDark() {
         CyclistanceTheme(darkTheme = true) {
             MessagingConversationContent(
                 uiState = MessagingConversationUiState(messageAreaExpanded = true),
-                event = {})
+                event = {}, state = MessagingConversationState())
         }
     }
 }
@@ -310,7 +420,7 @@ fun PreviewMessagingConversationContentLight() {
         CyclistanceTheme(darkTheme = false) {
             MessagingConversationContent(
                 uiState = MessagingConversationUiState(messageAreaExpanded = true),
-                event = {})
+                event = {}, state = MessagingConversationState())
         }
     }
 }

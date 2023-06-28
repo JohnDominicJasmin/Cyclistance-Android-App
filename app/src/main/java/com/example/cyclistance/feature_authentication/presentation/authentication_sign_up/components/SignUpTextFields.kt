@@ -49,7 +49,7 @@ fun SignUpTextFieldsArea(
                 email = email,
                 emailErrorMessage = emailErrorMessage,
                 clearIconOnClick = {
-                 onValueChangeEmail(TextFieldValue(""))
+                    onValueChangeEmail(TextFieldValue(""))
                 },
                 onValueChange = onValueChangeEmail,
                 enabled = !isLoading)

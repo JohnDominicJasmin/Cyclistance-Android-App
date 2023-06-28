@@ -2,10 +2,10 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_cancellatio
 
 import androidx.compose.ui.text.input.TextFieldValue
 
-sealed class CancellationReasonUiEvent{
+sealed class CancellationReasonUiEvent {
     data class OnChangeMessage(val message: TextFieldValue) : CancellationReasonUiEvent()
-    object ConfirmCancellationReason: CancellationReasonUiEvent()
-    object NavigateToMapping: CancellationReasonUiEvent()
+    object ConfirmCancellationReason : CancellationReasonUiEvent()
+    object NavigateToMapping : CancellationReasonUiEvent()
     object DismissNoInternetDialog : CancellationReasonUiEvent()
     data class SelectReason(val reason: String) : CancellationReasonUiEvent()
 }

@@ -46,11 +46,12 @@ fun TopAppBarCreator(
 
 
 @Composable
-fun TitleTopAppBar(title: String) {
+fun TitleTopAppBar(modifier: Modifier = Modifier, title: String) {
     Text(
         text = title,
         color = MaterialTheme.colors.onBackground,
-        style = MaterialTheme.typography.h6)
+        style = MaterialTheme.typography.h6,
+        modifier = modifier)
 
 }
 

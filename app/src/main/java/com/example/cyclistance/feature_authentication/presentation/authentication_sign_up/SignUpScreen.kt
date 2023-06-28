@@ -62,12 +62,12 @@ fun SignUpScreen(
         }
     }
 
-    val onDoneKeyboardAction = remember{
+    val onDoneKeyboardAction = remember {
         {
             signUpAccount()
             focusManager.clearFocus()
         }
-    } 
+    }
     val onValueChangeEmail = remember {
         { inputEmail: TextFieldValue ->
             uiState = uiState.copy(

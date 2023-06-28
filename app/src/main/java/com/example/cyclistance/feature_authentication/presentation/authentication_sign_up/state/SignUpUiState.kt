@@ -12,11 +12,11 @@ import kotlinx.parcelize.RawValue
 @StableState
 data class SignUpUiState(
     val email: @RawValue TextFieldValue = TextFieldValue(""),
-    val emailErrorMessage:String = "",
+    val emailErrorMessage: String = "",
     val password: @RawValue TextFieldValue = TextFieldValue(""),
-    val passwordErrorMessage:String = "",
+    val passwordErrorMessage: String = "",
     val confirmPassword: @RawValue TextFieldValue = TextFieldValue(""),
-    val confirmPasswordErrorMessage:String = "",
+    val confirmPasswordErrorMessage: String = "",
     val alertDialogState: AlertDialogState = AlertDialogState(),
     val passwordVisible: Boolean = false,
     val isNoInternetVisible: Boolean = false,

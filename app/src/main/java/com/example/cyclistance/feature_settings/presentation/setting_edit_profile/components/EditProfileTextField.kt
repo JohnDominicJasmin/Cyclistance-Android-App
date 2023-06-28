@@ -164,9 +164,10 @@ fun TextFieldItem(
 fun EditProfileTextFieldPreview() {
     CyclistanceTheme(darkTheme = true) {
 
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colors.background)) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)) {
             TextFieldInputArea(
                 modifier = Modifier, state = EditProfileState(),
                 onValueChangeName = { },

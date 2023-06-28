@@ -2,7 +2,7 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 
 import androidx.compose.ui.text.input.TextFieldValue
 
-sealed class SignUpUiEvent{
+sealed class SignUpUiEvent {
     object DismissAlertDialog : SignUpUiEvent()
     object KeyboardActionDone : SignUpUiEvent()
     data class OnChangeEmail(val email: TextFieldValue) : SignUpUiEvent()

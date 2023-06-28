@@ -23,7 +23,6 @@ val Red600 = Color(0xFFFF746B)
 val Red710 = Color(0xFFE1413B)
 
 
-
 val Blue600 = Color(0xFF5786FF)
 val Blue500 = Color(0xFF3B5998)
 
