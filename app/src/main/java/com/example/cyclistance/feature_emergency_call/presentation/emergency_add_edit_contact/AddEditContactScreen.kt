@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -161,12 +162,12 @@ fun EmergencyAddEditContactScreen(
     }
 
     val onValueChangeName = remember {
-        { name: String ->
+        { name: TextFieldValue ->
             uiState = uiState.copy(name = name)
         }
     }
     val onValueChangePhoneNumber = remember {
-        { phoneNumber: String ->
+        { phoneNumber: TextFieldValue ->
             uiState = uiState.copy(phoneNumber = phoneNumber)
         }
     }
