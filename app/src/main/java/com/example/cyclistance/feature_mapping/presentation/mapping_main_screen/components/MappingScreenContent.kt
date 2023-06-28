@@ -27,6 +27,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogForegroundLocationPermission
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogPhonePermission
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.EmergencyCallDialog
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.banner.MappingExpandableBanner
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
@@ -56,7 +57,7 @@ fun MappingScreenContent(
     isNavigating: Boolean,
     uiState: MappingUiState,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
-    event: (MappingUiEvent) -> Unit = {}
+    event: (MappingUiEvent) -> Unit = {},
 ) {
 
     val respondentCount by remember(state.newRescueRequest?.request?.size) {
@@ -94,12 +95,16 @@ fun MappingScreenContent(
             onClickChatRescueTransactionButton = { event(MappingUiEvent.ChatRescueTransaction) },
             onClickCancelRescueTransactionButton = { event(MappingUiEvent.CancelRescueTransaction) },
             bottomSheetScaffoldState = bottomSheetScaffoldState,
-            bottomSheetType = uiState.bottomSheetType) {
+            bottomSheetType = uiState.bottomSheetType,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp),
+            onClickReportIncident = { event(MappingUiEvent.OnReportIncident(it)) }) {
 
 
             ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
-                val (mapScreen, requestHelpButton, circularProgressbar, noInternetScreen, respondToHelpButton, fabSection, permissionDialog, expandableFabSection) = createRefs()
+                val (mapScreen, requestHelpButton, circularProgressbar, dialog, respondToHelpButton, fabSection, expandableFabSection) = createRefs()
 
 
                 MappingMapsScreen(
@@ -158,23 +163,30 @@ fun MappingScreenContent(
 
 
 
-                ExpandableFABSection(
-                    modifier = Modifier
-                        .constrainAs(expandableFabSection) {
-                            end.linkTo(parent.end, margin = 8.dp)
-                            bottom.linkTo(parent.bottom, margin = 15.dp)
-                        },
-                    onClickEmergencyCall = { event(MappingUiEvent.OpenEmergencyCall) },
-                    onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
-                    onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
-                    onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
-                    isFabExpanded = uiState.isFabExpanded,
-                    badgeCount = respondentCount
-                )
+                AnimatedVisibility(
+                    visible = bottomSheetScaffoldState.bottomSheetState.isCollapsed,
+                    enter = fadeIn(),
+                    exit = fadeOut(), modifier = Modifier.constrainAs(expandableFabSection) {
+                        end.linkTo(parent.end, margin = 8.dp)
+                        bottom.linkTo(parent.bottom, margin = 15.dp)
+                    }) {
 
-                val buttonVisible = isNavigating.not() && uiState.isFabExpanded.not()
+                    ExpandableFABSection(
+                        onClickEmergencyCall = { event(MappingUiEvent.ShowEmergencyCallDialog) },
+                        onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
+                        onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
+                        onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
+                        isFabExpanded = uiState.isFabExpanded,
+                        badgeCount = respondentCount
+                    )
+                }
+
+
+                val buttonVisible =
+                    isNavigating.not() && uiState.isFabExpanded.not() && bottomSheetScaffoldState.bottomSheetState.isCollapsed
                 val requestHelpVisible = uiState.requestHelpButtonVisible && buttonVisible
-                val respondToHelpVisible = uiState.requestHelpButtonVisible.not() && buttonVisible
+                val respondToHelpVisible =
+                    uiState.requestHelpButtonVisible.not() && buttonVisible
 
                 RequestHelpButton(
                     modifier = Modifier.constrainAs(requestHelpButton) {
@@ -210,23 +222,36 @@ fun MappingScreenContent(
                         })
                 }
 
+
+                if (uiState.isEmergencyCallDialogVisible) {
+                    EmergencyCallDialog(
+                        modifier = Modifier.constrainAs(dialog) {
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            width = Dimension.matchParent
+                            height = Dimension.wrapContent
+                        },
+                        onDismiss = { event(MappingUiEvent.DismissEmergencyCallDialog) }
+                    )
+                }
+
                 if (uiState.isNoInternetVisible) {
                     NoInternetDialog(
                         onDismiss = { event(MappingUiEvent.DismissNoInternetDialog) },
-                        modifier = Modifier.constrainAs(noInternetScreen) {
+                        modifier = Modifier.constrainAs(dialog) {
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
                             bottom.linkTo(parent.bottom)
                             width = Dimension.matchParent
                             height = Dimension.wrapContent
                         })
-
                 }
 
                 if (uiState.locationPermissionDialogVisible) {
                     DialogForegroundLocationPermission(
                         modifier = Modifier.constrainAs(
-                            permissionDialog) {
+                            dialog) {
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
                             bottom.linkTo(parent.bottom)
@@ -237,7 +262,7 @@ fun MappingScreenContent(
                 }
 
                 if (uiState.phonePermissionDialogVisible) {
-                    DialogPhonePermission(modifier = Modifier.constrainAs(permissionDialog) {
+                    DialogPhonePermission(modifier = Modifier.constrainAs(dialog) {
                         end.linkTo(parent.end)
                         start.linkTo(parent.start)
                         bottom.linkTo(parent.bottom)
@@ -278,7 +303,6 @@ fun MappingScreenContent(
                     )
                 }
             }
-
         }
     }
 }

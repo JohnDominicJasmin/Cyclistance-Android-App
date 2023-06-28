@@ -22,7 +22,6 @@ import com.example.cyclistance.databinding.ActivityMappingBinding
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
-import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
@@ -123,10 +122,12 @@ fun MappingMapsScreen(
 
 
     LaunchedEffect(key1 = mapboxMap, uiState.isFabExpanded) {
+
         mapboxMap?.setOnMarkerClickListener {
             event(MappingUiEvent.RescueeMapIconSelected(it.title))
             true
         }
+
         mapboxMap?.addOnMapClickListener {
             event(MappingUiEvent.OnMapClick)
             true
@@ -136,6 +137,11 @@ fun MappingMapsScreen(
             if (uiState.isFabExpanded) {
                 event(MappingUiEvent.OnCollapseExpandableFAB)
             }
+        }
+
+        mapboxMap?.addOnMapLongClickListener {
+            event(MappingUiEvent.OnMapLongClick)
+            true
         }
 
     }
@@ -268,7 +274,6 @@ private fun Map(
                             mapView.getMapAsync {
 
 
-
                                 it.setStyle(if (isDarkTheme) Style.DARK else Style.LIGHT) { loadedStyle ->
 
                                     if (loadedStyle.isFullyLoaded) {
@@ -297,18 +302,19 @@ private fun Map(
                             val cameraZoom = camera?.zoom
                             cameraCenter?.let {
                                 cameraZoom?.let {
-                                    val cameraMoved = cameraCenter.latitude != 0.0 && cameraCenter.longitude != 0.0 && cameraZoom != 3.0
+                                    val cameraMoved =
+                                        cameraCenter.latitude != 0.0 && cameraCenter.longitude != 0.0 && cameraZoom != 3.0
 
                                     if (!cameraMoved) {
                                         return@let
                                     }
 
 
-                                    event(
-                                        MappingUiEvent.OnChangeCameraState(
-                                            cameraState = CameraState(
-                                                position = cameraCenter,
-                                                zoom = cameraZoom)))
+                                    /*  event(
+                                          MappingUiEvent.OnChangeCameraState(
+                                              cameraState = CameraState(
+                                                  position = cameraCenter,
+                                                  zoom = cameraZoom)))*/
                                 }
                             }
                         }
