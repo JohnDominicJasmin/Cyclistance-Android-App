@@ -8,8 +8,8 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class EmergencyContactModel(
-    val id: String,
-    val name: String,
-    val photo: String,
-    val number: String
+    val id: String = "",
+    val name: String = "",
+    val photo: String = "",
+    val number: String = ""
 ) : Parcelable

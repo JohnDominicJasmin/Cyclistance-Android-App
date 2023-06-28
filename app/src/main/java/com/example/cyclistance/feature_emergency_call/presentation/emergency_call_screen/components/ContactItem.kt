@@ -42,7 +42,7 @@ fun ContactItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
     onClickEdit: (id: String) -> Unit,
-    onClickDelete: (id: String) -> Unit,
+    onClickDelete: (emergencyContact: EmergencyContactModel) -> Unit,
     emergencyContact: EmergencyContactModel) {
 
     Surface(
@@ -85,7 +85,7 @@ fun ContactItem(
             DropDownMenu(
                 modifier = Modifier.wrapContentSize(),
                 onClickEdit = { onClickEdit(emergencyContact.id) },
-                onClickDelete = { onClickDelete(emergencyContact.id) }
+                onClickDelete = { onClickDelete(emergencyContact) }
             )
         }
     }
@@ -114,8 +114,7 @@ private fun DropDownMenu(
         DropdownMenu(
             modifier = Modifier
                 .background(MaterialTheme.colors.secondary)
-                .wrapContentSize()
-                .clip(CircleShape),
+                .wrapContentSize(),
             expanded = expanded,
             onDismissRequest = { expanded = false }) {
 
