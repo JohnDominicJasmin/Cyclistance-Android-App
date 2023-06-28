@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_message.presentation.messaging_conversat
 
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -19,9 +20,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
@@ -37,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
@@ -53,8 +57,10 @@ import com.example.cyclistance.feature_message.domain.model.ui.Duration
 import com.example.cyclistance.feature_message.domain.model.ui.MessageContent
 import com.example.cyclistance.feature_message.domain.model.ui.MessageConversation
 import com.example.cyclistance.feature_message.presentation.messaging_conversation.event.MessagingConversationUiEvent
+import com.example.cyclistance.feature_message.presentation.messaging_conversation.state.MessagingConversationState
 import com.example.cyclistance.feature_message.presentation.messaging_conversation.state.MessagingConversationUiState
 import com.example.cyclistance.navigation.IsDarkTheme
+import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.launch
 
@@ -187,11 +193,14 @@ private val conversation = MessageConversation(
 fun MessagingConversationContent(
     modifier: Modifier = Modifier,
     uiState: MessagingConversationUiState,
+    state: MessagingConversationState,
     event: (MessagingConversationUiEvent) -> Unit) {
 
-
+    val conversationAvailable by remember(state.conversation) {
+        derivedStateOf { state.conversation.messages.isNotEmpty() }
+    }
     val listState =
-        rememberLazyListState(initialFirstVisibleItemIndex = conversation.messages.indices.last)
+        rememberLazyListState(initialFirstVisibleItemIndex = state.conversation.messages.indices.last)
     val focusManager = LocalFocusManager.current
     val keyboardState by keyboardAsState()
 
@@ -256,6 +265,7 @@ fun MessagingConversationContent(
                 .noRippleClickable {
 
                     event(MessagingConversationUiEvent.ResetSelectedIndex)
+
                     if (uiState.messageAreaExpanded) {
                         event(MessagingConversationUiEvent.ToggleMessageArea)
                     }
@@ -263,50 +273,69 @@ fun MessagingConversationContent(
                 },
             color = MaterialTheme.colors.background) {
 
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = if (conversationAvailable) Alignment.BottomCenter else Alignment.Center) {
+
 
                 Column(
                     modifier = Modifier.fillMaxSize()) {
 
-                    LazyColumn(
-                        state = listState,
-                        verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)
-                    ) {
 
-                        itemsIndexed(
-                            items = conversation.messages,
-                            key = { _, item -> item.messageId }) { index, message ->
+                    if (conversationAvailable) {
 
-                            val isSender by remember { derivedStateOf { message.senderId != USER_ID } }
-                            val timeStampAvailable by remember { derivedStateOf { message.duration != null && message.dateSent != null } }
+                        LazyColumn(
+                            state = listState,
+                            verticalArrangement = Arrangement.Top,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            modifier = Modifier.weight(1f),
+                            contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)
+                        ) {
 
-                            AnimatedVisibility(visible = timeStampAvailable) {
+                            itemsIndexed(
+                                items = state.conversation.messages,
+                                key = { _, item -> item.messageId }) { index, message ->
 
-                                MessagingTimeStamp(
-                                    value = message.dateSent!!,
+                                val isSender by remember { derivedStateOf { message.senderId != USER_ID } }
+                                val timeStampAvailable by remember { derivedStateOf { message.duration != null && message.dateSent != null } }
+
+                                AnimatedVisibility(visible = timeStampAvailable) {
+
+                                    MessagingTimeStamp(
+                                        value = message.dateSent!!,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 8.dp))
+                                }
+
+
+                                ChatItem(
+                                    message = message,
+                                    isSender = isSender,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(vertical = 8.dp))
+                                        .padding(vertical = 8.dp, horizontal = 6.dp),
+                                    contentAlignment = if (isSender) Alignment.CenterStart else Alignment.CenterEnd,
+                                    currentIndex = index,
+                                    selectedIndex = uiState.chatItemSelectedIndex,
+                                    onClick = {
+                                        event(
+                                            MessagingConversationUiEvent.SelectChatItem(
+                                                index = it))
+                                    }
+                                )
                             }
 
-
-                            ChatItem(
-                                message = message,
-                                isSender = isSender,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp, horizontal = 6.dp),
-                                contentAlignment = if (isSender) Alignment.CenterStart else Alignment.CenterEnd,
-                                currentIndex = index,
-                                selectedIndex = uiState.chatItemSelectedIndex,
-                                onClick = { event(MessagingConversationUiEvent.SelectChatItem(index = it)) }
-                            )
                         }
 
+                    } else {
+                        PlaceholderEmptyConversation(modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize())
                     }
+
+
+
 
                     MessagingTextArea(
                         message = uiState.message,
@@ -323,7 +352,7 @@ fun MessagingConversationContent(
                     isVisible = isScrollingUp,
                     onClick = {
                         scope.launch {
-                            listState.animateScrollToItem(index = conversation.messages.indices.last)
+                            listState.animateScrollToItem(index = state.conversation.messages.indices.last)
                         }
                     })
 
@@ -335,6 +364,43 @@ fun MessagingConversationContent(
 }
 
 
+@Composable
+fun PlaceholderEmptyConversation(modifier: Modifier = Modifier) {
+    val isDarkTheme = IsDarkTheme.current
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            text = "No messages here yet...",
+            color = Black500,
+            style = MaterialTheme.typography.subtitle1,
+            modifier = Modifier.padding(all = 4.dp)
+        )
+
+        Icon(
+            painter = painterResource(id = if (isDarkTheme) R.drawable.ic_mailbox_dark else R.drawable.ic_mailbox_light),
+            contentDescription = "No Conversation Available",
+            tint = Color.Unspecified
+        )
+
+
+    }
+}
+
+@Preview
+@Composable
+fun PreviewPlaceholderEmptyConversation() {
+    CompositionLocalProvider(IsDarkTheme provides false) {
+        CyclistanceTheme(darkTheme = false) {
+            Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                PlaceholderEmptyConversation()
+            }
+        }
+    }
+}
+
+
 @Preview
 @Composable
 fun PreviewMessagingConversationContentDark() {
@@ -342,7 +408,7 @@ fun PreviewMessagingConversationContentDark() {
         CyclistanceTheme(darkTheme = true) {
             MessagingConversationContent(
                 uiState = MessagingConversationUiState(messageAreaExpanded = true),
-                event = {})
+                event = {}, state = MessagingConversationState())
         }
     }
 }
@@ -354,7 +420,7 @@ fun PreviewMessagingConversationContentLight() {
         CyclistanceTheme(darkTheme = false) {
             MessagingConversationContent(
                 uiState = MessagingConversationUiState(messageAreaExpanded = true),
-                event = {})
+                event = {}, state = MessagingConversationState())
         }
     }
 }
