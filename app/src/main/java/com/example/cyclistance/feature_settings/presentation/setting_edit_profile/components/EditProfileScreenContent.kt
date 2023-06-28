@@ -87,8 +87,8 @@ fun EditProfileScreenContent(
         uiState.phoneNumber,
         uiState.selectedImageUri) {
         derivedStateOf {
-            uiState.name != state.nameSnapshot ||
-            uiState.phoneNumber != state.phoneNumberSnapshot ||
+            uiState.name.text != state.nameSnapshot ||
+            uiState.phoneNumber.text != state.phoneNumberSnapshot ||
             uiState.selectedImageUri.isNotEmpty()
         }
     }

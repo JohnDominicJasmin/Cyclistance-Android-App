@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.common.ErrorMessage
@@ -42,8 +43,8 @@ fun TextFieldInputArea(
     modifier: Modifier,
     state: EditProfileState,
     uiState: EditProfileUiState,
-    onValueChangeName: (String) -> Unit,
-    onValueChangePhoneNumber: (String) -> Unit,
+    onValueChangeName: (TextFieldValue) -> Unit,
+    onValueChangePhoneNumber: (TextFieldValue) -> Unit,
     keyboardActions: KeyboardActions
 ) {
 
@@ -127,10 +128,10 @@ fun TextFieldCreator(
 
 @Composable
 fun TextFieldItem(
-    value: String,
+    value: TextFieldValue,
     keyboardOptions: KeyboardOptions,
     keyboardActions: KeyboardActions = KeyboardActions(),
-    onValueChange: (String) -> Unit,
+    onValueChange: (TextFieldValue) -> Unit,
     enabled: Boolean = true,
     onClick: () -> Unit = {}) {
 

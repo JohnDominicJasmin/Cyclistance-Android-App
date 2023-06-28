@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -144,11 +145,18 @@ fun EditProfileScreen(
                 }
 
                 is EditProfileEvent.GetNameSuccess -> {
-                    uiState = uiState.copy(name = event.name)
+                    uiState = uiState.copy(
+                        name = uiState.name.copy(
+                            text = event.name
+                        ))
                 }
 
                 is EditProfileEvent.GetPhoneNumberSuccess -> {
-                    uiState = uiState.copy(phoneNumber = event.phoneNumber)
+
+                    uiState = uiState.copy(
+                        phoneNumber = uiState.phoneNumber.copy(
+                            text = event.phoneNumber
+                        ))
                 }
 
                 is EditProfileEvent.GetNameFailed -> {
@@ -208,12 +216,12 @@ fun EditProfileScreen(
     }
 
     val onValueChangeName = remember {
-        { name: String ->
+        { name: TextFieldValue ->
             uiState = uiState.copy(name = name)
         }
     }
     val onValueChangePhoneNumber = remember {
-        { phoneNumber: String ->
+        { phoneNumber: TextFieldValue ->
             uiState = uiState.copy(phoneNumber = phoneNumber)
         }
     }
@@ -222,8 +230,8 @@ fun EditProfileScreen(
             editProfileViewModel.onEvent(
                 event = EditProfileVmEvent.Save(
                     imageUri = uiState.selectedImageUri,
-                    name = uiState.name,
-                    phoneNumber = uiState.phoneNumber))
+                    name = uiState.name.text,
+                    phoneNumber = uiState.phoneNumber.text))
         })
     }
     val cancelEditProfile = remember {
@@ -237,8 +245,8 @@ fun EditProfileScreen(
             editProfileViewModel.onEvent(
                 event = EditProfileVmEvent.Save(
                     imageUri = uiState.selectedImageUri,
-                    name = uiState.name,
-                    phoneNumber = uiState.phoneNumber))
+                    name = uiState.name.text,
+                    phoneNumber = uiState.phoneNumber.text))
         }
     }
 
