@@ -6,6 +6,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -73,236 +74,244 @@ fun MappingScreenContent(
         color = MaterialTheme.colors.background) {
 
 
-        if (uiState.isRescueRequestDialogVisible) {
-            RescueRequestDialog(
-                modifier = Modifier
-                    .fillMaxSize(),
-                mappingState = state,
-                uiState = uiState,
-                event = event
-            )
-        }
+        Box {
 
-
-
-
-        MappingBottomSheet(
-            state = state,
-            onClickRescueArrivedButton = { event(MappingUiEvent.RescueArrivedConfirmed) },
-            onClickReachedDestinationButton = { event(MappingUiEvent.DestinationReachedConfirmed) },
-            onClickCancelSearchButton = { event(MappingUiEvent.CancelSearchConfirmed) },
-            onClickCallRescueTransactionButton = { event(MappingUiEvent.CallRescueTransaction) },
-            onClickChatRescueTransactionButton = { event(MappingUiEvent.ChatRescueTransaction) },
-            onClickCancelRescueTransactionButton = { event(MappingUiEvent.CancelRescueTransaction) },
-            bottomSheetScaffoldState = bottomSheetScaffoldState,
-            bottomSheetType = uiState.bottomSheetType,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp),
-            onClickReportIncident = { event(MappingUiEvent.OnReportIncident(it)) }) {
-
-
-            ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-
-                val (mapScreen, requestHelpButton, circularProgressbar, dialog, respondToHelpButton, fabSection, expandableFabSection) = createRefs()
-
-
-                MappingMapsScreen(
-                    state = state,
-                    modifier = Modifier.constrainAs(mapScreen) {
-                        top.linkTo(parent.top)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                    },
-                    hasTransaction = hasTransaction,
-                    isRescueCancelled = isRescueCancelled,
-                    mapboxMap = mapboxMap,
-                    routeDirection = uiState.routeDirection,
-                    isNavigating = isNavigating,
-                    event = event,
-                    uiState = uiState
-                )
-
-
-
-
-                AnimatedVisibility(
-                    visible = uiState.mapSelectedRescuee != null,
-                    enter = expandVertically(expandFrom = Alignment.Top) { 20 },
-                    exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
-                        fullHeight / 2
-                    },
-                ) {
-                    if (uiState.mapSelectedRescuee != null) {
-                        MappingExpandableBanner(
-                            modifier = Modifier
-                                .padding(all = 6.dp)
-                                .fillMaxWidth(), banner = uiState.mapSelectedRescuee,
-                            onClickDismissButton = { event(MappingUiEvent.DismissBanner) })
-                    }
-                }
-
-                FloatingButtonSection(
+            if (uiState.isRescueRequestDialogVisible) {
+                RescueRequestDialog(
                     modifier = Modifier
-                        .constrainAs(fabSection) {
-                            end.linkTo(parent.end, margin = 8.dp)
-                            bottom.linkTo(
-                                parent.bottom,
-                                margin = (configuration.screenHeightDp / 2.5).dp)
-                        },
-                    locationPermissionGranted = locationPermissionState.allPermissionsGranted,
-                    onClickLocateUserButton = { event(MappingUiEvent.LocateUser) },
-                    onClickRouteOverviewButton = { event(MappingUiEvent.RouteOverview) },
-                    onClickRecenterButton = { event(MappingUiEvent.RecenterRoute) },
-                    onClickOpenNavigationButton = { event(MappingUiEvent.OpenNavigation) },
-                    isNavigating = isNavigating,
-                    uiState = uiState
+                        .fillMaxSize(),
+                    mappingState = state,
+                    uiState = uiState,
+                    event = event
                 )
+            }
 
 
+            MappingBottomSheet(
+                state = state,
+                onClickRescueArrivedButton = { event(MappingUiEvent.RescueArrivedConfirmed) },
+                onClickReachedDestinationButton = { event(MappingUiEvent.DestinationReachedConfirmed) },
+                onClickCancelSearchButton = { event(MappingUiEvent.CancelSearchConfirmed) },
+                onClickCallRescueTransactionButton = { event(MappingUiEvent.CallRescueTransaction) },
+                onClickChatRescueTransactionButton = { event(MappingUiEvent.ChatRescueTransaction) },
+                onClickCancelRescueTransactionButton = { event(MappingUiEvent.CancelRescueTransaction) },
+                bottomSheetScaffoldState = bottomSheetScaffoldState,
+                bottomSheetType = uiState.bottomSheetType,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+                onClickReportIncident = { event(MappingUiEvent.OnReportIncident(it)) }) {
 
 
-                AnimatedVisibility(
-                    visible = bottomSheetScaffoldState.bottomSheetState.isCollapsed,
-                    enter = fadeIn(),
-                    exit = fadeOut(), modifier = Modifier.constrainAs(expandableFabSection) {
-                        end.linkTo(parent.end, margin = 8.dp)
-                        bottom.linkTo(parent.bottom, margin = 15.dp)
-                    }) {
+                ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
-                    ExpandableFABSection(
-                        onClickEmergencyCall = { event(MappingUiEvent.ShowEmergencyCallDialog) },
-                        onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
-                        onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
-                        onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
-                        isFabExpanded = uiState.isFabExpanded,
-                        badgeCount = respondentCount
-                    )
-                }
+                    val (mapScreen, requestHelpButton, circularProgressbar, dialog, respondToHelpButton, fabSection, expandableFabSection) = createRefs()
 
 
-                val buttonVisible =
-                    isNavigating.not() && uiState.isFabExpanded.not() && bottomSheetScaffoldState.bottomSheetState.isCollapsed
-                val requestHelpVisible = uiState.requestHelpButtonVisible && buttonVisible
-                val respondToHelpVisible =
-                    uiState.requestHelpButtonVisible.not() && buttonVisible
-
-                RequestHelpButton(
-                    modifier = Modifier.constrainAs(requestHelpButton) {
-                        bottom.linkTo(parent.bottom, margin = 15.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                    }, onClickRequestHelpButton = { event(MappingUiEvent.RequestHelp) },
-                    state = state,
-                    visible = requestHelpVisible
-
-                )
-
-                RespondToHelpButton(
-                    modifier = Modifier.constrainAs(respondToHelpButton) {
-                        bottom.linkTo(parent.bottom, margin = 15.dp)
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                    },
-                    onClickRespondButton = { event(MappingUiEvent.RespondToHelp) },
-                    state = state,
-                    visible = respondToHelpVisible
-                )
-
-                if (state.isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.constrainAs(
-                            circularProgressbar) {
+                    MappingMapsScreen(
+                        state = state,
+                        modifier = Modifier.constrainAs(mapScreen) {
                             top.linkTo(parent.top)
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
                             bottom.linkTo(parent.bottom)
-                            this.centerTo(parent)
-                        })
-                }
-
-
-                if (uiState.isEmergencyCallDialogVisible) {
-                    EmergencyCallDialog(
-                        modifier = Modifier.constrainAs(dialog) {
-                            end.linkTo(parent.end)
-                            start.linkTo(parent.start)
-                            bottom.linkTo(parent.bottom)
-                            width = Dimension.matchParent
-                            height = Dimension.wrapContent
                         },
-                        onDismiss = { event(MappingUiEvent.DismissEmergencyCallDialog) }
+                        hasTransaction = hasTransaction,
+                        isRescueCancelled = isRescueCancelled,
+                        mapboxMap = mapboxMap,
+                        routeDirection = uiState.routeDirection,
+                        isNavigating = isNavigating,
+                        event = event,
+                        uiState = uiState
                     )
-                }
 
-                if (uiState.isNoInternetVisible) {
-                    NoInternetDialog(
-                        onDismiss = { event(MappingUiEvent.DismissNoInternetDialog) },
-                        modifier = Modifier.constrainAs(dialog) {
+
+
+
+                    AnimatedVisibility(
+                        visible = uiState.mapSelectedRescuee != null,
+                        enter = expandVertically(expandFrom = Alignment.Top) { 20 },
+                        exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
+                            fullHeight / 2
+                        },
+                    ) {
+                        if (uiState.mapSelectedRescuee != null) {
+                            MappingExpandableBanner(
+                                modifier = Modifier
+                                    .padding(all = 6.dp)
+                                    .fillMaxWidth(), banner = uiState.mapSelectedRescuee,
+                                onClickDismissButton = { event(MappingUiEvent.DismissBanner) })
+                        }
+                    }
+
+                    FloatingButtonSection(
+                        modifier = Modifier
+                            .constrainAs(fabSection) {
+                                end.linkTo(parent.end, margin = 8.dp)
+                                bottom.linkTo(
+                                    parent.bottom,
+                                    margin = (configuration.screenHeightDp / 2.5).dp)
+                            },
+                        locationPermissionGranted = locationPermissionState.allPermissionsGranted,
+                        onClickLocateUserButton = { event(MappingUiEvent.LocateUser) },
+                        onClickRouteOverviewButton = { event(MappingUiEvent.RouteOverview) },
+                        onClickRecenterButton = { event(MappingUiEvent.RecenterRoute) },
+                        onClickOpenNavigationButton = { event(MappingUiEvent.OpenNavigation) },
+                        isNavigating = isNavigating,
+                        uiState = uiState
+                    )
+
+
+
+
+                    AnimatedVisibility(
+                        visible = bottomSheetScaffoldState.bottomSheetState.isCollapsed,
+                        enter = fadeIn(),
+                        exit = fadeOut(), modifier = Modifier.constrainAs(expandableFabSection) {
+                            end.linkTo(parent.end, margin = 8.dp)
+                            bottom.linkTo(parent.bottom, margin = 15.dp)
+                        }) {
+
+                        ExpandableFABSection(
+                            onClickEmergencyCall = { event(MappingUiEvent.ShowEmergencyCallDialog) },
+                            onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
+                            onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
+                            onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
+                            onClickBikeTracker = { event(MappingUiEvent.ShowSinoTrackWebView) },
+                            isFabExpanded = uiState.isFabExpanded,
+                            badgeCount = respondentCount
+                        )
+                    }
+
+
+                    val buttonVisible =
+                        isNavigating.not() && uiState.isFabExpanded.not() && bottomSheetScaffoldState.bottomSheetState.isCollapsed
+                    val requestHelpVisible = uiState.requestHelpButtonVisible && buttonVisible
+                    val respondToHelpVisible =
+                        uiState.requestHelpButtonVisible.not() && buttonVisible
+
+                    RequestHelpButton(
+                        modifier = Modifier.constrainAs(requestHelpButton) {
+                            bottom.linkTo(parent.bottom, margin = 15.dp)
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
-                            bottom.linkTo(parent.bottom)
-                            width = Dimension.matchParent
-                            height = Dimension.wrapContent
-                        })
-                }
+                        }, onClickRequestHelpButton = { event(MappingUiEvent.RequestHelp) },
+                        state = state,
+                        visible = requestHelpVisible
 
-                if (uiState.locationPermissionDialogVisible) {
-                    DialogForegroundLocationPermission(
-                        modifier = Modifier.constrainAs(
-                            dialog) {
+                    )
+
+                    RespondToHelpButton(
+                        modifier = Modifier.constrainAs(respondToHelpButton) {
+                            bottom.linkTo(parent.bottom, margin = 15.dp)
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                        },
+                        onClickRespondButton = { event(MappingUiEvent.RespondToHelp) },
+                        state = state,
+                        visible = respondToHelpVisible
+                    )
+
+                    if (state.isLoading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.constrainAs(
+                                circularProgressbar) {
+                                top.linkTo(parent.top)
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                this.centerTo(parent)
+                            })
+                    }
+
+
+                    if (uiState.isEmergencyCallDialogVisible) {
+                        EmergencyCallDialog(
+                            modifier = Modifier.constrainAs(dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                width = Dimension.matchParent
+                                height = Dimension.wrapContent
+                            },
+                            onDismiss = { event(MappingUiEvent.DismissEmergencyCallDialog) }
+                        )
+                    }
+
+                    if (uiState.isNoInternetVisible) {
+                        NoInternetDialog(
+                            onDismiss = { event(MappingUiEvent.DismissNoInternetDialog) },
+                            modifier = Modifier.constrainAs(dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                width = Dimension.matchParent
+                                height = Dimension.wrapContent
+                            })
+                    }
+
+                    if (uiState.locationPermissionDialogVisible) {
+                        DialogForegroundLocationPermission(
+                            modifier = Modifier.constrainAs(
+                                dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            }, onDismiss = { event(MappingUiEvent.DismissLocationPermission) }
+                        )
+                    }
+
+                    if (uiState.phonePermissionDialogVisible) {
+                        DialogPhonePermission(modifier = Modifier.constrainAs(dialog) {
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
                             bottom.linkTo(parent.bottom)
                             height = Dimension.wrapContent
                             centerTo(parent)
-                        }, onDismiss = { event(MappingUiEvent.DismissLocationPermission) }
-                    )
-                }
+                        }, onDismiss = { event(MappingUiEvent.DismissPhonePermission) })
+                    }
 
-                if (uiState.phonePermissionDialogVisible) {
-                    DialogPhonePermission(modifier = Modifier.constrainAs(dialog) {
-                        end.linkTo(parent.end)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                        height = Dimension.wrapContent
-                        centerTo(parent)
-                    }, onDismiss = { event(MappingUiEvent.DismissPhonePermission) })
-                }
+                    AnimatedVisibility(
+                        visible = isRescueCancelled && uiState.rescueRequestAccepted.not(),
+                        enter = fadeIn(),
+                        exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
 
-                AnimatedVisibility(
-                    visible = isRescueCancelled && uiState.rescueRequestAccepted.not(),
-                    enter = fadeIn(),
-                    exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
+                        val rescueTransaction = state.rescueTransaction
+                        val cancellation = rescueTransaction?.cancellation
+                        val cancellationReason =
+                            cancellation?.cancellationReason ?: return@AnimatedVisibility
 
-                    val rescueTransaction = state.rescueTransaction
-                    val cancellation = rescueTransaction?.cancellation
-                    val cancellationReason =
-                        cancellation?.cancellationReason ?: return@AnimatedVisibility
+                        RescueRequestCancelled(
+                            modifier = Modifier.fillMaxSize(),
+                            onClickOkButton = { event(MappingUiEvent.CancelledRescueConfirmed) },
+                            cancelledRescueModel = CancelledRescueModel(
+                                transactionID = rescueTransaction.id,
+                                rescueCancelledBy = cancellation.nameCancelledBy,
+                                reason = cancellationReason.reason,
+                                message = cancellationReason.message
+                            ))
+                    }
 
-                    RescueRequestCancelled(
-                        modifier = Modifier.fillMaxSize(),
-                        onClickOkButton = { event(MappingUiEvent.CancelledRescueConfirmed) },
-                        cancelledRescueModel = CancelledRescueModel(
-                            transactionID = rescueTransaction.id,
-                            rescueCancelledBy = cancellation.nameCancelledBy,
-                            reason = cancellationReason.reason,
-                            message = cancellationReason.message
-                        ))
-                }
-
-                AnimatedVisibility(
-                    visible = uiState.rescueRequestAccepted && isRescueCancelled.not(),
-                    enter = fadeIn(),
-                    exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
-                    RescueRequestAccepted(
-                        modifier = Modifier.fillMaxSize(),
-                        onClickOkButton = { event(MappingUiEvent.RescueRequestAccepted) },
-                        acceptedName = state.rescuee?.name ?: "Name placeholder",
-                    )
+                    AnimatedVisibility(
+                        visible = uiState.rescueRequestAccepted && isRescueCancelled.not(),
+                        enter = fadeIn(),
+                        exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
+                        RescueRequestAccepted(
+                            modifier = Modifier.fillMaxSize(),
+                            onClickOkButton = { event(MappingUiEvent.RescueRequestAccepted) },
+                            acceptedName = state.rescuee?.name ?: "Name placeholder",
+                        )
+                    }
                 }
             }
+
+
+            if (uiState.isSinoTrackWebViewVisible) {
+                SinoTrackWebView(onDismiss = { event(MappingUiEvent.DismissSinoTrackWebView) })
+            }
+
         }
     }
 }
