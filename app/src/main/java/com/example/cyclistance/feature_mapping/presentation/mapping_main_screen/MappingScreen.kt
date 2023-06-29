@@ -76,6 +76,7 @@ fun MappingScreen(
     onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
     navController: NavController) {
 
+
     val context = LocalContext.current
     val state by mappingViewModel.state.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
@@ -588,6 +589,22 @@ fun MappingScreen(
         }
     }
 
+    val onDismissSinoTrackWebView = remember {
+        {
+            uiState = uiState.copy(
+                isSinoTrackWebViewVisible = false
+            )
+        }
+    }
+
+    val onShowSinoTrackWebView = remember {
+        {
+            uiState = uiState.copy(
+                isSinoTrackWebViewVisible = true
+            )
+        }
+    }
+
 
     LaunchedEffect(key1 = true, key2 = state.userLocation) {
 
@@ -889,6 +906,9 @@ fun MappingScreen(
                 is MappingUiEvent.OnCollapseExpandableFAB -> onCollapseExpandableFAB()
                 is MappingUiEvent.OnMapLongClick -> onMapLongClick()
                 is MappingUiEvent.OnReportIncident -> onClickReportIncident()
+                is MappingUiEvent.DismissSinoTrackWebView -> onDismissSinoTrackWebView()
+                is MappingUiEvent.ShowSinoTrackWebView -> onShowSinoTrackWebView()
+
 
             }
         }

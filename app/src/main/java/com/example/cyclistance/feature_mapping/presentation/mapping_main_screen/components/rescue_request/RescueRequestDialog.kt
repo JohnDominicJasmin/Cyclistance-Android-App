@@ -23,6 +23,7 @@ fun RescueRequestDialog(
         properties = DialogProperties(
             usePlatformDefaultWidth = false,
             dismissOnClickOutside = false,
+            dismissOnBackPress = true
         )) {
 
         RescueRequestScreenContent(
