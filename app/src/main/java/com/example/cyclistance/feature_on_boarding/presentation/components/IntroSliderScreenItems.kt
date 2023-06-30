@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_intro_slider.presentation.components
+package com.example.cyclistance.feature_on_boarding.presentation.components
 
 import com.example.cyclistance.R
 

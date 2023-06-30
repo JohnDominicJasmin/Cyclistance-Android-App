@@ -24,7 +24,7 @@ import com.example.cyclistance.theme.White900
 fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 
     val inShowableScreens =
-        route != Screens.SettingScreen.route && route != Screens.IntroSliderScreen.route
+        route != Screens.Settings.ROUTE && route != Screens.OnBoarding.ROUTE
 
     AnimatedVisibility(
         visible = internetAvailable.not() && inShowableScreens,
@@ -52,7 +52,7 @@ fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 fun PreviewNoInternetStatusBarDark() {
     CyclistanceTheme(darkTheme = true) {
         Surface {
-            NoInternetStatusBar(internetAvailable = false, route = Screens.MappingScreen.route)
+            NoInternetStatusBar(internetAvailable = false, route = Screens.Mapping.ROUTE)
         }
     }
 }
@@ -62,7 +62,7 @@ fun PreviewNoInternetStatusBarDark() {
 fun PreviewNoInternetStatusBarLight() {
     CyclistanceTheme(darkTheme = false) {
         Surface {
-            NoInternetStatusBar(internetAvailable = false, route = Screens.MappingScreen.route)
+            NoInternetStatusBar(internetAvailable = false, route = Screens.Mapping.ROUTE)
         }
     }
 }

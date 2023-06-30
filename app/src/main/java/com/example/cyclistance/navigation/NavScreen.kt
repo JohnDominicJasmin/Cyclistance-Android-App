@@ -40,6 +40,8 @@ import com.example.cyclistance.feature_settings.presentation.setting_screen.Sett
 import com.example.cyclistance.feature_settings.presentation.setting_screen.event.SettingUiEvent
 import com.example.cyclistance.navigation.components.NoInternetStatusBar
 import com.example.cyclistance.navigation.components.TopAppBar
+import com.example.cyclistance.navigation.nav_graph.NavGraph
+import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import com.example.cyclistance.navigation.state.NavUiState
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -135,7 +137,7 @@ fun NavScreen(
 
                 is SettingUiEvent.SignOutSuccess -> {
                     navController.popBackStack()
-                    navController.navigate(Screens.SignInScreen.route)
+                    navController.navigate(Screens.Authentication.ROUTE)
                 }
 
                 is SettingUiEvent.SignOutFailed -> {
@@ -158,7 +160,7 @@ fun NavScreen(
         {
             closeDrawer()
             navController.navigate(
-                Screens.SettingScreen.route)
+                Screens.Settings.ROUTE)
         }
     }
 
@@ -166,7 +168,7 @@ fun NavScreen(
     val onClickChat = remember {
         {
             closeDrawer()
-            navController.navigateScreen(Screens.MessagingScreen.route)
+            navController.navigateScreen(Screens.Messaging.ROUTE)
         }
     }
 
@@ -180,7 +182,7 @@ fun NavScreen(
     val onClickEmergencyCall = remember {
         {
             closeDrawer()
-            navController.navigateScreen(Screens.EmergencyCallScreen.route)
+            navController.navigateScreen(Screens.EmergencyCall.ROUTE)
         }
     }
 

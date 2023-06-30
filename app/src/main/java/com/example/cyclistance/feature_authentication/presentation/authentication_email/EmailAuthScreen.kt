@@ -25,7 +25,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthUiState
 import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.navigation.navigateScreenInclusively
+import com.example.cyclistance.navigation.nav_graph.navigateScreenInclusively
 import kotlinx.coroutines.flow.collectLatest
 import timber.log.Timber
 
@@ -102,8 +102,8 @@ fun EmailAuthScreen(
             when (event) {
                 is EmailAuthEvent.EmailVerificationSuccess -> {
                     navController.navigateScreenInclusively(
-                        Screens.MappingScreen.route,
-                        Screens.EmailAuthScreen.route)
+                        Screens.Mapping.ROUTE,
+                        Screens.Authentication.ROUTE)
                 }
 
                 is EmailAuthEvent.ReloadEmailFailed -> {

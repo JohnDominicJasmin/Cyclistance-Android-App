@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.NavConstants.NAV_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_intro_slider.domain.use_case.IntroSliderUseCase
+import com.example.cyclistance.feature_on_boarding.domain.use_case.IntroSliderUseCase
 import com.example.cyclistance.navigation.state.NavState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -40,16 +40,16 @@ class NavViewModel @Inject constructor(
                 introSliderUseCase.readIntroSliderUseCase().collect { userCompletedWalkThrough ->
 
                     if (!userCompletedWalkThrough) {
-                        _state.update { it.copy(navigationStartingDestination = Screens.IntroSliderScreen.route) }
+                        _state.update { it.copy(navigationStartingDestination = Screens.OnBoarding.ROUTE) }
                         return@collect
                     }
 
                     if (isUserSignedIn()) {
-                        _state.update { it.copy(navigationStartingDestination = Screens.MappingScreen.route) }
+                        _state.update { it.copy(navigationStartingDestination = Screens.Mapping.ROUTE) }
                         return@collect
                     }
 
-                    _state.update { it.copy(navigationStartingDestination = Screens.SignInScreen.route) }
+                    _state.update { it.copy(navigationStartingDestination = Screens.Authentication.ROUTE) }
                 }
 
             }.onFailure {

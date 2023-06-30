@@ -28,7 +28,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_deta
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsUiState
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.navigation.navigateScreen
+import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
@@ -59,7 +59,7 @@ fun ConfirmDetailsScreen(
         viewModel.eventFlow.distinctUntilChanged().collect { event ->
             when (event) {
                 is ConfirmDetailsEvent.ConfirmDetailsSuccess -> {
-                    navController.navigateScreen(Screens.MappingScreen.route)
+                    navController.navigateScreen(Screens.Mapping.MappingScreen.screenRoute)
                 }
 
                 is ConfirmDetailsEvent.UserError -> {
@@ -135,7 +135,7 @@ fun ConfirmDetailsScreen(
 
     val onClickCancelButton = remember {
         {
-            navController.navigateScreen(Screens.MappingScreen.route)
+            navController.navigateScreen(Screens.Mapping.MappingScreen.screenRoute)
         }
     }
 

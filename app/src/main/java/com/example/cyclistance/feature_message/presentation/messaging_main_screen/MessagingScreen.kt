@@ -18,7 +18,7 @@ fun MessagingScreen(navController: NavController, paddingValues: PaddingValues) 
         event = {
             when (it) {
                 is MessageUiEvent.OnMessageClicked -> {
-                    navController.navigate(Screens.MessagingConversationScreen.route)
+                    navController.navigate(Screens.Messaging.ConversationScreen.screenRoute)
                 }
             }
         },

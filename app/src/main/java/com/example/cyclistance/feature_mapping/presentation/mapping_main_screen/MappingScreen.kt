@@ -44,7 +44,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.changeToNormalPuckIcon
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.openNavigationApp
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.navigation.navigateScreen
+import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
@@ -367,7 +367,7 @@ fun MappingScreen(
             val selectionType = if (isRescuee) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
             val clientId = state.rescuer?.id ?: state.rescuee?.id
 
-            navController.navigateScreen(destination = "${Screens.CancellationScreen.route}/$selectionType/$transactionId/$clientId")
+            navController.navigateScreen(destination = "${Screens.Mapping.CancellationScreen.screenRoute}/$selectionType/$transactionId/$clientId")
 
         }
     }
@@ -614,12 +614,12 @@ fun MappingScreen(
 
                 is MappingEvent.RequestHelpSuccess -> {
                     navController.navigateScreen(
-                        Screens.ConfirmDetailsScreen.route + "?$LATITUDE=${state.userLocation?.latitude}&$LONGITUDE=${state.userLocation?.longitude}")
+                        Screens.Mapping.ConfirmDetailsScreen.screenRoute + "?$LATITUDE=${state.userLocation?.latitude}&$LONGITUDE=${state.userLocation?.longitude}")
                 }
 
                 is MappingEvent.InsufficientUserCredential -> {
                     navController.navigateScreen(
-                        Screens.EditProfileScreen.route)
+                        Screens.Settings.EditProfileScreen.screenRoute)
                 }
 
                 is MappingEvent.LocationNotAvailable -> {
