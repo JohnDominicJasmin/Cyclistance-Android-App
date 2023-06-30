@@ -129,6 +129,7 @@ class EmailAuthViewModel @Inject constructor(
                 }
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
+                job?.cancel()
                 when (exception) {
                     is AuthExceptions.NetworkException -> {
                         _eventFlow.emit(value = EmailAuthEvent.NoInternetConnection)

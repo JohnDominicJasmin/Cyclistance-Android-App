@@ -30,7 +30,7 @@ object AuthenticationModule {
     fun provideFirebaseAuth(): FirebaseAuth {
         return FirebaseAuth.getInstance().apply {
             if (BuildConfig.DEBUG) {
-                useEmulator("192.168.18.21", 9099)
+//                useEmulator("192.168.18.21", 9099)
             }
         }
     }
