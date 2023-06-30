@@ -1,8 +1,8 @@
-package com.example.cyclistance.feature_intro_slider.presentation
+package com.example.cyclistance.feature_on_boarding.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.feature_intro_slider.domain.use_case.IntroSliderUseCase
+import com.example.cyclistance.feature_on_boarding.domain.use_case.IntroSliderUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.launch

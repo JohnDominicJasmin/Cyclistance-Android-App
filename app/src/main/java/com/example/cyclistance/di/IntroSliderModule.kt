@@ -1,11 +1,11 @@
 package com.example.cyclistance.di
 
 import android.content.Context
-import com.example.cyclistance.feature_intro_slider.data.repository.IntroSliderRepositoryImpl
-import com.example.cyclistance.feature_intro_slider.domain.repository.IntroSliderRepository
-import com.example.cyclistance.feature_intro_slider.domain.use_case.IntroSliderUseCase
-import com.example.cyclistance.feature_intro_slider.domain.use_case.completed_intro_slider.CompletedIntroSliderUseCase
-import com.example.cyclistance.feature_intro_slider.domain.use_case.read_intro_slider.UserCompletedWalkThroughUseCase
+import com.example.cyclistance.feature_on_boarding.data.repository.IntroSliderRepositoryImpl
+import com.example.cyclistance.feature_on_boarding.domain.repository.IntroSliderRepository
+import com.example.cyclistance.feature_on_boarding.domain.use_case.IntroSliderUseCase
+import com.example.cyclistance.feature_on_boarding.domain.use_case.completed_intro_slider.CompletedIntroSliderUseCase
+import com.example.cyclistance.feature_on_boarding.domain.use_case.read_intro_slider.UserCompletedWalkThroughUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
