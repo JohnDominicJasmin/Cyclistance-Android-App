@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -164,7 +165,8 @@ private fun SetupTextField(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp), clip = true)
-                .focusRequester(focusRequester),
+                .focusRequester(focusRequester)
+                .clearAndSetSemantics { },
             value = textFieldValue,
             onValueChange = onValueChange,
             singleLine = true,
