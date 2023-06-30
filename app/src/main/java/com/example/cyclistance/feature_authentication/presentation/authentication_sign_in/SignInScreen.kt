@@ -37,8 +37,8 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInUiState
 import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.navigation.navigateScreen
-import com.example.cyclistance.navigation.navigateScreenInclusively
+import com.example.cyclistance.navigation.nav_graph.navigateScreen
+import com.example.cyclistance.navigation.nav_graph.navigateScreenInclusively
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.common.api.ApiException
 import kotlinx.coroutines.flow.collectLatest
@@ -100,8 +100,8 @@ fun SignInScreen(
 
                 is SignInEvent.SignInSuccess -> {
                     navController.navigateScreenInclusively(
-                        Screens.MappingScreen.route,
-                        Screens.SignInScreen.route)
+                        Screens.Mapping.ROUTE,
+                        Screens.Authentication.ROUTE)
                 }
 
                 is SignInEvent.SignInFailed -> {
@@ -164,8 +164,9 @@ fun SignInScreen(
             when (emailAuthEvent) {
                 is EmailAuthEvent.EmailVerificationSuccess -> {
                     navController.navigateScreenInclusively(
-                        Screens.MappingScreen.route,
-                        Screens.SignInScreen.route)
+                        Screens.Mapping.ROUTE,
+                        Screens.Authentication.ROUTE
+                    )
                 }
 
                 is EmailAuthEvent.ReloadEmailFailed -> {
@@ -178,8 +179,8 @@ fun SignInScreen(
 
                 is EmailAuthEvent.EmailVerificationFailed -> {
                     navController.navigateScreenInclusively(
-                        Screens.EmailAuthScreen.route,
-                        Screens.SignInScreen.route)
+                        Screens.Authentication.EmailAuthScreen.screenRoute,
+                        Screens.Authentication.SignInScreen.screenRoute)
                 }
 
                 is EmailAuthEvent.EmailVerificationSent -> {
@@ -278,7 +279,7 @@ fun SignInScreen(
 
     val onClickSignInText = remember {
         {
-            navController.navigateScreen(Screens.SignUpScreen.route)
+            navController.navigateScreen(Screens.Authentication.SignUpScreen.screenRoute)
         }
     }
 

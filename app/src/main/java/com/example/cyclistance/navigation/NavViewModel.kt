@@ -40,16 +40,16 @@ class NavViewModel @Inject constructor(
                 introSliderUseCase.readIntroSliderUseCase().collect { userCompletedWalkThrough ->
 
                     if (!userCompletedWalkThrough) {
-                        _state.update { it.copy(navigationStartingDestination = Screens.IntroSliderScreen.route) }
+                        _state.update { it.copy(navigationStartingDestination = Screens.OnBoarding.ROUTE) }
                         return@collect
                     }
 
                     if (isUserSignedIn()) {
-                        _state.update { it.copy(navigationStartingDestination = Screens.MappingScreen.route) }
+                        _state.update { it.copy(navigationStartingDestination = Screens.Mapping.ROUTE) }
                         return@collect
                     }
 
-                    _state.update { it.copy(navigationStartingDestination = Screens.SignInScreen.route) }
+                    _state.update { it.copy(navigationStartingDestination = Screens.Authentication.ROUTE) }
                 }
 
             }.onFailure {

@@ -1,15 +1,15 @@
 @file:OptIn(ExperimentalPagerApi::class)
 
-package com.example.cyclistance.feature_intro_slider.presentation
+package com.example.cyclistance.feature_on_boarding.presentation
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_intro_slider.presentation.components.IntroSliderContent
+import com.example.cyclistance.feature_on_boarding.presentation.components.IntroSliderContent
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.navigation.navigateScreenInclusively
+import com.example.cyclistance.navigation.nav_graph.navigateScreenInclusively
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
@@ -30,8 +30,8 @@ fun IntroSliderScreen(
     val onClickSkipButton = remember {{
             introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
             navController.navigateScreenInclusively(
-                Screens.SignInScreen.route,
-                Screens.IntroSliderScreen.route)
+                Screens.Authentication.ROUTE,
+                Screens.OnBoarding.ROUTE)
         }
     }
 
@@ -41,8 +41,8 @@ fun IntroSliderScreen(
             if (isOnLastPage) {
                 introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
                 navController.navigateScreenInclusively(
-                    Screens.SignInScreen.route,
-                    Screens.IntroSliderScreen.route)
+                    Screens.Authentication.ROUTE,
+                    Screens.OnBoarding.ROUTE)
             } else {
                 scope.launch {
                     pagerState.animateScrollToPage(
@@ -50,7 +50,6 @@ fun IntroSliderScreen(
                     )
                 }
             }
-            Unit
         }
     }
 

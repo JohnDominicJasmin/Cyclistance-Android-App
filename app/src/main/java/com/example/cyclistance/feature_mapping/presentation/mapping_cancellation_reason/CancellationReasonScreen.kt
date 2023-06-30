@@ -24,7 +24,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.event.CancellationReasonVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.state.CancellationReasonUiState
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.navigation.navigateScreen
+import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import kotlinx.coroutines.flow.collectLatest
 
 
@@ -43,7 +43,7 @@ fun CancellationReasonScreen(
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is CancellationReasonEvent.ConfirmCancellationReasonSuccess -> {
-                    navController.navigateScreen(Screens.MappingScreen.route)
+                    navController.navigateScreen(Screens.Mapping.MappingScreen.screenRoute)
                 }
 
                 is CancellationReasonEvent.UnexpectedError -> {
@@ -92,7 +92,7 @@ fun CancellationReasonScreen(
     }
     val onClickCancelButton = remember {
         {
-            navController.navigateScreen(Screens.MappingScreen.route)
+            navController.navigateScreen(Screens.Mapping.MappingScreen.screenRoute)
         }
     }
     val onSelectReason = remember {

@@ -45,7 +45,7 @@ fun EmergencyCallScreen(navController: NavController, paddingValues: PaddingValu
             when (event) {
                 is EmergencyCallUiEvent.OnClickContact -> {}
                 is EmergencyCallUiEvent.OnClickAddContact -> {
-                    navController.navigate(Screens.EmergencyAddNewContact.route)
+                    navController.navigate(Screens.EmergencyCall.AddNewContact.screenRoute)
                 }
 
                 is EmergencyCallUiEvent.OnClickCancel -> {

@@ -25,7 +25,7 @@ fun TopAppBar(
     route: String?) {
 
     when (route) {
-        Screens.MappingScreen.route -> {
+        Screens.Mapping.MappingScreen.screenRoute -> {
             AnimatedVisibility(
                 visible = isNavigating.not(),
                 enter = fadeIn(initialAlpha = 0.4f),
@@ -35,7 +35,7 @@ fun TopAppBar(
             }
         }
 
-        "${Screens.CancellationScreen.route}/{${NavigationConstants.CANCELLATION_TYPE}}/{${NavigationConstants.TRANSACTION_ID}}/{${NavigationConstants.CLIENT_ID}}" -> {
+        "${Screens.Mapping.CancellationScreen.screenRoute}/{${NavigationConstants.CANCELLATION_TYPE}}/{${NavigationConstants.TRANSACTION_ID}}/{${NavigationConstants.CLIENT_ID}}" -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -44,7 +44,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.ConfirmDetailsScreen.route + "?${NavigationConstants.LATITUDE}={${NavigationConstants.LATITUDE}}&${NavigationConstants.LONGITUDE}={${NavigationConstants.LONGITUDE}}" -> {
+        Screens.Mapping.ConfirmDetailsScreen.screenRoute + "?${NavigationConstants.LATITUDE}={${NavigationConstants.LATITUDE}}&${NavigationConstants.LONGITUDE}={${NavigationConstants.LONGITUDE}}" -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -55,7 +55,7 @@ fun TopAppBar(
         }
 
 
-        Screens.ChangePasswordScreen.route -> {
+        Screens.Settings.ChangePasswordScreen.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -64,7 +64,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.EditProfileScreen.route -> {
+        Screens.Settings.EditProfileScreen.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -73,7 +73,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.SettingScreen.route -> {
+        Screens.Settings.SettingScreen.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -82,7 +82,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.EmergencyCallScreen.route -> {
+        Screens.EmergencyCall.EmergencyCallScreen.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -91,7 +91,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.MessagingScreen.route -> {
+        Screens.Messaging.MessagingScreen.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -111,7 +111,7 @@ fun PreviewTopAppBarDark() {
     CyclistanceTheme(true) {
         Surface(color = MaterialTheme.colors.background) {
             TopAppBar(
-                route = Screens.EditProfileScreen.route,
+                route = Screens.Settings.EditProfileScreen.screenRoute,
                 isNavigating = false)
         }
     }
@@ -124,7 +124,7 @@ fun PreviewTopAppBarLight() {
     CyclistanceTheme(false) {
         Surface(color = MaterialTheme.colors.background) {
             TopAppBar(
-                route = Screens.EditProfileScreen.route,
+                route = Screens.Settings.EditProfileScreen.screenRoute,
                 isNavigating = false)
         }
     }

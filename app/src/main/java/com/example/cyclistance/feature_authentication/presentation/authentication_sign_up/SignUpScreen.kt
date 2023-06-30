@@ -24,7 +24,7 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state.SignUpUiState
 import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.navigation.navigateScreenInclusively
+import com.example.cyclistance.navigation.nav_graph.navigateScreenInclusively
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -107,8 +107,8 @@ fun SignUpScreen(
     val onClickSignUpText = remember {
         {
             navController.navigateScreenInclusively(
-                Screens.SignInScreen.route,
-                Screens.SignUpScreen.route)
+                Screens.Authentication.SignInScreen.screenRoute,
+                Screens.Authentication.SignUpScreen.screenRoute)
         }
     }
     val onDismissNoInternetDialog = remember {
@@ -126,8 +126,8 @@ fun SignUpScreen(
             when (event) {
                 is SignUpEvent.SignUpSuccess -> {
                     navController.navigateScreenInclusively(
-                        Screens.EmailAuthScreen.route,
-                        Screens.SignUpScreen.route)
+                        Screens.Authentication.EmailAuthScreen.screenRoute,
+                        Screens.Authentication.SignUpScreen.screenRoute)
 
                 }
 
