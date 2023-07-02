@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.sino_track
 
 import android.view.ViewGroup
 import android.webkit.WebView
