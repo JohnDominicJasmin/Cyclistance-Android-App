@@ -48,6 +48,7 @@ fun MessagingScreenContent(
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
         if (messageAvailable) {
+
             Box(contentAlignment = Alignment.TopCenter, modifier = Modifier.fillMaxWidth()) {
                 Column(
                     modifier = Modifier
@@ -91,8 +92,7 @@ fun MessagingScreenContent(
                     modifier = Modifier.fillMaxWidth(0.7f),
                     textAlign = TextAlign.Center, lineHeight = TextUnit(20f, TextUnitType.Sp))
 
-
-                AddMessageButton(onClick = {})
+                AddMessageButton(onClick = {}, modifier = Modifier.align(Alignment.BottomEnd))
 
             }
         }
@@ -108,8 +108,7 @@ private fun BoxScope.AddMessageButton(modifier: Modifier = Modifier, onClick: ()
         color = MaterialTheme.colors.primary,
         contentColor = MaterialTheme.colors.background,
         modifier = modifier
-            .padding(all = 12.dp)
-            .align(Alignment.BottomEnd),
+            .padding(all = 12.dp),
         shape = CircleShape,
         onClick = onClick) {
 
@@ -119,7 +118,6 @@ private fun BoxScope.AddMessageButton(modifier: Modifier = Modifier, onClick: ()
             modifier = Modifier
                 .padding(12.dp)
                 .size(28.dp),
-
             )
     }
 }
