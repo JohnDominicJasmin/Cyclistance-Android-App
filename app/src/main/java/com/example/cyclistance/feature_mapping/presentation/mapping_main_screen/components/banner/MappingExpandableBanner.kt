@@ -91,10 +91,9 @@ fun MappingExpandableBanner(
 
                 val (roundedImage, nameText, issueText, distanceAndTime, expandedSection) = createRefs()
 
-
-                AsyncImage(model = banner.userProfileImage,
+                AsyncImage(
+                    model = banner.userProfileImage,
                     contentDescription = "User Picture",
-                    contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .padding(top = 4.dp)
                         .size(60.dp)
@@ -102,7 +101,11 @@ fun MappingExpandableBanner(
                         .constrainAs(roundedImage) {
                             top.linkTo(parent.top)
                             start.linkTo(parent.start)
-                        })
+                        },
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
+                    error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
+                    fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
 
 
                 Text(

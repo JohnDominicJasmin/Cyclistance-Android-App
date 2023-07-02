@@ -61,4 +61,13 @@ sealed class Screens {
     }
 
 
+    open class RideHistory(val screenRoute: String = "") : Screens() {
+        companion object {
+            const val ROUTE = "ride_history"
+        }
+
+        object RideHistoryScreen : RideHistory(screenRoute = "ride_history_screen")
+        object RideHistoryDetailsScreen : RideHistory(screenRoute = "ride_history_details_screen")
+    }
+
 }

@@ -72,6 +72,10 @@ fun NavGraph(
             onToggleTheme = onToggleTheme
         )
 
+        rideHistoryGraph(
+            navController = navController,
+            paddingValues = paddingValues
+        )
 
     }
 }

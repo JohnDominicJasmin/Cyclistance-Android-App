@@ -8,14 +8,15 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.cyclistance.core.utils.constants.NavigationConstants
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.topAppBar.DefaultTopBar
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.topAppBar.TitleTopAppBar
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.topAppBar.TopAppBarCreator
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.CyclistanceTheme
+import com.example.cyclistance.top_bars.DefaultTopBar
+import com.example.cyclistance.top_bars.TitleTopAppBar
+import com.example.cyclistance.top_bars.TopAppBarCreator
 
 @Composable
 fun TopAppBar(
@@ -99,6 +100,25 @@ fun TopAppBar(
                     TitleTopAppBar(title = "Chats")
                 })
         }
+
+        Screens.RideHistory.RideHistoryScreen.screenRoute -> {
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Ride History")
+                })
+        }
+
+        Screens.RideHistory.RideHistoryDetailsScreen.screenRoute -> {
+            TopAppBarCreator(
+                icon = Icons.Default.Close,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Rescue Details")
+                })
+        }
+
 
     }
 

@@ -34,7 +34,6 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.zIndex
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 
 @Composable
@@ -77,7 +76,7 @@ fun DialogAnimatedIconCreator(
 
 
                 if (iconResourceType == "raw") {
-                    AnimatedRawResIcon(modifier = iconModifier, icon)
+                    AnimatedRawResIcon(modifier = iconModifier, icon, iterations = 1)
                 } else {
                     AnimatedDrawableResIcon(modifier = iconModifier, icon)
                 }
@@ -123,13 +122,16 @@ private fun AnimatedDrawableResIcon(modifier: Modifier, @DrawableRes resId: Int)
 }
 
 @Composable
-private fun AnimatedRawResIcon(modifier: Modifier, @RawRes resId: Int) {
+fun AnimatedRawResIcon(modifier: Modifier, @RawRes resId: Int, iterations: Int = Int.MAX_VALUE) {
 
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(resId))
-    val progress by animateLottieCompositionAsState(composition)
+
     LottieAnimation(
         composition,
-        progress,
         modifier = modifier,
-    )
+        restartOnPlay = true,
+        iterations = iterations,
+
+
+        )
 }

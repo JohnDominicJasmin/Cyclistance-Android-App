@@ -60,21 +60,52 @@ object FormatterUtils {
 
     // TODO: test this code
     fun String.getMapIconImageDescription(context: Context): Drawable? {
-      this.getMapIconImage()?.let { image ->
-          return AppCompatResources.getDrawable(context, image)
-      }
+        this.getMapIconImage().let { image ->
+            return AppCompatResources.getDrawable(context, image)
+        }
         return null
     }
 
+    fun String.bikeDescriptionToIcon(): Int {
+        return when (this) {
+            MappingConstants.INJURY_TEXT -> {
+                R.drawable.ic_injury
+            }
 
-    fun String.getMapIconImage():Int?{
-        return when(this){
+            MappingConstants.BROKEN_FRAME_TEXT -> {
+                R.drawable.ic_broken_frame
+            }
+
+            MappingConstants.INCIDENT_TEXT -> {
+                R.drawable.ic_injury
+            }
+
+            MappingConstants.BROKEN_CHAIN_TEXT -> {
+                R.drawable.ic_broken_chain
+            }
+
+            MappingConstants.FLAT_TIRES_TEXT -> {
+                R.drawable.ic_flat_tire
+            }
+
+            MappingConstants.FAULTY_BRAKES_TEXT -> {
+                R.drawable.ic_faulty_brakes
+            }
+
+            else -> throw RuntimeException("No icon found for $this")
+        }
+    }
+
+    fun String.getMapIconImage(): Int {
+        return when (this) {
             MappingConstants.INJURY_TEXT -> {
                 R.drawable.ic_injury_em
             }
+
             MappingConstants.BROKEN_FRAME_TEXT -> {
                 R.drawable.ic_broken_frame_em
             }
+
             MappingConstants.INCIDENT_TEXT -> {
                 R.drawable.ic_incident_em
             }
@@ -88,7 +119,7 @@ object FormatterUtils {
                 R.drawable.ic_faulty_brakes_em
             }
 
-            else -> null
+            else -> throw RuntimeException("No icon found for $this")
         }
     }
 }

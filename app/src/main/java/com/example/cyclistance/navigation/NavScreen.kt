@@ -186,6 +186,13 @@ fun NavScreen(
         }
     }
 
+    val onClickRideHistory = remember {
+        {
+            closeDrawer()
+            navController.navigateScreen(Screens.RideHistory.ROUTE)
+        }
+    }
+
     val onToggleTheme = remember {
         {
             settingViewModel.onEvent(event = SettingEvent.ToggleTheme)
@@ -243,7 +250,7 @@ fun NavScreen(
                             onClickChat = onClickChat,
                             onClickSignOut = onClickSignOut,
                             onClickEmergencyCall = onClickEmergencyCall,
-                            onClickRideHistory = {},
+                            onClickRideHistory = onClickRideHistory,
                             uiState = navUiState
                         )
                     },
