@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_request
+package com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,12 +30,12 @@ import com.example.cyclistance.feature_dialogs.presentation.alert_dialog.AlertDi
 import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.topAppBar.TitleTopAppBar
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.topAppBar.TopAppBarCreator
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.example.cyclistance.theme.CyclistanceTheme
+import com.example.cyclistance.top_bars.TitleTopAppBar
+import com.example.cyclistance.top_bars.TopAppBarCreator
 
 @Composable
 fun RescueRequestScreenContent(

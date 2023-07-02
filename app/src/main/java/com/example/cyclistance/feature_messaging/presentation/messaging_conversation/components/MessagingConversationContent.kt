@@ -51,8 +51,6 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
 import com.example.cyclistance.core.utils.composable_utils.keyboardAsState
 import com.example.cyclistance.core.utils.composable_utils.noRippleClickable
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.topAppBar.TitleTopAppBar
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.topAppBar.TopAppBarCreator
 import com.example.cyclistance.feature_messaging.domain.model.ui.Duration
 import com.example.cyclistance.feature_messaging.domain.model.ui.MessageContent
 import com.example.cyclistance.feature_messaging.domain.model.ui.MessageConversation
@@ -62,6 +60,8 @@ import com.example.cyclistance.feature_messaging.presentation.messaging_conversa
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
+import com.example.cyclistance.top_bars.TitleTopAppBar
+import com.example.cyclistance.top_bars.TopAppBarCreator
 import kotlinx.coroutines.launch
 
 private val USER_ID = "1"

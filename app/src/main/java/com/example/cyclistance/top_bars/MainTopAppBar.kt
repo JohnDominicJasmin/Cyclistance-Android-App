@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.topAppBar
+package com.example.cyclistance.top_bars
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
