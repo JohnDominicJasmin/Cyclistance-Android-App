@@ -24,7 +24,7 @@ import com.example.cyclistance.theme.White900
 fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 
     val inShowableScreens =
-        route != Screens.Settings.ROUTE && route != Screens.OnBoarding.ROUTE
+        route != Screens.Settings.ROUTE && route != Screens.OnBoarding.ROUTE && route != Screens.RideHistory.ROUTE
 
     AnimatedVisibility(
         visible = internetAvailable.not() && inShowableScreens,
