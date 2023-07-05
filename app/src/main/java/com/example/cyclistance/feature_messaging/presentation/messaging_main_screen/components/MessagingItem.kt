@@ -77,7 +77,7 @@ fun MessagingItem(
                 contentAlignment = Alignment.CenterStart) {
 
                 AsyncImage(
-                    model = messageItemModel.userImage,
+                    model = messageItemModel.userPhotoUrl,
                     contentDescription = "User Profile Image",
                     modifier = Modifier
                         .clip(CircleShape)
@@ -181,7 +181,7 @@ fun PreviewMessagingItemDark() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 messageItemModel = MessageItemModel(
-                    userImage = MappingConstants.IMAGE_PLACEHOLDER_URL,
+                    userPhotoUrl = MappingConstants.IMAGE_PLACEHOLDER_URL,
                     name = "John Doe",
                     message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                               "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
@@ -214,7 +214,7 @@ fun PreviewMessagingItemLight() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 messageItemModel = MessageItemModel(
-                    userImage = MappingConstants.IMAGE_PLACEHOLDER_URL,
+                    userPhotoUrl = MappingConstants.IMAGE_PLACEHOLDER_URL,
                     name = "John Doe",
                     message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                               "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
