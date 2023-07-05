@@ -23,7 +23,7 @@ fun RateRescuer(modifier: Modifier = Modifier, onValueChange: (Float) -> Unit, r
 
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterVertically),
+        verticalArrangement = Arrangement.spacedBy(12.dp, alignment = Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally) {
 
         Text(
@@ -38,6 +38,7 @@ fun RateRescuer(modifier: Modifier = Modifier, onValueChange: (Float) -> Unit, r
             ),
             onValueChange = onValueChange,
             onRatingChanged = {},
+            size = 38.dp
 
             )
     }

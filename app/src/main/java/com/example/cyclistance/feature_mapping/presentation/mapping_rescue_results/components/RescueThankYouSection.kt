@@ -31,13 +31,16 @@ fun RescueThankYouSection(modifier: Modifier = Modifier) {
         Image(
             painter = painterResource(id = if (isDarkTheme) R.drawable.ic_baloon_heart_dark else R.drawable.ic_baloon_heart_light),
             contentDescription = "Thank you",
-            modifier = Modifier.padding(vertical = 8.dp)
+            modifier = Modifier
+                .padding(all = 12.dp)
+                .weight(0.25f, fill = false)
         )
 
         Text(
             text = "Thank you!",
             color = MaterialTheme.colors.onBackground,
-            style = MaterialTheme.typography.h5
+            style = MaterialTheme.typography.h5,
+            modifier = Modifier.weight(0.2f, fill = false)
         )
 
         Text(
@@ -47,7 +50,8 @@ fun RescueThankYouSection(modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(all = 8.dp)
-                .fillMaxWidth(0.75f))
+                .fillMaxWidth(0.75f)
+                .weight(0.2f, fill = false))
     }
 }
 

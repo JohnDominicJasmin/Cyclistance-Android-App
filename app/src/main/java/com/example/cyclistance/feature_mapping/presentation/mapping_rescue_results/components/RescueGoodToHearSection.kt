@@ -31,15 +31,16 @@ fun RescueGoodToHearSection(modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.spacedBy(12.dp, alignment = Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally) {
 
-        Text(
-            text = "That’s good to hear!",
-            color = MaterialTheme.colors.onBackground,
-            style = MaterialTheme.typography.body2
-        )
-
         Image(
             painter = painterResource(id = if (isDarkTheme) R.drawable.ic_high_five_dark else R.drawable.ic_high_five_light),
             contentDescription = "Good to hear")
+
+
+        Text(
+            text = "That’s good to hear!",
+            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.h6
+        )
     }
 }
 

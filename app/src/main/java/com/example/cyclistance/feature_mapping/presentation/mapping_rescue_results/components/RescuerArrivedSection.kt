@@ -33,7 +33,6 @@ fun RescueArrivedSection(modifier: Modifier = Modifier) {
         Image(
             painter = painterResource(id = if (isDarkTheme) R.drawable.ic_cape_dark else R.drawable.ic_cape_light),
             contentDescription = "Rescuer Arrived",
-            modifier = Modifier.weight(0.8f)
         )
 
         Text(
