@@ -151,7 +151,7 @@ private fun MessagesSection(
 val fakeMessages = MessagesModel(
     listOf(
         MessageItemModel(
-            userImage = "https://www.liquidsandsolids.com/wp-content/uploads/2022/09/talking-to-a-dead-person.jpg",
+            userPhotoUrl = "https://www.liquidsandsolids.com/wp-content/uploads/2022/09/talking-to-a-dead-person.jpg",
             name = "John Doe",
             message = "Hey there! How are you?",
             timeStamp = "12:00",
@@ -160,7 +160,7 @@ val fakeMessages = MessagesModel(
             messageId = "1"
         ),
         MessageItemModel(
-            userImage = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
+            userPhotoUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
             name = "Jane Doe",
             message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
@@ -172,7 +172,7 @@ val fakeMessages = MessagesModel(
             messageId = "2"
         ),
         MessageItemModel(
-            userImage = "https://www.diethelmtravel.com/wp-content/uploads/2016/04/bill-gates-wealthiest-person.jpg",
+            userPhotoUrl = "https://www.diethelmtravel.com/wp-content/uploads/2016/04/bill-gates-wealthiest-person.jpg",
             name = "Jennifer",
             message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
@@ -184,7 +184,7 @@ val fakeMessages = MessagesModel(
             messageId = "3"
         ),
         MessageItemModel(
-            userImage = "https://www.harleytherapy.co.uk/counselling/wp-content/uploads/16297800391_5c6e812832.jpg",
+            userPhotoUrl = "https://www.harleytherapy.co.uk/counselling/wp-content/uploads/16297800391_5c6e812832.jpg",
             name = "John Doe",
             message = "Hello",
             timeStamp = "12:00",
@@ -193,7 +193,7 @@ val fakeMessages = MessagesModel(
             messageId = "4"
         ),
         MessageItemModel(
-            userImage = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREz8aDOvFn1m2fCQ020dcrr-RCxey0NyF_XG6JOG1HzYoQRdBwB8U3fQJKEwG7t6Yr72Q",
+            userPhotoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREz8aDOvFn1m2fCQ020dcrr-RCxey0NyF_XG6JOG1HzYoQRdBwB8U3fQJKEwG7t6Yr72Q",
             name = "John Doe",
             message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +

@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class MessageItemModel(
     val messageId: String = "",
-    val userImage: String = "",
+    val userPhotoUrl: String = "",
     val name: String = "",
     val message: String = "",
     val timeStamp: String = "",
