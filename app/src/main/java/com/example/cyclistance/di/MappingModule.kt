@@ -7,9 +7,9 @@ import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInterne
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
-import com.example.cyclistance.feature_mapping.data.remote.websockets.RescueTransactionWSClient
-import com.example.cyclistance.feature_mapping.data.remote.websockets.TransactionLiveLocationWSClient
-import com.example.cyclistance.feature_mapping.data.remote.websockets.UserWSClient
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.RescueTransactionWSClient
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.TransactionLiveLocationWSClient
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.UserWSClient
 import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase

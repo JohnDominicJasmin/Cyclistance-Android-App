@@ -1,14 +1,14 @@
 package com.example.cyclistance.feature_mapping.data.mapper
 
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.ConfirmationDetailDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.RescueRequestDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.RespondentDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.TransactionDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserAssistanceDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserItemDto
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toLocationDto
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toLocationModel
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.ConfirmationDetailDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.RescueRequestDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.RespondentDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.TransactionDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserAssistanceDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserItemDto
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
 import com.example.cyclistance.feature_mapping.domain.model.api.user.ConfirmationDetailModel
 import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
@@ -41,7 +41,7 @@ object UserMapper {
         )
     }
 
-    fun UserItem.toUserItemDto():UserItemDto{
+    fun UserItem.toUserItemDto(): UserItemDto {
         return UserItemDto(
             address = this.address,
             contactNumber = this.contactNumber,
@@ -69,7 +69,8 @@ object UserMapper {
             transactionId = this.transactionId
         )
     }
-    private fun RescueRequest.toRescueRequestDto():RescueRequestDto{
+
+    private fun RescueRequest.toRescueRequestDto(): RescueRequestDto {
         return RescueRequestDto(
             respondents = this.respondents.map { it.toRespondentDto() },
         )
@@ -81,7 +82,7 @@ object UserMapper {
         )
     }
 
-    private fun RespondentModel.toRespondentDto():RespondentDto{
+    private fun RespondentModel.toRespondentDto(): RespondentDto {
         return RespondentDto(
             clientId = this.clientId
         )
@@ -110,7 +111,7 @@ object UserMapper {
         )
     }
 
-    private fun UserAssistanceModel.toUserAssistanceDto(): UserAssistanceDto{
+    private fun UserAssistanceModel.toUserAssistanceDto(): UserAssistanceDto {
         return UserAssistanceDto(
             confirmationDetail = this.confirmationDetail.toConfirmationDetailDto(),
             needHelp = this.needHelp,

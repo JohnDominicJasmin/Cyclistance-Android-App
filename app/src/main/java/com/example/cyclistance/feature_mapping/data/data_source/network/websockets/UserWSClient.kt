@@ -1,8 +1,8 @@
-package com.example.cyclistance.feature_mapping.data.remote.websockets
+package com.example.cyclistance.feature_mapping.data.data_source.network.websockets
 
 import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_USERS
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUser
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
 import com.example.cyclistance.feature_mapping.domain.websockets.WebSocketClient
@@ -38,7 +38,7 @@ class UserWSClient(
             socket.connect()
 
             awaitClose {
-                socket.disconnect();
+                socket.disconnect()
                 socket.off(BROADCAST_USERS, onNewUsers)
             }
         }

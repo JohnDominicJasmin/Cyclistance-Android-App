@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.data.remote.dto.user_dto
+package com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto
 
 
 import androidx.annotation.Keep

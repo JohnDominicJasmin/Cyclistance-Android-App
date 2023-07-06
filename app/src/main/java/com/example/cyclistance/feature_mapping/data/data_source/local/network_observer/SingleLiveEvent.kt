@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.data.local.network_observer
+package com.example.cyclistance.feature_mapping.data.data_source.local.network_observer
 
 import androidx.annotation.MainThread
 import androidx.annotation.Nullable
@@ -17,7 +17,7 @@ open class SingleLiveEvent<T> : MutableLiveData<T?>() {
         }
         super.observe(owner){
             if (mPending.compareAndSet(true, false)) {
-                observer.onChanged(it);
+                observer.onChanged(it)
             }
         }
 

@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.data.remote.websockets
+package com.example.cyclistance.feature_mapping.data.data_source.network.websockets
 
 import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_LOCATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.JOIN_LIVE_LOCATION_UPDATES

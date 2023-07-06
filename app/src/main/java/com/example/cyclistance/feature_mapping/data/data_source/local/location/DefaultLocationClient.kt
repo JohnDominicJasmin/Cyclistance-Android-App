@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.data.local.location
+package com.example.cyclistance.feature_mapping.data.data_source.local.location
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location

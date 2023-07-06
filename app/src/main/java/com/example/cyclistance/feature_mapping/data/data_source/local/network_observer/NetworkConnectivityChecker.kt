@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.data.local.network_observer
+package com.example.cyclistance.feature_mapping.data.data_source.local.network_observer
 
 import android.content.Context
 import android.net.ConnectivityManager
