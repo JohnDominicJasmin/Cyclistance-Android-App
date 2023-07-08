@@ -1,6 +1,7 @@
 package com.example.cyclistance.di
 
 import android.content.Context
+import androidx.annotation.Keep
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.feature_authentication.data.repository.AuthRepositoryImpl
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
@@ -17,7 +18,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
+@Keep
 @Module
 @InstallIn(SingletonComponent::class)
 object AuthenticationModule {

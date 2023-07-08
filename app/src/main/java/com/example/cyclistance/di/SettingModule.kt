@@ -2,6 +2,7 @@ package com.example.cyclistance.di
 
 import android.content.Context
 import android.provider.MediaStore.MediaColumns.*
+import androidx.annotation.Keep
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.feature_settings.data.repository.SettingRepositoryImpl
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
@@ -23,6 +24,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
+
+@Keep
 @Module
 @InstallIn(SingletonComponent::class)
 object SettingModule {
@@ -39,7 +42,6 @@ object SettingModule {
     }
 
 
-
     @Provides
     @Singleton
     fun provideSettingRepository(
@@ -47,9 +49,6 @@ object SettingModule {
         firebaseAuth: FirebaseAuth,
         storage: FirebaseStorage): SettingRepository =
         SettingRepositoryImpl(context = context, auth = firebaseAuth, storage = storage)
-
-
-
 
 
     @Provides
