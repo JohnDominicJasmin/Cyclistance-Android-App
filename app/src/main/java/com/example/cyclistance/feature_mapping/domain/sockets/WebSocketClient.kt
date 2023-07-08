@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.domain.websockets
+package com.example.cyclistance.feature_mapping.domain.sockets
 
 import kotlinx.coroutines.flow.Flow
 

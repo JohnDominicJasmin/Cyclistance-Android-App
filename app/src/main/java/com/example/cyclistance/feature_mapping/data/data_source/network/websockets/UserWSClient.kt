@@ -5,7 +5,7 @@ import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUser
 import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
-import com.example.cyclistance.feature_mapping.domain.websockets.WebSocketClient
+import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClient
 import com.google.gson.Gson
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
