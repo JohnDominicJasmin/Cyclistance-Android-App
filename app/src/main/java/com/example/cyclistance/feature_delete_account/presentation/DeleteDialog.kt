@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_dialogs.presentation.delete_dialog
+package com.example.cyclistance.feature_delete_account.presentation
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border

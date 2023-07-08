@@ -33,7 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_emergency_call.domain.model.ui.EmergencyContactModel
+import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.theme.Black500
 
 @OptIn(ExperimentalMaterialApi::class)

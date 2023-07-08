@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_emergency_call.domain.model.ui
+package com.example.cyclistance.feature_emergency_call.domain.model
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState

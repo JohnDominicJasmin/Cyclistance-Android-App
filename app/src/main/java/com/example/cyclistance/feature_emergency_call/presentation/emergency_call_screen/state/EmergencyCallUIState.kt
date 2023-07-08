@@ -2,7 +2,7 @@ package com.example.cyclistance.feature_emergency_call.presentation.emergency_ca
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState
-import com.example.cyclistance.feature_emergency_call.domain.model.ui.EmergencyContactModel
+import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import kotlinx.parcelize.Parcelize
 
 

@@ -10,8 +10,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_emergency_call.domain.model.ui.EmergencyCallModel
-import com.example.cyclistance.feature_emergency_call.domain.model.ui.EmergencyContactModel
+import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyCallModel
+import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.EmergencyCallScreenContent
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallUIState

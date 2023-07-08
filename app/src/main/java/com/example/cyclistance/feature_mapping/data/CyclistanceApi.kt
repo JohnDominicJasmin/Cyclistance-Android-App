@@ -3,7 +3,6 @@ package com.example.cyclistance.feature_mapping.data
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.rescue_transaction.RescueTransactionItemDto
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserItemDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.*
 import retrofit2.http.*
 
 interface CyclistanceApi {

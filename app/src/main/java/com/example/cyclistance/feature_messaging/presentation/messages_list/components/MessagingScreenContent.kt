@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_messaging.presentation.messaging_main_screen.components
+package com.example.cyclistance.feature_messaging.presentation.messages_list.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -32,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_messaging.domain.model.ui.MessageItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.MessagesModel
-import com.example.cyclistance.feature_messaging.presentation.messaging_main_screen.event.MessageUiEvent
+import com.example.cyclistance.feature_messaging.presentation.messages_list.event.MessageUiEvent
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 

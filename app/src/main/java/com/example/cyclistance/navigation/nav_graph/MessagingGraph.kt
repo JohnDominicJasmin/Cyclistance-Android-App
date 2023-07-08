@@ -6,7 +6,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.cyclistance.feature_messaging.presentation.messaging_main_screen.MessagingScreen
+import com.example.cyclistance.feature_messaging.presentation.messages_list.MessagingScreen
 import com.example.cyclistance.navigation.Screens
 
 fun NavGraphBuilder.messagingGraph(

@@ -1,13 +1,13 @@
-package com.example.cyclistance.feature_messaging.presentation.messaging_main_screen
+package com.example.cyclistance.feature_messaging.presentation.messages_list
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_messaging.presentation.messaging_main_screen.components.MessagingScreenContent
-import com.example.cyclistance.feature_messaging.presentation.messaging_main_screen.components.fakeMessages
-import com.example.cyclistance.feature_messaging.presentation.messaging_main_screen.event.MessageUiEvent
+import com.example.cyclistance.feature_messaging.presentation.messages_list.components.MessagingScreenContent
+import com.example.cyclistance.feature_messaging.presentation.messages_list.components.fakeMessages
+import com.example.cyclistance.feature_messaging.presentation.messages_list.event.MessageUiEvent
 import com.example.cyclistance.navigation.Screens
 
 @Composable
