@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
@@ -48,11 +49,15 @@ class EmergencyCallViewModel @Inject constructor(
         emergencyCallUseCase.getContactsUseCase().catch {
             Timber.v("Error: ${it.message}")
         }.onEach { model ->
-            if (model.contacts.isEmpty()) {
+
+            val isPurposefullyDeleted =
+                emergencyCallUseCase.areContactsPurposelyDeletedUseCase().first()
+            if (model.contacts.isEmpty().and(isPurposefullyDeleted.not())) {
                 addDefaultContact()
-                return@onEach
+            } else {
+                _state.update { it.copy(emergencyCallModel = model) }
             }
-            _state.update { it.copy(emergencyCallModel = model) }
+            savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value
 
         }.launchIn(viewModelScope)
 
@@ -64,6 +69,7 @@ class EmergencyCallViewModel @Inject constructor(
                 deleteContact(event.emergencyContactModel)
             }
         }
+        savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value
     }
 
 
@@ -72,12 +78,17 @@ class EmergencyCallViewModel @Inject constructor(
             runCatching {
                 emergencyCallUseCase.deleteContactUseCase(contact)
             }.onSuccess {
-
+                _eventFlow.emit(value = EmergencyCallEvent.ContactDeleteSuccess)
+                if (isLastContact) {
+                    emergencyCallUseCase.setContactsPurposelyDeletedUseCase()
+                }
             }.onFailure {
-
+                _eventFlow.emit(value = EmergencyCallEvent.ContactDeleteFailed)
             }
         }
     }
+
+    private val isLastContact = state.value.emergencyCallModel.contacts.size == 1
 
     private suspend fun addDefaultContact() {
         emergencyCallUseCase.upsertContactUseCase(
