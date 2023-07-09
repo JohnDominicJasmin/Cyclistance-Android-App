@@ -697,6 +697,7 @@ fun MappingScreen(
                         bottomSheetType = BottomSheetType.OnGoingRescue.type
                     ).also {
                         expandBottomSheet()
+                        onDismissRescueRequestDialog()
                     }
                 }
 
