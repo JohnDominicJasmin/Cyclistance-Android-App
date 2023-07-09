@@ -60,7 +60,12 @@ fun EmergencyCallScreen(
     val onClickAddContact = remember {
         {
             navController.navigate(Screens.EmergencyCall.AddNewContact.screenRoute)
+        }
+    }
 
+    val onClickEditContact = remember {
+        { id: Int ->
+            navController.navigate(Screens.EmergencyCall.AddNewContact.screenRoute + "?contactId=${id}")
         }
     }
 
@@ -96,7 +101,10 @@ fun EmergencyCallScreen(
             if (!openPhoneCallPermissionState.status.isGranted) {
                 uiState = uiState.copy(selectedPhoneNumber = phoneNumber)
                 openPhoneCallPermissionState.launchPermissionRequest()
+            } else {
+                callPhoneNumber(phoneNumber)
             }
+
         }
     }
 
@@ -124,7 +132,7 @@ fun EmergencyCallScreen(
                 is EmergencyCallUiEvent.OnClickAddContact -> onClickAddContact()
                 is EmergencyCallUiEvent.OnClickCancel -> onClickCancel()
                 is EmergencyCallUiEvent.OnClickDeleteContact -> showDeleteDialog(event.emergencyContact)
-                is EmergencyCallUiEvent.OnClickEditContact -> {}
+                is EmergencyCallUiEvent.OnClickEditContact -> onClickEditContact(event.id)
                 is EmergencyCallUiEvent.DismissDeleteContactDialog -> dismissDeleteDialog()
                 is EmergencyCallUiEvent.DeleteContact -> deleteContact(event.emergencyContact)
 
