@@ -129,46 +129,46 @@ fun EmergencyCallScreenContent(
 private val fakeContacts = EmergencyCallModel(
     contacts = listOf(
         EmergencyContactModel(
-            id = "1",
+            id = 1,
             name = EmergencyCallConstants.PHILIPPINE_RED_CROSS,
             photo = EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO,
-            number = "123456789"
+            phoneNumber = "123456789"
         ),
         EmergencyContactModel(
-            id = "12323",
+            id = 12323,
             name = EmergencyCallConstants.NATIONAL_EMERGENCY,
             photo = EmergencyCallConstants.NATIONAL_EMERGENCY_PHOTO,
-            number = "123456789"
+            phoneNumber = "123456789"
         ),
         EmergencyContactModel(
-            id = "2",
+            id = 2,
             name = "John Doe",
             photo = "",
-            number = "123456789"
+            phoneNumber = "123456789"
         ),
         EmergencyContactModel(
-            id = "3",
+            id = 3,
             name = "John Doe",
             photo = "",
-            number = "123456789"
+            phoneNumber = "123456789"
         ),
         EmergencyContactModel(
-            id = "4",
+            id = 4,
             name = "John Doe",
             photo = "",
-            number = "123456789"
+            phoneNumber = "123456789"
         ),
         EmergencyContactModel(
-            id = "5",
+            id = 5,
             name = "John Doe",
             photo = "",
-            number = "123456789"
+            phoneNumber = "123456789"
         ),
         EmergencyContactModel(
-            id = "52",
+            id = 52,
             name = "John Doe",
             photo = "",
-            number = "123456789"
+            phoneNumber = "123456789"
         ),
 
         ))

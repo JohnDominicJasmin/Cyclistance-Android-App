@@ -53,34 +53,34 @@ import com.example.cyclistance.theme.CyclistanceTheme
 private val emergencyContactModel = EmergencyCallModel(
     contacts = listOf(
         EmergencyContactModel(
-            id = "1",
+            id = 1,
             name = "John Doe",
             photo = "",
-            number = "1388"),
+            phoneNumber = "1388"),
 
         EmergencyContactModel(
-            id = "12",
+            id = 12,
             name = "Victoria Matthews",
             photo = "",
-            number = "1388"),
+            phoneNumber = "1388"),
 
         EmergencyContactModel(
-            id = "12",
+            id = 12,
             name = "Jasmine Spencer",
             photo = "",
-            number = "1388"),
+            phoneNumber = "1388"),
 
         EmergencyContactModel(
-            id = "12",
+            id = 123,
             name = "Jasmine Spencer",
             photo = "",
-            number = "1388"),
+            phoneNumber = "1388"),
 
         EmergencyContactModel(
-            id = "12",
+            id = 33,
             name = "Jasmine Spencer",
             photo = "",
-            number = "1388"),
+            phoneNumber = "1388"),
 
 
         )
@@ -170,7 +170,7 @@ fun EmergencyCallDialog(
 private fun ContactSection(
     modifier: Modifier = Modifier,
     emergencyCallModel: EmergencyCallModel,
-    onClick: (String) -> Unit) {
+    onClick: (Int) -> Unit) {
     Column(
         modifier = modifier.padding(vertical = 4.dp, horizontal = 2.dp),
         verticalArrangement = Arrangement.spacedBy(7.dp)) {
@@ -181,7 +181,7 @@ private fun ContactSection(
                 modifier = Modifier.weight(0.5f),
                 imageUrl = PHILIPPINE_RED_CROSS_PHOTO,
                 name = PHILIPPINE_RED_CROSS,
-                id = "1",
+                id = 1,
                 onClick = onClick)
 
 
@@ -189,7 +189,7 @@ private fun ContactSection(
                 modifier = Modifier.weight(0.5f),
                 imageUrl = NATIONAL_EMERGENCY_PHOTO,
                 name = NATIONAL_EMERGENCY,
-                id = "2",
+                id = 2,
                 onClick = onClick)
 
 
@@ -219,7 +219,7 @@ private fun ContactSection(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun DialogEmergencyItem(
-    modifier: Modifier, imageUrl: String, name: String, id: String, onClick: (String) -> Unit) {
+    modifier: Modifier, imageUrl: String, name: String, id: Int, onClick: (Int) -> Unit) {
 
 
     Column(
@@ -261,7 +261,7 @@ fun PreviewDialogEmergencyItem() {
             DialogEmergencyItem(modifier = Modifier.width(70.dp),
                 imageUrl = PHILIPPINE_RED_CROSS_PHOTO,
                 name = PHILIPPINE_RED_CROSS,
-                id = "1",
+                id = 11,
                 onClick = {})
         }
     }
