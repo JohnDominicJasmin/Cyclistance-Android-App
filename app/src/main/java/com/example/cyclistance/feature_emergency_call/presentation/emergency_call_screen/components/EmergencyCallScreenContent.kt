@@ -32,6 +32,7 @@ import com.example.cyclistance.core.utils.constants.EmergencyCallConstants
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyCallModel
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallUIState
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -39,11 +40,11 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun EmergencyCallScreenContent(
     modifier: Modifier = Modifier,
-    emergencyCallModel: EmergencyCallModel,
     uiState: EmergencyCallUIState,
+    state: EmergencyCallState,
     event: (EmergencyCallUiEvent) -> Unit) {
 
-    val messageAvailable by remember(emergencyCallModel.contacts) { derivedStateOf { emergencyCallModel.contacts.isNotEmpty() } }
+    val contactsAvailable by remember(state.emergencyCallModel) { derivedStateOf { state.emergencyCallModel.contacts.isNotEmpty() } }
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
@@ -53,7 +54,10 @@ fun EmergencyCallScreenContent(
             if (uiState.deleteDialogVisible) {
                 DeleteContactDialog(
                     onDismissRequest = { event(EmergencyCallUiEvent.DismissDeleteContactDialog) },
-                    onClickConfirmButton = { event(EmergencyCallUiEvent.DeleteContact(uiState.contactToDelete.id)) },
+                    onClickConfirmButton = {
+                        event(EmergencyCallUiEvent.DeleteContact(uiState.contactToDelete))
+                        event(EmergencyCallUiEvent.DismissDeleteContactDialog)
+                    },
                     nameToDelete = uiState.contactToDelete.name
                 )
             }
@@ -66,23 +70,25 @@ fun EmergencyCallScreenContent(
                     modifier = Modifier.padding(vertical = 16.dp))
 
 
-                if (messageAvailable) {
+                if (contactsAvailable) {
+
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(0.8f),
                         horizontalAlignment = Alignment.CenterHorizontally) {
 
-
-                        items(items = emergencyCallModel.contacts, key = { it.id }) { item ->
+                        items(items = state.emergencyCallModel.contacts, key = { it.id }) { item ->
                             ContactItem(
-                                onClick = { event(EmergencyCallUiEvent.OnClickContact) },
+                                onClick = { event(EmergencyCallUiEvent.OnClickContact(item.phoneNumber)) },
                                 emergencyContact = item,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(vertical = 1.dp),
-                                onClickEdit = { event(EmergencyCallUiEvent.OnClickEditContact(it)) },
-                                onClickDelete = { event(EmergencyCallUiEvent.OnClickDeleteContact(it)) })
+                                onClickEdit = { event(EmergencyCallUiEvent.OnClickEditContact(item.id)) },
+                                onClickDelete = {
+                                    event(EmergencyCallUiEvent.OnClickDeleteContact(item))
+                                })
                         }
                     }
 
@@ -198,7 +204,10 @@ fun PreviewEmergencyCallScreenContentDark() {
     CyclistanceTheme(darkTheme = true) {
         EmergencyCallScreenContent(
             uiState = uiState,
-            emergencyCallModel = fakeContacts, event = { event ->
+            state = EmergencyCallState(
+                emergencyCallModel = fakeContacts
+            ),
+            event = { event ->
                 when (event) {
                     is EmergencyCallUiEvent.OnClickContact -> {
 
@@ -247,7 +256,9 @@ fun PreviewEmergencyCallScreenContentLight() {
     CyclistanceTheme(darkTheme = false) {
         EmergencyCallScreenContent(
             uiState = uiState,
-            emergencyCallModel = fakeContacts, event = { event ->
+            state = EmergencyCallState(
+                emergencyCallModel = fakeContacts
+            ), event = { event ->
                 when (event) {
                     is EmergencyCallUiEvent.OnClickContact -> {
 

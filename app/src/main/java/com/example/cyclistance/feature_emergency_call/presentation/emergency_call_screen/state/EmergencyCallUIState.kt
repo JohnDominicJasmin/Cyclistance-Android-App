@@ -10,5 +10,6 @@ import kotlinx.parcelize.Parcelize
 @StableState
 data class EmergencyCallUIState(
     val deleteDialogVisible: Boolean = false,
-    val contactToDelete: EmergencyContactModel = EmergencyContactModel()
+    val contactToDelete: EmergencyContactModel = EmergencyContactModel(),
+    val selectedPhoneNumber: String = "",
 ) : Parcelable

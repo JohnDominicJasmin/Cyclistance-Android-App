@@ -11,10 +11,10 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface EmergencyContactDao {
 
-    @Upsert
+    @Upsert(entity = EmergencyContact::class)
     suspend fun upsertContact(emergencyContact: EmergencyContact)
 
-    @Delete()
+    @Delete(entity = EmergencyContact::class)
     suspend fun deleteContact(emergencyContact: EmergencyContact)
 
     @Query(value = "SELECT * FROM EmergencyContact")

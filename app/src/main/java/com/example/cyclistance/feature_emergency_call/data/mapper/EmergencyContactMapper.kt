@@ -16,6 +16,7 @@ object EmergencyContactMapper {
 
     fun EmergencyContactModel.toEmergencyContact(): EmergencyContact {
         return EmergencyContact(
+            id = this.id,
             name = this.name,
             photoUri = photo,
             number = this.phoneNumber

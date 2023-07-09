@@ -41,8 +41,8 @@ import com.example.cyclistance.theme.Black500
 fun ContactItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
-    onClickEdit: (id: String) -> Unit,
-    onClickDelete: (emergencyContact: EmergencyContactModel) -> Unit,
+    onClickEdit: () -> Unit,
+    onClickDelete: () -> Unit,
     emergencyContact: EmergencyContactModel) {
 
     Surface(
@@ -76,7 +76,7 @@ fun ContactItem(
                     color = MaterialTheme.colors.onBackground
                 )
                 Text(
-                    text = emergencyContact.number,
+                    text = emergencyContact.phoneNumber,
                     style = MaterialTheme.typography.caption,
                     color = Black500
                 )
@@ -84,8 +84,8 @@ fun ContactItem(
 
             DropDownMenu(
                 modifier = Modifier.wrapContentSize(),
-                onClickEdit = { onClickEdit(emergencyContact.id) },
-                onClickDelete = { onClickDelete(emergencyContact) }
+                onClickEdit = { onClickEdit() },
+                onClickDelete = { onClickDelete() }
             )
         }
     }
