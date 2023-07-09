@@ -2,9 +2,8 @@ package com.example.cyclistance.feature_emergency_call.domain.use_case.delete_co
 
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.domain.repository.EmergencyContactRepository
-import javax.inject.Inject
 
-class DeleteContactUseCase @Inject constructor(
+class DeleteContactUseCase(
     private val repository: EmergencyContactRepository
 ) {
     suspend operator fun invoke(emergencyContact: EmergencyContactModel) {

@@ -1,9 +1,8 @@
-package com.example.cyclistance.feature_emergency_call.domain.use_case.get_contacts
+package com.example.cyclistance.feature_emergency_call.domain.use_case.get_contact
 
 import com.example.cyclistance.feature_emergency_call.domain.repository.EmergencyContactRepository
-import javax.inject.Inject
 
-class GetContactsUseCase @Inject constructor(
+class GetContactsUseCase(
     private val repository: EmergencyContactRepository
 ) {
 
