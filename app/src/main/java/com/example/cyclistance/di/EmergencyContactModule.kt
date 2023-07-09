@@ -1,18 +1,22 @@
 package com.example.cyclistance.di
 
 import android.app.Application
+import android.content.Context
 import androidx.annotation.Keep
 import androidx.room.Room
 import com.example.cyclistance.feature_emergency_call.data.data_source.local.EmergencyContactDatabase
 import com.example.cyclistance.feature_emergency_call.data.repository.EmergencyContactRepositoryImpl
 import com.example.cyclistance.feature_emergency_call.domain.repository.EmergencyContactRepository
 import com.example.cyclistance.feature_emergency_call.domain.use_case.EmergencyContactUseCase
+import com.example.cyclistance.feature_emergency_call.domain.use_case.contact_purposely_deleted.AreContactsPurposelyDeletedUseCase
+import com.example.cyclistance.feature_emergency_call.domain.use_case.contact_purposely_deleted.SetContactsPurposelyDeletedUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.delete_contact.DeleteContactUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.get_contacts.GetContactsUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.upsert_contact.UpsertContactUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -33,8 +37,10 @@ object EmergencyContactModule {
 
     @Provides
     @Singleton
-    fun providesEmergencyContactRepository(db: EmergencyContactDatabase): EmergencyContactRepository {
-        return EmergencyContactRepositoryImpl(db.dao)
+    fun providesEmergencyContactRepository(
+        @ApplicationContext context: Context,
+        db: EmergencyContactDatabase): EmergencyContactRepository {
+        return EmergencyContactRepositoryImpl(db.dao, context = context)
     }
 
 
@@ -44,7 +50,9 @@ object EmergencyContactModule {
         return EmergencyContactUseCase(
             upsertContactUseCase = UpsertContactUseCase(repository),
             deleteContactUseCase = DeleteContactUseCase(repository),
-            getContactsUseCase = GetContactsUseCase(repository)
+            getContactsUseCase = GetContactsUseCase(repository),
+            areContactsPurposelyDeletedUseCase = AreContactsPurposelyDeletedUseCase(repository),
+            setContactsPurposelyDeletedUseCase = SetContactsPurposelyDeletedUseCase(repository)
         )
     }
 }
