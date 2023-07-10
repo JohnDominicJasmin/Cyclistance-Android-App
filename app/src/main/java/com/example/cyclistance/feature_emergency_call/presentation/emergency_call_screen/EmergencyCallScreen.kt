@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.CONTACT_ID
 import com.example.cyclistance.core.utils.contexts.callPhoneNumber
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.EmergencyCallScreenContent
@@ -65,7 +66,7 @@ fun EmergencyCallScreen(
 
     val onClickEditContact = remember {
         { id: Int ->
-            navController.navigate(Screens.EmergencyCall.AddNewContact.screenRoute + "?contactId=${id}")
+            navController.navigate(Screens.EmergencyCall.AddNewContact.screenRoute + "?$CONTACT_ID=${id}")
         }
     }
 

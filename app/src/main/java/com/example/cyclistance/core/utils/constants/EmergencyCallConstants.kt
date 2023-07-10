@@ -16,4 +16,5 @@ object EmergencyCallConstants {
     const val EMERGENCY_CALL_VM_STATE_KEY = "emergency_call_vm_state_key"
 
     val CONTACTS_PURPOSELY_DELETE_KEY = booleanPreferencesKey("contacts_purposely_delete_key")
+    const val CONTACT_ID = "contactId"
 }
