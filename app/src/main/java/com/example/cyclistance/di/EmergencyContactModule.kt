@@ -11,7 +11,8 @@ import com.example.cyclistance.feature_emergency_call.domain.use_case.EmergencyC
 import com.example.cyclistance.feature_emergency_call.domain.use_case.contact_purposely_deleted.AreContactsPurposelyDeletedUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.contact_purposely_deleted.SetContactsPurposelyDeletedUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.delete_contact.DeleteContactUseCase
-import com.example.cyclistance.feature_emergency_call.domain.use_case.get_contacts.GetContactsUseCase
+import com.example.cyclistance.feature_emergency_call.domain.use_case.get_contact.GetContactUseCase
+import com.example.cyclistance.feature_emergency_call.domain.use_case.get_contact.GetContactsUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.upsert_contact.UpsertContactUseCase
 import dagger.Module
 import dagger.Provides
@@ -52,7 +53,8 @@ object EmergencyContactModule {
             deleteContactUseCase = DeleteContactUseCase(repository),
             getContactsUseCase = GetContactsUseCase(repository),
             areContactsPurposelyDeletedUseCase = AreContactsPurposelyDeletedUseCase(repository),
-            setContactsPurposelyDeletedUseCase = SetContactsPurposelyDeletedUseCase(repository)
+            setContactsPurposelyDeletedUseCase = SetContactsPurposelyDeletedUseCase(repository),
+            getContactUseCase = GetContactUseCase(repository)
         )
     }
 }

@@ -64,5 +64,7 @@ class EmergencyContactRepositoryImpl(
         }
     }
 
-
+    override fun getContact(id: Int): Flow<EmergencyContactModel> {
+        return emergencyContactDao.getContact(id = id).map { it.toEmergencyContactModel() }
+    }
 }

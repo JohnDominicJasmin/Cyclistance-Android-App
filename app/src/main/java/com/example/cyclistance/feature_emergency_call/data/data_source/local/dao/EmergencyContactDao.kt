@@ -20,5 +20,7 @@ interface EmergencyContactDao {
     @Query(value = "SELECT * FROM EmergencyContact")
     fun getContacts(): Flow<List<EmergencyContact>>
 
+    @Query(value = "SELECT * FROM EmergencyContact Where id = :id")
+    fun getContact(id: Int): Flow<EmergencyContact>
 
 }
