@@ -11,8 +11,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -22,7 +24,7 @@ class NavViewModel @Inject constructor(
     private val introSliderUseCase: IntroSliderUseCase,
     private val defaultDispatcher: CoroutineDispatcher,
     private val authUseCase: AuthenticationUseCase
-):ViewModel() {
+) : ViewModel() {
 
 
     private val _state = MutableStateFlow(savedStateHandle[NAV_VM_STATE_KEY] ?: NavState())
@@ -34,28 +36,22 @@ class NavViewModel @Inject constructor(
 
     private fun getStartingDestination() {
 
-        viewModelScope.launch(context = defaultDispatcher) {
-            runCatching {
 
-                introSliderUseCase.readIntroSliderUseCase().collect { userCompletedWalkThrough ->
-
-                    if (!userCompletedWalkThrough) {
-                        _state.update { it.copy(navigationStartingDestination = Screens.OnBoarding.ROUTE) }
-                        return@collect
-                    }
-
-                    if (isUserSignedIn()) {
-                        _state.update { it.copy(navigationStartingDestination = Screens.Mapping.ROUTE) }
-                        return@collect
-                    }
-
-                    _state.update { it.copy(navigationStartingDestination = Screens.Authentication.ROUTE) }
-                }
-
-            }.onFailure {
-                Timber.e("IntroSlider DataStore Reading Failed: ${it.localizedMessage}")
+        introSliderUseCase.readIntroSliderUseCase().catch {
+            Timber.e("IntroSlider DataStore Reading Failed: ${it.localizedMessage}")
+        }.onEach { userCompletedWalkThrough ->
+            if (!userCompletedWalkThrough) {
+                _state.update { it.copy(navigationStartingDestination = Screens.OnBoarding.ROUTE) }
+                return@onEach
             }
-        }.invokeOnCompletion {
+
+            if (isUserSignedIn()) {
+                _state.update { it.copy(navigationStartingDestination = Screens.Mapping.ROUTE) }
+                return@onEach
+            }
+
+            _state.update { it.copy(navigationStartingDestination = Screens.Authentication.ROUTE) }
+        }.launchIn(viewModelScope).invokeOnCompletion {
             savedStateHandle[NAV_VM_STATE_KEY] = state.value
         }
 
@@ -64,7 +60,7 @@ class NavViewModel @Inject constructor(
 
     private fun isUserSignedIn(): Boolean {
         return (authUseCase.isSignedInWithProviderUseCase() == true || authUseCase.isEmailVerifiedUseCase() == true) &&
-               authUseCase.hasAccountSignedInUseCase()
+                authUseCase.hasAccountSignedInUseCase()
     }
 
 
