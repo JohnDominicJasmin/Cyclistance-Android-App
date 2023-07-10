@@ -47,7 +47,7 @@ fun AddEditContextTextFieldSection(
                 onValueChange = { event(AddEditContactUiEvent.OnChangeName(it)) })
         }
 
-        TextFieldCreator(label = "Phone", errorMessage = "") {
+        TextFieldCreator(label = "Phone", errorMessage = uiState.phoneNumberErrorMessage) {
             Row(verticalAlignment = Alignment.CenterVertically) {
 
                 Text(
