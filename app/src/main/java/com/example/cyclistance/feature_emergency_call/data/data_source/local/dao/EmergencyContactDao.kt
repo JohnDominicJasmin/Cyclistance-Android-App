@@ -2,8 +2,9 @@ package com.example.cyclistance.feature_emergency_call.data.data_source.local.da
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Upsert
 import com.example.cyclistance.feature_emergency_call.data.data_source.local.entities.EmergencyContact
 import kotlinx.coroutines.flow.Flow
 
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface EmergencyContactDao {
 
-    @Upsert(entity = EmergencyContact::class)
+    @Insert(entity = EmergencyContact::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertContact(emergencyContact: EmergencyContact)
 
     @Delete(entity = EmergencyContact::class)
