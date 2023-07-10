@@ -17,4 +17,5 @@ object EmergencyCallConstants {
 
     val CONTACTS_PURPOSELY_DELETE_KEY = booleanPreferencesKey("contacts_purposely_delete_key")
     const val CONTACT_ID = "contactId"
+    const val MAX_CONTACTS = 7
 }

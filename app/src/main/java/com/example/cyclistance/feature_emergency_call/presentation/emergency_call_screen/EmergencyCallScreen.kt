@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.CONTACT_ID
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.MAX_CONTACTS
 import com.example.cyclistance.core.utils.contexts.callPhoneNumber
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.EmergencyCallScreenContent
@@ -58,9 +60,19 @@ fun EmergencyCallScreen(
         }
     }
 
+    val maximumContactReached by remember(state.emergencyCallModel) {
+        derivedStateOf {
+            state.emergencyCallModel.contacts.size >= MAX_CONTACTS
+        }
+    }
     val onClickAddContact = remember {
         {
-            navController.navigate(Screens.EmergencyCall.AddNewContact.screenRoute)
+
+            if (!maximumContactReached) {
+                navController.navigate(Screens.EmergencyCall.AddNewContact.screenRoute)
+            }
+            uiState = uiState.copy(maximumContactDialogVisible = maximumContactReached)
+
         }
     }
 
@@ -109,6 +121,12 @@ fun EmergencyCallScreen(
         }
     }
 
+    val dismissMaximumDialog = remember {
+        {
+            uiState = uiState.copy(maximumContactDialogVisible = false)
+        }
+    }
+
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
@@ -136,6 +154,7 @@ fun EmergencyCallScreen(
                 is EmergencyCallUiEvent.OnClickEditContact -> onClickEditContact(event.id)
                 is EmergencyCallUiEvent.DismissDeleteContactDialog -> dismissDeleteDialog()
                 is EmergencyCallUiEvent.DeleteContact -> deleteContact(event.emergencyContact)
+                is EmergencyCallUiEvent.DismissMaximumContactDialog -> dismissMaximumDialog()
 
             }
         })

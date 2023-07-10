@@ -12,6 +12,7 @@ sealed class EmergencyCallUiEvent {
 
     data class DeleteContact(val emergencyContact: EmergencyContactModel) : EmergencyCallUiEvent()
     object DismissDeleteContactDialog : EmergencyCallUiEvent()
+    object DismissMaximumContactDialog : EmergencyCallUiEvent()
 
 
 }

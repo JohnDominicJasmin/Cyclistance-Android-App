@@ -20,7 +20,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants
+import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
+import com.example.cyclistance.feature_dialogs.presentation.alert_dialog.AlertDialog
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyCallModel
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
@@ -42,6 +45,16 @@ fun EmergencyCallScreenContent(
 
 
         Box(modifier = Modifier) {
+
+
+            if (uiState.maximumContactDialogVisible) {
+                AlertDialog(
+                    alertDialog = AlertDialogState(
+                        title = "Maximum number of contacts reached",
+                        description = "You can only add ${EmergencyCallConstants.MAX_CONTACTS} contacts",
+                        icon = R.raw.info),
+                    onDismissRequest = { event(EmergencyCallUiEvent.DismissMaximumContactDialog) })
+            }
 
             if (uiState.deleteDialogVisible) {
                 DeleteContactDialog(
@@ -201,6 +214,7 @@ fun PreviewEmergencyCallScreenContentDark() {
 
                     is EmergencyCallUiEvent.DismissDeleteContactDialog -> dismissDeleteDialog()
                     is EmergencyCallUiEvent.DeleteContact -> {}
+                    is EmergencyCallUiEvent.DismissMaximumContactDialog -> {}
 
                 }
             })
@@ -254,6 +268,7 @@ fun PreviewEmergencyCallScreenContentLight() {
 
                     is EmergencyCallUiEvent.DismissDeleteContactDialog -> dismissDeleteDialog()
                     is EmergencyCallUiEvent.DeleteContact -> {}
+                    is EmergencyCallUiEvent.DismissMaximumContactDialog -> {}
                 }
             })
     }
