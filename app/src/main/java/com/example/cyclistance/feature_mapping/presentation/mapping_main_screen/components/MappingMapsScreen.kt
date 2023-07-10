@@ -161,9 +161,11 @@ fun MappingMapsScreen(
     val dismissTransactionLocationIcon = remember(mapboxMap) {
         {
             mapboxMap?.getStyle { style ->
-                style.removeImage(TRANSACTION_ICON_ID)
-                val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
-                geoJsonSource?.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
+                if (style.isFullyLoaded) {
+                    style.removeImage(TRANSACTION_ICON_ID)
+                    val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
+                    geoJsonSource?.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
+                }
             }
         }
     }
@@ -178,16 +180,19 @@ fun MappingMapsScreen(
                 R.drawable.ic_map_rescuee
             }
             mapboxMap?.getStyle { style ->
-                val longitude = location.longitude ?: return@getStyle
-                val latitude = location.latitude ?: return@getStyle
-                style.removeImage(TRANSACTION_ICON_ID)
-                ContextCompat.getDrawable(context, mapIcon)?.toBitmap(width = 100, height = 100)
-                    ?.let { iconBitmap ->
-                        style.addImage(TRANSACTION_ICON_ID, iconBitmap)
-                        val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
-                        val feature = Feature.fromGeometry(Point.fromLngLat(longitude, latitude))
-                        geoJsonSource?.setGeoJson(feature)
-                    }
+                if (style.isFullyLoaded) {
+                    val longitude = location.longitude ?: return@getStyle
+                    val latitude = location.latitude ?: return@getStyle
+                    style.removeImage(TRANSACTION_ICON_ID)
+                    ContextCompat.getDrawable(context, mapIcon)?.toBitmap(width = 100, height = 100)
+                        ?.let { iconBitmap ->
+                            style.addImage(TRANSACTION_ICON_ID, iconBitmap)
+                            val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
+                            val feature =
+                                Feature.fromGeometry(Point.fromLngLat(longitude, latitude))
+                            geoJsonSource?.setGeoJson(feature)
+                        }
+                }
             }
         }
     }
