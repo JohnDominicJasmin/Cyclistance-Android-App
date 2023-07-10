@@ -82,20 +82,25 @@ class AddEditContactViewModel @Inject constructor(
             }.onSuccess {
                 _eventFlow.emit(value = AddEditEvent.SaveContactSuccess)
             }.onFailure {
-                when (it) {
-                    is EmergencyCallExceptions.NameException -> {
-                        _eventFlow.emit(value = AddEditEvent.NameFailure(it.message!!))
-                    }
-
-                    is EmergencyCallExceptions.PhoneNumberException -> {
-                        _eventFlow.emit(value = AddEditEvent.PhoneNumberFailure(it.message!!))
-                    }
-
-                    else -> {
-                        _eventFlow.emit(value = AddEditEvent.UnknownFailure(it.message!!))
-                    }
-                }
+                it.handleException()
             }
         }
     }
+
+    private suspend fun Throwable.handleException() {
+        when (this) {
+            is EmergencyCallExceptions.NameException -> {
+                _eventFlow.emit(value = AddEditEvent.NameFailure(this.message!!))
+            }
+
+            is EmergencyCallExceptions.PhoneNumberException -> {
+                _eventFlow.emit(value = AddEditEvent.PhoneNumberFailure(this.message!!))
+            }
+
+            else -> {
+                _eventFlow.emit(value = AddEditEvent.UnknownFailure(this.message!!))
+            }
+        }
+    }
+
 }

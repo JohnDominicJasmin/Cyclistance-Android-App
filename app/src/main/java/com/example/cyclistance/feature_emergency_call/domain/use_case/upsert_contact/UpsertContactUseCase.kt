@@ -6,6 +6,7 @@ import com.example.cyclistance.feature_emergency_call.domain.exceptions.Emergenc
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.domain.repository.EmergencyContactRepository
 import com.example.cyclistance.feature_settings.domain.exceptions.SettingExceptions
+import kotlinx.coroutines.flow.first
 
 class UpsertContactUseCase(
     private val repository: EmergencyContactRepository
@@ -30,6 +31,26 @@ class UpsertContactUseCase(
             throw SettingExceptions.PhoneNumberException("Phone number must not contain special characters.")
         }
 
+        repository.getContacts().first().apply {
+
+
+            this.contacts.apply {
+                find {
+                    it.id != emergencyContact.id
+                }?.let {
+
+                    if (it.name == emergencyContact.name) {
+                        throw EmergencyCallExceptions.NameException("Name already exists.")
+                    }
+
+                    if (it.phoneNumber == emergencyContact.phoneNumber) {
+                        throw EmergencyCallExceptions.PhoneNumberException("Phone number already exists.")
+                    }
+
+                }
+
+            }
+        }
 
 
         repository.upsertContact(emergencyContact = emergencyContact)
