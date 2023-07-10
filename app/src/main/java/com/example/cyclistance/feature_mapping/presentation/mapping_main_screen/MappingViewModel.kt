@@ -516,7 +516,7 @@ class MappingViewModel @Inject constructor(
             val transactionId = getTransactionId(rescuer)
             val user = state.value.user
 
-            checkCurrentTransactions(user = user, rescuer = rescuer) {
+            checkCurrentTransactions(user = user, rescuer = rescuer, noCurrentTransaction = {
 
                 coroutineScope {
                     runCatching {
@@ -539,7 +539,7 @@ class MappingViewModel @Inject constructor(
 
                     }.onSuccess { rescueTransaction ->
                         broadcastRescueTransaction()
-                        assignRequestTransaction(
+                        acceptRequest(
                             rescueTransaction = rescueTransaction,
                             user = user,
                             rescuer = rescuer,
@@ -553,7 +553,7 @@ class MappingViewModel @Inject constructor(
 
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
 
-            }
+            })
         }
     }
 
@@ -584,7 +584,7 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun assignRequestTransaction(
+    private suspend fun acceptRequest(
         rescueTransaction: RescueTransactionItem,
         user: UserItem,
         rescuer: UserItem,
@@ -592,11 +592,11 @@ class MappingViewModel @Inject constructor(
 
         runCatching {
 
-            transactionId.assignRequestTransaction(
+            transactionId.acceptRequest(
                 role = Role.RESCUEE.name.lowercase(),
                 id = user.id)
 
-            transactionId.assignRequestTransaction(
+            transactionId.acceptRequest(
                 role = Role.RESCUER.name.lowercase(),
                 id = rescuer.id)
 
@@ -639,7 +639,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private suspend fun String.assignRequestTransaction(role: String, id: String?) {
+    private suspend fun String.acceptRequest(role: String, id: String?) {
         mappingUseCase.createUserUseCase(
             user = UserItem.empty(id = id, transactionId = this, role = role)
         )
@@ -971,26 +971,19 @@ class MappingViewModel @Inject constructor(
                 return@coroutineScope
             }
 
-            getFullAddress(location = userLocation, onSuccess = onSuccess)
 
-        }
-    }
-
-    private suspend inline fun getFullAddress(
-        location: LocationModel,
-        crossinline onSuccess: () -> Unit) {
-
-        location.latitude ?: return
-        location.longitude ?: return
-
-        runCatching {
-            mappingUseCase.getFullAddressUseCase(
-                latitude = location.latitude,
-                longitude = location.longitude)
-        }.onSuccess { fullAddress ->
-            uploadProfile(location = location, fullAddress = fullAddress, onSuccess = onSuccess)
-        }.onFailure { exception ->
-            throw exception
+            runCatching {
+                mappingUseCase.getFullAddressUseCase(
+                    latitude = userLocation.latitude ?: return@coroutineScope,
+                    longitude = userLocation.longitude ?: return@coroutineScope)
+            }.onSuccess { fullAddress ->
+                uploadProfile(
+                    location = userLocation,
+                    fullAddress = fullAddress,
+                    onSuccess = onSuccess)
+            }.onFailure { exception ->
+                throw exception
+            }
         }
     }
 
