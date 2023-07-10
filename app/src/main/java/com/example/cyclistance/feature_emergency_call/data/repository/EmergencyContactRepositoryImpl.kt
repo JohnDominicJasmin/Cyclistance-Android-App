@@ -5,7 +5,6 @@ import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.CONTA
 import com.example.cyclistance.core.utils.data_store_ext.editData
 import com.example.cyclistance.core.utils.data_store_ext.getData
 import com.example.cyclistance.feature_emergency_call.data.data_source.local.dao.EmergencyContactDao
-import com.example.cyclistance.feature_emergency_call.data.data_source.local.entities.EmergencyContact
 import com.example.cyclistance.feature_emergency_call.data.mapper.EmergencyContactMapper.toEmergencyContact
 import com.example.cyclistance.feature_emergency_call.data.mapper.EmergencyContactMapper.toEmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyCallModel
@@ -29,11 +28,7 @@ class EmergencyContactRepositoryImpl(
     override suspend fun upsertContact(emergencyContact: EmergencyContactModel) {
         withContext(scope) {
             emergencyContactDao.upsertContact(
-                emergencyContact = EmergencyContact(
-                    name = emergencyContact.name,
-                    photoUri = emergencyContact.photo,
-                    number = emergencyContact.phoneNumber
-                ))
+                emergencyContact = emergencyContact.toEmergencyContact())
         }
     }
 
