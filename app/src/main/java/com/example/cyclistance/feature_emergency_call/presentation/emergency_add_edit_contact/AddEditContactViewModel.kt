@@ -61,6 +61,12 @@ class AddEditContactViewModel @Inject constructor(
             Timber.e("Error getting contact")
         }.onEach { contact ->
             _eventFlow.emit(value = AddEditEvent.GetContactSuccess(contact))
+            _state.update {
+                it.copy(
+                    nameSnapshot = contact.name,
+                    phoneNumberSnapshot = contact.phoneNumber
+                )
+            }
             savedStateHandle[ADD_EDIT_CONTACT_VM_STATE_KEY] = state.value
         }.launchIn(viewModelScope)
 
