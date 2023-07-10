@@ -36,13 +36,13 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RespondToHelpButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.ExpandableFABSection
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.FloatingButtonSection
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.request.MappingRequestAccepted
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.request.MappingRequestCancelled
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.sino_track.SinoTrackWebView
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.RescueRequestDialog
-import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.components.RescueRequestAccepted
-import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.components.RescueRequestCancelled
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -286,7 +286,7 @@ fun MappingScreenContent(
                         val cancellationReason =
                             cancellation?.cancellationReason ?: return@AnimatedVisibility
 
-                        RescueRequestCancelled(
+                        MappingRequestCancelled(
                             modifier = Modifier.fillMaxSize(),
                             onClickOkButton = { event(MappingUiEvent.CancelledRescueConfirmed) },
                             cancelledRescueModel = CancelledRescueModel(
@@ -301,7 +301,7 @@ fun MappingScreenContent(
                         visible = uiState.rescueRequestAccepted && isRescueCancelled.not(),
                         enter = fadeIn(),
                         exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
-                        RescueRequestAccepted(
+                        MappingRequestAccepted(
                             modifier = Modifier.fillMaxSize(),
                             onClickOkButton = { event(MappingUiEvent.RescueRequestAccepted) },
                             acceptedName = state.rescuee?.name ?: "Name placeholder",

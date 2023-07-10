@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.request
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,10 +27,10 @@ import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.theme.Green678
 
 @Composable
-fun RescueRequestAccepted(
+fun MappingRequestAccepted(
     modifier: Modifier = Modifier,
     onClickOkButton: () -> Unit = {},
-    acceptedName:String = "placeholder",
+    acceptedName: String = "placeholder",
     onDismiss: () -> Unit = {},
 ) {
     Dialog(
@@ -46,7 +46,7 @@ fun RescueRequestAccepted(
                     color = Color.Transparent,
                 )
         ) {
-            RequestAcceptedContent(
+            MappingRequestAcceptedContent(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth(),
@@ -57,7 +57,7 @@ fun RescueRequestAccepted(
 }
 
 @Composable
-private fun RequestAcceptedContent(
+private fun MappingRequestAcceptedContent(
     modifier: Modifier = Modifier,
     acceptedName: String = "placeholder",
     onClickOkButton: () -> Unit
@@ -107,6 +107,6 @@ private fun RequestAcceptedContent(
 @Composable
 private fun PreviewRescueRequestAccepted() {
     CyclistanceTheme(true) {
-        RescueRequestAccepted(modifier = Modifier.fillMaxSize())
+        MappingRequestAccepted(modifier = Modifier.fillMaxSize())
     }
 }

@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.request
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -37,7 +37,7 @@ import com.example.cyclistance.theme.Red610
 
 
 @Composable
-fun RescueRequestCancelled(
+fun MappingRequestCancelled(
     modifier: Modifier = Modifier,
     cancelledRescueModel: CancelledRescueModel = CancelledRescueModel(),
     onClickOkButton: () -> Unit,
@@ -57,7 +57,7 @@ fun RescueRequestCancelled(
                     color = Color.Transparent,
                 )
         ) {
-            RescueRequestCancelledContent(
+            MappingRequestCancelledContent(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth(),
@@ -69,7 +69,7 @@ fun RescueRequestCancelled(
 }
 
 @Composable
-private fun RescueRequestCancelledContent(
+private fun MappingRequestCancelledContent(
     modifier: Modifier = Modifier,
     cancelledRescueModel: CancelledRescueModel = CancelledRescueModel(),
     onClickOkButton: () -> Unit) {
@@ -242,7 +242,7 @@ private fun PreviewDetailsItem() {
 @Composable
 private fun PreviewMappingCancelledRescue() {
     CyclistanceTheme(true) {
-        RescueRequestCancelled(
+        MappingRequestCancelled(
             modifier = Modifier.fillMaxSize(),
             cancelledRescueModel = CancelledRescueModel(
                 transactionID = "02i4n93j09",
