@@ -50,7 +50,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import okhttp3.internal.toImmutableList
@@ -74,7 +77,8 @@ class MappingViewModel @Inject constructor(
     private var getTransactionLocationUpdatesJob: Job? = null
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(
-        savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState())
+        savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState()
+    )
     val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<MappingEvent> = MutableSharedFlow()
@@ -146,20 +150,18 @@ class MappingViewModel @Inject constructor(
         }
 
         coroutineScope {
-            runCatching {
-                mappingUseCase.getUsersUseCase(
-                    latitude = userLocation.latitude,
-                    longitude = userLocation.longitude).distinctUntilChanged().collect {
 
-
-                    it.getUser()
-                    it.getNearbyCyclist()
-                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-
-                }
-            }.onFailure {
+            mappingUseCase.getUsersUseCase(
+                latitude = userLocation.latitude,
+                longitude = userLocation.longitude
+            ).distinctUntilChanged().catch {
                 it.handleException()
-            }
+            }.onEach {
+                it.getUser()
+                it.getNearbyCyclist()
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+            }.launchIn(this)
+
         }
 
     }
@@ -171,23 +173,24 @@ class MappingViewModel @Inject constructor(
             if (transactionId.isNullOrEmpty()) {
                 return@coroutineScope
             }
-            runCatching {
-                mappingUseCase.getRescueTransactionByIdUseCase(transactionId)
-                    .collect { rescueTransaction ->
-                        _state.update { it.copy(rescueTransaction = rescueTransaction) }
-                    }
-            }.onSuccess {
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-            }.onFailure {
+
+            mappingUseCase.getRescueTransactionByIdUseCase(transactionId).catch {
                 it.handleException()
+            }.onEach { rescueTransaction ->
+                _state.update { it.copy(rescueTransaction = rescueTransaction) }
+            }.launchIn(this).invokeOnCompletion {
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }
+
         }
+
     }
 
 
     private inline fun getUserRescueTransaction(
         rescueTransaction: RescueTransaction,
-        onFoundRescueTransaction: (RescueTransactionItem?) -> Unit) {
+        onFoundRescueTransaction: (RescueTransactionItem?) -> Unit
+    ) {
 
         val transactionId = state.value.user.transaction?.transactionId
         val rescueTransactionResult =
@@ -284,7 +287,8 @@ class MappingViewModel @Inject constructor(
                     viewModelScope.launch(context = defaultDispatcher) {
                         mappingUseCase.addRescueRespondentUseCase(
                             userId = selectedRescuee.userId,
-                            respondentId = getId())
+                            respondentId = getId()
+                        )
                     }
                 })
             }.onSuccess {
@@ -340,15 +344,17 @@ class MappingViewModel @Inject constructor(
                     selectedRescuee = MapSelectedRescuee(
                         userId = selectedRescuee.id!!,
                         userProfileImage = selectedRescuee.profilePictureUrl
-                                           ?: IMAGE_PLACEHOLDER_URL,
+                            ?: IMAGE_PLACEHOLDER_URL,
                         name = selectedRescuee.name ?: "name unavailable",
                         issue = confirmationDetail?.description ?: "",
                         bikeType = confirmationDetail?.bikeType ?: "",
                         address = selectedRescuee.address ?: "",
                         message = confirmationDetail?.message ?: "",
                         distanceRemaining = distance.formatToDistanceKm(),
-                        timeRemaining = timeRemaining)
-                ))
+                        timeRemaining = timeRemaining
+                    )
+                )
+            )
         }.onFailure {
             _eventFlow.emit(value = MappingEvent.FailedToCalculateDistance)
         }.also {
@@ -364,7 +370,9 @@ class MappingViewModel @Inject constructor(
                 id = this,
                 transaction = TransactionModel(),
                 userAssistance = UserAssistanceModel(needHelp = false),
-                rescueRequest = RescueRequest()))
+                rescueRequest = RescueRequest()
+            )
+        )
     }
 
 
@@ -393,19 +401,13 @@ class MappingViewModel @Inject constructor(
         }
         getTransactionLocationUpdatesJob =
             viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
-
-                runCatching {
-                    mappingUseCase.getTransactionLocationUpdatesUseCase().distinctUntilChanged()
-                        .collect { liveLocation ->
-                            liveLocation.updateTransactionLocation()
-                            liveLocation.updateTransactionETA()
-                            liveLocation.updateTransactionDistance()
-                        }
-                }.onSuccess {
-                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                }.onFailure {
+                mappingUseCase.getTransactionLocationUpdatesUseCase().distinctUntilChanged().catch {
                     Timber.e("ERROR GETTING TRANSACTION LOCATION: ${it.message}")
-                }
+                }.onEach { liveLocation ->
+                    liveLocation.updateTransactionLocation()
+                    liveLocation.updateTransactionETA()
+                    liveLocation.updateTransactionDistance()
+                }.launchIn(this@launch)
 
             }
     }
@@ -441,7 +443,9 @@ class MappingViewModel @Inject constructor(
             it.copy(
                 transactionLocation = LocationModel(
                     latitude = this.latitude,
-                    longitude = this.longitude))
+                    longitude = this.longitude
+                )
+            )
         }
     }
 
@@ -454,13 +458,16 @@ class MappingViewModel @Inject constructor(
         val eta = getETABetweenTwoPoints(
             startingLocation = LocationModel(
                 latitude = this.latitude,
-                longitude = this.longitude), endLocation = userLocation)
+                longitude = this.longitude
+            ), endLocation = userLocation
+        )
         _state.update { it.copy(rescuerETA = eta) }
     }
 
     private fun getETABetweenTwoPoints(
         startingLocation: LocationModel,
-        endLocation: LocationModel): String {
+        endLocation: LocationModel
+    ): String {
         val distance = mappingUseCase.getCalculatedDistanceUseCase(
             startingLocation = startingLocation,
             destinationLocation = endLocation
@@ -473,7 +480,8 @@ class MappingViewModel @Inject constructor(
     private suspend inline fun checkCurrentTransactions(
         user: UserItem,
         rescuer: UserItem,
-        crossinline noCurrentTransaction: suspend () -> Unit) {
+        crossinline noCurrentTransaction: suspend () -> Unit
+    ) {
 
         val userHasCurrentTransaction =
             (user.transaction ?: TransactionModel()).transactionId.isNotEmpty()
@@ -529,11 +537,14 @@ class MappingViewModel @Inject constructor(
                             route = RouteModel(
                                 startingLocation = LocationModel(
                                     latitude = rescuer.location!!.latitude,
-                                    longitude = rescuer.location.longitude),
+                                    longitude = rescuer.location.longitude
+                                ),
                                 destinationLocation = LocationModel(
                                     latitude = user.location!!.latitude,
-                                    longitude = user.location.longitude)
-                            )).apply {
+                                    longitude = user.location.longitude
+                                )
+                            )
+                        ).apply {
                             mappingUseCase.createRescueTransactionUseCase(rescueTransaction = this)
                         }
 
@@ -543,7 +554,8 @@ class MappingViewModel @Inject constructor(
                             rescueTransaction = rescueTransaction,
                             user = user,
                             rescuer = rescuer,
-                            transactionId = transactionId)
+                            transactionId = transactionId
+                        )
                         user.location?.let { broadcastRescueTransactionToRespondent(it) }
                     }.onFailure { exception ->
                         finishLoading()
@@ -578,7 +590,8 @@ class MappingViewModel @Inject constructor(
                 locationModel = LiveLocationWSModel(
                     latitude = location.latitude,
                     longitude = location.longitude
-                ))
+                )
+            )
         }.onFailure {
             it.handleException()
         }
@@ -588,17 +601,20 @@ class MappingViewModel @Inject constructor(
         rescueTransaction: RescueTransactionItem,
         user: UserItem,
         rescuer: UserItem,
-        transactionId: String) {
+        transactionId: String
+    ) {
 
         runCatching {
 
             transactionId.assignRequestTransaction(
                 role = Role.RESCUEE.name.lowercase(),
-                id = user.id)
+                id = user.id
+            )
 
             transactionId.assignRequestTransaction(
                 role = Role.RESCUER.name.lowercase(),
-                id = rescuer.id)
+                id = rescuer.id
+            )
 
         }.onSuccess {
             broadcastToNearbyCyclists()
@@ -620,13 +636,15 @@ class MappingViewModel @Inject constructor(
         val estimatedTimeArrival = rescuer.location?.let {
             getETABetweenTwoPoints(
                 startingLocation = it,
-                endLocation = userLocation)
+                endLocation = userLocation
+            )
         }
         _state.update {
             it.copy(
                 rescueTransaction = rescueTransaction,
                 rescuerETA = estimatedTimeArrival ?: "",
-                rescuer = rescuer)
+                rescuer = rescuer
+            )
         }
     }
 
@@ -684,7 +702,9 @@ class MappingViewModel @Inject constructor(
                 id = getId(),
                 userAssistance = UserAssistanceModel(
                     needHelp = false,
-                    confirmationDetail = ConfirmationDetailModel()))
+                    confirmationDetail = ConfirmationDetailModel()
+                )
+            )
         )
     }
 
@@ -695,7 +715,9 @@ class MappingViewModel @Inject constructor(
             state.copy(
                 userLocation = LocationModel(
                     latitude = latitude,
-                    longitude = longitude))
+                    longitude = longitude
+                )
+            )
         }
 
     }
@@ -711,7 +733,9 @@ class MappingViewModel @Inject constructor(
             _state.update {
                 it.copy(
                     newRescueRequest = NewRescueRequestsModel(
-                        request = respondents))
+                        request = respondents
+                    )
+                )
             }
         }.onFailure {
             _eventFlow.emit(value = MappingEvent.GetUserIdFailed)
@@ -749,7 +773,9 @@ class MappingViewModel @Inject constructor(
                 rescueRespondentsSnapShot.add(
                     element = userRespondent.toRescueRequest(
                         distance = distance.formatToDistanceKm(),
-                        eta = formattedETA))
+                        eta = formattedETA
+                    )
+                )
             }
         }
 
@@ -771,9 +797,11 @@ class MappingViewModel @Inject constructor(
                 LiveLocationWSModel(
                     latitude = location.latitude,
                     longitude = location.longitude,
-                    room = rescueTransaction.id),
+                    room = rescueTransaction.id
+                ),
                 user = user,
-                rescueTransactionItem = rescueTransaction)
+                rescueTransactionItem = rescueTransaction
+            )
 
         }.onFailure {
             Timber.v("Broadcasting location to transaction failed: ${it.message}")
@@ -792,17 +820,17 @@ class MappingViewModel @Inject constructor(
         getRescueTransactionUpdatesJob =
             viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
-                runCatching {
-                    mappingUseCase.getRescueTransactionUpdatesUseCase().collect {
-                        it.updateRescueTransaction()
-                        it.updateRescueClient()
-                        it.checkRescueRequestAccepted()
-                    }
-                }.onSuccess {
-                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                }.onFailure {
+                mappingUseCase.getRescueTransactionUpdatesUseCase().catch {
                     Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
+
+                }.onEach {
+                    it.updateRescueTransaction()
+                    it.updateRescueClient()
+                    it.checkRescueRequestAccepted()
+                }.launchIn(this@launch).invokeOnCompletion {
+                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
+
             }
     }
 
@@ -870,18 +898,14 @@ class MappingViewModel @Inject constructor(
         }
         locationUpdatesJob = viewModelScope.launch(context = defaultDispatcher) {
 
-            runCatching {
-                mappingUseCase.getUserLocationUseCase().collect { location ->
-                    broadcastRescueTransactionToRespondent(location)
-                    updateLocation(location)
-                    getNearbyCyclist()
-                }
-
-            }.onSuccess {
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-
-            }.onFailure {
+            mappingUseCase.getUserLocationUseCase().catch {
                 Timber.e("Error Location Updates: ${it.message}")
+            }.onEach { location ->
+                broadcastRescueTransactionToRespondent(location)
+                updateLocation(location)
+                getNearbyCyclist()
+            }.launchIn(this@launch).invokeOnCompletion {
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }
         }
     }
@@ -893,16 +917,15 @@ class MappingViewModel @Inject constructor(
         }
 
         getUsersUpdatesJob = viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
-            runCatching {
-                mappingUseCase.getUserUpdatesUseCase().collect {
-                    it.getUser()
-                    it.getNearbyCyclist()
-                    it.updateClient()
-                }
-            }.onSuccess {
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-            }.onFailure {
+
+            mappingUseCase.getUserUpdatesUseCase().catch {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
+            }.onEach {
+                it.getUser()
+                it.getNearbyCyclist()
+                it.updateClient()
+            }.launchIn(this).invokeOnCompletion {
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }
         }
     }
@@ -978,7 +1001,8 @@ class MappingViewModel @Inject constructor(
 
     private suspend inline fun getFullAddress(
         location: LocationModel,
-        crossinline onSuccess: () -> Unit) {
+        crossinline onSuccess: () -> Unit
+    ) {
 
         location.latitude ?: return
         location.longitude ?: return
@@ -986,7 +1010,8 @@ class MappingViewModel @Inject constructor(
         runCatching {
             mappingUseCase.getFullAddressUseCase(
                 latitude = location.latitude,
-                longitude = location.longitude)
+                longitude = location.longitude
+            )
         }.onSuccess { fullAddress ->
             uploadProfile(location = location, fullAddress = fullAddress, onSuccess = onSuccess)
         }.onFailure { exception ->
@@ -1020,8 +1045,11 @@ class MappingViewModel @Inject constructor(
                         contactNumber = getPhoneNumber(),
                         location = LocationModel(
                             latitude = location.latitude,
-                            longitude = location.longitude),
-                        rescueRequest = RescueRequest(), userAssistance = UserAssistanceModel()))
+                            longitude = location.longitude
+                        ),
+                        rescueRequest = RescueRequest(), userAssistance = UserAssistanceModel()
+                    )
+                )
                 mappingUseCase.setAddressUseCase(fullAddress)
 
             }.onSuccess {
@@ -1050,21 +1078,24 @@ class MappingViewModel @Inject constructor(
                 _eventFlow.emit(
                     MappingEvent.UnexpectedError(
                         reason = this.message
-                    ))
+                    )
+                )
             }
 
             is AuthExceptions.UserException -> {
                 _eventFlow.emit(
                     MappingEvent.UserFailed(
                         reason = this.message
-                    ))
+                    )
+                )
             }
 
             is MappingExceptions.AddressException -> {
                 _eventFlow.emit(
                     MappingEvent.AddressFailed(
                         reason = this.message ?: "Searching for GPS"
-                    ))
+                    )
+                )
             }
 
             is SettingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
