@@ -19,7 +19,7 @@ fun RescueResultsDialog(
 
 
     Dialog(
-        onDismissRequest = { },
+        onDismissRequest = { event(MappingUiEvent.DismissRescueResultsDialog) },
         properties = DialogProperties(
             usePlatformDefaultWidth = false,
             dismissOnClickOutside = false,
