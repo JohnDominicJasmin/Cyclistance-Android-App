@@ -43,6 +43,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.RescueRequestDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.components.RescueRequestAccepted
 import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.components.RescueRequestCancelled
+import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_results.RescueResultsDialog
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -87,6 +88,18 @@ fun MappingScreenContent(
                     uiState = uiState,
                     event = event
                 )
+            }
+
+
+            if(uiState.isRescueResultsDialogVisible){
+
+                RescueResultsDialog(
+                    modifier = Modifier.fillMaxSize(),
+                    mappingState = state,
+                    uiState = uiState,
+                    event = event
+                )
+
             }
 
 
