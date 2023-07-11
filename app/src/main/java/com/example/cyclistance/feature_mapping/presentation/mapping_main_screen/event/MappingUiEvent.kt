@@ -37,6 +37,7 @@ sealed class MappingUiEvent{
     object OpenFamilyTracker : MappingUiEvent()
     object ShowRescueRequestDialog : MappingUiEvent()
     object DismissRescueRequestDialog : MappingUiEvent()
+    object DismissRescueResultsDialog : MappingUiEvent()
     object DismissSinoTrackWebView : MappingUiEvent()
     object ShowSinoTrackWebView : MappingUiEvent()
 
