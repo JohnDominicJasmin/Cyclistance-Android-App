@@ -43,7 +43,7 @@ fun PreviewEmailAuthScreenDark() {
                 ),
             )
         }
-    }
+    } 
 }
 
 @Preview(device = "id:pixel_xl")
