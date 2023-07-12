@@ -12,6 +12,8 @@ data class ReportAccountUiState(
     val accountReport: AccountReport = AccountReport(),
     val shouldShowReportFeedback: Boolean = false,
     val isReportMaxLimitReached: Boolean = false,
-    val isReportButtonEnabled: Boolean = false
+    val isReportButtonEnabled: Boolean = false,
+    val reportedName: String = "",
+    val reportedPhoto: String = ""
 ) : Parcelable
 

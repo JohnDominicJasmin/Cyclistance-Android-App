@@ -23,7 +23,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun ReportAccountDialog(onDismiss: () -> Unit) {
 
-    var uiState by rememberSaveable() {
+    var uiState by rememberSaveable {
         mutableStateOf(ReportAccountUiState())
     }
     val selectedOptions = remember { mutableStateListOf<String>() }
@@ -43,19 +43,6 @@ fun ReportAccountDialog(onDismiss: () -> Unit) {
     }
     val onReasonChecked = remember {
         { reason: String ->
-
-
-            /*
-            *      if (selectedOptions.contains(reason)) {
-                                        selectedOptions.remove(reason)
-                                        return@ReportReasonItem
-                                    }
-
-                                    if (isReportMaxLimitReached.value) {
-                                        return@ReportReasonItem
-                                    }
-
-                                    selectedOptions.add(reason)*/
 
             selectedOptions.apply {
                 if (contains(reason)) {

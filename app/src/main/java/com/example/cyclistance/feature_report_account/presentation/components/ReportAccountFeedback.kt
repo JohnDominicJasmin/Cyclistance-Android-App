@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -21,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -36,7 +38,7 @@ fun ReportAccountFeedback(
     onClickOkayButton: () -> Unit
 ) {
     Column(
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier.fillMaxWidth()
     ) {
 
@@ -59,7 +61,9 @@ fun ReportAccountFeedback(
                 8.dp,
                 alignment = Alignment.CenterHorizontally
             ),
-            modifier = Modifier.padding(vertical = 16.dp)
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .fillMaxWidth(0.9f)
         ) {
 
 
@@ -69,7 +73,6 @@ fun ReportAccountFeedback(
                 contentDescription = "User Profile Image",
                 modifier = Modifier
                     .clip(CircleShape)
-                    .weight(0.5f)
                     .size(45.dp),
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
@@ -81,8 +84,13 @@ fun ReportAccountFeedback(
                 text = name,
                 color = MaterialTheme.colors.onBackground,
                 style = MaterialTheme.typography.body1,
-                modifier = Modifier.weight(0.5f)
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                modifier = Modifier.weight(0.3f)
+
             )
+
+
         }
 
         Text(
@@ -92,8 +100,6 @@ fun ReportAccountFeedback(
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .padding(vertical = 16.dp),
-
-
             )
 
         Button(onClick = onClickOkayButton, shape = RoundedCornerShape(8.dp)) {
@@ -101,8 +107,9 @@ fun ReportAccountFeedback(
                 text = "Okay",
                 color = MaterialTheme.colors.onPrimary,
                 style = MaterialTheme.typography.button,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+                modifier = Modifier.padding(horizontal = 16.dp),
+
+                )
         }
     }
 }
@@ -112,7 +119,12 @@ fun ReportAccountFeedback(
 private fun PreviewReportAccountFeedback() {
     CyclistanceTheme(darkTheme = true) {
         Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
-            ReportAccountFeedback(photo = "", name = "John DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn Doe", onClickOkayButton = {})
+            Box(modifier = Modifier.fillMaxSize()) {
+                ReportAccountFeedback(
+                    photo = "",
+                    name = "John Doe John DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn Doe",
+                    onClickOkayButton = {})
+            }
         }
     }
 }
