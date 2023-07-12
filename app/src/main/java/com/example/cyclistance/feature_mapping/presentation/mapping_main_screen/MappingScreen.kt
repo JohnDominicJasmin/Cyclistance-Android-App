@@ -605,6 +605,11 @@ fun MappingScreen(
         }
     }
 
+    val onDismissRescueResultsDialog = remember{{
+        uiState = uiState.copy(
+            isRescueResultsDialogVisible = false
+        )
+    }}
 
     LaunchedEffect(key1 = true, key2 = state.userLocation) {
 
@@ -908,6 +913,7 @@ fun MappingScreen(
                 is MappingUiEvent.OnReportIncident -> onClickReportIncident()
                 is MappingUiEvent.DismissSinoTrackWebView -> onDismissSinoTrackWebView()
                 is MappingUiEvent.ShowSinoTrackWebView -> onShowSinoTrackWebView()
+                is MappingUiEvent.DismissRescueResultsDialog -> onDismissRescueResultsDialog()
 
 
             }
