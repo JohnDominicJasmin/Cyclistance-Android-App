@@ -40,6 +40,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 fun DialogAnimatedIconCreator(
     icon: Int,
     isDialogOpen: Boolean,
+    usePlatformDefaultWidth: Boolean = true,
     onDialogVisibilityToggle: () -> Unit,
     onDismissRequest: () -> Unit,
     content: @Composable ColumnScope.() -> Unit
@@ -49,14 +50,17 @@ fun DialogAnimatedIconCreator(
 
 
     if (isDialogOpen) {
-        Dialog(onDismissRequest = {
-            onDismissRequest()
-            onDialogVisibilityToggle()
-        }, properties = DialogProperties()) {
+        Dialog(
+            onDismissRequest = {
+                onDismissRequest()
+                onDialogVisibilityToggle()
+            }, properties = DialogProperties(
+                usePlatformDefaultWidth = usePlatformDefaultWidth,
+            )) {
 
             Box(
                 modifier = Modifier
-                    .widthIn(max = 500.dp)
+                    .widthIn(max = 600.dp)
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 contentAlignment = Alignment.Center

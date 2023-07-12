@@ -12,7 +12,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -59,7 +59,7 @@ fun AdditionalMessage(
 
 
                 val (textField, numberOfCharactersText) = createRefs()
-                var numberOfCharacters by remember { mutableStateOf(0) }
+                var numberOfCharacters by remember { mutableIntStateOf(0) }
 
                 TextField(
                     enabled = enabled,
