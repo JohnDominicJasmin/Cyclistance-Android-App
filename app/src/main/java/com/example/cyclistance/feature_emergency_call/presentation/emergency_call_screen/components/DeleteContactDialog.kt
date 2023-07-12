@@ -22,6 +22,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun DeleteContactDialog(
+    modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
     onClickConfirmButton: () -> Unit,
     nameToDelete: String) {
@@ -36,7 +37,7 @@ fun DeleteContactDialog(
 
 
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally) {
 
