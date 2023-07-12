@@ -1,13 +1,17 @@
 package com.example.cyclistance.feature_report_account.presentation.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -28,15 +32,20 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun ReportAccountFeedback(
     modifier: Modifier = Modifier,
     photo: String,
-    name: String
+    name: String,
+    onClickOkayButton: () -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
+        horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier.fillMaxWidth()
+    ) {
+
+
         Image(
             painter = painterResource(id = R.drawable.ic_report_account_feedback),
             contentDescription = "Report Account Feedback",
-            modifier = Modifier.padding(vertical = 16.dp))
+            modifier = Modifier.padding(vertical = 16.dp)
+        )
 
         Text(
             text = "Thank you for feedback",
@@ -48,24 +57,32 @@ fun ReportAccountFeedback(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
                 8.dp,
-                alignment = Alignment.CenterHorizontally),
-            modifier = Modifier.padding(vertical = 8.dp)) {
+                alignment = Alignment.CenterHorizontally
+            ),
+            modifier = Modifier.padding(vertical = 16.dp)
+        ) {
+
+
             AsyncImage(
                 model = photo,
                 alignment = Alignment.Center,
                 contentDescription = "User Profile Image",
                 modifier = Modifier
                     .clip(CircleShape)
+                    .weight(0.5f)
                     .size(45.dp),
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
                 error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
-                fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
+                fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large)
+            )
 
             Text(
                 text = name,
                 color = MaterialTheme.colors.onBackground,
-                style = MaterialTheme.typography.body1)
+                style = MaterialTheme.typography.body1,
+                modifier = Modifier.weight(0.5f)
+            )
         }
 
         Text(
@@ -78,6 +95,15 @@ fun ReportAccountFeedback(
 
 
             )
+
+        Button(onClick = onClickOkayButton, shape = RoundedCornerShape(8.dp)) {
+            Text(
+                text = "Okay",
+                color = MaterialTheme.colors.onPrimary,
+                style = MaterialTheme.typography.button,
+                modifier = Modifier.padding(horizontal = 16.dp)
+            )
+        }
     }
 }
 
@@ -85,6 +111,8 @@ fun ReportAccountFeedback(
 @Composable
 private fun PreviewReportAccountFeedback() {
     CyclistanceTheme(darkTheme = true) {
-        ReportAccountFeedback(photo = "", name = "John Doe")
+        Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            ReportAccountFeedback(photo = "", name = "John DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn Doe", onClickOkayButton = {})
+        }
     }
 }
