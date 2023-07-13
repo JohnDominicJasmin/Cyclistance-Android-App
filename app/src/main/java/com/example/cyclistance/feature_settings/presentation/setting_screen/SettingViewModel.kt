@@ -15,6 +15,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -26,7 +29,7 @@ class SettingViewModel @Inject constructor(
     private val settingUseCase: SettingUseCase,
     private val defaultDispatcher: CoroutineDispatcher,
     private val authUseCase: AuthenticationUseCase
-    ) : ViewModel() {
+) : ViewModel() {
 
     private val _state = MutableStateFlow(savedStateHandle[SETTING_VM_STATE_KEY] ?: SettingState())
     val state = _state.asStateFlow()
@@ -34,7 +37,7 @@ class SettingViewModel @Inject constructor(
     private val _eventFlow = MutableSharedFlow<SettingUiEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
-    init{
+    init {
         loadTheme()
     }
 
@@ -53,21 +56,19 @@ class SettingViewModel @Inject constructor(
     }
 
 
-    private fun loadTheme(){
+    private fun loadTheme() {
 
         viewModelScope.launch(context = defaultDispatcher) {
-            runCatching {
-                settingUseCase.isDarkThemeUseCase().collect { isDarkTheme ->
-                    _state.update { it.copy(isDarkTheme = isDarkTheme) }
-                    savedStateHandle[SETTING_VM_STATE_KEY] = state.value
-                }
-            }.onFailure {
+
+            settingUseCase.isDarkThemeUseCase().catch {
                 Timber.e("Dark Theme DataStore Reading Failed: ${it.localizedMessage}")
 
-            }
+            }.onEach { isDarkTheme ->
+                _state.update { it.copy(isDarkTheme = isDarkTheme) }
+                savedStateHandle[SETTING_VM_STATE_KEY] = state.value
+            }.launchIn(this@launch)
         }
     }
-
 
 
     private fun toggleTheme() {
@@ -81,15 +82,12 @@ class SettingViewModel @Inject constructor(
     }
 
 
-
-
-
-
     fun onEvent(event: SettingEvent) {
         when (event) {
             is SettingEvent.ToggleTheme -> {
                 toggleTheme()
             }
+
             is SettingEvent.SignOut -> {
                 signOutAccount()
             }

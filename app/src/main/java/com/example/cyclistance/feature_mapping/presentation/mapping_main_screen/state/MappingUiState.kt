@@ -25,6 +25,7 @@ data class MappingUiState(
     val isRescueRequestDialogVisible: Boolean = false,
     val isSinoTrackWebViewVisible: Boolean = false,
     val isEmergencyCallDialogVisible: Boolean = false,
+    val isRescueResultsDialogVisible: Boolean = false,
 
 
     ) : Parcelable

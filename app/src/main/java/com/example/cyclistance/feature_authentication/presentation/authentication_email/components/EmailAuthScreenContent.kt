@@ -31,6 +31,7 @@ import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
+
 @Preview(device = "id:pixel_xl")
 @Composable
 fun PreviewEmailAuthScreenDark() {
@@ -43,9 +44,8 @@ fun PreviewEmailAuthScreenDark() {
                 ),
             )
         }
-    }
+    } 
 }
-
 @Preview(device = "id:pixel_xl")
 @Composable
 fun PreviewEmailAuthScreenLight() {

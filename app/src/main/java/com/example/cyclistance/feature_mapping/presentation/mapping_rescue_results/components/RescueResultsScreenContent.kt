@@ -20,6 +20,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -32,10 +33,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
+import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun RescueResultsScreenContent(modifier: Modifier = Modifier) {
+fun RescueResultsScreenContent(
+    modifier: Modifier = Modifier,
+    mappingState: MappingState = MappingState(),
+    uiState: MappingUiState = MappingUiState(),
+    event: (MappingUiEvent) -> Unit
+) {
     var step by rememberSaveable { mutableIntStateOf(1) }
     var rating by rememberSaveable { mutableFloatStateOf(0.0f) }
 
@@ -45,6 +55,14 @@ fun RescueResultsScreenContent(modifier: Modifier = Modifier) {
         }
     }
 
+
+    val stepUp = remember(step){{
+        step += 1
+    }}
+
+    val stepDown = remember(step){{
+        step -= 1
+    }}
     val fadeInAnimationSpec: FiniteAnimationSpec<Float> =
         tween(durationMillis = 1200, delayMillis = 250, easing = FastOutSlowInEasing)
 
@@ -64,15 +82,18 @@ fun RescueResultsScreenContent(modifier: Modifier = Modifier) {
                     .padding(vertical = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(
                     16.dp,
-                    alignment = Alignment.Top),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+                    alignment = Alignment.Top
+                ),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
 
                 AnimatedVisibility(
                     enter = fadeIn(),
                     exit = fadeOut(),
                     visible = step == 1,
                     modifier = Modifier
-                        .animateContentSize()) {
+                        .animateContentSize()
+                ) {
                     RescueArrivedSection(
                         modifier = Modifier.padding(vertical = 22.dp)
                     )
@@ -85,7 +106,8 @@ fun RescueResultsScreenContent(modifier: Modifier = Modifier) {
                         .padding(vertical = 16.dp),
                     visible = step == 1,
                     enter = fadeIn(),
-                    exit = fadeOut()) {
+                    exit = fadeOut()
+                ) {
 
                     RescueReportAccountSection(
                         photoUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
@@ -94,18 +116,21 @@ fun RescueResultsScreenContent(modifier: Modifier = Modifier) {
                             //todo
                         }, modifier = Modifier
                             .padding(horizontal = 12.dp)
-                            .animateContentSize())
+                            .animateContentSize()
+                    )
 
                 }
 
                 AnimatedVisibility(
                     visible = step == 2,
                     enter = fadeIn(
-                        animationSpec = fadeInAnimationSpec),
+                        animationSpec = fadeInAnimationSpec
+                    ),
                     exit = fadeOut(),
                     modifier = Modifier
                         .animateContentSize()
-                        .padding(vertical = 8.dp)) {
+                        .padding(vertical = 8.dp)
+                ) {
                     RescueGoodToHearSection()
                 }
 
@@ -116,7 +141,8 @@ fun RescueResultsScreenContent(modifier: Modifier = Modifier) {
                     exit = fadeOut(),
                     modifier = Modifier
                         .animateContentSize()
-                        .padding(vertical = 8.dp)) {
+                        .padding(vertical = 8.dp)
+                ) {
                     RateRescuer(onValueChange = { rating = it }, rating = rating)
                 }
 
@@ -127,7 +153,8 @@ fun RescueResultsScreenContent(modifier: Modifier = Modifier) {
                     exit = fadeOut(),
                     modifier = Modifier
                         .animateContentSize()
-                        .padding(vertical = 8.dp)) {
+                        .padding(vertical = 8.dp)
+                ) {
                     RescueThankYouSection()
                 }
 
@@ -142,15 +169,16 @@ fun RescueResultsScreenContent(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .animateContentSize()
                     .padding(bottom = 30.dp)
-                    .align(alignment = Alignment.BottomCenter)) {
+                    .align(alignment = Alignment.BottomCenter)
+            ) {
 
                 ButtonNavigation(
                     modifier = Modifier
                         .fillMaxWidth(0.8f),
                     negativeButtonText = "No",
                     positiveButtonText = "Yes",
-                    onClickCancelButton = {/*todo*/ },
-                    onClickConfirmButton = { step += 1 })
+                    onClickCancelButton = { event(MappingUiEvent.DismissRescueResultsDialog) },
+                    onClickConfirmButton = stepUp)
 
             }
 
@@ -161,7 +189,8 @@ fun RescueResultsScreenContent(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .animateContentSize()
                     .padding(bottom = 30.dp)
-                    .align(alignment = Alignment.BottomCenter)) {
+                    .align(alignment = Alignment.BottomCenter)
+            ) {
 
                 ButtonNavigation(
                     modifier = Modifier
@@ -169,8 +198,8 @@ fun RescueResultsScreenContent(modifier: Modifier = Modifier) {
                     positiveButtonEnabled = isRated,
                     negativeButtonText = "Cancel",
                     positiveButtonText = "Rate",
-                    onClickCancelButton = {/*todo*/ },
-                    onClickConfirmButton = { step += 1 })
+                    onClickCancelButton = stepDown,
+                    onClickConfirmButton = stepUp)
 
             }
 
@@ -182,16 +211,19 @@ fun RescueResultsScreenContent(modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .animateContentSize()
                     .padding(bottom = 30.dp)
-                    .align(alignment = Alignment.BottomCenter)) {
+                    .align(alignment = Alignment.BottomCenter)
+            ) {
 
 
                 Button(
-                    onClick = {}, shape = RoundedCornerShape(8.dp),
+                    onClick = {event(MappingUiEvent.DismissRescueResultsDialog)}, shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = MaterialTheme.colors.primary,
-                        contentColor = MaterialTheme.colors.onPrimary),
+                        contentColor = MaterialTheme.colors.onPrimary
+                    ),
                     modifier = Modifier
-                        .padding(vertical = 16.dp)) {
+                        .padding(vertical = 16.dp)
+                ) {
 
                     Text(
                         text = "Okay",
@@ -210,8 +242,23 @@ fun RescueResultsScreenContent(modifier: Modifier = Modifier) {
 
 @Preview(device = "id:Galaxy Nexus")
 @Composable
-fun PreviewRescueResultsScreenContent() {
-    CyclistanceTheme(darkTheme = true) {
-        RescueResultsScreenContent()
+fun PreviewRescueResultsScreenContentDark() {
+
+    CompositionLocalProvider(IsDarkTheme provides true) {
+        CyclistanceTheme(darkTheme = true) {
+            RescueResultsScreenContent(event = {})
+        }
     }
 }
+
+@Preview(device = "id:Galaxy Nexus")
+@Composable
+fun PreviewRescueResultsScreenContentLight() {
+
+    CompositionLocalProvider(IsDarkTheme provides false) {
+        CyclistanceTheme(darkTheme = false) {
+            RescueResultsScreenContent(event = {})
+        }
+    }
+}
+

@@ -12,7 +12,7 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -33,7 +33,8 @@ import com.example.cyclistance.theme.Black500
 
 @Composable
 fun AdditionalMessage(
-    text: String = "Message",
+    text: String? = "Message",
+    placeholderText: String? = "(Optional) Leave a message",
     modifier: Modifier,
     message: TextFieldValue,
     enabled: Boolean,
@@ -41,12 +42,14 @@ fun AdditionalMessage(
     Column(modifier = modifier) {
 
 
-        Text(
-            text = text,
-            color = MaterialTheme.colors.onBackground,
-            style = MaterialTheme.typography.subtitle1,
-            fontWeight = FontWeight.Normal,
-            modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))
+        if (text != null) {
+            Text(
+                text = text,
+                color = MaterialTheme.colors.onBackground,
+                style = MaterialTheme.typography.subtitle1,
+                fontWeight = FontWeight.Normal,
+                modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))
+        }
 
 
         Column(
@@ -59,7 +62,7 @@ fun AdditionalMessage(
 
 
                 val (textField, numberOfCharactersText) = createRefs()
-                var numberOfCharacters by remember { mutableStateOf(0) }
+                var numberOfCharacters by remember { mutableIntStateOf(0) }
 
                 TextField(
                     enabled = enabled,
@@ -89,10 +92,12 @@ fun AdditionalMessage(
                         disabledIndicatorColor = Color.Transparent
                     ),
                     placeholder = {
-                        Text(
-                            text = "(Optional) Leave a message",
-                            color = Black500,
-                            style = MaterialTheme.typography.body2)
+                        placeholderText?.let {
+                            Text(
+                                text = placeholderText,
+                                color = Black500,
+                                style = MaterialTheme.typography.body2)
+                        }
                     },
                     textStyle = TextStyle(
                         fontSize = TextUnit(value = 14f, type = TextUnitType.Sp)
