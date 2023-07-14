@@ -1,0 +1,162 @@
+Index: app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/ContactItem.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components\n\nimport androidx.compose.foundation.background\nimport androidx.compose.foundation.layout.Arrangement\nimport androidx.compose.foundation.layout.Box\nimport androidx.compose.foundation.layout.Column\nimport androidx.compose.foundation.layout.Row\nimport androidx.compose.foundation.layout.fillMaxWidth\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.layout.size\nimport androidx.compose.foundation.layout.wrapContentSize\nimport androidx.compose.foundation.shape.CircleShape\nimport androidx.compose.material.ExperimentalMaterialApi\nimport androidx.compose.material.Icon\nimport androidx.compose.material.MaterialTheme\nimport androidx.compose.material.Surface\nimport androidx.compose.material.Text\nimport androidx.compose.material.icons.Icons\nimport androidx.compose.material.icons.filled.MoreVert\nimport androidx.compose.material3.DropdownMenu\nimport androidx.compose.material3.DropdownMenuItem\nimport androidx.compose.material3.IconButton\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.draw.clip\nimport androidx.compose.ui.layout.ContentScale\nimport androidx.compose.ui.res.painterResource\nimport androidx.compose.ui.unit.dp\nimport coil.compose.AsyncImage\nimport com.example.cyclistance.R\nimport com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel\nimport com.example.cyclistance.theme.Black500\n\n@OptIn(ExperimentalMaterialApi::class)\n@Composable\nfun ContactItem(\n    modifier: Modifier = Modifier,\n    onClick: () -> Unit,\n    onClickEdit: () -> Unit,\n    onClickDelete: () -> Unit,\n    emergencyContact: EmergencyContactModel) {\n\n    Surface(\n        onClick = onClick,\n        color = MaterialTheme.colors.background,\n        modifier = modifier.fillMaxWidth()) {\n\n        Row(\n            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),\n            verticalAlignment = Alignment.CenterVertically,\n            horizontalArrangement = Arrangement.spacedBy(12.dp, alignment = Alignment.Start)\n        ) {\n\n            AsyncImage(\n                model = emergencyContact.photo,\n                alignment = Alignment.Center,\n                contentDescription = \"User Profile Image\",\n                modifier = Modifier\n                    .clip(CircleShape)\n                    .size(54.dp),\n                contentScale = ContentScale.Crop,\n                placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),\n                error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),\n                fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))\n\n\n            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {\n                Text(\n                    text = emergencyContact.name,\n                    style = MaterialTheme.typography.body1,\n                    color = MaterialTheme.colors.onBackground\n                )\n                Text(\n                    text = emergencyContact.phoneNumber,\n                    style = MaterialTheme.typography.caption,\n                    color = Black500\n                )\n            }\n\n            DropDownMenu(\n                modifier = Modifier.wrapContentSize(),\n                onClickEdit = { onClickEdit() },\n                onClickDelete = { onClickDelete() }\n            )\n        }\n    }\n}\n\n@Composable\nprivate fun DropDownMenu(\n    modifier: Modifier = Modifier,\n    onClickEdit: () -> Unit,\n    onClickDelete: () -> Unit) {\n\n    var expanded by remember { mutableStateOf(false) }\n\n    Box(\n        modifier = modifier\n            .fillMaxWidth()\n            .wrapContentSize(Alignment.TopEnd)\n    ) {\n        IconButton(onClick = { expanded = !expanded }) {\n            Icon(\n                imageVector = Icons.Default.MoreVert,\n                contentDescription = \"More\"\n            )\n        }\n\n        DropdownMenu(\n            modifier = Modifier\n                .background(MaterialTheme.colors.secondary)\n                .wrapContentSize(),\n            expanded = expanded,\n            onDismissRequest = { expanded = false }) {\n\n            DropdownMenuItem(\n                text = { Text(\"Edit\") },\n                onClick = { onClickEdit(); expanded = false }\n            )\n\n            DropdownMenuItem(\n                text = { Text(\"Delete\") },\n                onClick = { onClickDelete(); expanded = false }\n            )\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/ContactItem.kt b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/ContactItem.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/ContactItem.kt	(revision cb3df178809b484645c85941000fe86a0d8ee98a)
++++ b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/ContactItem.kt	(date 1688997601469)
+@@ -28,11 +28,7 @@
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+ import androidx.compose.ui.draw.clip
+-import androidx.compose.ui.layout.ContentScale
+-import androidx.compose.ui.res.painterResource
+ import androidx.compose.ui.unit.dp
+-import coil.compose.AsyncImage
+-import com.example.cyclistance.R
+ import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
+ import com.example.cyclistance.theme.Black500
+ 
+@@ -56,18 +52,12 @@
+             horizontalArrangement = Arrangement.spacedBy(12.dp, alignment = Alignment.Start)
+         ) {
+ 
+-            AsyncImage(
+-                model = emergencyContact.photo,
+-                alignment = Alignment.Center,
+-                contentDescription = "User Profile Image",
++            ContactPhoto(
++                photo = emergencyContact.photo,
+                 modifier = Modifier
++                    .size(54.dp)
+                     .clip(CircleShape)
+-                    .size(54.dp),
+-                contentScale = ContentScale.Crop,
+-                placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
+-                error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
+-                fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
+-
++            )
+ 
+             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                 Text(
+Index: app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/ContactPhoto.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/ContactPhoto.kt b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/ContactPhoto.kt
+new file mode 100644
+--- /dev/null	(date 1689069589904)
++++ b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/ContactPhoto.kt	(date 1689069589904)
+@@ -0,0 +1,88 @@
++package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components
++
++import android.graphics.Bitmap
++import android.graphics.ImageDecoder
++import android.net.Uri
++import android.os.Build
++import android.provider.MediaStore
++import androidx.compose.foundation.Image
++import androidx.compose.foundation.layout.fillMaxSize
++import androidx.compose.foundation.shape.CircleShape
++import androidx.compose.material.Surface
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.LaunchedEffect
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.remember
++import androidx.compose.runtime.setValue
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.graphics.asImageBitmap
++import androidx.compose.ui.layout.ContentScale
++import androidx.compose.ui.platform.LocalContext
++import androidx.compose.ui.res.painterResource
++import coil.compose.AsyncImage
++import com.example.cyclistance.R
++import timber.log.Timber
++
++@Composable
++fun ContactPhoto(
++    modifier: Modifier = Modifier,
++    photo: String
++) {
++    val context = LocalContext.current
++    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
++
++    Surface(modifier = modifier, color = Color.Transparent, shape = CircleShape) {
++
++        if (photo.contains("http")) {
++            AsyncImage(
++                model = photo,
++                alignment = Alignment.Center,
++                contentDescription = "User Profile Image",
++                modifier = Modifier
++                    .fillMaxSize(),
++                contentScale = ContentScale.Crop,
++                placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
++                error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
++                fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
++
++        } else {
++
++            LaunchedEffect(key1 = photo) {
++
++                bitmap = try {
++                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
++                        ImageDecoder.decodeBitmap(
++                            ImageDecoder.createSource(
++                                context.contentResolver,
++                                Uri.parse("content://com.android.providers.media.documents/document/image%3A61")))
++                    } else {
++                        MediaStore.Images.Media.getBitmap(
++                            context.contentResolver,
++                            Uri.parse("content://com.android.providers.media.documents/document/image%3A61"))
++                    }
++                } catch (e: Exception) {
++                    Timber.e("Error: ${e.message}")
++                    null
++                }
++
++            }
++
++
++            bitmap?.asImageBitmap()?.let {
++                Image(
++                    bitmap = it,
++                    contentDescription = "User Profile Image",
++                    modifier = Modifier
++                        .fillMaxSize(),
++                    contentScale = ContentScale.Crop
++                )
++            }
++
++        }
++    }
++
++}
++
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetDropDown\">\n    <targetSelectedWithDropDown>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_28.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetSelectedWithDropDown>\n    <timeTargetWasSelectedWithDropDown value=\"2023-06-30T04:03:06.360971984Z\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(revision cb3df178809b484645c85941000fe86a0d8ee98a)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1689003115584)
+@@ -12,6 +12,6 @@
+         </deviceKey>
+       </Target>
+     </targetSelectedWithDropDown>
+-    <timeTargetWasSelectedWithDropDown value="2023-06-30T04:03:06.360971984Z" />
++    <timeTargetWasSelectedWithDropDown value="2023-07-10T15:28:12.492478806Z" />
+   </component>
+ </project>
+\ No newline at end of file

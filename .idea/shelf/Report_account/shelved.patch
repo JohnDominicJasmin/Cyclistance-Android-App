@@ -1,0 +1,2473 @@
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"GradleMigrationSettings\" migrationVersion=\"1\" />\n  <component name=\"GradleSettings\">\n    <option name=\"linkedExternalProjectsSettings\">\n      <GradleProjectSettings>\n        <option name=\"testRunner\" value=\"GRADLE\" />\n        <option name=\"distributionType\" value=\"DEFAULT_WRAPPED\" />\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\n        <option name=\"gradleJvm\" value=\"Embedded JDK\" />\n        <option name=\"modules\">\n          <set>\n            <option value=\"$PROJECT_DIR$\" />\n            <option value=\"$PROJECT_DIR$/app\" />\n          </set>\n        </option>\n      </GradleProjectSettings>\n    </option>\n    <option name=\"offlineMode\" value=\"true\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+--- a/.idea/gradle.xml	(revision fb64e481ccfffb729b79457ae55d51ac98994604)
++++ b/.idea/gradle.xml	(date 1688621568756)
+@@ -16,6 +16,5 @@
+         </option>
+       </GradleProjectSettings>
+     </option>
+-    <option name="offlineMode" value="true" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: app/src/main/res/raw/report.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\n  \"nm\": \"Exclamation_loop\",\n  \"ddd\": 0,\n  \"h\": 1080,\n  \"w\": 1080,\n  \"meta\": {\n    \"g\": \"LottieFiles AE 3.1.1\"\n  },\n  \"layers\": [\n    {\n      \"ty\": 4,\n      \"nm\": \"titik\",\n      \"sr\": 1,\n      \"st\": 0,\n      \"op\": 204,\n      \"ip\": 43,\n      \"hd\": false,\n      \"ddd\": 0,\n      \"bm\": 0,\n      \"hasMask\": false,\n      \"ao\": 0,\n      \"ks\": {\n        \"a\": {\n          \"a\": 0,\n          \"k\": [\n            0,\n            0,\n            0\n          ],\n          \"ix\": 1\n        },\n        \"s\": {\n          \"a\": 0,\n          \"k\": [\n            100,\n            100,\n            100\n          ],\n          \"ix\": 6\n        },\n        \"sk\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"p\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.167,\n                \"y\": 0.167\n              },\n              \"i\": {\n                \"x\": 0.833,\n                \"y\": 0.833\n              },\n              \"s\": [\n                544,\n                530,\n                0\n              ],\n              \"t\": 44,\n              \"ti\": [\n                0,\n                -17.333,\n                0\n              ],\n              \"to\": [\n                0,\n                17.333,\n                0\n              ]\n            },\n            {\n              \"s\": [\n                544,\n                634,\n                0\n              ],\n              \"t\": 50\n            }\n          ],\n          \"ix\": 2\n        },\n        \"r\": {\n          \"a\": 0,\n          \"k\": 0,\n          \"ix\": 10\n        },\n        \"sa\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"o\": {\n          \"a\": 0,\n          \"k\": 100,\n          \"ix\": 11\n        }\n      },\n      \"ef\": [],\n      \"shapes\": [\n        {\n          \"ty\": \"gr\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Group\",\n          \"nm\": \"Shape 1\",\n          \"ix\": 1,\n          \"cix\": 2,\n          \"np\": 3,\n          \"it\": [\n            {\n              \"ty\": \"sh\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Shape - Group\",\n              \"nm\": \"Path 1\",\n              \"ix\": 1,\n              \"d\": 1,\n              \"ks\": {\n                \"a\": 0,\n                \"k\": {\n                  \"c\": false,\n                  \"i\": [\n                    [\n                      0,\n                      0\n                    ],\n                    [\n                      0,\n                      0\n                    ]\n                  ],\n                  \"o\": [\n                    [\n                      0,\n                      0\n                    ],\n                    [\n                      0,\n                      0\n                    ]\n                  ],\n                  \"v\": [\n                    [\n                      -4,\n                      -172\n                    ],\n                    [\n                      -4,\n                      46\n                    ]\n                  ]\n                },\n                \"ix\": 2\n              }\n            },\n            {\n              \"ty\": \"st\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Graphic - Stroke\",\n              \"nm\": \"Stroke 1\",\n              \"lc\": 2,\n              \"lj\": 1,\n              \"ml\": 4,\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 4\n              },\n              \"w\": {\n                \"a\": 0,\n                \"k\": 60,\n                \"ix\": 5\n              },\n              \"c\": {\n                \"a\": 0,\n                \"k\": [\n                  1,\n                  1,\n                  1\n                ],\n                \"ix\": 3\n              }\n            },\n            {\n              \"ty\": \"tr\",\n              \"a\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 1\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  100,\n                  100\n                ],\n                \"ix\": 3\n              },\n              \"sk\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 4\n              },\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 2\n              },\n              \"r\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 6\n              },\n              \"sa\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 7\n              }\n            }\n          ]\n        },\n        {\n          \"ty\": \"tm\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Filter - Trim\",\n          \"nm\": \"Trim Paths 1\",\n          \"ix\": 2,\n          \"e\": {\n            \"a\": 0,\n            \"k\": 100,\n            \"ix\": 2\n          },\n          \"o\": {\n            \"a\": 0,\n            \"k\": 0,\n            \"ix\": 3\n          },\n          \"s\": {\n            \"a\": 0,\n            \"k\": 99,\n            \"ix\": 1\n          },\n          \"m\": 1\n        }\n      ],\n      \"ind\": 1\n    },\n    {\n      \"ty\": 4,\n      \"nm\": \"pentung\",\n      \"sr\": 1,\n      \"st\": 0,\n      \"op\": 900,\n      \"ip\": 0,\n      \"hd\": false,\n      \"ddd\": 0,\n      \"bm\": 0,\n      \"hasMask\": false,\n      \"ao\": 0,\n      \"ks\": {\n        \"a\": {\n          \"a\": 0,\n          \"k\": [\n            0,\n            0,\n            0\n          ],\n          \"ix\": 1\n        },\n        \"s\": {\n          \"a\": 0,\n          \"k\": [\n            100,\n            100,\n            100\n          ],\n          \"ix\": 6\n        },\n        \"sk\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"p\": {\n          \"a\": 0,\n          \"k\": [\n            544,\n            536,\n            0\n          ],\n          \"ix\": 2\n        },\n        \"r\": {\n          \"a\": 0,\n          \"k\": 0,\n          \"ix\": 10\n        },\n        \"sa\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"o\": {\n          \"a\": 0,\n          \"k\": 100,\n          \"ix\": 11\n        }\n      },\n      \"ef\": [],\n      \"shapes\": [\n        {\n          \"ty\": \"gr\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Group\",\n          \"nm\": \"Shape 1\",\n          \"ix\": 1,\n          \"cix\": 2,\n          \"np\": 3,\n          \"it\": [\n            {\n              \"ty\": \"sh\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Shape - Group\",\n              \"nm\": \"Path 1\",\n              \"ix\": 1,\n              \"d\": 1,\n              \"ks\": {\n                \"a\": 0,\n                \"k\": {\n                  \"c\": false,\n                  \"i\": [\n                    [\n                      0,\n                      0\n                    ],\n                    [\n                      0,\n                      0\n                    ]\n                  ],\n                  \"o\": [\n                    [\n                      0,\n                      0\n                    ],\n                    [\n                      0,\n                      0\n                    ]\n                  ],\n                  \"v\": [\n                    [\n                      -4,\n                      -172\n                    ],\n                    [\n                      -4,\n                      46\n                    ]\n                  ]\n                },\n                \"ix\": 2\n              }\n            },\n            {\n              \"ty\": \"st\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Graphic - Stroke\",\n              \"nm\": \"Stroke 1\",\n              \"lc\": 2,\n              \"lj\": 1,\n              \"ml\": 4,\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 4\n              },\n              \"w\": {\n                \"a\": 0,\n                \"k\": 60,\n                \"ix\": 5\n              },\n              \"c\": {\n                \"a\": 0,\n                \"k\": [\n                  1,\n                  1,\n                  1\n                ],\n                \"ix\": 3\n              }\n            },\n            {\n              \"ty\": \"tr\",\n              \"a\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 1\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  100,\n                  100\n                ],\n                \"ix\": 3\n              },\n              \"sk\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 4\n              },\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 2\n              },\n              \"r\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 6\n              },\n              \"sa\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 7\n              }\n            }\n          ]\n        },\n        {\n          \"ty\": \"tm\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Filter - Trim\",\n          \"nm\": \"Trim Paths 1\",\n          \"ix\": 2,\n          \"e\": {\n            \"a\": 1,\n            \"k\": [\n              {\n                \"o\": {\n                  \"x\": 1,\n                  \"y\": 0\n                },\n                \"i\": {\n                  \"x\": 0.374,\n                  \"y\": 1\n                },\n                \"s\": [\n                  0\n                ],\n                \"t\": 34\n              },\n              {\n                \"s\": [\n                  100\n                ],\n                \"t\": 44\n              }\n            ],\n            \"ix\": 2\n          },\n          \"o\": {\n            \"a\": 0,\n            \"k\": 0,\n            \"ix\": 3\n          },\n          \"s\": {\n            \"a\": 0,\n            \"k\": 0,\n            \"ix\": 1\n          },\n          \"m\": 1\n        }\n      ],\n      \"ind\": 2\n    },\n    {\n      \"ty\": 4,\n      \"nm\": \"Bulet\",\n      \"sr\": 1,\n      \"st\": 0,\n      \"op\": 204,\n      \"ip\": 0,\n      \"hd\": false,\n      \"ddd\": 0,\n      \"bm\": 0,\n      \"hasMask\": false,\n      \"ao\": 0,\n      \"ks\": {\n        \"a\": {\n          \"a\": 0,\n          \"k\": [\n            0,\n            0,\n            0\n          ],\n          \"ix\": 1\n        },\n        \"s\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.208,\n                \"y\": 0\n              },\n              \"i\": {\n                \"x\": 0.078,\n                \"y\": 1\n              },\n              \"s\": [\n                100,\n                100,\n                100\n              ],\n              \"t\": 30\n            },\n            {\n              \"o\": {\n                \"x\": 0.901,\n                \"y\": 0\n              },\n              \"i\": {\n                \"x\": 0,\n                \"y\": 1\n              },\n              \"s\": [\n                90,\n                90,\n                100\n              ],\n              \"t\": 34\n            },\n            {\n              \"s\": [\n                100,\n                100,\n                100\n              ],\n              \"t\": 38\n            }\n          ],\n          \"ix\": 6\n        },\n        \"sk\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"p\": {\n          \"a\": 0,\n          \"k\": [\n            547.688,\n            527.801,\n            0\n          ],\n          \"ix\": 2\n        },\n        \"r\": {\n          \"a\": 0,\n          \"k\": 0,\n          \"ix\": 10\n        },\n        \"sa\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"o\": {\n          \"a\": 0,\n          \"k\": 100,\n          \"ix\": 11\n        }\n      },\n      \"ef\": [],\n      \"shapes\": [\n        {\n          \"ty\": \"gr\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Group\",\n          \"nm\": \"Ellipse 1\",\n          \"ix\": 1,\n          \"cix\": 2,\n          \"np\": 4,\n          \"it\": [\n            {\n              \"ty\": \"el\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Shape - Ellipse\",\n              \"nm\": \"Ellipse Path 1\",\n              \"d\": 1,\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  578.508,\n                  578.508\n                ],\n                \"ix\": 2\n              }\n            },\n            {\n              \"ty\": \"tm\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Filter - Trim\",\n              \"nm\": \"Trim Paths 1\",\n              \"ix\": 2,\n              \"e\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 2\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 1,\n                \"k\": [\n                  {\n                    \"o\": {\n                      \"x\": 0.76,\n                      \"y\": 0\n                    },\n                    \"i\": {\n                      \"x\": 0.348,\n                      \"y\": 1\n                    },\n                    \"s\": [\n                      0\n                    ],\n                    \"t\": 0\n                  },\n                  {\n                    \"s\": [\n                      100\n                    ],\n                    \"t\": 30\n                  }\n                ],\n                \"ix\": 1\n              },\n              \"m\": 1\n            },\n            {\n              \"ty\": \"st\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Graphic - Stroke\",\n              \"nm\": \"Stroke 1\",\n              \"lc\": 2,\n              \"lj\": 1,\n              \"ml\": 1,\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 4\n              },\n              \"w\": {\n                \"a\": 0,\n                \"k\": 33,\n                \"ix\": 5\n              },\n              \"c\": {\n                \"a\": 0,\n                \"k\": [\n                  1,\n                  0.6157,\n                  0.2314\n                ],\n                \"ix\": 3\n              }\n            },\n            {\n              \"ty\": \"tr\",\n              \"a\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 1\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  100,\n                  100\n                ],\n                \"ix\": 3\n              },\n              \"sk\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 4\n              },\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  -7.688,\n                  12.199\n                ],\n                \"ix\": 2\n              },\n              \"r\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 6\n              },\n              \"sa\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 7\n              }\n            }\n          ]\n        },\n        {\n          \"ty\": \"fl\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Graphic - Fill\",\n          \"nm\": \"Fill 1\",\n          \"c\": {\n            \"a\": 0,\n            \"k\": [\n              1,\n              0.6157,\n              0.2314\n            ],\n            \"ix\": 4\n          },\n          \"r\": 1,\n          \"o\": {\n            \"a\": 1,\n            \"k\": [\n              {\n                \"o\": {\n                  \"x\": 0.882,\n                  \"y\": 0\n                },\n                \"i\": {\n                  \"x\": 0.258,\n                  \"y\": 1\n                },\n                \"s\": [\n                  0\n                ],\n                \"t\": 31\n              },\n              {\n                \"s\": [\n                  100\n                ],\n                \"t\": 34\n              }\n            ],\n            \"ix\": 5\n          }\n        }\n      ],\n      \"ind\": 3\n    },\n    {\n      \"ty\": 4,\n      \"nm\": \"Bayang 3\",\n      \"sr\": 1,\n      \"st\": 0,\n      \"op\": 79,\n      \"ip\": 38,\n      \"hd\": false,\n      \"ddd\": 0,\n      \"bm\": 0,\n      \"hasMask\": false,\n      \"ao\": 0,\n      \"ks\": {\n        \"a\": {\n          \"a\": 0,\n          \"k\": [\n            0,\n            0,\n            0\n          ],\n          \"ix\": 1\n        },\n        \"s\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.333,\n                \"y\": 0\n              },\n              \"i\": {\n                \"x\": 0.667,\n                \"y\": 1\n              },\n              \"s\": [\n                100,\n                100,\n                100\n              ],\n              \"t\": 38\n            },\n            {\n              \"s\": [\n                150,\n                150,\n                100\n              ],\n              \"t\": 78\n            }\n          ],\n          \"ix\": 6\n        },\n        \"sk\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"p\": {\n          \"a\": 0,\n          \"k\": [\n            547.688,\n            527.801,\n            0\n          ],\n          \"ix\": 2\n        },\n        \"r\": {\n          \"a\": 0,\n          \"k\": 0,\n          \"ix\": 10\n        },\n        \"sa\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"o\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.167,\n                \"y\": 0.167\n              },\n              \"i\": {\n                \"x\": 0.833,\n                \"y\": 0.833\n              },\n              \"s\": [\n                100\n              ],\n              \"t\": 62\n            },\n            {\n              \"s\": [\n                0\n              ],\n              \"t\": 78\n            }\n          ],\n          \"ix\": 11\n        }\n      },\n      \"ef\": [],\n      \"shapes\": [\n        {\n          \"ty\": \"gr\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Group\",\n          \"nm\": \"Ellipse 1\",\n          \"ix\": 1,\n          \"cix\": 2,\n          \"np\": 4,\n          \"it\": [\n            {\n              \"ty\": \"el\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Shape - Ellipse\",\n              \"nm\": \"Ellipse Path 1\",\n              \"d\": 1,\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  578.508,\n                  578.508\n                ],\n                \"ix\": 2\n              }\n            },\n            {\n              \"ty\": \"tm\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Filter - Trim\",\n              \"nm\": \"Trim Paths 1\",\n              \"ix\": 2,\n              \"e\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 2\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 1\n              },\n              \"m\": 1\n            },\n            {\n              \"ty\": \"st\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Graphic - Stroke\",\n              \"nm\": \"Stroke 1\",\n              \"lc\": 2,\n              \"lj\": 1,\n              \"ml\": 1,\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 4\n              },\n              \"w\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"c\": {\n                \"a\": 0,\n                \"k\": [\n                  1,\n                  0.6157,\n                  0.2314\n                ],\n                \"ix\": 3\n              }\n            },\n            {\n              \"ty\": \"tr\",\n              \"a\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 1\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  100,\n                  100\n                ],\n                \"ix\": 3\n              },\n              \"sk\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 4\n              },\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  -7.688,\n                  12.199\n                ],\n                \"ix\": 2\n              },\n              \"r\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 6\n              },\n              \"sa\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 7\n              }\n            }\n          ]\n        },\n        {\n          \"ty\": \"fl\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Graphic - Fill\",\n          \"nm\": \"Fill 1\",\n          \"c\": {\n            \"a\": 0,\n            \"k\": [\n              1,\n              0.6157,\n              0.2314\n            ],\n            \"ix\": 4\n          },\n          \"r\": 1,\n          \"o\": {\n            \"a\": 0,\n            \"k\": 40,\n            \"ix\": 5\n          }\n        }\n      ],\n      \"ind\": 4\n    },\n    {\n      \"ty\": 4,\n      \"nm\": \"Bayang 4\",\n      \"sr\": 1,\n      \"st\": 40,\n      \"op\": 141,\n      \"ip\": 78,\n      \"hd\": false,\n      \"ddd\": 0,\n      \"bm\": 0,\n      \"hasMask\": false,\n      \"ao\": 0,\n      \"ks\": {\n        \"a\": {\n          \"a\": 0,\n          \"k\": [\n            0,\n            0,\n            0\n          ],\n          \"ix\": 1\n        },\n        \"s\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.333,\n                \"y\": 0\n              },\n              \"i\": {\n                \"x\": 0.667,\n                \"y\": 1\n              },\n              \"s\": [\n                100,\n                100,\n                100\n              ],\n              \"t\": 78\n            },\n            {\n              \"s\": [\n                150,\n                150,\n                100\n              ],\n              \"t\": 140\n            }\n          ],\n          \"ix\": 6\n        },\n        \"sk\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"p\": {\n          \"a\": 0,\n          \"k\": [\n            547.688,\n            527.801,\n            0\n          ],\n          \"ix\": 2\n        },\n        \"r\": {\n          \"a\": 0,\n          \"k\": 0,\n          \"ix\": 10\n        },\n        \"sa\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"o\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.167,\n                \"y\": 0.167\n              },\n              \"i\": {\n                \"x\": 0.833,\n                \"y\": 0.833\n              },\n              \"s\": [\n                100\n              ],\n              \"t\": 114\n            },\n            {\n              \"s\": [\n                0\n              ],\n              \"t\": 140\n            }\n          ],\n          \"ix\": 11\n        }\n      },\n      \"ef\": [],\n      \"shapes\": [\n        {\n          \"ty\": \"gr\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Group\",\n          \"nm\": \"Ellipse 1\",\n          \"ix\": 1,\n          \"cix\": 2,\n          \"np\": 4,\n          \"it\": [\n            {\n              \"ty\": \"el\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Shape - Ellipse\",\n              \"nm\": \"Ellipse Path 1\",\n              \"d\": 1,\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  578.508,\n                  578.508\n                ],\n                \"ix\": 2\n              }\n            },\n            {\n              \"ty\": \"tm\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Filter - Trim\",\n              \"nm\": \"Trim Paths 1\",\n              \"ix\": 2,\n              \"e\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 2\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 1\n              },\n              \"m\": 1\n            },\n            {\n              \"ty\": \"st\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Graphic - Stroke\",\n              \"nm\": \"Stroke 1\",\n              \"lc\": 2,\n              \"lj\": 1,\n              \"ml\": 1,\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 4\n              },\n              \"w\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"c\": {\n                \"a\": 0,\n                \"k\": [\n                  1,\n                  0.6157,\n                  0.2314\n                ],\n                \"ix\": 3\n              }\n            },\n            {\n              \"ty\": \"tr\",\n              \"a\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 1\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  100,\n                  100\n                ],\n                \"ix\": 3\n              },\n              \"sk\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 4\n              },\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  -7.688,\n                  12.199\n                ],\n                \"ix\": 2\n              },\n              \"r\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 6\n              },\n              \"sa\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 7\n              }\n            }\n          ]\n        },\n        {\n          \"ty\": \"fl\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Graphic - Fill\",\n          \"nm\": \"Fill 1\",\n          \"c\": {\n            \"a\": 0,\n            \"k\": [\n              1,\n              0.6157,\n              0.2314\n            ],\n            \"ix\": 4\n          },\n          \"r\": 1,\n          \"o\": {\n            \"a\": 0,\n            \"k\": 40,\n            \"ix\": 5\n          }\n        }\n      ],\n      \"ind\": 5\n    },\n    {\n      \"ty\": 4,\n      \"nm\": \"Bayang 2\",\n      \"sr\": 1,\n      \"st\": 103,\n      \"op\": 204,\n      \"ip\": 141,\n      \"hd\": false,\n      \"ddd\": 0,\n      \"bm\": 0,\n      \"hasMask\": false,\n      \"ao\": 0,\n      \"ks\": {\n        \"a\": {\n          \"a\": 0,\n          \"k\": [\n            0,\n            0,\n            0\n          ],\n          \"ix\": 1\n        },\n        \"s\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.333,\n                \"y\": 0\n              },\n              \"i\": {\n                \"x\": 0.667,\n                \"y\": 1\n              },\n              \"s\": [\n                100,\n                100,\n                100\n              ],\n              \"t\": 141\n            },\n            {\n              \"s\": [\n                150,\n                150,\n                100\n              ],\n              \"t\": 203\n            }\n          ],\n          \"ix\": 6\n        },\n        \"sk\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"p\": {\n          \"a\": 0,\n          \"k\": [\n            547.688,\n            527.801,\n            0\n          ],\n          \"ix\": 2\n        },\n        \"r\": {\n          \"a\": 0,\n          \"k\": 0,\n          \"ix\": 10\n        },\n        \"sa\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"o\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.167,\n                \"y\": 0.167\n              },\n              \"i\": {\n                \"x\": 0.833,\n                \"y\": 0.833\n              },\n              \"s\": [\n                100\n              ],\n              \"t\": 177\n            },\n            {\n              \"s\": [\n                0\n              ],\n              \"t\": 203\n            }\n          ],\n          \"ix\": 11\n        }\n      },\n      \"ef\": [],\n      \"shapes\": [\n        {\n          \"ty\": \"gr\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Group\",\n          \"nm\": \"Ellipse 1\",\n          \"ix\": 1,\n          \"cix\": 2,\n          \"np\": 4,\n          \"it\": [\n            {\n              \"ty\": \"el\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Shape - Ellipse\",\n              \"nm\": \"Ellipse Path 1\",\n              \"d\": 1,\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  578.508,\n                  578.508\n                ],\n                \"ix\": 2\n              }\n            },\n            {\n              \"ty\": \"tm\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Filter - Trim\",\n              \"nm\": \"Trim Paths 1\",\n              \"ix\": 2,\n              \"e\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 2\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 1\n              },\n              \"m\": 1\n            },\n            {\n              \"ty\": \"st\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Graphic - Stroke\",\n              \"nm\": \"Stroke 1\",\n              \"lc\": 2,\n              \"lj\": 1,\n              \"ml\": 1,\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 4\n              },\n              \"w\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"c\": {\n                \"a\": 0,\n                \"k\": [\n                  1,\n                  0.6157,\n                  0.2314\n                ],\n                \"ix\": 3\n              }\n            },\n            {\n              \"ty\": \"tr\",\n              \"a\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 1\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  100,\n                  100\n                ],\n                \"ix\": 3\n              },\n              \"sk\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 4\n              },\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  -7.688,\n                  12.199\n                ],\n                \"ix\": 2\n              },\n              \"r\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 6\n              },\n              \"sa\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 7\n              }\n            }\n          ]\n        },\n        {\n          \"ty\": \"fl\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Graphic - Fill\",\n          \"nm\": \"Fill 1\",\n          \"c\": {\n            \"a\": 0,\n            \"k\": [\n              1,\n              0.6157,\n              0.2314\n            ],\n            \"ix\": 4\n          },\n          \"r\": 1,\n          \"o\": {\n            \"a\": 0,\n            \"k\": 40,\n            \"ix\": 5\n          }\n        }\n      ],\n      \"ind\": 6\n    }\n  ],\n  \"v\": \"4.8.0\",\n  \"fr\": 30,\n  \"op\": 204,\n  \"ip\": 79,\n  \"assets\": []\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/raw/report.json b/app/src/main/res/raw/report.json
+--- a/app/src/main/res/raw/report.json	(revision fb64e481ccfffb729b79457ae55d51ac98994604)
++++ b/app/src/main/res/raw/report.json	(date 1688635655777)
+@@ -1,19 +1,19 @@
+ {
+-  "nm": "Exclamation_loop",
++  "nm": "caution_ani",
+   "ddd": 0,
+-  "h": 1080,
+-  "w": 1080,
++  "h": 182,
++  "w": 182,
+   "meta": {
+-    "g": "LottieFiles AE 3.1.1"
++    "g": "LottieFiles AE 1.0.0"
+   },
+   "layers": [
+     {
+       "ty": 4,
+-      "nm": "titik",
++      "nm": "Rectangle Copy",
+       "sr": 1,
+-      "st": 0,
+-      "op": 204,
+-      "ip": 43,
++      "st": 13,
++      "op": 163,
++      "ip": 13,
+       "hd": false,
+       "ddd": 0,
+       "bm": 0,
+@@ -43,42 +43,11 @@
+           "k": 0
+         },
+         "p": {
+-          "a": 1,
++          "a": 0,
+           "k": [
+-            {
+-              "o": {
+-                "x": 0.167,
+-                "y": 0.167
+-              },
+-              "i": {
+-                "x": 0.833,
+-                "y": 0.833
+-              },
+-              "s": [
+-                544,
+-                530,
+-                0
+-              ],
+-              "t": 44,
+-              "ti": [
+-                0,
+-                -17.333,
+-                0
+-              ],
+-              "to": [
+-                0,
+-                17.333,
+-                0
+-              ]
+-            },
+-            {
+-              "s": [
+-                544,
+-                634,
+-                0
+-              ],
+-              "t": 50
+-            }
++            90.538,
++            76,
++            0
+           ],
+           "ix": 2
+         },
+@@ -104,7 +73,7 @@
+           "bm": 0,
+           "hd": false,
+           "mn": "ADBE Vector Group",
+-          "nm": "Shape 1",
++          "nm": "Rectangle Copy",
+           "ix": 1,
+           "cix": 2,
+           "np": 3,
+@@ -118,70 +87,247 @@
+               "ix": 1,
+               "d": 1,
+               "ks": {
+-                "a": 0,
+-                "k": {
+-                  "c": false,
+-                  "i": [
+-                    [
+-                      0,
+-                      0
+-                    ],
+-                    [
+-                      0,
+-                      0
+-                    ]
+-                  ],
+-                  "o": [
+-                    [
+-                      0,
+-                      0
+-                    ],
+-                    [
+-                      0,
+-                      0
+-                    ]
+-                  ],
+-                  "v": [
+-                    [
+-                      -4,
+-                      -172
+-                    ],
+-                    [
+-                      -4,
+-                      46
+-                    ]
+-                  ]
+-                },
++                "a": 1,
++                "k": [
++                  {
++                    "o": {
++                      "x": 0.167,
++                      "y": 0.167
++                    },
++                    "i": {
++                      "x": 0.667,
++                      "y": 1
++                    },
++                    "s": [
++                      {
++                        "c": true,
++                        "i": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "o": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "v": [
++                          [
++                            41.493,
++                            -15
++                          ],
++                          [
++                            41.542,
++                            -12
++                          ],
++                          [
++                            41.542,
++                            12
++                          ],
++                          [
++                            41.493,
++                            15
++                          ]
++                        ]
++                      }
++                    ],
++                    "t": 13
++                  },
++                  {
++                    "o": {
++                      "x": 0.333,
++                      "y": 0
++                    },
++                    "i": {
++                      "x": 0.667,
++                      "y": 1
++                    },
++                    "s": [
++                      {
++                        "c": true,
++                        "i": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "o": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "v": [
++                          [
++                            -60.361,
++                            -15.177
++                          ],
++                          [
++                            35.542,
++                            -12
++                          ],
++                          [
++                            35.542,
++                            12
++                          ],
++                          [
++                            -60.361,
++                            14.823
++                          ]
++                        ]
++                      }
++                    ],
++                    "t": 19
++                  },
++                  {
++                    "s": [
++                      {
++                        "c": true,
++                        "i": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "o": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "v": [
++                          [
++                            -41.538,
++                            -15
++                          ],
++                          [
++                            41.542,
++                            -12
++                          ],
++                          [
++                            41.542,
++                            12
++                          ],
++                          [
++                            -41.538,
++                            15
++                          ]
++                        ]
++                      }
++                    ],
++                    "t": 22
++                  }
++                ],
+                 "ix": 2
+               }
+             },
+             {
+-              "ty": "st",
++              "ty": "rd",
++              "bm": 0,
++              "hd": false,
++              "mn": "ADBE Vector Filter - RC",
++              "nm": "Round Corners 1",
++              "ix": 2,
++              "r": {
++                "a": 0,
++                "k": 7.429,
++                "ix": 1
++              }
++            },
++            {
++              "ty": "fl",
+               "bm": 0,
+               "hd": false,
+-              "mn": "ADBE Vector Graphic - Stroke",
+-              "nm": "Stroke 1",
+-              "lc": 2,
+-              "lj": 1,
+-              "ml": 4,
+-              "o": {
++              "mn": "ADBE Vector Graphic - Fill",
++              "nm": "Fill 1",
++              "c": {
+                 "a": 0,
+-                "k": 100,
++                "k": [
++                  1,
++                  1,
++                  1
++                ],
+                 "ix": 4
+               },
+-              "w": {
++              "r": 1,
++              "o": {
+                 "a": 0,
+-                "k": 60,
++                "k": 100,
+                 "ix": 5
+-              },
+-              "c": {
+-                "a": 0,
+-                "k": [
+-                  1,
+-                  1,
+-                  1
+-                ],
+-                "ix": 3
+               }
+             },
+             {
+@@ -217,7 +363,7 @@
+               },
+               "r": {
+                 "a": 0,
+-                "k": 0,
++                "k": 90,
+                 "ix": 6
+               },
+               "sa": {
+@@ -232,41 +378,17 @@
+               }
+             }
+           ]
+-        },
+-        {
+-          "ty": "tm",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Filter - Trim",
+-          "nm": "Trim Paths 1",
+-          "ix": 2,
+-          "e": {
+-            "a": 0,
+-            "k": 100,
+-            "ix": 2
+-          },
+-          "o": {
+-            "a": 0,
+-            "k": 0,
+-            "ix": 3
+-          },
+-          "s": {
+-            "a": 0,
+-            "k": 99,
+-            "ix": 1
+-          },
+-          "m": 1
+         }
+       ],
+       "ind": 1
+     },
+     {
+       "ty": 4,
+-      "nm": "pentung",
++      "nm": "Rectangle Copy 2",
+       "sr": 1,
+-      "st": 0,
+-      "op": 900,
+-      "ip": 0,
++      "st": 9,
++      "op": 159,
++      "ip": 9,
+       "hd": false,
+       "ddd": 0,
+       "bm": 0,
+@@ -298,8 +420,8 @@
+         "p": {
+           "a": 0,
+           "k": [
+-            544,
+-            536,
++            91,
++            139,
+             0
+           ],
+           "ix": 2
+@@ -326,7 +448,7 @@
+           "bm": 0,
+           "hd": false,
+           "mn": "ADBE Vector Group",
+-          "nm": "Shape 1",
++          "nm": "Rectangle Copy 2",
+           "ix": 1,
+           "cix": 2,
+           "np": 3,
+@@ -340,658 +462,247 @@
+               "ix": 1,
+               "d": 1,
+               "ks": {
+-                "a": 0,
+-                "k": {
+-                  "c": false,
+-                  "i": [
+-                    [
+-                      0,
+-                      0
+-                    ],
+-                    [
+-                      0,
+-                      0
+-                    ]
+-                  ],
+-                  "o": [
+-                    [
+-                      0,
+-                      0
+-                    ],
+-                    [
+-                      0,
+-                      0
+-                    ]
+-                  ],
+-                  "v": [
+-                    [
+-                      -4,
+-                      -172
+-                    ],
+-                    [
+-                      -4,
+-                      46
+-                    ]
+-                  ]
+-                },
+-                "ix": 2
+-              }
+-            },
+-            {
+-              "ty": "st",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Graphic - Stroke",
+-              "nm": "Stroke 1",
+-              "lc": 2,
+-              "lj": 1,
+-              "ml": 4,
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 4
+-              },
+-              "w": {
+-                "a": 0,
+-                "k": 60,
+-                "ix": 5
+-              },
+-              "c": {
+-                "a": 0,
+-                "k": [
+-                  1,
+-                  1,
+-                  1
+-                ],
+-                "ix": 3
+-              }
+-            },
+-            {
+-              "ty": "tr",
+-              "a": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 1
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  100,
+-                  100
+-                ],
+-                "ix": 3
+-              },
+-              "sk": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 4
+-              },
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 2
+-              },
+-              "r": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 6
+-              },
+-              "sa": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 5
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 7
+-              }
+-            }
+-          ]
+-        },
+-        {
+-          "ty": "tm",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Filter - Trim",
+-          "nm": "Trim Paths 1",
+-          "ix": 2,
+-          "e": {
+-            "a": 1,
+-            "k": [
+-              {
+-                "o": {
+-                  "x": 1,
+-                  "y": 0
+-                },
+-                "i": {
+-                  "x": 0.374,
+-                  "y": 1
+-                },
+-                "s": [
+-                  0
+-                ],
+-                "t": 34
+-              },
+-              {
+-                "s": [
+-                  100
+-                ],
+-                "t": 44
+-              }
+-            ],
+-            "ix": 2
+-          },
+-          "o": {
+-            "a": 0,
+-            "k": 0,
+-            "ix": 3
+-          },
+-          "s": {
+-            "a": 0,
+-            "k": 0,
+-            "ix": 1
+-          },
+-          "m": 1
+-        }
+-      ],
+-      "ind": 2
+-    },
+-    {
+-      "ty": 4,
+-      "nm": "Bulet",
+-      "sr": 1,
+-      "st": 0,
+-      "op": 204,
+-      "ip": 0,
+-      "hd": false,
+-      "ddd": 0,
+-      "bm": 0,
+-      "hasMask": false,
+-      "ao": 0,
+-      "ks": {
+-        "a": {
+-          "a": 0,
+-          "k": [
+-            0,
+-            0,
+-            0
+-          ],
+-          "ix": 1
+-        },
+-        "s": {
+-          "a": 1,
+-          "k": [
+-            {
+-              "o": {
+-                "x": 0.208,
+-                "y": 0
+-              },
+-              "i": {
+-                "x": 0.078,
+-                "y": 1
+-              },
+-              "s": [
+-                100,
+-                100,
+-                100
+-              ],
+-              "t": 30
+-            },
+-            {
+-              "o": {
+-                "x": 0.901,
+-                "y": 0
+-              },
+-              "i": {
+-                "x": 0,
+-                "y": 1
+-              },
+-              "s": [
+-                90,
+-                90,
+-                100
+-              ],
+-              "t": 34
+-            },
+-            {
+-              "s": [
+-                100,
+-                100,
+-                100
+-              ],
+-              "t": 38
+-            }
+-          ],
+-          "ix": 6
+-        },
+-        "sk": {
+-          "a": 0,
+-          "k": 0
+-        },
+-        "p": {
+-          "a": 0,
+-          "k": [
+-            547.688,
+-            527.801,
+-            0
+-          ],
+-          "ix": 2
+-        },
+-        "r": {
+-          "a": 0,
+-          "k": 0,
+-          "ix": 10
+-        },
+-        "sa": {
+-          "a": 0,
+-          "k": 0
+-        },
+-        "o": {
+-          "a": 0,
+-          "k": 100,
+-          "ix": 11
+-        }
+-      },
+-      "ef": [],
+-      "shapes": [
+-        {
+-          "ty": "gr",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Group",
+-          "nm": "Ellipse 1",
+-          "ix": 1,
+-          "cix": 2,
+-          "np": 4,
+-          "it": [
+-            {
+-              "ty": "el",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Shape - Ellipse",
+-              "nm": "Ellipse Path 1",
+-              "d": 1,
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  578.508,
+-                  578.508
++                "a": 1,
++                "k": [
++                  {
++                    "o": {
++                      "x": 0.167,
++                      "y": 0.167
++                    },
++                    "i": {
++                      "x": 0.667,
++                      "y": 1
++                    },
++                    "s": [
++                      {
++                        "c": true,
++                        "i": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "o": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "v": [
++                          [
++                            12,
++                            -12
++                          ],
++                          [
++                            12,
++                            -12
++                          ],
++                          [
++                            12,
++                            12
++                          ],
++                          [
++                            12,
++                            12
++                          ]
++                        ]
++                      }
++                    ],
++                    "t": 9
++                  },
++                  {
++                    "o": {
++                      "x": 0.333,
++                      "y": 0
++                    },
++                    "i": {
++                      "x": 0.667,
++                      "y": 1
++                    },
++                    "s": [
++                      {
++                        "c": true,
++                        "i": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "o": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "v": [
++                          [
++                            -23,
++                            -12
++                          ],
++                          [
++                            9.5,
++                            -12
++                          ],
++                          [
++                            9.5,
++                            12
++                          ],
++                          [
++                            -23,
++                            12
++                          ]
++                        ]
++                      }
++                    ],
++                    "t": 13
++                  },
++                  {
++                    "s": [
++                      {
++                        "c": true,
++                        "i": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "o": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "v": [
++                          [
++                            -12,
++                            -12
++                          ],
++                          [
++                            12,
++                            -12
++                          ],
++                          [
++                            12,
++                            12
++                          ],
++                          [
++                            -12,
++                            12
++                          ]
++                        ]
++                      }
++                    ],
++                    "t": 16
++                  }
+                 ],
+                 "ix": 2
+               }
+             },
+             {
+-              "ty": "tm",
++              "ty": "rd",
+               "bm": 0,
+               "hd": false,
+-              "mn": "ADBE Vector Filter - Trim",
+-              "nm": "Trim Paths 1",
++              "mn": "ADBE Vector Filter - RC",
++              "nm": "Round Corners 1",
+               "ix": 2,
+-              "e": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 2
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 1,
+-                "k": [
+-                  {
+-                    "o": {
+-                      "x": 0.76,
+-                      "y": 0
+-                    },
+-                    "i": {
+-                      "x": 0.348,
+-                      "y": 1
+-                    },
+-                    "s": [
+-                      0
+-                    ],
+-                    "t": 0
+-                  },
+-                  {
+-                    "s": [
+-                      100
+-                    ],
+-                    "t": 30
+-                  }
+-                ],
+-                "ix": 1
+-              },
+-              "m": 1
+-            },
+-            {
+-              "ty": "st",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Graphic - Stroke",
+-              "nm": "Stroke 1",
+-              "lc": 2,
+-              "lj": 1,
+-              "ml": 1,
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 4
+-              },
+-              "w": {
+-                "a": 0,
+-                "k": 33,
+-                "ix": 5
+-              },
+-              "c": {
+-                "a": 0,
+-                "k": [
+-                  1,
+-                  0.6157,
+-                  0.2314
+-                ],
+-                "ix": 3
+-              }
+-            },
+-            {
+-              "ty": "tr",
+-              "a": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 1
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  100,
+-                  100
+-                ],
+-                "ix": 3
+-              },
+-              "sk": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 4
+-              },
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  -7.688,
+-                  12.199
+-                ],
+-                "ix": 2
+-              },
+               "r": {
+                 "a": 0,
+-                "k": 0,
+-                "ix": 6
+-              },
+-              "sa": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 5
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 7
++                "k": 7.429,
++                "ix": 1
+               }
+-            }
+-          ]
+-        },
+-        {
+-          "ty": "fl",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Graphic - Fill",
+-          "nm": "Fill 1",
+-          "c": {
+-            "a": 0,
+-            "k": [
+-              1,
+-              0.6157,
+-              0.2314
+-            ],
+-            "ix": 4
+-          },
+-          "r": 1,
+-          "o": {
+-            "a": 1,
+-            "k": [
+-              {
+-                "o": {
+-                  "x": 0.882,
+-                  "y": 0
+-                },
+-                "i": {
+-                  "x": 0.258,
+-                  "y": 1
+-                },
+-                "s": [
+-                  0
+-                ],
+-                "t": 31
+-              },
+-              {
+-                "s": [
+-                  100
+-                ],
+-                "t": 34
+-              }
+-            ],
+-            "ix": 5
+-          }
+-        }
+-      ],
+-      "ind": 3
+-    },
+-    {
+-      "ty": 4,
+-      "nm": "Bayang 3",
+-      "sr": 1,
+-      "st": 0,
+-      "op": 79,
+-      "ip": 38,
+-      "hd": false,
+-      "ddd": 0,
+-      "bm": 0,
+-      "hasMask": false,
+-      "ao": 0,
+-      "ks": {
+-        "a": {
+-          "a": 0,
+-          "k": [
+-            0,
+-            0,
+-            0
+-          ],
+-          "ix": 1
+-        },
+-        "s": {
+-          "a": 1,
+-          "k": [
+-            {
+-              "o": {
+-                "x": 0.333,
+-                "y": 0
+-              },
+-              "i": {
+-                "x": 0.667,
+-                "y": 1
+-              },
+-              "s": [
+-                100,
+-                100,
+-                100
+-              ],
+-              "t": 38
+-            },
+-            {
+-              "s": [
+-                150,
+-                150,
+-                100
+-              ],
+-              "t": 78
+-            }
+-          ],
+-          "ix": 6
+-        },
+-        "sk": {
+-          "a": 0,
+-          "k": 0
+-        },
+-        "p": {
+-          "a": 0,
+-          "k": [
+-            547.688,
+-            527.801,
+-            0
+-          ],
+-          "ix": 2
+-        },
+-        "r": {
+-          "a": 0,
+-          "k": 0,
+-          "ix": 10
+-        },
+-        "sa": {
+-          "a": 0,
+-          "k": 0
+-        },
+-        "o": {
+-          "a": 1,
+-          "k": [
+-            {
+-              "o": {
+-                "x": 0.167,
+-                "y": 0.167
+-              },
+-              "i": {
+-                "x": 0.833,
+-                "y": 0.833
+-              },
+-              "s": [
+-                100
+-              ],
+-              "t": 62
+-            },
+-            {
+-              "s": [
+-                0
+-              ],
+-              "t": 78
+-            }
+-          ],
+-          "ix": 11
+-        }
+-      },
+-      "ef": [],
+-      "shapes": [
+-        {
+-          "ty": "gr",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Group",
+-          "nm": "Ellipse 1",
+-          "ix": 1,
+-          "cix": 2,
+-          "np": 4,
+-          "it": [
+-            {
+-              "ty": "el",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Shape - Ellipse",
+-              "nm": "Ellipse Path 1",
+-              "d": 1,
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  578.508,
+-                  578.508
+-                ],
+-                "ix": 2
+-              }
+-            },
+-            {
+-              "ty": "tm",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Filter - Trim",
+-              "nm": "Trim Paths 1",
+-              "ix": 2,
+-              "e": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 2
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 1
+-              },
+-              "m": 1
+-            },
+-            {
+-              "ty": "st",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Graphic - Stroke",
+-              "nm": "Stroke 1",
+-              "lc": 2,
+-              "lj": 1,
+-              "ml": 1,
++            },
++            {
++              "ty": "fl",
++              "bm": 0,
++              "hd": false,
++              "mn": "ADBE Vector Graphic - Fill",
++              "nm": "Fill 1",
++              "c": {
++                "a": 0,
++                "k": [
++                  1,
++                  1,
++                  1
++                ],
++                "ix": 4
++              },
++              "r": 1,
+               "o": {
+                 "a": 0,
+                 "k": 100,
+-                "ix": 4
+-              },
+-              "w": {
+-                "a": 0,
+-                "k": 0,
+                 "ix": 5
+-              },
+-              "c": {
+-                "a": 0,
+-                "k": [
+-                  1,
+-                  0.6157,
+-                  0.2314
+-                ],
+-                "ix": 3
+               }
+             },
+             {
+@@ -1020,14 +731,14 @@
+               "p": {
+                 "a": 0,
+                 "k": [
+-                  -7.688,
+-                  12.199
++                  0,
++                  0
+                 ],
+                 "ix": 2
+               },
+               "r": {
+                 "a": 0,
+-                "k": 0,
++                "k": 90,
+                 "ix": 6
+               },
+               "sa": {
+@@ -1042,81 +753,38 @@
+               }
+             }
+           ]
+-        },
+-        {
+-          "ty": "fl",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Graphic - Fill",
+-          "nm": "Fill 1",
+-          "c": {
+-            "a": 0,
+-            "k": [
+-              1,
+-              0.6157,
+-              0.2314
+-            ],
+-            "ix": 4
+-          },
+-          "r": 1,
+-          "o": {
+-            "a": 0,
+-            "k": 40,
+-            "ix": 5
+-          }
+         }
+       ],
+-      "ind": 4
++      "ind": 2
+     },
+     {
+-      "ty": 4,
+-      "nm": "Bayang 4",
++      "ty": 1,
++      "nm": "진한 녹색 단색 4",
+       "sr": 1,
+-      "st": 40,
+-      "op": 141,
+-      "ip": 78,
++      "st": 0,
++      "op": 900,
++      "ip": 0,
+       "hd": false,
+       "ddd": 0,
+       "bm": 0,
+-      "hasMask": false,
++      "hasMask": true,
+       "ao": 0,
+       "ks": {
+         "a": {
+           "a": 0,
+           "k": [
+-            0,
+-            0,
++            50,
++            50,
+             0
+           ],
+           "ix": 1
+         },
+         "s": {
+-          "a": 1,
++          "a": 0,
+           "k": [
+-            {
+-              "o": {
+-                "x": 0.333,
+-                "y": 0
+-              },
+-              "i": {
+-                "x": 0.667,
+-                "y": 1
+-              },
+-              "s": [
+-                100,
+-                100,
+-                100
+-              ],
+-              "t": 78
+-            },
+-            {
+-              "s": [
+-                150,
+-                150,
+-                100
+-              ],
+-              "t": 140
+-            }
++            182,
++            182,
++            100
+           ],
+           "ix": 6
+         },
+@@ -1127,8 +795,8 @@
+         "p": {
+           "a": 0,
+           "k": [
+-            547.688,
+-            527.801,
++            91,
++            91,
+             0
+           ],
+           "ix": 2
+@@ -1143,463 +811,176 @@
+           "k": 0
+         },
+         "o": {
+-          "a": 1,
+-          "k": [
+-            {
+-              "o": {
+-                "x": 0.167,
+-                "y": 0.167
+-              },
+-              "i": {
+-                "x": 0.833,
+-                "y": 0.833
+-              },
+-              "s": [
+-                100
+-              ],
+-              "t": 114
+-            },
+-            {
+-              "s": [
+-                0
+-              ],
+-              "t": 140
+-            }
+-          ],
+-          "ix": 11
+-        }
+-      },
+-      "ef": [],
+-      "shapes": [
+-        {
+-          "ty": "gr",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Group",
+-          "nm": "Ellipse 1",
+-          "ix": 1,
+-          "cix": 2,
+-          "np": 4,
+-          "it": [
+-            {
+-              "ty": "el",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Shape - Ellipse",
+-              "nm": "Ellipse Path 1",
+-              "d": 1,
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  578.508,
+-                  578.508
+-                ],
+-                "ix": 2
+-              }
+-            },
+-            {
+-              "ty": "tm",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Filter - Trim",
+-              "nm": "Trim Paths 1",
+-              "ix": 2,
+-              "e": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 2
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 1
+-              },
+-              "m": 1
+-            },
+-            {
+-              "ty": "st",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Graphic - Stroke",
+-              "nm": "Stroke 1",
+-              "lc": 2,
+-              "lj": 1,
+-              "ml": 1,
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 4
+-              },
+-              "w": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 5
+-              },
+-              "c": {
+-                "a": 0,
+-                "k": [
+-                  1,
+-                  0.6157,
+-                  0.2314
+-                ],
+-                "ix": 3
+-              }
+-            },
+-            {
+-              "ty": "tr",
+-              "a": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 1
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  100,
+-                  100
+-                ],
+-                "ix": 3
+-              },
+-              "sk": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 4
+-              },
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  -7.688,
+-                  12.199
+-                ],
+-                "ix": 2
+-              },
+-              "r": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 6
+-              },
+-              "sa": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 5
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 7
+-              }
+-            }
+-          ]
+-        },
+-        {
+-          "ty": "fl",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Graphic - Fill",
+-          "nm": "Fill 1",
+-          "c": {
+-            "a": 0,
+-            "k": [
+-              1,
+-              0.6157,
+-              0.2314
+-            ],
+-            "ix": 4
++          "a": 0,
++          "k": 100,
++          "ix": 11
++        }
++      },
++      "ef": [],
++      "masksProperties": [
++        {
++          "nm": "마스크 2",
++          "inv": false,
++          "mode": "a",
++          "x": {
++            "a": 0,
++            "k": 0,
++            "ix": 4
++          },
++          "o": {
++            "a": 0,
++            "k": 100,
++            "ix": 3
+           },
+-          "r": 1,
+-          "o": {
+-            "a": 0,
+-            "k": 40,
+-            "ix": 5
+-          }
+-        }
+-      ],
+-      "ind": 5
+-    },
+-    {
+-      "ty": 4,
+-      "nm": "Bayang 2",
+-      "sr": 1,
+-      "st": 103,
+-      "op": 204,
+-      "ip": 141,
+-      "hd": false,
+-      "ddd": 0,
+-      "bm": 0,
+-      "hasMask": false,
+-      "ao": 0,
+-      "ks": {
+-        "a": {
+-          "a": 0,
+-          "k": [
+-            0,
+-            0,
+-            0
+-          ],
+-          "ix": 1
+-        },
+-        "s": {
+-          "a": 1,
+-          "k": [
+-            {
+-              "o": {
+-                "x": 0.333,
+-                "y": 0
+-              },
+-              "i": {
+-                "x": 0.667,
+-                "y": 1
+-              },
+-              "s": [
+-                100,
+-                100,
+-                100
+-              ],
+-              "t": 141
+-            },
+-            {
+-              "s": [
+-                150,
+-                150,
+-                100
+-              ],
+-              "t": 203
+-            }
+-          ],
+-          "ix": 6
+-        },
+-        "sk": {
+-          "a": 0,
+-          "k": 0
+-        },
+-        "p": {
+-          "a": 0,
+-          "k": [
+-            547.688,
+-            527.801,
+-            0
+-          ],
+-          "ix": 2
+-        },
+-        "r": {
+-          "a": 0,
+-          "k": 0,
+-          "ix": 10
+-        },
+-        "sa": {
+-          "a": 0,
+-          "k": 0
+-        },
+-        "o": {
+-          "a": 1,
+-          "k": [
+-            {
+-              "o": {
+-                "x": 0.167,
+-                "y": 0.167
+-              },
+-              "i": {
+-                "x": 0.833,
+-                "y": 0.833
+-              },
+-              "s": [
+-                100
+-              ],
+-              "t": 177
+-            },
+-            {
+-              "s": [
+-                0
+-              ],
+-              "t": 203
+-            }
+-          ],
+-          "ix": 11
+-        }
+-      },
+-      "ef": [],
+-      "shapes": [
+-        {
+-          "ty": "gr",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Group",
+-          "nm": "Ellipse 1",
+-          "ix": 1,
+-          "cix": 2,
+-          "np": 4,
+-          "it": [
+-            {
+-              "ty": "el",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Shape - Ellipse",
+-              "nm": "Ellipse Path 1",
+-              "d": 1,
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  578.508,
+-                  578.508
+-                ],
+-                "ix": 2
+-              }
+-            },
+-            {
+-              "ty": "tm",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Filter - Trim",
+-              "nm": "Trim Paths 1",
+-              "ix": 2,
+-              "e": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 2
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 1
+-              },
+-              "m": 1
+-            },
+-            {
+-              "ty": "st",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Graphic - Stroke",
+-              "nm": "Stroke 1",
+-              "lc": 2,
+-              "lj": 1,
+-              "ml": 1,
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 4
+-              },
+-              "w": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 5
+-              },
+-              "c": {
+-                "a": 0,
+-                "k": [
+-                  1,
+-                  0.6157,
+-                  0.2314
+-                ],
+-                "ix": 3
+-              }
+-            },
+-            {
+-              "ty": "tr",
+-              "a": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 1
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  100,
+-                  100
+-                ],
+-                "ix": 3
+-              },
+-              "sk": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 4
+-              },
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  -7.688,
+-                  12.199
+-                ],
+-                "ix": 2
+-              },
+-              "r": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 6
+-              },
+-              "sa": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 5
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 7
+-              }
+-            }
+-          ]
+-        },
+-        {
+-          "ty": "fl",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Graphic - Fill",
+-          "nm": "Fill 1",
+-          "c": {
+-            "a": 0,
+-            "k": [
+-              1,
+-              0.6157,
+-              0.2314
++          "pt": {
++            "a": 1,
++            "k": [
++              {
++                "o": {
++                  "x": 0.9,
++                  "y": 0
++                },
++                "i": {
++                  "x": 0.1,
++                  "y": 1
++                },
++                "s": [
++                  {
++                    "c": true,
++                    "i": [
++                      [
++                        -28.5,
++                        0.5
++                      ],
++                      [
++                        0,
++                        -27.614
++                      ],
++                      [
++                        -27.614,
++                        0
++                      ],
++                      [
++                        0,
++                        27.614
++                      ]
++                    ],
++                    "o": [
++                      [
++                        -27.614,
++                        0
++                      ],
++                      [
++                        0,
++                        27.614
++                      ],
++                      [
++                        -28.5,
++                        -0.5
++                      ],
++                      [
++                        0,
++                        -27.614
++                      ]
++                    ],
++                    "v": [
++                      [
++                        50,
++                        0
++                      ],
++                      [
++                        0,
++                        50
++                      ],
++                      [
++                        50,
++                        100
++                      ],
++                      [
++                        0,
++                        50
++                      ]
++                    ]
++                  }
++                ],
++                "t": 0
++              },
++              {
++                "s": [
++                  {
++                    "c": true,
++                    "i": [
++                      [
++                        27.614,
++                        0
++                      ],
++                      [
++                        0,
++                        -27.614
++                      ],
++                      [
++                        -27.614,
++                        0
++                      ],
++                      [
++                        0,
++                        27.614
++                      ]
++                    ],
++                    "o": [
++                      [
++                        -27.614,
++                        0
++                      ],
++                      [
++                        0,
++                        27.614
++                      ],
++                      [
++                        27.614,
++                        0
++                      ],
++                      [
++                        0,
++                        -27.614
++                      ]
++                    ],
++                    "v": [
++                      [
++                        50,
++                        0
++                      ],
++                      [
++                        0,
++                        50
++                      ],
++                      [
++                        50,
++                        100
++                      ],
++                      [
++                        100,
++                        50
++                      ]
++                    ]
++                  }
++                ],
++                "t": 11
++              }
+             ],
+-            "ix": 4
+-          },
+-          "r": 1,
+-          "o": {
+-            "a": 0,
+-            "k": 40,
+-            "ix": 5
++            "ix": 1
+           }
+         }
+       ],
+-      "ind": 6
++      "sc": "#a5a5a5",
++      "sh": 100,
++      "sw": 100,
++      "ind": 3
+     }
+   ],
+   "v": "4.8.0",
+-  "fr": 30,
+-  "op": 204,
+-  "ip": 79,
++  "fr": 15,
++  "op": 30,
++  "ip": 0,
+   "assets": []
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportReasonItem.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportReasonItem.kt b/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportReasonItem.kt
+new file mode 100644
+--- /dev/null	(date 1688631769202)
++++ b/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportReasonItem.kt	(date 1688631769202)
+@@ -0,0 +1,80 @@
++package com.example.cyclistance.feature_report_account.presentation.components
++
++import androidx.compose.foundation.clickable
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.offset
++import androidx.compose.foundation.layout.padding
++import androidx.compose.material.Checkbox
++import androidx.compose.material.CheckboxDefaults
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.unit.dp
++
++@Composable
++fun ReportReasonItem(
++    modifier: Modifier = Modifier,
++    label: String,
++    isChecked: Boolean,
++    onReasonChecked: (String) -> Unit
++) {
++
++
++    Row(modifier = modifier.clickable {
++        onReasonChecked(label)
++    }, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
++
++        Checkbox(
++            modifier = Modifier.offset(x = (-12).dp),
++            checked = isChecked,
++            onCheckedChange = {
++                onReasonChecked(label)
++            },
++            colors = CheckboxDefaults.colors(
++                checkedColor = MaterialTheme.colors.primary,
++                checkmarkColor = MaterialTheme.colors.onPrimary,
++                uncheckedColor = MaterialTheme.colors.onSurface,
++            ))
++
++        Text(
++            text = label,
++            color = MaterialTheme.colors.onSurface,
++            style = MaterialTheme.typography.body1,
++            modifier = Modifier
++                .fillMaxWidth()
++                .padding(horizontal = 4.dp)
++        )
++    }
++}
++
++/*
++@Preview
++@Composable
++private fun PreviewReportReasonItemDark() {
++    CyclistanceTheme(darkTheme = true) {
++        ReportReasonItem(
++            isReasonChecked = false,
++            label = "Misleading or Scam",
++            onReasonChecked = { })
++    }
++}
++
++
++@Preview
++@Composable
++private fun PreviewReportReasonItemLight() {
++    CyclistanceTheme(darkTheme = false) {
++        ReportReasonItem(
++            isReasonChecked = true,
++            label = "Misleading or Scam",
++            onReasonChecked = {  })
++    }
++}
++
++*/
++
++
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/presentation/common/AdditionalMessage.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_mapping.presentation.common\n\nimport androidx.compose.foundation.layout.Arrangement\nimport androidx.compose.foundation.layout.Column\nimport androidx.compose.foundation.layout.fillMaxSize\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.layout.wrapContentHeight\nimport androidx.compose.foundation.shape.RoundedCornerShape\nimport androidx.compose.material.MaterialTheme\nimport androidx.compose.material.Text\nimport androidx.compose.material.TextField\nimport androidx.compose.material.TextFieldDefaults\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.draw.shadow\nimport androidx.compose.ui.graphics.Color\nimport androidx.compose.ui.text.TextStyle\nimport androidx.compose.ui.text.font.FontWeight\nimport androidx.compose.ui.text.input.TextFieldValue\nimport androidx.compose.ui.unit.TextUnit\nimport androidx.compose.ui.unit.TextUnitType\nimport androidx.compose.ui.unit.dp\nimport androidx.constraintlayout.compose.ConstraintLayout\nimport com.example.cyclistance.core.utils.constants.MappingConstants.CHARACTER_LIMIT\nimport com.example.cyclistance.theme.Black440\nimport com.example.cyclistance.theme.Black500\n\n\n@Composable\nfun AdditionalMessage(\n    text: String = \"Message\",\n    modifier: Modifier,\n    message: TextFieldValue,\n    enabled: Boolean,\n    onChangeValueMessage: (TextFieldValue) -> Unit) {\n    Column(modifier = modifier) {\n\n\n        Text(\n            text = text,\n            color = MaterialTheme.colors.onBackground,\n            style = MaterialTheme.typography.subtitle1,\n            fontWeight = FontWeight.Normal,\n            modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))\n\n\n        Column(\n            horizontalAlignment = Alignment.CenterHorizontally,\n            verticalArrangement = Arrangement.spacedBy(\n                10.dp,\n                alignment = Alignment.CenterVertically)) {\n\n            ConstraintLayout(modifier = Modifier.wrapContentHeight()) {\n\n\n                val (textField, numberOfCharactersText) = createRefs()\n                var numberOfCharacters by remember { mutableStateOf(0) }\n\n                TextField(\n                    enabled = enabled,\n                    modifier = Modifier\n                        .fillMaxSize()\n                        .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)\n                        .constrainAs(textField) {\n                            top.linkTo(parent.top)\n                            end.linkTo(parent.end)\n                            start.linkTo(parent.start)\n\n                        },\n                    value = message,\n                    onValueChange = { newText ->\n                        if (newText.text.length <= CHARACTER_LIMIT) {\n                            numberOfCharacters = newText.text.length\n                            onChangeValueMessage(newText)\n                        }\n                    },\n                    shape = RoundedCornerShape(12.dp),\n                    colors = TextFieldDefaults.textFieldColors(\n                        textColor = MaterialTheme.colors.onSecondary,\n                        backgroundColor = MaterialTheme.colors.secondary,\n                        focusedIndicatorColor = Color.Transparent,\n                        unfocusedIndicatorColor = Color.Transparent,\n                        cursorColor = MaterialTheme.colors.primary,\n                        disabledIndicatorColor = Color.Transparent\n                    ),\n                    placeholder = {\n                        Text(\n                            text = \"(Optional) Leave a message\",\n                            color = Black500,\n                            style = MaterialTheme.typography.body2)\n                    },\n                    textStyle = TextStyle(\n                        fontSize = TextUnit(value = 14f, type = TextUnitType.Sp)\n                    )\n                )\n\n                Text(\n                    text = \"${numberOfCharacters}/$CHARACTER_LIMIT\",\n                    color = Black440,\n                    style = MaterialTheme.typography.caption,\n                    modifier = Modifier\n                        .padding(top = 5.dp, bottom = 5.dp)\n                        .constrainAs(numberOfCharactersText) {\n                            top.linkTo(textField.bottom)\n                            end.linkTo(parent.end)\n                        })\n            }\n\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/common/AdditionalMessage.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/common/AdditionalMessage.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/common/AdditionalMessage.kt	(revision fb64e481ccfffb729b79457ae55d51ac98994604)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/common/AdditionalMessage.kt	(date 1688633837165)
+@@ -12,7 +12,7 @@
+ import androidx.compose.material.TextFieldDefaults
+ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.getValue
+-import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.mutableIntStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Alignment
+@@ -59,7 +59,7 @@
+ 
+ 
+                 val (textField, numberOfCharactersText) = createRefs()
+-                var numberOfCharacters by remember { mutableStateOf(0) }
++                var numberOfCharacters by remember { mutableIntStateOf(0) }
+ 
+                 TextField(
+                     enabled = enabled,
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetDropDown\">\n    <targetSelectedWithDropDown>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_28.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetSelectedWithDropDown>\n    <timeTargetWasSelectedWithDropDown value=\"2023-06-30T04:03:06.360971984Z\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(revision fb64e481ccfffb729b79457ae55d51ac98994604)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1688633858455)
+@@ -12,6 +12,6 @@
+         </deviceKey>
+       </Target>
+     </targetSelectedWithDropDown>
+-    <timeTargetWasSelectedWithDropDown value="2023-06-30T04:03:06.360971984Z" />
++    <timeTargetWasSelectedWithDropDown value="2023-07-06T08:57:35.110976051Z" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportAccountDialogContent.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportAccountDialogContent.kt b/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportAccountDialogContent.kt
+new file mode 100644
+--- /dev/null	(date 1688635655750)
++++ b/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportAccountDialogContent.kt	(date 1688635655750)
+@@ -0,0 +1,132 @@
++package com.example.cyclistance.feature_report_account.presentation.components
++
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.ExperimentalLayoutApi
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.lazy.LazyColumn
++import androidx.compose.foundation.lazy.items
++import androidx.compose.material.Divider
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.derivedStateOf
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateListOf
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.remember
++import androidx.compose.runtime.saveable.rememberSaveable
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.tooling.preview.Preview
++import androidx.compose.ui.unit.dp
++import com.example.cyclistance.R
++import com.example.cyclistance.feature_dialogs.presentation.common.DialogAnimatedIconCreator
++import com.example.cyclistance.theme.Black500
++import com.example.cyclistance.theme.CyclistanceTheme
++
++
++private val reasonsToReportAccount = listOf(
++    "Misleading or Scam",
++    "Verbal Abuse",
++    "Sexualizing",
++    "Negative behavior",
++    "Pretending to be someone else",
++    "Violence",
++)
++
++@OptIn(ExperimentalLayoutApi::class)
++@Composable
++fun ReportAccountDialogContent(modifier: Modifier = Modifier, onDismiss: () -> Unit) {
++    val (isDialogOpen, onDialogVisibilityToggle) = rememberSaveable { mutableStateOf(true) }
++
++    val selectedOptions = remember { mutableStateListOf<String>() }
++    val isReportMaxLimitReached = remember { derivedStateOf { selectedOptions.size == 3 } }
++
++    DialogAnimatedIconCreator(
++        icon = R.raw.report,
++        isDialogOpen = isDialogOpen,
++        usePlatformDefaultWidth = false,
++        onDialogVisibilityToggle = { onDialogVisibilityToggle(!isDialogOpen) },
++        onDismissRequest = onDismiss) {
++
++        Column(
++            modifier = modifier.fillMaxWidth(0.9f),
++            verticalArrangement = Arrangement.Center,
++            horizontalAlignment = Alignment.CenterHorizontally) {
++
++
++            Text(
++                text = "Report this Account",
++                color = MaterialTheme.colors.onSurface,
++                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium),
++                modifier = Modifier.padding(vertical = 4.dp)
++            )
++
++            Divider(
++                color = Black500,
++                thickness = (1).dp,
++                modifier = Modifier.padding(vertical = 4.dp)
++            )
++
++            Text(
++                text = "Select the reason for reporting this account",
++                color = Black500,
++                style = MaterialTheme.typography.caption,
++                modifier = Modifier.fillMaxWidth()
++            )
++
++
++            LazyColumn(modifier = Modifier.padding(top = 8.dp)) {
++                items(items = reasonsToReportAccount) { reason ->
++
++                    val isChecked by remember { derivedStateOf { reason in selectedOptions } }
++
++                    ReportReasonItem(
++                        label = reason,
++                        isChecked = isChecked,
++                        onReasonChecked = {
++
++                            if (selectedOptions.contains(reason)) {
++                                selectedOptions.remove(reason)
++                                return@ReportReasonItem
++                            }
++
++                            if (isReportMaxLimitReached.value) {
++                                return@ReportReasonItem
++                            }
++
++                            selectedOptions.add(reason)
++
++                        })
++                }
++            }
++
++
++            /*  reasonsToReportAccount.forEach{ reason ->
++                  ReportReasonItem(label = reason, isChecked = reason == selectedOption.value, onReasonChecked = {
++                *//*      if (selectedOptions.contains(reason)) {
++                        selectedOptions.remove(reason)
++                    } else {
++                        selectedOptions.add(reason)
++                    }*//*
++                    selectedOption.value = reason
++                })
++            }
++*/
++
++
++        }
++    }
++
++}
++
++@Preview
++@Composable
++private fun PreviewReportAccountDialogContent() {
++    CyclistanceTheme(darkTheme = true) {
++        ReportAccountDialogContent(onDismiss = {})
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_dialogs/presentation/common/DialogAnimatedIconCreator.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_dialogs.presentation.common\n\nimport androidx.annotation.DrawableRes\nimport androidx.annotation.RawRes\nimport androidx.compose.foundation.BorderStroke\nimport androidx.compose.foundation.Image\nimport androidx.compose.foundation.border\nimport androidx.compose.foundation.layout.Box\nimport androidx.compose.foundation.layout.Column\nimport androidx.compose.foundation.layout.ColumnScope\nimport androidx.compose.foundation.layout.Spacer\nimport androidx.compose.foundation.layout.fillMaxWidth\nimport androidx.compose.foundation.layout.height\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.layout.size\nimport androidx.compose.foundation.layout.widthIn\nimport androidx.compose.foundation.layout.wrapContentHeight\nimport androidx.compose.foundation.shape.CircleShape\nimport androidx.compose.foundation.shape.RoundedCornerShape\nimport androidx.compose.material.MaterialTheme\nimport androidx.compose.material.Surface\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.remember\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.draw.shadow\nimport androidx.compose.ui.graphics.Color\nimport androidx.compose.ui.platform.LocalContext\nimport androidx.compose.ui.res.painterResource\nimport androidx.compose.ui.unit.dp\nimport androidx.compose.ui.window.Dialog\nimport androidx.compose.ui.window.DialogProperties\nimport androidx.compose.ui.zIndex\nimport com.airbnb.lottie.compose.LottieAnimation\nimport com.airbnb.lottie.compose.LottieCompositionSpec\nimport com.airbnb.lottie.compose.rememberLottieComposition\n\n@Composable\nfun DialogAnimatedIconCreator(\n    icon: Int,\n    isDialogOpen: Boolean,\n    onDialogVisibilityToggle: () -> Unit,\n    onDismissRequest: () -> Unit,\n    content: @Composable ColumnScope.() -> Unit\n) {\n    val context = LocalContext.current\n\n\n\n    if (isDialogOpen) {\n        Dialog(onDismissRequest = {\n            onDismissRequest()\n            onDialogVisibilityToggle()\n        }, properties = DialogProperties()) {\n\n            Box(\n                modifier = Modifier\n                    .widthIn(max = 500.dp)\n                    .fillMaxWidth()\n                    .wrapContentHeight(),\n                contentAlignment = Alignment.Center\n            ) {\n\n                val iconResourceType = remember { context.resources.getResourceTypeName(icon) }\n                val iconModifier = remember {\n                    Modifier\n                        .zIndex(100f)\n                        .size(72.dp)\n                        .align(Alignment.TopCenter)\n                        .shadow(elevation = 0.dp, shape = CircleShape, clip = true)\n                        .border(\n                            border = BorderStroke(width = 2.dp, color = Color.Transparent),\n                            shape = CircleShape)\n                }\n\n\n                if (iconResourceType == \"raw\") {\n                    AnimatedRawResIcon(modifier = iconModifier, icon, iterations = 1)\n                } else {\n                    AnimatedDrawableResIcon(modifier = iconModifier, icon)\n                }\n\n                Column(\n                    Modifier\n                        .zIndex(1f)\n                        .wrapContentHeight()\n                ) {\n\n                    Spacer(Modifier.height(36.dp))\n\n\n                    Surface(\n                        modifier = Modifier.wrapContentHeight(),\n                        color = MaterialTheme.colors.surface, shape = RoundedCornerShape(12.dp)) {\n\n\n                        Column(\n                            modifier = Modifier.padding(16.dp),\n                            horizontalAlignment = Alignment.CenterHorizontally\n                        ) {\n                            Spacer(modifier = Modifier.height(28.dp))\n                            content()\n                        }\n                    }\n                }\n            }\n        }\n\n    }\n}\n\n\n@Composable\nprivate fun AnimatedDrawableResIcon(modifier: Modifier, @DrawableRes resId: Int) {\n\n    Image(\n        painter = painterResource(id = resId),\n        contentDescription = \"Icon\",\n        modifier = modifier)\n\n}\n\n@Composable\nfun AnimatedRawResIcon(modifier: Modifier, @RawRes resId: Int, iterations: Int = Int.MAX_VALUE) {\n\n    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(resId))\n\n    LottieAnimation(\n        composition,\n        modifier = modifier,\n        restartOnPlay = true,\n        iterations = iterations,\n\n\n        )\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_dialogs/presentation/common/DialogAnimatedIconCreator.kt b/app/src/main/java/com/example/cyclistance/feature_dialogs/presentation/common/DialogAnimatedIconCreator.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_dialogs/presentation/common/DialogAnimatedIconCreator.kt	(revision fb64e481ccfffb729b79457ae55d51ac98994604)
++++ b/app/src/main/java/com/example/cyclistance/feature_dialogs/presentation/common/DialogAnimatedIconCreator.kt	(date 1688635655760)
+@@ -40,6 +40,7 @@
+ fun DialogAnimatedIconCreator(
+     icon: Int,
+     isDialogOpen: Boolean,
++    usePlatformDefaultWidth: Boolean = true,
+     onDialogVisibilityToggle: () -> Unit,
+     onDismissRequest: () -> Unit,
+     content: @Composable ColumnScope.() -> Unit
+@@ -49,14 +50,17 @@
+ 
+ 
+     if (isDialogOpen) {
+-        Dialog(onDismissRequest = {
+-            onDismissRequest()
+-            onDialogVisibilityToggle()
+-        }, properties = DialogProperties()) {
++        Dialog(
++            onDismissRequest = {
++                onDismissRequest()
++                onDialogVisibilityToggle()
++            }, properties = DialogProperties(
++                usePlatformDefaultWidth = usePlatformDefaultWidth,
++            )) {
+ 
+             Box(
+                 modifier = Modifier
+-                    .widthIn(max = 500.dp)
++                    .widthIn(max = 600.dp)
+                     .fillMaxWidth()
+                     .wrapContentHeight(),
+                 contentAlignment = Alignment.Center
+Index: app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/DeleteContactDialog.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components\n\nimport androidx.compose.foundation.layout.Arrangement\nimport androidx.compose.foundation.layout.Column\nimport androidx.compose.foundation.layout.Spacer\nimport androidx.compose.foundation.layout.fillMaxWidth\nimport androidx.compose.foundation.layout.height\nimport androidx.compose.material.MaterialTheme\nimport androidx.compose.material.Text\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.saveable.rememberSaveable\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.text.style.TextAlign\nimport androidx.compose.ui.tooling.preview.Preview\nimport androidx.compose.ui.unit.dp\nimport com.example.cyclistance.R\nimport com.example.cyclistance.feature_dialogs.presentation.common.DialogAnimatedIconCreator\nimport com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation\nimport com.example.cyclistance.theme.CyclistanceTheme\n\n@Composable\nfun DeleteContactDialog(\n    onDismissRequest: () -> Unit,\n    onClickConfirmButton: () -> Unit,\n    nameToDelete: String) {\n\n    val (isDialogOpen, onDialogVisibilityToggle) = rememberSaveable { mutableStateOf(true) }\n\n    DialogAnimatedIconCreator(\n        icon = R.raw.question,\n        isDialogOpen = isDialogOpen,\n        onDialogVisibilityToggle = { onDialogVisibilityToggle(!isDialogOpen) },\n        onDismissRequest = onDismissRequest) {\n\n\n        Column(\n            modifier = Modifier.fillMaxWidth(),\n            verticalArrangement = Arrangement.Center,\n            horizontalAlignment = Alignment.CenterHorizontally) {\n\n            Text(\n                text = \"Are you sure you want to delete\\n\" +\n                       \"“$nameToDelete”?\",\n                textAlign = TextAlign.Center,\n                style = MaterialTheme.typography.body2,\n                color = MaterialTheme.colors.onSurface)\n\n\n            Spacer(modifier = Modifier.height(16.dp))\n\n            ButtonNavigation(\n                modifier = Modifier.fillMaxWidth(0.8f),\n                onClickCancelButton = onDismissRequest,\n                onClickConfirmButton = onClickConfirmButton)\n\n        }\n    }\n}\n\n@Preview\n@Composable\nfun PreviewEmergencyCallDeleteDialog() {\n    CyclistanceTheme(darkTheme = true) {\n        DeleteContactDialog(\n            onDismissRequest = {},\n            onClickConfirmButton = {},\n            nameToDelete = \"Philippine Red Cross\")\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/DeleteContactDialog.kt b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/DeleteContactDialog.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/DeleteContactDialog.kt	(revision fb64e481ccfffb729b79457ae55d51ac98994604)
++++ b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/DeleteContactDialog.kt	(date 1688635655767)
+@@ -22,6 +22,7 @@
+ 
+ @Composable
+ fun DeleteContactDialog(
++    modifier: Modifier = Modifier,
+     onDismissRequest: () -> Unit,
+     onClickConfirmButton: () -> Unit,
+     nameToDelete: String) {
+@@ -36,7 +37,7 @@
+ 
+ 
+         Column(
+-            modifier = Modifier.fillMaxWidth(),
++            modifier = modifier.fillMaxWidth(),
+             verticalArrangement = Arrangement.Center,
+             horizontalAlignment = Alignment.CenterHorizontally) {
+ 
