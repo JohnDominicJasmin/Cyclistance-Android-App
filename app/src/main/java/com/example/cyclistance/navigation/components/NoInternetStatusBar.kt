@@ -15,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.CONTACT_ID
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.Black900
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -29,8 +28,7 @@ fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
         route != Screens.OnBoarding.IntroSliderScreen.screenRoute &&
         route != Screens.RideHistory.RideHistoryScreen.screenRoute &&
         route != Screens.RideHistory.RideHistoryDetailsScreen.screenRoute &&
-        route != Screens.EmergencyCall.EmergencyCallScreen.screenRoute &&
-        route != Screens.EmergencyCall.AddNewContact.screenRoute + "?${CONTACT_ID}={$CONTACT_ID}"
+        route != Screens.EmergencyCall.EmergencyCallScreen.screenRoute
 
 
     AnimatedVisibility(

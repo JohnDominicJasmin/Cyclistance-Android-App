@@ -1,0 +1,2753 @@
+Index: app/src/main/java/com/example/cyclistance/feature_dialogs/presentation/common/DialogAnimatedIconCreator.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_dialogs.presentation.common\n\nimport androidx.annotation.DrawableRes\nimport androidx.annotation.RawRes\nimport androidx.compose.foundation.BorderStroke\nimport androidx.compose.foundation.Image\nimport androidx.compose.foundation.border\nimport androidx.compose.foundation.layout.Box\nimport androidx.compose.foundation.layout.Column\nimport androidx.compose.foundation.layout.ColumnScope\nimport androidx.compose.foundation.layout.Spacer\nimport androidx.compose.foundation.layout.fillMaxWidth\nimport androidx.compose.foundation.layout.height\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.layout.size\nimport androidx.compose.foundation.layout.widthIn\nimport androidx.compose.foundation.layout.wrapContentHeight\nimport androidx.compose.foundation.shape.CircleShape\nimport androidx.compose.foundation.shape.RoundedCornerShape\nimport androidx.compose.material.MaterialTheme\nimport androidx.compose.material.Surface\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.remember\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.draw.shadow\nimport androidx.compose.ui.graphics.Color\nimport androidx.compose.ui.platform.LocalContext\nimport androidx.compose.ui.res.painterResource\nimport androidx.compose.ui.unit.dp\nimport androidx.compose.ui.window.Dialog\nimport androidx.compose.ui.window.DialogProperties\nimport androidx.compose.ui.zIndex\nimport com.airbnb.lottie.compose.LottieAnimation\nimport com.airbnb.lottie.compose.LottieCompositionSpec\nimport com.airbnb.lottie.compose.rememberLottieComposition\n\n@Composable\nfun DialogAnimatedIconCreator(\n    icon: Int,\n    isDialogOpen: Boolean,\n    onDialogVisibilityToggle: () -> Unit,\n    onDismissRequest: () -> Unit,\n    content: @Composable ColumnScope.() -> Unit\n) {\n    val context = LocalContext.current\n\n\n\n    if (isDialogOpen) {\n        Dialog(onDismissRequest = {\n            onDismissRequest()\n            onDialogVisibilityToggle()\n        }, properties = DialogProperties()) {\n\n            Box(\n                modifier = Modifier\n                    .widthIn(max = 500.dp)\n                    .fillMaxWidth()\n                    .wrapContentHeight(),\n                contentAlignment = Alignment.Center\n            ) {\n\n                val iconResourceType = remember { context.resources.getResourceTypeName(icon) }\n                val iconModifier = remember {\n                    Modifier\n                        .zIndex(100f)\n                        .size(72.dp)\n                        .align(Alignment.TopCenter)\n                        .shadow(elevation = 0.dp, shape = CircleShape, clip = true)\n                        .border(\n                            border = BorderStroke(width = 2.dp, color = Color.Transparent),\n                            shape = CircleShape)\n                }\n\n\n                if (iconResourceType == \"raw\") {\n                    AnimatedRawResIcon(modifier = iconModifier, icon, iterations = 1)\n                } else {\n                    AnimatedDrawableResIcon(modifier = iconModifier, icon)\n                }\n\n                Column(\n                    Modifier\n                        .zIndex(1f)\n                        .wrapContentHeight()\n                ) {\n\n                    Spacer(Modifier.height(36.dp))\n\n\n                    Surface(\n                        modifier = Modifier.wrapContentHeight(),\n                        color = MaterialTheme.colors.surface, shape = RoundedCornerShape(12.dp)) {\n\n\n                        Column(\n                            modifier = Modifier.padding(16.dp),\n                            horizontalAlignment = Alignment.CenterHorizontally\n                        ) {\n                            Spacer(modifier = Modifier.height(28.dp))\n                            content()\n                        }\n                    }\n                }\n            }\n        }\n\n    }\n}\n\n\n@Composable\nprivate fun AnimatedDrawableResIcon(modifier: Modifier, @DrawableRes resId: Int) {\n\n    Image(\n        painter = painterResource(id = resId),\n        contentDescription = \"Icon\",\n        modifier = modifier)\n\n}\n\n@Composable\nfun AnimatedRawResIcon(modifier: Modifier, @RawRes resId: Int, iterations: Int = Int.MAX_VALUE) {\n\n    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(resId))\n\n    LottieAnimation(\n        composition,\n        modifier = modifier,\n        restartOnPlay = true,\n        iterations = iterations,\n\n\n        )\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_dialogs/presentation/common/DialogAnimatedIconCreator.kt b/app/src/main/java/com/example/cyclistance/feature_dialogs/presentation/common/DialogAnimatedIconCreator.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_dialogs/presentation/common/DialogAnimatedIconCreator.kt	(revision fb64e481ccfffb729b79457ae55d51ac98994604)
++++ b/app/src/main/java/com/example/cyclistance/feature_dialogs/presentation/common/DialogAnimatedIconCreator.kt	(date 1689073730939)
+@@ -40,6 +40,7 @@
+ fun DialogAnimatedIconCreator(
+     icon: Int,
+     isDialogOpen: Boolean,
++    usePlatformDefaultWidth: Boolean = true,
+     onDialogVisibilityToggle: () -> Unit,
+     onDismissRequest: () -> Unit,
+     content: @Composable ColumnScope.() -> Unit
+@@ -49,14 +50,17 @@
+ 
+ 
+     if (isDialogOpen) {
+-        Dialog(onDismissRequest = {
+-            onDismissRequest()
+-            onDialogVisibilityToggle()
+-        }, properties = DialogProperties()) {
++        Dialog(
++            onDismissRequest = {
++                onDismissRequest()
++                onDialogVisibilityToggle()
++            }, properties = DialogProperties(
++                usePlatformDefaultWidth = usePlatformDefaultWidth,
++            )) {
+ 
+             Box(
+                 modifier = Modifier
+-                    .widthIn(max = 500.dp)
++                    .widthIn(max = 600.dp)
+                     .fillMaxWidth()
+                     .wrapContentHeight(),
+                 contentAlignment = Alignment.Center
+Index: app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportReasonItem.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportReasonItem.kt b/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportReasonItem.kt
+new file mode 100644
+--- /dev/null	(date 1689074242213)
++++ b/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportReasonItem.kt	(date 1689074242213)
+@@ -0,0 +1,53 @@
++package com.example.cyclistance.feature_report_account.presentation.components
++
++import androidx.compose.foundation.clickable
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.offset
++import androidx.compose.foundation.layout.padding
++import androidx.compose.material.Checkbox
++import androidx.compose.material.CheckboxDefaults
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.unit.dp
++
++@Composable
++fun ReportReasonItem(
++    modifier: Modifier = Modifier,
++    label: String,
++    isChecked: Boolean,
++    onReasonChecked: (String) -> Unit
++) {
++
++
++    Row(modifier = modifier.clickable {
++        onReasonChecked(label)
++    }, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Start) {
++
++        Checkbox(
++            modifier = Modifier.offset(x = (-12).dp),
++            checked = isChecked,
++            onCheckedChange = {
++                onReasonChecked(label)
++            },
++            colors = CheckboxDefaults.colors(
++                checkedColor = MaterialTheme.colors.primary,
++                checkmarkColor = MaterialTheme.colors.onPrimary,
++                uncheckedColor = MaterialTheme.colors.onSurface,
++            ))
++
++        Text(
++            text = label,
++            color = MaterialTheme.colors.onSurface,
++            style = MaterialTheme.typography.body1,
++            modifier = Modifier
++                .fillMaxWidth()
++                .padding(horizontal = 4.dp)
++        )
++    }
++}
++
+Index: app/src/main/res/drawable/ic_report_account_light.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_report_account_light.xml b/app/src/main/res/drawable/ic_report_account_light.xml
+new file mode 100644
+--- /dev/null	(date 1689076795175)
++++ b/app/src/main/res/drawable/ic_report_account_light.xml	(date 1689076795175)
+@@ -0,0 +1,81 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="168dp"
++    android:height="130dp"
++    android:viewportWidth="168"
++    android:viewportHeight="130">
++    <group>
++        <clip-path android:pathData="M0,0h168v130h-168z" />
++        <path
++            android:fillColor="#F0F0F0"
++            android:pathData="M24.42,97.9L19.31,94.35C19.08,91.23 19.01,88.1 19.09,84.98L21.74,85.72L19.13,83.9C19.27,80.03 19.59,77.49 19.59,77.49C19.59,77.49 29.92,84.8 36.51,94.73L35.38,103.12L38.06,97.25C38.75,98.44 39.36,99.69 39.9,100.97C45.33,113.9 45.86,126.32 41.08,128.71C36.31,131.09 28.04,122.54 22.61,109.61C20.93,105.6 20,100.99 19.52,96.53L24.42,97.9Z" />
++        <path
++            android:fillColor="#F0F0F0"
++            android:pathData="M13.93,110.39L7.88,110.23C6.2,107.69 4.65,105.05 3.25,102.33L5.87,101.47L2.77,101.39C1.06,98 0.13,95.63 0.13,95.63C0.13,95.63 12.43,96.07 22.77,100.85L25.78,108.67L25.3,102.13C26.45,102.77 27.57,103.49 28.64,104.28C39.41,112.29 45.75,122.63 42.79,127.36C39.83,132.1 28.7,129.44 17.92,121.43C14.59,118.94 11.61,115.52 9.08,111.98L13.93,110.39Z" />
++        <path
++            android:fillColor="#3F3D56"
++            android:pathData="M90.65,30.91H90V11.39C90,9.91 89.73,8.44 89.21,7.07C88.69,5.7 87.92,4.45 86.96,3.4C86,2.36 84.86,1.52 83.6,0.96C82.35,0.39 81,0.1 79.64,0.1H41.74C40.38,0.1 39.04,0.39 37.78,0.96C36.52,1.52 35.38,2.36 34.42,3.4C33.46,4.45 32.7,5.7 32.18,7.07C31.66,8.44 31.39,9.91 31.39,11.39V118.48C31.39,121.47 32.48,124.35 34.42,126.47C36.36,128.59 39,129.77 41.74,129.77H79.64C82.39,129.77 85.02,128.59 86.96,126.47C88.9,124.35 89.99,121.47 89.99,118.48V44.81H90.65V30.91Z" />
++        <path
++            android:fillColor="#ffffff"
++            android:pathData="M80.06,3.03H75.11C75.34,3.64 75.43,4.3 75.37,4.96C75.3,5.61 75.1,6.24 74.76,6.78C74.42,7.33 73.97,7.78 73.44,8.09C72.91,8.39 72.31,8.56 71.71,8.56H50C49.4,8.56 48.8,8.39 48.27,8.09C47.74,7.78 47.29,7.33 46.95,6.78C46.62,6.24 46.41,5.61 46.35,4.96C46.28,4.3 46.37,3.64 46.6,3.03H41.98C39.93,3.03 37.96,3.92 36.51,5.51C35.06,7.09 34.25,9.23 34.25,11.47V118.4C34.25,119.51 34.45,120.6 34.83,121.63C35.22,122.65 35.79,123.58 36.51,124.36C37.23,125.15 38.08,125.77 39.02,126.19C39.96,126.62 40.96,126.84 41.98,126.84H80.06C81.08,126.84 82.08,126.62 83.02,126.19C83.96,125.77 84.81,125.15 85.53,124.36C86.25,123.58 86.81,122.65 87.2,121.63C87.59,120.6 87.79,119.51 87.79,118.4V11.47C87.79,10.36 87.59,9.27 87.2,8.24C86.81,7.22 86.25,6.29 85.53,5.51C84.81,4.72 83.96,4.1 83.02,3.68C82.08,3.25 81.08,3.03 80.06,3.03Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M60.78,44.68C64.11,44.68 66.81,41.73 66.81,38.09C66.81,34.45 64.11,31.5 60.78,31.5C57.44,31.5 54.74,34.45 54.74,38.09C54.74,41.73 57.44,44.68 60.78,44.68Z" />
++        <path
++            android:fillColor="#E4E4E4"
++            android:pathData="M72.79,48.36L72.66,51.13C69.76,54.42 65.81,56.36 61.63,56.54C57.45,56.71 53.37,55.12 50.25,52.08C50.11,51.95 49.97,51.81 49.84,51.66C50.68,50.76 52.99,48.52 55.55,48.31L67.12,47.51C67.12,47.51 71.5,46.95 72.79,48.36Z" />
++        <path
++            android:fillColor="#E4E4E4"
++            android:pathData="M73.77,49.74C72.53,51.46 71.01,52.93 69.29,54.05L69.02,48.76L72.79,48.36C72.79,48.36 73.25,48.36 73.77,49.74Z" />
++        <path
++            android:fillColor="#3F3D56"
++            android:pathData="M61,56.85C56.97,56.85 53.08,55.24 50.06,52.31C49.92,52.17 49.78,52.03 49.64,51.88C48.02,50.21 46.73,48.2 45.86,45.96C44.98,43.72 44.53,41.31 44.54,38.88C44.54,34.12 46.27,29.55 49.36,26.18C52.45,22.81 56.64,20.92 61,20.92C65.37,20.92 69.56,22.81 72.64,26.18C75.73,29.55 77.47,34.12 77.47,38.88C77.48,42.88 76.26,46.78 73.99,49.92C72.45,52.08 70.48,53.83 68.23,55.03C65.98,56.23 63.51,56.85 61,56.85ZM61,21.52C56.78,21.53 52.74,23.36 49.76,26.61C46.78,29.87 45.1,34.28 45.1,38.88C45.09,41.23 45.52,43.56 46.37,45.72C47.22,47.88 48.47,49.83 50.03,51.44C50.17,51.59 50.3,51.72 50.43,51.85C52.06,53.43 53.97,54.62 56.03,55.36C58.1,56.1 60.28,56.37 62.45,56.16C64.61,55.94 66.72,55.24 68.63,54.11C70.54,52.97 72.21,51.42 73.55,49.55C75.74,46.51 76.92,42.75 76.91,38.88C76.9,34.28 75.23,29.87 72.25,26.61C69.26,23.36 65.22,21.53 61,21.52Z" />
++        <path
++            android:fillColor="#CACACA"
++            android:pathData="M167.72,130H0.28C0.21,130 0.13,129.97 0.08,129.91C0.03,129.85 0,129.78 0,129.7C0,129.61 0.03,129.54 0.08,129.48C0.13,129.42 0.21,129.39 0.28,129.39H167.72C167.79,129.39 167.87,129.42 167.92,129.48C167.97,129.54 168,129.61 168,129.7C168,129.78 167.97,129.85 167.92,129.91C167.87,129.97 167.79,130 167.72,130Z" />
++        <path
++            android:fillColor="#A5A5A5"
++            android:pathData="M61.4,69.01C58.97,69.01 56.59,69.76 54.57,71.17C52.56,72.57 50.98,74.57 50.05,76.91C49.12,79.24 48.88,81.82 49.35,84.3C49.83,86.78 51,89.06 52.71,90.84C54.43,92.63 56.62,93.85 59,94.34C61.38,94.84 63.85,94.59 66.1,93.62C68.34,92.65 70.26,91.01 71.61,88.91C72.96,86.8 73.68,84.33 73.68,81.8C73.68,78.41 72.38,75.16 70.08,72.76C67.78,70.36 64.65,69.01 61.4,69.01V69.01ZM59.87,75.41C59.87,74.98 60.03,74.58 60.32,74.28C60.61,73.98 61,73.81 61.41,73.81C61.81,73.81 62.2,73.98 62.49,74.28C62.78,74.58 62.94,74.98 62.94,75.41V82.75C62.94,82.96 62.9,83.17 62.82,83.36C62.75,83.56 62.63,83.73 62.49,83.88C62.35,84.03 62.18,84.15 61.99,84.23C61.81,84.31 61.61,84.35 61.41,84.35C61.2,84.35 61.01,84.31 60.82,84.23C60.63,84.15 60.46,84.03 60.32,83.88C60.18,83.73 60.07,83.56 59.99,83.36C59.91,83.17 59.87,82.96 59.87,82.75V75.41ZM61.4,89.79C61.05,89.79 60.71,89.69 60.42,89.49C60.13,89.28 59.9,89 59.77,88.66C59.64,88.33 59.6,87.96 59.67,87.6C59.74,87.25 59.91,86.92 60.15,86.67C60.4,86.41 60.71,86.23 61.05,86.16C61.39,86.09 61.75,86.13 62.07,86.27C62.39,86.41 62.67,86.64 62.86,86.94C63.05,87.24 63.16,87.6 63.16,87.96C63.16,88.45 62.97,88.91 62.64,89.26C62.31,89.6 61.86,89.79 61.4,89.79Z" />
++        <path
++            android:fillColor="#7A7A7A"
++            android:pathData="M110.45,41.74C110.09,38.84 109.65,35.72 107.8,33.63C107.21,32.96 106.51,32.44 105.74,32.08C104.97,31.73 104.14,31.55 103.3,31.56C102.46,31.57 101.63,31.76 100.86,32.14C100.1,32.51 99.41,33.05 98.83,33.73C97.49,35.32 96.9,37.55 96.84,39.73C96.79,41.91 97.23,44.06 97.71,46.17C100.28,46.23 102.83,45.67 105.18,44.54C105.76,44.23 106.36,43.97 106.97,43.76C107.6,43.58 108.04,44.03 108.62,44.33L108.94,43.66C109.2,44.2 110,44.04 110.3,43.52C110.59,43 110.52,42.34 110.45,41.74Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M134.23,120.92L132.36,122.3L126.7,114.9L129.46,112.86L134.23,120.92Z" />
++        <path
++            android:fillColor="#EBAD52"
++            android:pathData="M135.91,122.51L129.74,126.87L129.69,126.79C129.26,126.11 129.12,125.27 129.27,124.47C129.42,123.68 129.86,122.97 130.5,122.53L134.27,119.86L135.91,122.51Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M109.68,124.74H107.41L106.33,114.99L109.68,114.99L109.68,124.74Z" />
++        <path
++            android:fillColor="#EBAD52"
++            android:pathData="M110.23,126.87L102.98,126.87V126.77C102.98,125.99 103.27,125.24 103.8,124.69C104.33,124.13 105.05,123.82 105.8,123.82L110.23,123.82L110.23,126.87Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M93.38,58.34L84.81,51.58C84.85,51.22 84.79,50.86 84.65,50.54C84.5,50.23 84.28,49.96 84,49.78C83.72,49.6 83.4,49.51 83.08,49.52C82.76,49.54 82.45,49.66 82.18,49.87C81.92,50.07 81.72,50.36 81.6,50.69C81.48,51.03 81.46,51.39 81.52,51.74C81.59,52.09 81.75,52.41 81.97,52.66C82.2,52.91 82.49,53.09 82.81,53.16C83.88,54.15 91.7,62.75 92.82,62.29C93.96,61.83 98.93,61 98.93,61L99.07,55.79L93.38,58.34Z" />
++        <path
++            android:fillColor="#FF9F46"
++            android:pathData="M100.19,70.63L100.27,82.52C100.27,82.52 102.13,100.14 102.81,103.11C103.5,106.09 106.29,119.86 106.29,119.86L110.82,119.06L107.9,101.05L108.78,86.13L113.86,101.09L126.77,115.93L130.05,113.03L118.81,94.86L115.38,79.98C115.38,79.98 115.8,72.28 111.96,69.32L100.19,70.63Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M102.84,44.65C105.53,44.65 107.72,42.2 107.72,39.17C107.72,36.14 105.53,33.69 102.84,33.69C100.14,33.69 97.95,36.14 97.95,39.17C97.95,42.2 100.14,44.65 102.84,44.65Z" />
++        <path
++            android:fillColor="#2F2E41"
++            android:pathData="M104.15,72.54L102.3,77.06L107.66,79.69L109.51,75.18L104.15,72.54Z" />
++        <path
++            android:fillColor="#E4E4E4"
++            android:pathData="M110.79,49.53C110.21,48.25 109.93,46.68 108.7,46.26C107.86,45.98 104.49,46.4 103.72,46.87C102.46,47.66 103.61,49.13 102.86,50.5C102.05,52 101.24,53.5 100.43,54.99C99.87,56.02 99.3,57.06 99,58.21C98.7,59.37 98.69,60.66 99.2,61.71C99.66,62.66 100.49,63.33 100.96,64.27C101.44,65.25 100.57,69.64 100.13,70.64L100.34,70.75C103.32,70.94 106.3,70.83 109.26,70.41C109.99,70.31 110.76,70.18 111.36,69.71C112.25,69.01 112.61,67.75 112.82,66.57C113.89,60.8 113.17,54.8 110.79,49.53Z" />
++        <path
++            android:fillColor="#E4E4E4"
++            android:pathData="M100.59,61.97C101.92,60.51 103.26,59.03 104.36,57.34C105.46,55.65 106.31,53.72 106.55,51.65C106.65,50.99 106.61,50.31 106.43,49.67C106.23,49.04 105.77,48.49 105.19,48.34C104.25,48.11 103.41,48.95 102.74,49.71C100.77,51.97 98.8,54.23 96.84,56.49C98.09,58.33 99.34,60.17 100.6,62.01L100.59,61.97Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M115.24,63.14C114.83,61.88 114.08,56.38 114.08,56.38L109.39,56.22L111.68,62.53L105.42,72.29C105.42,72.29 105.43,72.31 105.45,72.35C105.12,72.29 104.79,72.34 104.49,72.5C104.18,72.66 103.93,72.92 103.76,73.24C103.59,73.56 103.52,73.93 103.54,74.3C103.56,74.67 103.68,75.02 103.89,75.31C104.1,75.6 104.38,75.82 104.7,75.93C105.01,76.04 105.36,76.04 105.67,75.93C105.99,75.83 106.28,75.61 106.48,75.32C106.69,75.03 106.82,74.68 106.84,74.31C106.86,74.32 106.89,74.33 106.92,74.32C106.94,74.32 106.97,74.3 106.99,74.28C107.68,73.31 115.65,64.4 115.24,63.14Z" />
++        <path
++            android:fillColor="#E4E4E4"
++            android:pathData="M115.78,59.74C115.34,57.7 114.9,55.65 114.17,53.72C113.43,51.79 112.38,49.96 110.89,48.66C110.43,48.21 109.89,47.9 109.3,47.74C108.7,47.61 108.03,47.76 107.61,48.24C106.95,49.02 107.15,50.27 107.39,51.3C108.11,54.36 108.84,57.42 109.56,60.48C111.64,60.24 113.73,60 115.81,59.75L115.78,59.74Z" />
++        <path
++            android:fillColor="#7A7A7A"
++            android:pathData="M109.01,39.67C108.85,38.35 108.69,37.01 108.33,35.77C107.97,34.52 107.39,33.36 106.56,32.65C105.25,31.53 103.54,31.75 102.07,32.39C100.92,32.89 99.81,33.64 99,34.86C98.2,36.07 97.75,37.8 98.05,39.39C99.62,38.9 101.19,38.41 102.77,37.92L102.6,38.08C103.62,38.73 104.4,40.06 104.63,41.56C104.86,43.07 104.56,44.61 103.8,45.87C104.87,45.37 105.94,44.87 107.02,44.37C107.68,44.06 108.39,43.7 108.78,42.91C109.24,41.99 109.13,40.77 109.01,39.67Z" />
++    </group>
++</vector>
+Index: app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/DeleteContactDialog.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components\n\nimport androidx.compose.foundation.layout.Arrangement\nimport androidx.compose.foundation.layout.Column\nimport androidx.compose.foundation.layout.Spacer\nimport androidx.compose.foundation.layout.fillMaxWidth\nimport androidx.compose.foundation.layout.height\nimport androidx.compose.material.MaterialTheme\nimport androidx.compose.material.Text\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.saveable.rememberSaveable\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.text.style.TextAlign\nimport androidx.compose.ui.tooling.preview.Preview\nimport androidx.compose.ui.unit.dp\nimport com.example.cyclistance.R\nimport com.example.cyclistance.feature_dialogs.presentation.common.DialogAnimatedIconCreator\nimport com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation\nimport com.example.cyclistance.theme.CyclistanceTheme\n\n@Composable\nfun DeleteContactDialog(\n    onDismissRequest: () -> Unit,\n    onClickConfirmButton: () -> Unit,\n    nameToDelete: String) {\n\n    val (isDialogOpen, onDialogVisibilityToggle) = rememberSaveable { mutableStateOf(true) }\n\n    DialogAnimatedIconCreator(\n        icon = R.raw.question,\n        isDialogOpen = isDialogOpen,\n        onDialogVisibilityToggle = { onDialogVisibilityToggle(!isDialogOpen) },\n        onDismissRequest = onDismissRequest) {\n\n\n        Column(\n            modifier = Modifier.fillMaxWidth(),\n            verticalArrangement = Arrangement.Center,\n            horizontalAlignment = Alignment.CenterHorizontally) {\n\n            Text(\n                text = \"Are you sure you want to delete\\n\" +\n                       \"“$nameToDelete”?\",\n                textAlign = TextAlign.Center,\n                style = MaterialTheme.typography.body2,\n                color = MaterialTheme.colors.onSurface)\n\n\n            Spacer(modifier = Modifier.height(16.dp))\n\n            ButtonNavigation(\n                modifier = Modifier.fillMaxWidth(0.8f),\n                onClickCancelButton = onDismissRequest,\n                onClickConfirmButton = onClickConfirmButton)\n\n        }\n    }\n}\n\n@Preview\n@Composable\nfun PreviewEmergencyCallDeleteDialog() {\n    CyclistanceTheme(darkTheme = true) {\n        DeleteContactDialog(\n            onDismissRequest = {},\n            onClickConfirmButton = {},\n            nameToDelete = \"Philippine Red Cross\")\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/DeleteContactDialog.kt b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/DeleteContactDialog.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/DeleteContactDialog.kt	(revision fb64e481ccfffb729b79457ae55d51ac98994604)
++++ b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/components/DeleteContactDialog.kt	(date 1689073730952)
+@@ -22,6 +22,7 @@
+ 
+ @Composable
+ fun DeleteContactDialog(
++    modifier: Modifier = Modifier,
+     onDismissRequest: () -> Unit,
+     onClickConfirmButton: () -> Unit,
+     nameToDelete: String) {
+@@ -36,7 +37,7 @@
+ 
+ 
+         Column(
+-            modifier = Modifier.fillMaxWidth(),
++            modifier = modifier.fillMaxWidth(),
+             verticalArrangement = Arrangement.Center,
+             horizontalAlignment = Alignment.CenterHorizontally) {
+ 
+Index: app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportAccountDialogContent.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportAccountDialogContent.kt b/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportAccountDialogContent.kt
+new file mode 100644
+--- /dev/null	(date 1689076795161)
++++ b/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/components/ReportAccountDialogContent.kt	(date 1689076795161)
+@@ -0,0 +1,140 @@
++package com.example.cyclistance.feature_report_account.presentation.components
++
++import androidx.compose.foundation.Image
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.ExperimentalLayoutApi
++import androidx.compose.foundation.layout.Spacer
++import androidx.compose.foundation.layout.fillMaxSize
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.height
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.lazy.LazyColumn
++import androidx.compose.foundation.lazy.items
++import androidx.compose.material.Divider
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Surface
++import androidx.compose.material.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.derivedStateOf
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateListOf
++import androidx.compose.runtime.remember
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.res.painterResource
++import androidx.compose.ui.tooling.preview.Preview
++import androidx.compose.ui.unit.dp
++import androidx.compose.ui.window.Dialog
++import androidx.compose.ui.window.DialogProperties
++import com.example.cyclistance.R
++import com.example.cyclistance.feature_mapping.presentation.common.AdditionalMessage
++import com.example.cyclistance.theme.Black500
++import com.example.cyclistance.theme.CyclistanceTheme
++
++
++private val reasonsToReportAccount = listOf(
++    "Misleading or Scam",
++    "Verbal Abuse",
++    "Sexualizing",
++    "Negative behavior",
++    "Pretending to be someone else",
++    "Violence",
++)
++
++@OptIn(ExperimentalLayoutApi::class)
++@Composable
++fun ReportAccountDialogContent(modifier: Modifier = Modifier, onDismiss: () -> Unit) {
++
++    val selectedOptions = remember { mutableStateListOf<String>() }
++    val isReportMaxLimitReached = remember { derivedStateOf { selectedOptions.size == 3 } }
++
++    Dialog(
++        onDismissRequest = onDismiss,
++        properties = DialogProperties(
++            usePlatformDefaultWidth = false,
++            dismissOnClickOutside = false,
++            dismissOnBackPress = true
++        )) {
++
++
++        Surface(
++            modifier = Modifier
++                .fillMaxSize(),
++            color = MaterialTheme.colors.background) {
++
++
++            Column(
++                modifier = modifier
++                    .fillMaxWidth(0.9f)
++                    .padding(horizontal = 8.dp),
++                verticalArrangement = Arrangement.Top,
++                horizontalAlignment = Alignment.CenterHorizontally) {
++
++                Spacer(modifier = Modifier.height(8.dp))
++
++                Image(
++                    painter = painterResource(id = R.drawable.ic_report_account_dark),
++                    contentDescription = "Report Account",
++                    modifier = Modifier.padding(vertical = 16.dp)
++                )
++
++                Divider(
++                    color = Black500,
++                    thickness = (1).dp,
++                    modifier = Modifier.padding(vertical = 4.dp)
++                )
++
++                Text(
++                    text = "Select the reason for reporting this account",
++                    color = Black500,
++                    style = MaterialTheme.typography.caption,
++                    modifier = Modifier.fillMaxWidth()
++                )
++
++
++                LazyColumn(modifier = Modifier.padding(top = 8.dp)) {
++                    items(items = reasonsToReportAccount) { reason ->
++
++                        val isChecked by remember { derivedStateOf { reason in selectedOptions } }
++
++                        ReportReasonItem(
++                            label = reason,
++                            isChecked = isChecked,
++                            onReasonChecked = {
++
++                                if (selectedOptions.contains(reason)) {
++                                    selectedOptions.remove(reason)
++                                    return@ReportReasonItem
++                                }
++
++                                if (isReportMaxLimitReached.value) {
++                                    return@ReportReasonItem
++                                }
++
++                                selectedOptions.add(reason)
++
++                            })
++                    }
++                    item {
++                        AdditionalMessage(
++                            modifier = Modifier.fillMaxWidth(0.9f),
++
++                            )
++                    }
++                }
++
++
++            }
++        }
++
++    }
++}
++
++@Preview(device = "id:Galaxy Nexus")
++@Composable
++private fun PreviewReportAccountDialogContent() {
++    CyclistanceTheme(darkTheme = true) {
++        ReportAccountDialogContent(onDismiss = {})
++    }
++}
+\ No newline at end of file
+Index: app/src/main/res/raw/report.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\n  \"nm\": \"Exclamation_loop\",\n  \"ddd\": 0,\n  \"h\": 1080,\n  \"w\": 1080,\n  \"meta\": {\n    \"g\": \"LottieFiles AE 3.1.1\"\n  },\n  \"layers\": [\n    {\n      \"ty\": 4,\n      \"nm\": \"titik\",\n      \"sr\": 1,\n      \"st\": 0,\n      \"op\": 204,\n      \"ip\": 43,\n      \"hd\": false,\n      \"ddd\": 0,\n      \"bm\": 0,\n      \"hasMask\": false,\n      \"ao\": 0,\n      \"ks\": {\n        \"a\": {\n          \"a\": 0,\n          \"k\": [\n            0,\n            0,\n            0\n          ],\n          \"ix\": 1\n        },\n        \"s\": {\n          \"a\": 0,\n          \"k\": [\n            100,\n            100,\n            100\n          ],\n          \"ix\": 6\n        },\n        \"sk\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"p\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.167,\n                \"y\": 0.167\n              },\n              \"i\": {\n                \"x\": 0.833,\n                \"y\": 0.833\n              },\n              \"s\": [\n                544,\n                530,\n                0\n              ],\n              \"t\": 44,\n              \"ti\": [\n                0,\n                -17.333,\n                0\n              ],\n              \"to\": [\n                0,\n                17.333,\n                0\n              ]\n            },\n            {\n              \"s\": [\n                544,\n                634,\n                0\n              ],\n              \"t\": 50\n            }\n          ],\n          \"ix\": 2\n        },\n        \"r\": {\n          \"a\": 0,\n          \"k\": 0,\n          \"ix\": 10\n        },\n        \"sa\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"o\": {\n          \"a\": 0,\n          \"k\": 100,\n          \"ix\": 11\n        }\n      },\n      \"ef\": [],\n      \"shapes\": [\n        {\n          \"ty\": \"gr\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Group\",\n          \"nm\": \"Shape 1\",\n          \"ix\": 1,\n          \"cix\": 2,\n          \"np\": 3,\n          \"it\": [\n            {\n              \"ty\": \"sh\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Shape - Group\",\n              \"nm\": \"Path 1\",\n              \"ix\": 1,\n              \"d\": 1,\n              \"ks\": {\n                \"a\": 0,\n                \"k\": {\n                  \"c\": false,\n                  \"i\": [\n                    [\n                      0,\n                      0\n                    ],\n                    [\n                      0,\n                      0\n                    ]\n                  ],\n                  \"o\": [\n                    [\n                      0,\n                      0\n                    ],\n                    [\n                      0,\n                      0\n                    ]\n                  ],\n                  \"v\": [\n                    [\n                      -4,\n                      -172\n                    ],\n                    [\n                      -4,\n                      46\n                    ]\n                  ]\n                },\n                \"ix\": 2\n              }\n            },\n            {\n              \"ty\": \"st\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Graphic - Stroke\",\n              \"nm\": \"Stroke 1\",\n              \"lc\": 2,\n              \"lj\": 1,\n              \"ml\": 4,\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 4\n              },\n              \"w\": {\n                \"a\": 0,\n                \"k\": 60,\n                \"ix\": 5\n              },\n              \"c\": {\n                \"a\": 0,\n                \"k\": [\n                  1,\n                  1,\n                  1\n                ],\n                \"ix\": 3\n              }\n            },\n            {\n              \"ty\": \"tr\",\n              \"a\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 1\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  100,\n                  100\n                ],\n                \"ix\": 3\n              },\n              \"sk\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 4\n              },\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 2\n              },\n              \"r\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 6\n              },\n              \"sa\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 7\n              }\n            }\n          ]\n        },\n        {\n          \"ty\": \"tm\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Filter - Trim\",\n          \"nm\": \"Trim Paths 1\",\n          \"ix\": 2,\n          \"e\": {\n            \"a\": 0,\n            \"k\": 100,\n            \"ix\": 2\n          },\n          \"o\": {\n            \"a\": 0,\n            \"k\": 0,\n            \"ix\": 3\n          },\n          \"s\": {\n            \"a\": 0,\n            \"k\": 99,\n            \"ix\": 1\n          },\n          \"m\": 1\n        }\n      ],\n      \"ind\": 1\n    },\n    {\n      \"ty\": 4,\n      \"nm\": \"pentung\",\n      \"sr\": 1,\n      \"st\": 0,\n      \"op\": 900,\n      \"ip\": 0,\n      \"hd\": false,\n      \"ddd\": 0,\n      \"bm\": 0,\n      \"hasMask\": false,\n      \"ao\": 0,\n      \"ks\": {\n        \"a\": {\n          \"a\": 0,\n          \"k\": [\n            0,\n            0,\n            0\n          ],\n          \"ix\": 1\n        },\n        \"s\": {\n          \"a\": 0,\n          \"k\": [\n            100,\n            100,\n            100\n          ],\n          \"ix\": 6\n        },\n        \"sk\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"p\": {\n          \"a\": 0,\n          \"k\": [\n            544,\n            536,\n            0\n          ],\n          \"ix\": 2\n        },\n        \"r\": {\n          \"a\": 0,\n          \"k\": 0,\n          \"ix\": 10\n        },\n        \"sa\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"o\": {\n          \"a\": 0,\n          \"k\": 100,\n          \"ix\": 11\n        }\n      },\n      \"ef\": [],\n      \"shapes\": [\n        {\n          \"ty\": \"gr\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Group\",\n          \"nm\": \"Shape 1\",\n          \"ix\": 1,\n          \"cix\": 2,\n          \"np\": 3,\n          \"it\": [\n            {\n              \"ty\": \"sh\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Shape - Group\",\n              \"nm\": \"Path 1\",\n              \"ix\": 1,\n              \"d\": 1,\n              \"ks\": {\n                \"a\": 0,\n                \"k\": {\n                  \"c\": false,\n                  \"i\": [\n                    [\n                      0,\n                      0\n                    ],\n                    [\n                      0,\n                      0\n                    ]\n                  ],\n                  \"o\": [\n                    [\n                      0,\n                      0\n                    ],\n                    [\n                      0,\n                      0\n                    ]\n                  ],\n                  \"v\": [\n                    [\n                      -4,\n                      -172\n                    ],\n                    [\n                      -4,\n                      46\n                    ]\n                  ]\n                },\n                \"ix\": 2\n              }\n            },\n            {\n              \"ty\": \"st\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Graphic - Stroke\",\n              \"nm\": \"Stroke 1\",\n              \"lc\": 2,\n              \"lj\": 1,\n              \"ml\": 4,\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 4\n              },\n              \"w\": {\n                \"a\": 0,\n                \"k\": 60,\n                \"ix\": 5\n              },\n              \"c\": {\n                \"a\": 0,\n                \"k\": [\n                  1,\n                  1,\n                  1\n                ],\n                \"ix\": 3\n              }\n            },\n            {\n              \"ty\": \"tr\",\n              \"a\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 1\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  100,\n                  100\n                ],\n                \"ix\": 3\n              },\n              \"sk\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 4\n              },\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 2\n              },\n              \"r\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 6\n              },\n              \"sa\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 7\n              }\n            }\n          ]\n        },\n        {\n          \"ty\": \"tm\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Filter - Trim\",\n          \"nm\": \"Trim Paths 1\",\n          \"ix\": 2,\n          \"e\": {\n            \"a\": 1,\n            \"k\": [\n              {\n                \"o\": {\n                  \"x\": 1,\n                  \"y\": 0\n                },\n                \"i\": {\n                  \"x\": 0.374,\n                  \"y\": 1\n                },\n                \"s\": [\n                  0\n                ],\n                \"t\": 34\n              },\n              {\n                \"s\": [\n                  100\n                ],\n                \"t\": 44\n              }\n            ],\n            \"ix\": 2\n          },\n          \"o\": {\n            \"a\": 0,\n            \"k\": 0,\n            \"ix\": 3\n          },\n          \"s\": {\n            \"a\": 0,\n            \"k\": 0,\n            \"ix\": 1\n          },\n          \"m\": 1\n        }\n      ],\n      \"ind\": 2\n    },\n    {\n      \"ty\": 4,\n      \"nm\": \"Bulet\",\n      \"sr\": 1,\n      \"st\": 0,\n      \"op\": 204,\n      \"ip\": 0,\n      \"hd\": false,\n      \"ddd\": 0,\n      \"bm\": 0,\n      \"hasMask\": false,\n      \"ao\": 0,\n      \"ks\": {\n        \"a\": {\n          \"a\": 0,\n          \"k\": [\n            0,\n            0,\n            0\n          ],\n          \"ix\": 1\n        },\n        \"s\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.208,\n                \"y\": 0\n              },\n              \"i\": {\n                \"x\": 0.078,\n                \"y\": 1\n              },\n              \"s\": [\n                100,\n                100,\n                100\n              ],\n              \"t\": 30\n            },\n            {\n              \"o\": {\n                \"x\": 0.901,\n                \"y\": 0\n              },\n              \"i\": {\n                \"x\": 0,\n                \"y\": 1\n              },\n              \"s\": [\n                90,\n                90,\n                100\n              ],\n              \"t\": 34\n            },\n            {\n              \"s\": [\n                100,\n                100,\n                100\n              ],\n              \"t\": 38\n            }\n          ],\n          \"ix\": 6\n        },\n        \"sk\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"p\": {\n          \"a\": 0,\n          \"k\": [\n            547.688,\n            527.801,\n            0\n          ],\n          \"ix\": 2\n        },\n        \"r\": {\n          \"a\": 0,\n          \"k\": 0,\n          \"ix\": 10\n        },\n        \"sa\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"o\": {\n          \"a\": 0,\n          \"k\": 100,\n          \"ix\": 11\n        }\n      },\n      \"ef\": [],\n      \"shapes\": [\n        {\n          \"ty\": \"gr\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Group\",\n          \"nm\": \"Ellipse 1\",\n          \"ix\": 1,\n          \"cix\": 2,\n          \"np\": 4,\n          \"it\": [\n            {\n              \"ty\": \"el\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Shape - Ellipse\",\n              \"nm\": \"Ellipse Path 1\",\n              \"d\": 1,\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  578.508,\n                  578.508\n                ],\n                \"ix\": 2\n              }\n            },\n            {\n              \"ty\": \"tm\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Filter - Trim\",\n              \"nm\": \"Trim Paths 1\",\n              \"ix\": 2,\n              \"e\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 2\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 1,\n                \"k\": [\n                  {\n                    \"o\": {\n                      \"x\": 0.76,\n                      \"y\": 0\n                    },\n                    \"i\": {\n                      \"x\": 0.348,\n                      \"y\": 1\n                    },\n                    \"s\": [\n                      0\n                    ],\n                    \"t\": 0\n                  },\n                  {\n                    \"s\": [\n                      100\n                    ],\n                    \"t\": 30\n                  }\n                ],\n                \"ix\": 1\n              },\n              \"m\": 1\n            },\n            {\n              \"ty\": \"st\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Graphic - Stroke\",\n              \"nm\": \"Stroke 1\",\n              \"lc\": 2,\n              \"lj\": 1,\n              \"ml\": 1,\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 4\n              },\n              \"w\": {\n                \"a\": 0,\n                \"k\": 33,\n                \"ix\": 5\n              },\n              \"c\": {\n                \"a\": 0,\n                \"k\": [\n                  1,\n                  0.6157,\n                  0.2314\n                ],\n                \"ix\": 3\n              }\n            },\n            {\n              \"ty\": \"tr\",\n              \"a\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 1\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  100,\n                  100\n                ],\n                \"ix\": 3\n              },\n              \"sk\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 4\n              },\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  -7.688,\n                  12.199\n                ],\n                \"ix\": 2\n              },\n              \"r\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 6\n              },\n              \"sa\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 7\n              }\n            }\n          ]\n        },\n        {\n          \"ty\": \"fl\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Graphic - Fill\",\n          \"nm\": \"Fill 1\",\n          \"c\": {\n            \"a\": 0,\n            \"k\": [\n              1,\n              0.6157,\n              0.2314\n            ],\n            \"ix\": 4\n          },\n          \"r\": 1,\n          \"o\": {\n            \"a\": 1,\n            \"k\": [\n              {\n                \"o\": {\n                  \"x\": 0.882,\n                  \"y\": 0\n                },\n                \"i\": {\n                  \"x\": 0.258,\n                  \"y\": 1\n                },\n                \"s\": [\n                  0\n                ],\n                \"t\": 31\n              },\n              {\n                \"s\": [\n                  100\n                ],\n                \"t\": 34\n              }\n            ],\n            \"ix\": 5\n          }\n        }\n      ],\n      \"ind\": 3\n    },\n    {\n      \"ty\": 4,\n      \"nm\": \"Bayang 3\",\n      \"sr\": 1,\n      \"st\": 0,\n      \"op\": 79,\n      \"ip\": 38,\n      \"hd\": false,\n      \"ddd\": 0,\n      \"bm\": 0,\n      \"hasMask\": false,\n      \"ao\": 0,\n      \"ks\": {\n        \"a\": {\n          \"a\": 0,\n          \"k\": [\n            0,\n            0,\n            0\n          ],\n          \"ix\": 1\n        },\n        \"s\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.333,\n                \"y\": 0\n              },\n              \"i\": {\n                \"x\": 0.667,\n                \"y\": 1\n              },\n              \"s\": [\n                100,\n                100,\n                100\n              ],\n              \"t\": 38\n            },\n            {\n              \"s\": [\n                150,\n                150,\n                100\n              ],\n              \"t\": 78\n            }\n          ],\n          \"ix\": 6\n        },\n        \"sk\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"p\": {\n          \"a\": 0,\n          \"k\": [\n            547.688,\n            527.801,\n            0\n          ],\n          \"ix\": 2\n        },\n        \"r\": {\n          \"a\": 0,\n          \"k\": 0,\n          \"ix\": 10\n        },\n        \"sa\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"o\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.167,\n                \"y\": 0.167\n              },\n              \"i\": {\n                \"x\": 0.833,\n                \"y\": 0.833\n              },\n              \"s\": [\n                100\n              ],\n              \"t\": 62\n            },\n            {\n              \"s\": [\n                0\n              ],\n              \"t\": 78\n            }\n          ],\n          \"ix\": 11\n        }\n      },\n      \"ef\": [],\n      \"shapes\": [\n        {\n          \"ty\": \"gr\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Group\",\n          \"nm\": \"Ellipse 1\",\n          \"ix\": 1,\n          \"cix\": 2,\n          \"np\": 4,\n          \"it\": [\n            {\n              \"ty\": \"el\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Shape - Ellipse\",\n              \"nm\": \"Ellipse Path 1\",\n              \"d\": 1,\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  578.508,\n                  578.508\n                ],\n                \"ix\": 2\n              }\n            },\n            {\n              \"ty\": \"tm\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Filter - Trim\",\n              \"nm\": \"Trim Paths 1\",\n              \"ix\": 2,\n              \"e\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 2\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 1\n              },\n              \"m\": 1\n            },\n            {\n              \"ty\": \"st\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Graphic - Stroke\",\n              \"nm\": \"Stroke 1\",\n              \"lc\": 2,\n              \"lj\": 1,\n              \"ml\": 1,\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 4\n              },\n              \"w\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"c\": {\n                \"a\": 0,\n                \"k\": [\n                  1,\n                  0.6157,\n                  0.2314\n                ],\n                \"ix\": 3\n              }\n            },\n            {\n              \"ty\": \"tr\",\n              \"a\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 1\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  100,\n                  100\n                ],\n                \"ix\": 3\n              },\n              \"sk\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 4\n              },\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  -7.688,\n                  12.199\n                ],\n                \"ix\": 2\n              },\n              \"r\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 6\n              },\n              \"sa\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 7\n              }\n            }\n          ]\n        },\n        {\n          \"ty\": \"fl\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Graphic - Fill\",\n          \"nm\": \"Fill 1\",\n          \"c\": {\n            \"a\": 0,\n            \"k\": [\n              1,\n              0.6157,\n              0.2314\n            ],\n            \"ix\": 4\n          },\n          \"r\": 1,\n          \"o\": {\n            \"a\": 0,\n            \"k\": 40,\n            \"ix\": 5\n          }\n        }\n      ],\n      \"ind\": 4\n    },\n    {\n      \"ty\": 4,\n      \"nm\": \"Bayang 4\",\n      \"sr\": 1,\n      \"st\": 40,\n      \"op\": 141,\n      \"ip\": 78,\n      \"hd\": false,\n      \"ddd\": 0,\n      \"bm\": 0,\n      \"hasMask\": false,\n      \"ao\": 0,\n      \"ks\": {\n        \"a\": {\n          \"a\": 0,\n          \"k\": [\n            0,\n            0,\n            0\n          ],\n          \"ix\": 1\n        },\n        \"s\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.333,\n                \"y\": 0\n              },\n              \"i\": {\n                \"x\": 0.667,\n                \"y\": 1\n              },\n              \"s\": [\n                100,\n                100,\n                100\n              ],\n              \"t\": 78\n            },\n            {\n              \"s\": [\n                150,\n                150,\n                100\n              ],\n              \"t\": 140\n            }\n          ],\n          \"ix\": 6\n        },\n        \"sk\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"p\": {\n          \"a\": 0,\n          \"k\": [\n            547.688,\n            527.801,\n            0\n          ],\n          \"ix\": 2\n        },\n        \"r\": {\n          \"a\": 0,\n          \"k\": 0,\n          \"ix\": 10\n        },\n        \"sa\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"o\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.167,\n                \"y\": 0.167\n              },\n              \"i\": {\n                \"x\": 0.833,\n                \"y\": 0.833\n              },\n              \"s\": [\n                100\n              ],\n              \"t\": 114\n            },\n            {\n              \"s\": [\n                0\n              ],\n              \"t\": 140\n            }\n          ],\n          \"ix\": 11\n        }\n      },\n      \"ef\": [],\n      \"shapes\": [\n        {\n          \"ty\": \"gr\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Group\",\n          \"nm\": \"Ellipse 1\",\n          \"ix\": 1,\n          \"cix\": 2,\n          \"np\": 4,\n          \"it\": [\n            {\n              \"ty\": \"el\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Shape - Ellipse\",\n              \"nm\": \"Ellipse Path 1\",\n              \"d\": 1,\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  578.508,\n                  578.508\n                ],\n                \"ix\": 2\n              }\n            },\n            {\n              \"ty\": \"tm\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Filter - Trim\",\n              \"nm\": \"Trim Paths 1\",\n              \"ix\": 2,\n              \"e\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 2\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 1\n              },\n              \"m\": 1\n            },\n            {\n              \"ty\": \"st\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Graphic - Stroke\",\n              \"nm\": \"Stroke 1\",\n              \"lc\": 2,\n              \"lj\": 1,\n              \"ml\": 1,\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 4\n              },\n              \"w\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"c\": {\n                \"a\": 0,\n                \"k\": [\n                  1,\n                  0.6157,\n                  0.2314\n                ],\n                \"ix\": 3\n              }\n            },\n            {\n              \"ty\": \"tr\",\n              \"a\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 1\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  100,\n                  100\n                ],\n                \"ix\": 3\n              },\n              \"sk\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 4\n              },\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  -7.688,\n                  12.199\n                ],\n                \"ix\": 2\n              },\n              \"r\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 6\n              },\n              \"sa\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 7\n              }\n            }\n          ]\n        },\n        {\n          \"ty\": \"fl\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Graphic - Fill\",\n          \"nm\": \"Fill 1\",\n          \"c\": {\n            \"a\": 0,\n            \"k\": [\n              1,\n              0.6157,\n              0.2314\n            ],\n            \"ix\": 4\n          },\n          \"r\": 1,\n          \"o\": {\n            \"a\": 0,\n            \"k\": 40,\n            \"ix\": 5\n          }\n        }\n      ],\n      \"ind\": 5\n    },\n    {\n      \"ty\": 4,\n      \"nm\": \"Bayang 2\",\n      \"sr\": 1,\n      \"st\": 103,\n      \"op\": 204,\n      \"ip\": 141,\n      \"hd\": false,\n      \"ddd\": 0,\n      \"bm\": 0,\n      \"hasMask\": false,\n      \"ao\": 0,\n      \"ks\": {\n        \"a\": {\n          \"a\": 0,\n          \"k\": [\n            0,\n            0,\n            0\n          ],\n          \"ix\": 1\n        },\n        \"s\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.333,\n                \"y\": 0\n              },\n              \"i\": {\n                \"x\": 0.667,\n                \"y\": 1\n              },\n              \"s\": [\n                100,\n                100,\n                100\n              ],\n              \"t\": 141\n            },\n            {\n              \"s\": [\n                150,\n                150,\n                100\n              ],\n              \"t\": 203\n            }\n          ],\n          \"ix\": 6\n        },\n        \"sk\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"p\": {\n          \"a\": 0,\n          \"k\": [\n            547.688,\n            527.801,\n            0\n          ],\n          \"ix\": 2\n        },\n        \"r\": {\n          \"a\": 0,\n          \"k\": 0,\n          \"ix\": 10\n        },\n        \"sa\": {\n          \"a\": 0,\n          \"k\": 0\n        },\n        \"o\": {\n          \"a\": 1,\n          \"k\": [\n            {\n              \"o\": {\n                \"x\": 0.167,\n                \"y\": 0.167\n              },\n              \"i\": {\n                \"x\": 0.833,\n                \"y\": 0.833\n              },\n              \"s\": [\n                100\n              ],\n              \"t\": 177\n            },\n            {\n              \"s\": [\n                0\n              ],\n              \"t\": 203\n            }\n          ],\n          \"ix\": 11\n        }\n      },\n      \"ef\": [],\n      \"shapes\": [\n        {\n          \"ty\": \"gr\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Group\",\n          \"nm\": \"Ellipse 1\",\n          \"ix\": 1,\n          \"cix\": 2,\n          \"np\": 4,\n          \"it\": [\n            {\n              \"ty\": \"el\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Shape - Ellipse\",\n              \"nm\": \"Ellipse Path 1\",\n              \"d\": 1,\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  578.508,\n                  578.508\n                ],\n                \"ix\": 2\n              }\n            },\n            {\n              \"ty\": \"tm\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Filter - Trim\",\n              \"nm\": \"Trim Paths 1\",\n              \"ix\": 2,\n              \"e\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 2\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 3\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 1\n              },\n              \"m\": 1\n            },\n            {\n              \"ty\": \"st\",\n              \"bm\": 0,\n              \"hd\": false,\n              \"mn\": \"ADBE Vector Graphic - Stroke\",\n              \"nm\": \"Stroke 1\",\n              \"lc\": 2,\n              \"lj\": 1,\n              \"ml\": 1,\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 4\n              },\n              \"w\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"c\": {\n                \"a\": 0,\n                \"k\": [\n                  1,\n                  0.6157,\n                  0.2314\n                ],\n                \"ix\": 3\n              }\n            },\n            {\n              \"ty\": \"tr\",\n              \"a\": {\n                \"a\": 0,\n                \"k\": [\n                  0,\n                  0\n                ],\n                \"ix\": 1\n              },\n              \"s\": {\n                \"a\": 0,\n                \"k\": [\n                  100,\n                  100\n                ],\n                \"ix\": 3\n              },\n              \"sk\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 4\n              },\n              \"p\": {\n                \"a\": 0,\n                \"k\": [\n                  -7.688,\n                  12.199\n                ],\n                \"ix\": 2\n              },\n              \"r\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 6\n              },\n              \"sa\": {\n                \"a\": 0,\n                \"k\": 0,\n                \"ix\": 5\n              },\n              \"o\": {\n                \"a\": 0,\n                \"k\": 100,\n                \"ix\": 7\n              }\n            }\n          ]\n        },\n        {\n          \"ty\": \"fl\",\n          \"bm\": 0,\n          \"hd\": false,\n          \"mn\": \"ADBE Vector Graphic - Fill\",\n          \"nm\": \"Fill 1\",\n          \"c\": {\n            \"a\": 0,\n            \"k\": [\n              1,\n              0.6157,\n              0.2314\n            ],\n            \"ix\": 4\n          },\n          \"r\": 1,\n          \"o\": {\n            \"a\": 0,\n            \"k\": 40,\n            \"ix\": 5\n          }\n        }\n      ],\n      \"ind\": 6\n    }\n  ],\n  \"v\": \"4.8.0\",\n  \"fr\": 30,\n  \"op\": 204,\n  \"ip\": 79,\n  \"assets\": []\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/raw/report.json b/app/src/main/res/raw/report.json
+--- a/app/src/main/res/raw/report.json	(revision fb64e481ccfffb729b79457ae55d51ac98994604)
++++ b/app/src/main/res/raw/report.json	(date 1689073731015)
+@@ -1,19 +1,19 @@
+ {
+-  "nm": "Exclamation_loop",
++  "nm": "caution_ani",
+   "ddd": 0,
+-  "h": 1080,
+-  "w": 1080,
++  "h": 182,
++  "w": 182,
+   "meta": {
+-    "g": "LottieFiles AE 3.1.1"
++    "g": "LottieFiles AE 1.0.0"
+   },
+   "layers": [
+     {
+       "ty": 4,
+-      "nm": "titik",
++      "nm": "Rectangle Copy",
+       "sr": 1,
+-      "st": 0,
+-      "op": 204,
+-      "ip": 43,
++      "st": 13,
++      "op": 163,
++      "ip": 13,
+       "hd": false,
+       "ddd": 0,
+       "bm": 0,
+@@ -43,42 +43,11 @@
+           "k": 0
+         },
+         "p": {
+-          "a": 1,
++          "a": 0,
+           "k": [
+-            {
+-              "o": {
+-                "x": 0.167,
+-                "y": 0.167
+-              },
+-              "i": {
+-                "x": 0.833,
+-                "y": 0.833
+-              },
+-              "s": [
+-                544,
+-                530,
+-                0
+-              ],
+-              "t": 44,
+-              "ti": [
+-                0,
+-                -17.333,
+-                0
+-              ],
+-              "to": [
+-                0,
+-                17.333,
+-                0
+-              ]
+-            },
+-            {
+-              "s": [
+-                544,
+-                634,
+-                0
+-              ],
+-              "t": 50
+-            }
++            90.538,
++            76,
++            0
+           ],
+           "ix": 2
+         },
+@@ -104,7 +73,7 @@
+           "bm": 0,
+           "hd": false,
+           "mn": "ADBE Vector Group",
+-          "nm": "Shape 1",
++          "nm": "Rectangle Copy",
+           "ix": 1,
+           "cix": 2,
+           "np": 3,
+@@ -118,70 +87,247 @@
+               "ix": 1,
+               "d": 1,
+               "ks": {
+-                "a": 0,
+-                "k": {
+-                  "c": false,
+-                  "i": [
+-                    [
+-                      0,
+-                      0
+-                    ],
+-                    [
+-                      0,
+-                      0
+-                    ]
+-                  ],
+-                  "o": [
+-                    [
+-                      0,
+-                      0
+-                    ],
+-                    [
+-                      0,
+-                      0
+-                    ]
+-                  ],
+-                  "v": [
+-                    [
+-                      -4,
+-                      -172
+-                    ],
+-                    [
+-                      -4,
+-                      46
+-                    ]
+-                  ]
+-                },
++                "a": 1,
++                "k": [
++                  {
++                    "o": {
++                      "x": 0.167,
++                      "y": 0.167
++                    },
++                    "i": {
++                      "x": 0.667,
++                      "y": 1
++                    },
++                    "s": [
++                      {
++                        "c": true,
++                        "i": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "o": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "v": [
++                          [
++                            41.493,
++                            -15
++                          ],
++                          [
++                            41.542,
++                            -12
++                          ],
++                          [
++                            41.542,
++                            12
++                          ],
++                          [
++                            41.493,
++                            15
++                          ]
++                        ]
++                      }
++                    ],
++                    "t": 13
++                  },
++                  {
++                    "o": {
++                      "x": 0.333,
++                      "y": 0
++                    },
++                    "i": {
++                      "x": 0.667,
++                      "y": 1
++                    },
++                    "s": [
++                      {
++                        "c": true,
++                        "i": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "o": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "v": [
++                          [
++                            -60.361,
++                            -15.177
++                          ],
++                          [
++                            35.542,
++                            -12
++                          ],
++                          [
++                            35.542,
++                            12
++                          ],
++                          [
++                            -60.361,
++                            14.823
++                          ]
++                        ]
++                      }
++                    ],
++                    "t": 19
++                  },
++                  {
++                    "s": [
++                      {
++                        "c": true,
++                        "i": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "o": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "v": [
++                          [
++                            -41.538,
++                            -15
++                          ],
++                          [
++                            41.542,
++                            -12
++                          ],
++                          [
++                            41.542,
++                            12
++                          ],
++                          [
++                            -41.538,
++                            15
++                          ]
++                        ]
++                      }
++                    ],
++                    "t": 22
++                  }
++                ],
+                 "ix": 2
+               }
+             },
+             {
+-              "ty": "st",
++              "ty": "rd",
++              "bm": 0,
++              "hd": false,
++              "mn": "ADBE Vector Filter - RC",
++              "nm": "Round Corners 1",
++              "ix": 2,
++              "r": {
++                "a": 0,
++                "k": 7.429,
++                "ix": 1
++              }
++            },
++            {
++              "ty": "fl",
+               "bm": 0,
+               "hd": false,
+-              "mn": "ADBE Vector Graphic - Stroke",
+-              "nm": "Stroke 1",
+-              "lc": 2,
+-              "lj": 1,
+-              "ml": 4,
+-              "o": {
++              "mn": "ADBE Vector Graphic - Fill",
++              "nm": "Fill 1",
++              "c": {
+                 "a": 0,
+-                "k": 100,
++                "k": [
++                  1,
++                  1,
++                  1
++                ],
+                 "ix": 4
+               },
+-              "w": {
++              "r": 1,
++              "o": {
+                 "a": 0,
+-                "k": 60,
++                "k": 100,
+                 "ix": 5
+-              },
+-              "c": {
+-                "a": 0,
+-                "k": [
+-                  1,
+-                  1,
+-                  1
+-                ],
+-                "ix": 3
+               }
+             },
+             {
+@@ -217,7 +363,7 @@
+               },
+               "r": {
+                 "a": 0,
+-                "k": 0,
++                "k": 90,
+                 "ix": 6
+               },
+               "sa": {
+@@ -232,41 +378,17 @@
+               }
+             }
+           ]
+-        },
+-        {
+-          "ty": "tm",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Filter - Trim",
+-          "nm": "Trim Paths 1",
+-          "ix": 2,
+-          "e": {
+-            "a": 0,
+-            "k": 100,
+-            "ix": 2
+-          },
+-          "o": {
+-            "a": 0,
+-            "k": 0,
+-            "ix": 3
+-          },
+-          "s": {
+-            "a": 0,
+-            "k": 99,
+-            "ix": 1
+-          },
+-          "m": 1
+         }
+       ],
+       "ind": 1
+     },
+     {
+       "ty": 4,
+-      "nm": "pentung",
++      "nm": "Rectangle Copy 2",
+       "sr": 1,
+-      "st": 0,
+-      "op": 900,
+-      "ip": 0,
++      "st": 9,
++      "op": 159,
++      "ip": 9,
+       "hd": false,
+       "ddd": 0,
+       "bm": 0,
+@@ -298,8 +420,8 @@
+         "p": {
+           "a": 0,
+           "k": [
+-            544,
+-            536,
++            91,
++            139,
+             0
+           ],
+           "ix": 2
+@@ -326,7 +448,7 @@
+           "bm": 0,
+           "hd": false,
+           "mn": "ADBE Vector Group",
+-          "nm": "Shape 1",
++          "nm": "Rectangle Copy 2",
+           "ix": 1,
+           "cix": 2,
+           "np": 3,
+@@ -340,658 +462,247 @@
+               "ix": 1,
+               "d": 1,
+               "ks": {
+-                "a": 0,
+-                "k": {
+-                  "c": false,
+-                  "i": [
+-                    [
+-                      0,
+-                      0
+-                    ],
+-                    [
+-                      0,
+-                      0
+-                    ]
+-                  ],
+-                  "o": [
+-                    [
+-                      0,
+-                      0
+-                    ],
+-                    [
+-                      0,
+-                      0
+-                    ]
+-                  ],
+-                  "v": [
+-                    [
+-                      -4,
+-                      -172
+-                    ],
+-                    [
+-                      -4,
+-                      46
+-                    ]
+-                  ]
+-                },
+-                "ix": 2
+-              }
+-            },
+-            {
+-              "ty": "st",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Graphic - Stroke",
+-              "nm": "Stroke 1",
+-              "lc": 2,
+-              "lj": 1,
+-              "ml": 4,
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 4
+-              },
+-              "w": {
+-                "a": 0,
+-                "k": 60,
+-                "ix": 5
+-              },
+-              "c": {
+-                "a": 0,
+-                "k": [
+-                  1,
+-                  1,
+-                  1
+-                ],
+-                "ix": 3
+-              }
+-            },
+-            {
+-              "ty": "tr",
+-              "a": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 1
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  100,
+-                  100
+-                ],
+-                "ix": 3
+-              },
+-              "sk": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 4
+-              },
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 2
+-              },
+-              "r": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 6
+-              },
+-              "sa": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 5
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 7
+-              }
+-            }
+-          ]
+-        },
+-        {
+-          "ty": "tm",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Filter - Trim",
+-          "nm": "Trim Paths 1",
+-          "ix": 2,
+-          "e": {
+-            "a": 1,
+-            "k": [
+-              {
+-                "o": {
+-                  "x": 1,
+-                  "y": 0
+-                },
+-                "i": {
+-                  "x": 0.374,
+-                  "y": 1
+-                },
+-                "s": [
+-                  0
+-                ],
+-                "t": 34
+-              },
+-              {
+-                "s": [
+-                  100
+-                ],
+-                "t": 44
+-              }
+-            ],
+-            "ix": 2
+-          },
+-          "o": {
+-            "a": 0,
+-            "k": 0,
+-            "ix": 3
+-          },
+-          "s": {
+-            "a": 0,
+-            "k": 0,
+-            "ix": 1
+-          },
+-          "m": 1
+-        }
+-      ],
+-      "ind": 2
+-    },
+-    {
+-      "ty": 4,
+-      "nm": "Bulet",
+-      "sr": 1,
+-      "st": 0,
+-      "op": 204,
+-      "ip": 0,
+-      "hd": false,
+-      "ddd": 0,
+-      "bm": 0,
+-      "hasMask": false,
+-      "ao": 0,
+-      "ks": {
+-        "a": {
+-          "a": 0,
+-          "k": [
+-            0,
+-            0,
+-            0
+-          ],
+-          "ix": 1
+-        },
+-        "s": {
+-          "a": 1,
+-          "k": [
+-            {
+-              "o": {
+-                "x": 0.208,
+-                "y": 0
+-              },
+-              "i": {
+-                "x": 0.078,
+-                "y": 1
+-              },
+-              "s": [
+-                100,
+-                100,
+-                100
+-              ],
+-              "t": 30
+-            },
+-            {
+-              "o": {
+-                "x": 0.901,
+-                "y": 0
+-              },
+-              "i": {
+-                "x": 0,
+-                "y": 1
+-              },
+-              "s": [
+-                90,
+-                90,
+-                100
+-              ],
+-              "t": 34
+-            },
+-            {
+-              "s": [
+-                100,
+-                100,
+-                100
+-              ],
+-              "t": 38
+-            }
+-          ],
+-          "ix": 6
+-        },
+-        "sk": {
+-          "a": 0,
+-          "k": 0
+-        },
+-        "p": {
+-          "a": 0,
+-          "k": [
+-            547.688,
+-            527.801,
+-            0
+-          ],
+-          "ix": 2
+-        },
+-        "r": {
+-          "a": 0,
+-          "k": 0,
+-          "ix": 10
+-        },
+-        "sa": {
+-          "a": 0,
+-          "k": 0
+-        },
+-        "o": {
+-          "a": 0,
+-          "k": 100,
+-          "ix": 11
+-        }
+-      },
+-      "ef": [],
+-      "shapes": [
+-        {
+-          "ty": "gr",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Group",
+-          "nm": "Ellipse 1",
+-          "ix": 1,
+-          "cix": 2,
+-          "np": 4,
+-          "it": [
+-            {
+-              "ty": "el",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Shape - Ellipse",
+-              "nm": "Ellipse Path 1",
+-              "d": 1,
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  578.508,
+-                  578.508
++                "a": 1,
++                "k": [
++                  {
++                    "o": {
++                      "x": 0.167,
++                      "y": 0.167
++                    },
++                    "i": {
++                      "x": 0.667,
++                      "y": 1
++                    },
++                    "s": [
++                      {
++                        "c": true,
++                        "i": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "o": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "v": [
++                          [
++                            12,
++                            -12
++                          ],
++                          [
++                            12,
++                            -12
++                          ],
++                          [
++                            12,
++                            12
++                          ],
++                          [
++                            12,
++                            12
++                          ]
++                        ]
++                      }
++                    ],
++                    "t": 9
++                  },
++                  {
++                    "o": {
++                      "x": 0.333,
++                      "y": 0
++                    },
++                    "i": {
++                      "x": 0.667,
++                      "y": 1
++                    },
++                    "s": [
++                      {
++                        "c": true,
++                        "i": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "o": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "v": [
++                          [
++                            -23,
++                            -12
++                          ],
++                          [
++                            9.5,
++                            -12
++                          ],
++                          [
++                            9.5,
++                            12
++                          ],
++                          [
++                            -23,
++                            12
++                          ]
++                        ]
++                      }
++                    ],
++                    "t": 13
++                  },
++                  {
++                    "s": [
++                      {
++                        "c": true,
++                        "i": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "o": [
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ],
++                          [
++                            0,
++                            0
++                          ]
++                        ],
++                        "v": [
++                          [
++                            -12,
++                            -12
++                          ],
++                          [
++                            12,
++                            -12
++                          ],
++                          [
++                            12,
++                            12
++                          ],
++                          [
++                            -12,
++                            12
++                          ]
++                        ]
++                      }
++                    ],
++                    "t": 16
++                  }
+                 ],
+                 "ix": 2
+               }
+             },
+             {
+-              "ty": "tm",
++              "ty": "rd",
+               "bm": 0,
+               "hd": false,
+-              "mn": "ADBE Vector Filter - Trim",
+-              "nm": "Trim Paths 1",
++              "mn": "ADBE Vector Filter - RC",
++              "nm": "Round Corners 1",
+               "ix": 2,
+-              "e": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 2
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 1,
+-                "k": [
+-                  {
+-                    "o": {
+-                      "x": 0.76,
+-                      "y": 0
+-                    },
+-                    "i": {
+-                      "x": 0.348,
+-                      "y": 1
+-                    },
+-                    "s": [
+-                      0
+-                    ],
+-                    "t": 0
+-                  },
+-                  {
+-                    "s": [
+-                      100
+-                    ],
+-                    "t": 30
+-                  }
+-                ],
+-                "ix": 1
+-              },
+-              "m": 1
+-            },
+-            {
+-              "ty": "st",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Graphic - Stroke",
+-              "nm": "Stroke 1",
+-              "lc": 2,
+-              "lj": 1,
+-              "ml": 1,
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 4
+-              },
+-              "w": {
+-                "a": 0,
+-                "k": 33,
+-                "ix": 5
+-              },
+-              "c": {
+-                "a": 0,
+-                "k": [
+-                  1,
+-                  0.6157,
+-                  0.2314
+-                ],
+-                "ix": 3
+-              }
+-            },
+-            {
+-              "ty": "tr",
+-              "a": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 1
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  100,
+-                  100
+-                ],
+-                "ix": 3
+-              },
+-              "sk": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 4
+-              },
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  -7.688,
+-                  12.199
+-                ],
+-                "ix": 2
+-              },
+               "r": {
+                 "a": 0,
+-                "k": 0,
+-                "ix": 6
+-              },
+-              "sa": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 5
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 7
++                "k": 7.429,
++                "ix": 1
+               }
+-            }
+-          ]
+-        },
+-        {
+-          "ty": "fl",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Graphic - Fill",
+-          "nm": "Fill 1",
+-          "c": {
+-            "a": 0,
+-            "k": [
+-              1,
+-              0.6157,
+-              0.2314
+-            ],
+-            "ix": 4
+-          },
+-          "r": 1,
+-          "o": {
+-            "a": 1,
+-            "k": [
+-              {
+-                "o": {
+-                  "x": 0.882,
+-                  "y": 0
+-                },
+-                "i": {
+-                  "x": 0.258,
+-                  "y": 1
+-                },
+-                "s": [
+-                  0
+-                ],
+-                "t": 31
+-              },
+-              {
+-                "s": [
+-                  100
+-                ],
+-                "t": 34
+-              }
+-            ],
+-            "ix": 5
+-          }
+-        }
+-      ],
+-      "ind": 3
+-    },
+-    {
+-      "ty": 4,
+-      "nm": "Bayang 3",
+-      "sr": 1,
+-      "st": 0,
+-      "op": 79,
+-      "ip": 38,
+-      "hd": false,
+-      "ddd": 0,
+-      "bm": 0,
+-      "hasMask": false,
+-      "ao": 0,
+-      "ks": {
+-        "a": {
+-          "a": 0,
+-          "k": [
+-            0,
+-            0,
+-            0
+-          ],
+-          "ix": 1
+-        },
+-        "s": {
+-          "a": 1,
+-          "k": [
+-            {
+-              "o": {
+-                "x": 0.333,
+-                "y": 0
+-              },
+-              "i": {
+-                "x": 0.667,
+-                "y": 1
+-              },
+-              "s": [
+-                100,
+-                100,
+-                100
+-              ],
+-              "t": 38
+-            },
+-            {
+-              "s": [
+-                150,
+-                150,
+-                100
+-              ],
+-              "t": 78
+-            }
+-          ],
+-          "ix": 6
+-        },
+-        "sk": {
+-          "a": 0,
+-          "k": 0
+-        },
+-        "p": {
+-          "a": 0,
+-          "k": [
+-            547.688,
+-            527.801,
+-            0
+-          ],
+-          "ix": 2
+-        },
+-        "r": {
+-          "a": 0,
+-          "k": 0,
+-          "ix": 10
+-        },
+-        "sa": {
+-          "a": 0,
+-          "k": 0
+-        },
+-        "o": {
+-          "a": 1,
+-          "k": [
+-            {
+-              "o": {
+-                "x": 0.167,
+-                "y": 0.167
+-              },
+-              "i": {
+-                "x": 0.833,
+-                "y": 0.833
+-              },
+-              "s": [
+-                100
+-              ],
+-              "t": 62
+-            },
+-            {
+-              "s": [
+-                0
+-              ],
+-              "t": 78
+-            }
+-          ],
+-          "ix": 11
+-        }
+-      },
+-      "ef": [],
+-      "shapes": [
+-        {
+-          "ty": "gr",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Group",
+-          "nm": "Ellipse 1",
+-          "ix": 1,
+-          "cix": 2,
+-          "np": 4,
+-          "it": [
+-            {
+-              "ty": "el",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Shape - Ellipse",
+-              "nm": "Ellipse Path 1",
+-              "d": 1,
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  578.508,
+-                  578.508
+-                ],
+-                "ix": 2
+-              }
+-            },
+-            {
+-              "ty": "tm",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Filter - Trim",
+-              "nm": "Trim Paths 1",
+-              "ix": 2,
+-              "e": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 2
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 1
+-              },
+-              "m": 1
+-            },
+-            {
+-              "ty": "st",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Graphic - Stroke",
+-              "nm": "Stroke 1",
+-              "lc": 2,
+-              "lj": 1,
+-              "ml": 1,
++            },
++            {
++              "ty": "fl",
++              "bm": 0,
++              "hd": false,
++              "mn": "ADBE Vector Graphic - Fill",
++              "nm": "Fill 1",
++              "c": {
++                "a": 0,
++                "k": [
++                  1,
++                  1,
++                  1
++                ],
++                "ix": 4
++              },
++              "r": 1,
+               "o": {
+                 "a": 0,
+                 "k": 100,
+-                "ix": 4
+-              },
+-              "w": {
+-                "a": 0,
+-                "k": 0,
+                 "ix": 5
+-              },
+-              "c": {
+-                "a": 0,
+-                "k": [
+-                  1,
+-                  0.6157,
+-                  0.2314
+-                ],
+-                "ix": 3
+               }
+             },
+             {
+@@ -1020,14 +731,14 @@
+               "p": {
+                 "a": 0,
+                 "k": [
+-                  -7.688,
+-                  12.199
++                  0,
++                  0
+                 ],
+                 "ix": 2
+               },
+               "r": {
+                 "a": 0,
+-                "k": 0,
++                "k": 90,
+                 "ix": 6
+               },
+               "sa": {
+@@ -1042,81 +753,38 @@
+               }
+             }
+           ]
+-        },
+-        {
+-          "ty": "fl",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Graphic - Fill",
+-          "nm": "Fill 1",
+-          "c": {
+-            "a": 0,
+-            "k": [
+-              1,
+-              0.6157,
+-              0.2314
+-            ],
+-            "ix": 4
+-          },
+-          "r": 1,
+-          "o": {
+-            "a": 0,
+-            "k": 40,
+-            "ix": 5
+-          }
+         }
+       ],
+-      "ind": 4
++      "ind": 2
+     },
+     {
+-      "ty": 4,
+-      "nm": "Bayang 4",
++      "ty": 1,
++      "nm": "진한 녹색 단색 4",
+       "sr": 1,
+-      "st": 40,
+-      "op": 141,
+-      "ip": 78,
++      "st": 0,
++      "op": 900,
++      "ip": 0,
+       "hd": false,
+       "ddd": 0,
+       "bm": 0,
+-      "hasMask": false,
++      "hasMask": true,
+       "ao": 0,
+       "ks": {
+         "a": {
+           "a": 0,
+           "k": [
+-            0,
+-            0,
++            50,
++            50,
+             0
+           ],
+           "ix": 1
+         },
+         "s": {
+-          "a": 1,
++          "a": 0,
+           "k": [
+-            {
+-              "o": {
+-                "x": 0.333,
+-                "y": 0
+-              },
+-              "i": {
+-                "x": 0.667,
+-                "y": 1
+-              },
+-              "s": [
+-                100,
+-                100,
+-                100
+-              ],
+-              "t": 78
+-            },
+-            {
+-              "s": [
+-                150,
+-                150,
+-                100
+-              ],
+-              "t": 140
+-            }
++            182,
++            182,
++            100
+           ],
+           "ix": 6
+         },
+@@ -1127,8 +795,8 @@
+         "p": {
+           "a": 0,
+           "k": [
+-            547.688,
+-            527.801,
++            91,
++            91,
+             0
+           ],
+           "ix": 2
+@@ -1143,463 +811,176 @@
+           "k": 0
+         },
+         "o": {
+-          "a": 1,
+-          "k": [
+-            {
+-              "o": {
+-                "x": 0.167,
+-                "y": 0.167
+-              },
+-              "i": {
+-                "x": 0.833,
+-                "y": 0.833
+-              },
+-              "s": [
+-                100
+-              ],
+-              "t": 114
+-            },
+-            {
+-              "s": [
+-                0
+-              ],
+-              "t": 140
+-            }
+-          ],
+-          "ix": 11
+-        }
+-      },
+-      "ef": [],
+-      "shapes": [
+-        {
+-          "ty": "gr",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Group",
+-          "nm": "Ellipse 1",
+-          "ix": 1,
+-          "cix": 2,
+-          "np": 4,
+-          "it": [
+-            {
+-              "ty": "el",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Shape - Ellipse",
+-              "nm": "Ellipse Path 1",
+-              "d": 1,
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  578.508,
+-                  578.508
+-                ],
+-                "ix": 2
+-              }
+-            },
+-            {
+-              "ty": "tm",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Filter - Trim",
+-              "nm": "Trim Paths 1",
+-              "ix": 2,
+-              "e": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 2
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 1
+-              },
+-              "m": 1
+-            },
+-            {
+-              "ty": "st",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Graphic - Stroke",
+-              "nm": "Stroke 1",
+-              "lc": 2,
+-              "lj": 1,
+-              "ml": 1,
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 4
+-              },
+-              "w": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 5
+-              },
+-              "c": {
+-                "a": 0,
+-                "k": [
+-                  1,
+-                  0.6157,
+-                  0.2314
+-                ],
+-                "ix": 3
+-              }
+-            },
+-            {
+-              "ty": "tr",
+-              "a": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 1
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  100,
+-                  100
+-                ],
+-                "ix": 3
+-              },
+-              "sk": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 4
+-              },
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  -7.688,
+-                  12.199
+-                ],
+-                "ix": 2
+-              },
+-              "r": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 6
+-              },
+-              "sa": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 5
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 7
+-              }
+-            }
+-          ]
+-        },
+-        {
+-          "ty": "fl",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Graphic - Fill",
+-          "nm": "Fill 1",
+-          "c": {
+-            "a": 0,
+-            "k": [
+-              1,
+-              0.6157,
+-              0.2314
+-            ],
+-            "ix": 4
++          "a": 0,
++          "k": 100,
++          "ix": 11
++        }
++      },
++      "ef": [],
++      "masksProperties": [
++        {
++          "nm": "마스크 2",
++          "inv": false,
++          "mode": "a",
++          "x": {
++            "a": 0,
++            "k": 0,
++            "ix": 4
++          },
++          "o": {
++            "a": 0,
++            "k": 100,
++            "ix": 3
+           },
+-          "r": 1,
+-          "o": {
+-            "a": 0,
+-            "k": 40,
+-            "ix": 5
+-          }
+-        }
+-      ],
+-      "ind": 5
+-    },
+-    {
+-      "ty": 4,
+-      "nm": "Bayang 2",
+-      "sr": 1,
+-      "st": 103,
+-      "op": 204,
+-      "ip": 141,
+-      "hd": false,
+-      "ddd": 0,
+-      "bm": 0,
+-      "hasMask": false,
+-      "ao": 0,
+-      "ks": {
+-        "a": {
+-          "a": 0,
+-          "k": [
+-            0,
+-            0,
+-            0
+-          ],
+-          "ix": 1
+-        },
+-        "s": {
+-          "a": 1,
+-          "k": [
+-            {
+-              "o": {
+-                "x": 0.333,
+-                "y": 0
+-              },
+-              "i": {
+-                "x": 0.667,
+-                "y": 1
+-              },
+-              "s": [
+-                100,
+-                100,
+-                100
+-              ],
+-              "t": 141
+-            },
+-            {
+-              "s": [
+-                150,
+-                150,
+-                100
+-              ],
+-              "t": 203
+-            }
+-          ],
+-          "ix": 6
+-        },
+-        "sk": {
+-          "a": 0,
+-          "k": 0
+-        },
+-        "p": {
+-          "a": 0,
+-          "k": [
+-            547.688,
+-            527.801,
+-            0
+-          ],
+-          "ix": 2
+-        },
+-        "r": {
+-          "a": 0,
+-          "k": 0,
+-          "ix": 10
+-        },
+-        "sa": {
+-          "a": 0,
+-          "k": 0
+-        },
+-        "o": {
+-          "a": 1,
+-          "k": [
+-            {
+-              "o": {
+-                "x": 0.167,
+-                "y": 0.167
+-              },
+-              "i": {
+-                "x": 0.833,
+-                "y": 0.833
+-              },
+-              "s": [
+-                100
+-              ],
+-              "t": 177
+-            },
+-            {
+-              "s": [
+-                0
+-              ],
+-              "t": 203
+-            }
+-          ],
+-          "ix": 11
+-        }
+-      },
+-      "ef": [],
+-      "shapes": [
+-        {
+-          "ty": "gr",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Group",
+-          "nm": "Ellipse 1",
+-          "ix": 1,
+-          "cix": 2,
+-          "np": 4,
+-          "it": [
+-            {
+-              "ty": "el",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Shape - Ellipse",
+-              "nm": "Ellipse Path 1",
+-              "d": 1,
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  578.508,
+-                  578.508
+-                ],
+-                "ix": 2
+-              }
+-            },
+-            {
+-              "ty": "tm",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Filter - Trim",
+-              "nm": "Trim Paths 1",
+-              "ix": 2,
+-              "e": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 2
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 3
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 1
+-              },
+-              "m": 1
+-            },
+-            {
+-              "ty": "st",
+-              "bm": 0,
+-              "hd": false,
+-              "mn": "ADBE Vector Graphic - Stroke",
+-              "nm": "Stroke 1",
+-              "lc": 2,
+-              "lj": 1,
+-              "ml": 1,
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 4
+-              },
+-              "w": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 5
+-              },
+-              "c": {
+-                "a": 0,
+-                "k": [
+-                  1,
+-                  0.6157,
+-                  0.2314
+-                ],
+-                "ix": 3
+-              }
+-            },
+-            {
+-              "ty": "tr",
+-              "a": {
+-                "a": 0,
+-                "k": [
+-                  0,
+-                  0
+-                ],
+-                "ix": 1
+-              },
+-              "s": {
+-                "a": 0,
+-                "k": [
+-                  100,
+-                  100
+-                ],
+-                "ix": 3
+-              },
+-              "sk": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 4
+-              },
+-              "p": {
+-                "a": 0,
+-                "k": [
+-                  -7.688,
+-                  12.199
+-                ],
+-                "ix": 2
+-              },
+-              "r": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 6
+-              },
+-              "sa": {
+-                "a": 0,
+-                "k": 0,
+-                "ix": 5
+-              },
+-              "o": {
+-                "a": 0,
+-                "k": 100,
+-                "ix": 7
+-              }
+-            }
+-          ]
+-        },
+-        {
+-          "ty": "fl",
+-          "bm": 0,
+-          "hd": false,
+-          "mn": "ADBE Vector Graphic - Fill",
+-          "nm": "Fill 1",
+-          "c": {
+-            "a": 0,
+-            "k": [
+-              1,
+-              0.6157,
+-              0.2314
++          "pt": {
++            "a": 1,
++            "k": [
++              {
++                "o": {
++                  "x": 0.9,
++                  "y": 0
++                },
++                "i": {
++                  "x": 0.1,
++                  "y": 1
++                },
++                "s": [
++                  {
++                    "c": true,
++                    "i": [
++                      [
++                        -28.5,
++                        0.5
++                      ],
++                      [
++                        0,
++                        -27.614
++                      ],
++                      [
++                        -27.614,
++                        0
++                      ],
++                      [
++                        0,
++                        27.614
++                      ]
++                    ],
++                    "o": [
++                      [
++                        -27.614,
++                        0
++                      ],
++                      [
++                        0,
++                        27.614
++                      ],
++                      [
++                        -28.5,
++                        -0.5
++                      ],
++                      [
++                        0,
++                        -27.614
++                      ]
++                    ],
++                    "v": [
++                      [
++                        50,
++                        0
++                      ],
++                      [
++                        0,
++                        50
++                      ],
++                      [
++                        50,
++                        100
++                      ],
++                      [
++                        0,
++                        50
++                      ]
++                    ]
++                  }
++                ],
++                "t": 0
++              },
++              {
++                "s": [
++                  {
++                    "c": true,
++                    "i": [
++                      [
++                        27.614,
++                        0
++                      ],
++                      [
++                        0,
++                        -27.614
++                      ],
++                      [
++                        -27.614,
++                        0
++                      ],
++                      [
++                        0,
++                        27.614
++                      ]
++                    ],
++                    "o": [
++                      [
++                        -27.614,
++                        0
++                      ],
++                      [
++                        0,
++                        27.614
++                      ],
++                      [
++                        27.614,
++                        0
++                      ],
++                      [
++                        0,
++                        -27.614
++                      ]
++                    ],
++                    "v": [
++                      [
++                        50,
++                        0
++                      ],
++                      [
++                        0,
++                        50
++                      ],
++                      [
++                        50,
++                        100
++                      ],
++                      [
++                        100,
++                        50
++                      ]
++                    ]
++                  }
++                ],
++                "t": 11
++              }
+             ],
+-            "ix": 4
+-          },
+-          "r": 1,
+-          "o": {
+-            "a": 0,
+-            "k": 40,
+-            "ix": 5
++            "ix": 1
+           }
+         }
+       ],
+-      "ind": 6
++      "sc": "#a5a5a5",
++      "sh": 100,
++      "sw": 100,
++      "ind": 3
+     }
+   ],
+   "v": "4.8.0",
+-  "fr": 30,
+-  "op": 204,
+-  "ip": 79,
++  "fr": 15,
++  "op": 30,
++  "ip": 0,
+   "assets": []
+ }
+\ No newline at end of file
+Index: app/src/main/res/drawable/ic_report_account_dark.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_report_account_dark.xml b/app/src/main/res/drawable/ic_report_account_dark.xml
+new file mode 100644
+--- /dev/null	(date 1689076795151)
++++ b/app/src/main/res/drawable/ic_report_account_dark.xml	(date 1689076795151)
+@@ -0,0 +1,81 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="168dp"
++    android:height="130dp"
++    android:viewportWidth="168"
++    android:viewportHeight="130">
++    <group>
++        <clip-path android:pathData="M0,0h168v130h-168z" />
++        <path
++            android:fillColor="#F0F0F0"
++            android:pathData="M24.42,97.9L19.31,94.35C19.08,91.23 19.01,88.1 19.09,84.98L21.74,85.72L19.13,83.9C19.27,80.03 19.59,77.49 19.59,77.49C19.59,77.49 29.92,84.8 36.51,94.73L35.38,103.12L38.06,97.25C38.75,98.44 39.36,99.69 39.9,100.97C45.33,113.9 45.86,126.32 41.08,128.71C36.31,131.09 28.04,122.54 22.61,109.61C20.93,105.6 20,100.99 19.52,96.53L24.42,97.9Z" />
++        <path
++            android:fillColor="#F0F0F0"
++            android:pathData="M13.93,110.39L7.88,110.23C6.2,107.69 4.65,105.05 3.25,102.33L5.87,101.47L2.77,101.39C1.06,98 0.13,95.63 0.13,95.63C0.13,95.63 12.43,96.07 22.77,100.85L25.78,108.67L25.3,102.13C26.45,102.77 27.57,103.49 28.64,104.28C39.41,112.29 45.75,122.63 42.79,127.36C39.83,132.1 28.7,129.44 17.92,121.43C14.59,118.94 11.61,115.52 9.08,111.98L13.93,110.39Z" />
++        <path
++            android:fillColor="#7A7A7A"
++            android:pathData="M90.65,30.91H90V11.39C90,9.91 89.73,8.44 89.21,7.07C88.69,5.7 87.92,4.45 86.96,3.4C86,2.36 84.86,1.52 83.6,0.96C82.35,0.39 81,0.1 79.64,0.1H41.74C40.38,0.1 39.04,0.39 37.78,0.96C36.52,1.52 35.38,2.36 34.42,3.4C33.46,4.45 32.7,5.7 32.18,7.07C31.66,8.44 31.39,9.91 31.39,11.39V118.48C31.39,121.47 32.48,124.35 34.42,126.47C36.36,128.59 39,129.77 41.74,129.77H79.64C82.39,129.77 85.02,128.59 86.96,126.47C88.9,124.35 89.99,121.47 89.99,118.48V44.81H90.65V30.91Z" />
++        <path
++            android:fillColor="#ffffff"
++            android:pathData="M80.06,3.03H75.11C75.34,3.64 75.43,4.3 75.37,4.96C75.3,5.61 75.1,6.24 74.76,6.78C74.42,7.33 73.97,7.78 73.44,8.09C72.91,8.39 72.31,8.56 71.71,8.56H50C49.4,8.56 48.8,8.39 48.27,8.09C47.74,7.78 47.29,7.33 46.95,6.78C46.62,6.24 46.41,5.61 46.35,4.96C46.28,4.3 46.37,3.64 46.6,3.03H41.98C39.93,3.03 37.96,3.92 36.51,5.51C35.06,7.09 34.25,9.23 34.25,11.47V118.4C34.25,119.51 34.45,120.6 34.83,121.63C35.22,122.65 35.79,123.58 36.51,124.36C37.23,125.15 38.08,125.77 39.02,126.19C39.96,126.62 40.96,126.84 41.98,126.84H80.06C81.08,126.84 82.08,126.62 83.02,126.19C83.96,125.77 84.81,125.15 85.53,124.36C86.25,123.58 86.81,122.65 87.2,121.63C87.59,120.6 87.79,119.51 87.79,118.4V11.47C87.79,10.36 87.59,9.27 87.2,8.24C86.81,7.22 86.25,6.29 85.53,5.51C84.81,4.72 83.96,4.1 83.02,3.68C82.08,3.25 81.08,3.03 80.06,3.03Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M60.78,44.68C64.11,44.68 66.81,41.73 66.81,38.09C66.81,34.45 64.11,31.5 60.78,31.5C57.44,31.5 54.74,34.45 54.74,38.09C54.74,41.73 57.44,44.68 60.78,44.68Z" />
++        <path
++            android:fillColor="#E4E4E4"
++            android:pathData="M72.79,48.36L72.66,51.13C69.76,54.42 65.81,56.36 61.63,56.54C57.45,56.71 53.37,55.12 50.25,52.08C50.11,51.95 49.97,51.81 49.84,51.66C50.68,50.76 52.99,48.52 55.55,48.31L67.12,47.51C67.12,47.51 71.5,46.95 72.79,48.36Z" />
++        <path
++            android:fillColor="#E4E4E4"
++            android:pathData="M73.77,49.74C72.53,51.46 71.01,52.93 69.29,54.05L69.02,48.76L72.79,48.36C72.79,48.36 73.25,48.36 73.77,49.74Z" />
++        <path
++            android:fillColor="#3F3D56"
++            android:pathData="M61,56.85C56.97,56.85 53.08,55.24 50.06,52.31C49.92,52.17 49.78,52.03 49.64,51.88C48.02,50.21 46.73,48.2 45.86,45.96C44.98,43.72 44.53,41.31 44.54,38.88C44.54,34.12 46.27,29.55 49.36,26.18C52.45,22.81 56.64,20.92 61,20.92C65.37,20.92 69.56,22.81 72.64,26.18C75.73,29.55 77.47,34.12 77.47,38.88C77.48,42.88 76.26,46.78 73.99,49.92C72.45,52.08 70.48,53.83 68.23,55.03C65.98,56.23 63.51,56.85 61,56.85ZM61,21.52C56.78,21.53 52.74,23.36 49.76,26.61C46.78,29.87 45.1,34.28 45.1,38.88C45.09,41.23 45.52,43.56 46.37,45.72C47.22,47.88 48.47,49.83 50.03,51.44C50.17,51.59 50.3,51.72 50.43,51.85C52.06,53.43 53.97,54.62 56.03,55.36C58.1,56.1 60.28,56.37 62.45,56.16C64.61,55.94 66.72,55.24 68.63,54.11C70.54,52.97 72.21,51.42 73.55,49.55C75.74,46.51 76.92,42.75 76.91,38.88C76.9,34.28 75.23,29.87 72.25,26.61C69.26,23.36 65.22,21.53 61,21.52Z" />
++        <path
++            android:fillColor="#CACACA"
++            android:pathData="M167.72,130H0.28C0.21,130 0.13,129.97 0.08,129.91C0.03,129.85 0,129.78 0,129.7C0,129.61 0.03,129.54 0.08,129.48C0.13,129.42 0.21,129.39 0.28,129.39H167.72C167.79,129.39 167.87,129.42 167.92,129.48C167.97,129.54 168,129.61 168,129.7C168,129.78 167.97,129.85 167.92,129.91C167.87,129.97 167.79,130 167.72,130Z" />
++        <path
++            android:fillColor="#A5A5A5"
++            android:pathData="M61.4,69.01C58.97,69.01 56.59,69.76 54.57,71.17C52.56,72.57 50.98,74.57 50.05,76.91C49.12,79.24 48.88,81.82 49.35,84.3C49.83,86.78 51,89.06 52.71,90.84C54.43,92.63 56.62,93.85 59,94.34C61.38,94.84 63.85,94.59 66.1,93.62C68.34,92.65 70.26,91.01 71.61,88.91C72.96,86.8 73.68,84.33 73.68,81.8C73.68,78.41 72.38,75.16 70.08,72.76C67.78,70.36 64.65,69.01 61.4,69.01V69.01ZM59.87,75.41C59.87,74.98 60.03,74.58 60.32,74.28C60.61,73.98 61,73.81 61.41,73.81C61.81,73.81 62.2,73.98 62.49,74.28C62.78,74.58 62.94,74.98 62.94,75.41V82.75C62.94,82.96 62.9,83.17 62.82,83.36C62.75,83.56 62.63,83.73 62.49,83.88C62.35,84.03 62.18,84.15 61.99,84.23C61.81,84.31 61.61,84.35 61.41,84.35C61.2,84.35 61.01,84.31 60.82,84.23C60.63,84.15 60.46,84.03 60.32,83.88C60.18,83.73 60.07,83.56 59.99,83.36C59.91,83.17 59.87,82.96 59.87,82.75V75.41ZM61.4,89.79C61.05,89.79 60.71,89.69 60.42,89.49C60.13,89.28 59.9,89 59.77,88.66C59.64,88.33 59.6,87.96 59.67,87.6C59.74,87.25 59.91,86.92 60.15,86.67C60.4,86.41 60.71,86.23 61.05,86.16C61.39,86.09 61.75,86.13 62.07,86.27C62.39,86.41 62.67,86.64 62.86,86.94C63.05,87.24 63.16,87.6 63.16,87.96C63.16,88.45 62.97,88.91 62.64,89.26C62.31,89.6 61.86,89.79 61.4,89.79Z" />
++        <path
++            android:fillColor="#7A7A7A"
++            android:pathData="M110.45,41.74C110.09,38.84 109.65,35.72 107.8,33.63C107.21,32.96 106.51,32.44 105.74,32.08C104.97,31.73 104.14,31.55 103.3,31.56C102.46,31.57 101.63,31.76 100.86,32.14C100.1,32.51 99.41,33.05 98.83,33.73C97.49,35.32 96.9,37.55 96.84,39.73C96.79,41.91 97.23,44.06 97.71,46.17C100.28,46.23 102.83,45.67 105.18,44.54C105.76,44.23 106.36,43.97 106.97,43.76C107.6,43.58 108.04,44.03 108.62,44.33L108.94,43.66C109.2,44.2 110,44.04 110.3,43.52C110.59,43 110.52,42.34 110.45,41.74Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M134.23,120.92L132.36,122.3L126.7,114.9L129.46,112.86L134.23,120.92Z" />
++        <path
++            android:fillColor="#EBAD52"
++            android:pathData="M135.91,122.51L129.74,126.87L129.69,126.79C129.26,126.11 129.12,125.27 129.27,124.47C129.42,123.68 129.86,122.97 130.5,122.53L134.27,119.86L135.91,122.51Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M109.68,124.74H107.41L106.33,114.99L109.68,114.99L109.68,124.74Z" />
++        <path
++            android:fillColor="#EBAD52"
++            android:pathData="M110.23,126.87L102.98,126.87V126.77C102.98,125.99 103.27,125.24 103.8,124.69C104.33,124.13 105.05,123.82 105.8,123.82L110.23,123.82L110.23,126.87Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M93.38,58.34L84.81,51.58C84.85,51.22 84.79,50.86 84.65,50.54C84.5,50.23 84.28,49.96 84,49.78C83.72,49.6 83.4,49.51 83.08,49.52C82.76,49.54 82.45,49.66 82.18,49.87C81.92,50.07 81.72,50.36 81.6,50.69C81.48,51.03 81.46,51.39 81.52,51.74C81.59,52.09 81.75,52.41 81.97,52.66C82.2,52.91 82.49,53.09 82.81,53.16C83.88,54.15 91.7,62.75 92.82,62.29C93.96,61.83 98.93,61 98.93,61L99.07,55.79L93.38,58.34Z" />
++        <path
++            android:fillColor="#FF9F46"
++            android:pathData="M100.19,70.63L100.27,82.52C100.27,82.52 102.13,100.14 102.81,103.11C103.5,106.09 106.29,119.86 106.29,119.86L110.82,119.06L107.9,101.05L108.78,86.13L113.86,101.09L126.77,115.93L130.05,113.03L118.81,94.86L115.38,79.98C115.38,79.98 115.8,72.28 111.96,69.32L100.19,70.63Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M102.84,44.65C105.53,44.65 107.72,42.2 107.72,39.17C107.72,36.14 105.53,33.69 102.84,33.69C100.14,33.69 97.95,36.14 97.95,39.17C97.95,42.2 100.14,44.65 102.84,44.65Z" />
++        <path
++            android:fillColor="#2F2E41"
++            android:pathData="M104.15,72.54L102.3,77.06L107.66,79.69L109.51,75.18L104.15,72.54Z" />
++        <path
++            android:fillColor="#E4E4E4"
++            android:pathData="M110.79,49.53C110.21,48.25 109.93,46.68 108.7,46.26C107.86,45.98 104.49,46.4 103.72,46.87C102.46,47.66 103.61,49.13 102.86,50.5C102.05,52 101.24,53.5 100.43,54.99C99.87,56.02 99.3,57.06 99,58.21C98.7,59.37 98.69,60.66 99.2,61.71C99.66,62.66 100.49,63.33 100.96,64.27C101.44,65.25 100.57,69.64 100.13,70.64L100.34,70.75C103.32,70.94 106.3,70.83 109.26,70.41C109.99,70.31 110.76,70.18 111.36,69.71C112.25,69.01 112.61,67.75 112.82,66.57C113.89,60.8 113.17,54.8 110.79,49.53Z" />
++        <path
++            android:fillColor="#E4E4E4"
++            android:pathData="M100.59,61.97C101.92,60.51 103.26,59.03 104.36,57.34C105.46,55.65 106.31,53.72 106.55,51.65C106.65,50.99 106.61,50.31 106.43,49.67C106.23,49.04 105.77,48.49 105.19,48.34C104.25,48.11 103.41,48.95 102.74,49.71C100.77,51.97 98.8,54.23 96.84,56.49C98.09,58.33 99.34,60.17 100.6,62.01L100.59,61.97Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M115.24,63.14C114.83,61.88 114.08,56.38 114.08,56.38L109.39,56.22L111.68,62.53L105.42,72.29C105.42,72.29 105.43,72.31 105.45,72.35C105.12,72.29 104.79,72.34 104.49,72.5C104.18,72.66 103.93,72.92 103.76,73.24C103.59,73.56 103.52,73.93 103.54,74.3C103.56,74.67 103.68,75.02 103.89,75.31C104.1,75.6 104.38,75.82 104.7,75.93C105.01,76.04 105.36,76.04 105.67,75.93C105.99,75.83 106.28,75.61 106.48,75.32C106.69,75.03 106.82,74.68 106.84,74.31C106.86,74.32 106.89,74.33 106.92,74.32C106.94,74.32 106.97,74.3 106.99,74.28C107.68,73.31 115.65,64.4 115.24,63.14Z" />
++        <path
++            android:fillColor="#E4E4E4"
++            android:pathData="M115.78,59.74C115.34,57.7 114.9,55.65 114.17,53.72C113.43,51.79 112.38,49.96 110.89,48.66C110.43,48.21 109.89,47.9 109.3,47.74C108.7,47.61 108.03,47.76 107.61,48.24C106.95,49.02 107.15,50.27 107.39,51.3C108.11,54.36 108.84,57.42 109.56,60.48C111.64,60.24 113.73,60 115.81,59.75L115.78,59.74Z" />
++        <path
++            android:fillColor="#7A7A7A"
++            android:pathData="M109.01,39.67C108.85,38.35 108.69,37.01 108.33,35.77C107.97,34.52 107.39,33.36 106.56,32.65C105.25,31.53 103.54,31.75 102.07,32.39C100.92,32.89 99.81,33.64 99,34.86C98.2,36.07 97.75,37.8 98.05,39.39C99.62,38.9 101.19,38.41 102.77,37.92L102.6,38.08C103.62,38.73 104.4,40.06 104.63,41.56C104.86,43.07 104.56,44.61 103.8,45.87C104.87,45.37 105.94,44.87 107.02,44.37C107.68,44.06 108.39,43.7 108.78,42.91C109.24,41.99 109.13,40.77 109.01,39.67Z" />
++    </group>
++</vector>
+Index: app/src/main/res/drawable/ic_report_account_feedback.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_report_account_feedback.xml b/app/src/main/res/drawable/ic_report_account_feedback.xml
+new file mode 100644
+--- /dev/null	(date 1689076795168)
++++ b/app/src/main/res/drawable/ic_report_account_feedback.xml	(date 1689076795168)
+@@ -0,0 +1,125 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="149dp"
++    android:height="174dp"
++    android:viewportWidth="149"
++    android:viewportHeight="174">
++    <group>
++        <clip-path android:pathData="M0,0h149v174h-149z" />
++        <path
++            android:fillColor="#E6E6E6"
++            android:pathData="M57.71,142.81C54.74,139.82 50.45,138.1 45.92,138.1L45.75,138.1C42.77,138.1 39.84,137.32 37.26,135.85L36.99,135.7L37.21,135.48C38.38,134.3 39.35,132.94 40.1,131.47C39.57,131.95 38.94,132.32 38.25,132.54C37.55,132.76 36.82,132.82 36.1,132.74C35.34,132.65 34.61,132.39 33.96,131.99C33.31,131.58 32.77,131.04 32.37,130.4C30.79,127.88 28.9,124.31 28.9,121.59C28.9,119.29 29.4,117.02 30.34,114.92C31.29,112.82 32.68,110.93 34.41,109.38C35.51,108.42 36.38,107.23 36.98,105.91C37.58,104.58 37.89,103.15 37.88,101.7L37.88,101.5C37.88,99.59 38.12,97.69 38.59,95.84L38.64,95.66L38.83,95.66C40.1,95.7 41.36,95.6 42.6,95.35C41.44,95.21 40.3,94.92 39.22,94.47L39.01,94.39L39.08,94.18C44.02,91.18 55.16,92.73 61.62,78.24C66.87,66.48 85.36,88.67 85.36,101.5C85.36,102.81 84.04,104.53 85.03,105.4C95.73,114.75 88.35,120.75 86.02,126.79C85.47,128.23 86.67,129.8 86.67,131.35C86.67,131.62 86.66,131.89 86.64,132.16L86.62,132.58L86.27,132.35C85.56,131.89 84.91,131.37 84.32,130.78C84.93,132.16 85.22,133.66 85.16,135.17C85.11,136.68 84.71,138.15 83.99,139.49C82.87,141.56 81.79,143.04 80.77,143.9C77.51,146.63 73.3,148.04 69.02,147.84C64.73,147.64 60.69,145.84 57.71,142.81Z" />
++        <path
++            android:fillColor="#3F3D56"
++            android:pathData="M75.62,174C75.69,174 75.76,173.97 75.81,173.93C75.87,173.88 75.91,173.82 75.92,173.74C75.93,173.66 77.19,164.75 76.06,152.91C75.01,141.97 71.65,126.22 61.59,113.28C61.57,113.25 61.54,113.23 61.51,113.21C61.47,113.19 61.43,113.18 61.39,113.17C61.35,113.16 61.31,113.17 61.28,113.18C61.24,113.19 61.2,113.2 61.17,113.23C61.14,113.25 61.11,113.28 61.09,113.32C61.07,113.35 61.06,113.39 61.05,113.42C61.05,113.46 61.05,113.5 61.06,113.54C61.07,113.58 61.09,113.61 61.11,113.64C71.08,126.47 74.42,142.1 75.45,152.96C76.58,164.73 75.33,173.57 75.32,173.66C75.31,173.7 75.31,173.75 75.33,173.79C75.34,173.83 75.36,173.87 75.39,173.9C75.42,173.93 75.45,173.96 75.49,173.97C75.53,173.99 75.57,174 75.62,174Z" />
++        <path
++            android:fillColor="#3F3D56"
++            android:pathData="M67.41,131.53C67.47,131.53 67.53,131.51 67.59,131.48C67.64,131.44 67.68,131.39 67.7,131.33C67.72,131.27 67.72,131.2 67.7,131.14C67.68,131.08 67.64,131.03 67.59,130.99C64.72,129.09 61.62,127.55 58.37,126.4C53.28,124.57 45.55,122.92 37.59,125.4C37.55,125.41 37.52,125.43 37.48,125.46C37.45,125.48 37.43,125.51 37.41,125.55C37.39,125.58 37.38,125.62 37.38,125.66C37.37,125.7 37.38,125.74 37.39,125.77C37.4,125.81 37.42,125.85 37.45,125.88C37.47,125.9 37.51,125.93 37.54,125.95C37.58,125.97 37.62,125.98 37.65,125.98C37.69,125.98 37.73,125.98 37.77,125.97C45.57,123.54 53.16,125.16 58.16,126.95C61.36,128.09 64.41,129.6 67.23,131.48C67.28,131.51 67.34,131.53 67.41,131.53Z" />
++        <path
++            android:fillColor="#3F3D56"
++            android:pathData="M81.27,97.69C81.28,97.63 81.26,97.57 81.23,97.51C81.19,97.46 81.14,97.42 81.08,97.4C81.03,97.37 80.96,97.37 80.9,97.38C80.84,97.4 80.78,97.43 80.74,97.48C78.6,100.14 76.8,103.06 75.39,106.16C73.17,111 70.93,118.43 72.89,126.39C72.89,126.43 72.91,126.47 72.93,126.5C72.96,126.53 72.99,126.56 73.02,126.58C73.06,126.6 73.09,126.61 73.13,126.62C73.17,126.63 73.21,126.62 73.25,126.61C73.29,126.61 73.33,126.59 73.36,126.57C73.39,126.54 73.42,126.51 73.44,126.48C73.46,126.45 73.47,126.41 73.48,126.37C73.49,126.33 73.48,126.29 73.47,126.26C71.56,118.46 73.76,111.16 75.95,106.4C77.33,103.35 79.1,100.48 81.2,97.86C81.24,97.81 81.27,97.75 81.27,97.69Z" />
++        <path
++            android:fillColor="#F0F0F0"
++            android:pathData="M139.7,173.69H115.59L115.49,173.5C115.18,172.95 114.88,172.37 114.6,171.78C112.12,166.57 111.07,160.6 110.14,155.35L109.44,151.38C109.36,150.9 109.42,150.41 109.63,149.96C109.83,149.52 110.16,149.15 110.58,148.89C111.01,148.63 111.5,148.5 112,148.52C112.49,148.54 112.97,148.7 113.37,148.99C117.04,151.6 120.71,154.21 124.37,156.82C125.76,157.81 127.35,158.96 128.87,160.2C129.01,159.5 129.17,158.8 129.32,158.11C129.43,157.63 129.67,157.2 130.03,156.86C130.39,156.52 130.85,156.3 131.34,156.22C131.83,156.13 132.33,156.2 132.79,156.39C133.24,156.59 133.62,156.92 133.88,157.34L136.71,161.78C138.76,165.02 140.58,168.22 140.21,171.67C140.21,171.71 140.21,171.75 140.2,171.79C140.13,172.36 139.99,172.91 139.79,173.45L139.7,173.69Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M128.47,80.78L123.82,63.9C123.61,63.19 123.14,62.58 122.48,62.2C121.83,61.83 121.05,61.73 120.32,61.91C119.94,62.01 119.59,62.18 119.28,62.41C118.97,62.64 118.71,62.94 118.52,63.27C118.33,63.61 118.21,63.98 118.17,64.36C118.13,64.74 118.17,65.12 118.29,65.49L123.67,82.88L126.49,93.58C126.08,93.89 125.77,94.31 125.62,94.79C125.46,95.28 125.46,95.79 125.61,96.28C125.77,96.76 126.07,97.18 126.48,97.49C126.89,97.8 127.39,97.98 127.9,98C128.42,98.02 128.93,97.89 129.36,97.62C129.8,97.34 130.14,96.95 130.34,96.48C130.53,96.01 130.58,95.5 130.47,95.01C130.35,94.51 130.09,94.06 129.71,93.72L128.47,80.78Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M89.3,77.15L103.44,66.48C104.04,66.03 104.43,65.36 104.54,64.63C104.64,63.89 104.44,63.15 103.99,62.56C103.75,62.25 103.46,61.99 103.12,61.8C102.78,61.61 102.4,61.49 102.01,61.45C101.63,61.4 101.23,61.44 100.86,61.54C100.48,61.65 100.14,61.84 99.83,62.08L85.49,73.6L76.48,80.24C76.03,79.99 75.51,79.87 75,79.92C74.49,79.96 74,80.16 73.6,80.48C73.21,80.8 72.92,81.24 72.79,81.73C72.65,82.22 72.67,82.73 72.85,83.21C73.03,83.69 73.35,84.1 73.77,84.39C74.19,84.68 74.69,84.83 75.21,84.83C75.73,84.83 76.23,84.68 76.65,84.39C77.08,84.1 77.4,83.69 77.57,83.21L89.3,77.15Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M100.83,79.6L100.21,93.24L119.78,89.07C118.11,83.59 116.98,82.65 118.23,78.84L100.83,79.6Z" />
++        <path
++            android:fillColor="#E6E6E6"
++            android:pathData="M112.86,54.59H106.34L103.54,59.28L102.21,59.21C101.56,59.18 100.9,59.27 100.29,59.49C99.67,59.71 99.11,60.05 98.64,60.49C98.16,60.93 97.79,61.46 97.53,62.05C97.27,62.64 97.13,63.28 97.13,63.92L98.78,66.41C98.78,66.41 95.84,71.43 100.07,73.91C100.07,73.91 99.32,78.56 100.07,78.51C100.83,78.46 102.57,77.51 100.83,78.46C99.09,79.41 99.22,79.53 99.44,79.76L99.67,79.98L117.97,82.99C117.97,82.99 118.5,79.51 118.56,78.89C118.62,78.27 118.23,79.79 118.62,78.27C119,76.75 119.58,77.32 119,76.75C118.43,76.19 122.76,69.14 120.98,66.41L123.84,63.68C123.84,61.06 119.54,58.94 116.87,58.94H116.53L112.86,54.59Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M97.15,168.43H94.51L93.26,158.45L97.15,158.45L97.15,168.43Z" />
++        <path
++            android:fillAlpha="0.95"
++            android:fillColor="#EBAD52"
++            android:pathData="M89.19,172.24C89.19,172.53 89.3,172.81 89.51,173.02C89.72,173.22 90.01,173.34 90.3,173.34H95.27L95.42,173.03L96.13,171.6L96.4,173.03L96.46,173.34H98.33L98.31,173.02L97.81,167.15L97.15,167.11L94.33,166.95L93.63,166.91V168.66C93.11,169.21 88.98,171.28 89.19,172.24Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M136.38,161.65L134.16,163.05L127.6,155.33L130.87,153.26L136.38,161.65Z" />
++        <path
++            android:fillAlpha="0.95"
++            android:fillColor="#EBAD52"
++            android:pathData="M131.79,169.09C131.95,169.33 132.2,169.5 132.49,169.56C132.78,169.62 133.08,169.57 133.33,169.41L137.51,166.78L137.47,166.43L137.27,164.87L138.29,165.92L138.51,166.15L140.09,165.16L139.89,164.9L136.23,160.23L135.65,160.54L133.19,161.9L132.58,162.24L133.55,163.71C133.41,164.45 131.08,168.39 131.79,169.09Z" />
++        <path
++            android:fillColor="#CACACA"
++            android:pathData="M148.69,173.87L66.96,173.95C66.88,173.95 66.8,173.91 66.74,173.86C66.69,173.8 66.65,173.72 66.65,173.64C66.65,173.56 66.69,173.49 66.74,173.43C66.8,173.37 66.88,173.34 66.96,173.34L148.69,173.26C148.77,173.26 148.85,173.3 148.91,173.35C148.97,173.41 149,173.49 149,173.57C149,173.65 148.97,173.72 148.91,173.78C148.85,173.84 148.77,173.87 148.69,173.87Z" />
++        <path
++            android:fillColor="#FF9F46"
++            android:pathData="M119.47,87.53C119.47,87.53 106.96,94.01 100.35,89.59C100.35,89.59 98.9,96.46 98.32,97.03C97.74,97.6 96.81,97.84 97.47,98.48C98.12,99.11 98.49,99.97 97.24,101.06C96,102.14 94.75,101.8 95.96,102.92C97.16,104.04 92.32,131.51 92.32,131.51C92.32,131.51 93.1,157.06 92.32,157.83C91.55,158.6 90.52,158.78 91.52,159.73C92.52,160.69 92.52,159.95 92.52,161.27V162.58L92.97,163.89H99.25C99.25,163.89 100.77,162.17 99.25,160.67C97.74,159.17 99.71,158.76 100.18,157.36C100.64,155.95 101.41,157.47 100.64,155.95C99.86,154.44 99.49,154.73 99.49,153.73C99.48,152.73 110.89,113.7 110.89,113.7L112.27,135.3L128.89,158.96L133.78,155.37C133.78,155.37 130.22,150.46 131.05,149.78C131.88,149.1 128.6,148.26 129.63,147.49C130.67,146.73 128.17,145.96 129.11,144.96C130.05,143.95 127.82,141.4 126.52,141.4C125.23,141.4 123.41,137.16 123.41,137.16L126.12,103.63L119.47,87.53Z" />
++        <path
++            android:fillColor="#7A7A7A"
++            android:pathData="M106.21,40.8C106.12,40.91 105.42,40.85 104.57,40.73C102.89,40.49 102.66,40.78 101.41,41.89C99.59,43.51 100.63,53.39 99.73,55.53L99.45,55.73C100.02,55.63 100.58,55.47 101.12,55.27C101.43,54.32 101.74,53.36 102.05,52.41C102.35,53.15 102.53,53.93 102.6,54.72C103.03,54.56 103.46,54.15 105.27,53.6C106.17,53 112.75,52.39 113.59,52.12C115.74,44.98 112.28,42.08 106.21,40.8Z" />
++        <path
++            android:fillColor="#FFB6B6"
++            android:pathData="M108.43,51.82C111.9,51.82 114.71,49.07 114.71,45.67C114.71,42.27 111.9,39.51 108.43,39.51C104.96,39.51 102.15,42.27 102.15,45.67C102.15,49.07 104.96,51.82 108.43,51.82Z" />
++        <path
++            android:fillColor="#7A7A7A"
++            android:pathData="M112.38,40.26C112.03,40.21 111.69,40.09 111.38,39.91C111.23,39.82 111.1,39.69 111.02,39.53C110.94,39.38 110.91,39.2 110.92,39.03C111,38.59 111.51,38.33 111.96,38.35C112.41,38.42 112.83,38.59 113.2,38.85C113.16,38.43 112.98,38.03 112.68,37.72C112.38,37.41 111.99,37.21 111.56,37.15C112.15,37.12 112.77,37.09 113.32,37.32C113.87,37.54 114.33,38.1 114.23,38.67C115.15,38.56 116.07,39.19 116.45,40.02C116.83,40.85 116.75,41.83 116.45,42.69C116.42,42.83 116.36,42.95 116.28,43.06C116.19,43.17 116.09,43.26 115.96,43.32C115.65,43.44 115.32,43.24 115.05,43.05C113.64,42.05 112.36,40.89 111.23,39.6" />
++        <path
++            android:fillColor="#7A7A7A"
++            android:pathData="M115.12,52.21C114.86,52.33 115,52.79 114.79,53C114.7,53.08 114.59,53.15 114.47,53.19C114.44,52.81 114.35,52.43 114.2,52.08C114.18,52.01 114.13,51.94 114.06,51.95C113.98,51.96 113.96,52.06 113.96,52.14C113.94,52.53 113.85,52.9 113.7,53.26C113.7,53.26 113.7,53.27 113.69,53.27C113.64,53.27 113.57,53.27 113.51,53.27C113.07,53.25 112.07,52.12 111.85,52.5C112.63,51.15 113.58,49.12 113.72,47.58C113.77,47.25 113.75,46.92 113.65,46.61C113.6,46.46 113.5,46.32 113.38,46.21C113.25,46.11 113.09,46.04 112.93,46.02C112.84,46.02 112.76,46.03 112.69,46.06C112.61,46.1 112.54,46.14 112.49,46.2C112.43,46.26 112.39,46.33 112.37,46.41C112.35,46.49 112.34,46.57 112.35,46.65L112.24,46.63C111.2,45.8 112.1,44.36 110.89,43.79C110.48,43.59 107.97,44.24 107.52,44.13C107.51,43.67 107.42,43.22 107.24,42.8C107.22,42.73 107.17,42.66 107.1,42.66C107.02,42.67 107,42.78 107,42.86C106.98,43.24 106.89,43.62 106.74,43.98C106.13,43.89 105.5,43.92 104.9,44.07C104.37,44.21 103.87,44.44 103.34,44.57C103.07,44.65 102.8,44.67 102.52,44.64C102.25,44.61 101.99,44.53 101.75,44.4C101.07,43.95 100.96,42.97 101.29,42.25C101.54,41.78 101.86,41.37 102.26,41.02C102.57,40.73 102.88,40.46 103.2,40.18C103.48,39.93 103.76,39.68 104.04,39.43C104.4,39.11 104.78,38.8 105.18,38.53C105.81,38.12 106.53,37.84 107.28,37.71C108.03,37.59 108.8,37.61 109.54,37.78C110.43,37.99 111.62,37.7 112.43,38.1C112.86,38.32 113.8,39.14 114.17,39.43C115.13,40.17 114.48,39.57 115.53,40C118.02,41.03 116.92,51.39 115.12,52.21Z" />
++        <path
++            android:fillColor="#ffffff"
++            android:pathData="M45.59,97.13C67.1,97.13 84.53,80.04 84.53,58.96C84.53,37.89 67.1,20.8 45.59,20.8C24.08,20.8 6.64,37.89 6.64,58.96C6.64,80.04 24.08,97.13 45.59,97.13Z" />
++        <path
++            android:fillColor="#FF9F46"
++            android:pathData="M45.59,97.51C23.9,97.51 6.25,80.22 6.25,58.96C6.25,37.71 23.9,20.42 45.59,20.42C67.28,20.42 84.92,37.71 84.92,58.96C84.92,80.22 67.28,97.51 45.59,97.51ZM45.59,21.18C24.33,21.18 7.03,38.13 7.03,58.96C7.03,79.8 24.33,96.75 45.59,96.75C66.85,96.75 84.15,79.8 84.15,58.96C84.15,38.13 66.85,21.18 45.59,21.18Z" />
++        <path
++            android:fillColor="#FF9F46"
++            android:pathData="M40.28,78.83C39.6,78.83 38.94,78.67 38.34,78.38C37.74,78.08 37.21,77.66 36.81,77.13L26.18,63.25C25.84,62.8 25.59,62.29 25.45,61.75C25.31,61.21 25.28,60.65 25.36,60.1C25.44,59.55 25.63,59.02 25.92,58.54C26.21,58.06 26.6,57.64 27.05,57.3C27.51,56.97 28.02,56.72 28.58,56.59C29.13,56.45 29.7,56.42 30.26,56.5C30.83,56.58 31.37,56.76 31.86,57.05C32.35,57.33 32.78,57.71 33.12,58.15L40.07,67.23L57.92,40.99C58.56,40.05 59.55,39.41 60.68,39.18C61.8,38.96 62.97,39.19 63.93,39.82C64.88,40.44 65.55,41.41 65.77,42.51C66,43.62 65.77,44.76 65.13,45.7L43.88,76.94C43.5,77.5 42.98,77.97 42.37,78.3C41.77,78.62 41.09,78.81 40.4,78.83C40.36,78.83 40.32,78.83 40.28,78.83Z" />
++        <path
++            android:fillColor="#E6E6E6"
++            android:pathData="M85.71,23.18C85.82,22.45 85.04,21.74 83.97,21.59C82.9,21.43 81.95,21.9 81.84,22.63C81.73,23.36 82.51,24.08 83.58,24.23C84.65,24.38 85.61,23.91 85.71,23.18Z" />
++        <path
++            android:fillColor="#3F3D56"
++            android:pathData="M98.46,21.97C98.57,21.24 97.79,20.52 96.72,20.37C95.65,20.22 94.69,20.68 94.58,21.41C94.47,22.14 95.25,22.86 96.32,23.01C97.4,23.16 98.35,22.7 98.46,21.97Z" />
++        <path
++            android:fillColor="#FF6584"
++            android:pathData="M82.22,13.07C82.33,12.34 81.55,11.63 80.48,11.48C79.41,11.32 78.46,11.79 78.35,12.52C78.24,13.25 79.02,13.97 80.09,14.12C81.16,14.27 82.12,13.8 82.22,13.07Z" />
++        <path
++            android:fillColor="#E6E6E6"
++            android:pathData="M76.69,8.93C76.69,8.26 76.31,7.72 75.83,7.71C75.36,7.71 74.97,8.25 74.96,8.92C74.96,9.59 75.34,10.14 75.82,10.14C76.29,10.14 76.68,9.6 76.69,8.93Z" />
++        <path
++            android:fillColor="#3F3D56"
++            android:pathData="M74.81,1.22C74.81,0.55 74.43,0 73.96,-0C73.48,-0 73.09,0.54 73.09,1.21C73.08,1.88 73.46,2.42 73.94,2.43C74.41,2.43 74.8,1.89 74.81,1.22Z" />
++        <path
++            android:fillColor="#E6E6E6"
++            android:pathData="M89.41,14.79C89.42,14.12 89.04,13.58 88.56,13.57C88.09,13.57 87.7,14.11 87.69,14.78C87.69,15.45 88.07,16 88.54,16C89.02,16 89.41,15.46 89.41,14.79Z" />
++        <path
++            android:fillColor="#FF6584"
++            android:pathData="M83.25,17.81C83.26,17.14 82.88,16.59 82.4,16.59C81.93,16.58 81.54,17.13 81.53,17.8C81.53,18.46 81.91,19.01 82.38,19.01C82.86,19.02 83.25,18.48 83.25,17.81Z" />
++        <path
++            android:fillColor="#3F3D56"
++            android:pathData="M91.83,23.38C91.83,22.71 91.45,22.16 90.98,22.16C90.5,22.15 90.11,22.69 90.11,23.36C90.1,24.03 90.48,24.58 90.96,24.58C91.43,24.59 91.82,24.05 91.83,23.38Z" />
++        <path
++            android:fillColor="#E6E6E6"
++            android:pathData="M12.63,113.6C12.74,112.87 11.96,112.15 10.89,112C9.81,111.85 8.86,112.31 8.75,113.04C8.64,113.77 9.42,114.49 10.49,114.64C11.56,114.79 12.52,114.33 12.63,113.6Z" />
++        <path
++            android:fillColor="#3F3D56"
++            android:pathData="M25.37,112.38C25.48,111.65 24.7,110.93 23.63,110.78C22.56,110.63 21.6,111.1 21.5,111.82C21.39,112.56 22.17,113.27 23.24,113.42C24.31,113.57 25.26,113.11 25.37,112.38Z" />
++        <path
++            android:fillColor="#FF6584"
++            android:pathData="M9.14,103.49C9.25,102.76 8.47,102.04 7.39,101.89C6.32,101.74 5.37,102.2 5.26,102.93C5.15,103.66 5.93,104.38 7,104.53C8.07,104.68 9.03,104.22 9.14,103.49Z" />
++        <path
++            android:fillColor="#E6E6E6"
++            android:pathData="M3.6,99.35C3.61,98.68 3.22,98.13 2.75,98.13C2.27,98.12 1.88,98.66 1.88,99.33C1.87,100 2.25,100.55 2.73,100.55C3.21,100.56 3.6,100.02 3.6,99.35Z" />
++        <path
++            android:fillColor="#3F3D56"
++            android:pathData="M1.72,91.63C1.73,90.96 1.35,90.42 0.87,90.41C0.39,90.41 0,90.95 -0,91.62C-0.01,92.29 0.38,92.83 0.85,92.84C1.33,92.84 1.72,92.3 1.72,91.63Z" />
++        <path
++            android:fillColor="#E6E6E6"
++            android:pathData="M16.33,105.21C16.33,104.54 15.95,103.99 15.47,103.99C15,103.98 14.61,104.53 14.6,105.19C14.6,105.86 14.98,106.41 15.45,106.41C15.93,106.42 16.32,105.88 16.33,105.21Z" />
++        <path
++            android:fillColor="#FF6584"
++            android:pathData="M10.17,108.22C10.17,107.55 9.79,107 9.32,107C8.84,107 8.45,107.54 8.44,108.21C8.44,108.88 8.82,109.42 9.3,109.43C9.77,109.43 10.16,108.89 10.17,108.22Z" />
++        <path
++            android:fillColor="#3F3D56"
++            android:pathData="M18.74,113.79C18.74,113.12 18.36,112.57 17.89,112.57C17.41,112.57 17.02,113.11 17.02,113.78C17.01,114.45 17.39,114.99 17.87,115C18.34,115 18.73,114.46 18.74,113.79Z" />
++    </group>
++</vector>
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetDropDown\">\n    <targetSelectedWithDropDown>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_28.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetSelectedWithDropDown>\n    <timeTargetWasSelectedWithDropDown value=\"2023-06-30T04:03:06.360971984Z\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(revision fb64e481ccfffb729b79457ae55d51ac98994604)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1689073730912)
+@@ -12,6 +12,6 @@
+         </deviceKey>
+       </Target>
+     </targetSelectedWithDropDown>
+-    <timeTargetWasSelectedWithDropDown value="2023-06-30T04:03:06.360971984Z" />
++    <timeTargetWasSelectedWithDropDown value="2023-07-06T08:57:35.110976051Z" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/presentation/common/AdditionalMessage.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_mapping.presentation.common\n\nimport androidx.compose.foundation.layout.Arrangement\nimport androidx.compose.foundation.layout.Column\nimport androidx.compose.foundation.layout.fillMaxSize\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.layout.wrapContentHeight\nimport androidx.compose.foundation.shape.RoundedCornerShape\nimport androidx.compose.material.MaterialTheme\nimport androidx.compose.material.Text\nimport androidx.compose.material.TextField\nimport androidx.compose.material.TextFieldDefaults\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.draw.shadow\nimport androidx.compose.ui.graphics.Color\nimport androidx.compose.ui.text.TextStyle\nimport androidx.compose.ui.text.font.FontWeight\nimport androidx.compose.ui.text.input.TextFieldValue\nimport androidx.compose.ui.unit.TextUnit\nimport androidx.compose.ui.unit.TextUnitType\nimport androidx.compose.ui.unit.dp\nimport androidx.constraintlayout.compose.ConstraintLayout\nimport com.example.cyclistance.core.utils.constants.MappingConstants.CHARACTER_LIMIT\nimport com.example.cyclistance.theme.Black440\nimport com.example.cyclistance.theme.Black500\n\n\n@Composable\nfun AdditionalMessage(\n    text: String = \"Message\",\n    modifier: Modifier,\n    message: TextFieldValue,\n    enabled: Boolean,\n    onChangeValueMessage: (TextFieldValue) -> Unit) {\n    Column(modifier = modifier) {\n\n\n        Text(\n            text = text,\n            color = MaterialTheme.colors.onBackground,\n            style = MaterialTheme.typography.subtitle1,\n            fontWeight = FontWeight.Normal,\n            modifier = Modifier.padding(top = 5.dp, bottom = 5.dp))\n\n\n        Column(\n            horizontalAlignment = Alignment.CenterHorizontally,\n            verticalArrangement = Arrangement.spacedBy(\n                10.dp,\n                alignment = Alignment.CenterVertically)) {\n\n            ConstraintLayout(modifier = Modifier.wrapContentHeight()) {\n\n\n                val (textField, numberOfCharactersText) = createRefs()\n                var numberOfCharacters by remember { mutableStateOf(0) }\n\n                TextField(\n                    enabled = enabled,\n                    modifier = Modifier\n                        .fillMaxSize()\n                        .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)\n                        .constrainAs(textField) {\n                            top.linkTo(parent.top)\n                            end.linkTo(parent.end)\n                            start.linkTo(parent.start)\n\n                        },\n                    value = message,\n                    onValueChange = { newText ->\n                        if (newText.text.length <= CHARACTER_LIMIT) {\n                            numberOfCharacters = newText.text.length\n                            onChangeValueMessage(newText)\n                        }\n                    },\n                    shape = RoundedCornerShape(12.dp),\n                    colors = TextFieldDefaults.textFieldColors(\n                        textColor = MaterialTheme.colors.onSecondary,\n                        backgroundColor = MaterialTheme.colors.secondary,\n                        focusedIndicatorColor = Color.Transparent,\n                        unfocusedIndicatorColor = Color.Transparent,\n                        cursorColor = MaterialTheme.colors.primary,\n                        disabledIndicatorColor = Color.Transparent\n                    ),\n                    placeholder = {\n                        Text(\n                            text = \"(Optional) Leave a message\",\n                            color = Black500,\n                            style = MaterialTheme.typography.body2)\n                    },\n                    textStyle = TextStyle(\n                        fontSize = TextUnit(value = 14f, type = TextUnitType.Sp)\n                    )\n                )\n\n                Text(\n                    text = \"${numberOfCharacters}/$CHARACTER_LIMIT\",\n                    color = Black440,\n                    style = MaterialTheme.typography.caption,\n                    modifier = Modifier\n                        .padding(top = 5.dp, bottom = 5.dp)\n                        .constrainAs(numberOfCharactersText) {\n                            top.linkTo(textField.bottom)\n                            end.linkTo(parent.end)\n                        })\n            }\n\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/common/AdditionalMessage.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/common/AdditionalMessage.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/common/AdditionalMessage.kt	(revision fb64e481ccfffb729b79457ae55d51ac98994604)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/common/AdditionalMessage.kt	(date 1689073730965)
+@@ -12,7 +12,7 @@
+ import androidx.compose.material.TextFieldDefaults
+ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.getValue
+-import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.mutableIntStateOf
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Alignment
+@@ -59,7 +59,7 @@
+ 
+ 
+                 val (textField, numberOfCharactersText) = createRefs()
+-                var numberOfCharacters by remember { mutableStateOf(0) }
++                var numberOfCharacters by remember { mutableIntStateOf(0) }
+ 
+                 TextField(
+                     enabled = enabled,
