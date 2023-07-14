@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_messaging.presentation.messaging_conversation.components
+package com.example.cyclistance.feature_messaging.presentation.messaging.components.conversation
 
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text

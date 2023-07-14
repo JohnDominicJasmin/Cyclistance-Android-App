@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_messaging.presentation.messages_list.components
+package com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,8 +18,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,22 +30,37 @@ import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_messaging.domain.model.ui.MessageItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.MessagesModel
-import com.example.cyclistance.feature_messaging.presentation.messages_list.event.MessageUiEvent
+import com.example.cyclistance.feature_messaging.presentation.messaging.components.conversation.MessagingConversationContent
+import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingUiEvent
+import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingState
+import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingUiState
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun MessagingScreenContent(
     modifier: Modifier = Modifier,
-    messagesModel: MessagesModel,
-    event: (MessageUiEvent) -> Unit) {
+    uiState: MessagingUiState,
+    state: MessagingState,
+    event: (MessagingUiEvent) -> Unit) {
 
 
-    val messageAvailable by remember(messagesModel.messages) { derivedStateOf { messagesModel.messages.isNotEmpty() } }
-
+    val messageAvailable =
+        remember(state.messagesModel.messages) { state.messagesModel.messages.isNotEmpty() }
+    val shouldShowConversationDialog =
+        remember(uiState.selectedConversationId) { uiState.selectedConversationId != null }
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
-        if (messageAvailable) {
+        if (shouldShowConversationDialog) {
+            MessagingConversationContent(
+                modifier = Modifier.fillMaxSize(),
+                uiState = uiState,
+                state = state,
+                event = event
+            )
+        }
+
+        if (messageAvailable && !shouldShowConversationDialog) {
 
             Box(contentAlignment = Alignment.TopCenter, modifier = Modifier.fillMaxWidth()) {
                 Column(
@@ -75,13 +88,13 @@ fun MessagingScreenContent(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
                     )
 
-                    MessagesSection(messagesModel = messagesModel, onClick = {
-                        event(MessageUiEvent.OnMessageClicked(it))
-
+                    MessagesSection(messagesModel = state.messagesModel, onClick = {
+                        event(MessagingUiEvent.OnSelectedConversation(it))
                     })
                 }
             }
-        } else {
+        }
+        if (!messageAvailable && !shouldShowConversationDialog) {
 
             Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
@@ -118,7 +131,7 @@ private fun BoxScope.AddMessageButton(modifier: Modifier = Modifier, onClick: ()
             modifier = Modifier
                 .padding(12.dp)
                 .size(28.dp),
-            )
+        )
     }
 }
 
@@ -213,7 +226,8 @@ val fakeMessages = MessagesModel(
 fun PreviewMessagingScreenContentDark() {
     CyclistanceTheme(darkTheme = true) {
         MessagingScreenContent(
-            messagesModel = MessagesModel(),
+            uiState = MessagingUiState(),
+            state = MessagingState(),
             event = {})
     }
 }
@@ -223,7 +237,8 @@ fun PreviewMessagingScreenContentDark() {
 fun PreviewMessagingScreenContentLight() {
     CyclistanceTheme(darkTheme = false) {
         MessagingScreenContent(
-            messagesModel = fakeMessages,
+            uiState = MessagingUiState(),
+            state = MessagingState(),
             event = {})
     }
 }

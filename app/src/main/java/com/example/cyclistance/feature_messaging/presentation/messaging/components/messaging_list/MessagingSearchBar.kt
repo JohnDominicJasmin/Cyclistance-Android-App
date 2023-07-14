@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_messaging.presentation.messages_list.components
+package com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
