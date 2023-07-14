@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components
+package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -6,16 +6,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,26 +29,32 @@ import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.feature_dialogs.presentation.alert_dialog.AlertDialog
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyCallModel
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.add_edit_contact.AddEditContactContent
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallUIState
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EmergencyCallScreenContent(
     modifier: Modifier = Modifier,
+    bottomSheetScaffoldState: ModalBottomSheetState,
+    keyboardActions: KeyboardActions = KeyboardActions { },
     uiState: EmergencyCallUIState,
     state: EmergencyCallState,
+    photoUrl: Any?,
     event: (EmergencyCallUiEvent) -> Unit) {
 
-    val contactsAvailable by remember(state.emergencyCallModel) { derivedStateOf { state.emergencyCallModel.contacts.isNotEmpty() } }
+    val contactsAvailable =
+        remember(state.emergencyCallModel) { state.emergencyCallModel.contacts.isNotEmpty() }
+    val shouldShowAddEditContactDialog =
+        remember(uiState.contactCurrentlyEditing) { uiState.contactCurrentlyEditing != null }
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
-
-        Box(modifier = Modifier) {
-
+        Box {
 
             if (uiState.maximumContactDialogVisible) {
                 AlertDialog(
@@ -67,6 +76,16 @@ fun EmergencyCallScreenContent(
                 )
             }
 
+            if (shouldShowAddEditContactDialog) {
+                AddEditContactContent(
+                    bottomSheetScaffoldState = bottomSheetScaffoldState,
+                    keyboardActions = keyboardActions,
+                    event = event,
+                    state = state,
+                    photoUrl = photoUrl,
+                    uiState = uiState
+                )
+            }
 
 
 
@@ -91,7 +110,7 @@ fun EmergencyCallScreenContent(
                             onClickEdit = {
                                 event(
                                     EmergencyCallUiEvent.OnClickEditContact(
-                                        item.id))
+                                        item))
                             },
                             onClickDelete = {
                                 event(EmergencyCallUiEvent.OnClickDeleteContact(item))
@@ -167,79 +186,35 @@ private val fakeContacts = EmergencyCallModel(
 
         ))
 
+@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun PreviewEmergencyCallScreenContentDark() {
 
 
-    var uiState by rememberSaveable {
+    val uiState by rememberSaveable {
         mutableStateOf(EmergencyCallUIState())
     }
-
-    val showDeleteDialog = remember {
-        { emergencyContact: EmergencyContactModel ->
-            uiState = uiState.copy(deleteDialogVisible = true, contactToDelete = emergencyContact)
-        }
-    }
-
-    val dismissDeleteDialog = remember {
-        {
-            uiState =
-                uiState.copy(deleteDialogVisible = false, contactToDelete = EmergencyContactModel())
-        }
-    }
-
     CyclistanceTheme(darkTheme = true) {
         EmergencyCallScreenContent(
             uiState = uiState,
             state = EmergencyCallState(
                 emergencyCallModel = EmergencyCallModel()
             ),
-            event = { event ->
-                when (event) {
-                    is EmergencyCallUiEvent.OnClickContact -> {
-
-                    }
-
-                    is EmergencyCallUiEvent.OnClickAddContact -> {
-                    }
-
-                    is EmergencyCallUiEvent.OnClickCancel -> {
-                    }
-
-                    is EmergencyCallUiEvent.OnClickDeleteContact -> showDeleteDialog(event.emergencyContact)
-                    is EmergencyCallUiEvent.OnClickEditContact -> {
-
-                    }
-
-                    is EmergencyCallUiEvent.DismissDeleteContactDialog -> dismissDeleteDialog()
-                    is EmergencyCallUiEvent.DeleteContact -> {}
-                    is EmergencyCallUiEvent.DismissMaximumContactDialog -> {}
-
-                }
-            })
+            bottomSheetScaffoldState = rememberModalBottomSheetState(
+                ModalBottomSheetValue.Expanded),
+            photoUrl = EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO,
+            event = {})
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun PreviewEmergencyCallScreenContentLight() {
 
-    var uiState by rememberSaveable {
+    val uiState by rememberSaveable {
         mutableStateOf(EmergencyCallUIState())
-    }
-
-    val showDeleteDialog = remember {
-        { emergencyContact: EmergencyContactModel ->
-            uiState = uiState.copy(deleteDialogVisible = true, contactToDelete = emergencyContact)
-        }
-    }
-
-    val dismissDeleteDialog = remember {
-        {
-            uiState =
-                uiState.copy(deleteDialogVisible = false, contactToDelete = EmergencyContactModel())
-        }
     }
 
     CyclistanceTheme(darkTheme = false) {
@@ -247,30 +222,10 @@ fun PreviewEmergencyCallScreenContentLight() {
             uiState = uiState,
             state = EmergencyCallState(
                 emergencyCallModel = fakeContacts
-            ), event = { event ->
-                when (event) {
-                    is EmergencyCallUiEvent.OnClickContact -> {
-
-                    }
-
-                    is EmergencyCallUiEvent.OnClickAddContact -> {
-
-                    }
-
-                    is EmergencyCallUiEvent.OnClickCancel -> {
-
-                    }
-
-                    is EmergencyCallUiEvent.OnClickDeleteContact -> showDeleteDialog(event.emergencyContact)
-                    is EmergencyCallUiEvent.OnClickEditContact -> {
-
-                    }
-
-                    is EmergencyCallUiEvent.DismissDeleteContactDialog -> dismissDeleteDialog()
-                    is EmergencyCallUiEvent.DeleteContact -> {}
-                    is EmergencyCallUiEvent.DismissMaximumContactDialog -> {}
-                }
-            })
+            ),
+            bottomSheetScaffoldState = rememberModalBottomSheetState(
+                ModalBottomSheetValue.Expanded),
+            photoUrl = EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO, event = {})
     }
 }
 

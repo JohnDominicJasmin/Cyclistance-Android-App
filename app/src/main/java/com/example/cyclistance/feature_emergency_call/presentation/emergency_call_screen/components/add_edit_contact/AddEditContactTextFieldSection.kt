@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.components
+package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.add_edit_contact
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,9 +15,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.event.AddEditContactUiEvent
-import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.state.AddEditContactState
-import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.state.AddEditContactUiState
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallUIState
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.TextFieldCreator
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.TextFieldItem
 import com.example.cyclistance.theme.Black500
@@ -25,10 +25,10 @@ import com.example.cyclistance.theme.Black500
 @Composable
 fun AddEditContextTextFieldSection(
     modifier: Modifier,
-    uiState: AddEditContactUiState,
-    state: AddEditContactState,
+    uiState: EmergencyCallUIState,
+    state: EmergencyCallState,
     keyboardActions: KeyboardActions,
-    event: (AddEditContactUiEvent) -> Unit) {
+    event: (EmergencyCallUiEvent) -> Unit) {
 
 
     Column(
@@ -44,7 +44,7 @@ fun AddEditContextTextFieldSection(
                     autoCorrect = false,
                     keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next),
-                onValueChange = { event(AddEditContactUiEvent.OnChangeName(it)) })
+                onValueChange = { event(EmergencyCallUiEvent.OnChangeName(it)) })
         }
 
         TextFieldCreator(label = "Phone", errorMessage = uiState.phoneNumberErrorMessage) {
@@ -67,7 +67,7 @@ fun AddEditContextTextFieldSection(
                         keyboardType = KeyboardType.Phone,
                         imeAction = ImeAction.Done),
                     keyboardActions = keyboardActions,
-                    onValueChange = { event(AddEditContactUiEvent.OnChangePhoneNumber(it)) })
+                    onValueChange = { event(EmergencyCallUiEvent.OnChangePhoneNumber(it)) })
 
             }
         }
