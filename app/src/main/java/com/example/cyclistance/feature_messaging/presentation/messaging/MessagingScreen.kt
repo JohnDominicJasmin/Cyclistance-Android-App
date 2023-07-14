@@ -1,3 +1,5 @@
+package com.example.cyclistance.feature_messaging.presentation.messaging
+
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -12,18 +14,35 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_messaging.presentation.messaging_conversation.MessagingConversationViewModel
-import com.example.cyclistance.feature_messaging.presentation.messaging_conversation.components.MessagingConversationContent
-import com.example.cyclistance.feature_messaging.presentation.messaging_conversation.event.MessagingConversationUiEvent
-import com.example.cyclistance.feature_messaging.presentation.messaging_conversation.state.MessagingConversationUiState
+import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.MessagingScreenContent
+import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.fakeMessages
+import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingUiEvent
+import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingUiState
 
 @Composable
-fun MessagingConversationScreen(
-    viewModel: MessagingConversationViewModel = viewModel(),
+fun MessagingScreen(
+    viewModel: MessagingViewModel = viewModel(),
     navController: NavController,
     paddingValues: PaddingValues) {
+
+    var uiState by rememberSaveable { mutableStateOf(MessagingUiState()) }
     val state by viewModel.state.collectAsStateWithLifecycle()
-    var uiState by rememberSaveable { mutableStateOf(MessagingConversationUiState()) }
+
+    val onSelectedConversationId = remember {
+        { id: String ->
+            uiState = uiState.copy(
+                selectedConversationId = id
+            )
+        }
+    }
+
+    val onDismissConversationDialog = remember {
+        {
+            uiState = uiState.copy(
+                selectedConversationId = null
+            )
+        }
+    }
 
     val onToggleExpand = remember {
         {
@@ -68,26 +87,21 @@ fun MessagingConversationScreen(
         }
     })
 
-    val onCloseMessageConversationScreen = remember {
-        {
-            navController.popBackStack()
-        }
-    }
 
 
-
-    MessagingConversationContent(
-        modifier = Modifier.padding(paddingValues),
+    MessagingScreenContent(
         uiState = uiState,
-        state = state,
+        state = state.copy(messagesModel = fakeMessages),
         event = { event ->
             when (event) {
-                is MessagingConversationUiEvent.ToggleMessageArea -> onToggleExpand()
-                is MessagingConversationUiEvent.ResetSelectedIndex -> resetSelectedIndex()
-                is MessagingConversationUiEvent.SelectChatItem -> onClickChatItem(event.index)
-                is MessagingConversationUiEvent.OnChangeMessage -> onChangeValueMessage(event.message)
-                is MessagingConversationUiEvent.CloseMessagingConversationScreen -> onCloseMessageConversationScreen()
+                is MessagingUiEvent.ToggleMessageArea -> onToggleExpand()
+                is MessagingUiEvent.ResetSelectedIndex -> resetSelectedIndex()
+                is MessagingUiEvent.SelectChatItem -> onClickChatItem(event.index)
+                is MessagingUiEvent.OnChangeMessage -> onChangeValueMessage(event.message)
+                is MessagingUiEvent.OnSelectedConversation -> onSelectedConversationId(event.conversationId)
+                is MessagingUiEvent.DismissConversationDialog -> onDismissConversationDialog()
             }
-        }
+        },
+        modifier = Modifier.padding(paddingValues)
     )
 }
