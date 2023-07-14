@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_request.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
