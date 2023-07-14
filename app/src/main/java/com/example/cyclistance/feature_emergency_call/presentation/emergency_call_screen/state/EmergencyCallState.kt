@@ -13,5 +13,4 @@ data class EmergencyCallState(
     val emergencyCallModel: EmergencyCallModel = EmergencyCallModel(),
     val nameSnapshot: String = "",
     val phoneNumberSnapshot: String = "",
-    val emergencyCallModel: EmergencyCallModel = EmergencyCallModel()
 ) : Parcelable
