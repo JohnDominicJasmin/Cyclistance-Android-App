@@ -19,7 +19,6 @@ sealed class Screens {
         }
 
         object EmergencyCallScreen : EmergencyCall(screenRoute = "emergency_call_screen")
-        object AddNewContact : EmergencyCall(screenRoute = "emergency_add_new_contact")
     }
 
     open class Messaging(val screenRoute: String = "") : Screens() {

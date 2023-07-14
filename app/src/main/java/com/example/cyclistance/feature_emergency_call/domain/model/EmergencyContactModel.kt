@@ -12,4 +12,8 @@ data class EmergencyContactModel(
     val name: String = "",
     val photo: String = "",
     val phoneNumber: String = ""
-) : Parcelable
+) : Parcelable {
+    fun isEmpty(): Boolean {
+        return name.isEmpty() && photo.isEmpty() && phoneNumber.isEmpty()
+    }
+}

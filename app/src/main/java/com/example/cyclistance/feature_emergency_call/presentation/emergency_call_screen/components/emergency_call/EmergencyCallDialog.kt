@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components
+package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

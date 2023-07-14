@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.components
+package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.add_edit_contact
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -23,7 +23,7 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.event.AddEditContactUiEvent
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
 
 
 @Composable
@@ -31,7 +31,7 @@ fun AddEditPhotoSection(
 
     isOnEditMode: Boolean,
     photoUrl: Any?,
-    event: (AddEditContactUiEvent) -> Unit) {
+    event: (EmergencyCallUiEvent) -> Unit) {
 
 
     val shouldShowAddEditImage = remember(isOnEditMode, photoUrl) {
@@ -51,7 +51,7 @@ fun AddEditPhotoSection(
             modifier = Modifier
                 .size(100.dp)
                 .clip(CircleShape)
-                .clickable { event(AddEditContactUiEvent.ToggleBottomSheet) }
+                .clickable { event(EmergencyCallUiEvent.ToggleBottomSheet) }
         )
 
     }
@@ -63,7 +63,7 @@ fun AddEditPhotoSection(
 private fun AddEditContactImage(
     modifier: Modifier = Modifier,
     photoUrl: Any?,
-    event: (AddEditContactUiEvent) -> Unit) {
+    event: (EmergencyCallUiEvent) -> Unit) {
     Surface(
         modifier = modifier,
         color = (Color.Transparent),
@@ -84,7 +84,7 @@ private fun AddEditContactImage(
                     modifier = Modifier
                         .clip(CircleShape)
                         .fillMaxSize()
-                        .clickable { event(AddEditContactUiEvent.ToggleBottomSheet) },
+                        .clickable { event(EmergencyCallUiEvent.ToggleBottomSheet) },
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
                     error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
@@ -100,7 +100,7 @@ private fun AddEditContactImage(
                         .clip(CircleShape)
                         .fillMaxSize()
                         .size(100.dp)
-                        .clickable { event(AddEditContactUiEvent.ToggleBottomSheet) },
+                        .clickable { event(EmergencyCallUiEvent.ToggleBottomSheet) },
                     contentScale = ContentScale.Crop,
 
                     )
