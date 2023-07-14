@@ -1,13 +1,13 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_request
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_request.components.RescueRequestScreenContent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
-import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_request.components.RescueRequestScreenContent
 
 
 @Composable

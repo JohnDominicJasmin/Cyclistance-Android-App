@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_rescue_results.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_results.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
