@@ -1,6 +1,7 @@
 package com.example.cyclistance.di
 
 import android.content.Context
+import androidx.annotation.Keep
 import com.example.cyclistance.feature_on_boarding.data.repository.IntroSliderRepositoryImpl
 import com.example.cyclistance.feature_on_boarding.domain.repository.IntroSliderRepository
 import com.example.cyclistance.feature_on_boarding.domain.use_case.IntroSliderUseCase
@@ -13,7 +14,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
-
+@Keep
 @Module
 @InstallIn(SingletonComponent::class)
 object IntroSliderModule {

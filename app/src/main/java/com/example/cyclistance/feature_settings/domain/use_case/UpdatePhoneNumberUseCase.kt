@@ -2,7 +2,7 @@ package com.example.cyclistance.feature_settings.domain.use_case
 
 import com.example.cyclistance.core.utils.validation.InputValidate.containsSpecialCharacters
 import com.example.cyclistance.core.utils.validation.InputValidate.isDigit
-import com.example.cyclistance.core.utils.validation.InputValidate.isPhoneNumberLongEnough
+import com.example.cyclistance.core.utils.validation.InputValidate.isPhoneNumberEnough
 import com.example.cyclistance.feature_settings.domain.exceptions.SettingExceptions
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
 
@@ -27,7 +27,7 @@ class UpdatePhoneNumberUseCase(private val repository: SettingRepository) {
             throw SettingExceptions.PhoneNumberException("Phone number must start with 9")
         }
 
-        if(!userPhoneNumber.isPhoneNumberLongEnough()){
+        if (!userPhoneNumber.isPhoneNumberEnough()) {
             throw SettingExceptions.PhoneNumberException("Phone number is invalid")
         }
 

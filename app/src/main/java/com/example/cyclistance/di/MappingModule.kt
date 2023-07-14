@@ -2,14 +2,15 @@ package com.example.cyclistance.di
 
 import android.content.Context
 import android.location.Geocoder
+import androidx.annotation.Keep
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
-import com.example.cyclistance.feature_mapping.data.remote.websockets.RescueTransactionWSClient
-import com.example.cyclistance.feature_mapping.data.remote.websockets.TransactionLiveLocationWSClient
-import com.example.cyclistance.feature_mapping.data.remote.websockets.UserWSClient
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.RescueTransactionWSClient
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.TransactionLiveLocationWSClient
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.UserWSClient
 import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
@@ -50,10 +51,11 @@ import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
+
+@Keep
 @Module
 @InstallIn(SingletonComponent::class)
 object MappingModule {
-
 
 
     @Provides
@@ -146,7 +148,6 @@ object MappingModule {
             getCalculatedDistanceUseCase = GetCalculatedDistanceUseCase(repository),
         )
     }
-
 
 
     @Provides

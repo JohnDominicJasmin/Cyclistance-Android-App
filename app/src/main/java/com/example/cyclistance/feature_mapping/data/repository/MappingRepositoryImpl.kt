@@ -31,7 +31,7 @@ import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCycli
 import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
-import com.example.cyclistance.feature_mapping.domain.websockets.WebSocketClient
+import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClient
 import com.example.cyclistance.service.LocationService
 import com.mapbox.api.directions.v5.DirectionsCriteria
 import com.mapbox.api.directions.v5.models.DirectionsRoute
@@ -67,9 +67,9 @@ class MappingRepositoryImpl(
     private val mapboxDirections: MapboxOptimization.Builder,
     val context: Context,
     private val geocoder: Geocoder,
-    private val scope: CoroutineContext = Dispatchers.IO) : MappingRepository {
+) : MappingRepository {
 
-
+    private val scope: CoroutineContext = Dispatchers.IO
     private var dataStore = context.dataStore
 
     override suspend fun getFullAddress(latitude: Double, longitude: Double): String {
@@ -166,7 +166,7 @@ class MappingRepositoryImpl(
     }
 
     override suspend fun setBikeType(bikeType: String) {
-        return withContext(scope) { dataStore.editData(BIKE_TYPE_KEY, bikeType) }
+        withContext(scope) { dataStore.editData(BIKE_TYPE_KEY, bikeType) }
     }
 
     override suspend fun getAddress(): Flow<String> {

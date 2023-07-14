@@ -9,6 +9,8 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.NavigationConstants
+import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.CancellationReasonScreen
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.ConfirmDetailsScreen
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingScreen
@@ -56,12 +58,12 @@ fun NavGraphBuilder.mappingGraph(
         }
 
 
-        composable(route = Screens.Mapping.ConfirmDetailsScreen.screenRoute + "?${NavigationConstants.LATITUDE}={${NavigationConstants.LATITUDE}}&${NavigationConstants.LONGITUDE}={${NavigationConstants.LONGITUDE}}",
+        composable(route = Screens.Mapping.ConfirmDetailsScreen.screenRoute + "?${LATITUDE}={${LATITUDE}}&${LONGITUDE}={${LONGITUDE}}",
             arguments = listOf(
-                navArgument(NavigationConstants.LATITUDE) {
+                navArgument(LATITUDE) {
                     type = NavType.FloatType; defaultValue = -1f
                 },
-                navArgument(NavigationConstants.LONGITUDE) {
+                navArgument(LONGITUDE) {
                     type = NavType.FloatType; defaultValue = -1f
                 }
             )) {

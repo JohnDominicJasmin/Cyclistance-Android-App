@@ -6,6 +6,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
@@ -16,6 +17,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,17 +29,21 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.core.utils.save_images.ImageUtils.toImageUri
+import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.components.AddEditContactContent
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.event.AddEditContactUiEvent
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.event.AddEditEvent
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.event.AddEditVmEvent
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_add_edit_contact.state.AddEditContactUiState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @OptIn(
@@ -47,7 +53,7 @@ import kotlinx.coroutines.launch
 fun EmergencyAddEditContactScreen(
     navController: NavController,
     paddingValues: PaddingValues,
-    viewModel: AddEditContactViewModel = viewModel()) {
+    viewModel: AddEditContactViewModel = hiltViewModel()) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -163,37 +169,91 @@ fun EmergencyAddEditContactScreen(
 
     val onValueChangeName = remember {
         { name: TextFieldValue ->
-            uiState = uiState.copy(name = name)
+            uiState = uiState.copy(name = name, nameErrorMessage = "")
         }
     }
     val onValueChangePhoneNumber = remember {
         { phoneNumber: TextFieldValue ->
-            uiState = uiState.copy(phoneNumber = phoneNumber)
+            uiState = uiState.copy(phoneNumber = phoneNumber, phoneNumberErrorMessage = "")
+        }
+    }
+
+    val saveAddEditContact = remember {
+        {
+            viewModel.onEvent(
+                event = AddEditVmEvent.SaveContact(
+                    emergencyContactModel = EmergencyContactModel(
+                        id = uiState.contactCurrentlyEditing?.id ?: 0,
+                        name = uiState.name.text,
+                        phoneNumber = uiState.phoneNumber.text,
+                        photo = uiState.selectedImageUri
+                    )
+                ))
         }
     }
     val keyboardActions = remember {
         KeyboardActions(onDone = {
-
+            saveAddEditContact()
         })
     }
-    val cancelAddEditContact = remember {
+
+
+    val onCloseEditContactScreen = remember {
         {
             navController.popBackStack()
             Unit
         }
     }
-    val saveAddEditContact = remember {
-        {
 
+
+    val onSaveContactSuccess = remember {
+        {
+            Toast.makeText(context, "Contact Saved", Toast.LENGTH_LONG).show()
         }
     }
 
-    val onCloseEditContactScreen = remember {
-        {
-            navController.popBackStack()
+    val onUnknownFailure = remember {
+        { message: String ->
+            Toast.makeText(context, message, Toast.LENGTH_LONG).show()
+        }
+    }
+    val onPhoneFailure = remember {
+        { message: String ->
+            uiState = uiState.copy(phoneNumberErrorMessage = message)
+        }
+    }
+    val onNameFailure = remember {
+        { message: String ->
+            uiState = uiState.copy(nameErrorMessage = message)
         }
     }
 
+
+    val onGetContactSuccess = remember {
+        { emergencyContactModel: EmergencyContactModel ->
+            uiState = uiState.copy(
+                contactCurrentlyEditing = emergencyContactModel,
+                photoUrl = emergencyContactModel.photo,
+                name = TextFieldValue(emergencyContactModel.name),
+                phoneNumber = TextFieldValue(emergencyContactModel.phoneNumber)
+            )
+        }
+    }
+
+    LaunchedEffect(key1 = true) {
+        viewModel.eventFlow.collectLatest { event ->
+            when (event) {
+                is AddEditEvent.GetContactSuccess -> onGetContactSuccess(event.emergencyContactModel)
+                is AddEditEvent.SaveContactSuccess -> {
+                    onSaveContactSuccess(); onCloseEditContactScreen()
+                }
+
+                is AddEditEvent.NameFailure -> onNameFailure(event.message)
+                is AddEditEvent.PhoneNumberFailure -> onPhoneFailure(event.message)
+                is AddEditEvent.UnknownFailure -> onUnknownFailure(event.message)
+            }
+        }
+    }
 
 
     AddEditContactContent(
@@ -209,7 +269,7 @@ fun EmergencyAddEditContactScreen(
                 is AddEditContactUiEvent.OpenCamera -> openCamera()
                 is AddEditContactUiEvent.OnChangeName -> onValueChangeName(event.name)
                 is AddEditContactUiEvent.OnChangePhoneNumber -> onValueChangePhoneNumber(event.phoneNumber)
-                is AddEditContactUiEvent.CancelEditContact -> cancelAddEditContact()
+                is AddEditContactUiEvent.CancelEditContact -> onCloseEditContactScreen()
                 is AddEditContactUiEvent.SaveEditContact -> saveAddEditContact()
                 is AddEditContactUiEvent.ToggleBottomSheet -> {
                     toggleBottomSheet()

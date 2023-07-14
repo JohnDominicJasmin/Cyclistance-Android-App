@@ -1,12 +1,12 @@
 package com.example.cyclistance.feature_mapping.data.mapper
 
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.CancellationDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.CancellationReasonDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.RescueTransactionDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.RescueTransactionItemDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.RouteDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.rescue_transaction.StatusDto
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.LocationDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.rescue_transaction.CancellationDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.rescue_transaction.CancellationReasonDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.rescue_transaction.RescueTransactionDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.rescue_transaction.RescueTransactionItemDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.rescue_transaction.RouteDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.rescue_transaction.StatusDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.LocationDto
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.CancellationModel
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.CancellationReasonModel
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
@@ -62,7 +62,7 @@ object RescueTransactionMapper {
         )
     }
 
-     fun LocationModel.toLocationDto(): LocationDto{
+    fun LocationModel.toLocationDto(): LocationDto {
         return LocationDto(
             latitude = this.latitude,
             longitude = this.longitude
@@ -80,12 +80,13 @@ object RescueTransactionMapper {
         )
     }
 
-    private fun RouteModel.toRouteDto(): RouteDto{
+    private fun RouteModel.toRouteDto(): RouteDto {
         return RouteDto(
             startingLocation = this.startingLocation.toLocationDto(),
             destinationLocation = this.destinationLocation.toLocationDto()
         )
     }
+
     private fun CancellationModel.toCancellationDto(): CancellationDto {
         return CancellationDto(
             cancellationReason = this.cancellationReason.toCancellationReasonDto(),
@@ -95,14 +96,14 @@ object RescueTransactionMapper {
         )
     }
 
-    private fun CancellationReasonModel.toCancellationReasonDto(): CancellationReasonDto{
+    private fun CancellationReasonModel.toCancellationReasonDto(): CancellationReasonDto {
         return CancellationReasonDto(
             message = this.message,
             reason = this.reason
         )
     }
 
-    private fun StatusModel.toStatusDto(): StatusDto{
+    private fun StatusModel.toStatusDto(): StatusDto {
         return StatusDto(
             finished = this.finished,
             ongoing = this.onGoing,

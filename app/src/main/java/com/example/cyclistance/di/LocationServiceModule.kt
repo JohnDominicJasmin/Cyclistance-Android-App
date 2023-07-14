@@ -1,10 +1,11 @@
 package com.example.cyclistance.di
 
 import android.content.Context
+import androidx.annotation.Keep
 import androidx.core.app.NotificationCompat
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.feature_mapping.data.local.location.DefaultLocationClient
+import com.example.cyclistance.feature_mapping.data.data_source.local.location.DefaultLocationClient
 import com.example.cyclistance.feature_mapping.domain.location.LocationClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.Priority
@@ -15,6 +16,7 @@ import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
 
+@Keep
 @Module
 @InstallIn(ServiceComponent::class)
 
@@ -33,14 +35,13 @@ object LocationServiceModule {
     }
 
 
-
     @Provides
     @ServiceScoped
     fun provideLocationClient(
         locationRequest: LocationRequest,
         @ApplicationContext context: Context,
 
-    ): LocationClient {
+        ): LocationClient {
         return DefaultLocationClient(
             locationRequest = locationRequest,
             context = context,

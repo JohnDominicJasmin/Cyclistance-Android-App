@@ -48,12 +48,11 @@ fun AddEditContactContent(
     keyboardActions: KeyboardActions = KeyboardActions { },
     event: (AddEditContactUiEvent) -> Unit,
     state: AddEditContactState,
-    photoUrl: Any,
+    photoUrl: Any?,
     uiState: AddEditContactUiState) {
 
-
-    val isOnEditMode by remember(key1 = uiState.idCurrentlyEditing) {
-        derivedStateOf { uiState.idCurrentlyEditing != null }
+    val isOnEditMode by remember(key1 = uiState.contactCurrentlyEditing) {
+        derivedStateOf { uiState.contactCurrentlyEditing != null }
     }
     val isUserInformationChanges by remember(
         uiState.name,
@@ -209,7 +208,7 @@ fun PreviewAddNewContactContentDarkEditMode() {
             bottomSheetScaffoldState = rememberModalBottomSheetState(
                 ModalBottomSheetValue.Expanded),
             event = {},
-            uiState = AddEditContactUiState(idCurrentlyEditing = "1"),
+            uiState = AddEditContactUiState(),
             state = AddEditContactState(),
             photoUrl = PHILIPPINE_RED_CROSS_PHOTO)
     }

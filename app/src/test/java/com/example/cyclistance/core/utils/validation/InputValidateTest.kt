@@ -5,9 +5,8 @@ import com.example.cyclistance.core.utils.validation.InputValidate.containsSpeci
 import com.example.cyclistance.core.utils.validation.InputValidate.isDigit
 import com.example.cyclistance.core.utils.validation.InputValidate.isEmailValid
 import com.example.cyclistance.core.utils.validation.InputValidate.isPasswordStrong
-import com.example.cyclistance.core.utils.validation.InputValidate.isPhoneNumberLongEnough
+import com.example.cyclistance.core.utils.validation.InputValidate.isPhoneNumberEnough
 import com.example.cyclistance.core.utils.validation.InputValidate.numberOfCharactersEnough
-import org.junit.Assert
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -18,14 +17,14 @@ class InputValidateTest {
     fun inputEmailValue_returnsTrue() {
         val input = "johndoe@gmail.com"
         val result = input.isEmailValid()
-        Assert.assertTrue(result)
+        assertTrue(result)
     }
 
     @Test
     fun inputEmailValue_returnsFalse(){
         val input = "johndoe"
         val result = input.isEmailValid()
-        Assert.assertFalse(result)
+        assertFalse(result)
     }
     @Test
     fun `input contains numeric returns true`(){
@@ -88,14 +87,14 @@ class InputValidateTest {
     @Test
     fun `input isPhoneNumberLongEnough returns true`(){
         val input = "1234567890"
-        val result = input.isPhoneNumberLongEnough()
+        val result = input.isPhoneNumberEnough()
         assertTrue(result)
     }
 
     @Test
     fun `input isPhoneNumberLongEnough returns false`(){
         val input = "123456789"
-        val result = input.isPhoneNumberLongEnough()
+        val result = input.isPhoneNumberEnough()
         assertFalse(result)
     }
 

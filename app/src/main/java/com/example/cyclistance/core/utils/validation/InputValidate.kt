@@ -20,7 +20,7 @@ object InputValidate {
     }
     fun String.isDigit() = all { it.isDigit() }
 
-    fun String.isPhoneNumberLongEnough(): Boolean {
+    fun String.isPhoneNumberEnough(): Boolean {
         return toCharArray().size == AuthConstants.PHONE_NUMBER_NUMBER_OF_CHARACTERS
     }
 
