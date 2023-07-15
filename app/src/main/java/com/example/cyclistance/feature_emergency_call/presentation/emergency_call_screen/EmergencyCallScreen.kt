@@ -330,10 +330,10 @@ fun EmergencyCallScreen(
         { emergencyContactModel: EmergencyContactModel ->
             uiState = uiState.copy(
                 contactCurrentlyEditing = emergencyContactModel,
-                photoUrl = emergencyContactModel.photo,
                 name = TextFieldValue(emergencyContactModel.name),
-                phoneNumber = TextFieldValue(emergencyContactModel.phoneNumber)
-            )
+                phoneNumber = TextFieldValue(emergencyContactModel.phoneNumber),
+                nameErrorMessage = "",
+                phoneNumberErrorMessage = "")
         }
     }
 
