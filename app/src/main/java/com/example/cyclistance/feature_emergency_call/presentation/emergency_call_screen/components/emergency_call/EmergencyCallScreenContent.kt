@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO
 import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.feature_dialogs.presentation.alert_dialog.AlertDialog
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyCallModel
@@ -44,7 +45,6 @@ fun EmergencyCallScreenContent(
     keyboardActions: KeyboardActions = KeyboardActions { },
     uiState: EmergencyCallUIState,
     state: EmergencyCallState,
-    photoUrl: Any?,
     event: (EmergencyCallUiEvent) -> Unit) {
 
     val contactsAvailable =
@@ -82,7 +82,6 @@ fun EmergencyCallScreenContent(
                     keyboardActions = keyboardActions,
                     event = event,
                     state = state,
-                    photoUrl = photoUrl,
                     uiState = uiState
                 )
             }
@@ -144,7 +143,7 @@ private val fakeContacts = EmergencyCallModel(
         EmergencyContactModel(
             id = 1,
             name = EmergencyCallConstants.PHILIPPINE_RED_CROSS,
-            photo = EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO,
+            photo = PHILIPPINE_RED_CROSS_PHOTO,
             phoneNumber = "123456789"
         ),
         EmergencyContactModel(
@@ -197,13 +196,18 @@ fun PreviewEmergencyCallScreenContentDark() {
     }
     CyclistanceTheme(darkTheme = true) {
         EmergencyCallScreenContent(
-            uiState = uiState,
+            uiState = uiState.copy(
+                contactCurrentlyEditing =
+                EmergencyContactModel(
+                    id = 1,
+                    name = "John Doe",
+                    photo = PHILIPPINE_RED_CROSS_PHOTO,
+                    phoneNumber = "123456789")),
             state = EmergencyCallState(
                 emergencyCallModel = EmergencyCallModel()
             ),
             bottomSheetScaffoldState = rememberModalBottomSheetState(
                 ModalBottomSheetValue.Expanded),
-            photoUrl = EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO,
             event = {})
     }
 }
@@ -219,13 +223,18 @@ fun PreviewEmergencyCallScreenContentLight() {
 
     CyclistanceTheme(darkTheme = false) {
         EmergencyCallScreenContent(
-            uiState = uiState,
+            uiState = uiState.copy(
+                contactCurrentlyEditing = EmergencyContactModel(
+                    id = 1,
+                    name = "John Doe",
+                    photo = PHILIPPINE_RED_CROSS_PHOTO,
+                    phoneNumber = "123456789"
+                )),
             state = EmergencyCallState(
                 emergencyCallModel = fakeContacts
             ),
             bottomSheetScaffoldState = rememberModalBottomSheetState(
-                ModalBottomSheetValue.Expanded),
-            photoUrl = EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO, event = {})
+                ModalBottomSheetValue.Expanded), event = {})
     }
 }
 

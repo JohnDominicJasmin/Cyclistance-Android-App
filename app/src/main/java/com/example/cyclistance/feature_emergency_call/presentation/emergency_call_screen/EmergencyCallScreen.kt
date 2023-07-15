@@ -365,7 +365,6 @@ fun EmergencyCallScreen(
         uiState = uiState,
         modifier = Modifier.padding(paddingValues),
         state = state,
-        photoUrl = imageBitmap?.asImageBitmap() ?: uiState.photoUrl,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         keyboardActions = keyboardActions,
         event = { event ->

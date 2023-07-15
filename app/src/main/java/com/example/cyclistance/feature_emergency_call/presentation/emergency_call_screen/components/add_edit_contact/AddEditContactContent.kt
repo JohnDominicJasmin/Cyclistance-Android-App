@@ -50,7 +50,6 @@ fun AddEditContactContent(
     keyboardActions: KeyboardActions = KeyboardActions { },
     event: (EmergencyCallUiEvent) -> Unit,
     state: EmergencyCallState,
-    photoUrl: Any?,
     uiState: EmergencyCallUIState) {
 
     val isOnEditMode by remember(key1 = uiState.contactCurrentlyEditing) {
@@ -121,7 +120,7 @@ fun AddEditContactContent(
 
                             AddEditPhotoSection(
                                 isOnEditMode = isOnEditMode,
-                                photoUrl = photoUrl,
+                                emergencyContact = uiState.contactCurrentlyEditing,
                                 event = event)
 
                         }
@@ -214,8 +213,7 @@ fun PreviewAddNewContactContentDarkEditMode() {
                 ModalBottomSheetValue.Expanded),
             event = {},
             uiState = EmergencyCallUIState(),
-            state = EmergencyCallState(),
-            photoUrl = PHILIPPINE_RED_CROSS_PHOTO)
+            state = EmergencyCallState())
     }
 }
 
@@ -228,9 +226,14 @@ fun PreviewAddNewContactContentDark() {
             bottomSheetScaffoldState = rememberModalBottomSheetState(
                 ModalBottomSheetValue.Hidden),
             event = {},
-            uiState = EmergencyCallUIState(),
+            uiState = EmergencyCallUIState(
+                contactCurrentlyEditing = EmergencyContactModel(
+                    name = "Philippine Red Cross",
+                    photo = PHILIPPINE_RED_CROSS_PHOTO,
+                    phoneNumber = "143",
+                    id = 1)),
             state = EmergencyCallState(),
-            photoUrl = PHILIPPINE_RED_CROSS_PHOTO)
+        )
     }
 }
 
@@ -243,8 +246,14 @@ fun PreviewAddNewContactContentLight() {
             bottomSheetScaffoldState = rememberModalBottomSheetState(
                 ModalBottomSheetValue.Expanded),
             event = {},
-            uiState = EmergencyCallUIState(),
-            state = EmergencyCallState(), photoUrl = PHILIPPINE_RED_CROSS_PHOTO)
+            uiState = EmergencyCallUIState(
+                contactCurrentlyEditing = EmergencyContactModel(
+                    name = "Philippine Red Cross",
+                    photo = PHILIPPINE_RED_CROSS_PHOTO,
+                    phoneNumber = "143",
+                    id = 1)),
+            state = EmergencyCallState(),
+        )
     }
 }
 
