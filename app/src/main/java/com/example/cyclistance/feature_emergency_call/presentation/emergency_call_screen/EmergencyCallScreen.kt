@@ -100,8 +100,14 @@ fun EmergencyCallScreen(
             if (!maximumContactReached) {
                 uiState = uiState.copy(
                     contactCurrentlyEditing = EmergencyContactModel(),
+                    name = TextFieldValue(""),
+                    phoneNumber = TextFieldValue(""),
+                    nameErrorMessage = "",
+                    phoneNumberErrorMessage = ""
                 )
             }
+
+            viewModel.onEvent(event = EmergencyCallVmEvent.ResetSnapshot)
             uiState = uiState.copy(maximumContactDialogVisible = maximumContactReached)
 
         }
