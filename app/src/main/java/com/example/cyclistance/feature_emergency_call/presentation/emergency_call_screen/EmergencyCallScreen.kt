@@ -248,11 +248,9 @@ fun EmergencyCallScreen(
                 is EmergencyCallEvent.ContactDeleteFailed -> {
                     Toast.makeText(context, "Failed to delete contact", Toast.LENGTH_SHORT).show()
                 }
-
                 is EmergencyCallEvent.ContactDeleteSuccess -> {
                     Toast.makeText(context, "Contact deleted", Toast.LENGTH_SHORT).show()
                 }
-
                 is EmergencyCallEvent.GetContactSuccess -> onGetContactSuccess(event.emergencyContactModel)
                 is EmergencyCallEvent.NameFailure -> onNameFailure(event.message)
                 is EmergencyCallEvent.PhoneNumberFailure -> onPhoneFailure(event.message)

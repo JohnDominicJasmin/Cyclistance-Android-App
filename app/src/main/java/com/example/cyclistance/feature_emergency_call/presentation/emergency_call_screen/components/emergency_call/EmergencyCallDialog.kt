@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -25,6 +24,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -40,9 +40,12 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY_NUMBER
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY_PHOTO
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_NUMBER
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyCallModel
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
@@ -50,8 +53,16 @@ import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
-private val emergencyContactModel = EmergencyCallModel(
+val emergencyContactModel1 = EmergencyCallModel(
     contacts = listOf(
+        EmergencyContactModel(
+            name = PHILIPPINE_RED_CROSS,
+            photo = PHILIPPINE_RED_CROSS_PHOTO,
+            phoneNumber = PHILIPPINE_RED_CROSS_NUMBER),
+        EmergencyContactModel(
+            name = NATIONAL_EMERGENCY,
+            photo = NATIONAL_EMERGENCY_PHOTO,
+            phoneNumber = NATIONAL_EMERGENCY_NUMBER),
         EmergencyContactModel(
             id = 1,
             name = "John Doe",
@@ -92,7 +103,9 @@ private val emergencyContactModel = EmergencyCallModel(
 @Composable
 fun EmergencyCallDialog(
     modifier: Modifier = Modifier,
+    emergencyCallModel: EmergencyCallModel,
     onDismiss: () -> Unit,
+    onClick: (EmergencyContactModel) -> Unit,
 ) {
     var dialogOpen by rememberSaveable { mutableStateOf(true) }
 
@@ -134,9 +147,10 @@ fun EmergencyCallDialog(
 
                     ContactSection(
                         modifier = Modifier,
-                        emergencyCallModel = emergencyContactModel,
+                        emergencyCallModel = emergencyCallModel,
                         onClick = {
                             onDismiss()
+                            onClick(it)
                         })
 
 
@@ -170,30 +184,12 @@ fun EmergencyCallDialog(
 private fun ContactSection(
     modifier: Modifier = Modifier,
     emergencyCallModel: EmergencyCallModel,
-    onClick: (Int) -> Unit) {
+    onClick: (EmergencyContactModel) -> Unit) {
     Column(
         modifier = modifier.padding(vertical = 4.dp, horizontal = 2.dp),
         verticalArrangement = Arrangement.spacedBy(7.dp)) {
 
-        Row {
 
-            DialogEmergencyItem(
-                modifier = Modifier.weight(0.5f),
-                imageUrl = PHILIPPINE_RED_CROSS_PHOTO,
-                name = PHILIPPINE_RED_CROSS,
-                id = 1,
-                onClick = onClick)
-
-
-            DialogEmergencyItem(
-                modifier = Modifier.weight(0.5f),
-                imageUrl = NATIONAL_EMERGENCY_PHOTO,
-                name = NATIONAL_EMERGENCY,
-                id = 2,
-                onClick = onClick)
-
-
-        }
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
             maxItemsInEachRow = 3,
@@ -205,13 +201,9 @@ private fun ContactSection(
             repeat(contacts.indices.count()) {
                 DialogEmergencyItem(
                     modifier = Modifier.weight(0.3f),
-                    imageUrl = contacts[it].photo,
-                    name = contacts[it].name,
-                    id = contacts[it].id,
+                    emergencyContact = contacts[it],
                     onClick = onClick)
             }
-
-
         }
     }
 }
@@ -219,7 +211,19 @@ private fun ContactSection(
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun DialogEmergencyItem(
-    modifier: Modifier, imageUrl: String, name: String, id: Int, onClick: (Int) -> Unit) {
+    modifier: Modifier,
+    emergencyContact: EmergencyContactModel,
+    onClick: (EmergencyContactModel) -> Unit) {
+
+    val imageModel = remember(emergencyContact.name, emergencyContact.photo) {
+        if (emergencyContact.photo != NATIONAL_EMERGENCY_PHOTO &&
+            emergencyContact.photo != PHILIPPINE_RED_CROSS_PHOTO) {
+
+            "${EmergencyCallConstants.DICE_BEAR_URL}${emergencyContact.name}"
+        } else {
+            emergencyContact.photo
+        }
+    }
 
 
     Column(
@@ -229,11 +233,11 @@ private fun DialogEmergencyItem(
         horizontalAlignment = Alignment.CenterHorizontally) {
 
         Surface(
-            onClick = { onClick(id) },
+            onClick = { onClick(emergencyContact) },
             shape = CircleShape,
         ) {
             AsyncImage(
-                model = imageUrl,
+                model = imageModel,
                 alignment = Alignment.Center,
                 contentDescription = "User Profile Image",
                 modifier = Modifier
@@ -245,7 +249,7 @@ private fun DialogEmergencyItem(
                 fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
         }
         Text(
-            text = name,
+            text = emergencyContact.name,
             textAlign = TextAlign.Center,
             style = MaterialTheme.typography.caption,
             modifier = Modifier.padding(all = 2.dp),
@@ -258,11 +262,17 @@ private fun DialogEmergencyItem(
 fun PreviewDialogEmergencyItem() {
     CyclistanceTheme(darkTheme = true) {
         Box(modifier = Modifier.background(MaterialTheme.colors.onSurface)) {
-            DialogEmergencyItem(modifier = Modifier.width(70.dp),
-                imageUrl = PHILIPPINE_RED_CROSS_PHOTO,
-                name = PHILIPPINE_RED_CROSS,
-                id = 11,
-                onClick = {})
+            DialogEmergencyItem(
+                modifier = Modifier.width(70.dp),
+                emergencyContact = EmergencyContactModel(
+                    photo = PHILIPPINE_RED_CROSS_PHOTO,
+                    name = PHILIPPINE_RED_CROSS,
+                    id = 11,
+                    phoneNumber = "1234",
+
+                    ),
+                onClick = {},
+            )
         }
     }
 }
@@ -272,6 +282,6 @@ fun PreviewDialogEmergencyItem() {
 @Composable
 fun PreviewEmergencyCallDialog() {
     CyclistanceTheme(darkTheme = true) {
-        EmergencyCallDialog(onDismiss = {})
+        EmergencyCallDialog(onDismiss = {}, emergencyCallModel = EmergencyCallModel(), onClick = {})
     }
 }

@@ -29,6 +29,7 @@ import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.N
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogForegroundLocationPermission
 import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogPhonePermission
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call.EmergencyCallDialog
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.banner.MappingExpandableBanner
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
@@ -56,6 +57,7 @@ fun MappingScreenContent(
     modifier: Modifier,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     state: MappingState,
+    emergencyState: EmergencyCallState,
     mapboxMap: MapboxMap?,
     hasTransaction: Boolean = false,
     isRescueCancelled: Boolean = false,
@@ -250,7 +252,16 @@ fun MappingScreenContent(
                                 width = Dimension.matchParent
                                 height = Dimension.wrapContent
                             },
-                            onDismiss = { event(MappingUiEvent.DismissEmergencyCallDialog) }
+                            onDismiss = { event(MappingUiEvent.DismissEmergencyCallDialog) },
+                            emergencyCallModel = emergencyState.emergencyCallModel,
+                            onClick = {
+                                event(
+                                    MappingUiEvent.OnEmergencyCall(
+                                        it.phoneNumber
+                                    )
+                                )
+                            }
+
                         )
                     }
 
