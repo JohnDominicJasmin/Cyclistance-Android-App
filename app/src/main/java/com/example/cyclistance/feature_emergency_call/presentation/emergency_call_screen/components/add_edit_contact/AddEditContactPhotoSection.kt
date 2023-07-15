@@ -20,22 +20,39 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.DICE_BEAR_URL
+import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
+import com.example.cyclistance.navigation.IsDarkTheme
 
 
 @Composable
 fun AddEditPhotoSection(
-
     isOnEditMode: Boolean,
-    photoUrl: Any?,
+    emergencyContact: EmergencyContactModel?,
     event: (EmergencyCallUiEvent) -> Unit) {
 
 
-    val shouldShowAddEditImage = remember(isOnEditMode, photoUrl) {
-        isOnEditMode.or(photoUrl != null)
+    val isDarkTheme = IsDarkTheme.current
+
+    val shouldShowAddEditImage = remember(isOnEditMode, emergencyContact?.photo) {
+        isOnEditMode.or(emergencyContact?.photo?.isNotEmpty() == true)
     }
 
+    val imageModel = remember(emergencyContact?.name, emergencyContact?.photo) {
+        if (emergencyContact?.photo != EmergencyCallConstants.NATIONAL_EMERGENCY_PHOTO &&
+            emergencyContact?.photo != EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO) {
+
+            "$DICE_BEAR_URL${emergencyContact?.name}"
+        } else {
+            emergencyContact.photo
+        }
+    }
+
+
     if (shouldShowAddEditImage) {
+
         AddEditContactImage(
             photoUrl = imageModel,
             event = event,
