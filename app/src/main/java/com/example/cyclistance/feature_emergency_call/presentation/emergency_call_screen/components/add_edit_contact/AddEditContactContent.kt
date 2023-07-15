@@ -124,11 +124,6 @@ fun AddEditContactContent(
                                 photoUrl = photoUrl,
                                 event = event)
 
-                            Text(
-                                text = if (isOnEditMode) "Change Photo" else "Add Photo",
-                                color = MaterialTheme.colors.onBackground,
-                                style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                            )
                         }
 
 
