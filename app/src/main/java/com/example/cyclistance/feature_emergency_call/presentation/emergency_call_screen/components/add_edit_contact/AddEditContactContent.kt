@@ -13,7 +13,6 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.rememberModalBottomSheetState
@@ -23,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -31,8 +29,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO
-import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogCameraPermission
-import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogFilesAndMediaPermission
+import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallUIState
@@ -92,11 +89,9 @@ fun AddEditContactContent(
                 SelectImageBottomSheet(
                     onClickGalleryButton = {
                         event(EmergencyCallUiEvent.ToggleBottomSheet)
-                        event(EmergencyCallUiEvent.SelectImageFromGallery)
                     },
                     onClickCameraButton = {
                         event(EmergencyCallUiEvent.ToggleBottomSheet)
-                        event(EmergencyCallUiEvent.OpenCamera)
                     },
                     bottomSheetScaffoldState = bottomSheetScaffoldState,
                     isLoading = state.isLoading) {
@@ -153,35 +148,6 @@ fun AddEditContactContent(
                             negativeButtonEnabled = !state.isLoading,
                             positiveButtonEnabled = !state.isLoading && isUserInformationChanges
                         )
-
-
-
-
-                        if (uiState.cameraPermissionDialogVisible) {
-                            DialogCameraPermission(modifier = Modifier.constrainAs(permissionDialog) {
-                                end.linkTo(parent.end)
-                                start.linkTo(parent.start)
-                                bottom.linkTo(parent.bottom)
-                                height = Dimension.wrapContent
-                                centerTo(parent)
-                            }, onDismiss = {
-                                event(EmergencyCallUiEvent.DismissCameraDialog)
-                            })
-                        }
-
-                        if (uiState.filesAndMediaDialogVisible) {
-                            DialogFilesAndMediaPermission(
-                                modifier = Modifier.constrainAs(
-                                    permissionDialog) {
-                                    end.linkTo(parent.end)
-                                    start.linkTo(parent.start)
-                                    bottom.linkTo(parent.bottom)
-                                    height = Dimension.wrapContent
-                                    centerTo(parent)
-                                }, onDismiss = {
-                                    event(EmergencyCallUiEvent.DismissFilesAndMediaDialog)
-                                })
-                        }
 
                         if (state.isLoading) {
                             CircularProgressIndicator(modifier = Modifier.constrainAs(progressBar) {

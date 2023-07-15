@@ -17,12 +17,9 @@ data class EmergencyCallUIState(
     val maximumContactDialogVisible: Boolean = false,
 
     val selectedImageUri: String = "",
-    val photoUrl: String? = null,
     val name: @RawValue TextFieldValue = TextFieldValue(""),
     val nameErrorMessage: String = "",
     val phoneNumber: @RawValue TextFieldValue = TextFieldValue(""),
     val phoneNumberErrorMessage: String = "",
-    val cameraPermissionDialogVisible: Boolean = false,
-    val filesAndMediaDialogVisible: Boolean = false,
     val contactCurrentlyEditing: EmergencyContactModel? = null,
 ) : Parcelable
