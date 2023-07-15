@@ -40,14 +40,16 @@ fun AddEditPhotoSection(
 
     if (shouldShowAddEditImage) {
         AddEditContactImage(
-            photoUrl = photoUrl, event = event, modifier = Modifier
-                .size(125.dp))
+            photoUrl = imageModel,
+            event = event,
+            modifier = Modifier.size(125.dp))
+
     } else {
 
         Icon(
-            painter = painterResource(id = R.drawable.ic_add_to_contact),
+            painter = painterResource(id = if (isDarkTheme) R.drawable.ic_add_new_contact_dark else R.drawable.ic_add_new_contact_light),
             contentDescription = "Add new contact",
-            tint = MaterialTheme.colors.primary,
+            tint = Color.Unspecified,
             modifier = Modifier
                 .size(100.dp)
                 .clip(CircleShape)
