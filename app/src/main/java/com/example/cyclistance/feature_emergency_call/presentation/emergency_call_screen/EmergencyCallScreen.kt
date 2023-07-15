@@ -115,12 +115,7 @@ fun EmergencyCallScreen(
 
     val onClickEditContact = remember {
         { model: EmergencyContactModel ->
-            uiState = uiState.copy(
-                contactCurrentlyEditing = model,
-                photoUrl = model.photo,
-                name = TextFieldValue(model.name),
-                phoneNumber = TextFieldValue(model.phoneNumber)
-            )
+            viewModel.onEvent(event = EmergencyCallVmEvent.GetContact(model.id))
         }
     }
 

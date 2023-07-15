@@ -3,7 +3,6 @@ package com.example.cyclistance.feature_emergency_call.presentation.emergency_ca
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.EMERGENCY_CALL_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY_NUMBER
@@ -85,8 +84,9 @@ class EmergencyCallViewModel @Inject constructor(
         }
     }
 
-        id ?: return
-        emergencyCallUseCase.getContactUseCase(id.toInt()).catch {
+    private fun getContact(id: Int) {
+
+        emergencyCallUseCase.getContactUseCase(id).catch {
             Timber.e("Error getting contact")
         }.onEach { contact ->
             _eventFlow.emit(value = EmergencyCallEvent.GetContactSuccess(contact))
@@ -96,7 +96,7 @@ class EmergencyCallViewModel @Inject constructor(
                     phoneNumberSnapshot = contact.phoneNumber
                 )
             }
-            savedStateHandle[EmergencyCallConstants.ADD_EDIT_CONTACT_VM_STATE_KEY] = state.value
+            savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value
         }.launchIn(viewModelScope)
 
     }

@@ -11,4 +11,7 @@ sealed class EmergencyCallVmEvent {
 
     data class DeleteContact(val emergencyContactModel: EmergencyContactModel) :
         EmergencyCallVmEvent()
+
+    data class GetContact(val id: Int) : EmergencyCallVmEvent()
+
 }
