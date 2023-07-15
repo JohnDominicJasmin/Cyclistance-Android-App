@@ -40,6 +40,7 @@ sealed class MappingUiEvent{
     object DismissRescueResultsDialog : MappingUiEvent()
     object DismissSinoTrackWebView : MappingUiEvent()
     object ShowSinoTrackWebView : MappingUiEvent()
+    data class OnEmergencyCall(val phoneNumber: String) : MappingUiEvent()
 
 
     data class CancelRequestHelp(val id: String) : MappingUiEvent()

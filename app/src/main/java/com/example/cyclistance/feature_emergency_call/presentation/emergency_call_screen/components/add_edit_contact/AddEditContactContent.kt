@@ -98,7 +98,7 @@ fun AddEditContactContent(
 
                     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
-                        val (addPhoto, content, button, permissionDialog, progressBar) = createRefs()
+                        val (addPhoto, content, button, progressBar) = createRefs()
 
                         Column(
                             modifier = Modifier

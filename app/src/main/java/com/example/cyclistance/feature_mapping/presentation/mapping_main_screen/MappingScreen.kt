@@ -31,6 +31,7 @@ import com.example.cyclistance.core.utils.contexts.callPhoneNumber
 import com.example.cyclistance.core.utils.contexts.startLocationServiceIntentAction
 import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.EmergencyCallViewModel
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.*
@@ -46,6 +47,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.mapbox.core.constants.Constants.PRECISION_6
@@ -71,6 +73,7 @@ import timber.log.Timber
 fun MappingScreen(
     hasInternetConnection: Boolean,
     mappingViewModel: MappingViewModel = hiltViewModel(),
+    emergencyViewModel: EmergencyCallViewModel = hiltViewModel(),
     paddingValues: PaddingValues,
     isNavigating: Boolean,
     onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
@@ -79,6 +82,7 @@ fun MappingScreen(
 
     val context = LocalContext.current
     val state by mappingViewModel.state.collectAsStateWithLifecycle()
+    val emergencyState by emergencyViewModel.state.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
     var uiState by rememberSaveable { mutableStateOf(MappingUiState()) }
@@ -605,11 +609,38 @@ fun MappingScreen(
         }
     }
 
-    val onDismissRescueResultsDialog = remember{{
-        uiState = uiState.copy(
-            isRescueResultsDialogVisible = false
-        )
-    }}
+    val onDismissRescueResultsDialog = remember {
+        {
+            uiState = uiState.copy(
+                isRescueResultsDialogVisible = false
+            )
+        }
+    }
+
+    val callPhoneNumber = remember {
+        { phoneNumber: String ->
+            context.callPhoneNumber(phoneNumber)
+        }
+    }
+
+    val openPhoneCallPermissionState =
+        rememberPermissionState(permission = Manifest.permission.CALL_PHONE) { permissionGranted ->
+            if (permissionGranted) {
+                uiState.selectedPhoneNumber.takeIf { it.isNotEmpty() }
+                    ?.let { callPhoneNumber(it) }
+            }
+        }
+
+    val onEmergencyCall = remember {
+        { phoneNumber: String ->
+            if (!openPhoneCallPermissionState.status.isGranted) {
+                uiState = uiState.copy(selectedPhoneNumber = phoneNumber)
+                openPhoneCallPermissionState.launchPermissionRequest()
+            } else {
+                callPhoneNumber(phoneNumber)
+            }
+        }
+    }
 
     LaunchedEffect(key1 = true, key2 = state.userLocation) {
 
@@ -875,6 +906,7 @@ fun MappingScreen(
         isNavigating = isNavigating,
         mapboxMap = mapboxMap,
         uiState = uiState,
+        emergencyState = emergencyState,
         event = { event ->
             when (event) {
                 is MappingUiEvent.RequestHelp -> onClickRequestHelpButton()
@@ -915,6 +947,7 @@ fun MappingScreen(
                 is MappingUiEvent.DismissSinoTrackWebView -> onDismissSinoTrackWebView()
                 is MappingUiEvent.ShowSinoTrackWebView -> onShowSinoTrackWebView()
                 is MappingUiEvent.DismissRescueResultsDialog -> onDismissRescueResultsDialog()
+                is MappingUiEvent.OnEmergencyCall -> onEmergencyCall(event.phoneNumber)
 
 
             }
