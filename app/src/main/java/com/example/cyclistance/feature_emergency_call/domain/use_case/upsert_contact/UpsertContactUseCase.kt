@@ -31,24 +31,23 @@ class UpsertContactUseCase(
             throw SettingExceptions.PhoneNumberException("Phone number must not contain special characters.")
         }
 
-        repository.getContacts().first().apply {
 
+        repository.getContacts().first().contacts.apply {
 
-            this.contacts.apply {
-                find {
-                    it.id != emergencyContact.id
-                }?.let {
+            val isNameExist = any {
+                it.name.trim() == emergencyContact.name.trim() && it.id != emergencyContact.id
+            }
 
-                    if (it.name == emergencyContact.name) {
-                        throw EmergencyCallExceptions.NameException("Name already exists.")
-                    }
+            val isPhoneNumberExist = any {
+                it.phoneNumber.trim() == emergencyContact.phoneNumber.trim() && it.id != emergencyContact.id
+            }
 
-                    if (it.phoneNumber == emergencyContact.phoneNumber) {
-                        throw EmergencyCallExceptions.PhoneNumberException("Phone number already exists.")
-                    }
+            if (isNameExist) {
+                throw EmergencyCallExceptions.NameException("Name already exists.")
+            }
 
-                }
-
+            if (isPhoneNumberExist) {
+                throw EmergencyCallExceptions.PhoneNumberException("Phone number already exists.")
             }
         }
 

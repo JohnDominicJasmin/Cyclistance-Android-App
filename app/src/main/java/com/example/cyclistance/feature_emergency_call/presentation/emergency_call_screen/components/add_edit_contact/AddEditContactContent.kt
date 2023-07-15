@@ -13,7 +13,6 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.rememberModalBottomSheetState
@@ -23,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -31,8 +29,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO
-import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogCameraPermission
-import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogFilesAndMediaPermission
+import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallUIState
@@ -50,7 +47,6 @@ fun AddEditContactContent(
     keyboardActions: KeyboardActions = KeyboardActions { },
     event: (EmergencyCallUiEvent) -> Unit,
     state: EmergencyCallState,
-    photoUrl: Any?,
     uiState: EmergencyCallUIState) {
 
     val isOnEditMode by remember(key1 = uiState.contactCurrentlyEditing) {
@@ -93,11 +89,9 @@ fun AddEditContactContent(
                 SelectImageBottomSheet(
                     onClickGalleryButton = {
                         event(EmergencyCallUiEvent.ToggleBottomSheet)
-                        event(EmergencyCallUiEvent.SelectImageFromGallery)
                     },
                     onClickCameraButton = {
                         event(EmergencyCallUiEvent.ToggleBottomSheet)
-                        event(EmergencyCallUiEvent.OpenCamera)
                     },
                     bottomSheetScaffoldState = bottomSheetScaffoldState,
                     isLoading = state.isLoading) {
@@ -121,14 +115,9 @@ fun AddEditContactContent(
 
                             AddEditPhotoSection(
                                 isOnEditMode = isOnEditMode,
-                                photoUrl = photoUrl,
+                                emergencyContact = uiState.contactCurrentlyEditing,
                                 event = event)
 
-                            Text(
-                                text = if (isOnEditMode) "Change Photo" else "Add Photo",
-                                color = MaterialTheme.colors.onBackground,
-                                style = MaterialTheme.typography.body2.copy(fontWeight = FontWeight.SemiBold),
-                            )
                         }
 
 
@@ -160,35 +149,6 @@ fun AddEditContactContent(
                             positiveButtonEnabled = !state.isLoading && isUserInformationChanges
                         )
 
-
-
-
-                        if (uiState.cameraPermissionDialogVisible) {
-                            DialogCameraPermission(modifier = Modifier.constrainAs(permissionDialog) {
-                                end.linkTo(parent.end)
-                                start.linkTo(parent.start)
-                                bottom.linkTo(parent.bottom)
-                                height = Dimension.wrapContent
-                                centerTo(parent)
-                            }, onDismiss = {
-                                event(EmergencyCallUiEvent.DismissCameraDialog)
-                            })
-                        }
-
-                        if (uiState.filesAndMediaDialogVisible) {
-                            DialogFilesAndMediaPermission(
-                                modifier = Modifier.constrainAs(
-                                    permissionDialog) {
-                                    end.linkTo(parent.end)
-                                    start.linkTo(parent.start)
-                                    bottom.linkTo(parent.bottom)
-                                    height = Dimension.wrapContent
-                                    centerTo(parent)
-                                }, onDismiss = {
-                                    event(EmergencyCallUiEvent.DismissFilesAndMediaDialog)
-                                })
-                        }
-
                         if (state.isLoading) {
                             CircularProgressIndicator(modifier = Modifier.constrainAs(progressBar) {
                                 top.linkTo(parent.top)
@@ -219,8 +179,7 @@ fun PreviewAddNewContactContentDarkEditMode() {
                 ModalBottomSheetValue.Expanded),
             event = {},
             uiState = EmergencyCallUIState(),
-            state = EmergencyCallState(),
-            photoUrl = PHILIPPINE_RED_CROSS_PHOTO)
+            state = EmergencyCallState())
     }
 }
 
@@ -233,9 +192,14 @@ fun PreviewAddNewContactContentDark() {
             bottomSheetScaffoldState = rememberModalBottomSheetState(
                 ModalBottomSheetValue.Hidden),
             event = {},
-            uiState = EmergencyCallUIState(),
+            uiState = EmergencyCallUIState(
+                contactCurrentlyEditing = EmergencyContactModel(
+                    name = "Philippine Red Cross",
+                    photo = PHILIPPINE_RED_CROSS_PHOTO,
+                    phoneNumber = "143",
+                    id = 1)),
             state = EmergencyCallState(),
-            photoUrl = PHILIPPINE_RED_CROSS_PHOTO)
+        )
     }
 }
 
@@ -248,8 +212,14 @@ fun PreviewAddNewContactContentLight() {
             bottomSheetScaffoldState = rememberModalBottomSheetState(
                 ModalBottomSheetValue.Expanded),
             event = {},
-            uiState = EmergencyCallUIState(),
-            state = EmergencyCallState(), photoUrl = PHILIPPINE_RED_CROSS_PHOTO)
+            uiState = EmergencyCallUIState(
+                contactCurrentlyEditing = EmergencyContactModel(
+                    name = "Philippine Red Cross",
+                    photo = PHILIPPINE_RED_CROSS_PHOTO,
+                    phoneNumber = "143",
+                    id = 1)),
+            state = EmergencyCallState(),
+        )
     }
 }
 

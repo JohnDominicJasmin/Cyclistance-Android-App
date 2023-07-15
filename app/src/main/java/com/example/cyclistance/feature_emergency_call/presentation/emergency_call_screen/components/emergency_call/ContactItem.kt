@@ -33,6 +33,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.DICE_BEAR_URL
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY_PHOTO
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.theme.Black500
 
@@ -45,6 +48,18 @@ fun ContactItem(
     onClickDelete: () -> Unit,
     emergencyContact: EmergencyContactModel) {
 
+
+    val imageModel = remember(emergencyContact.name, emergencyContact.photo) {
+        if (emergencyContact.photo != NATIONAL_EMERGENCY_PHOTO &&
+            emergencyContact.photo != PHILIPPINE_RED_CROSS_PHOTO) {
+            "$DICE_BEAR_URL${emergencyContact.name}"
+        } else {
+            emergencyContact.photo
+        }
+    }
+
+
+
     Surface(
         onClick = onClick,
         color = MaterialTheme.colors.background,
@@ -53,11 +68,10 @@ fun ContactItem(
         Row(
             modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp, alignment = Alignment.Start)
-        ) {
+            horizontalArrangement = Arrangement.spacedBy(12.dp, alignment = Alignment.Start)) {
 
             AsyncImage(
-                model = emergencyContact.photo,
+                model = imageModel,
                 alignment = Alignment.Center,
                 contentDescription = "User Profile Image",
                 modifier = Modifier

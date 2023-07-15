@@ -3,7 +3,6 @@ package com.example.cyclistance.feature_emergency_call.presentation.emergency_ca
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.EMERGENCY_CALL_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY_NUMBER
@@ -67,21 +66,27 @@ class EmergencyCallViewModel @Inject constructor(
 
     fun onEvent(event: EmergencyCallVmEvent) {
         when (event) {
-            is EmergencyCallVmEvent.DeleteContact -> {
-                deleteContact(event.emergencyContactModel)
-            }
+            is EmergencyCallVmEvent.DeleteContact -> deleteContact(event.emergencyContactModel)
+            is EmergencyCallVmEvent.SaveContact -> saveContact(event.emergencyContactModel)
+            is EmergencyCallVmEvent.GetContact -> getContact(event.id)
+            is EmergencyCallVmEvent.ResetSnapshot -> resetSnapshot()
 
-            is EmergencyCallVmEvent.SaveContact -> {
-                saveContact(event.emergencyContactModel)
-            }
         }
         savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value
     }
 
-    private fun getContact(id: String?) {
+    private fun resetSnapshot() {
+        _state.update {
+            it.copy(
+                nameSnapshot = "",
+                phoneNumberSnapshot = ""
+            )
+        }
+    }
 
-        id ?: return
-        emergencyCallUseCase.getContactUseCase(id.toInt()).catch {
+    private fun getContact(id: Int) {
+
+        emergencyCallUseCase.getContactUseCase(id).catch {
             Timber.e("Error getting contact")
         }.onEach { contact ->
             _eventFlow.emit(value = EmergencyCallEvent.GetContactSuccess(contact))
@@ -91,7 +96,7 @@ class EmergencyCallViewModel @Inject constructor(
                     phoneNumberSnapshot = contact.phoneNumber
                 )
             }
-            savedStateHandle[EmergencyCallConstants.ADD_EDIT_CONTACT_VM_STATE_KEY] = state.value
+            savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value
         }.launchIn(viewModelScope)
 
     }

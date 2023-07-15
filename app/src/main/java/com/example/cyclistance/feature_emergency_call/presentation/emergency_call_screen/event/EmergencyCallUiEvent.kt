@@ -17,15 +17,11 @@ sealed class EmergencyCallUiEvent {
     object DismissDeleteContactDialog : EmergencyCallUiEvent()
     object DismissMaximumContactDialog : EmergencyCallUiEvent()
 
-    object SelectImageFromGallery : EmergencyCallUiEvent()
-    object OpenCamera : EmergencyCallUiEvent()
     data class OnChangeName(val name: TextFieldValue) : EmergencyCallUiEvent()
     data class OnChangePhoneNumber(val phoneNumber: TextFieldValue) : EmergencyCallUiEvent()
     object CancelEditContact : EmergencyCallUiEvent()
     object SaveEditContact : EmergencyCallUiEvent()
     object ToggleBottomSheet : EmergencyCallUiEvent()
-    object DismissFilesAndMediaDialog : EmergencyCallUiEvent()
-    object DismissCameraDialog : EmergencyCallUiEvent()
     object DismissEditContactScreen : EmergencyCallUiEvent()
 
 
