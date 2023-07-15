@@ -67,18 +67,23 @@ class EmergencyCallViewModel @Inject constructor(
 
     fun onEvent(event: EmergencyCallVmEvent) {
         when (event) {
-            is EmergencyCallVmEvent.DeleteContact -> {
-                deleteContact(event.emergencyContactModel)
-            }
+            is EmergencyCallVmEvent.DeleteContact -> deleteContact(event.emergencyContactModel)
+            is EmergencyCallVmEvent.SaveContact -> saveContact(event.emergencyContactModel)
+            is EmergencyCallVmEvent.GetContact -> getContact(event.id)
+            is EmergencyCallVmEvent.ResetSnapshot -> resetSnapshot()
 
-            is EmergencyCallVmEvent.SaveContact -> {
-                saveContact(event.emergencyContactModel)
-            }
         }
         savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value
     }
 
-    private fun getContact(id: String?) {
+    private fun resetSnapshot() {
+        _state.update {
+            it.copy(
+                nameSnapshot = "",
+                phoneNumberSnapshot = ""
+            )
+        }
+    }
 
         id ?: return
         emergencyCallUseCase.getContactUseCase(id.toInt()).catch {

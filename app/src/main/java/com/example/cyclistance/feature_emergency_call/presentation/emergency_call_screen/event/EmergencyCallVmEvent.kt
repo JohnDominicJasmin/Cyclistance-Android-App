@@ -4,6 +4,8 @@ import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyCont
 
 sealed class EmergencyCallVmEvent {
 
+    object ResetSnapshot : EmergencyCallVmEvent()
+
     data class SaveContact(val emergencyContactModel: EmergencyContactModel) :
         EmergencyCallVmEvent()
 
