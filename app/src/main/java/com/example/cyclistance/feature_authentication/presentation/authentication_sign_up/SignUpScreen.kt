@@ -36,20 +36,31 @@ fun SignUpScreen(
     val signUpState by signUpViewModel.state.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
     val focusRequester = remember { FocusRequester() }
+    var email by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+    var password by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+
+    var confirmPassword by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+
 
     var uiState by rememberSaveable { mutableStateOf(SignUpUiState()) }
 
-    val signUpAccount = remember(key1 = uiState.email, key2 = signUpState.hasAccountSignedIn) {
+    val signUpAccount = remember(key1 = email, key2 = signUpState.hasAccountSignedIn) {
         {
-            val isUserCreatedNewAccount = uiState.email.text != signUpState.savedAccountEmail
+            val isUserCreatedNewAccount = email.text != signUpState.savedAccountEmail
             if (signUpState.hasAccountSignedIn && isUserCreatedNewAccount) {
                 signUpViewModel.onEvent(SignUpVmEvent.SignOut)
             }
             signUpViewModel.onEvent(
                 SignUpVmEvent.SignUp(
-                    email = uiState.email.text,
-                    password = uiState.password.text,
-                    confirmPassword = uiState.confirmPassword.text))
+                    email = email.text,
+                    password = password.text,
+                    confirmPassword = confirmPassword.text))
         }
 
     }
@@ -71,25 +82,25 @@ fun SignUpScreen(
     val onValueChangeEmail = remember {
         { inputEmail: TextFieldValue ->
             uiState = uiState.copy(
-                email = inputEmail,
                 emailErrorMessage = ""
             )
+            email = inputEmail
         }
     }
     val onValueChangePassword = remember {
         { inputPassword: TextFieldValue ->
             uiState = uiState.copy(
-                password = inputPassword,
                 passwordErrorMessage = ""
             )
+            password = inputPassword
         }
     }
     val onValueChangeConfirmPassword = remember {
         { inputConfirmPassword: TextFieldValue ->
             uiState = uiState.copy(
-                confirmPassword = inputConfirmPassword,
                 confirmPasswordErrorMessage = ""
             )
+            confirmPassword = inputConfirmPassword
         }
     }
     val onClickPasswordVisibility = remember {
@@ -187,6 +198,9 @@ fun SignUpScreen(
         focusRequester = focusRequester,
         signUpState = signUpState,
         uiState = uiState,
+        email = email,
+        password = password,
+        confirmPassword = confirmPassword,
         event = { event ->
             when (event) {
                 is SignUpUiEvent.DismissAlertDialog -> onDismissAlertDialog()
