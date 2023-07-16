@@ -86,6 +86,13 @@ fun SignInScreen(
         }
     }
 
+    var email by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+    var password by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+
 
 
     LaunchedEffect(key1 = true) {
@@ -218,8 +225,8 @@ fun SignInScreen(
         {
             signInViewModel.onEvent(
                 SignInVmEvent.SignInWithEmailAndPassword(
-                    email = uiState.email.text,
-                    password = uiState.password.text))
+                    email = email.text,
+                    password = password.text))
             focusManager.clearFocus()
         }
     }
@@ -227,18 +234,18 @@ fun SignInScreen(
     val onValueChangeEmail = remember<(TextFieldValue) -> Unit> {
         {
             uiState = uiState.copy(
-                email = it,
                 emailErrorMessage = ""
             )
+            email = it
         }
     }
 
     val onValueChangePassword = remember<(TextFieldValue) -> Unit> {
         {
             uiState = uiState.copy(
-                password = it,
                 passwordErrorMessage = ""
             )
+            password = it
         }
     }
 
@@ -271,8 +278,8 @@ fun SignInScreen(
 
             signInViewModel.onEvent(
                 SignInVmEvent.SignInWithEmailAndPassword(
-                    email = uiState.email.text,
-                    password = uiState.password.text
+                    email = email.text,
+                    password = password.text
                 ))
         }
     }
@@ -297,6 +304,8 @@ fun SignInScreen(
         emailAuthState = emailAuthState,
         focusRequester = focusRequester,
         uiState = uiState,
+        email = email,
+        password = password,
         event = { event ->
             when (event) {
                 is SignUiEvent.DismissAlertDialog -> onDismissAlertDialog()
