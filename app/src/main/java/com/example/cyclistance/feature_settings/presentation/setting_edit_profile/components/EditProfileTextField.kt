@@ -43,6 +43,8 @@ fun TextFieldInputArea(
     modifier: Modifier,
     state: EditProfileState,
     uiState: EditProfileUiState,
+    name: TextFieldValue,
+    phoneNumber: TextFieldValue,
     onValueChangeName: (TextFieldValue) -> Unit,
     onValueChangePhoneNumber: (TextFieldValue) -> Unit,
     keyboardActions: KeyboardActions
@@ -56,7 +58,7 @@ fun TextFieldInputArea(
         TextFieldCreator(label = "Full Name", errorMessage = uiState.nameErrorMessage) {
             TextFieldItem(
                 enabled = !state.isLoading,
-                value = uiState.name,
+                value = name,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Words,
                     autoCorrect = false,
@@ -80,7 +82,7 @@ fun TextFieldInputArea(
 
                 TextFieldItem(
                     enabled = !state.isLoading,
-                    value = uiState.phoneNumber,
+                    value = phoneNumber,
                     keyboardOptions = KeyboardOptions(
                         capitalization = KeyboardCapitalization.None,
                         autoCorrect = false,
@@ -174,6 +176,8 @@ fun EditProfileTextFieldPreview() {
                 onValueChangePhoneNumber = {},
                 keyboardActions = KeyboardActions { },
                 uiState = EditProfileUiState(),
+                name = TextFieldValue(""),
+                phoneNumber = TextFieldValue("")
             )
         }
     }

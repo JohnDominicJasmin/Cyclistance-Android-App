@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
@@ -28,7 +29,11 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun PreviewSignUpScreenDark() {
     CyclistanceTheme(true) {
-        SignUpScreenContent(signUpState = SignUpState())
+        SignUpScreenContent(
+            signUpState = SignUpState(),
+            email = TextFieldValue(""),
+            password = TextFieldValue(""),
+            confirmPassword = TextFieldValue(""))
     }
 }
 
@@ -36,7 +41,11 @@ fun PreviewSignUpScreenDark() {
 @Composable
 fun PreviewSignUpScreenLight() {
     CyclistanceTheme(false) {
-        SignUpScreenContent(signUpState = SignUpState())
+        SignUpScreenContent(
+            signUpState = SignUpState(),
+            email = TextFieldValue(""),
+            password = TextFieldValue(""),
+            confirmPassword = TextFieldValue(""))
     }
 
 }
@@ -48,6 +57,9 @@ fun SignUpScreenContent(
     signUpState: SignUpState = SignUpState(),
     focusRequester: FocusRequester = FocusRequester(),
     uiState: SignUpUiState = SignUpUiState(),
+    email: TextFieldValue,
+    password: TextFieldValue,
+    confirmPassword: TextFieldValue,
     event: (SignUpUiEvent) -> Unit = {},
 ) {
 
@@ -104,11 +116,11 @@ fun SignUpScreenContent(
                 onClickPasswordVisibility = {
                     event(SignUpUiEvent.TogglePasswordVisibility)
                 },
-                email = uiState.email,
+                email = email,
                 emailErrorMessage = uiState.emailErrorMessage,
-                password = uiState.password,
+                password = password,
                 passwordErrorMessage = uiState.passwordErrorMessage,
-                confirmPassword = uiState.confirmPassword,
+                confirmPassword = confirmPassword,
                 confirmPasswordErrorMessage = uiState.confirmPasswordErrorMessage,
                 passwordVisibility = uiState.passwordVisible
             )

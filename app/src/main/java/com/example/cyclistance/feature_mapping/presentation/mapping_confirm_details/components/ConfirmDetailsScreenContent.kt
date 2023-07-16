@@ -43,7 +43,11 @@ fun PreviewConfirmDetailsScreenDark() {
         ConfirmDetailsContent(
             modifier = Modifier,
             state = ConfirmDetailsState(),
-            uiState = ConfirmDetailsUiState())
+            uiState = ConfirmDetailsUiState(),
+            bikeType = TextFieldValue(""),
+            message = TextFieldValue(""),
+            address = TextFieldValue(""),
+        )
     }
 }
 
@@ -54,7 +58,11 @@ fun PreviewConfirmDetailsScreenLight() {
         ConfirmDetailsContent(
             modifier = Modifier,
             state = ConfirmDetailsState(),
-            uiState = ConfirmDetailsUiState(backgroundLocationPermissionDialogVisible = true))
+            uiState = ConfirmDetailsUiState(backgroundLocationPermissionDialogVisible = true),
+            bikeType = TextFieldValue(""),
+            message = TextFieldValue(""),
+            address = TextFieldValue(""),
+        )
     }
 }
 
@@ -63,6 +71,9 @@ fun PreviewConfirmDetailsScreenLight() {
 fun ConfirmDetailsContent(
     modifier: Modifier,
     state: ConfirmDetailsState = ConfirmDetailsState(),
+    bikeType: TextFieldValue,
+    message: TextFieldValue,
+    address: TextFieldValue,
     uiState: ConfirmDetailsUiState = ConfirmDetailsUiState(),
     event: (ConfirmDetailsUiEvent) -> Unit = {}) {
 
@@ -95,7 +106,7 @@ fun ConfirmDetailsContent(
                             width = Dimension.percent(0.9f)
                             height = Dimension.wrapContent
                         },
-                    address = uiState.address,
+                    address = address,
                     addressErrorMessage = uiState.addressErrorMessage,
                     onValueChange = { event(ConfirmDetailsUiEvent.OnChangeAddress(it)) },
                     enabled = !state.isLoading
@@ -111,7 +122,7 @@ fun ConfirmDetailsContent(
                             height = Dimension.wrapContent
                         },
                     errorMessage = uiState.bikeTypeErrorMessage,
-                    selectedItem = uiState.bikeType,
+                    selectedItem = bikeType,
                     onClickItem = {
                         event(ConfirmDetailsUiEvent.OnChangeBikeType(TextFieldValue(text = it)))
                     },
@@ -145,7 +156,7 @@ fun ConfirmDetailsContent(
                             width = Dimension.percent(0.9f)
 
                         },
-                    message = uiState.message,
+                    message = message,
                     onChangeValueMessage = {
                         event(ConfirmDetailsUiEvent.OnChangeMessage(it))
                     },
