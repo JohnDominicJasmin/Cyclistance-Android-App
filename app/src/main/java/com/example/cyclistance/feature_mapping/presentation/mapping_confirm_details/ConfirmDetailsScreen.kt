@@ -44,6 +44,16 @@ fun ConfirmDetailsScreen(
     val context = LocalContext.current
     var uiState by rememberSaveable { mutableStateOf(ConfirmDetailsUiState()) }
 
+    var bikeType by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+    var message by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+    var address by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+
     val foregroundLocationPermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
@@ -69,11 +79,11 @@ fun ConfirmDetailsScreen(
                 }
 
                 is ConfirmDetailsEvent.GetSavedBikeType -> {
-                    uiState = uiState.copy(bikeType = TextFieldValue(text = event.bikeType))
+                    bikeType = TextFieldValue(event.bikeType)
                 }
 
                 is ConfirmDetailsEvent.GetSavedAddress -> {
-                    uiState = uiState.copy(address = TextFieldValue(text = event.address))
+                    address = TextFieldValue(event.address)
                 }
 
                 is ConfirmDetailsEvent.NoInternetConnection -> {
@@ -101,24 +111,20 @@ fun ConfirmDetailsScreen(
     val onValueChangeAddress = remember {
         { addressInput: TextFieldValue ->
             uiState = uiState.copy(
-                address = addressInput,
                 addressErrorMessage = ""
             )
+            address = addressInput
         }
     }
     val onValueChangeMessage = remember {
         { messageInput: TextFieldValue ->
-            uiState = uiState.copy(
-                message = messageInput
-            )
+            message = messageInput
         }
     }
     val onClickBikeType = remember {
         { bikeTypeInput: TextFieldValue ->
-            uiState = uiState.copy(
-                bikeType = bikeTypeInput,
-                bikeTypeErrorMessage = ""
-            )
+            uiState = uiState.copy(bikeTypeErrorMessage = "")
+            bikeType = bikeTypeInput
         }
     }
     val onClickDescriptionButton = remember {
@@ -148,10 +154,10 @@ fun ConfirmDetailsScreen(
                         viewModel.onEvent(
                             event = ConfirmDetailsVmEvent.ConfirmDetails(
                                 confirmDetailsModel = ConfirmationDetails(
-                                    address = uiState.address.text,
-                                    bikeType = uiState.bikeType.text,
+                                    address = address.text,
+                                    bikeType = bikeType.text,
                                     description = uiState.description,
-                                    message = uiState.message.text
+                                    message = message.text
                                 )
                             ))
                     }, onExplain = {
@@ -173,10 +179,10 @@ fun ConfirmDetailsScreen(
                         viewModel.onEvent(
                             event = ConfirmDetailsVmEvent.ConfirmDetails(
                                 confirmDetailsModel = ConfirmationDetails(
-                                    address = uiState.address.text,
-                                    bikeType = uiState.bikeType.text,
+                                    address = address.text,
+                                    bikeType = bikeType.text,
                                     description = uiState.description,
-                                    message = uiState.message.text
+                                    message = message.text
                                 )
                             ))
                     },
@@ -217,6 +223,9 @@ fun ConfirmDetailsScreen(
         modifier = Modifier.padding(paddingValues),
         state = state,
         uiState = uiState,
+        bikeType = bikeType,
+        message = message,
+        address = address,
         event = { event ->
             when (event) {
                 is ConfirmDetailsUiEvent.OnChangeAddress -> onValueChangeAddress(event.address)
