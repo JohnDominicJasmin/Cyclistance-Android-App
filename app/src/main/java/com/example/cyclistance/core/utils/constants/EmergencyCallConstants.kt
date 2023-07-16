@@ -17,4 +17,5 @@ object EmergencyCallConstants {
     val CONTACTS_PURPOSELY_DELETE_KEY = booleanPreferencesKey("contacts_purposely_delete_key")
     const val MAX_CONTACTS = 7
     const val DICE_BEAR_URL = "https://api.dicebear.com/6.x/shapes/png?seed="
+    const val SHOULD_OPEN_CONTACT_DIALOG = "shouldOpenAddContactDialog"
 }

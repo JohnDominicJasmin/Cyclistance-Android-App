@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants
 import com.example.cyclistance.core.utils.constants.NavigationConstants
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -83,7 +84,8 @@ fun TopAppBar(
                 })
         }
 
-        Screens.EmergencyCall.EmergencyCallScreen.screenRoute -> {
+        Screens.EmergencyCall.EmergencyCallScreen.screenRoute + "?${EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG}={${EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG}}" -> {
+
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,

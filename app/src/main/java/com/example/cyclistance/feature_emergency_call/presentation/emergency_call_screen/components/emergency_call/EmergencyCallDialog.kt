@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -106,8 +107,13 @@ fun EmergencyCallDialog(
     emergencyCallModel: EmergencyCallModel,
     onDismiss: () -> Unit,
     onClick: (EmergencyContactModel) -> Unit,
+    onAddContact: () -> Unit,
 ) {
     var dialogOpen by rememberSaveable { mutableStateOf(true) }
+
+    val emergencyContactAvailable = remember(emergencyCallModel.contacts) {
+        emergencyCallModel.contacts.isNotEmpty()
+    }
 
     if (dialogOpen) {
         Dialog(
@@ -143,15 +149,34 @@ fun EmergencyCallDialog(
                     Divider(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 8.dp, horizontal = 4.dp), color = Black500)
+                            .padding(vertical = 8.dp, horizontal = 8.dp), color = Black500)
 
-                    ContactSection(
-                        modifier = Modifier,
-                        emergencyCallModel = emergencyCallModel,
-                        onClick = {
-                            onDismiss()
-                            onClick(it)
-                        })
+
+                    if (emergencyContactAvailable) {
+                        ContactSection(
+                            modifier = Modifier,
+                            emergencyCallModel = emergencyCallModel,
+                            onClick = {
+                                onDismiss()
+                                onClick(it)
+                            })
+                    } else {
+                        ButtonAddContact(
+                            onClick = onAddContact,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 4.dp)
+                                .padding(horizontal = 4.dp))
+
+                        Text(
+                            text = "No contacts added",
+                            style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium),
+                            color = Black500,
+                            modifier = Modifier.padding(vertical = 24.dp)
+                        )
+                    }
+
+
 
 
                     OutlinedButton(
@@ -282,6 +307,10 @@ fun PreviewDialogEmergencyItem() {
 @Composable
 fun PreviewEmergencyCallDialog() {
     CyclistanceTheme(darkTheme = true) {
-        EmergencyCallDialog(onDismiss = {}, emergencyCallModel = EmergencyCallModel(), onClick = {})
+        EmergencyCallDialog(
+            onDismiss = {},
+            emergencyCallModel = EmergencyCallModel(),
+            onClick = {},
+            onAddContact = {})
     }
 }

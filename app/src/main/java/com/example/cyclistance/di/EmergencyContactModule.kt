@@ -8,8 +8,8 @@ import com.example.cyclistance.feature_emergency_call.data.data_source.local.Eme
 import com.example.cyclistance.feature_emergency_call.data.repository.EmergencyContactRepositoryImpl
 import com.example.cyclistance.feature_emergency_call.domain.repository.EmergencyContactRepository
 import com.example.cyclistance.feature_emergency_call.domain.use_case.EmergencyContactUseCase
+import com.example.cyclistance.feature_emergency_call.domain.use_case.contact_purposely_deleted.AddDefaultContactUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.contact_purposely_deleted.AreContactsPurposelyDeletedUseCase
-import com.example.cyclistance.feature_emergency_call.domain.use_case.contact_purposely_deleted.SetContactsPurposelyDeletedUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.delete_contact.DeleteContactUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.get_contact.GetContactUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.get_contact.GetContactsUseCase
@@ -53,7 +53,7 @@ object EmergencyContactModule {
             deleteContactUseCase = DeleteContactUseCase(repository),
             getContactsUseCase = GetContactsUseCase(repository),
             areContactsPurposelyDeletedUseCase = AreContactsPurposelyDeletedUseCase(repository),
-            setContactsPurposelyDeletedUseCase = SetContactsPurposelyDeletedUseCase(repository),
+            addDefaultContactUseCase = AddDefaultContactUseCase(repository),
             getContactUseCase = GetContactUseCase(repository)
         )
     }

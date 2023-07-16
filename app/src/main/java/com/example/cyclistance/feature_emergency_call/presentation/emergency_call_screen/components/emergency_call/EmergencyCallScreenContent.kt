@@ -101,7 +101,9 @@ fun EmergencyCallScreenContent(
                 item {
                     ButtonAddContact(
                         onClick = { event(EmergencyCallUiEvent.OnClickAddContact) },
-                        modifier = Modifier.padding(vertical = 16.dp))
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(all = 16.dp))
                 }
                 items(items = state.emergencyCallModel.contacts, key = { it.id }) { item ->
                     if (contactsAvailable) {

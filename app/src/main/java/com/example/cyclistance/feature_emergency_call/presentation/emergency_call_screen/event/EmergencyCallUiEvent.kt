@@ -4,7 +4,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 
 sealed class EmergencyCallUiEvent {
-    object OnClickCancel : EmergencyCallUiEvent()
     object OnClickAddContact : EmergencyCallUiEvent()
     data class OnClickContact(val phoneNumber: String) : EmergencyCallUiEvent()
     data class OnClickEditContact(val emergencyContact: EmergencyContactModel) :

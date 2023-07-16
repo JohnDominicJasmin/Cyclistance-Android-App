@@ -66,7 +66,7 @@ fun ContactItem(
         modifier = modifier.fillMaxWidth()) {
 
         Row(
-            modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp, alignment = Alignment.Start)) {
 

@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
@@ -642,6 +643,13 @@ fun MappingScreen(
         }
     }
 
+    val onAddEmergencyContact = remember {
+        {
+            navController.navigateScreen(Screens.EmergencyCall.EmergencyCallScreen.screenRoute + "?$SHOULD_OPEN_CONTACT_DIALOG=${true}")
+        }
+    }
+
+
     LaunchedEffect(key1 = true, key2 = state.userLocation) {
 
         mappingViewModel.eventFlow.collectLatest { event ->
@@ -784,10 +792,6 @@ fun MappingScreen(
             }
         }
     }
-
-
-
-
 
 
     LaunchedEffect(key1 = uiState.routeDirection, key2 = mapboxMap) {
@@ -948,6 +952,7 @@ fun MappingScreen(
                 is MappingUiEvent.ShowSinoTrackWebView -> onShowSinoTrackWebView()
                 is MappingUiEvent.DismissRescueResultsDialog -> onDismissRescueResultsDialog()
                 is MappingUiEvent.OnEmergencyCall -> onEmergencyCall(event.phoneNumber)
+                is MappingUiEvent.OnAddEmergencyContact -> onAddEmergencyContact()
 
 
             }

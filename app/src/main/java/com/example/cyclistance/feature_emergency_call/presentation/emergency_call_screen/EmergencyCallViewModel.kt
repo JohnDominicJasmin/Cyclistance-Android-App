@@ -47,6 +47,7 @@ class EmergencyCallViewModel @Inject constructor(
 
     init {
 
+
         emergencyCallUseCase.getContactsUseCase().catch {
             Timber.v("Error: ${it.message}")
         }.onEach { model ->
@@ -55,6 +56,8 @@ class EmergencyCallViewModel @Inject constructor(
                 emergencyCallUseCase.areContactsPurposelyDeletedUseCase().first()
             if (model.contacts.isEmpty().and(isPurposefullyDeleted.not())) {
                 addDefaultContact()
+                emergencyCallUseCase.addDefaultContactUseCase()
+
             } else {
                 _state.update { it.copy(emergencyCallModel = model) }
             }
@@ -109,7 +112,7 @@ class EmergencyCallViewModel @Inject constructor(
             }.onSuccess {
                 _eventFlow.emit(value = EmergencyCallEvent.ContactDeleteSuccess)
                 if (isLastContact) {
-                    emergencyCallUseCase.setContactsPurposelyDeletedUseCase()
+                    emergencyCallUseCase.addDefaultContactUseCase()
                 }
             }.onFailure {
                 _eventFlow.emit(value = EmergencyCallEvent.ContactDeleteFailed)
