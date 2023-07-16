@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -47,6 +48,8 @@ fun AddEditContactContent(
     keyboardActions: KeyboardActions = KeyboardActions { },
     event: (EmergencyCallUiEvent) -> Unit,
     state: EmergencyCallState,
+    name: TextFieldValue,
+    phoneNumber: TextFieldValue,
     uiState: EmergencyCallUIState) {
 
     val isOnEditMode by remember(key1 = uiState.contactCurrentlyEditing) {
@@ -54,12 +57,12 @@ fun AddEditContactContent(
     }
 
     val isUserInformationChanges by remember(
-        uiState.name,
-        uiState.phoneNumber,
+        name,
+        phoneNumber,
         uiState.selectedImageUri) {
         derivedStateOf {
-            uiState.name.text != state.nameSnapshot ||
-            uiState.phoneNumber.text != state.phoneNumberSnapshot ||
+            name.text != state.nameSnapshot ||
+            phoneNumber.text != state.phoneNumberSnapshot ||
             uiState.selectedImageUri.isNotEmpty()
         }
     }
@@ -131,7 +134,9 @@ fun AddEditContactContent(
                             uiState = uiState,
                             state = state,
                             event = event,
-                            keyboardActions = keyboardActions)
+                            keyboardActions = keyboardActions,
+                            name = name,
+                            phoneNumber = phoneNumber)
 
 
                         ButtonNavigation(
@@ -179,7 +184,9 @@ fun PreviewAddNewContactContentDarkEditMode() {
                 ModalBottomSheetValue.Expanded),
             event = {},
             uiState = EmergencyCallUIState(),
-            state = EmergencyCallState())
+            state = EmergencyCallState(),
+            phoneNumber = TextFieldValue("143"),
+            name = TextFieldValue("Philippine Red Cross"))
     }
 }
 
@@ -199,6 +206,8 @@ fun PreviewAddNewContactContentDark() {
                     phoneNumber = "143",
                     id = 1)),
             state = EmergencyCallState(),
+            phoneNumber = TextFieldValue("143"),
+            name = TextFieldValue("Philippine Red Cross")
         )
     }
 }
@@ -219,6 +228,8 @@ fun PreviewAddNewContactContentLight() {
                     phoneNumber = "143",
                     id = 1)),
             state = EmergencyCallState(),
+            phoneNumber = TextFieldValue("143"),
+            name = TextFieldValue("Philippine Red Cross")
         )
     }
 }

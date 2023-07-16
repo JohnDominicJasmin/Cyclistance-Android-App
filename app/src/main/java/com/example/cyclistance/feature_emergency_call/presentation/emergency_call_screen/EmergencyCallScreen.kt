@@ -51,6 +51,13 @@ fun EmergencyCallScreen(
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
+    var name by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+    var phoneNumber by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+
 
     var uiState by rememberSaveable {
         mutableStateOf(EmergencyCallUIState())
@@ -88,11 +95,11 @@ fun EmergencyCallScreen(
             if (!maximumContactReached) {
                 uiState = uiState.copy(
                     contactCurrentlyEditing = EmergencyContactModel(),
-                    name = TextFieldValue(""),
-                    phoneNumber = TextFieldValue(""),
                     nameErrorMessage = "",
                     phoneNumberErrorMessage = ""
                 )
+                name = name.copy(text = "")
+                phoneNumber = phoneNumber.copy(text = "")
             }
 
             viewModel.onEvent(event = EmergencyCallVmEvent.ResetSnapshot)
@@ -178,13 +185,15 @@ fun EmergencyCallScreen(
 
 
     val onValueChangeName = remember {
-        { name: TextFieldValue ->
-            uiState = uiState.copy(name = name, nameErrorMessage = "")
+        { _name: TextFieldValue ->
+            uiState = uiState.copy(nameErrorMessage = "")
+            name = _name
         }
     }
     val onValueChangePhoneNumber = remember {
-        { phoneNumber: TextFieldValue ->
-            uiState = uiState.copy(phoneNumber = phoneNumber, phoneNumberErrorMessage = "")
+        { _phoneNumber: TextFieldValue ->
+            uiState = uiState.copy(phoneNumberErrorMessage = "")
+            phoneNumber = _phoneNumber
         }
     }
 
@@ -194,8 +203,8 @@ fun EmergencyCallScreen(
                 event = EmergencyCallVmEvent.SaveContact(
                     emergencyContactModel = EmergencyContactModel(
                         id = uiState.contactCurrentlyEditing?.id ?: 0,
-                        name = uiState.name.text,
-                        phoneNumber = uiState.phoneNumber.text,
+                        name = name.text,
+                        phoneNumber = phoneNumber.text,
                         photo = uiState.selectedImageUri
                     )
                 ))
@@ -235,10 +244,11 @@ fun EmergencyCallScreen(
         { emergencyContactModel: EmergencyContactModel ->
             uiState = uiState.copy(
                 contactCurrentlyEditing = emergencyContactModel,
-                name = TextFieldValue(emergencyContactModel.name),
-                phoneNumber = TextFieldValue(emergencyContactModel.phoneNumber),
                 nameErrorMessage = "",
                 phoneNumberErrorMessage = "")
+
+            name = name.copy(text = emergencyContactModel.name)
+            phoneNumber = phoneNumber.copy(text = emergencyContactModel.phoneNumber)
         }
     }
 
@@ -269,6 +279,8 @@ fun EmergencyCallScreen(
         state = state,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         keyboardActions = keyboardActions,
+        name = name,
+        phoneNumber = phoneNumber,
         event = { event ->
             when (event) {
                 is EmergencyCallUiEvent.OnClickContact -> onClickContact(event.phoneNumber)
