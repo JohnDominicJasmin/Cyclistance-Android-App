@@ -84,6 +84,7 @@ fun MappingBottomSheet(
                         onClickChatButton = onClickChatRescueTransactionButton,
                         onClickCancelButton = onClickCancelRescueTransactionButton,
                         bottomSheetScaffoldState = bottomSheetScaffoldState,
+                        role = state.user.transaction?.role ?: "",
                         onGoingRescueModel = OnGoingRescueModel(
                             estimatedTime = state.rescuerETA,
                             estimatedDistance = state.rescuerDistance

@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
+import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -34,10 +35,16 @@ fun BottomSheetOnGoingRescue(
     onClickCallButton: () -> Unit,
     onClickChatButton: () -> Unit,
     onClickCancelButton: () -> Unit,
+    role: String,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     onGoingRescueModel: OnGoingRescueModel,
 ) {
 
+    val isRescuer by remember(role) {
+        derivedStateOf {
+            role == Role.RESCUER.name
+        }
+    }
 
     Card(
         modifier = modifier
@@ -60,6 +67,7 @@ fun BottomSheetOnGoingRescue(
                     onGoingRescueModel.estimatedTime.isNotEmpty()
                 }
             }
+
 
             Divider(modifier = Modifier
                 .fillMaxWidth(0.1f)
@@ -86,17 +94,20 @@ fun BottomSheetOnGoingRescue(
             }
 
             if (etaAvailable) {
-                SpeedometerSection(
-                    modifier = Modifier.constrainAs(speedometer) {
-                        top.linkTo(lineGrip.bottom, margin = 4.dp)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    },
-                    currentSpeed = onGoingRescueModel.currentSpeed,
-                    distance = onGoingRescueModel.ridingDistance,
-                    maxSpeed = onGoingRescueModel.maxSpeed,
-                    time = onGoingRescueModel.ridingTime
-                )
+
+                if (isRescuer) {
+                    SpeedometerSection(
+                        modifier = Modifier.constrainAs(speedometer) {
+                            top.linkTo(lineGrip.bottom, margin = 4.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        },
+                        currentSpeed = onGoingRescueModel.currentSpeed,
+                        distance = onGoingRescueModel.ridingDistance,
+                        maxSpeed = onGoingRescueModel.maxSpeed,
+                        time = onGoingRescueModel.ridingTime
+                    )
+                }
 
                 Text(
                     text = onGoingRescueModel.estimatedTime,
@@ -105,7 +116,9 @@ fun BottomSheetOnGoingRescue(
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .constrainAs(time) {
-                            top.linkTo(speedometer.bottom, margin = 5.dp)
+                            top.linkTo(
+                                if (isRescuer) speedometer.bottom else lineGrip.bottom,
+                                margin = 5.dp)
                             end.linkTo(etaIcon.start)
                         }
                 )
@@ -117,7 +130,9 @@ fun BottomSheetOnGoingRescue(
                     modifier = Modifier
                         .size(20.dp)
                         .constrainAs(etaIcon) {
-                            top.linkTo(speedometer.bottom, margin = 5.dp)
+                            top.linkTo(
+                                if (isRescuer) speedometer.bottom else lineGrip.bottom,
+                                margin = 7.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
 
@@ -132,7 +147,10 @@ fun BottomSheetOnGoingRescue(
                     modifier = Modifier
                         .padding(horizontal = 12.dp)
                         .constrainAs(distance) {
-                            top.linkTo(speedometer.bottom, margin = 5.dp)
+                            top.linkTo(
+                                if (isRescuer) speedometer.bottom else lineGrip.bottom,
+                                margin = 5.dp,
+                            )
                             start.linkTo(etaIcon.end)
                         }
                 )
@@ -322,20 +340,26 @@ private fun RoundButtonSection(
 private fun PreviewBottomSheetOnGoingRescueDark() {
 
     CyclistanceTheme(true) {
-        BottomSheetOnGoingRescue(
-            onClickCancelButton = {},
-            onClickCallButton = {},
-            onClickChatButton = {},
-            bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
-            onGoingRescueModel = OnGoingRescueModel(
-                currentSpeed = "13.3",
-                ridingDistance = "10.0 km",
-                maxSpeed = "36 km/h",
-                ridingTime = "1:30:00",
-                estimatedDistance = "9.0 km",
-                estimatedTime = "1h 20m",
-
-                ))
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)) {
+            BottomSheetOnGoingRescue(
+                onClickCancelButton = {},
+                onClickCallButton = {},
+                onClickChatButton = {},
+                bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
+                onGoingRescueModel = OnGoingRescueModel(
+                    currentSpeed = "13.3",
+                    ridingDistance = "10.0 km",
+                    maxSpeed = "36 km/h",
+                    ridingTime = "1:30:00",
+                    estimatedDistance = "9.0 km",
+                    estimatedTime = "1h 20m",
+                ),
+                role = Role.RESCUER.name)
+        }
     }
 }
 
@@ -346,20 +370,28 @@ private fun PreviewBottomSheetOnGoingRescueDark() {
 private fun PreviewBottomSheetOnGoingRescueLight() {
 
     CyclistanceTheme(false) {
-        BottomSheetOnGoingRescue(
-            onClickCancelButton = {},
-            onClickCallButton = {},
-            onClickChatButton = {},
-            bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
-            onGoingRescueModel = OnGoingRescueModel(
-                currentSpeed = "13.3",
-                ridingDistance = "10.0 km",
-                maxSpeed = "36 km/h",
-                ridingTime = "1:30:00",
-                estimatedDistance = "9.0 km",
-                estimatedTime = "1h 20m",
+        Box(
+            contentAlignment = Alignment.BottomCenter,
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colors.background)) {
 
-                ))
+
+            BottomSheetOnGoingRescue(
+                onClickCancelButton = {},
+                onClickCallButton = {},
+                onClickChatButton = {},
+                bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
+                onGoingRescueModel = OnGoingRescueModel(
+                    currentSpeed = "13.3",
+                    ridingDistance = "10.0 km",
+                    maxSpeed = "36 km/h",
+                    ridingTime = "1:30:00",
+                    estimatedDistance = "9.0 km",
+                    estimatedTime = "1h 20m",
+                ),
+                role = Role.RESCUEE.name)
+        }
     }
 }
 
