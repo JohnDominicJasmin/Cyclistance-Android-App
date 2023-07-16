@@ -46,7 +46,8 @@ import kotlinx.coroutines.launch
 fun EmergencyCallScreen(
     viewModel: EmergencyCallViewModel = hiltViewModel(),
     navController: NavController,
-    paddingValues: PaddingValues) {
+    paddingValues: PaddingValues,
+    shouldOpenAddNewContact: Boolean) {
 
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
@@ -83,9 +84,13 @@ fun EmergencyCallScreen(
     }
 
 
-    val onCloseEditContactScreen = remember {
+    val onCloseEditContactScreen = remember(shouldOpenAddNewContact) {
         {
-            uiState = uiState.copy(contactCurrentlyEditing = null)
+            if (shouldOpenAddNewContact) {
+                navController.popBackStack()
+            } else {
+                uiState = uiState.copy(contactCurrentlyEditing = null)
+            }
         }
     }
 
@@ -111,12 +116,6 @@ fun EmergencyCallScreen(
     val onClickEditContact = remember {
         { model: EmergencyContactModel ->
             viewModel.onEvent(event = EmergencyCallVmEvent.GetContact(model.id))
-        }
-    }
-
-    val onClickCancel = remember {
-        {
-            navController.popBackStack()
         }
     }
 
@@ -252,12 +251,20 @@ fun EmergencyCallScreen(
         }
     }
 
+
+    LaunchedEffect(key1 = shouldOpenAddNewContact) {
+        if (shouldOpenAddNewContact) {
+            onClickAddContact()
+        }
+    }
+
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is EmergencyCallEvent.ContactDeleteFailed -> {
                     Toast.makeText(context, "Failed to delete contact", Toast.LENGTH_SHORT).show()
                 }
+
                 is EmergencyCallEvent.ContactDeleteSuccess -> {
                     Toast.makeText(context, "Contact deleted", Toast.LENGTH_SHORT).show()
                 }
@@ -285,7 +292,6 @@ fun EmergencyCallScreen(
             when (event) {
                 is EmergencyCallUiEvent.OnClickContact -> onClickContact(event.phoneNumber)
                 is EmergencyCallUiEvent.OnClickAddContact -> onClickAddContact()
-                is EmergencyCallUiEvent.OnClickCancel -> onClickCancel()
                 is EmergencyCallUiEvent.OnClickDeleteContact -> showDeleteDialog(event.emergencyContact)
                 is EmergencyCallUiEvent.OnClickEditContact -> onClickEditContact(event.emergencyContact)
                 is EmergencyCallUiEvent.DismissDeleteContactDialog -> dismissDeleteDialog()

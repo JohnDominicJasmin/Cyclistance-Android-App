@@ -260,6 +260,9 @@ fun MappingScreenContent(
                                         it.phoneNumber
                                     )
                                 )
+                            }, onAddContact = {
+                                event(MappingUiEvent.OnAddEmergencyContact)
+                                event(MappingUiEvent.DismissEmergencyCallDialog)
                             }
 
                         )

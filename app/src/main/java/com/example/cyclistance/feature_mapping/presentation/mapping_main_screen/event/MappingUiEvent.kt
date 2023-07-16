@@ -46,6 +46,7 @@ sealed class MappingUiEvent{
     data class CancelRequestHelp(val id: String) : MappingUiEvent()
     data class ConfirmRequestHelp(val id: String) : MappingUiEvent()
     object DismissAlertDialog : MappingUiEvent()
+    object OnAddEmergencyContact : MappingUiEvent()
 
 
 }
