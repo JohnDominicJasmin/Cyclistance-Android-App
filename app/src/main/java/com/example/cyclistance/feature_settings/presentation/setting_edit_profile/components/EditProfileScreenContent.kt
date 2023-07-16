@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,6 +47,8 @@ fun PreviewEditProfileDark() {
             state = EditProfileState(isLoading = false),
             uiState = EditProfileUiState(cameraPermissionDialogVisible = true),
             bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
+            name = TextFieldValue(""),
+            phoneNumber = TextFieldValue(""),
             event = {}
         )
     }
@@ -63,6 +66,8 @@ fun PreviewEditProfileLight() {
             state = EditProfileState(isLoading = false),
             uiState = EditProfileUiState(cameraPermissionDialogVisible = true),
             bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
+            name = TextFieldValue(""),
+            phoneNumber = TextFieldValue(""),
             event = {}
         )
     }
@@ -78,17 +83,19 @@ fun EditProfileScreenContent(
     keyboardActions: KeyboardActions = KeyboardActions { },
     uiState: EditProfileUiState,
     bottomSheetScaffoldState: ModalBottomSheetState,
+    name: TextFieldValue,
+    phoneNumber: TextFieldValue,
     event: (EditProfileUiEvent) -> Unit = {}
 ) {
 
 
     val isUserInformationChanges by remember(
-        uiState.name,
-        uiState.phoneNumber,
+        name,
+        phoneNumber,
         uiState.selectedImageUri) {
         derivedStateOf {
-            uiState.name.text != state.nameSnapshot ||
-            uiState.phoneNumber.text != state.phoneNumberSnapshot ||
+            name.text != state.nameSnapshot ||
+            phoneNumber.text != state.phoneNumberSnapshot ||
             uiState.selectedImageUri.isNotEmpty()
         }
     }
@@ -166,6 +173,8 @@ fun EditProfileScreenContent(
                     onValueChangePhoneNumber = { event(EditProfileUiEvent.OnChangePhoneNumber(it)) },
                     keyboardActions = keyboardActions,
                     uiState = uiState,
+                    name = name,
+                    phoneNumber = phoneNumber,
                 )
 
 
