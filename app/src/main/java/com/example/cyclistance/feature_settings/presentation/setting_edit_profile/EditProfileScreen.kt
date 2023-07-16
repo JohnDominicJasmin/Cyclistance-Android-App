@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -55,6 +56,14 @@ fun EditProfileScreen(
     var uiState by remember { mutableStateOf(EditProfileUiState()) }
     val scope = rememberCoroutineScope()
     val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    var name by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+    var phoneNumber by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+
+
     val toggleBottomSheet = remember(bottomSheetScaffoldState, state.isLoading) {
         {
             scope.launch {
@@ -145,18 +154,11 @@ fun EditProfileScreen(
                 }
 
                 is EditProfileEvent.GetNameSuccess -> {
-                    uiState = uiState.copy(
-                        name = uiState.name.copy(
-                            text = event.name
-                        ))
+                    name = TextFieldValue(text = event.name)
                 }
 
                 is EditProfileEvent.GetPhoneNumberSuccess -> {
-
-                    uiState = uiState.copy(
-                        phoneNumber = uiState.phoneNumber.copy(
-                            text = event.phoneNumber
-                        ))
+                    phoneNumber = TextFieldValue(text = event.phoneNumber)
                 }
 
                 is EditProfileEvent.GetNameFailed -> {
@@ -216,13 +218,13 @@ fun EditProfileScreen(
     }
 
     val onValueChangeName = remember {
-        { name: TextFieldValue ->
-            uiState = uiState.copy(name = name)
+        { _name: TextFieldValue ->
+            name = _name
         }
     }
     val onValueChangePhoneNumber = remember {
-        { phoneNumber: TextFieldValue ->
-            uiState = uiState.copy(phoneNumber = phoneNumber)
+        { _phoneNumber: TextFieldValue ->
+            phoneNumber = _phoneNumber
         }
     }
     val keyboardActions = remember {
@@ -230,8 +232,8 @@ fun EditProfileScreen(
             editProfileViewModel.onEvent(
                 event = EditProfileVmEvent.Save(
                     imageUri = uiState.selectedImageUri,
-                    name = uiState.name.text,
-                    phoneNumber = uiState.phoneNumber.text))
+                    name = name.text,
+                    phoneNumber = phoneNumber.text))
         })
     }
     val cancelEditProfile = remember {
@@ -245,8 +247,8 @@ fun EditProfileScreen(
             editProfileViewModel.onEvent(
                 event = EditProfileVmEvent.Save(
                     imageUri = uiState.selectedImageUri,
-                    name = uiState.name.text,
-                    phoneNumber = uiState.phoneNumber.text))
+                    name = name.text,
+                    phoneNumber = phoneNumber.text))
         }
     }
 
@@ -262,6 +264,8 @@ fun EditProfileScreen(
         photoUrl = imageBitmap?.asImageBitmap() ?: uiState.photoUrl,
         state = state,
         keyboardActions = keyboardActions,
+        name = name,
+        phoneNumber = phoneNumber,
         event = { event ->
             when (event) {
                 is EditProfileUiEvent.SelectImageFromGallery -> openGallery()

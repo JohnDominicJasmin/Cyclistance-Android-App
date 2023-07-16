@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
@@ -45,6 +46,8 @@ fun EmergencyCallScreenContent(
     keyboardActions: KeyboardActions = KeyboardActions { },
     uiState: EmergencyCallUIState,
     state: EmergencyCallState,
+    name: TextFieldValue,
+    phoneNumber: TextFieldValue,
     event: (EmergencyCallUiEvent) -> Unit) {
 
     val contactsAvailable =
@@ -82,7 +85,9 @@ fun EmergencyCallScreenContent(
                     keyboardActions = keyboardActions,
                     event = event,
                     state = state,
-                    uiState = uiState
+                    uiState = uiState,
+                    name = name,
+                    phoneNumber = phoneNumber
                 )
             }
 
@@ -208,7 +213,7 @@ fun PreviewEmergencyCallScreenContentDark() {
             ),
             bottomSheetScaffoldState = rememberModalBottomSheetState(
                 ModalBottomSheetValue.Expanded),
-            event = {})
+            event = {}, name = TextFieldValue(""), phoneNumber = TextFieldValue(""))
     }
 }
 
@@ -234,7 +239,10 @@ fun PreviewEmergencyCallScreenContentLight() {
                 emergencyCallModel = fakeContacts
             ),
             bottomSheetScaffoldState = rememberModalBottomSheetState(
-                ModalBottomSheetValue.Expanded), event = {})
+                ModalBottomSheetValue.Expanded),
+            event = {},
+            name = TextFieldValue(""),
+            phoneNumber = TextFieldValue(""))
     }
 }
 

@@ -34,84 +34,6 @@ import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.N
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
-@Preview(device = "id:Galaxy Nexus")
-@Composable
-fun PreviewSignInScreenDark() {
-
-    var uiState by rememberSaveable {
-        mutableStateOf(SignInUiState())
-    }
-
-
-    val onValueChangeEmail = remember<(TextFieldValue) -> Unit> {
-        {
-            uiState = uiState.copy(
-                email = it,
-                emailErrorMessage = ""
-            )
-        }
-    }
-
-    val onValueChangePassword = remember<(TextFieldValue) -> Unit> {
-        {
-            uiState = uiState.copy(
-                password = it,
-                passwordErrorMessage = ""
-            )
-        }
-    }
-
-    CyclistanceTheme(true) {
-        SignInScreenContent(uiState = uiState, event = {
-            when (it) {
-                is SignUiEvent.OnChangeEmail -> onValueChangeEmail(it.email)
-                is SignUiEvent.OnChangePassword -> onValueChangePassword(it.password)
-                else -> {}
-            }
-        })
-    }
-}
-
-@Preview(device = "id:Galaxy Nexus")
-@Composable
-fun PreviewSignInScreenLight() {
-
-    var uiState by rememberSaveable {
-        mutableStateOf(SignInUiState())
-    }
-
-
-    val onValueChangeEmail = remember<(TextFieldValue) -> Unit> {
-        {
-            uiState = uiState.copy(
-                email = it,
-                emailErrorMessage = ""
-            )
-        }
-    }
-
-    val onValueChangePassword = remember<(TextFieldValue) -> Unit> {
-        {
-            uiState = uiState.copy(
-                password = it,
-                passwordErrorMessage = ""
-            )
-        }
-    }
-
-
-    CyclistanceTheme(false) {
-        SignInScreenContent(uiState = uiState, event = {
-            when (it) {
-                is SignUiEvent.OnChangeEmail -> onValueChangeEmail(it.email)
-                is SignUiEvent.OnChangePassword -> onValueChangePassword(it.password)
-                else -> {}
-            }
-        })
-    }
-}
-
-
 @Composable
 fun SignInScreenContent(
     modifier: Modifier = Modifier,
@@ -119,6 +41,8 @@ fun SignInScreenContent(
     signInState: SignInState = SignInState(),
     emailAuthState: EmailAuthState = EmailAuthState(),
     uiState: SignInUiState = SignInUiState(),
+    email: TextFieldValue,
+    password: TextFieldValue,
     event: (SignUiEvent) -> Unit = {}) {
 
 
@@ -164,9 +88,9 @@ fun SignInScreenContent(
                 onValueChangeEmail = { event(SignUiEvent.OnChangeEmail(it)) },
                 onValueChangePassword = { event(SignUiEvent.OnChangePassword(it)) },
                 onClickPasswordVisibility = { event(SignUiEvent.TogglePasswordVisibility) },
-                email = uiState.email,
+                email = email,
                 emailErrorMessage = uiState.emailErrorMessage,
-                password = uiState.password,
+                password = password,
                 passwordErrorMessage = uiState.passwordErrorMessage,
                 passwordVisible = uiState.isPasswordVisible
             )
@@ -207,6 +131,96 @@ fun SignInScreenContent(
         }
     }
 }
+
+
+@Preview(device = "id:Galaxy Nexus")
+@Composable
+fun PreviewSignInScreenDark() {
+
+    var uiState by rememberSaveable {
+        mutableStateOf(SignInUiState())
+    }
+    var email by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+    var password by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+
+    val onValueChangeEmail = remember<(TextFieldValue) -> Unit> {
+        {
+            uiState = uiState.copy(
+                emailErrorMessage = ""
+            )
+            email = it
+        }
+    }
+
+    val onValueChangePassword = remember<(TextFieldValue) -> Unit> {
+        {
+            uiState = uiState.copy(
+                passwordErrorMessage = ""
+            )
+            password = it
+        }
+    }
+
+    CyclistanceTheme(true) {
+        SignInScreenContent(uiState = uiState, email = email, password = password, event = {
+            when (it) {
+                is SignUiEvent.OnChangeEmail -> onValueChangeEmail(it.email)
+                is SignUiEvent.OnChangePassword -> onValueChangePassword(it.password)
+                else -> {}
+            }
+        })
+    }
+}
+
+@Preview(device = "id:Galaxy Nexus")
+@Composable
+fun PreviewSignInScreenLight() {
+
+    var uiState by rememberSaveable {
+        mutableStateOf(SignInUiState())
+    }
+    var email by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+    var password by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+
+    val onValueChangeEmail = remember<(TextFieldValue) -> Unit> {
+        {
+            uiState = uiState.copy(
+                emailErrorMessage = ""
+            )
+            email = it
+        }
+    }
+
+    val onValueChangePassword = remember<(TextFieldValue) -> Unit> {
+        {
+            uiState = uiState.copy(
+                passwordErrorMessage = ""
+            )
+            password = it
+        }
+    }
+
+
+    CyclistanceTheme(false) {
+        SignInScreenContent(uiState = uiState, email = email, password = password, event = {
+            when (it) {
+                is SignUiEvent.OnChangeEmail -> onValueChangeEmail(it.email)
+                is SignUiEvent.OnChangePassword -> onValueChangePassword(it.password)
+                else -> {}
+            }
+        })
+    }
+}
+
+
 
 
 

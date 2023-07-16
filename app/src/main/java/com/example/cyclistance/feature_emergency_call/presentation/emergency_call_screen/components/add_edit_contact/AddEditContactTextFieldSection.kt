@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
@@ -21,6 +22,8 @@ fun AddEditContextTextFieldSection(
     modifier: Modifier,
     uiState: EmergencyCallUIState,
     state: EmergencyCallState,
+    name: TextFieldValue,
+    phoneNumber: TextFieldValue,
     keyboardActions: KeyboardActions,
     event: (EmergencyCallUiEvent) -> Unit) {
 
@@ -32,7 +35,7 @@ fun AddEditContextTextFieldSection(
         TextFieldCreator(label = "Name", errorMessage = uiState.nameErrorMessage) {
             TextFieldItem(
                 enabled = !state.isLoading,
-                value = uiState.name,
+                value = name,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Words,
                     autoCorrect = false,
@@ -46,7 +49,7 @@ fun AddEditContextTextFieldSection(
 
             TextFieldItem(
                 enabled = !state.isLoading,
-                value = uiState.phoneNumber,
+                value = phoneNumber,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.None,
                     autoCorrect = false,
