@@ -1,7 +1,7 @@
 package com.example.cyclistance.feature_emergency_call.domain.use_case
 
+import com.example.cyclistance.feature_emergency_call.domain.use_case.contact_purposely_deleted.AddDefaultContactUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.contact_purposely_deleted.AreContactsPurposelyDeletedUseCase
-import com.example.cyclistance.feature_emergency_call.domain.use_case.contact_purposely_deleted.SetContactsPurposelyDeletedUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.delete_contact.DeleteContactUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.get_contact.GetContactUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.get_contact.GetContactsUseCase
@@ -12,6 +12,6 @@ data class EmergencyContactUseCase(
     val getContactsUseCase: GetContactsUseCase,
     val upsertContactUseCase: UpsertContactUseCase,
     val areContactsPurposelyDeletedUseCase: AreContactsPurposelyDeletedUseCase,
-    val setContactsPurposelyDeletedUseCase: SetContactsPurposelyDeletedUseCase,
+    val addDefaultContactUseCase: AddDefaultContactUseCase,
     val getContactUseCase: GetContactUseCase
 )

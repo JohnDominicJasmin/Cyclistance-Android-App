@@ -34,9 +34,7 @@ class EmergencyContactRepositoryImpl(
 
 
     override suspend fun areContactsPurposelyDeleted(): Flow<Boolean> {
-        return withContext(scope) {
-            dataStore.getData(CONTACTS_PURPOSELY_DELETE_KEY, defaultValue = false)
-        }
+        return dataStore.getData(CONTACTS_PURPOSELY_DELETE_KEY, defaultValue = false)
     }
 
     override suspend fun deleteContact(emergencyContact: EmergencyContactModel) {
