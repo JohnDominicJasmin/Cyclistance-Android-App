@@ -8,7 +8,6 @@ import com.example.cyclistance.core.utils.constants.AuthConstants.USER_NOT_FOUND
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
-import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FacebookAuthProvider
@@ -79,8 +78,13 @@ class AuthRepositoryImpl(
             suspendCancellableCoroutine { continuation ->
                 auth.createUserWithEmailAndPassword(email.trim(), password.trim())
                     .addOnCompleteListener { createAccount ->
-//                        Timber.v("Account: ${createAccount.result.user?.uid}")
                         createAccount.exception?.let { exception ->
+                            if (exception is FirebaseNetworkException) {
+                                continuation.resumeWithException(
+                                    AuthExceptions.NetworkException(
+                                        message = context.getString(R.string.no_internet_message)))
+                                return@addOnCompleteListener
+                            }
 
                             if (exception is FirebaseAuthUserCollisionException) {
                                 continuation.resumeWithException(
@@ -89,17 +93,8 @@ class AuthRepositoryImpl(
                                         message = context.getString(R.string.accountAlreadyInUse)))
                                 return@addOnCompleteListener
                             }
-
-                            if (exception is FirebaseNetworkException || exception is FirebaseException) {
-                                continuation.resumeWithException(
-                                    AuthExceptions.NetworkException(
-                                        message = context.getString(R.string.no_internet_message)))
-                                return@addOnCompleteListener
-                            }
-
                             continuation.resumeWithException(exception)
                         }
-
                         if (continuation.isActive) {
                             continuation.resume(createAccount.isSuccessful)
                         }
@@ -119,6 +114,14 @@ class AuthRepositoryImpl(
                 auth.signInWithEmailAndPassword(email.trim(), password.trim())
                     .addOnCompleteListener { signInWithEmailAndPassword ->
                         signInWithEmailAndPassword.exception?.let { exception ->
+                            Timber.e(exception.message)
+                            if (exception is FirebaseNetworkException) {
+                                continuation.resumeWithException(
+                                    AuthExceptions.NetworkException(
+                                        message = context.getString(
+                                            R.string.no_internet_message)))
+                                return@addOnCompleteListener
+                            }
 
                             if (exception is FirebaseAuthInvalidCredentialsException) {
                                 continuation.resumeWithException(
@@ -146,15 +149,6 @@ class AuthRepositoryImpl(
                                         message = context.getString(R.string.manyFailedAttempts)))
                                 return@addOnCompleteListener
                             }
-
-                            if (exception is FirebaseNetworkException || exception is FirebaseException) {
-                                continuation.resumeWithException(
-                                    AuthExceptions.NetworkException(
-                                        message = context.getString(
-                                            R.string.no_internet_message)))
-                                return@addOnCompleteListener
-                            }
-
 
                             if (exception is IllegalStateException) {
                                 Timber.e(exception.message)
@@ -191,7 +185,7 @@ class AuthRepositoryImpl(
                                             R.string.no_internet_message)))
                             }
 
-                            if (exception is FirebaseNetworkException || exception is FirebaseException) {
+                            if(exception is FirebaseNetworkException){
                                 continuation.resumeWithException(
                                     AuthExceptions.NetworkException(
                                         message = context.getString(R.string.no_internet_message)))
