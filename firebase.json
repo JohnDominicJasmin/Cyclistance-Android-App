@@ -13,6 +13,9 @@
     },
     "ui": {
       "enabled": true
+    },
+    "firestore": {
+      "port": 9299
     }
   }
 }
