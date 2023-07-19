@@ -44,7 +44,7 @@ object AuthenticationModule {
         firebaseAuth: FirebaseAuth): AuthRepository {
 
         return AuthRepositoryImpl(
-            context = context,
+            appContext = context,
             auth = firebaseAuth)
     }
 

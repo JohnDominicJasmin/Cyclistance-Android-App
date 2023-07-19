@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_authentication.domain.use_case.create_ac
 import com.example.cyclistance.core.utils.resource_texts.ResourceText
 import com.example.cyclistance.core.utils.validation.InputValidate.isEmailValid
 import com.example.cyclistance.core.utils.validation.InputValidate.isPasswordStrong
+import com.example.cyclistance.feature_authentication.data.repository.model.AuthenticationResult
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
@@ -10,7 +11,7 @@ import com.example.cyclistance.feature_authentication.domain.repository.AuthRepo
 class CreateWithEmailAndPasswordUseCase(
     private val repository: AuthRepository) {
 
-    suspend operator fun invoke(authModel: AuthModel): Boolean {
+    suspend operator fun invoke(authModel: AuthModel): AuthenticationResult? {
 
         val email = authModel.email.trim()
         val password = authModel.password.trim()

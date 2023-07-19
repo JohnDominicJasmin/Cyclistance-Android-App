@@ -7,8 +7,8 @@ import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_UP_VM_STA
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpVmEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpVmEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state.SignUpState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -81,9 +81,9 @@ class SignUpViewModel @Inject constructor(
                             confirmPassword = confirmPassword.trim()
                         ))
                 }
-            }.onSuccess { isAccountCreated ->
+            }.onSuccess { accountCreation ->
                 _state.update { it.copy(isLoading = false) }
-                if (isAccountCreated) {
+                if (accountCreation?.isSuccessful == true) {
                     _eventFlow.emit(SignUpEvent.SignUpSuccess)
                 } else {
                     _eventFlow.emit(SignUpEvent.CreateAccountFailed())
