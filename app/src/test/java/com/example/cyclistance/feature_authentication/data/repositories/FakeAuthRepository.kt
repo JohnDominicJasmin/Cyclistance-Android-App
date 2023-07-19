@@ -1,4 +1,5 @@
 package com.example.cyclistance.feature_authentication.data.repositories
+import com.example.cyclistance.feature_authentication.data.repository.model.AuthenticationResult
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
@@ -35,19 +36,19 @@ class FakeAuthRepository: AuthRepository {
         signOut = true
     }
 
-    override fun getEmail(): String? = email
+    override fun getEmail(): String = email
 
     override suspend fun sendEmailVerification(): Boolean = sendEmailVerification
 
     override fun getName(): String? = name
 
-    override fun getId(): String? = id
+    override fun getId(): String = id
 
     override fun getPhotoUrl(): String? = photoUrl
 
-    override fun isSignedInWithProvider(): Boolean? = isSignedInWithProvider
+    override fun isSignedInWithProvider(): Boolean = isSignedInWithProvider
 
-    override fun isEmailVerified(): Boolean? = isEmailVerified
+    override fun isEmailVerified(): Boolean = isEmailVerified
 
     override fun hasAccountSignedIn(): Boolean = hasAccountSignedIn
 
@@ -60,9 +61,11 @@ class FakeAuthRepository: AuthRepository {
         return imagePath
     }
 
-    override suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean {
-       
-        if(shouldReturnNetworkError){
+    override suspend fun createUserWithEmailAndPassword(
+        email: String,
+        password: String): AuthenticationResult {
+
+        if (shouldReturnNetworkError) {
             throw AuthExceptions.NetworkException("Network error")
         }
         Companion.email = email
@@ -70,16 +73,18 @@ class FakeAuthRepository: AuthRepository {
         return true
     }
 
-    override suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean {
+    override suspend fun signInWithEmailAndPassword(
+        email: String,
+        password: String): AuthenticationResult {
         if (shouldReturnNetworkError) {
             throw AuthExceptions.NetworkException("Network error")
         }
-        
-        if(email != Companion.email){
+
+        if (email != Companion.email) {
             throw MappingExceptions.UserException("Email is not correct")
         }
-        
-        if(Companion.password != password){
+
+        if (Companion.password != password) {
             throw MappingExceptions.UserException("Password is not correct")
         }
         

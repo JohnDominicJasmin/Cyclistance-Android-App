@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_authentication.domain.repository
 
+import com.example.cyclistance.feature_authentication.data.repository.model.AuthenticationResult
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 
 interface AuthRepository {
@@ -13,8 +14,11 @@ interface AuthRepository {
     fun isEmailVerified(): Boolean?
     fun hasAccountSignedIn(): Boolean
 
-    suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean
-    suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean
+    suspend fun createUserWithEmailAndPassword(
+        email: String,
+        password: String): AuthenticationResult?
+
+    suspend fun signInWithEmailAndPassword(email: String, password: String): AuthenticationResult?
     suspend fun signInWithCredential(credential: SignInCredential): Boolean
 
 }

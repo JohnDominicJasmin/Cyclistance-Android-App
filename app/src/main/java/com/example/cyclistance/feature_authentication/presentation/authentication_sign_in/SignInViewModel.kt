@@ -97,9 +97,9 @@ class SignInViewModel @Inject constructor(
                             password = password.trim()))
                 }
 
-            }.onSuccess { isSignedIn ->
+            }.onSuccess { signIn ->
                 _state.update { it.copy(isLoading = false) }
-                if (isSignedIn) {
+                if (signIn?.isSuccessful == true) {
                     _eventFlow.emit(SignInEvent.RefreshEmail)
                 } else {
                     _eventFlow.emit(SignInEvent.SignInFailed())

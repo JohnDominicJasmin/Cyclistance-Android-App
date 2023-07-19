@@ -5,6 +5,7 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNECTION_FAILURE
 import com.example.cyclistance.core.utils.constants.AuthConstants.USER_NOT_FOUND
+import com.example.cyclistance.feature_authentication.data.repository.model.AuthenticationResult
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
@@ -16,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.GoogleAuthProvider
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
@@ -26,10 +28,10 @@ import kotlin.coroutines.resumeWithException
 
 
 class AuthRepositoryImpl(
-    private val context: Context,
+    private val appContext: Context,
     private val auth: FirebaseAuth,
     private val scope: CoroutineContext = Dispatchers.IO
-    ) : AuthRepository {
+) : AuthRepository {
 
 
 
@@ -40,7 +42,10 @@ class AuthRepositoryImpl(
                 auth.currentUser?.reload()?.addOnCompleteListener { reload ->
                     reload.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
-                            continuation.resumeWithException(AuthExceptions.NetworkException(message = context.getString(R.string.no_internet_message)))
+                            continuation.resumeWithException(
+                                AuthExceptions.NetworkException(
+                                    message = appContext.getString(
+                                        R.string.no_internet_message)))
                         }
                     }
                     if (continuation.isActive) {
@@ -58,7 +63,9 @@ class AuthRepositoryImpl(
                 auth.currentUser?.sendEmailVerification()?.addOnCompleteListener { sendEmail ->
                     sendEmail.exception?.let {
                         continuation.resumeWithException(
-                            AuthExceptions.EmailVerificationException(message = context.getString(R.string.failed_email_verification)))
+                            AuthExceptions.EmailVerificationException(
+                                message = appContext.getString(
+                                    R.string.failed_email_verification)))
                     }
                     if (continuation.isActive) {
                         continuation.resume(sendEmail.isSuccessful)
@@ -68,10 +75,12 @@ class AuthRepositoryImpl(
         }
     }
 
-    override suspend fun createUserWithEmailAndPassword(email: String, password: String): Boolean {
+    override suspend fun createUserWithEmailAndPassword(
+        email: String,
+        password: String): AuthenticationResult? {
 
-        if(!context.hasInternetConnection()){
-            throw AuthExceptions.NetworkException(message = context.getString(R.string.no_internet_message))
+        if (!appContext.hasInternetConnection()) {
+            throw AuthExceptions.NetworkException(message = appContext.getString(R.string.no_internet_message))
         }
 
         return withContext(scope) {
@@ -79,91 +88,118 @@ class AuthRepositoryImpl(
                 auth.createUserWithEmailAndPassword(email.trim(), password.trim())
                     .addOnCompleteListener { createAccount ->
                         createAccount.exception?.let { exception ->
-                            if (exception is FirebaseNetworkException) {
-                                continuation.resumeWithException(
-                                    AuthExceptions.NetworkException(
-                                        message = context.getString(R.string.no_internet_message)))
-                                return@addOnCompleteListener
-                            }
-
-                            if (exception is FirebaseAuthUserCollisionException) {
-                                continuation.resumeWithException(
-                                    AuthExceptions.UserAlreadyExistsException(
-                                        title = context.getString(R.string.userAlreadyExists),
-                                        message = context.getString(R.string.accountAlreadyInUse)))
-                                return@addOnCompleteListener
-                            }
-                            continuation.resumeWithException(exception)
+                            continuation.handleCreateUserWithEmailAndPassword(exception)
+                            return@addOnCompleteListener
                         }
                         if (continuation.isActive) {
-                            continuation.resume(createAccount.isSuccessful)
+
+                            continuation.resume(
+                                AuthenticationResult(
+                                    isSuccessful = createAccount.isSuccessful,
+                                    uid = createAccount.result?.user?.uid,
+                                ))
                         }
                     }
             }
         }
     }
 
-    override suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean {
 
-        if(!context.hasInternetConnection()){
-            throw AuthExceptions.NetworkException(message = context.getString(R.string.no_internet_message))
+    override suspend fun signInWithEmailAndPassword(
+        email: String,
+        password: String): AuthenticationResult? {
+
+        if (!appContext.hasInternetConnection()) {
+            throw AuthExceptions.NetworkException(message = appContext.getString(R.string.no_internet_message))
         }
 
         return withContext(scope) {
             suspendCancellableCoroutine { continuation ->
                 auth.signInWithEmailAndPassword(email.trim(), password.trim())
-                    .addOnCompleteListener { signInWithEmailAndPassword ->
-                        signInWithEmailAndPassword.exception?.let { exception ->
-                            Timber.e(exception.message)
-                            if (exception is FirebaseNetworkException) {
-                                continuation.resumeWithException(
-                                    AuthExceptions.NetworkException(
-                                        message = context.getString(
-                                            R.string.no_internet_message)))
-                                return@addOnCompleteListener
-                            }
+                    .addOnCompleteListener { task ->
 
-                            if (exception is FirebaseAuthInvalidCredentialsException) {
-                                continuation.resumeWithException(
-                                    AuthExceptions.PasswordException(
-                                        message = context.getString(
-                                            R.string.incorrectPasswordMessage)))
-                                return@addOnCompleteListener
-                            }
-
-                            if (exception is FirebaseAuthInvalidUserException) {
-                                if (exception.errorCode == USER_NOT_FOUND) {
-                                    continuation.resumeWithException(
-                                        AuthExceptions.EmailException(
-                                            message = context.getString(
-                                                R.string.couldntFindAccount)))
-                                    return@addOnCompleteListener
-                                }
-                            }
-
-                            if (exception is FirebaseTooManyRequestsException) {
-                                continuation.resumeWithException(
-                                    AuthExceptions.TooManyRequestsException(
-                                        title = context.getString(
-                                            R.string.tooManyFailedAttempts),
-                                        message = context.getString(R.string.manyFailedAttempts)))
-                                return@addOnCompleteListener
-                            }
-
-                            if (exception is IllegalStateException) {
-                                Timber.e(exception.message)
-                            }
-
-                            continuation.resumeWithException(exception)
+                        task.exception?.let {
+                            continuation.handleSignInWithEmailAndPasswordException(exception = it)
+                            return@addOnCompleteListener
                         }
+
                         if (continuation.isActive) {
-                            continuation.resume(signInWithEmailAndPassword.isSuccessful)
+                            continuation.resume(
+                                AuthenticationResult(
+                                    isSuccessful = task.isSuccessful,
+                                    uid = task.result?.user?.uid,
+                                ))
                         }
                     }
             }
         }
     }
 
+
+    private fun CancellableContinuation<AuthenticationResult?>.handleCreateUserWithEmailAndPassword(
+        exception: Exception) {
+        if (exception is FirebaseNetworkException) {
+            resumeWithException(
+                AuthExceptions.NetworkException(
+                    message = appContext.getString(
+                        R.string.no_internet_message)))
+            return
+        }
+
+        if (exception is FirebaseAuthUserCollisionException) {
+            resumeWithException(
+                AuthExceptions.UserAlreadyExistsException(
+                    title = appContext.getString(R.string.userAlreadyExists),
+                    message = appContext.getString(R.string.accountAlreadyInUse)))
+            return
+        }
+        resumeWithException(exception)
+    }
+
+
+    private fun CancellableContinuation<AuthenticationResult?>.handleSignInWithEmailAndPasswordException(
+        exception: Exception) {
+        if (exception is FirebaseNetworkException) {
+            resumeWithException(
+                AuthExceptions.NetworkException(
+                    message = appContext.getString(
+                        R.string.no_internet_message)))
+            return
+        }
+
+        if (exception is FirebaseAuthInvalidCredentialsException) {
+            resumeWithException(
+                AuthExceptions.PasswordException(
+                    message = appContext.getString(
+                        R.string.incorrectPasswordMessage)))
+            return
+        }
+
+        if (exception is FirebaseAuthInvalidUserException) {
+            if (exception.errorCode == USER_NOT_FOUND) {
+                resumeWithException(
+                    AuthExceptions.EmailException(
+                        message = appContext.getString(
+                            R.string.couldntFindAccount)))
+                return
+            }
+        }
+
+        if (exception is FirebaseTooManyRequestsException) {
+            resumeWithException(
+                AuthExceptions.TooManyRequestsException(
+                    title = appContext.getString(
+                        R.string.tooManyFailedAttempts),
+                    message = appContext.getString(R.string.manyFailedAttempts)))
+            return
+        }
+
+        if (exception is IllegalStateException) {
+            Timber.e(exception.message)
+        }
+
+        resumeWithException(exception)
+    }
 
     override suspend fun signInWithCredential(credential: SignInCredential): Boolean {
         return withContext(scope) {
@@ -181,14 +217,14 @@ class AuthRepositoryImpl(
                             if (exception.message == FACEBOOK_CONNECTION_FAILURE) {
                                 continuation.resumeWithException(
                                     AuthExceptions.NetworkException(
-                                        message = context.getString(
+                                        message = appContext.getString(
                                             R.string.no_internet_message)))
                             }
 
                             if(exception is FirebaseNetworkException){
                                 continuation.resumeWithException(
                                     AuthExceptions.NetworkException(
-                                        message = context.getString(R.string.no_internet_message)))
+                                        message = appContext.getString(R.string.no_internet_message)))
                                 return@addOnCompleteListener
                             }
 
