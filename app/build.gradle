@@ -24,6 +24,7 @@ android {
         targetSdk 33
         versionCode 1
         versionName "1.0"
+        multiDexEnabled = true
 
         testInstrumentationRunner "com.example.cyclistance.HiltTestRunner"
         vectorDrawables {
@@ -124,6 +125,7 @@ dependencies {
     implementation "androidx.compose.material3:material3:1.1.1"
     implementation 'androidx.test.ext:junit-ktx:1.1.5'
     implementation 'androidx.core:core-ktx:1.10.1'
+
     debugImplementation "androidx.compose.ui:ui-tooling:1.4.3"
     implementation "androidx.compose.compiler:compiler:1.4.7"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
@@ -232,7 +234,7 @@ dependencies {
 
 
     //Firebase
-    implementation platform('com.google.firebase:firebase-bom:29.1.0')
+    implementation platform('com.google.firebase:firebase-bom:32.2.0')
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.gms:google-services:4.3.15'
     implementation 'com.google.firebase:firebase-crashlytics'
@@ -241,13 +243,15 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore-ktx'
     implementation 'com.google.firebase:firebase-storage-ktx'
     implementation 'com.google.firebase:firebase-common-ktx'
+    implementation 'com.google.firebase:firebase-messaging-ktx'
+
 
     //livedata
     implementation 'androidx.compose.runtime:runtime-livedata:1.5.0-beta02'
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1"
 
     //IOSocket Websocket
-    implementation ('io.socket:socket.io-client:2.1.0') {
+    implementation('io.socket:socket.io-client:2.1.0') {
         exclude group: 'org.json', module: 'json'
     }
 
@@ -271,6 +275,9 @@ dependencies {
     implementation "androidx.room:room-runtime:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
+
+    def multidex_version = "2.0.1"
+    implementation("androidx.multidex:multidex:$multidex_version")
 }
 
 apply plugin: 'com.google.gms.google-services'
