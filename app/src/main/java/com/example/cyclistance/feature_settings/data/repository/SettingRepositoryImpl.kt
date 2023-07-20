@@ -62,10 +62,10 @@ class SettingRepositoryImpl(
     }
 
 
-    override suspend fun updateProfile(photoUrl: String?, name: String?): Boolean {
+    override suspend fun updateProfile(photoUri: String?, name: String?): Boolean {
         val profileUpdates = userProfileChangeRequest {
             name?.let { this.displayName = it }
-            photoUrl?.let { this.photoUri = Uri.parse(photoUrl) }
+            photoUri?.let { this.photoUri = Uri.parse(photoUri) }
         }
 
 
