@@ -11,4 +11,5 @@ sealed class AuthExceptions {
     class EmailException(message: String) : RuntimeException(message)
     class UserException(message: String = "User not found") : RuntimeException(message)
     class CreateUserException(message: String = "Error creating user") : RuntimeException(message)
+    class UnexpectedException(message: String = "") : RuntimeException(message)
 }

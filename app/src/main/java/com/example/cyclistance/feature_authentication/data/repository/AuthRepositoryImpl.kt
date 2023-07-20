@@ -53,8 +53,8 @@ class AuthRepositoryImpl(
                                 R.string.no_internet_message))
                     }
 
-                    throw AuthExceptions.CreateUserException(
-                        message = appContext.getString(R.string.failed_create_user))
+                    throw AuthExceptions.UnexpectedException(
+                        message = it.message!!)
                 }
 
                 if (!task.isSuccessful) {
