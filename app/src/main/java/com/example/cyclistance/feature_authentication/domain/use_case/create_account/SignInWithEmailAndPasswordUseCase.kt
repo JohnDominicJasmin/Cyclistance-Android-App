@@ -2,9 +2,9 @@ package com.example.cyclistance.feature_authentication.domain.use_case.create_ac
 
 import com.example.cyclistance.core.utils.resource_texts.ResourceText
 import com.example.cyclistance.core.utils.validation.InputValidate.isEmailValid
-import com.example.cyclistance.feature_authentication.data.repository.model.AuthenticationResult
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
+import com.example.cyclistance.feature_authentication.domain.model.AuthenticationResult
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 
 class SignInWithEmailAndPasswordUseCase(
