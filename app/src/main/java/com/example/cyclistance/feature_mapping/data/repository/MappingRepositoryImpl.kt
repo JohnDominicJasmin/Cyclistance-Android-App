@@ -5,13 +5,11 @@ import android.location.Address
 import android.location.Geocoder
 import android.os.Build
 import androidx.annotation.WorkerThread
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.API_CALL_RETRY_COUNT
 import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_KEY
+import com.example.cyclistance.core.utils.contexts.dataStore
 import com.example.cyclistance.core.utils.data_store_ext.editData
 import com.example.cyclistance.core.utils.data_store_ext.getData
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
@@ -57,7 +55,6 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
 
 class MappingRepositoryImpl(
     val rescueTransactionClient: WebSocketClient<RescueTransaction, LiveLocationWSModel>,
