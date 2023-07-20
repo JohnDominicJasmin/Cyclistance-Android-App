@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_UP_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
@@ -84,7 +85,7 @@ class SignUpViewModel @Inject constructor(
             }.onSuccess { accountCreation ->
                 _state.update { it.copy(isLoading = false) }
                 if (accountCreation?.isSuccessful == true) {
-                    createUser(authUser = accountCreation.authUser)
+                    createUser(user = accountCreation.user)
                     _eventFlow.emit(SignUpEvent.SignUpSuccess)
                 } else {
                     _eventFlow.emit(SignUpEvent.CreateAccountFailed())
@@ -98,11 +99,11 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
-    private fun createUser(authUser: AuthenticationUser) {
+    private fun createUser(user: UserDetails) {
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 _state.update { it.copy(isLoading = true) }
-                authUseCase.createUserUseCase(authUser = authUser)
+                authUseCase.createUserUseCase(user)
             }.onSuccess {
                 _state.update { it.copy(isLoading = false) }
             }.onFailure { exception ->

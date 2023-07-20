@@ -39,11 +39,11 @@ class AuthRepositoryImpl(
 ) : AuthRepository {
 
 
-    override suspend fun createUser(authUser: AuthenticationUser) {
+    override suspend fun createUser(user: UserDetails) {
 
         checkInternetConnection()
 
-        fireStore.document("$USER_DOCUMENT/${authUser.uid}").set(authUser)
+        fireStore.document("$USER_DOCUMENT/${user.uid}").set(user)
             .addOnCompleteListener { task ->
                 task.exception?.let {
 
@@ -129,7 +129,7 @@ class AuthRepositoryImpl(
                             continuation.resume(
                                 AuthenticationResult(
                                     isSuccessful = task.isSuccessful,
-                                    authUser = task.result.user!!.toAuthenticationUser()
+                                    user = task.result.user!!.toUserDetails()
                                 ))
                         }
                     }
@@ -158,7 +158,7 @@ class AuthRepositoryImpl(
                             continuation.resume(
                                 AuthenticationResult(
                                     isSuccessful = task.isSuccessful,
-                                    authUser = task.result.user!!.toAuthenticationUser()
+                                    user = task.result.user!!.toUserDetails()
                                 ))
                         }
                     }
