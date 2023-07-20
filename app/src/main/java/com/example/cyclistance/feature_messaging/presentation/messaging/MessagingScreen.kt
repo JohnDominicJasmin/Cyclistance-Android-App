@@ -11,8 +11,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.MessagingScreenContent
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.fakeMessages
@@ -21,7 +21,7 @@ import com.example.cyclistance.feature_messaging.presentation.messaging.state.Me
 
 @Composable
 fun MessagingScreen(
-    viewModel: MessagingViewModel = viewModel(),
+    viewModel: MessagingViewModel = hiltViewModel(),
     navController: NavController,
     paddingValues: PaddingValues) {
 
