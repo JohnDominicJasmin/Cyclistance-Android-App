@@ -6,8 +6,8 @@ import com.example.cyclistance.core.data.mapper.UserDetailsMapper.toUserDetails
 import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNECTION_FAILURE
-import com.example.cyclistance.core.utils.constants.AuthConstants.USER_DOCUMENT
 import com.example.cyclistance.core.utils.constants.AuthConstants.USER_NOT_FOUND
+import com.example.cyclistance.core.utils.constants.UtilsConstants.USER_COLLECTION
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthenticationResult
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
@@ -43,25 +43,19 @@ class AuthRepositoryImpl(
 
         checkInternetConnection()
 
-        fireStore.document("$USER_DOCUMENT/${user.uid}").set(user)
-            .addOnCompleteListener { task ->
-                task.exception?.let {
+        fireStore.document("${USER_COLLECTION}/${user.uid}").set(user).addOnSuccessListener {
+            Timber.v("User created successfully")
+        }.addOnFailureListener { exception ->
 
-                    if (it is FirebaseNetworkException) {
-                        throw AuthExceptions.NetworkException(
-                            message = appContext.getString(
-                                R.string.no_internet_message))
-                    }
-
-                    throw AuthExceptions.UnexpectedException(
-                        message = it.message!!)
-                }
-
-                if (!task.isSuccessful) {
-                    throw AuthExceptions.CreateUserException(
-                        message = appContext.getString(R.string.failed_create_user))
-                }
+            if (exception is FirebaseNetworkException) {
+                throw AuthExceptions.NetworkException(
+                    message = appContext.getString(
+                        R.string.no_internet_message))
             }
+
+            throw AuthExceptions.CreateUserException(
+                message = appContext.getString(R.string.failed_create_user))
+        }
 
     }
 
