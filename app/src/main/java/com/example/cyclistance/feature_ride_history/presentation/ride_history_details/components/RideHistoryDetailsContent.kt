@@ -19,9 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
+import com.example.cyclistance.core.presentation.dialogs.common.AnimatedRawResIcon
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.validation.FormatterUtils.bikeDescriptionToIcon
-import com.example.cyclistance.feature_dialogs.presentation.common.AnimatedRawResIcon
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue_details.RescueDetailsModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_details.components.RatingCard
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_details.components.RescueDescription

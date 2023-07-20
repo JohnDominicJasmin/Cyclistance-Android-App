@@ -1,8 +1,8 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state
 
 import android.os.Parcelable
+import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.utils.annotations.StableState
-import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 import kotlinx.parcelize.Parcelize

@@ -24,10 +24,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
+import com.example.cyclistance.core.domain.model.AlertDialogState
+import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
+import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.common.visible
-import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
-import com.example.cyclistance.feature_dialogs.presentation.alert_dialog.AlertDialog
-import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent

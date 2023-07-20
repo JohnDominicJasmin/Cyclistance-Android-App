@@ -8,7 +8,6 @@ import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNE
 import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_IN_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
-import com.example.cyclistance.feature_authentication.domain.model.AuthenticationUser
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_authentication.domain.util.ActivityResultCallbackI

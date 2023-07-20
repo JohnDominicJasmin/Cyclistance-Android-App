@@ -18,12 +18,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.R
+import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.components.EmailAuthScreenContent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthVmEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthUiState
-import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreenInclusively
 import kotlinx.coroutines.flow.collectLatest

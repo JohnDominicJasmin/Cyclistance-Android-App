@@ -25,9 +25,9 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
-import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogForegroundLocationPermission
-import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogPhonePermission
+import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
+import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
+import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogPhonePermission
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call.EmergencyCallDialog
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel

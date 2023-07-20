@@ -25,9 +25,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
-import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogCameraPermission
-import com.example.cyclistance.feature_dialogs.presentation.permissions_dialog.DialogFilesAndMediaPermission
+import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
+import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogCameraPermission
+import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogFilesAndMediaPermission
 import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileUiEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileState

@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_dialogs.presentation.common
+package com.example.cyclistance.core.presentation.dialogs.common
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_dialogs.domain.model.DialogModel
+import com.example.cyclistance.core.domain.model.DialogModel
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme

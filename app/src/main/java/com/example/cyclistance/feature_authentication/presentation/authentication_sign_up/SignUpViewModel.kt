@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_UP_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
-import com.example.cyclistance.feature_authentication.domain.model.AuthenticationUser
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpVmEvent
