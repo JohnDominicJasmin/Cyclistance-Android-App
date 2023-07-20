@@ -2,14 +2,14 @@ package com.example.cyclistance.feature_authentication.data.repository
 
 import android.content.Context
 import com.example.cyclistance.R
+import com.example.cyclistance.core.data.mapper.UserDetailsMapper.toUserDetails
+import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNECTION_FAILURE
 import com.example.cyclistance.core.utils.constants.AuthConstants.USER_DOCUMENT
 import com.example.cyclistance.core.utils.constants.AuthConstants.USER_NOT_FOUND
-import com.example.cyclistance.feature_authentication.data.mapper.AuthenticationUserMapper.toAuthenticationUser
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthenticationResult
-import com.example.cyclistance.feature_authentication.domain.model.AuthenticationUser
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.google.firebase.FirebaseNetworkException
