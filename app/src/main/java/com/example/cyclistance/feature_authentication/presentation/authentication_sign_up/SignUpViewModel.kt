@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_UP_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
+import com.example.cyclistance.feature_authentication.domain.model.AuthenticationUser
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpVmEvent
@@ -84,6 +85,7 @@ class SignUpViewModel @Inject constructor(
             }.onSuccess { accountCreation ->
                 _state.update { it.copy(isLoading = false) }
                 if (accountCreation?.isSuccessful == true) {
+                    createUser(authUser = accountCreation.authUser)
                     _eventFlow.emit(SignUpEvent.SignUpSuccess)
                 } else {
                     _eventFlow.emit(SignUpEvent.CreateAccountFailed())
@@ -97,13 +99,37 @@ class SignUpViewModel @Inject constructor(
         }
     }
 
+    private fun createUser(authUser: AuthenticationUser) {
+        viewModelScope.launch(context = defaultDispatcher) {
+            runCatching {
+                _state.update { it.copy(isLoading = true) }
+                authUseCase.createUserUseCase(authUser = authUser)
+            }.onSuccess {
+                _state.update { it.copy(isLoading = false) }
+            }.onFailure { exception ->
+                _state.update { it.copy(isLoading = false) }
+                handleException(exception)
+            }
+        }.apply {
+            invokeOnCompletion {
+                savedStateHandle[SIGN_UP_VM_STATE_KEY] = state.value
+            }
+        }
+    }
+
+
     private suspend fun handleException(exception: Throwable) {
         when (exception) {
             is AuthExceptions.EmailException -> {
-                _eventFlow.emit(value = SignUpEvent.InvalidEmail(reason = exception.message ?: "Invalid email. Please try again."))
+                _eventFlow.emit(
+                    value = SignUpEvent.InvalidEmail(
+                        reason = exception.message ?: "Invalid email. Please try again."))
             }
+
             is AuthExceptions.PasswordException -> {
-                _eventFlow.emit(value = SignUpEvent.InvalidPassword(reason = exception.message ?: "Invalid password. Please try again."))
+                _eventFlow.emit(
+                    value = SignUpEvent.InvalidPassword(
+                        reason = exception.message ?: "Invalid password. Please try again."))
             }
             is AuthExceptions.ConfirmPasswordException -> {
                 _eventFlow.emit(value = SignUpEvent.InvalidConfirmPassword(reason = exception.message ?: "Passwords do not match. Please try again."))

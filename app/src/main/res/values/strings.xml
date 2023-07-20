@@ -17,4 +17,5 @@
     <string name="userAlreadyExists">User already exist.</string>
     <string name="accountAlreadyInUse">This account is Already in Use.</string>
     <string name="somethingWentWrong">Sorry, something went wrong. Please try again.</string>
+    <string name="failed_create_user">Failed to Create User</string>
 </resources>

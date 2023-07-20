@@ -4,9 +4,12 @@ import android.content.Context
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNECTION_FAILURE
+import com.example.cyclistance.core.utils.constants.AuthConstants.USER_DOCUMENT
 import com.example.cyclistance.core.utils.constants.AuthConstants.USER_NOT_FOUND
-import com.example.cyclistance.feature_authentication.data.repository.model.AuthenticationResult
+import com.example.cyclistance.feature_authentication.data.mapper.AuthenticationUserMapper.toAuthenticationUser
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
+import com.example.cyclistance.feature_authentication.domain.model.AuthenticationResult
+import com.example.cyclistance.feature_authentication.domain.model.AuthenticationUser
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.google.firebase.FirebaseNetworkException
@@ -17,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -30,15 +34,46 @@ import kotlin.coroutines.resumeWithException
 class AuthRepositoryImpl(
     private val appContext: Context,
     private val auth: FirebaseAuth,
+    private val fireStore: FirebaseFirestore,
     private val scope: CoroutineContext = Dispatchers.IO
 ) : AuthRepository {
 
 
+    override suspend fun createUser(authUser: AuthenticationUser) {
 
+        checkInternetConnection()
+
+        fireStore.document("$USER_DOCUMENT/${authUser.uid}").set(authUser)
+            .addOnCompleteListener { task ->
+                task.exception?.let {
+
+                    if (it is FirebaseNetworkException) {
+                        throw AuthExceptions.NetworkException(
+                            message = appContext.getString(
+                                R.string.no_internet_message))
+                    }
+
+                    throw AuthExceptions.CreateUserException(
+                        message = appContext.getString(R.string.failed_create_user))
+                }
+
+                if (!task.isSuccessful) {
+                    throw AuthExceptions.CreateUserException(
+                        message = appContext.getString(R.string.failed_create_user))
+                }
+            }
+
+    }
+
+    private fun checkInternetConnection() {
+        if (!appContext.hasInternetConnection()) {
+            throw AuthExceptions.NetworkException(message = appContext.getString(R.string.no_internet_message))
+        }
+    }
 
     override suspend fun reloadEmail(): Boolean {
         return withContext(scope) {
-             suspendCancellableCoroutine { continuation ->
+            suspendCancellableCoroutine { continuation ->
                 auth.currentUser?.reload()?.addOnCompleteListener { reload ->
                     reload.exception?.let { exception ->
                         if (exception is FirebaseNetworkException) {
@@ -79,15 +114,13 @@ class AuthRepositoryImpl(
         email: String,
         password: String): AuthenticationResult? {
 
-        if (!appContext.hasInternetConnection()) {
-            throw AuthExceptions.NetworkException(message = appContext.getString(R.string.no_internet_message))
-        }
+        checkInternetConnection()
 
         return withContext(scope) {
             suspendCancellableCoroutine { continuation ->
                 auth.createUserWithEmailAndPassword(email.trim(), password.trim())
-                    .addOnCompleteListener { createAccount ->
-                        createAccount.exception?.let { exception ->
+                    .addOnCompleteListener { task ->
+                        task.exception?.let { exception ->
                             continuation.handleCreateUserWithEmailAndPassword(exception)
                             return@addOnCompleteListener
                         }
@@ -95,8 +128,8 @@ class AuthRepositoryImpl(
 
                             continuation.resume(
                                 AuthenticationResult(
-                                    isSuccessful = createAccount.isSuccessful,
-                                    uid = createAccount.result?.user?.uid,
+                                    isSuccessful = task.isSuccessful,
+                                    authUser = task.result.user!!.toAuthenticationUser()
                                 ))
                         }
                     }
@@ -109,9 +142,7 @@ class AuthRepositoryImpl(
         email: String,
         password: String): AuthenticationResult? {
 
-        if (!appContext.hasInternetConnection()) {
-            throw AuthExceptions.NetworkException(message = appContext.getString(R.string.no_internet_message))
-        }
+        checkInternetConnection()
 
         return withContext(scope) {
             suspendCancellableCoroutine { continuation ->
@@ -127,7 +158,7 @@ class AuthRepositoryImpl(
                             continuation.resume(
                                 AuthenticationResult(
                                     isSuccessful = task.isSuccessful,
-                                    uid = task.result?.user?.uid,
+                                    authUser = task.result.user!!.toAuthenticationUser()
                                 ))
                         }
                     }
@@ -205,8 +236,11 @@ class AuthRepositoryImpl(
         return withContext(scope) {
             suspendCancellableCoroutine { continuation ->
 
-                val signInCredential = when(credential){
-                    is SignInCredential.Google -> GoogleAuthProvider.getCredential(credential.providerToken, null)
+                val signInCredential = when (credential) {
+                    is SignInCredential.Google -> GoogleAuthProvider.getCredential(
+                        credential.providerToken,
+                        null)
+
                     is SignInCredential.Facebook -> FacebookAuthProvider.getCredential(credential.providerToken)
                 }
 
@@ -221,7 +255,7 @@ class AuthRepositoryImpl(
                                             R.string.no_internet_message)))
                             }
 
-                            if(exception is FirebaseNetworkException){
+                            if (exception is FirebaseNetworkException) {
                                 continuation.resumeWithException(
                                     AuthExceptions.NetworkException(
                                         message = appContext.getString(R.string.no_internet_message)))
@@ -254,9 +288,6 @@ class AuthRepositoryImpl(
     }
 
 
-
-
-
     override fun isSignedInWithProvider(): Boolean? {
         return auth.currentUser?.providerData?.any {
             it.providerId == FacebookAuthProvider.PROVIDER_ID ||
@@ -271,9 +302,6 @@ class AuthRepositoryImpl(
     override fun hasAccountSignedIn(): Boolean {
         return auth.currentUser != null
     }
-
-
-
 
 
 }

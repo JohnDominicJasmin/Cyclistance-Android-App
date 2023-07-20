@@ -31,4 +31,5 @@ object AuthConstants {
     const val EMAIL_AUTH_VM_STATE_KEY = "email_auth_vm_state_key"
     const val SIGN_IN_VM_STATE_KEY = "sign_in_vm_state_key"
     const val SIGN_UP_VM_STATE_KEY = "sign_up_vm_state_key"
+    const val USER_DOCUMENT = "Users"
 }

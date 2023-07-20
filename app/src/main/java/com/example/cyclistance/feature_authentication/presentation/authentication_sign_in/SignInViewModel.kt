@@ -8,6 +8,7 @@ import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNE
 import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_IN_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthModel
+import com.example.cyclistance.feature_authentication.domain.model.AuthenticationUser
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_authentication.domain.util.ActivityResultCallbackI
@@ -100,6 +101,7 @@ class SignInViewModel @Inject constructor(
             }.onSuccess { signIn ->
                 _state.update { it.copy(isLoading = false) }
                 if (signIn?.isSuccessful == true) {
+                    createUser(authUser = signIn.authUser)
                     _eventFlow.emit(SignInEvent.RefreshEmail)
                 } else {
                     _eventFlow.emit(SignInEvent.SignInFailed())
@@ -113,6 +115,24 @@ class SignInViewModel @Inject constructor(
         }
     }
 
+
+    private fun createUser(authUser: AuthenticationUser) {
+        viewModelScope.launch(context = defaultDispatcher) {
+            runCatching {
+                _state.update { it.copy(isLoading = true) }
+                authUseCase.createUserUseCase(authUser = authUser)
+            }.onSuccess {
+                _state.update { it.copy(isLoading = false) }
+            }.onFailure { exception ->
+                _state.update { it.copy(isLoading = false) }
+                handleException(exception)
+            }
+        }.apply {
+            invokeOnCompletion {
+                savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
+            }
+        }
+    }
 
 
     private fun signInWithCredential(authCredential: SignInCredential) {
