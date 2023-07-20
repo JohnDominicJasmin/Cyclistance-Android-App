@@ -22,6 +22,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
+import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
+import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthState
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInState
@@ -29,8 +31,6 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.visible
-import com.example.cyclistance.feature_dialogs.presentation.alert_dialog.AlertDialog
-import com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.theme.CyclistanceTheme
 
 

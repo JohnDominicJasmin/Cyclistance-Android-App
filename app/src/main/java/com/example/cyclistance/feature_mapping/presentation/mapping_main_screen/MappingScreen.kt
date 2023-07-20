@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.R
+import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG
@@ -31,7 +32,6 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUD
 import com.example.cyclistance.core.utils.contexts.callPhoneNumber
 import com.example.cyclistance.core.utils.contexts.startLocationServiceIntentAction
 import com.example.cyclistance.core.utils.permissions.requestPermission
-import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.EmergencyCallViewModel
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState

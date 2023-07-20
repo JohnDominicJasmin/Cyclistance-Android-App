@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_dialogs.presentation.permissions_dialog
+package com.example.cyclistance.core.presentation.dialogs.permissions_dialog
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
@@ -8,9 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.cyclistance.R
+import com.example.cyclistance.core.domain.model.DialogModel
+import com.example.cyclistance.core.presentation.dialogs.common.DialogCreator
 import com.example.cyclistance.core.utils.contexts.openAppSettings
-import com.example.cyclistance.feature_dialogs.domain.model.DialogModel
-import com.example.cyclistance.feature_dialogs.presentation.common.DialogCreator
 import com.example.cyclistance.theme.CyclistanceTheme
 
 

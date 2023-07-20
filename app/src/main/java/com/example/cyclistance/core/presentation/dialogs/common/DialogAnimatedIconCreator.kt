@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_dialogs.presentation.common
+package com.example.cyclistance.core.presentation.dialogs.common
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.RawRes

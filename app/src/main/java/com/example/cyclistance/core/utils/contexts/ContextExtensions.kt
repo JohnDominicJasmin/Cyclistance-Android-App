@@ -4,6 +4,9 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.service.LocationService
 
@@ -33,3 +36,4 @@ fun Context.callPhoneNumber(phoneNumber: String) {
     startActivity(intent)
 }
 
+val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")

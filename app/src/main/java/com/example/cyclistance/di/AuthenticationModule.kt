@@ -11,6 +11,9 @@ import com.example.cyclistance.feature_authentication.domain.use_case.read_accou
 import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.*
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -39,13 +42,27 @@ object AuthenticationModule {
 
     @Provides
     @Singleton
+    fun provideFirebaseFireStore(): FirebaseFirestore {
+        return Firebase.firestore.apply {
+            if (BuildConfig.DEBUG) {
+                useEmulator("192.168.18.21", 9299)
+            }
+        }
+    }
+
+
+    @Provides
+    @Singleton
     fun provideAuthRepository(
         @ApplicationContext context: Context,
-        firebaseAuth: FirebaseAuth): AuthRepository {
+        firebaseAuth: FirebaseAuth,
+        fireStore: FirebaseFirestore
+    ): AuthRepository {
 
         return AuthRepositoryImpl(
             appContext = context,
-            auth = firebaseAuth)
+            auth = firebaseAuth,
+            fireStore = fireStore)
     }
 
 
@@ -64,6 +81,7 @@ object AuthenticationModule {
             sendEmailVerificationUseCase = SendEmailVerificationUseCase(repository = repository),
             signInWithEmailAndPasswordUseCase = SignInWithEmailAndPasswordUseCase(repository = repository),
             signInWithCredentialUseCase = SignInWithCredentialUseCase(repository = repository),
+            createUserUseCase = CreateUserUseCase(repository = repository),
         )
 
 

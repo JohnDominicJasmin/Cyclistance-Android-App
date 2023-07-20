@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNECTION_FAILURE
 import com.example.cyclistance.core.utils.constants.AuthConstants.SIGN_IN_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
@@ -100,6 +101,7 @@ class SignInViewModel @Inject constructor(
             }.onSuccess { signIn ->
                 _state.update { it.copy(isLoading = false) }
                 if (signIn?.isSuccessful == true) {
+                    createUser(user = signIn.user)
                     _eventFlow.emit(SignInEvent.RefreshEmail)
                 } else {
                     _eventFlow.emit(SignInEvent.SignInFailed())
@@ -113,6 +115,24 @@ class SignInViewModel @Inject constructor(
         }
     }
 
+
+    private fun createUser(user: UserDetails) {
+        viewModelScope.launch(context = defaultDispatcher) {
+            runCatching {
+                _state.update { it.copy(isLoading = true) }
+                authUseCase.createUserUseCase(user = user)
+            }.onSuccess {
+                _state.update { it.copy(isLoading = false) }
+            }.onFailure { exception ->
+                _state.update { it.copy(isLoading = false) }
+                handleException(exception)
+            }
+        }.apply {
+            invokeOnCompletion {
+                savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
+            }
+        }
+    }
 
 
     private fun signInWithCredential(authCredential: SignInCredential) {

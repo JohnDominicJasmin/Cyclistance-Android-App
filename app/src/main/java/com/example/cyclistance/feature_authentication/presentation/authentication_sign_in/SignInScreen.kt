@@ -22,6 +22,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.R
+import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.utils.constants.AuthConstants.GOOGLE_SIGN_IN_REQUEST_CODE
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.util.AuthResult
@@ -35,7 +36,6 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInVmEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInUiState
-import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import com.example.cyclistance.navigation.nav_graph.navigateScreenInclusively

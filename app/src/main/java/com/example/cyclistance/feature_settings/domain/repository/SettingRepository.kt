@@ -8,7 +8,7 @@ interface SettingRepository {
     fun isDarkTheme(): Flow<Boolean>
     suspend fun updatePhoneNumber(phoneNumber: String)
     fun getPhoneNumber(): Flow<String>
-    suspend fun updateProfile(s: String?, name: String?): Boolean
+    suspend fun updateProfile(photoUri: String?, name: String?): Boolean
     suspend fun uploadImage(v: String): String
     suspend fun getName(): String?
     suspend fun getPhotoUrl(): String?

@@ -36,7 +36,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_dialogs.presentation.common.DialogAnimatedIconCreator
+import com.example.cyclistance.core.presentation.dialogs.common.DialogAnimatedIconCreator
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.theme.Red700

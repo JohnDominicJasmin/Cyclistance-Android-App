@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_dialogs.domain.model
+package com.example.cyclistance.core.domain.model
 
 import android.os.Parcelable
 import androidx.annotation.DrawableRes

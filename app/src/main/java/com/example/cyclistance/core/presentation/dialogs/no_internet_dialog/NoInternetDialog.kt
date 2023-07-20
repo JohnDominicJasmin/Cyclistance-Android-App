@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_dialogs.presentation.no_internet_dialog
+package com.example.cyclistance.core.presentation.dialogs.no_internet_dialog
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
@@ -8,9 +8,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.cyclistance.R
+import com.example.cyclistance.core.domain.model.DialogModel
+import com.example.cyclistance.core.presentation.dialogs.common.DialogCreator
 import com.example.cyclistance.core.utils.contexts.openWifiSettings
-import com.example.cyclistance.feature_dialogs.domain.model.DialogModel
-import com.example.cyclistance.feature_dialogs.presentation.common.DialogCreator
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable

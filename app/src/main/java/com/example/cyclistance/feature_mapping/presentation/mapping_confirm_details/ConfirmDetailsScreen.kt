@@ -19,8 +19,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.utils.permissions.requestPermission
-import com.example.cyclistance.feature_dialogs.domain.model.AlertDialogState
 import com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetails
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.ConfirmDetailsContent
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsEvent
