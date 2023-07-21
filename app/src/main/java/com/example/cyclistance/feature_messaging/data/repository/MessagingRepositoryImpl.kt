@@ -4,7 +4,11 @@ import android.content.Context
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN
+import com.example.cyclistance.core.utils.constants.MessagingConstants.SAVED_TOKEN
 import com.example.cyclistance.core.utils.constants.UtilsConstants.USER_COLLECTION
+import com.example.cyclistance.core.utils.contexts.dataStore
+import com.example.cyclistance.core.utils.data_store_ext.editData
+import com.example.cyclistance.core.utils.data_store_ext.getData
 import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserDetailsMapper.toMessageUser
 import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions
 import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessagingUserItem
@@ -15,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -30,7 +35,7 @@ class MessagingRepositoryImpl(
 ) : MessagingRepository {
 
     private val scope: CoroutineContext = Dispatchers.IO
-
+    private var dataStore = appContext.dataStore
     private suspend fun getMessagingToken(): String {
         return suspendCancellableCoroutine { continuation ->
             firebaseMessaging.token.addOnSuccessListener { token: String ->
@@ -75,8 +80,13 @@ class MessagingRepositoryImpl(
         withContext(scope) {
 
             val token = getMessagingToken()
+            val savedToken = dataStore.getData(key = SAVED_TOKEN, defaultValue = "").firstOrNull()
 
             checkInternetConnection()
+            if (token == savedToken) {
+                return@withContext
+            }
+            dataStore.editData(key = SAVED_TOKEN, value = token)
             updateMessagingToken(token = token)
         }
     }
