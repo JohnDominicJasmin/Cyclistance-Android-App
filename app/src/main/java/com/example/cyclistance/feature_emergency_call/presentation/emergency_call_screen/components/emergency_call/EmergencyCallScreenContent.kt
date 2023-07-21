@@ -9,8 +9,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +42,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun EmergencyCallScreenContent(
     modifier: Modifier = Modifier,
+    bottomSheetScaffoldState: ModalBottomSheetState,
     keyboardActions: KeyboardActions = KeyboardActions { },
     uiState: EmergencyCallUIState,
     state: EmergencyCallState,
@@ -77,6 +81,7 @@ fun EmergencyCallScreenContent(
 
             if (shouldShowAddEditContactDialog) {
                 AddEditContactContent(
+                    bottomSheetScaffoldState = bottomSheetScaffoldState,
                     keyboardActions = keyboardActions,
                     event = event,
                     state = state,
@@ -187,6 +192,7 @@ private val fakeContacts = EmergencyCallModel(
 
         ))
 
+@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun PreviewEmergencyCallScreenContentDark() {
@@ -207,10 +213,13 @@ fun PreviewEmergencyCallScreenContentDark() {
             state = EmergencyCallState(
                 emergencyCallModel = EmergencyCallModel()
             ),
+            bottomSheetScaffoldState = rememberModalBottomSheetState(
+                ModalBottomSheetValue.Expanded),
             event = {}, name = TextFieldValue(""), phoneNumber = TextFieldValue(""))
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Preview
 @Composable
 fun PreviewEmergencyCallScreenContentLight() {
@@ -231,6 +240,8 @@ fun PreviewEmergencyCallScreenContentLight() {
             state = EmergencyCallState(
                 emergencyCallModel = fakeContacts
             ),
+            bottomSheetScaffoldState = rememberModalBottomSheetState(
+                ModalBottomSheetValue.Expanded),
             event = {},
             name = TextFieldValue(""),
             phoneNumber = TextFieldValue(""))

@@ -20,6 +20,7 @@ sealed class EmergencyCallUiEvent {
     data class OnChangePhoneNumber(val phoneNumber: TextFieldValue) : EmergencyCallUiEvent()
     object CancelEditContact : EmergencyCallUiEvent()
     object SaveEditContact : EmergencyCallUiEvent()
+    object ToggleBottomSheet : EmergencyCallUiEvent()
     object DismissEditContactScreen : EmergencyCallUiEvent()
 
 

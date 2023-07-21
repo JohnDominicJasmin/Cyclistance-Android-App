@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.add_edit_contact
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -66,6 +67,7 @@ fun AddEditPhotoSection(
             modifier = Modifier
                 .size(100.dp)
                 .clip(CircleShape)
+                .clickable { event(EmergencyCallUiEvent.ToggleBottomSheet) }
         )
 
     }
@@ -95,7 +97,8 @@ private fun AddEditContactImage(
             contentDescription = "User Profile Image",
             modifier = Modifier
                 .clip(CircleShape)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .clickable { event(EmergencyCallUiEvent.ToggleBottomSheet) },
             contentScale = ContentScale.Crop,
             placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
             error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),

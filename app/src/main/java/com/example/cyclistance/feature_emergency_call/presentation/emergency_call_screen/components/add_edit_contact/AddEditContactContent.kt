@@ -9,10 +9,13 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -32,6 +35,7 @@ import com.example.cyclistance.feature_emergency_call.presentation.emergency_cal
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallUIState
 import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
+import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.SelectImageBottomSheet
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.top_bars.TitleTopAppBar
 import com.example.cyclistance.top_bars.TopAppBarCreator
@@ -40,6 +44,7 @@ import com.example.cyclistance.top_bars.TopAppBarCreator
 @Composable
 fun AddEditContactContent(
     modifier: Modifier = Modifier,
+    bottomSheetScaffoldState: ModalBottomSheetState,
     keyboardActions: KeyboardActions = KeyboardActions { },
     event: (EmergencyCallUiEvent) -> Unit,
     state: EmergencyCallState,
@@ -83,6 +88,16 @@ fun AddEditContactContent(
                 modifier = Modifier
                     .padding(paddingValues)
                     .fillMaxSize(), color = MaterialTheme.colors.background) {
+
+                SelectImageBottomSheet(
+                    onClickGalleryButton = {
+                        event(EmergencyCallUiEvent.ToggleBottomSheet)
+                    },
+                    onClickCameraButton = {
+                        event(EmergencyCallUiEvent.ToggleBottomSheet)
+                    },
+                    bottomSheetScaffoldState = bottomSheetScaffoldState,
+                    isLoading = state.isLoading) {
 
                     ConstraintLayout(modifier = Modifier.fillMaxSize()) {
 
@@ -150,6 +165,7 @@ fun AddEditContactContent(
                         }
 
                     }
+                }
 
             }
         }
@@ -164,6 +180,8 @@ fun AddEditContactContent(
 fun PreviewAddNewContactContentDarkEditMode() {
     CyclistanceTheme(darkTheme = true) {
         AddEditContactContent(
+            bottomSheetScaffoldState = rememberModalBottomSheetState(
+                ModalBottomSheetValue.Expanded),
             event = {},
             uiState = EmergencyCallUIState(),
             state = EmergencyCallState(),
@@ -178,6 +196,8 @@ fun PreviewAddNewContactContentDarkEditMode() {
 fun PreviewAddNewContactContentDark() {
     CyclistanceTheme(darkTheme = true) {
         AddEditContactContent(
+            bottomSheetScaffoldState = rememberModalBottomSheetState(
+                ModalBottomSheetValue.Hidden),
             event = {},
             uiState = EmergencyCallUIState(
                 contactCurrentlyEditing = EmergencyContactModel(
@@ -198,6 +218,8 @@ fun PreviewAddNewContactContentDark() {
 fun PreviewAddNewContactContentLight() {
     CyclistanceTheme(darkTheme = false) {
         AddEditContactContent(
+            bottomSheetScaffoldState = rememberModalBottomSheetState(
+                ModalBottomSheetValue.Expanded),
             event = {},
             uiState = EmergencyCallUIState(
                 contactCurrentlyEditing = EmergencyContactModel(

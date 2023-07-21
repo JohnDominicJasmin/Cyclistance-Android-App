@@ -14,6 +14,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -36,6 +37,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(
     ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class,
@@ -157,7 +159,25 @@ fun EmergencyCallScreen(
     }
 
 
+    val scope = rememberCoroutineScope()
     val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val toggleBottomSheet = remember(bottomSheetScaffoldState, state.isLoading) {
+        {
+            scope.launch {
+
+                if (!state.isLoading) {
+                    with(bottomSheetScaffoldState) {
+                        if (isVisible) {
+                            hide()
+                        } else {
+                            show()
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 
 
 
@@ -264,6 +284,7 @@ fun EmergencyCallScreen(
         uiState = uiState,
         modifier = Modifier.padding(paddingValues),
         state = state,
+        bottomSheetScaffoldState = bottomSheetScaffoldState,
         keyboardActions = keyboardActions,
         name = name,
         phoneNumber = phoneNumber,
@@ -281,7 +302,10 @@ fun EmergencyCallScreen(
                 is EmergencyCallUiEvent.OnChangeName -> onValueChangeName(event.name)
                 is EmergencyCallUiEvent.OnChangePhoneNumber -> onValueChangePhoneNumber(event.phoneNumber)
                 is EmergencyCallUiEvent.SaveEditContact -> saveAddEditContact()
-
+                is EmergencyCallUiEvent.ToggleBottomSheet -> {
+                    toggleBottomSheet()
+                    keyboardController?.hide()
+                }
             }
         })
 }
