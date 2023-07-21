@@ -14,7 +14,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_messaging.domain.model.ui.MessageItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessageItemModel
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.MessagingScreenContent
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.fakeMessages
 import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingUiEvent

@@ -3,7 +3,7 @@ package com.example.cyclistance.feature_messaging.presentation.messaging.state
 import android.os.Parcelable
 import androidx.compose.ui.text.input.TextFieldValue
 import com.example.cyclistance.core.utils.annotations.StableState
-import com.example.cyclistance.feature_messaging.domain.model.ui.MessageItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessageItemModel
 import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.RawValue
 

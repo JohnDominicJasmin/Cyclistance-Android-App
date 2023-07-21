@@ -2,12 +2,12 @@ package com.example.cyclistance.feature_authentication.data.repository
 
 import android.content.Context
 import com.example.cyclistance.R
-import com.example.cyclistance.core.data.mapper.UserDetailsMapper.toUserDetails
 import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNECTION_FAILURE
 import com.example.cyclistance.core.utils.constants.AuthConstants.USER_NOT_FOUND
 import com.example.cyclistance.core.utils.constants.UtilsConstants.USER_COLLECTION
+import com.example.cyclistance.feature_authentication.data.mapper.AuthResultMapper.toAuthenticationResult
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthenticationResult
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
@@ -120,11 +120,7 @@ class AuthRepositoryImpl(
                         }
                         if (continuation.isActive) {
 
-                            continuation.resume(
-                                AuthenticationResult(
-                                    isSuccessful = task.isSuccessful,
-                                    user = task.result.user!!.toUserDetails()
-                                ))
+                            continuation.resume(task.toAuthenticationResult())
                         }
                     }
             }
@@ -149,11 +145,7 @@ class AuthRepositoryImpl(
                         }
 
                         if (continuation.isActive) {
-                            continuation.resume(
-                                AuthenticationResult(
-                                    isSuccessful = task.isSuccessful,
-                                    user = task.result.user!!.toUserDetails()
-                                ))
+                            continuation.resume(task.toAuthenticationResult())
                         }
                     }
             }

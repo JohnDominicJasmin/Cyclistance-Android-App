@@ -2,13 +2,13 @@ package com.example.cyclistance.feature_messaging.data.repository
 
 import android.content.Context
 import com.example.cyclistance.R
-import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN
 import com.example.cyclistance.core.utils.constants.UtilsConstants.USER_COLLECTION
-import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserDetailsMapper.toUserDetails
+import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserDetailsMapper.toMessageUser
 import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions
-import com.example.cyclistance.feature_messaging.domain.model.MessagingUsers
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessagingUserItem
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessagingUsers
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
@@ -87,8 +87,9 @@ class MessagingRepositoryImpl(
             suspendCancellableCoroutine { continuation ->
                 fireStore.collection(USER_COLLECTION).get().addOnSuccessListener {
                     it.documents.let { documents ->
-                        val users: List<UserDetails> = documents.map { document ->
-                            document.toUserDetails()
+                        val users: List<MessagingUserItem> = documents.map { document ->
+                            document.toMessageUser()
+
                         }
                         continuation.resume(MessagingUsers(users = users))
                     }

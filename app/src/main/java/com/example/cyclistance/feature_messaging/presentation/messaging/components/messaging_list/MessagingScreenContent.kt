@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_messaging.domain.model.ui.MessageItemModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.MessagesModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessageItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessagesModel
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.conversation.MessagingConversationContent
 import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingUiEvent
 import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingState

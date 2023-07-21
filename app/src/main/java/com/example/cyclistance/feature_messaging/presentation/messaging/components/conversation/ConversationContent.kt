@@ -53,9 +53,9 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
 import com.example.cyclistance.core.utils.composable_utils.keyboardAsState
 import com.example.cyclistance.core.utils.composable_utils.noRippleClickable
-import com.example.cyclistance.feature_messaging.domain.model.ui.Duration
-import com.example.cyclistance.feature_messaging.domain.model.ui.MessageContent
-import com.example.cyclistance.feature_messaging.domain.model.ui.MessageConversation
+import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.MessageDuration
 import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingUiEvent
 import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingState
 import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingUiState
@@ -67,121 +67,121 @@ import com.example.cyclistance.top_bars.TopAppBarCreator
 import kotlinx.coroutines.launch
 
 private val USER_ID = "1"
-private val conversation = MessageConversation(
+private val conversationsModel = ConversationsModel(
     messages = listOf(
-        MessageContent(
+        ConversationItemModel(
             messageId = "12",
             senderId = "1",
             recipientId = "2",
-            content = "Hello",
+            message = "Hello",
             dateSent = "10:30 AM",
-            duration = Duration.OneDay,
+            messageDuration = MessageDuration.OneDay,
 
             ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "13",
             senderId = "2",
             recipientId = "1",
-            content = "How are you?",
+            message = "How are you?",
             dateSent = "11:32 AM"
         ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "14",
             senderId = "1",
             recipientId = "2",
-            content = "I'm fine, thanks",
+            message = "I'm fine, thanks",
             dateSent = "11:35 AM"
         ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "15",
             senderId = "1",
             recipientId = "2",
-            content = "How about you?",
+            message = "How about you?",
             dateSent = "FEB 13 12:12 AM",
-            duration = Duration.OneMonth
+            messageDuration = MessageDuration.OneMonth
         ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "16",
             senderId = "2",
             recipientId = "1",
-            content = "I'm fine too",
+            message = "I'm fine too",
             dateSent = "11:42 AM",
-            duration = Duration.OneHour
+            messageDuration = MessageDuration.OneHour
         ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "17",
             senderId = "1",
             recipientId = "2",
-            content = "Good to hear that",
+            message = "Good to hear that",
             dateSent = "11:43 AM"
         ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "18",
             senderId = "2",
             recipientId = "1",
-            content = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
+            message = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
             dateSent = "11:45 AM"
         ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "19357846457",
             senderId = "1",
             recipientId = "2",
-            content = "Let's go for a ride?",
+            message = "Let's go for a ride?",
             dateSent = "11:50 AM"
         ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "23457570",
             senderId = "2",
             recipientId = "1",
-            content = "Sure",
+            message = "Sure",
             dateSent = "11:55 AM"
         ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "19",
             senderId = "1",
             recipientId = "2",
-            content = "Let's go for a ride?",
+            message = "Let's go for a ride?",
             dateSent = "11:50 AM"
         ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "23453450",
             senderId = "2",
             recipientId = "1",
-            content = "Sure",
+            message = "Sure",
             dateSent = "11:55 AM"
         ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "194533467",
             senderId = "1",
             recipientId = "2",
-            content = "Let's go for a ride?",
+            message = "Let's go for a ride?",
             dateSent = "11:50 AM"
         ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "203223",
             senderId = "2",
             recipientId = "1",
-            content = "Sure asdasdasd",
+            message = "Sure asdasdasd",
             dateSent = "11:55 AM"
         ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "18553",
             senderId = "2",
             recipientId = "1",
-            content = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
+            message = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
             dateSent = "11:45 AM"
         ),
-        MessageContent(
+        ConversationItemModel(
             messageId = "2546718",
             senderId = "2",
             recipientId = "1",
-            content = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
+            message = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
@@ -198,11 +198,11 @@ fun MessagingConversationContent(
     state: MessagingState,
     event: (MessagingUiEvent) -> Unit) {
 
-    val conversationAvailable by remember(state.conversation) {
-        derivedStateOf { state.conversation.messages.isNotEmpty() }
+    val conversationAvailable by remember(state.conversationsModel) {
+        derivedStateOf { state.conversationsModel.messages.isNotEmpty() }
     }
     val listState =
-        rememberLazyListState(initialFirstVisibleItemIndex = state.conversation.messages.indices.last)
+        rememberLazyListState(initialFirstVisibleItemIndex = state.conversationsModel.messages.indices.last)
     val focusManager = LocalFocusManager.current
     val keyboardState by keyboardAsState()
 
@@ -300,11 +300,11 @@ fun MessagingConversationContent(
                             ) {
 
                                 itemsIndexed(
-                                    items = state.conversation.messages,
+                                    items = state.conversationsModel.messages,
                                     key = { _, item -> item.messageId }) { index, message ->
 
                                     val isSender by remember { derivedStateOf { message.senderId != USER_ID } }
-                                    val timeStampAvailable by remember { derivedStateOf { message.duration != null && message.dateSent != null } }
+                                    val timeStampAvailable by remember { derivedStateOf { message.messageDuration != null && message.dateSent != null } }
 
                                     AnimatedVisibility(visible = timeStampAvailable) {
 
@@ -360,7 +360,7 @@ fun MessagingConversationContent(
                         isVisible = isScrollingUp,
                         onClick = {
                             scope.launch {
-                                listState.animateScrollToItem(index = state.conversation.messages.indices.last)
+                                listState.animateScrollToItem(index = state.conversationsModel.messages.indices.last)
                             }
                         })
 

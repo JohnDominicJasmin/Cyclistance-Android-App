@@ -11,5 +11,4 @@ data class UserDetails(
     val name: String = "",
     val photo: String = "",
     val email: String = "",
-    val fcmToken: String = "",
 ) : Parcelable

@@ -1,19 +1,19 @@
 package com.example.cyclistance.feature_messaging.domain.model.helper
 
-import com.example.cyclistance.feature_messaging.domain.model.ui.MessageContent
+import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 
 class Conversation {
-    private val messages: MutableList<MessageContent> = mutableListOf()
+    private val messages: MutableList<ConversationItemModel> = mutableListOf()
 
-    fun addMessage(message: MessageContent) {
+    fun addMessage(message: ConversationItemModel) {
         messages.add(message)
     }
 
-    fun getMessages(): List<MessageContent> {
+    fun getMessages(): List<ConversationItemModel> {
         return messages
     }
 
-    fun getMessagesBetween(senderId: String, recipientId: String): List<MessageContent> {
+    fun getMessagesBetween(senderId: String, recipientId: String): List<ConversationItemModel> {
         return messages.filter { it.senderId == senderId && it.recipientId == recipientId }
     }
 }

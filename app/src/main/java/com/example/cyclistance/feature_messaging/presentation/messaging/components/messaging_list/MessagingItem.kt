@@ -39,7 +39,7 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.feature_messaging.domain.model.ui.MessageItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessageItemModel
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @OptIn(ExperimentalMaterialApi::class)
