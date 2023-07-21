@@ -130,7 +130,7 @@ class AuthRepositoryImpl(
 
     override suspend fun signInWithEmailAndPassword(
         email: String,
-        password: String): AuthenticationResult? {
+        password: String): Boolean? {
 
         checkInternetConnection()
 
@@ -145,7 +145,7 @@ class AuthRepositoryImpl(
                         }
 
                         if (continuation.isActive) {
-                            continuation.resume(task.toAuthenticationResult())
+                            continuation.resume(task.isSuccessful)
                         }
                     }
             }
@@ -174,7 +174,7 @@ class AuthRepositoryImpl(
     }
 
 
-    private fun CancellableContinuation<AuthenticationResult?>.handleSignInWithEmailAndPasswordException(
+    private fun CancellableContinuation<Boolean?>.handleSignInWithEmailAndPasswordException(
         exception: Exception) {
         if (exception is FirebaseNetworkException) {
             resumeWithException(
@@ -218,7 +218,7 @@ class AuthRepositoryImpl(
         resumeWithException(exception)
     }
 
-    override suspend fun signInWithCredential(credential: SignInCredential): Boolean {
+    override suspend fun signInWithCredential(credential: SignInCredential): AuthenticationResult {
         return withContext(scope) {
             suspendCancellableCoroutine { continuation ->
 
@@ -232,8 +232,9 @@ class AuthRepositoryImpl(
 
 
                 auth.signInWithCredential(signInCredential)
-                    .addOnCompleteListener { signInWithCredential ->
-                        signInWithCredential.exception?.let { exception ->
+                    .addOnCompleteListener { task ->
+
+                        task.exception?.let { exception ->
                             if (exception.message == FACEBOOK_CONNECTION_FAILURE) {
                                 continuation.resumeWithException(
                                     AuthExceptions.NetworkException(
@@ -254,7 +255,7 @@ class AuthRepositoryImpl(
                                     ?: "Sorry, something went wrong. Please try again."))
                         }
                         if (continuation.isActive) {
-                            continuation.resume(signInWithCredential.isSuccessful)
+                            continuation.resume(task.toAuthenticationResult())
                         }
                     }
             }

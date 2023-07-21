@@ -101,7 +101,6 @@ class SignInViewModel @Inject constructor(
             }.onSuccess { signIn ->
                 _state.update { it.copy(isLoading = false) }
                 if (signIn?.isSuccessful == true) {
-                    createUser(user = signIn.user)
                     _eventFlow.emit(SignInEvent.RefreshEmail)
                 } else {
                     _eventFlow.emit(SignInEvent.SignInFailed())
@@ -141,9 +140,10 @@ class SignInViewModel @Inject constructor(
             runCatching {
                 _state.update { it.copy(isLoading = true) }
                 authUseCase.signInWithCredentialUseCase(authCredential)
-            }.onSuccess { isSuccess ->
+            }.onSuccess { task ->
                 _state.update { it.copy(isLoading = false) }
-                if (isSuccess) {
+                if (task.isSuccessful) {
+                    createUser(task.user)
                     _eventFlow.emit(SignInEvent.SignInSuccess)
                 }
             }.onFailure { exception ->

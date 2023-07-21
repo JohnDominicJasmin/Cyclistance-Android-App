@@ -19,8 +19,8 @@ interface AuthRepository {
         email: String,
         password: String): AuthenticationResult?
 
-    suspend fun signInWithEmailAndPassword(email: String, password: String): AuthenticationResult?
-    suspend fun signInWithCredential(credential: SignInCredential): Boolean
+    suspend fun signInWithEmailAndPassword(email: String, password: String): Boolean?
+    suspend fun signInWithCredential(credential: SignInCredential): AuthenticationResult
     suspend fun createUser(user: UserDetails)
 
 }
