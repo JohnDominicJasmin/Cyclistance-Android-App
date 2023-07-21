@@ -14,6 +14,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.cyclistance.feature_messaging.domain.model.ui.MessageItemModel
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.MessagingScreenContent
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.fakeMessages
 import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingUiEvent
@@ -29,9 +30,9 @@ fun MessagingScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val onSelectedConversationId = remember {
-        { id: String ->
+        { _messageItem: MessageItemModel ->
             uiState = uiState.copy(
-                selectedConversationId = id
+                selectedConversationItem = _messageItem
             )
         }
     }
@@ -39,7 +40,7 @@ fun MessagingScreen(
     val onDismissConversationDialog = remember {
         {
             uiState = uiState.copy(
-                selectedConversationId = null
+                selectedConversationItem = null
             )
         }
     }
@@ -98,7 +99,7 @@ fun MessagingScreen(
                 is MessagingUiEvent.ResetSelectedIndex -> resetSelectedIndex()
                 is MessagingUiEvent.SelectChatItem -> onClickChatItem(event.index)
                 is MessagingUiEvent.OnChangeMessage -> onChangeValueMessage(event.message)
-                is MessagingUiEvent.OnSelectedConversation -> onSelectedConversationId(event.conversationId)
+                is MessagingUiEvent.OnSelectedConversation -> onSelectedConversationId(event.messageItem)
                 is MessagingUiEvent.DismissConversationDialog -> onDismissConversationDialog()
             }
         },

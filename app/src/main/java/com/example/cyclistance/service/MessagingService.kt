@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_messaging.data.service
+package com.example.cyclistance.service
 
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage

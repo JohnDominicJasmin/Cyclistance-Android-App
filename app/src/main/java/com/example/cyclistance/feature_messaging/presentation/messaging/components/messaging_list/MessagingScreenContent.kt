@@ -48,7 +48,7 @@ fun MessagingScreenContent(
     val messageAvailable =
         remember(state.messagesModel.messages) { state.messagesModel.messages.isNotEmpty() }
     val shouldShowConversationDialog =
-        remember(uiState.selectedConversationId) { uiState.selectedConversationId != null }
+        remember(uiState.selectedConversationItem) { uiState.selectedConversationItem != null }
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
         if (shouldShowConversationDialog) {
@@ -139,7 +139,7 @@ private fun BoxScope.AddMessageButton(modifier: Modifier = Modifier, onClick: ()
 private fun MessagesSection(
     modifier: Modifier = Modifier,
     messagesModel: MessagesModel,
-    onClick: (String) -> Unit) {
+    onClick: (MessageItemModel) -> Unit) {
 
     LazyColumn(
         modifier = modifier

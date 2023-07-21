@@ -247,19 +247,19 @@ fun MessagingConversationContent(
                         horizontalArrangement = Arrangement.spacedBy(5.dp)) {
 
                         AsyncImage(
-                            model = "https://t3.ftcdn.net/jpg/02/99/04/20/360_F_299042079_vGBD7wIlSeNl7vOevWHiL93G4koMM967.jpg",
+                            model = uiState.selectedConversationItem?.userPhotoUrl,
                             alignment = Alignment.Center,
                             contentDescription = "User Profile Image",
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .size(35.dp)
+                                .size(45.dp)
                                 .clickable { event(MessagingUiEvent.DismissConversationDialog) },
                             contentScale = ContentScale.Crop,
                             placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
                             error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
                             fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
                         TitleTopAppBar(
-                            title = "John Doe",
+                            title = uiState.selectedConversationItem!!.name,
                             modifier = Modifier.padding(start = 5.dp))
                     }
                 })
