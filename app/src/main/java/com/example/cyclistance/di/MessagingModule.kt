@@ -5,6 +5,7 @@ import androidx.annotation.Keep
 import com.example.cyclistance.feature_messaging.data.repository.MessagingRepositoryImpl
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUsersUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.token.RefreshTokenUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -49,9 +50,8 @@ object MessagingModule {
     @Singleton
     fun providesMessagingUseCase(repository: MessagingRepository): MessagingUseCase {
         return MessagingUseCase(
-            refreshTokenUseCase = RefreshTokenUseCase(
-                repository = repository
-            )
+            refreshTokenUseCase = RefreshTokenUseCase(repository = repository),
+            getUsersUseCase = GetUsersUseCase(repository = repository)
         )
     }
 

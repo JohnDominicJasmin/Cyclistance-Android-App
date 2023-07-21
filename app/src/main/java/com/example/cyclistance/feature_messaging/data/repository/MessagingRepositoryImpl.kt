@@ -2,11 +2,15 @@ package com.example.cyclistance.feature_messaging.data.repository
 
 import android.content.Context
 import com.example.cyclistance.R
+import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN
 import com.example.cyclistance.core.utils.constants.UtilsConstants.USER_COLLECTION
+import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserDetailsMapper.toUserDetails
 import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions
+import com.example.cyclistance.feature_messaging.domain.model.MessagingUsers
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
@@ -43,10 +47,13 @@ class MessagingRepositoryImpl(
         }
     }
 
+    private fun getUid(): String {
+        return auth.uid ?: throw MessagingExceptions.TokenException(message = "User not logged in")
+    }
 
     private fun updateMessagingToken(token: String) {
-        val uid =
-            auth.uid ?: throw MessagingExceptions.TokenException(message = "User not logged in")
+        val uid = getUid()
+
 
         fireStore.collection(USER_COLLECTION).document(uid).update(
             KEY_FCM_TOKEN, token
@@ -56,6 +63,12 @@ class MessagingRepositoryImpl(
             throw MessagingExceptions.TokenException(message = it.message!!)
         }
 
+    }
+
+    private fun checkInternetConnection() {
+        if (!appContext.hasInternetConnection()) {
+            throw MessagingExceptions.NetworkException(message = appContext.getString(R.string.no_internet_message))
+        }
     }
 
     override suspend fun refreshToken() {
@@ -68,11 +81,27 @@ class MessagingRepositoryImpl(
         }
     }
 
-    private fun checkInternetConnection() {
-        if (!appContext.hasInternetConnection()) {
-            throw MessagingExceptions.NetworkException(message = appContext.getString(R.string.no_internet_message))
+    override suspend fun getUsers(): MessagingUsers {
+        checkInternetConnection()
+        return withContext(scope) {
+            suspendCancellableCoroutine { continuation ->
+                fireStore.collection(USER_COLLECTION).get().addOnSuccessListener {
+                    it.documents.let { documents ->
+                        val users: List<UserDetails> = documents.map { document ->
+                            document.toUserDetails()
+                        }
+                        continuation.resume(MessagingUsers(users = users))
+                    }
+                }.addOnFailureListener {
+                    if (it is FirebaseNetworkException) {
+                        continuation.resumeWithException(
+                            MessagingExceptions.NetworkException(
+                                message = it.message!!))
+                    }
+                }
+            }
         }
+
+
     }
-
-
 }
