@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.add_edit_contact
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -23,15 +22,13 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.DICE_BEAR_URL
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
-import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
 import com.example.cyclistance.navigation.IsDarkTheme
 
 
 @Composable
 fun AddEditPhotoSection(
     isOnEditMode: Boolean,
-    emergencyContact: EmergencyContactModel?,
-    event: (EmergencyCallUiEvent) -> Unit) {
+    emergencyContact: EmergencyContactModel?) {
 
 
     val isDarkTheme = IsDarkTheme.current
@@ -55,7 +52,6 @@ fun AddEditPhotoSection(
 
         AddEditContactImage(
             photoUrl = imageModel,
-            event = event,
             modifier = Modifier.size(125.dp))
 
     } else {
@@ -67,7 +63,6 @@ fun AddEditPhotoSection(
             modifier = Modifier
                 .size(100.dp)
                 .clip(CircleShape)
-                .clickable { event(EmergencyCallUiEvent.ToggleBottomSheet) }
         )
 
     }
@@ -79,7 +74,7 @@ fun AddEditPhotoSection(
 private fun AddEditContactImage(
     modifier: Modifier = Modifier,
     photoUrl: String?,
-    event: (EmergencyCallUiEvent) -> Unit) {
+) {
     Surface(
         modifier = modifier,
         color = (Color.Transparent),
@@ -97,8 +92,7 @@ private fun AddEditContactImage(
             contentDescription = "User Profile Image",
             modifier = Modifier
                 .clip(CircleShape)
-                .fillMaxSize()
-                .clickable { event(EmergencyCallUiEvent.ToggleBottomSheet) },
+                .fillMaxSize(),
             contentScale = ContentScale.Crop,
             placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
             error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
