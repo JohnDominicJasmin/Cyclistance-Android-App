@@ -79,6 +79,14 @@ fun MessagingScreen(
         }
     }
 
+    val onSendMessage = remember {
+        {
+            uiState = uiState.copy(
+                message = TextFieldValue()
+            )
+        }
+    }
+
 
     BackHandler(enabled = true, onBack = {
         if (uiState.messageAreaExpanded) {
@@ -101,6 +109,7 @@ fun MessagingScreen(
                 is MessagingUiEvent.OnChangeMessage -> onChangeValueMessage(event.message)
                 is MessagingUiEvent.OnSelectedConversation -> onSelectedConversationId(event.messageItem)
                 is MessagingUiEvent.DismissConversationDialog -> onDismissConversationDialog()
+                is MessagingUiEvent.OnSendMessage -> onSendMessage()
             }
         },
         modifier = Modifier.padding(paddingValues)
