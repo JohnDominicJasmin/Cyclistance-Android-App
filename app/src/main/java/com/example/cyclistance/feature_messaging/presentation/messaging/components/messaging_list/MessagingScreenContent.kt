@@ -28,8 +28,8 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_messaging.domain.model.ui.MessageItemModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.MessagesModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessageItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessagesModel
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.conversation.MessagingConversationContent
 import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingUiEvent
 import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingState
@@ -48,7 +48,7 @@ fun MessagingScreenContent(
     val messageAvailable =
         remember(state.messagesModel.messages) { state.messagesModel.messages.isNotEmpty() }
     val shouldShowConversationDialog =
-        remember(uiState.selectedConversationId) { uiState.selectedConversationId != null }
+        remember(uiState.selectedConversationItem) { uiState.selectedConversationItem != null }
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
         if (shouldShowConversationDialog) {
@@ -139,7 +139,7 @@ private fun BoxScope.AddMessageButton(modifier: Modifier = Modifier, onClick: ()
 private fun MessagesSection(
     modifier: Modifier = Modifier,
     messagesModel: MessagesModel,
-    onClick: (String) -> Unit) {
+    onClick: (MessageItemModel) -> Unit) {
 
     LazyColumn(
         modifier = modifier

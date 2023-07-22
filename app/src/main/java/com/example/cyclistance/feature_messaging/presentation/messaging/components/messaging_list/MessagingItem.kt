@@ -39,7 +39,7 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.feature_messaging.domain.model.ui.MessageItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessageItemModel
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -47,7 +47,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun MessagingItem(
     modifier: Modifier = Modifier,
     messageItemModel: MessageItemModel = MessageItemModel(),
-    onClick: (String) -> Unit) {
+    onClick: (MessageItemModel) -> Unit) {
 
 
     val hasUnreadMessage by remember {
@@ -57,7 +57,7 @@ fun MessagingItem(
     }
 
     Surface(
-        onClick = { onClick(messageItemModel.messageId) },
+        onClick = { onClick(messageItemModel) },
         modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colors.background, shape = RoundedCornerShape(4.dp)) {
 

@@ -11,9 +11,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessageItemModel
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.MessagingScreenContent
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.fakeMessages
 import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingUiEvent
@@ -21,7 +22,7 @@ import com.example.cyclistance.feature_messaging.presentation.messaging.state.Me
 
 @Composable
 fun MessagingScreen(
-    viewModel: MessagingViewModel = viewModel(),
+    viewModel: MessagingViewModel = hiltViewModel(),
     navController: NavController,
     paddingValues: PaddingValues) {
 
@@ -29,9 +30,9 @@ fun MessagingScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val onSelectedConversationId = remember {
-        { id: String ->
+        { _messageItem: MessageItemModel ->
             uiState = uiState.copy(
-                selectedConversationId = id
+                selectedConversationItem = _messageItem
             )
         }
     }
@@ -39,7 +40,7 @@ fun MessagingScreen(
     val onDismissConversationDialog = remember {
         {
             uiState = uiState.copy(
-                selectedConversationId = null
+                selectedConversationItem = null
             )
         }
     }
@@ -78,6 +79,14 @@ fun MessagingScreen(
         }
     }
 
+    val onSendMessage = remember {
+        {
+            uiState = uiState.copy(
+                message = TextFieldValue()
+            )
+        }
+    }
+
 
     BackHandler(enabled = true, onBack = {
         if (uiState.messageAreaExpanded) {
@@ -98,8 +107,9 @@ fun MessagingScreen(
                 is MessagingUiEvent.ResetSelectedIndex -> resetSelectedIndex()
                 is MessagingUiEvent.SelectChatItem -> onClickChatItem(event.index)
                 is MessagingUiEvent.OnChangeMessage -> onChangeValueMessage(event.message)
-                is MessagingUiEvent.OnSelectedConversation -> onSelectedConversationId(event.conversationId)
+                is MessagingUiEvent.OnSelectedConversation -> onSelectedConversationId(event.messageItem)
                 is MessagingUiEvent.DismissConversationDialog -> onDismissConversationDialog()
+                is MessagingUiEvent.OnSendMessage -> onSendMessage()
             }
         },
         modifier = Modifier.padding(paddingValues)

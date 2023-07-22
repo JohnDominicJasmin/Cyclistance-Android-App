@@ -1,11 +1,14 @@
 package com.example.cyclistance.core.domain.model
 
-import com.google.errorprone.annotations.Keep
+import android.os.Parcelable
+import com.example.cyclistance.core.utils.annotations.StableState
+import kotlinx.parcelize.Parcelize
 
-@Keep
+@StableState
+@Parcelize
 data class UserDetails(
     val uid: String = "",
     val name: String = "",
     val photo: String = "",
     val email: String = "",
-)
+) : Parcelable

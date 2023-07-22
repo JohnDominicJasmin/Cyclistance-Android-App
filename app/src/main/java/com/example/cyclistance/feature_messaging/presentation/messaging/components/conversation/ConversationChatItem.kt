@@ -25,14 +25,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.feature_messaging.domain.model.ui.MessageContent
+import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ChatItem(
     modifier: Modifier = Modifier,
-    message: MessageContent,
+    message: ConversationItemModel,
     isSender: Boolean,
     currentIndex: Int? = null,
     selectedIndex: Int? = null,
@@ -43,7 +43,7 @@ fun ChatItem(
 
     val timeStampAvailable by remember {
         derivedStateOf {
-            message.duration == null
+            message.messageDuration == null
         }
     }
 
@@ -103,7 +103,7 @@ fun ChatItem(
                 onClick = { currentIndex?.let { onClick(it) } }) {
 
                 Text(
-                    text = message.content,
+                    text = message.message,
                     modifier = Modifier
                         .padding(all = 12.dp),
                     style = MaterialTheme.typography.body1.copy(
@@ -133,11 +133,11 @@ fun PreviewChatItemSenderDark() {
     CyclistanceTheme(darkTheme = true) {
         ChatItem(
             isSender = true,
-            message = MessageContent(
+            message = ConversationItemModel(
                 senderId = "1",
-                content = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
+                message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
-                recipientId = "2",
+                receiverId = "2",
                 dateSent = "11:40 am",
                 messageId = "1",
             ))
@@ -152,11 +152,11 @@ fun PreviewChatItemSenderLight() {
     CyclistanceTheme(darkTheme = false) {
         ChatItem(
             isSender = true,
-            message = MessageContent(
+            message = ConversationItemModel(
                 senderId = "1",
-                content = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
+                message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
-                recipientId = "2",
+                receiverId = "2",
                 dateSent = "11:40 am",
                 messageId = "1",
             ))
@@ -171,11 +171,11 @@ fun PreviewChatItemRecipientDark() {
     CyclistanceTheme(darkTheme = true) {
         ChatItem(
             isSender = false,
-            message = MessageContent(
+            message = ConversationItemModel(
                 senderId = "1",
-                content = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
+                message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
-                recipientId = "2",
+                receiverId = "2",
                 dateSent = "11:40 am",
                 messageId = "1",
             ))
@@ -189,11 +189,11 @@ fun PreviewChatItemRecipientLight() {
     CyclistanceTheme(darkTheme = false) {
         ChatItem(
             isSender = false,
-            message = MessageContent(
+            message = ConversationItemModel(
                 senderId = "1",
-                content = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
+                message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
-                recipientId = "2",
+                receiverId = "2",
                 dateSent = "11:40 am",
                 messageId = "1",
             ))
