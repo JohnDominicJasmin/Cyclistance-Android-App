@@ -1,0 +1,396 @@
+Index: app/src/main/java/com/example/cyclistance/feature_authentication/data/mapper/AuthenticationUserMapper.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_authentication/data/mapper/AuthenticationUserMapper.kt b/app/src/main/java/com/example/cyclistance/feature_authentication/data/mapper/AuthenticationUserMapper.kt
+deleted file mode 100644
+--- a/app/src/main/java/com/example/cyclistance/feature_authentication/data/mapper/AuthenticationUserMapper.kt	(revision 1da5d10a73017be42d4773f376840eb0ad6f8e5f)
++++ /dev/null	(revision 1da5d10a73017be42d4773f376840eb0ad6f8e5f)
+@@ -1,15 +0,0 @@
+-package com.example.cyclistance.feature_authentication.data.mapper
+-
+-import com.example.cyclistance.feature_authentication.domain.model.AuthenticationUser
+-import com.google.firebase.auth.FirebaseUser
+-
+-object AuthenticationUserMapper {
+-    fun FirebaseUser.toAuthenticationUser(): AuthenticationUser {
+-        return AuthenticationUser(
+-            uid = this.uid,
+-            name = this.displayName ?: "",
+-            photo = this.photoUrl.toString(),
+-            email = this.email ?: ""
+-        )
+-    }
+-}
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/core/domain/model/UserDetails.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.core.domain.model\n\nimport com.google.errorprone.annotations.Keep\n\n@Keep\ndata class UserDetails(\n    val uid: String = \"\",\n    val name: String = \"\",\n    val photo: String = \"\",\n    val email: String = \"\",\n)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/core/domain/model/UserDetails.kt b/app/src/main/java/com/example/cyclistance/core/domain/model/UserDetails.kt
+--- a/app/src/main/java/com/example/cyclistance/core/domain/model/UserDetails.kt	(revision 1da5d10a73017be42d4773f376840eb0ad6f8e5f)
++++ b/app/src/main/java/com/example/cyclistance/core/domain/model/UserDetails.kt	(date 1689910525674)
+@@ -1,11 +1,15 @@
+ package com.example.cyclistance.core.domain.model
+ 
+-import com.google.errorprone.annotations.Keep
++import android.os.Parcelable
++import com.example.cyclistance.core.utils.annotations.StableState
++import kotlinx.parcelize.Parcelize
+ 
+-@Keep
++@StableState
++@Parcelize
+ data class UserDetails(
+     val uid: String = "",
+     val name: String = "",
+     val photo: String = "",
+     val email: String = "",
+-)
++    val fcmToken: String = "",
++) : Parcelable
+Index: firestore-debug.log
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>Jul 21, 2023 11:16:06 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://0.0.0.0:42611\nAPI endpoint: http://0.0.0.0:9299\nIf you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\n\n   export FIRESTORE_EMULATOR_HOST=0.0.0.0:9299\n\nDev App Server is now running.\n\nJul 21, 2023 11:16:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 21, 2023 11:16:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 21, 2023 11:17:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 21, 2023 11:18:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 21, 2023 11:19:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 21, 2023 11:20:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 21, 2023 11:21:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 21, 2023 11:22:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 21, 2023 11:23:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 21, 2023 11:24:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 21, 2023 11:25:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/firestore-debug.log b/firestore-debug.log
+--- a/firestore-debug.log	(revision 1da5d10a73017be42d4773f376840eb0ad6f8e5f)
++++ b/firestore-debug.log	(date 1689910467955)
+@@ -29,3 +29,17 @@
+ INFO: Detected non-HTTP/2 connection.
+ Jul 21, 2023 11:25:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
++Jul 21, 2023 11:26:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Jul 21, 2023 11:27:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Jul 21, 2023 11:28:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Jul 21, 2023 11:29:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Jul 21, 2023 11:30:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Jul 21, 2023 11:31:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Jul 21, 2023 11:32:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/manage_user/GetUsersUseCase.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/manage_user/GetUsersUseCase.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/manage_user/GetUsersUseCase.kt
+new file mode 100644
+--- /dev/null	(date 1689910468001)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/manage_user/GetUsersUseCase.kt	(date 1689910468001)
+@@ -0,0 +1,10 @@
++package com.example.cyclistance.feature_messaging.domain.use_case.manage_user
++
++import com.example.cyclistance.feature_messaging.domain.model.MessagingUsers
++import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
++
++class GetUsersUseCase(private val repository: MessagingRepository) {
++    suspend operator fun invoke(): MessagingUsers {
++        return repository.getUsers()
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/domain/model/MessagingUsers.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/domain/model/MessagingUsers.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/domain/model/MessagingUsers.kt
+new file mode 100644
+--- /dev/null	(date 1689910525688)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/domain/model/MessagingUsers.kt	(date 1689910525688)
+@@ -0,0 +1,12 @@
++package com.example.cyclistance.feature_messaging.domain.model
++
++import android.os.Parcelable
++import com.example.cyclistance.core.domain.model.UserDetails
++import com.example.cyclistance.core.utils.annotations.StableState
++import kotlinx.parcelize.Parcelize
++
++@StableState
++@Parcelize
++data class MessagingUsers(
++    val users: List<UserDetails> = emptyList()
++) : Parcelable
+Index: app/src/main/java/com/example/cyclistance/di/MessagingModule.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.di\n\nimport android.content.Context\nimport androidx.annotation.Keep\nimport com.example.cyclistance.feature_messaging.data.repository.MessagingRepositoryImpl\nimport com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository\nimport com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase\nimport com.example.cyclistance.feature_messaging.domain.use_case.token.RefreshTokenUseCase\nimport com.google.firebase.auth.FirebaseAuth\nimport com.google.firebase.firestore.FirebaseFirestore\nimport com.google.firebase.messaging.FirebaseMessaging\nimport dagger.Module\nimport dagger.Provides\nimport dagger.hilt.InstallIn\nimport dagger.hilt.android.qualifiers.ApplicationContext\nimport dagger.hilt.components.SingletonComponent\nimport javax.inject.Singleton\n\n\n@Keep\n@Module\n@InstallIn(SingletonComponent::class)\nobject MessagingModule {\n\n\n    @Provides\n    @Singleton\n    fun providesFirebaseMessaging(): FirebaseMessaging {\n        return FirebaseMessaging.getInstance()\n    }\n\n    @Provides\n    @Singleton\n    fun providesMessagingRepository(\n        @ApplicationContext context: Context,\n        firebaseFiresStore: FirebaseFirestore,\n        firebaseMessaging: FirebaseMessaging,\n        firebaseAuth: FirebaseAuth): MessagingRepository {\n\n        return MessagingRepositoryImpl(\n            fireStore = firebaseFiresStore,\n            firebaseMessaging = firebaseMessaging,\n            auth = firebaseAuth,\n            appContext = context\n        )\n    }\n\n    @Provides\n    @Singleton\n    fun providesMessagingUseCase(repository: MessagingRepository): MessagingUseCase {\n        return MessagingUseCase(\n            refreshTokenUseCase = RefreshTokenUseCase(\n                repository = repository\n            )\n        )\n    }\n\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/di/MessagingModule.kt b/app/src/main/java/com/example/cyclistance/di/MessagingModule.kt
+--- a/app/src/main/java/com/example/cyclistance/di/MessagingModule.kt	(revision 1da5d10a73017be42d4773f376840eb0ad6f8e5f)
++++ b/app/src/main/java/com/example/cyclistance/di/MessagingModule.kt	(date 1689910467968)
+@@ -5,6 +5,7 @@
+ import com.example.cyclistance.feature_messaging.data.repository.MessagingRepositoryImpl
+ import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
+ import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
++import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUsersUseCase
+ import com.example.cyclistance.feature_messaging.domain.use_case.token.RefreshTokenUseCase
+ import com.google.firebase.auth.FirebaseAuth
+ import com.google.firebase.firestore.FirebaseFirestore
+@@ -49,9 +50,8 @@
+     @Singleton
+     fun providesMessagingUseCase(repository: MessagingRepository): MessagingUseCase {
+         return MessagingUseCase(
+-            refreshTokenUseCase = RefreshTokenUseCase(
+-                repository = repository
+-            )
++            refreshTokenUseCase = RefreshTokenUseCase(repository = repository),
++            getUsersUseCase = GetUsersUseCase(repository = repository)
+         )
+     }
+ 
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/data/mapper/MessagingUserDetailsMapper.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/data/mapper/MessagingUserDetailsMapper.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/data/mapper/MessagingUserDetailsMapper.kt
+new file mode 100644
+--- /dev/null	(date 1689910468005)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/data/mapper/MessagingUserDetailsMapper.kt	(date 1689910468005)
+@@ -0,0 +1,17 @@
++package com.example.cyclistance.feature_messaging.data.mapper
++
++import com.example.cyclistance.core.domain.model.UserDetails
++import com.example.cyclistance.core.utils.constants.MessagingConstants
++import com.google.firebase.firestore.DocumentSnapshot
++
++object MessagingUserDetailsMapper {
++    fun DocumentSnapshot.toUserDetails(): UserDetails {
++        return UserDetails(
++            uid = this.id,
++            name = this[MessagingConstants.KEY_NAME].toString(),
++            photo = this[MessagingConstants.KEY_PHOTO].toString(),
++            email = this[MessagingConstants.KEY_EMAIL].toString(),
++            fcmToken = this[MessagingConstants.KEY_FCM_TOKEN].toString()
++        )
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/domain/repository/MessagingRepository.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_messaging.domain.repository\n\ninterface MessagingRepository {\n\n    suspend fun refreshToken()\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/domain/repository/MessagingRepository.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/domain/repository/MessagingRepository.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_messaging/domain/repository/MessagingRepository.kt	(revision 1da5d10a73017be42d4773f376840eb0ad6f8e5f)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/domain/repository/MessagingRepository.kt	(date 1689910525694)
+@@ -1,6 +1,9 @@
+ package com.example.cyclistance.feature_messaging.domain.repository
+ 
++import com.example.cyclistance.feature_messaging.domain.model.MessagingUsers
++
+ interface MessagingRepository {
+ 
+     suspend fun refreshToken()
++    suspend fun getUsers(): MessagingUsers
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/core/utils/constants/MessagingConstants.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.core.utils.constants\n\nobject MessagingConstants {\n    const val MESSAGING_VM_STATE_KEY = \"messaging_vm_state_key\"\n    const val KEY_FCM_TOKEN = \"fcmToken\"\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/core/utils/constants/MessagingConstants.kt b/app/src/main/java/com/example/cyclistance/core/utils/constants/MessagingConstants.kt
+--- a/app/src/main/java/com/example/cyclistance/core/utils/constants/MessagingConstants.kt	(revision 1da5d10a73017be42d4773f376840eb0ad6f8e5f)
++++ b/app/src/main/java/com/example/cyclistance/core/utils/constants/MessagingConstants.kt	(date 1689910467981)
+@@ -3,4 +3,7 @@
+ object MessagingConstants {
+     const val MESSAGING_VM_STATE_KEY = "messaging_vm_state_key"
+     const val KEY_FCM_TOKEN = "fcmToken"
++    const val KEY_EMAIL = "email"
++    const val KEY_PHOTO = "photo"
++    const val KEY_NAME = "name"
+ }
+\ No newline at end of file
+Index: firebase-debug.log
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>[debug] [2023-07-21T03:16:00.794Z] ----------------------------------------------------------------------\n[debug] [2023-07-21T03:16:00.795Z] Command:       /usr/local/bin/firebase /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase emulators:start --import=./Cyclistance_Emulator_Suite_Data --export-on-exit\n[debug] [2023-07-21T03:16:00.796Z] CLI Version:   11.8.1\n[debug] [2023-07-21T03:16:00.796Z] Platform:      linux\n[debug] [2023-07-21T03:16:00.796Z] Node Version:  v16.16.0\n[debug] [2023-07-21T03:16:00.796Z] Time:          Fri Jul 21 2023 11:16:00 GMT+0800 (Philippine Standard Time)\n[debug] [2023-07-21T03:16:00.797Z] ----------------------------------------------------------------------\n[debug] \n[debug] [2023-07-21T03:16:00.866Z] > command requires scopes: [\"email\",\"openid\",\"https://www.googleapis.com/auth/cloudplatformprojects.readonly\",\"https://www.googleapis.com/auth/firebase\",\"https://www.googleapis.com/auth/cloud-platform\"]\n[debug] [2023-07-21T03:16:00.866Z] > authorizing via signed-in user (mikocabal27@gmail.com)\n[debug] [2023-07-21T03:16:00.941Z] openjdk version \"17.0.7\" 2023-04-18\nOpenJDK Runtime Environment (build 17.0.7+7)\n\n[debug] [2023-07-21T03:16:00.942Z] OpenJDK 64-Bit Server VM (build 17.0.7+7, mixed mode)\n\n[debug] [2023-07-21T03:16:00.945Z] Parsed Java major version: 17\n[info] i  emulators: Starting emulators: auth, firestore, storage {\"metadata\":{\"emulator\":{\"name\":\"hub\"},\"message\":\"Starting emulators: auth, firestore, storage\"}}\n[debug] [2023-07-21T03:16:00.956Z] [hub] writing locator at /tmp/hub-cyclistance-cc715.json\n[info] i  firestore: Importing data from /mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/firestore_export/firestore_export.overall_export_metadata {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Importing data from /mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/firestore_export/firestore_export.overall_export_metadata\"}}\n[warn] ⚠  firestore: Did not find a Cloud Firestore rules file specified in a firebase.json config file. {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Did not find a Cloud Firestore rules file specified in a firebase.json config file.\"}}\n[warn] ⚠  firestore: The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration. {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration.\"}}\n[debug] [2023-07-21T03:16:05.986Z] Ignoring unsupported arg: projectId {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Ignoring unsupported arg: projectId\"}}\n[debug] [2023-07-21T03:16:05.987Z] Ignoring unsupported arg: auto_download {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Ignoring unsupported arg: auto_download\"}}\n[debug] [2023-07-21T03:16:05.987Z] Starting Firestore Emulator with command {\"binary\":\"java\",\"args\":[\"-Dgoogle.cloud_firestore.debug_log_level=FINE\",\"-Duser.language=en\",\"-jar\",\"/home/miko/.cache/firebase/emulators/cloud-firestore-emulator-v1.14.4.jar\",\"--host\",\"0.0.0.0\",\"--port\",9299,\"--seed_from_export\",\"/mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/firestore_export/firestore_export.overall_export_metadata\"],\"optionalArgs\":[\"port\",\"webchannel_port\",\"host\",\"rules\",\"functions_emulator\",\"seed_from_export\"],\"joinArgs\":false} {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Starting Firestore Emulator with command {\\\"binary\\\":\\\"java\\\",\\\"args\\\":[\\\"-Dgoogle.cloud_firestore.debug_log_level=FINE\\\",\\\"-Duser.language=en\\\",\\\"-jar\\\",\\\"/home/miko/.cache/firebase/emulators/cloud-firestore-emulator-v1.14.4.jar\\\",\\\"--host\\\",\\\"0.0.0.0\\\",\\\"--port\\\",9299,\\\"--seed_from_export\\\",\\\"/mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/firestore_export/firestore_export.overall_export_metadata\\\"],\\\"optionalArgs\\\":[\\\"port\\\",\\\"webchannel_port\\\",\\\"host\\\",\\\"rules\\\",\\\"functions_emulator\\\",\\\"seed_from_export\\\"],\\\"joinArgs\\\":false}\"}}\n[info] i  firestore: Firestore Emulator logging to firestore-debug.log {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Firestore Emulator logging to \\u001b[1mfirestore-debug.log\\u001b[22m\"}}\n[debug] [2023-07-21T03:16:06.728Z] Jul 21, 2023 11:16:06 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://0.0.0.0:42611\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Jul 21, 2023 11:16:06 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\\nINFO: Started WebSocket server on ws://0.0.0.0:42611\\n\"}}\n[debug] [2023-07-21T03:16:06.744Z] API endpoint: http://0.0.0.0:9299\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"API endpoint: http://0.0.0.0:9299\\n\"}}\n[debug] [2023-07-21T03:16:06.744Z] If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\n\n   export FIRESTORE_EMULATOR_HOST=0.0.0.0:9299\n\nDev App Server is now running.\n\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\\n\\n   export FIRESTORE_EMULATOR_HOST=0.0.0.0:9299\\n\\nDev App Server is now running.\\n\\n\"}}\n[info] i  auth: Importing config from /mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/auth_export/config.json {\"metadata\":{\"emulator\":{\"name\":\"auth\"},\"message\":\"Importing config from /mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/auth_export/config.json\"}}\n[info] i  auth: Importing accounts from /mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/auth_export/accounts.json {\"metadata\":{\"emulator\":{\"name\":\"auth\"},\"message\":\"Importing accounts from /mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/auth_export/accounts.json\"}}\n[debug] [2023-07-21T03:16:13.549Z] Ignoring unsupported arg: port {\"metadata\":{\"emulator\":{\"name\":\"storage\"},\"message\":\"Ignoring unsupported arg: port\"}}\n[debug] [2023-07-21T03:16:14.243Z] Temp file directory for storage emulator: /tmp/firebase/storage/blobs {\"metadata\":{\"emulator\":{\"name\":\"storage\"},\"message\":\"Temp file directory for storage emulator: /tmp/firebase/storage/blobs\"}}\n[debug] [2023-07-21T03:16:14.903Z] Jul 21, 2023 11:16:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Jul 21, 2023 11:16:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\\nINFO: Detected non-HTTP/2 connection.\\n\"}}\n[debug] [2023-07-21T03:16:15.567Z] Jul 21, 2023 11:16:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Jul 21, 2023 11:16:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\\nINFO: Detected non-HTTP/2 connection.\\n\"}}\n[debug] [2023-07-21T03:16:18.612Z] Ignoring unsupported arg: auto_download {\"metadata\":{\"emulator\":{\"name\":\"ui\"},\"message\":\"Ignoring unsupported arg: auto_download\"}}\n[debug] [2023-07-21T03:16:18.612Z] Ignoring unsupported arg: port {\"metadata\":{\"emulator\":{\"name\":\"ui\"},\"message\":\"Ignoring unsupported arg: port\"}}\n[debug] [2023-07-21T03:16:18.613Z] Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"/home/miko/.cache/firebase/emulators/ui-v1.9.0/server/server.js\"],\"optionalArgs\":[],\"joinArgs\":false} {\"metadata\":{\"emulator\":{\"name\":\"ui\"},\"message\":\"Starting Emulator UI with command {\\\"binary\\\":\\\"node\\\",\\\"args\\\":[\\\"/home/miko/.cache/firebase/emulators/ui-v1.9.0/server/server.js\\\"],\\\"optionalArgs\\\":[],\\\"joinArgs\\\":false}\"}}\n[info] i  ui: Emulator UI logging to ui-debug.log {\"metadata\":{\"emulator\":{\"name\":\"ui\"},\"message\":\"Emulator UI logging to \\u001b[1mui-debug.log\\u001b[22m\"}}\n[debug] [2023-07-21T03:16:18.835Z] Web / API server started at localhost:4000\n {\"metadata\":{\"emulator\":{\"name\":\"ui\"},\"message\":\"Web / API server started at localhost:4000\\n\"}}\n[info] \n┌─────────────────────────────────────────────────────────────┐\n│ ✔  All emulators ready! It is now safe to connect your app. │\n│ i  View Emulator UI at http://localhost:4000                │\n└─────────────────────────────────────────────────────────────┘\n\n┌────────────────┬──────────────┬─────────────────────────────────┐\n│ Emulator       │ Host:Port    │ View in Emulator UI             │\n├────────────────┼──────────────┼─────────────────────────────────┤\n│ Authentication │ 0.0.0.0:9099 │ http://localhost:4000/auth      │\n├────────────────┼──────────────┼─────────────────────────────────┤\n│ Firestore      │ 0.0.0.0:9299 │ http://localhost:4000/firestore │\n├────────────────┼──────────────┼─────────────────────────────────┤\n│ Storage        │ 0.0.0.0:9199 │ http://localhost:4000/storage   │\n└────────────────┴──────────────┴─────────────────────────────────┘\n  Emulator Hub running at localhost:4400\n  Other reserved ports: 4500\n\nIssues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.\n \n[debug] [2023-07-21T03:17:30.887Z] Jul 21, 2023 11:17:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Jul 21, 2023 11:17:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\\nINFO: Detected non-HTTP/2 connection.\\n\"}}\n[debug] [2023-07-21T03:18:16.888Z] Jul 21, 2023 11:18:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Jul 21, 2023 11:18:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\\nINFO: Detected non-HTTP/2 connection.\\n\"}}\n[debug] [2023-07-21T03:19:32.890Z] Jul 21, 2023 11:19:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Jul 21, 2023 11:19:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\\nINFO: Detected non-HTTP/2 connection.\\n\"}}\n[debug] [2023-07-21T03:20:32.928Z] Jul 21, 2023 11:20:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Jul 21, 2023 11:20:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\\nINFO: Detected non-HTTP/2 connection.\\n\"}}\n[debug] [2023-07-21T03:21:48.881Z] Jul 21, 2023 11:21:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Jul 21, 2023 11:21:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\\nINFO: Detected non-HTTP/2 connection.\\n\"}}\n[debug] [2023-07-21T03:22:48.911Z] Jul 21, 2023 11:22:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Jul 21, 2023 11:22:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\\nINFO: Detected non-HTTP/2 connection.\\n\"}}\n[debug] [2023-07-21T03:23:48.931Z] Jul 21, 2023 11:23:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Jul 21, 2023 11:23:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\\nINFO: Detected non-HTTP/2 connection.\\n\"}}\n[debug] [2023-07-21T03:24:48.956Z] Jul 21, 2023 11:24:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Jul 21, 2023 11:24:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\\nINFO: Detected non-HTTP/2 connection.\\n\"}}\n[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5) {\"metadata\":{\"emulator\":{\"name\":\"auth\"},\"message\":\"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)\"}}\n[debug] [2023-07-21T03:25:34.892Z] Jul 21, 2023 11:25:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n {\"metadata\":{\"emulator\":{\"name\":\"firestore\"},\"message\":\"Jul 21, 2023 11:25:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\\nINFO: Detected non-HTTP/2 connection.\\n\"}}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/firebase-debug.log b/firebase-debug.log
+--- a/firebase-debug.log	(revision 1da5d10a73017be42d4773f376840eb0ad6f8e5f)
++++ b/firebase-debug.log	(date 1689910467988)
+@@ -105,3 +105,24 @@
+ [debug] [2023-07-21T03:25:34.892Z] Jul 21, 2023 11:25:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+  {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 21, 2023 11:25:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
++[debug] [2023-07-21T03:26:34.912Z] Jul 21, 2023 11:26:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 21, 2023 11:26:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
++[debug] [2023-07-21T03:27:20.885Z] Jul 21, 2023 11:27:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 21, 2023 11:27:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
++[debug] [2023-07-21T03:28:36.882Z] Jul 21, 2023 11:28:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 21, 2023 11:28:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
++[debug] [2023-07-21T03:29:22.880Z] Jul 21, 2023 11:29:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 21, 2023 11:29:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
++[debug] [2023-07-21T03:30:22.922Z] Jul 21, 2023 11:30:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 21, 2023 11:30:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
++[debug] [2023-07-21T03:31:38.885Z] Jul 21, 2023 11:31:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 21, 2023 11:31:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
++[debug] [2023-07-21T03:32:38.906Z] Jul 21, 2023 11:32:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 21, 2023 11:32:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/MessagingUseCase.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_messaging.domain.use_case\n\nimport com.example.cyclistance.feature_messaging.domain.use_case.token.RefreshTokenUseCase\n\ndata class MessagingUseCase(\n    val refreshTokenUseCase: RefreshTokenUseCase\n)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/MessagingUseCase.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/MessagingUseCase.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/MessagingUseCase.kt	(revision 1da5d10a73017be42d4773f376840eb0ad6f8e5f)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/MessagingUseCase.kt	(date 1689910467995)
+@@ -1,7 +1,9 @@
+ package com.example.cyclistance.feature_messaging.domain.use_case
+ 
++import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUsersUseCase
+ import com.example.cyclistance.feature_messaging.domain.use_case.token.RefreshTokenUseCase
+ 
+ data class MessagingUseCase(
+-    val refreshTokenUseCase: RefreshTokenUseCase
++    val refreshTokenUseCase: RefreshTokenUseCase,
++    val getUsersUseCase: GetUsersUseCase
+ )
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/presentation/messaging/MessagingViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_messaging.presentation.messaging\n\nimport androidx.lifecycle.SavedStateHandle\nimport androidx.lifecycle.ViewModel\nimport androidx.lifecycle.viewModelScope\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_VM_STATE_KEY\nimport com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase\nimport com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingState\nimport dagger.hilt.android.lifecycle.HiltViewModel\nimport kotlinx.coroutines.flow.MutableStateFlow\nimport kotlinx.coroutines.flow.asStateFlow\nimport kotlinx.coroutines.launch\nimport timber.log.Timber\nimport javax.inject.Inject\n\n@HiltViewModel\nclass MessagingViewModel @Inject constructor(\n    private val savedStateHandle: SavedStateHandle,\n    private val messagingUseCase: MessagingUseCase\n) : ViewModel() {\n    private val _state =\n        MutableStateFlow(savedStateHandle[MESSAGING_VM_STATE_KEY] ?: MessagingState())\n    val state = _state.asStateFlow()\n\n    init {\n        refreshToken()\n    }\n\n    private fun refreshToken() {\n        viewModelScope.launch {\n            runCatching {\n                messagingUseCase.refreshTokenUseCase()\n            }.onSuccess {\n                Timber.v(\"Successfully refreshed token\")\n            }.onFailure {\n                Timber.e(\"Failed to refresh token ${it.message}\")\n            }\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/messaging/MessagingViewModel.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/messaging/MessagingViewModel.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/messaging/MessagingViewModel.kt	(revision 1da5d10a73017be42d4773f376840eb0ad6f8e5f)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/messaging/MessagingViewModel.kt	(date 1689910525684)
+@@ -24,6 +24,19 @@
+ 
+     init {
+         refreshToken()
++        getUsers()
++    }
++
++    private fun getUsers() {
++        viewModelScope.launch {
++            runCatching {
++                messagingUseCase.getUsersUseCase()
++            }.onSuccess {
++                Timber.v("Successfully retrieved users ${it.users}")
++            }.onFailure {
++                Timber.e("Failed to retrieve users ${it.message}")
++            }
++        }
+     }
+ 
+     private fun refreshToken() {
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/data/repository/MessagingRepositoryImpl.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_messaging.data.repository\n\nimport android.content.Context\nimport com.example.cyclistance.R\nimport com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN\nimport com.example.cyclistance.core.utils.constants.UtilsConstants.USER_COLLECTION\nimport com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions\nimport com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository\nimport com.google.firebase.auth.FirebaseAuth\nimport com.google.firebase.firestore.FirebaseFirestore\nimport com.google.firebase.messaging.FirebaseMessaging\nimport kotlinx.coroutines.Dispatchers\nimport kotlinx.coroutines.suspendCancellableCoroutine\nimport kotlinx.coroutines.withContext\nimport timber.log.Timber\nimport kotlin.coroutines.CoroutineContext\nimport kotlin.coroutines.resume\nimport kotlin.coroutines.resumeWithException\n\nclass MessagingRepositoryImpl(\n    private val fireStore: FirebaseFirestore,\n    private val firebaseMessaging: FirebaseMessaging,\n    private val auth: FirebaseAuth,\n    private val appContext: Context,\n) : MessagingRepository {\n\n    private val scope: CoroutineContext = Dispatchers.IO\n\n    private suspend fun getMessagingToken(): String {\n        return suspendCancellableCoroutine { continuation ->\n            firebaseMessaging.token.addOnSuccessListener { token: String ->\n                if (continuation.isActive) {\n                    continuation.resume(token)\n                }\n            }.addOnFailureListener {\n                continuation.resumeWithException(\n                    MessagingExceptions.TokenException(\n                        it.message!!\n                    )\n                )\n            }\n        }\n    }\n\n\n    private fun updateMessagingToken(token: String) {\n        val uid =\n            auth.uid ?: throw MessagingExceptions.TokenException(message = \"User not logged in\")\n\n        fireStore.collection(USER_COLLECTION).document(uid).update(\n            KEY_FCM_TOKEN, token\n        ).addOnSuccessListener {\n            Timber.v(\"Messaging token updated successfully\")\n        }.addOnFailureListener {\n            throw MessagingExceptions.TokenException(message = it.message!!)\n        }\n\n    }\n\n    override suspend fun refreshToken() {\n        withContext(scope) {\n\n            val token = getMessagingToken()\n\n            checkInternetConnection()\n            updateMessagingToken(token = token)\n        }\n    }\n\n    private fun checkInternetConnection() {\n        if (!appContext.hasInternetConnection()) {\n            throw MessagingExceptions.NetworkException(message = appContext.getString(R.string.no_internet_message))\n        }\n    }\n\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/data/repository/MessagingRepositoryImpl.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/data/repository/MessagingRepositoryImpl.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_messaging/data/repository/MessagingRepositoryImpl.kt	(revision 1da5d10a73017be42d4773f376840eb0ad6f8e5f)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/data/repository/MessagingRepositoryImpl.kt	(date 1689910468021)
+@@ -2,11 +2,15 @@
+ 
+ import android.content.Context
+ import com.example.cyclistance.R
++import com.example.cyclistance.core.domain.model.UserDetails
+ import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
+ import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN
+ import com.example.cyclistance.core.utils.constants.UtilsConstants.USER_COLLECTION
++import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserDetailsMapper.toUserDetails
+ import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions
++import com.example.cyclistance.feature_messaging.domain.model.MessagingUsers
+ import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
++import com.google.firebase.FirebaseNetworkException
+ import com.google.firebase.auth.FirebaseAuth
+ import com.google.firebase.firestore.FirebaseFirestore
+ import com.google.firebase.messaging.FirebaseMessaging
+@@ -43,10 +47,13 @@
+         }
+     }
+ 
++    private fun getUid(): String {
++        return auth.uid ?: throw MessagingExceptions.TokenException(message = "User not logged in")
++    }
+ 
+     private fun updateMessagingToken(token: String) {
+-        val uid =
+-            auth.uid ?: throw MessagingExceptions.TokenException(message = "User not logged in")
++        val uid = getUid()
++
+ 
+         fireStore.collection(USER_COLLECTION).document(uid).update(
+             KEY_FCM_TOKEN, token
+@@ -58,6 +65,12 @@
+ 
+     }
+ 
++    private fun checkInternetConnection() {
++        if (!appContext.hasInternetConnection()) {
++            throw MessagingExceptions.NetworkException(message = appContext.getString(R.string.no_internet_message))
++        }
++    }
++
+     override suspend fun refreshToken() {
+         withContext(scope) {
+ 
+@@ -68,11 +81,27 @@
+         }
+     }
+ 
+-    private fun checkInternetConnection() {
+-        if (!appContext.hasInternetConnection()) {
+-            throw MessagingExceptions.NetworkException(message = appContext.getString(R.string.no_internet_message))
+-        }
+-    }
++    override suspend fun getUsers(): MessagingUsers {
++        checkInternetConnection()
++        return withContext(scope) {
++            suspendCancellableCoroutine { continuation ->
++                fireStore.collection(USER_COLLECTION).get().addOnSuccessListener {
++                    it.documents.let { documents ->
++                        val users: List<UserDetails> = documents.map { document ->
++                            document.toUserDetails()
++                        }
++                        continuation.resume(MessagingUsers(users = users))
++                    }
++                }.addOnFailureListener {
++                    if (it is FirebaseNetworkException) {
++                        continuation.resumeWithException(
++                            MessagingExceptions.NetworkException(
++                                message = it.message!!))
++                    }
++                }
++            }
++        }
+ 
+ 
++    }
+ }
+\ No newline at end of file
