@@ -130,7 +130,7 @@ class AuthRepositoryImpl(
 
     override suspend fun signInWithEmailAndPassword(
         email: String,
-        password: String): Boolean? {
+        password: String): Boolean {
 
         checkInternetConnection()
 
@@ -174,7 +174,7 @@ class AuthRepositoryImpl(
     }
 
 
-    private fun CancellableContinuation<Boolean?>.handleSignInWithEmailAndPasswordException(
+    private fun CancellableContinuation<Boolean>.handleSignInWithEmailAndPasswordException(
         exception: Exception) {
         if (exception is FirebaseNetworkException) {
             resumeWithException(
