@@ -40,6 +40,7 @@ import com.example.cyclistance.feature_settings.presentation.setting_screen.Sett
 import com.example.cyclistance.feature_settings.presentation.setting_screen.event.SettingUiEvent
 import com.example.cyclistance.navigation.components.NoInternetStatusBar
 import com.example.cyclistance.navigation.components.TopAppBar
+import com.example.cyclistance.navigation.event.NavVmEvent
 import com.example.cyclistance.navigation.nav_graph.NavGraph
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import com.example.cyclistance.navigation.state.NavUiState
@@ -174,6 +175,7 @@ fun NavScreen(
 
     val onClickSignOut = remember {
         {
+            navViewModel.onEvent(NavVmEvent.DeleteMessagingToken)
             closeDrawer()
             settingViewModel.onEvent(event = SettingEvent.SignOut)
         }
