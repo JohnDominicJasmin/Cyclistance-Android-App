@@ -5,10 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.NavConstants.NAV_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.example.cyclistance.feature_on_boarding.domain.use_case.IntroSliderUseCase
+import com.example.cyclistance.navigation.event.NavVmEvent
 import com.example.cyclistance.navigation.state.NavState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -22,8 +23,8 @@ import javax.inject.Inject
 class NavViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val introSliderUseCase: IntroSliderUseCase,
-    private val defaultDispatcher: CoroutineDispatcher,
-    private val authUseCase: AuthenticationUseCase
+    private val authUseCase: AuthenticationUseCase,
+    private val messagingUseCase: MessagingUseCase
 ) : ViewModel() {
 
 
@@ -57,10 +58,25 @@ class NavViewModel @Inject constructor(
 
     }
 
+    fun onEvent(event: NavVmEvent) {
+        when (event) {
+            is NavVmEvent.DeleteMessagingToken -> deleteMessagingToken()
+        }
+    }
+
+    private fun deleteMessagingToken() {
+        runCatching {
+            messagingUseCase.deleteTokenUseCase()
+        }.onSuccess {
+            Timber.v("Messaging Token Deleted")
+        }.onFailure {
+            Timber.e("Messaging Token Deletion Failed: ${it.localizedMessage}")
+        }
+    }
 
     private fun isUserSignedIn(): Boolean {
         return (authUseCase.isSignedInWithProviderUseCase() == true || authUseCase.isEmailVerifiedUseCase() == true) &&
-                authUseCase.hasAccountSignedInUseCase()
+               authUseCase.hasAccountSignedInUseCase()
     }
 
 
