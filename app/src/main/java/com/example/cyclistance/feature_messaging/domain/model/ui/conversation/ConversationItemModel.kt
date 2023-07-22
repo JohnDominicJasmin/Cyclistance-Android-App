@@ -8,9 +8,9 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class ConversationItemModel(
-    val messageId: String,
+    val messageId: String = "",
     val senderId: String,
-    val recipientId: String,
+    val receiverId: String,
     val message: String,
     val dateSent: String? = null,
     val messageDuration: MessageDuration? = null,

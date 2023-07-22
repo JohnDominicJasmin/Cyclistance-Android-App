@@ -14,6 +14,6 @@ class Conversation {
     }
 
     fun getMessagesBetween(senderId: String, recipientId: String): List<ConversationItemModel> {
-        return messages.filter { it.senderId == senderId && it.recipientId == recipientId }
+        return messages.filter { it.senderId == senderId && it.receiverId == recipientId }
     }
 }

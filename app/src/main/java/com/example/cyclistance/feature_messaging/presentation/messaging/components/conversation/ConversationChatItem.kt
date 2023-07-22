@@ -137,7 +137,7 @@ fun PreviewChatItemSenderDark() {
                 senderId = "1",
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
-                recipientId = "2",
+                receiverId = "2",
                 dateSent = "11:40 am",
                 messageId = "1",
             ))
@@ -156,7 +156,7 @@ fun PreviewChatItemSenderLight() {
                 senderId = "1",
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
-                recipientId = "2",
+                receiverId = "2",
                 dateSent = "11:40 am",
                 messageId = "1",
             ))
@@ -175,7 +175,7 @@ fun PreviewChatItemRecipientDark() {
                 senderId = "1",
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
-                recipientId = "2",
+                receiverId = "2",
                 dateSent = "11:40 am",
                 messageId = "1",
             ))
@@ -193,7 +193,7 @@ fun PreviewChatItemRecipientLight() {
                 senderId = "1",
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
-                recipientId = "2",
+                receiverId = "2",
                 dateSent = "11:40 am",
                 messageId = "1",
             ))

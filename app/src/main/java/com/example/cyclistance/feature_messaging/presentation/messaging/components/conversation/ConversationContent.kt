@@ -72,7 +72,7 @@ private val conversationsModel = ConversationsModel(
         ConversationItemModel(
             messageId = "12",
             senderId = "1",
-            recipientId = "2",
+            receiverId = "2",
             message = "Hello",
             dateSent = "10:30 AM",
             messageDuration = MessageDuration.OneDay,
@@ -81,21 +81,21 @@ private val conversationsModel = ConversationsModel(
         ConversationItemModel(
             messageId = "13",
             senderId = "2",
-            recipientId = "1",
+            receiverId = "1",
             message = "How are you?",
             dateSent = "11:32 AM"
         ),
         ConversationItemModel(
             messageId = "14",
             senderId = "1",
-            recipientId = "2",
+            receiverId = "2",
             message = "I'm fine, thanks",
             dateSent = "11:35 AM"
         ),
         ConversationItemModel(
             messageId = "15",
             senderId = "1",
-            recipientId = "2",
+            receiverId = "2",
             message = "How about you?",
             dateSent = "FEB 13 12:12 AM",
             messageDuration = MessageDuration.OneMonth
@@ -103,7 +103,7 @@ private val conversationsModel = ConversationsModel(
         ConversationItemModel(
             messageId = "16",
             senderId = "2",
-            recipientId = "1",
+            receiverId = "1",
             message = "I'm fine too",
             dateSent = "11:42 AM",
             messageDuration = MessageDuration.OneHour
@@ -111,14 +111,14 @@ private val conversationsModel = ConversationsModel(
         ConversationItemModel(
             messageId = "17",
             senderId = "1",
-            recipientId = "2",
+            receiverId = "2",
             message = "Good to hear that",
             dateSent = "11:43 AM"
         ),
         ConversationItemModel(
             messageId = "18",
             senderId = "2",
-            recipientId = "1",
+            receiverId = "1",
             message = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
@@ -128,49 +128,49 @@ private val conversationsModel = ConversationsModel(
         ConversationItemModel(
             messageId = "19357846457",
             senderId = "1",
-            recipientId = "2",
+            receiverId = "2",
             message = "Let's go for a ride?",
             dateSent = "11:50 AM"
         ),
         ConversationItemModel(
             messageId = "23457570",
             senderId = "2",
-            recipientId = "1",
+            receiverId = "1",
             message = "Sure",
             dateSent = "11:55 AM"
         ),
         ConversationItemModel(
             messageId = "19",
             senderId = "1",
-            recipientId = "2",
+            receiverId = "2",
             message = "Let's go for a ride?",
             dateSent = "11:50 AM"
         ),
         ConversationItemModel(
             messageId = "23453450",
             senderId = "2",
-            recipientId = "1",
+            receiverId = "1",
             message = "Sure",
             dateSent = "11:55 AM"
         ),
         ConversationItemModel(
             messageId = "194533467",
             senderId = "1",
-            recipientId = "2",
+            receiverId = "2",
             message = "Let's go for a ride?",
             dateSent = "11:50 AM"
         ),
         ConversationItemModel(
             messageId = "203223",
             senderId = "2",
-            recipientId = "1",
+            receiverId = "1",
             message = "Sure asdasdasd",
             dateSent = "11:55 AM"
         ),
         ConversationItemModel(
             messageId = "18553",
             senderId = "2",
-            recipientId = "1",
+            receiverId = "1",
             message = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
@@ -180,7 +180,7 @@ private val conversationsModel = ConversationsModel(
         ConversationItemModel(
             messageId = "2546718",
             senderId = "2",
-            recipientId = "1",
+            receiverId = "1",
             message = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
@@ -349,7 +349,7 @@ fun MessagingConversationContent(
                             message = uiState.message,
                             onValueChange = { event(MessagingUiEvent.OnChangeMessage(it)) },
                             modifier = Modifier.wrapContentHeight(),
-                            onClickSend = {},
+                            onClickSend = { event(MessagingUiEvent.OnSendMessage) },
                             onToggleExpand = { event(MessagingUiEvent.ToggleMessageArea) },
                             isExpanded = uiState.messageAreaExpanded)
 
