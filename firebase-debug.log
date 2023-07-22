@@ -1,49 +1,57 @@
-[debug] [2023-07-21T04:19:52.399Z] ----------------------------------------------------------------------
-[debug] [2023-07-21T04:19:52.401Z] Command:       /usr/local/bin/firebase /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase emulators:start --import=./Cyclistance_Emulator_Suite_Data --export-on-exit
-[debug] [2023-07-21T04:19:52.401Z] CLI Version:   11.8.1
-[debug] [2023-07-21T04:19:52.401Z] Platform:      linux
-[debug] [2023-07-21T04:19:52.401Z] Node Version:  v16.16.0
-[debug] [2023-07-21T04:19:52.419Z] Time:          Fri Jul 21 2023 12:19:52 GMT+0800 (Philippine Standard Time)
-[debug] [2023-07-21T04:19:52.420Z] ----------------------------------------------------------------------
+[debug] [2023-07-22T01:20:26.714Z] ----------------------------------------------------------------------
+[debug] [2023-07-22T01:20:26.716Z] Command:       /usr/local/bin/firebase /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/bin/firebase emulators:start --import=./Cyclistance_Emulator_Suite_Data --export-on-exit
+[debug] [2023-07-22T01:20:26.716Z] CLI Version:   11.8.1
+[debug] [2023-07-22T01:20:26.716Z] Platform:      linux
+[debug] [2023-07-22T01:20:26.716Z] Node Version:  v16.16.0
+[debug] [2023-07-22T01:20:26.716Z] Time:          Sat Jul 22 2023 09:20:26 GMT+0800 (Philippine Standard Time)
+[debug] [2023-07-22T01:20:26.717Z] ----------------------------------------------------------------------
 [debug] 
-[debug] [2023-07-21T04:19:52.521Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
-[debug] [2023-07-21T04:19:52.522Z] > authorizing via signed-in user (mikocabal27@gmail.com)
-[debug] [2023-07-21T04:19:52.631Z] openjdk version "17.0.7" 2023-04-18
+[debug] [2023-07-22T01:20:26.790Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-07-22T01:20:26.790Z] > authorizing via signed-in user (mikocabal27@gmail.com)
+[debug] [2023-07-22T01:20:26.893Z] openjdk version "17.0.7" 2023-04-18
 OpenJDK Runtime Environment (build 17.0.7+7)
+OpenJDK 64-Bit Server VM (build 17.0.7+7, mixed mode)
 
-[debug] [2023-07-21T04:19:52.632Z] OpenJDK 64-Bit Server VM (build 17.0.7+7, mixed mode)
-
-[debug] [2023-07-21T04:19:52.636Z] Parsed Java major version: 17
+[debug] [2023-07-22T01:20:26.898Z] Parsed Java major version: 17
 [info] i  emulators: Starting emulators: auth, firestore, storage {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: auth, firestore, storage"}}
-[debug] [2023-07-21T04:19:52.646Z] [hub] writing locator at /tmp/hub-cyclistance-cc715.json
+[debug] [2023-07-22T01:20:26.908Z] [hub] writing locator at /tmp/hub-cyclistance-cc715.json
 [info] i  firestore: Importing data from /mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/firestore_export/firestore_export.overall_export_metadata {"metadata":{"emulator":{"name":"firestore"},"message":"Importing data from /mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/firestore_export/firestore_export.overall_export_metadata"}}
 [warn] ⚠  firestore: Did not find a Cloud Firestore rules file specified in a firebase.json config file. {"metadata":{"emulator":{"name":"firestore"},"message":"Did not find a Cloud Firestore rules file specified in a firebase.json config file."}}
 [warn] ⚠  firestore: The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration. {"metadata":{"emulator":{"name":"firestore"},"message":"The emulator will default to allowing all reads and writes. Learn more about this option: https://firebase.google.com/docs/emulator-suite/install_and_configure#security_rules_configuration."}}
-[debug] [2023-07-21T04:19:52.839Z] Ignoring unsupported arg: projectId {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: projectId"}}
-[debug] [2023-07-21T04:19:52.839Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: auto_download"}}
-[debug] [2023-07-21T04:19:52.839Z] Starting Firestore Emulator with command {"binary":"java","args":["-Dgoogle.cloud_firestore.debug_log_level=FINE","-Duser.language=en","-jar","/home/miko/.cache/firebase/emulators/cloud-firestore-emulator-v1.14.4.jar","--host","0.0.0.0","--port",9299,"--seed_from_export","/mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/firestore_export/firestore_export.overall_export_metadata"],"optionalArgs":["port","webchannel_port","host","rules","functions_emulator","seed_from_export"],"joinArgs":false} {"metadata":{"emulator":{"name":"firestore"},"message":"Starting Firestore Emulator with command {\"binary\":\"java\",\"args\":[\"-Dgoogle.cloud_firestore.debug_log_level=FINE\",\"-Duser.language=en\",\"-jar\",\"/home/miko/.cache/firebase/emulators/cloud-firestore-emulator-v1.14.4.jar\",\"--host\",\"0.0.0.0\",\"--port\",9299,\"--seed_from_export\",\"/mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/firestore_export/firestore_export.overall_export_metadata\"],\"optionalArgs\":[\"port\",\"webchannel_port\",\"host\",\"rules\",\"functions_emulator\",\"seed_from_export\"],\"joinArgs\":false}"}}
+[debug] [2023-07-22T01:20:26.938Z] Ignoring unsupported arg: projectId {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: projectId"}}
+[debug] [2023-07-22T01:20:26.938Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-07-22T01:20:26.938Z] Starting Firestore Emulator with command {"binary":"java","args":["-Dgoogle.cloud_firestore.debug_log_level=FINE","-Duser.language=en","-jar","/home/miko/.cache/firebase/emulators/cloud-firestore-emulator-v1.14.4.jar","--host","0.0.0.0","--port",9299,"--seed_from_export","/mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/firestore_export/firestore_export.overall_export_metadata"],"optionalArgs":["port","webchannel_port","host","rules","functions_emulator","seed_from_export"],"joinArgs":false} {"metadata":{"emulator":{"name":"firestore"},"message":"Starting Firestore Emulator with command {\"binary\":\"java\",\"args\":[\"-Dgoogle.cloud_firestore.debug_log_level=FINE\",\"-Duser.language=en\",\"-jar\",\"/home/miko/.cache/firebase/emulators/cloud-firestore-emulator-v1.14.4.jar\",\"--host\",\"0.0.0.0\",\"--port\",9299,\"--seed_from_export\",\"/mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/firestore_export/firestore_export.overall_export_metadata\"],\"optionalArgs\":[\"port\",\"webchannel_port\",\"host\",\"rules\",\"functions_emulator\",\"seed_from_export\"],\"joinArgs\":false}"}}
 [info] i  firestore: Firestore Emulator logging to firestore-debug.log {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator logging to \u001b[1mfirestore-debug.log\u001b[22m"}}
-[debug] [2023-07-21T04:19:53.967Z] Jul 21, 2023 12:19:53 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
-INFO: Started WebSocket server on ws://0.0.0.0:34733
- {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 21, 2023 12:19:53 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://0.0.0.0:34733\n"}}
-[debug] [2023-07-21T04:19:53.986Z] API endpoint: http://0.0.0.0:9299
+[debug] [2023-07-22T01:20:28.066Z] Jul 22, 2023 9:20:28 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
+INFO: Started WebSocket server on ws://0.0.0.0:36227
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:28 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://0.0.0.0:36227\n"}}
+[debug] [2023-07-22T01:20:28.084Z] API endpoint: http://0.0.0.0:9299
  {"metadata":{"emulator":{"name":"firestore"},"message":"API endpoint: http://0.0.0.0:9299\n"}}
-[debug] [2023-07-21T04:19:53.986Z] If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
+[debug] [2023-07-22T01:20:28.085Z] If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
 
    export FIRESTORE_EMULATOR_HOST=0.0.0.0:9299
 
 Dev App Server is now running.
 
  {"metadata":{"emulator":{"name":"firestore"},"message":"If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\n\n   export FIRESTORE_EMULATOR_HOST=0.0.0.0:9299\n\nDev App Server is now running.\n\n"}}
+[debug] [2023-07-22T01:20:35.418Z] Jul 22, 2023 9:20:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Jul 22, 2023 9:20:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+Jul 22, 2023 9:20:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+Jul 22, 2023 9:20:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nJul 22, 2023 9:20:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 22, 2023 9:20:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 22, 2023 9:20:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
 [info] i  auth: Importing config from /mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/auth_export/config.json {"metadata":{"emulator":{"name":"auth"},"message":"Importing config from /mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/auth_export/config.json"}}
 [info] i  auth: Importing accounts from /mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/auth_export/accounts.json {"metadata":{"emulator":{"name":"auth"},"message":"Importing accounts from /mnt/3bcb10b1-e590-4705-9bf8-3a5191317f8f/AndroidStudioProjects/Cyclistance/Cyclistance_Emulator_Suite_Data/auth_export/accounts.json"}}
-[debug] [2023-07-21T04:20:01.024Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"storage"},"message":"Ignoring unsupported arg: port"}}
-[debug] [2023-07-21T04:20:01.833Z] Temp file directory for storage emulator: /tmp/firebase/storage/blobs {"metadata":{"emulator":{"name":"storage"},"message":"Temp file directory for storage emulator: /tmp/firebase/storage/blobs"}}
-[debug] [2023-07-21T04:20:01.858Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
-[debug] [2023-07-21T04:20:01.858Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
-[debug] [2023-07-21T04:20:01.858Z] Starting Emulator UI with command {"binary":"node","args":["/home/miko/.cache/firebase/emulators/ui-v1.9.0/server/server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"/home/miko/.cache/firebase/emulators/ui-v1.9.0/server/server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
+[debug] [2023-07-22T01:20:35.462Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"storage"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2023-07-22T01:20:36.372Z] Temp file directory for storage emulator: /tmp/firebase/storage/blobs {"metadata":{"emulator":{"name":"storage"},"message":"Temp file directory for storage emulator: /tmp/firebase/storage/blobs"}}
+[debug] [2023-07-22T01:20:36.409Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-07-22T01:20:36.409Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2023-07-22T01:20:36.410Z] Starting Emulator UI with command {"binary":"node","args":["/home/miko/.cache/firebase/emulators/ui-v1.9.0/server/server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"/home/miko/.cache/firebase/emulators/ui-v1.9.0/server/server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
 [info] i  ui: Emulator UI logging to ui-debug.log {"metadata":{"emulator":{"name":"ui"},"message":"Emulator UI logging to \u001b[1mui-debug.log\u001b[22m"}}
-[debug] [2023-07-21T04:20:02.060Z] Web / API server started at localhost:4000
+[debug] [2023-07-22T01:20:36.615Z] Web / API server started at localhost:4000
  {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at localhost:4000\n"}}
 [info] 
 ┌─────────────────────────────────────────────────────────────┐
@@ -65,243 +73,388 @@ Dev App Server is now running.
 
 Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
  
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[debug] [2023-07-21T04:45:59.117Z] Jul 21, 2023 12:45:59 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+[debug] [2023-07-22T01:20:37.298Z] Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:37.320Z] Jul 22, 2023 9:20:37 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:37 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\nJul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:37.322Z] Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:37.356Z] Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:37.432Z] Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
- {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 21, 2023 12:45:59 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\n"}}
-[debug] [2023-07-21T04:45:59.122Z] Jul 21, 2023 12:45:59 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:37.434Z] Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:37.449Z] Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:39.348Z] Jul 22, 2023 9:20:39 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:39 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\n"}}
+[debug] [2023-07-22T01:20:39.477Z] Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:39.487Z] Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:39.592Z] Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:39.596Z] Jul 22, 2023 9:20:39 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:39 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\n"}}
+[debug] [2023-07-22T01:20:39.609Z] Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:39.617Z] Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:39.657Z] Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:39.689Z] Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:40.452Z] Jul 22, 2023 9:20:40 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:40 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\n"}}
+[debug] [2023-07-22T01:20:40.567Z] Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:40.578Z] Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:40.609Z] Jul 22, 2023 9:20:40 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:40 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\n"}}
+[debug] [2023-07-22T01:20:40.611Z] Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:40.626Z] Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:40.648Z] Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:40.670Z] Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:40.700Z] Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.164Z] Jul 22, 2023 9:20:41 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\n"}}
+[debug] [2023-07-22T01:20:41.280Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.291Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.320Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.323Z] Jul 22, 2023 9:20:41 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\n"}}
+[debug] [2023-07-22T01:20:41.350Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.370Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.393Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.442Z] Jul 22, 2023 9:20:41 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\n"}}
+[debug] [2023-07-22T01:20:41.483Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.492Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.552Z] Jul 22, 2023 9:20:41 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\n"}}
+[debug] [2023-07-22T01:20:41.554Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.576Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.593Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.605Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.629Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.736Z] Jul 22, 2023 9:20:41 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+INFO: Websocket client disconnected
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\n"}}
+[debug] [2023-07-22T01:20:41.808Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.820Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.860Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.862Z] Jul 22, 2023 9:20:41 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+INFO: Connected to new websocket client
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\n"}}
+[debug] [2023-07-22T01:20:41.880Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.901Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.927Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:41.954Z] Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:50.621Z] Jul 22, 2023 9:20:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:53.131Z] Jul 22, 2023 9:20:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:55.158Z] Jul 22, 2023 9:20:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:57.184Z] Jul 22, 2023 9:20:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:20:59.211Z] Jul 22, 2023 9:20:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:20:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[info] i  To verify the email address 22aspdi@gmail.com, follow this link: http://127.0.0.1:9099/emulator/action?mode=verifyEmail&lang=en&oobCode=LCVwPAOD-itHMNXoZ_p7yR8_y56pl-uXXMEe_sHT1je9jYa4r_ahDj&apiKey=fake-api-key {"metadata":{"emulator":{"name":"auth"},"message":"To verify the email address 22aspdi@gmail.com, follow this link: http://127.0.0.1:9099/emulator/action?mode=verifyEmail&lang=en&oobCode=LCVwPAOD-itHMNXoZ_p7yR8_y56pl-uXXMEe_sHT1je9jYa4r_ahDj&apiKey=fake-api-key"}}
+[debug] [2023-07-22T01:21:27.139Z] Jul 22, 2023 9:21:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:21:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:21:41.479Z] Jul 22, 2023 9:21:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:21:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:21:43.516Z] Jul 22, 2023 9:21:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:21:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:21:45.808Z] Jul 22, 2023 9:21:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:21:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:21:47.834Z] Jul 22, 2023 9:21:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:21:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:21:52.127Z] Jul 22, 2023 9:21:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:21:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:22:05.009Z] Jul 22, 2023 9:22:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:22:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:22:13.144Z] Jul 22, 2023 9:22:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:22:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:23:26.596Z] Jul 22, 2023 9:23:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:23:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:24:26.623Z] Jul 22, 2023 9:24:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:24:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:25:42.126Z] Jul 22, 2023 9:25:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:25:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:26:58.123Z] Jul 22, 2023 9:26:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:26:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:28:09.480Z] Jul 22, 2023 9:28:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
- {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 21, 2023 12:45:59 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\n"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[debug] [2023-07-21T04:49:19.282Z] Jul 21, 2023 12:49:19 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:28:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:28:09.575Z] Jul 22, 2023 9:28:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:28:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[info] i  To verify the email address ainsdoaisn@gmail.com, follow this link: http://127.0.0.1:9099/emulator/action?mode=verifyEmail&lang=en&oobCode=dFrNdKM1oMfpJfxPrwgfviXQyQW7-Qv88COrBaEg_PVavZ952fqKKI&apiKey=fake-api-key {"metadata":{"emulator":{"name":"auth"},"message":"To verify the email address ainsdoaisn@gmail.com, follow this link: http://127.0.0.1:9099/emulator/action?mode=verifyEmail&lang=en&oobCode=dFrNdKM1oMfpJfxPrwgfviXQyQW7-Qv88COrBaEg_PVavZ952fqKKI&apiKey=fake-api-key"}}
+[debug] [2023-07-22T01:29:07.048Z] Jul 22, 2023 9:29:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:29:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:29:40.190Z] Jul 22, 2023 9:29:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+Jul 22, 2023 9:29:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+Jul 22, 2023 9:29:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:29:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 22, 2023 9:29:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nJul 22, 2023 9:29:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:29:40.199Z] Jul 22, 2023 9:29:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:29:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:29:42.250Z] Jul 22, 2023 9:29:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:29:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:29:42.584Z] Jul 22, 2023 9:29:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:29:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:29:42.601Z] Jul 22, 2023 9:29:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:29:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:29:43.145Z] Jul 22, 2023 9:29:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:29:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:29:43.150Z] Jul 22, 2023 9:29:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:29:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:29:44.262Z] Jul 22, 2023 9:29:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:29:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:29:46.271Z] Jul 22, 2023 9:29:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:29:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:29:48.296Z] Jul 22, 2023 9:29:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:29:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:29:50.315Z] Jul 22, 2023 9:29:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:29:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:30:04.466Z] Jul 22, 2023 9:30:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:30:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[info] i  To verify the email address oppenheimer@gmail.com, follow this link: http://127.0.0.1:9099/emulator/action?mode=verifyEmail&lang=en&oobCode=HK1xa6szjP65Ti7Q-cZp2N-lZzfHk6zKwVA52RNChx07t9YfG_HrDY&apiKey=fake-api-key {"metadata":{"emulator":{"name":"auth"},"message":"To verify the email address oppenheimer@gmail.com, follow this link: http://127.0.0.1:9099/emulator/action?mode=verifyEmail&lang=en&oobCode=HK1xa6szjP65Ti7Q-cZp2N-lZzfHk6zKwVA52RNChx07t9YfG_HrDY&apiKey=fake-api-key"}}
+[debug] [2023-07-22T01:30:10.227Z] Jul 22, 2023 9:30:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:30:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:30:14.138Z] Jul 22, 2023 9:30:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:30:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:31:32.807Z] Jul 22, 2023 9:31:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:31:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:31:35.167Z] Jul 22, 2023 9:31:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:31:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:32:51.117Z] Jul 22, 2023 9:32:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:32:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:33:37.127Z] Jul 22, 2023 9:33:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:33:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:34:23.124Z] Jul 22, 2023 9:34:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:34:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:35:39.146Z] Jul 22, 2023 9:35:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:35:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:36:25.128Z] Jul 22, 2023 9:36:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:36:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:37:11.122Z] Jul 22, 2023 9:37:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:37:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:38:11.146Z] Jul 22, 2023 9:38:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:38:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:39:27.125Z] Jul 22, 2023 9:39:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:39:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:40:43.122Z] Jul 22, 2023 9:40:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:40:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:41:59.123Z] Jul 22, 2023 9:41:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:41:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:43:15.122Z] Jul 22, 2023 9:43:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:43:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:44:15.146Z] Jul 22, 2023 9:44:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:44:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:45:15.178Z] Jul 22, 2023 9:45:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:45:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:46:01.118Z] Jul 22, 2023 9:46:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:46:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:46:47.122Z] Jul 22, 2023 9:46:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:46:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:47:33.124Z] Jul 22, 2023 9:47:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:47:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:48:33.146Z] Jul 22, 2023 9:48:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:48:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:49:19.118Z] Jul 22, 2023 9:49:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:49:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:50:05.123Z] Jul 22, 2023 9:50:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:50:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:50:51.124Z] Jul 22, 2023 9:50:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:50:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:52:07.118Z] Jul 22, 2023 9:52:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:52:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:52:53.123Z] Jul 22, 2023 9:52:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:52:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:53:39.122Z] Jul 22, 2023 9:53:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:53:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:54:25.122Z] Jul 22, 2023 9:54:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:54:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:55:41.122Z] Jul 22, 2023 9:55:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:55:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:56:41.152Z] Jul 22, 2023 9:56:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:56:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:57:41.170Z] Jul 22, 2023 9:57:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:57:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:58:27.127Z] Jul 22, 2023 9:58:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:58:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T01:59:43.126Z] Jul 22, 2023 9:59:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 9:59:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T02:00:43.135Z] Jul 22, 2023 10:00:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 10:00:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T02:01:19.307Z] Jul 22, 2023 10:01:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
- {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 21, 2023 12:49:19 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\n"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
-[warn] ⚠  Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI
-    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)
-    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)
-    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)
-    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)
-    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46
-    at processTicksAndRejections (node:internal/process/task_queues:96:5) {"metadata":{"emulator":{"name":"auth"},"message":"Error: Internal state invariant broken: no user with ID: E6D8oC1k5GnfE9ObbNG34OZ8IBLI\n    at AgentProjectState.getUserByLocalIdAssertingExists (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:207:19)\n    at AgentProjectState.validateRefreshToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/state.js:294:24)\n    at grantToken (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/operations.js:1287:38)\n    at Proxy.<anonymous> (/home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/lib/emulator/auth/server.js:375:20)\n    at /home/miko/.cache/firebase/tools/lib/node_modules/firebase-tools/node_modules/promise-breaker/index.js:265:46\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}}
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 10:01:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\n"}}
+[debug] [2023-07-22T02:01:59.120Z] Jul 22, 2023 10:01:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 10:01:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T02:03:15.119Z] Jul 22, 2023 10:03:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 10:03:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T02:04:15.140Z] Jul 22, 2023 10:04:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 10:04:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T02:05:15.158Z] Jul 22, 2023 10:05:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 10:05:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T02:06:15.177Z] Jul 22, 2023 10:06:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 10:06:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
+[debug] [2023-07-22T02:07:31.122Z] Jul 22, 2023 10:07:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+ {"metadata":{"emulator":{"name":"firestore"},"message":"Jul 22, 2023 10:07:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n"}}
