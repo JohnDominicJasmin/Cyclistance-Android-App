@@ -10,6 +10,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class MessagingUserItem(
     val userDetails: UserDetails = UserDetails(),
-    val keyId: String = "",
     val fcmToken: String = ""
 ) : Parcelable

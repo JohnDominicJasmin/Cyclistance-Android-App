@@ -14,7 +14,6 @@ object MessagingUserDetailsMapper {
                 photo = this[MessagingConstants.KEY_PHOTO].toString(),
                 email = this[MessagingConstants.KEY_EMAIL].toString(),
             ),
-            keyId = this.id,
             fcmToken = this[MessagingConstants.KEY_FCM_TOKEN].toString()
 
         )
