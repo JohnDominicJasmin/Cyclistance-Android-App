@@ -10,13 +10,16 @@ import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transacti
 import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
 import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 object FormatterUtils {
 
 
     fun Double.formatToDistanceKm(): String {
 
-        return if(this <= 0.0) {
+        return if (this <= 0.0) {
             "0 m"
         } else if (this < 1000) {
             "%.2f m".format(this)
@@ -26,7 +29,7 @@ object FormatterUtils {
     }
 
     // TODO: test this code
-     fun RescueTransaction.findRescueTransaction(id: String): RescueTransactionItem {
+    fun RescueTransaction.findRescueTransaction(id: String): RescueTransactionItem {
         return this.transactions.find {
             it.id == id
         } ?: RescueTransactionItem()
@@ -109,17 +112,25 @@ object FormatterUtils {
             MappingConstants.INCIDENT_TEXT -> {
                 R.drawable.ic_incident_em
             }
+
             MappingConstants.BROKEN_CHAIN_TEXT -> {
                 R.drawable.ic_broken_chain_em
             }
+
             MappingConstants.FLAT_TIRES_TEXT -> {
                 R.drawable.ic_flat_tire_em
             }
+
             MappingConstants.FAULTY_BRAKES_TEXT -> {
                 R.drawable.ic_faulty_brakes_em
             }
 
             else -> throw RuntimeException("No icon found for $this")
         }
+    }
+
+
+    fun Date.getReadableDateTime(): String {
+        return SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(this)
     }
 }
