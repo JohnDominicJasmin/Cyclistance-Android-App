@@ -39,25 +39,27 @@ import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessageItemModel
+import com.example.cyclistance.core.utils.validation.FormatterUtils.toReadableDateTime
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatItemModel
 import com.example.cyclistance.theme.CyclistanceTheme
+import java.util.Date
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MessagingItem(
     modifier: Modifier = Modifier,
-    messageItemModel: MessageItemModel = MessageItemModel(),
-    onClick: (MessageItemModel) -> Unit) {
+    chatItemModel: ChatItemModel = ChatItemModel(),
+    onClick: (ChatItemModel) -> Unit) {
 
 
     val hasUnreadMessage by remember {
         derivedStateOf {
-            messageItemModel.unreadMessages > 0
+            chatItemModel.unreadMessages > 0
         }
     }
 
     Surface(
-        onClick = { onClick(messageItemModel) },
+        onClick = { onClick(chatItemModel) },
         modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colors.background, shape = RoundedCornerShape(4.dp)) {
 
@@ -77,7 +79,7 @@ fun MessagingItem(
                 contentAlignment = Alignment.CenterStart) {
 
                 AsyncImage(
-                    model = messageItemModel.userPhotoUrl,
+                    model = chatItemModel.userPhotoUrl,
                     contentDescription = "User Profile Image",
                     modifier = Modifier
                         .clip(CircleShape)
@@ -95,13 +97,13 @@ fun MessagingItem(
                 horizontalAlignment = Alignment.Start) {
 
                 Text(
-                    text = messageItemModel.name,
+                    text = chatItemModel.name,
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colors.onBackground, maxLines = 1,
                 )
 
                 Text(
-                    text = messageItemModel.message,
+                    text = chatItemModel.message,
                     overflow = TextOverflow.Ellipsis,
                     color = if (hasUnreadMessage) MaterialTheme.colors.primary.copy(
                         alpha = 0.7f) else MaterialTheme.colors.onBackground,
@@ -118,11 +120,11 @@ fun MessagingItem(
                 horizontalAlignment = Alignment.End) {
 
                 Text(
-                    text = messageItemModel.timeStamp,
+                    text = chatItemModel.timeStamp!!.toReadableDateTime(pattern = "hh:mm a"),
                     color = MaterialTheme.colors.onBackground,
                     style = MaterialTheme.typography.body2.copy(
                         fontWeight = FontWeight.Light,
-                        letterSpacing = TextUnit(1.5f, type = TextUnitType.Sp)))
+                        letterSpacing = TextUnit(0.7f, type = TextUnitType.Sp)))
 
                 if (hasUnreadMessage) {
 
@@ -136,7 +138,7 @@ fun MessagingItem(
                     ) {
 
                         val unreadMessageCount =
-                            if (messageItemModel.unreadMessages > 9) "9+" else messageItemModel.unreadMessages.toString()
+                            if (chatItemModel.unreadMessages > 9) "9+" else chatItemModel.unreadMessages.toString()
 
                         Text(
                             text = unreadMessageCount,
@@ -150,9 +152,9 @@ fun MessagingItem(
                 } else {
 
                     val icon =
-                        if (messageItemModel.isMessageSent) Icons.Default.Check else Icons.Default.Info
+                        if (chatItemModel.isMessageSent) Icons.Default.Check else Icons.Default.Info
                     val iconTint =
-                        if (messageItemModel.isMessageSent) MaterialTheme.colors.onBackground else MaterialTheme.colors.error
+                        if (chatItemModel.isMessageSent) MaterialTheme.colors.onBackground else MaterialTheme.colors.error
 
                     Icon(
                         imageVector = icon,
@@ -180,14 +182,14 @@ fun PreviewMessagingItemDark() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
-                messageItemModel = MessageItemModel(
+                chatItemModel = ChatItemModel(
                     userPhotoUrl = MappingConstants.IMAGE_PLACEHOLDER_URL,
                     name = "John Doe",
                     message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                               "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                               "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                               "optio, eaque rerum! Provident similique accusantium nemo autem.",
-                    timeStamp = "12:00",
+                    timeStamp = Date(),
                     unreadMessages = 4,
                 ),
                 onClick = {}
@@ -213,14 +215,14 @@ fun PreviewMessagingItemLight() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
-                messageItemModel = MessageItemModel(
+                chatItemModel = ChatItemModel(
                     userPhotoUrl = MappingConstants.IMAGE_PLACEHOLDER_URL,
                     name = "John Doe",
                     message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                               "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                               "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                               "optio, eaque rerum! Provident similique accusantium nemo autem.",
-                    timeStamp = "12:00",
+                    timeStamp = Date(),
                     unreadMessages = 0,
                     isMessageSent = false
                 ),

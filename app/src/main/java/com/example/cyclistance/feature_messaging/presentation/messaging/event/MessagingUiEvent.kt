@@ -1,7 +1,7 @@
 package com.example.cyclistance.feature_messaging.presentation.messaging.event
 
 import androidx.compose.ui.text.input.TextFieldValue
-import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessageItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatItemModel
 
 sealed class MessagingUiEvent {
     object ToggleMessageArea : MessagingUiEvent()
@@ -10,5 +10,5 @@ sealed class MessagingUiEvent {
     object OnSendMessage : MessagingUiEvent()
     data class SelectChatItem(val index: Int) : MessagingUiEvent()
     data class OnChangeMessage(val message: TextFieldValue) : MessagingUiEvent()
-    data class OnSelectedConversation(val messageItem: MessageItemModel) : MessagingUiEvent()
+    data class OnSelectedConversation(val messageItem: ChatItemModel) : MessagingUiEvent()
 }

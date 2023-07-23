@@ -28,14 +28,15 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessageItemModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessagesModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatsModel
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.conversation.MessagingConversationContent
 import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingUiEvent
 import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingState
 import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingUiState
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
+import java.util.Date
 
 @Composable
 fun MessagingScreenContent(
@@ -46,7 +47,7 @@ fun MessagingScreenContent(
 
 
     val messageAvailable =
-        remember(state.messagesModel.messages) { state.messagesModel.messages.isNotEmpty() }
+        remember(state.chatsModel.messages) { state.chatsModel.messages.isNotEmpty() }
     val shouldShowConversationDialog =
         remember(uiState.selectedConversationItem) { uiState.selectedConversationItem != null }
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
@@ -88,7 +89,7 @@ fun MessagingScreenContent(
                         modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
                     )
 
-                    MessagesSection(messagesModel = state.messagesModel, onClick = {
+                    MessagesSection(chatsModel = state.chatsModel, onClick = {
                         event(MessagingUiEvent.OnSelectedConversation(it))
                     })
                 }
@@ -138,22 +139,21 @@ private fun BoxScope.AddMessageButton(modifier: Modifier = Modifier, onClick: ()
 @Composable
 private fun MessagesSection(
     modifier: Modifier = Modifier,
-    messagesModel: MessagesModel,
-    onClick: (MessageItemModel) -> Unit) {
+    chatsModel: ChatsModel,
+    onClick: (ChatItemModel) -> Unit) {
 
     LazyColumn(
         modifier = modifier
             .fillMaxSize()) {
-        items(messagesModel.messages, key = {
+        items(chatsModel.messages, key = {
             it.messageId
-
         }) { item ->
 
             MessagingItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
-                messageItemModel = item,
+                chatItemModel = item,
                 onClick = onClick
             )
         }
@@ -161,62 +161,62 @@ private fun MessagesSection(
 }
 
 
-val fakeMessages = MessagesModel(
+val fakeMessages = ChatsModel(
     listOf(
-        MessageItemModel(
+        ChatItemModel(
             userPhotoUrl = "https://www.liquidsandsolids.com/wp-content/uploads/2022/09/talking-to-a-dead-person.jpg",
             name = "John Doe",
             message = "Hey there! How are you?",
-            timeStamp = "12:00",
+            timeStamp = Date(),
             unreadMessages = 4,
             isMessageSent = false,
             messageId = "1",
             userId = "1gaosidnuio2b"
         ),
-        MessageItemModel(
+        ChatItemModel(
             userPhotoUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
             name = "Jane Doe",
             message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timeStamp = "12:00",
+            timeStamp = Date(),
             unreadMessages = 10,
             isMessageSent = true,
             messageId = "2",
             userId = "ksnksksk29u4091u2"
         ),
-        MessageItemModel(
+        ChatItemModel(
             userPhotoUrl = "https://www.diethelmtravel.com/wp-content/uploads/2016/04/bill-gates-wealthiest-person.jpg",
             name = "Jennifer",
             message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timeStamp = "12:00",
+            timeStamp = Date(),
             unreadMessages = 0,
             isMessageSent = true,
             messageId = "3",
             userId = "asgknasoidn29h"
         ),
-        MessageItemModel(
+        ChatItemModel(
             userPhotoUrl = "https://www.harleytherapy.co.uk/counselling/wp-content/uploads/16297800391_5c6e812832.jpg",
             name = "John Doe",
             message = "Hello",
-            timeStamp = "12:00",
+            timeStamp = Date(),
             unreadMessages = 0,
             isMessageSent = true,
             messageId = "4",
             userId = "asidbnaoiusdb982bh"
         ),
-        MessageItemModel(
+        ChatItemModel(
             userPhotoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREz8aDOvFn1m2fCQ020dcrr-RCxey0NyF_XG6JOG1HzYoQRdBwB8U3fQJKEwG7t6Yr72Q",
             name = "John Doe",
             message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timeStamp = "12:00",
+            timeStamp = Date(),
             unreadMessages = 0,
             isMessageSent = false,
             messageId = "5",
