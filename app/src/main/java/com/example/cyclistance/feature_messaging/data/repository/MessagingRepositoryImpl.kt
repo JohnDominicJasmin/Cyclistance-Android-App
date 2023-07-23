@@ -22,16 +22,15 @@ import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.M
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.util.Date
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
@@ -71,16 +70,17 @@ class MessagingRepositoryImpl(
     private suspend fun updateMessagingToken(token: String) {
         val uid = getUid()
 
-        coroutineScope {
+        try {
             fireStore.collection(USER_COLLECTION).document(uid).update(
                 KEY_FCM_TOKEN, token
-            ).addOnSuccessListener {
-                this.launch {
-                    dataStore.editData(key = SAVED_TOKEN, value = token)
-                }
-            }.addOnFailureListener {
-                throw MessagingExceptions.TokenException(message = it.message!!)
+            ).await()
+
+            withContext(Dispatchers.IO) {
+                dataStore.editData(key = SAVED_TOKEN, value = token)
             }
+        } catch (exception: Exception) {
+            throw MessagingExceptions.TokenException(
+                message = exception.message ?: "Token update failed")
         }
     }
 
