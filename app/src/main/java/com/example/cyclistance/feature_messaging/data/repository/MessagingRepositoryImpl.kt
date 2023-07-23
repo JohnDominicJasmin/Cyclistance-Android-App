@@ -114,7 +114,10 @@ class MessagingRepositoryImpl(
                             document.toMessageUser()
 
                         }
-                        continuation.resume(MessagingUsers(users = users))
+
+                        if (continuation.isActive) {
+                            continuation.resume(MessagingUsers(users = users))
+                        }
                     }
                 }.addOnFailureListener {
                     if (it is FirebaseNetworkException) {
@@ -141,7 +144,9 @@ class MessagingRepositoryImpl(
                     KEY_TIMESTAMP to Date(),
                 )
                 fireStore.collection(KEY_CHAT_COLLECTION).add(message).addOnSuccessListener {
-                    continuation.resume(true)
+                    if (continuation.isActive) {
+                        continuation.resume(true)
+                    }
                 }.addOnFailureListener {
                     continuation.resumeWithException(
                         MessagingExceptions.SendMessagingFailure(
