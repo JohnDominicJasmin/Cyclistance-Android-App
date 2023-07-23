@@ -16,7 +16,7 @@ import com.example.cyclistance.core.utils.data_store_ext.editData
 import com.example.cyclistance.core.utils.data_store_ext.getData
 import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserDetailsMapper.toMessageUser
 import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions
-import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
+import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessagingUserItem
 import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessagingUsers
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
@@ -24,7 +24,6 @@ import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
@@ -40,7 +39,6 @@ class MessagingRepositoryImpl(
     private val fireStore: FirebaseFirestore,
     private val firebaseMessaging: FirebaseMessaging,
     private val auth: FirebaseAuth,
-    private val firebaseInstallations: FirebaseInstallations,
     private val appContext: Context,
 ) : MessagingRepository {
 
@@ -131,15 +129,15 @@ class MessagingRepositoryImpl(
 
     }
 
-    override suspend fun sendMessage(conversationItem: ConversationItemModel): Boolean {
+    override suspend fun sendMessage(sendMessageModel: SendMessageModel): Boolean {
         checkInternetConnection()
         return withContext(scope) {
             suspendCancellableCoroutine { continuation ->
                 val uid = getUid()
                 val message = mapOf(
                     KEY_SENDER_ID to uid,
-                    KEY_RECEIVER_ID to conversationItem.receiverId,
-                    KEY_MESSAGE to conversationItem.message,
+                    KEY_RECEIVER_ID to sendMessageModel.receiverId,
+                    KEY_MESSAGE to sendMessageModel.message,
                     KEY_TIMESTAMP to Date(),
                 )
                 fireStore.collection(KEY_CHAT_COLLECTION).add(message).addOnSuccessListener {
