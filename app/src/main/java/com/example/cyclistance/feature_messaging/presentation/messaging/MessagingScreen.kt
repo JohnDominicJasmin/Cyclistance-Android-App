@@ -36,6 +36,7 @@ fun MessagingScreen(
             uiState = uiState.copy(
                 selectedConversationItem = _messageItem
             )
+            viewModel.onEvent(event = MessagingEvent.AddMessageListener(_messageItem.userId))
         }
     }
 
@@ -44,6 +45,7 @@ fun MessagingScreen(
             uiState = uiState.copy(
                 selectedConversationItem = null
             )
+            viewModel.onEvent(event = MessagingEvent.RemoveMessageListener)
         }
     }
 
