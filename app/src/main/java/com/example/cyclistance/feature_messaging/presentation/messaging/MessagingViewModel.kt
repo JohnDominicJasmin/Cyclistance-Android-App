@@ -7,6 +7,7 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -27,7 +28,7 @@ class MessagingViewModel @Inject constructor(
     }
 
     private fun refreshToken() {
-        viewModelScope.launch {
+        viewModelScope.launch(SupervisorJob()) {
             runCatching {
                 messagingUseCase.refreshTokenUseCase()
             }.onSuccess {
