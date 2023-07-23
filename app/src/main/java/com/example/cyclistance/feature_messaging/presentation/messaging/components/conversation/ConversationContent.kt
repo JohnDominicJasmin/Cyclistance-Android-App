@@ -53,9 +53,11 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
 import com.example.cyclistance.core.utils.composable_utils.keyboardAsState
 import com.example.cyclistance.core.utils.composable_utils.noRippleClickable
+import com.example.cyclistance.core.utils.validation.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.MessageDuration
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatItemModel
 import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingUiEvent
 import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingState
 import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingUiState
@@ -65,6 +67,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.top_bars.TitleTopAppBar
 import com.example.cyclistance.top_bars.TopAppBarCreator
 import kotlinx.coroutines.launch
+import java.util.Date
 
 private val USER_ID = "1"
 private val conversationsModel = ConversationsModel(
@@ -74,7 +77,7 @@ private val conversationsModel = ConversationsModel(
             senderId = "1",
             receiverId = "2",
             message = "Hello",
-            dateSent = "10:30 AM",
+            timeStamp = Date(),
             messageDuration = MessageDuration.OneDay,
 
             ),
@@ -83,21 +86,21 @@ private val conversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "How are you?",
-            dateSent = "11:32 AM"
+            timeStamp = Date()
         ),
         ConversationItemModel(
             messageId = "14",
             senderId = "1",
             receiverId = "2",
             message = "I'm fine, thanks",
-            dateSent = "11:35 AM"
+            timeStamp = Date()
         ),
         ConversationItemModel(
             messageId = "15",
             senderId = "1",
             receiverId = "2",
             message = "How about you?",
-            dateSent = "FEB 13 12:12 AM",
+            timeStamp = Date(),
             messageDuration = MessageDuration.OneMonth
         ),
         ConversationItemModel(
@@ -105,7 +108,7 @@ private val conversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "I'm fine too",
-            dateSent = "11:42 AM",
+            timeStamp = Date(),
             messageDuration = MessageDuration.OneHour
         ),
         ConversationItemModel(
@@ -113,7 +116,7 @@ private val conversationsModel = ConversationsModel(
             senderId = "1",
             receiverId = "2",
             message = "Good to hear that",
-            dateSent = "11:43 AM"
+            timeStamp = Date()
         ),
         ConversationItemModel(
             messageId = "18",
@@ -123,49 +126,49 @@ private val conversationsModel = ConversationsModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            dateSent = "11:45 AM"
+            timeStamp = Date()
         ),
         ConversationItemModel(
             messageId = "19357846457",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            dateSent = "11:50 AM"
+            timeStamp = Date()
         ),
         ConversationItemModel(
             messageId = "23457570",
             senderId = "2",
             receiverId = "1",
             message = "Sure",
-            dateSent = "11:55 AM"
+            timeStamp = Date()
         ),
         ConversationItemModel(
             messageId = "19",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            dateSent = "11:50 AM"
+            timeStamp = Date()
         ),
         ConversationItemModel(
             messageId = "23453450",
             senderId = "2",
             receiverId = "1",
             message = "Sure",
-            dateSent = "11:55 AM"
+            timeStamp = Date()
         ),
         ConversationItemModel(
             messageId = "194533467",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            dateSent = "11:50 AM"
+            timeStamp = Date()
         ),
         ConversationItemModel(
             messageId = "203223",
             senderId = "2",
             receiverId = "1",
             message = "Sure asdasdasd",
-            dateSent = "11:55 AM"
+            timeStamp = Date()
         ),
         ConversationItemModel(
             messageId = "18553",
@@ -175,7 +178,7 @@ private val conversationsModel = ConversationsModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            dateSent = "11:45 AM"
+            timeStamp = Date()
         ),
         ConversationItemModel(
             messageId = "2546718",
@@ -185,7 +188,7 @@ private val conversationsModel = ConversationsModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            dateSent = "11:45 AM"
+            timeStamp = Date()
         ),
     )
 )
@@ -308,12 +311,12 @@ fun MessagingConversationContent(
                                     key = { _, item -> item.messageId }) { index, message ->
 
                                     val isSender by remember { derivedStateOf { message.senderId != USER_ID } }
-                                    val timeStampAvailable by remember { derivedStateOf { message.messageDuration != null && message.dateSent != null } }
+                                    val timeStampAvailable by remember { derivedStateOf { message.messageDuration != null && message.timeStamp != null } }
 
                                     AnimatedVisibility(visible = timeStampAvailable) {
 
                                         MessagingTimeStamp(
-                                            value = message.dateSent!!,
+                                            value = message.timeStamp!!.toReadableDateTime(),
                                             modifier = Modifier
                                                 .fillMaxWidth()
                                                 .padding(vertical = 8.dp))
@@ -420,8 +423,13 @@ fun PreviewMessagingConversationContentDark() {
     CompositionLocalProvider(IsDarkTheme provides true) {
         CyclistanceTheme(darkTheme = true) {
             MessagingConversationContent(
-                uiState = MessagingUiState(messageAreaExpanded = true),
-                event = {}, state = MessagingState())
+                uiState = MessagingUiState(
+                    messageAreaExpanded = true, selectedConversationItem = ChatItemModel(
+
+                    )),
+                event = {}, state = MessagingState(
+                    conversationsModel = conversationsModel
+                ))
         }
     }
 }
