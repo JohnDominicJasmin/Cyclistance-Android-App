@@ -7,7 +7,8 @@ interface MessagingRepository {
 
     suspend fun refreshToken()
     suspend fun getUsers(): UserMessagesModel
-    suspend fun sendMessage(sendMessageModel: SendMessageModel): Boolean
-    fun deleteToken()
-    fun listenForMessages(receiverId: String)
+    fun sendMessage(sendMessageModel: SendMessageModel)
+    suspend fun deleteToken()
+    fun addMessageListener(receiverId: String)
+    fun removeMessageListener()
 }

@@ -29,6 +29,7 @@ import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +48,8 @@ class MessagingRepositoryImpl(
     private val firebaseMessaging: FirebaseMessaging,
     private val auth: FirebaseAuth,
     private val appContext: Context,
-    private val chatMessages: Conversation = Conversation()
+    private val chatMessages: Conversation = Conversation(),
+    private var snapShotListener: ListenerRegistration? = null
 ) : MessagingRepository {
 
     private val scope: CoroutineContext = Dispatchers.IO
@@ -123,38 +125,6 @@ class MessagingRepositoryImpl(
     }
 
 
-    override fun listenForMessages(receiverId: String) {
-        checkInternetConnection()
-
-        val userUid = getUid()
-
-        val eventListener = { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
-            if (value == null) {
-                throw MessagingExceptions.ListenMessagingFailure(message = "Cannot listen to messages, value is null")
-            }
-
-            if (error != null) {
-                throw MessagingExceptions.ListenMessagingFailure(
-                    message = error.message ?: "Unknown error occurred")
-            }
-
-            value.documentChanges.filter { it.type == DocumentChange.Type.ADDED }
-                .forEach { documentChange ->
-                    val document = documentChange.document
-                    handleDocumentChange(document)
-                }
-
-            chatMessages.getMessages().sortedBy { it.timeStamp }
-            Timber.d("Messages: ${chatMessages.getMessages()}")
-        }
-
-        fireStore.collection(KEY_CHAT_COLLECTION)
-            .whereIn(KEY_SENDER_ID, listOf(userUid, receiverId))
-            .whereIn(KEY_RECEIVER_ID, listOf(userUid, receiverId))
-            .addSnapshotListener(eventListener)
-    }
-
-
     /*
         override fun listenForMessages(receiverId: String) {
             val userUid = getUid()
@@ -208,6 +178,44 @@ class MessagingRepositoryImpl(
         }
     */
 
+
+    override fun removeMessageListener() {
+        snapShotListener?.remove()
+    }
+
+    override fun addMessageListener(receiverId: String) {
+        checkInternetConnection()
+
+        val userUid = getUid()
+
+        val eventListener = { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
+            if (value == null) {
+                throw MessagingExceptions.ListenMessagingFailure(message = "Cannot listen to messages, value is null")
+            }
+
+            if (error != null) {
+                throw MessagingExceptions.ListenMessagingFailure(
+                    message = error.message ?: "Unknown error occurred")
+            }
+
+            value.documentChanges.filter { it.type == DocumentChange.Type.ADDED }
+                .forEach { documentChange ->
+                    val document = documentChange.document
+                    handleDocumentChange(document)
+                }
+
+            chatMessages.getMessages().sortedBy { it.timeStamp }
+            Timber.d("Messages: ${chatMessages.getMessages()}")
+        }
+
+        snapShotListener = fireStore.collection(KEY_CHAT_COLLECTION)
+            .whereIn(KEY_SENDER_ID, listOf(userUid, receiverId))
+            .whereIn(KEY_RECEIVER_ID, listOf(userUid, receiverId))
+            .addSnapshotListener(eventListener)
+
+    }
+
+
     override suspend fun refreshToken() {
         withContext(scope) {
 
@@ -251,35 +259,30 @@ class MessagingRepositoryImpl(
 
     }
 
-    override suspend fun sendMessage(sendMessageModel: SendMessageModel): Boolean {
+    override fun sendMessage(sendMessageModel: SendMessageModel) {
         checkInternetConnection()
-        return withContext(scope) {
-            suspendCancellableCoroutine { continuation ->
-                val uid = getUid()
-                val message = mapOf(
-                    KEY_SENDER_ID to uid,
-                    KEY_RECEIVER_ID to sendMessageModel.receiverId,
-                    KEY_MESSAGE to sendMessageModel.message,
-                    KEY_TIMESTAMP to Date(),
-                )
-                fireStore.collection(KEY_CHAT_COLLECTION).add(message).addOnSuccessListener {
-                    if (continuation.isActive) {
-                        continuation.resume(true)
-                    }
-                }.addOnFailureListener {
-                    continuation.resumeWithException(
-                        MessagingExceptions.SendMessagingFailure(
-                            message = it.message!!
-                        )
-                    )
-                }
-            }
+
+        val uid = getUid()
+        val message = mapOf(
+            KEY_SENDER_ID to uid,
+            KEY_RECEIVER_ID to sendMessageModel.receiverId,
+            KEY_MESSAGE to sendMessageModel.message,
+            KEY_TIMESTAMP to Date(),
+        )
+
+        fireStore.collection(KEY_CHAT_COLLECTION).add(message).addOnSuccessListener {
+            Timber.v("Message sent successfully ")
+        }.addOnFailureListener {
+            throw MessagingExceptions.SendMessagingFailure(message = it.message!!)
+        }.addOnCanceledListener {
+            Timber.e("Message sending cancelled by user")
         }
 
     }
 
-    override fun deleteToken() {
+    override suspend fun deleteToken() {
         checkInternetConnection()
+        dataStore.editData(key = SAVED_TOKEN, value = "")
         fireStore.collection(
             USER_COLLECTION
         ).document(getUid()).update(KEY_FCM_TOKEN, FieldValue.delete()).addOnFailureListener {

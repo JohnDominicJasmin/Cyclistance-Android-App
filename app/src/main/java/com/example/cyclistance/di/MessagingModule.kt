@@ -6,6 +6,8 @@ import com.example.cyclistance.feature_messaging.data.repository.MessagingReposi
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUsersUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.message.AddMessageListenerUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.message.RemoveMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.SendMessageUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.token.DeleteTokenUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.token.RefreshTokenUseCase
@@ -58,8 +60,9 @@ object MessagingModule {
             refreshTokenUseCase = RefreshTokenUseCase(repository = repository),
             getUsersUseCase = GetUsersUseCase(repository = repository),
             deleteTokenUseCase = DeleteTokenUseCase(repository = repository),
-            sendMessageUseCase = SendMessageUseCase(repository = repository)
-
+            sendMessageUseCase = SendMessageUseCase(repository = repository),
+            addMessageListenerUseCase = AddMessageListenerUseCase(repository = repository),
+            removeMessageListenerUseCase = RemoveMessageListenerUseCase(repository = repository)
         )
     }
 

@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -38,6 +39,24 @@ class MessagingViewModel @Inject constructor(
     fun onEvent(event: MessagingEvent) {
         when (event) {
             is MessagingEvent.SendMessage -> sendMessage(event.sendMessageModel)
+            is MessagingEvent.AddMessageListener -> addMessageListener(event.receiverId)
+            is MessagingEvent.RemoveMessageListener -> removeMessageListener()
+        }
+    }
+
+    private fun removeMessageListener() {
+        messagingUseCase.removeMessageListenerUseCase()
+    }
+
+    private fun addMessageListener(receiverId: String) {
+        viewModelScope.launch {
+            runCatching {
+                messagingUseCase.addMessageListenerUseCase(receiverId = receiverId)
+            }.onSuccess {
+                Timber.v("Successfully added message listener")
+            }.onFailure {
+                Timber.e("Failed to add message listener ${it.message}")
+            }
         }
     }
 
@@ -47,6 +66,7 @@ class MessagingViewModel @Inject constructor(
                 messagingUseCase.sendMessageUseCase(sendMessage)
             }.onSuccess {
                 Timber.v("Successfully sent message")
+                _state.update { it.copy(lastReceiverId = sendMessage.receiverId) }
             }.onFailure {
                 Timber.e("Failed to send message ${it.message}")
             }
