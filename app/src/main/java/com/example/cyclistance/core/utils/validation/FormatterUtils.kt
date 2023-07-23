@@ -130,7 +130,7 @@ object FormatterUtils {
     }
 
 
-    fun Date.getReadableDateTime(): String {
-        return SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(this)
+    fun Date.toReadableDateTime(pattern: String = "dd/MM/yyyy HH:mm"): String {
+        return SimpleDateFormat(pattern, Locale.getDefault()).format(this)
     }
 }
