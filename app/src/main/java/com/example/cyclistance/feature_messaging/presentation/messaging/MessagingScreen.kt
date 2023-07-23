@@ -14,9 +14,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessageItemModel
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.MessagingScreenContent
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.fakeMessages
+import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingEvent
 import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingUiEvent
 import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingUiState
 
@@ -29,7 +31,7 @@ fun MessagingScreen(
     var uiState by rememberSaveable { mutableStateOf(MessagingUiState()) }
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val onSelectedConversationId = remember {
+    val onSelectedConversation = remember {
         { _messageItem: MessageItemModel ->
             uiState = uiState.copy(
                 selectedConversationItem = _messageItem
@@ -81,9 +83,21 @@ fun MessagingScreen(
 
     val onSendMessage = remember {
         {
-            uiState = uiState.copy(
-                message = TextFieldValue()
-            )
+
+
+            viewModel.onEvent(
+                event = MessagingEvent.SendMessage(
+                    sendMessageModel = SendMessageModel(
+                        receiverId = uiState.selectedConversationItem!!.userId,
+                        message = uiState.message.text
+                    )
+                )).also {
+                uiState = uiState.copy(
+                    message = TextFieldValue()
+                )
+            }
+
+
         }
     }
 
@@ -107,7 +121,7 @@ fun MessagingScreen(
                 is MessagingUiEvent.ResetSelectedIndex -> resetSelectedIndex()
                 is MessagingUiEvent.SelectChatItem -> onClickChatItem(event.index)
                 is MessagingUiEvent.OnChangeMessage -> onChangeValueMessage(event.message)
-                is MessagingUiEvent.OnSelectedConversation -> onSelectedConversationId(event.messageItem)
+                is MessagingUiEvent.OnSelectedConversation -> onSelectedConversation(event.messageItem)
                 is MessagingUiEvent.DismissConversationDialog -> onDismissConversationDialog()
                 is MessagingUiEvent.OnSendMessage -> onSendMessage()
             }

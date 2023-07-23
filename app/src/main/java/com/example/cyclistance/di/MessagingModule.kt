@@ -11,7 +11,6 @@ import com.example.cyclistance.feature_messaging.domain.use_case.token.DeleteTok
 import com.example.cyclistance.feature_messaging.domain.use_case.token.RefreshTokenUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Module
 import dagger.Provides
@@ -35,11 +34,6 @@ object MessagingModule {
         }
     }
 
-    @Singleton
-    @Provides
-    fun providesFirebaseInstallations(): FirebaseInstallations {
-        return FirebaseInstallations.getInstance()
-    }
 
     @Provides
     @Singleton
@@ -47,14 +41,12 @@ object MessagingModule {
         @ApplicationContext context: Context,
         firebaseFiresStore: FirebaseFirestore,
         firebaseMessaging: FirebaseMessaging,
-        firebaseInstallations: FirebaseInstallations,
         firebaseAuth: FirebaseAuth): MessagingRepository {
 
         return MessagingRepositoryImpl(
             fireStore = firebaseFiresStore,
             firebaseMessaging = firebaseMessaging,
             auth = firebaseAuth,
-            firebaseInstallations = firebaseInstallations,
             appContext = context
         )
     }
