@@ -15,7 +15,6 @@ data class ChatItemModel(
     val userId: String = "",
     val message: String = "",
     val timeStamp: Date? = null,
-    val unreadMessages: Int = 0,
-    val isMessageSent: Boolean = false,
+
 
     ) : Parcelable

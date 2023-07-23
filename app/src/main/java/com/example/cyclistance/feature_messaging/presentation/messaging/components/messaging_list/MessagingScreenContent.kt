@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_messaging.presentation.messaging.compone
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -106,7 +105,7 @@ fun MessagingScreenContent(
                     modifier = Modifier.fillMaxWidth(0.7f),
                     textAlign = TextAlign.Center, lineHeight = TextUnit(20f, TextUnitType.Sp))
 
-                AddMessageButton(onClick = {}, modifier = Modifier.align(Alignment.BottomEnd))
+                AddMessageButton(modifier = Modifier.align(Alignment.BottomEnd)) {}
 
             }
         }
@@ -117,7 +116,7 @@ fun MessagingScreenContent(
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-private fun BoxScope.AddMessageButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
+private fun AddMessageButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
     Surface(
         color = MaterialTheme.colors.primary,
         contentColor = MaterialTheme.colors.background,
@@ -168,8 +167,6 @@ val fakeMessages = ChatsModel(
             name = "John Doe",
             message = "Hey there! How are you?",
             timeStamp = Date(),
-            unreadMessages = 4,
-            isMessageSent = false,
             messageId = "1",
             userId = "1gaosidnuio2b"
         ),
@@ -181,8 +178,6 @@ val fakeMessages = ChatsModel(
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
             timeStamp = Date(),
-            unreadMessages = 10,
-            isMessageSent = true,
             messageId = "2",
             userId = "ksnksksk29u4091u2"
         ),
@@ -194,8 +189,6 @@ val fakeMessages = ChatsModel(
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
             timeStamp = Date(),
-            unreadMessages = 0,
-            isMessageSent = true,
             messageId = "3",
             userId = "asgknasoidn29h"
         ),
@@ -204,8 +197,7 @@ val fakeMessages = ChatsModel(
             name = "John Doe",
             message = "Hello",
             timeStamp = Date(),
-            unreadMessages = 0,
-            isMessageSent = true,
+
             messageId = "4",
             userId = "asidbnaoiusdb982bh"
         ),
@@ -217,8 +209,6 @@ val fakeMessages = ChatsModel(
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
             timeStamp = Date(),
-            unreadMessages = 0,
-            isMessageSent = false,
             messageId = "5",
             userId = "q0iweht08"
         ),

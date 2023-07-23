@@ -9,21 +9,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -52,11 +44,7 @@ fun MessagingItem(
     onClick: (ChatItemModel) -> Unit) {
 
 
-    val hasUnreadMessage by remember {
-        derivedStateOf {
-            chatItemModel.unreadMessages > 0
-        }
-    }
+
 
     Surface(
         onClick = { onClick(chatItemModel) },
@@ -105,8 +93,7 @@ fun MessagingItem(
                 Text(
                     text = chatItemModel.message,
                     overflow = TextOverflow.Ellipsis,
-                    color = if (hasUnreadMessage) MaterialTheme.colors.primary.copy(
-                        alpha = 0.7f) else MaterialTheme.colors.onBackground,
+                    color = MaterialTheme.colors.onBackground,
                     maxLines = 1,
                 )
 
@@ -126,42 +113,7 @@ fun MessagingItem(
                         fontWeight = FontWeight.Light,
                         letterSpacing = TextUnit(0.7f, type = TextUnitType.Sp)))
 
-                if (hasUnreadMessage) {
 
-                    Box(
-                        modifier = Modifier
-                            .size(24.dp)
-                            .clip(CircleShape)
-                            .background(color = MaterialTheme.colors.primary)
-                            .wrapContentSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-
-                        val unreadMessageCount =
-                            if (chatItemModel.unreadMessages > 9) "9+" else chatItemModel.unreadMessages.toString()
-
-                        Text(
-                            text = unreadMessageCount,
-                            color = MaterialTheme.colors.onPrimary,
-                            modifier = Modifier
-                                .wrapContentSize(),
-                            style = MaterialTheme.typography.caption
-                        )
-                    }
-
-                } else {
-
-                    val icon =
-                        if (chatItemModel.isMessageSent) Icons.Default.Check else Icons.Default.Info
-                    val iconTint =
-                        if (chatItemModel.isMessageSent) MaterialTheme.colors.onBackground else MaterialTheme.colors.error
-
-                    Icon(
-                        imageVector = icon,
-                        contentDescription = "Message Read",
-                        tint = iconTint,
-                    )
-                }
             }
         }
     }
@@ -190,8 +142,8 @@ fun PreviewMessagingItemDark() {
                               "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                               "optio, eaque rerum! Provident similique accusantium nemo autem.",
                     timeStamp = Date(),
-                    unreadMessages = 4,
-                ),
+
+                    ),
                 onClick = {}
 
             )
@@ -223,9 +175,8 @@ fun PreviewMessagingItemLight() {
                               "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                               "optio, eaque rerum! Provident similique accusantium nemo autem.",
                     timeStamp = Date(),
-                    unreadMessages = 0,
-                    isMessageSent = false
-                ),
+
+                    ),
                 onClick = {}
             )
         }
