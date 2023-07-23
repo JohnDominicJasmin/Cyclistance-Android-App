@@ -157,14 +157,11 @@ class MessagingRepositoryImpl(
     }
 
     override fun deleteToken() {
-        firebaseMessaging.isAutoInitEnabled = false
-        firebaseInstallations.delete()
-        firebaseMessaging.deleteToken().addOnSuccessListener {
-            Timber.v("Token deletion successful")
-        }.addOnFailureListener {
-            Timber.v("Token deletion failed")
-        }.addOnCanceledListener {
-            Timber.v("Token deletion cancelled")
+        checkInternetConnection()
+        fireStore.collection(
+            USER_COLLECTION
+        ).document(getUid()).update(KEY_FCM_TOKEN, FieldValue.delete()).addOnFailureListener {
+            throw MessagingExceptions.TokenException(message = it.message!!)
         }
     }
 }
