@@ -119,7 +119,7 @@ class SettingRepositoryImpl(
                         }
                     }
 
-                    if (task.isSuccessful) {
+                    if (task.isSuccessful && continuation.isActive) {
                         reference.downloadUrl.addOnSuccessListener {
                             continuation.resume(it.toString())
                         }
@@ -140,7 +140,9 @@ class SettingRepositoryImpl(
                 val request =
                     GraphRequest.newMeRequest(getFacebookToken()) { jsonObject: JSONObject?, _ ->
                         val result = jsonObject.toString().takeUnless { it == "null" }
-                        continuation.resume(result)
+                        if (continuation.isActive) {
+                            continuation.resume(result)
+                        }
                     }
                 val parameters = Bundle()
                 parameters.putString("fields", "id,name, email, link, picture.type(large)")

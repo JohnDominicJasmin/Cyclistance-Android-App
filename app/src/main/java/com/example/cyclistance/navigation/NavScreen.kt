@@ -40,6 +40,7 @@ import com.example.cyclistance.feature_settings.presentation.setting_screen.Sett
 import com.example.cyclistance.feature_settings.presentation.setting_screen.event.SettingUiEvent
 import com.example.cyclistance.navigation.components.NoInternetStatusBar
 import com.example.cyclistance.navigation.components.TopAppBar
+import com.example.cyclistance.navigation.event.NavEvent
 import com.example.cyclistance.navigation.event.NavVmEvent
 import com.example.cyclistance.navigation.nav_graph.NavGraph
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
@@ -112,6 +113,20 @@ fun NavScreen(
 
     }
 
+    LaunchedEffect(true) {
+        navViewModel.event.collectLatest { event ->
+            when (event) {
+                NavEvent.DeleteMessagingTokenSuccess -> {
+                    settingViewModel.onEvent(event = SettingEvent.SignOut)
+                }
+
+                is NavEvent.DeleteMessagingTokenFailure -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+    }
+
 
 
     LaunchedEffect(key1 = true) {
@@ -177,7 +192,7 @@ fun NavScreen(
         {
             navViewModel.onEvent(NavVmEvent.DeleteMessagingToken)
             closeDrawer()
-            settingViewModel.onEvent(event = SettingEvent.SignOut)
+            Unit
         }
     }
 

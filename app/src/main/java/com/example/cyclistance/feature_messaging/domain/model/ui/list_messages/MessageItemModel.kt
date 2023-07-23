@@ -11,6 +11,7 @@ data class MessageItemModel(
     val messageId: String = "",
     val userPhotoUrl: String = "",
     val name: String = "",
+    val userId: String = "",
     val message: String = "",
     val timeStamp: String = "",
     val unreadMessages: Int = 0,

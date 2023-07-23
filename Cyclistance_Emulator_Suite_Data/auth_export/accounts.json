@@ -9,7 +9,7 @@
       "photoUrl": "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fA%3D%3D&w=1000&q=80",
       "passwordHash": "fakeHash:salt=fakeSaltMycoiZeCy63w3BKln9uH:password=12341234",
       "salt": "fakeSaltMycoiZeCy63w3BKln9uH",
-      "passwordUpdatedAt": 1689988300646,
+      "passwordUpdatedAt": 1690034272209,
       "providerUserInfo": [
         {
           "providerId": "password",
@@ -26,21 +26,18 @@
         }
       ],
       "phoneNumber": "+639263208902",
-      "validSince": "1689988300",
+      "validSince": "1690034272",
       "email": "johndominicjasmin@gmail.com",
       "emailVerified": true,
       "disabled": false
     },
     {
       "localId": "u0z5QG7q7pryQkaomtWUmeaSYtgB",
-      "lastLoginAt": "1689988749006",
-      "emailVerified": true,
-      "email": "mikkkk@gmail.com",
-      "salt": "fakeSaltqlLVxMhmjNCGPyLu645o",
-      "passwordHash": "fakeHash:salt=fakeSaltqlLVxMhmjNCGPyLu645o:password=12341234",
-      "passwordUpdatedAt": 1689988749007,
-      "validSince": "1689988749",
       "createdAt": "1689988749006",
+      "lastLoginAt": "1689988749006",
+      "passwordHash": "fakeHash:salt=fakeSaltqlLVxMhmjNCGPyLu645o:password=12341234",
+      "salt": "fakeSaltqlLVxMhmjNCGPyLu645o",
+      "passwordUpdatedAt": 1690034272209,
       "providerUserInfo": [
         {
           "providerId": "password",
@@ -49,7 +46,10 @@
           "rawId": "mikkkk@gmail.com"
         }
       ],
-      "lastRefreshAt": "2023-07-22T01:19:09.007Z"
+      "validSince": "1690034272",
+      "email": "mikkkk@gmail.com",
+      "emailVerified": true,
+      "disabled": false
     }
   ]
 }

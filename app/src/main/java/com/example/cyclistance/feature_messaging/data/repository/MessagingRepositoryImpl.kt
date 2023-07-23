@@ -16,22 +16,20 @@ import com.example.cyclistance.core.utils.data_store_ext.editData
 import com.example.cyclistance.core.utils.data_store_ext.getData
 import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserDetailsMapper.toMessageUser
 import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions
-import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
+import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessagingUserItem
 import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessagingUsers
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import java.util.Date
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
@@ -41,7 +39,6 @@ class MessagingRepositoryImpl(
     private val fireStore: FirebaseFirestore,
     private val firebaseMessaging: FirebaseMessaging,
     private val auth: FirebaseAuth,
-    private val firebaseInstallations: FirebaseInstallations,
     private val appContext: Context,
 ) : MessagingRepository {
 
@@ -71,16 +68,17 @@ class MessagingRepositoryImpl(
     private suspend fun updateMessagingToken(token: String) {
         val uid = getUid()
 
-        coroutineScope {
+        try {
             fireStore.collection(USER_COLLECTION).document(uid).update(
                 KEY_FCM_TOKEN, token
-            ).addOnSuccessListener {
-                this.launch {
-                    dataStore.editData(key = SAVED_TOKEN, value = token)
-                }
-            }.addOnFailureListener {
-                throw MessagingExceptions.TokenException(message = it.message!!)
+            ).await()
+
+            withContext(Dispatchers.IO) {
+                dataStore.editData(key = SAVED_TOKEN, value = token)
             }
+        } catch (exception: Exception) {
+            throw MessagingExceptions.TokenException(
+                message = exception.message ?: "Token update failed")
         }
     }
 
@@ -116,7 +114,10 @@ class MessagingRepositoryImpl(
                             document.toMessageUser()
 
                         }
-                        continuation.resume(MessagingUsers(users = users))
+
+                        if (continuation.isActive) {
+                            continuation.resume(MessagingUsers(users = users))
+                        }
                     }
                 }.addOnFailureListener {
                     if (it is FirebaseNetworkException) {
@@ -131,19 +132,21 @@ class MessagingRepositoryImpl(
 
     }
 
-    override suspend fun sendMessage(conversationItem: ConversationItemModel): Boolean {
+    override suspend fun sendMessage(sendMessageModel: SendMessageModel): Boolean {
         checkInternetConnection()
         return withContext(scope) {
             suspendCancellableCoroutine { continuation ->
                 val uid = getUid()
                 val message = mapOf(
                     KEY_SENDER_ID to uid,
-                    KEY_RECEIVER_ID to conversationItem.receiverId,
-                    KEY_MESSAGE to conversationItem.message,
+                    KEY_RECEIVER_ID to sendMessageModel.receiverId,
+                    KEY_MESSAGE to sendMessageModel.message,
                     KEY_TIMESTAMP to Date(),
                 )
                 fireStore.collection(KEY_CHAT_COLLECTION).add(message).addOnSuccessListener {
-                    continuation.resume(true)
+                    if (continuation.isActive) {
+                        continuation.resume(true)
+                    }
                 }.addOnFailureListener {
                     continuation.resumeWithException(
                         MessagingExceptions.SendMessagingFailure(
@@ -157,14 +160,11 @@ class MessagingRepositoryImpl(
     }
 
     override fun deleteToken() {
-        firebaseMessaging.isAutoInitEnabled = false
-        firebaseInstallations.delete()
-        firebaseMessaging.deleteToken().addOnSuccessListener {
-            Timber.v("Token deletion successful")
-        }.addOnFailureListener {
-            Timber.v("Token deletion failed")
-        }.addOnCanceledListener {
-            Timber.v("Token deletion cancelled")
+        checkInternetConnection()
+        fireStore.collection(
+            USER_COLLECTION
+        ).document(getUid()).update(KEY_FCM_TOKEN, FieldValue.delete()).addOnFailureListener {
+            throw MessagingExceptions.TokenException(message = it.message!!)
         }
     }
 }
