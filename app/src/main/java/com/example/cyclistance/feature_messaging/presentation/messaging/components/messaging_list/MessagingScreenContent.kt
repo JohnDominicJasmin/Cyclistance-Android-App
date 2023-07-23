@@ -170,7 +170,8 @@ val fakeMessages = MessagesModel(
             timeStamp = "12:00",
             unreadMessages = 4,
             isMessageSent = false,
-            messageId = "1"
+            messageId = "1",
+            userId = "1gaosidnuio2b"
         ),
         MessageItemModel(
             userPhotoUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
@@ -182,7 +183,8 @@ val fakeMessages = MessagesModel(
             timeStamp = "12:00",
             unreadMessages = 10,
             isMessageSent = true,
-            messageId = "2"
+            messageId = "2",
+            userId = "ksnksksk29u4091u2"
         ),
         MessageItemModel(
             userPhotoUrl = "https://www.diethelmtravel.com/wp-content/uploads/2016/04/bill-gates-wealthiest-person.jpg",
@@ -194,7 +196,8 @@ val fakeMessages = MessagesModel(
             timeStamp = "12:00",
             unreadMessages = 0,
             isMessageSent = true,
-            messageId = "3"
+            messageId = "3",
+            userId = "asgknasoidn29h"
         ),
         MessageItemModel(
             userPhotoUrl = "https://www.harleytherapy.co.uk/counselling/wp-content/uploads/16297800391_5c6e812832.jpg",
@@ -203,7 +206,8 @@ val fakeMessages = MessagesModel(
             timeStamp = "12:00",
             unreadMessages = 0,
             isMessageSent = true,
-            messageId = "4"
+            messageId = "4",
+            userId = "asidbnaoiusdb982bh"
         ),
         MessageItemModel(
             userPhotoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREz8aDOvFn1m2fCQ020dcrr-RCxey0NyF_XG6JOG1HzYoQRdBwB8U3fQJKEwG7t6Yr72Q",
@@ -215,7 +219,8 @@ val fakeMessages = MessagesModel(
             timeStamp = "12:00",
             unreadMessages = 0,
             isMessageSent = false,
-            messageId = "5"
+            messageId = "5",
+            userId = "q0iweht08"
         ),
 
         )
