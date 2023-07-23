@@ -241,6 +241,8 @@ fun MessagingConversationContent(
                 icon = Icons.Default.Close,
                 onClickIcon = { event(MessagingUiEvent.DismissConversationDialog) },
                 topAppBarTitle = {
+
+
                     Row(
                         modifier = Modifier.wrapContentSize(),
                         verticalAlignment = Alignment.CenterVertically,
@@ -263,6 +265,8 @@ fun MessagingConversationContent(
                             modifier = Modifier.padding(start = 5.dp))
                     }
                 })
+
+
         }) { paddingValues ->
 
             Surface(
@@ -317,7 +321,7 @@ fun MessagingConversationContent(
 
 
                                     ChatItem(
-                                        message = message,
+                                        conversation = message,
                                         isSender = isSender,
                                         modifier = Modifier
                                             .fillMaxWidth()
@@ -325,7 +329,7 @@ fun MessagingConversationContent(
                                         contentAlignment = if (isSender) Alignment.CenterStart else Alignment.CenterEnd,
                                         currentIndex = index,
                                         selectedIndex = uiState.chatItemSelectedIndex,
-                                        onClick = {
+                                        onSelectChatMessage = {
                                             event(
                                                 MessagingUiEvent.SelectChatItem(
                                                     index = it))

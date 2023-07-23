@@ -32,24 +32,24 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun ChatItem(
     modifier: Modifier = Modifier,
-    message: ConversationItemModel,
+    conversation: ConversationItemModel,
     isSender: Boolean,
     currentIndex: Int? = null,
     selectedIndex: Int? = null,
-    onClick: (Int) -> Unit = {},
+    onSelectChatMessage: (Int) -> Unit = {},
     contentAlignment: Alignment = Alignment.Center,
 ) {
 
 
     val timeStampAvailable by remember {
         derivedStateOf {
-            message.messageDuration == null
+            conversation.messageDuration == null
         }
     }
 
     val isMessageSent by remember {
         derivedStateOf {
-            message.dateSent != null
+            conversation.dateSent != null
         }
     }
 
@@ -81,7 +81,7 @@ fun ChatItem(
 
 
                 Text(
-                    text = message.dateSent!!,
+                    text = conversation.dateSent!!,
                     color = MaterialTheme.colors.onBackground,
                     modifier = Modifier
                         .wrapContentSize()
@@ -100,10 +100,10 @@ fun ChatItem(
                 contentColor = if (isSelected) contentColor.copy(alpha = 0.75f) else contentColor,
                 backgroundColor = if (isSelected) backgroundColor else backgroundColor.copy(alpha = 0.8f),
                 elevation = if (isSelected) 2.dp else 0.dp,
-                onClick = { currentIndex?.let { onClick(it) } }) {
+                onClick = { currentIndex?.let { onSelectChatMessage(it) } }) {
 
                 Text(
-                    text = message.message,
+                    text = conversation.message,
                     modifier = Modifier
                         .padding(all = 12.dp),
                     style = MaterialTheme.typography.body1.copy(
@@ -133,7 +133,7 @@ fun PreviewChatItemSenderDark() {
     CyclistanceTheme(darkTheme = true) {
         ChatItem(
             isSender = true,
-            message = ConversationItemModel(
+            conversation = ConversationItemModel(
                 senderId = "1",
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
@@ -152,7 +152,7 @@ fun PreviewChatItemSenderLight() {
     CyclistanceTheme(darkTheme = false) {
         ChatItem(
             isSender = true,
-            message = ConversationItemModel(
+            conversation = ConversationItemModel(
                 senderId = "1",
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
@@ -171,7 +171,7 @@ fun PreviewChatItemRecipientDark() {
     CyclistanceTheme(darkTheme = true) {
         ChatItem(
             isSender = false,
-            message = ConversationItemModel(
+            conversation = ConversationItemModel(
                 senderId = "1",
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
@@ -189,7 +189,7 @@ fun PreviewChatItemRecipientLight() {
     CyclistanceTheme(darkTheme = false) {
         ChatItem(
             isSender = false,
-            message = ConversationItemModel(
+            conversation = ConversationItemModel(
                 senderId = "1",
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
