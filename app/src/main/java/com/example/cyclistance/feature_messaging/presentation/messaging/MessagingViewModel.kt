@@ -33,6 +33,9 @@ class MessagingViewModel @Inject constructor(
 
     init {
         refreshToken()
+        viewModelScope.launch {
+            messagingUseCase.getUsersUseCase()
+        }
     }
 
 
