@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -34,6 +35,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
 import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
@@ -62,12 +65,22 @@ fun RequestItem(
                 horizontalArrangement = Arrangement.spacedBy(15.dp)) {
 
                 AsyncImage(
-                    model = cardState.profileImageUrl,
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(cardState.profileImageUrl)
+                        .crossfade(true)
+                        .networkCachePolicy(CachePolicy.ENABLED)
+                        .diskCachePolicy(CachePolicy.ENABLED)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .build(),
                     contentDescription = "User Picture",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(60.dp)
                         .clip(CircleShape))
+
+
+
+
 
                 Text(textAlign = TextAlign.Start,
                     text = buildAnnotatedString {

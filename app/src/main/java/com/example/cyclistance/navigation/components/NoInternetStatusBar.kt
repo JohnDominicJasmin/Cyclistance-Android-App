@@ -24,11 +24,11 @@ import com.example.cyclistance.theme.White900
 fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 
     val inShowableScreens =
-        route != Screens.Settings.SettingScreen.screenRoute &&
-        route != Screens.OnBoarding.IntroSliderScreen.screenRoute &&
-        route != Screens.RideHistory.RideHistoryScreen.screenRoute &&
-        route != Screens.RideHistory.RideHistoryDetailsScreen.screenRoute &&
-        route != Screens.EmergencyCall.EmergencyCallScreen.screenRoute
+        route != Screens.SettingsNavigation.SettingScreen.screenRoute &&
+        route != Screens.OnBoardingNavigation.IntroSliderScreen.screenRoute &&
+        route != Screens.RideHistoryNavigation.RideHistoryScreen.screenRoute &&
+        route != Screens.RideHistoryNavigation.RideHistoryDetailsScreen.screenRoute &&
+        route != Screens.EmergencyCallNavigation.EmergencyCallScreen.screenRoute
 
 
     AnimatedVisibility(
@@ -57,7 +57,7 @@ fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 fun PreviewNoInternetStatusBarDark() {
     CyclistanceTheme(darkTheme = true) {
         Surface {
-            NoInternetStatusBar(internetAvailable = false, route = Screens.Mapping.ROUTE)
+            NoInternetStatusBar(internetAvailable = false, route = Screens.MappingNavigation.ROUTE)
         }
     }
 }
@@ -67,7 +67,7 @@ fun PreviewNoInternetStatusBarDark() {
 fun PreviewNoInternetStatusBarLight() {
     CyclistanceTheme(darkTheme = false) {
         Surface {
-            NoInternetStatusBar(internetAvailable = false, route = Screens.Mapping.ROUTE)
+            NoInternetStatusBar(internetAvailable = false, route = Screens.MappingNavigation.ROUTE)
         }
     }
 }

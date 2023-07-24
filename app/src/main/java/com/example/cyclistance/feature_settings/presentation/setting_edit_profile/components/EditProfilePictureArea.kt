@@ -17,10 +17,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -44,7 +47,13 @@ fun ProfilePictureArea(photoUrl: Any, modifier: Modifier, onClick: () -> Unit) {
 
                     is String -> {
                         AsyncImage(
-                            model = photoUrl,
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(photoUrl)
+                                .crossfade(true)
+                                .networkCachePolicy(CachePolicy.ENABLED)
+                                .diskCachePolicy(CachePolicy.ENABLED)
+                                .memoryCachePolicy(CachePolicy.ENABLED)
+                                .build(),
                             alignment = Alignment.Center,
                             contentDescription = "User Profile Image",
                             modifier = Modifier
@@ -56,6 +65,8 @@ fun ProfilePictureArea(photoUrl: Any, modifier: Modifier, onClick: () -> Unit) {
                             placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
                             error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
                             fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
+
+
                     }
 
                     is ImageBitmap -> {

@@ -102,8 +102,8 @@ fun EmailAuthScreen(
             when (event) {
                 is EmailAuthEvent.EmailVerificationSuccess -> {
                     navController.navigateScreenInclusively(
-                        Screens.Mapping.ROUTE,
-                        Screens.Authentication.ROUTE)
+                        Screens.MappingNavigation.ROUTE,
+                        Screens.AuthenticationNavigation.ROUTE)
                 }
 
                 is EmailAuthEvent.ReloadEmailFailed -> {
