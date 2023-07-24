@@ -25,8 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.core.utils.validation.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.theme.CyclistanceTheme
+import java.util.Date
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -49,7 +51,7 @@ fun ChatItem(
 
     val isMessageSent by remember {
         derivedStateOf {
-            conversation.dateSent != null
+            conversation.timeStamp != null
         }
     }
 
@@ -81,7 +83,7 @@ fun ChatItem(
 
 
                 Text(
-                    text = conversation.dateSent!!,
+                    text = conversation.timeStamp!!.toReadableDateTime(),
                     color = MaterialTheme.colors.onBackground,
                     modifier = Modifier
                         .wrapContentSize()
@@ -138,7 +140,7 @@ fun PreviewChatItemSenderDark() {
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
                 receiverId = "2",
-                dateSent = "11:40 am",
+                timeStamp = Date(),
                 messageId = "1",
             ))
     }
@@ -157,7 +159,7 @@ fun PreviewChatItemSenderLight() {
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
                 receiverId = "2",
-                dateSent = "11:40 am",
+                timeStamp = Date(),
                 messageId = "1",
             ))
     }
@@ -176,7 +178,7 @@ fun PreviewChatItemRecipientDark() {
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
                 receiverId = "2",
-                dateSent = "11:40 am",
+                timeStamp = Date(),
                 messageId = "1",
             ))
     }
@@ -194,7 +196,7 @@ fun PreviewChatItemRecipientLight() {
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
                 receiverId = "2",
-                dateSent = "11:40 am",
+                timeStamp = Date(),
                 messageId = "1",
             ))
     }

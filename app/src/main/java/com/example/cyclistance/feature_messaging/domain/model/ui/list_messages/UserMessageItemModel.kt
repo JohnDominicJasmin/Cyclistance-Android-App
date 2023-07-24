@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @StableState
 @Parcelize
-data class MessagingUserItem(
+data class UserMessageItemModel(
     val userDetails: UserDetails = UserDetails(),
     val fcmToken: String = ""
 ) : Parcelable

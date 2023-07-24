@@ -15,7 +15,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.MessageItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatItemModel
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.MessagingScreenContent
 import com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list.fakeMessages
 import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingEvent
@@ -32,10 +32,11 @@ fun MessagingScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
 
     val onSelectedConversation = remember {
-        { _messageItem: MessageItemModel ->
+        { _messageItem: ChatItemModel ->
             uiState = uiState.copy(
                 selectedConversationItem = _messageItem
             )
+            viewModel.onEvent(event = MessagingEvent.AddMessageListener(_messageItem.userId))
         }
     }
 
@@ -44,6 +45,7 @@ fun MessagingScreen(
             uiState = uiState.copy(
                 selectedConversationItem = null
             )
+            viewModel.onEvent(event = MessagingEvent.RemoveMessageListener)
         }
     }
 
@@ -114,7 +116,7 @@ fun MessagingScreen(
 
     MessagingScreenContent(
         uiState = uiState,
-        state = state.copy(messagesModel = fakeMessages),
+        state = state.copy(chatsModel = fakeMessages),
         event = { event ->
             when (event) {
                 is MessagingUiEvent.ToggleMessageArea -> onToggleExpand()
