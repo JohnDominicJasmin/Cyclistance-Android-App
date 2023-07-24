@@ -94,14 +94,6 @@ fun TopAppBar(
                 })
         }
 
-        Screens.Messaging.MessagingScreen.screenRoute -> {
-            TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
-                onClickIcon = onClickArrowBackIcon,
-                topAppBarTitle = {
-                    TitleTopAppBar(title = "Chats")
-                })
-        }
 
         Screens.RideHistory.RideHistoryScreen.screenRoute -> {
             TopAppBarCreator(

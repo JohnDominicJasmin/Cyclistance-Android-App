@@ -1,9 +1,8 @@
-package com.example.cyclistance.feature_messaging.presentation.messaging.components.conversation
+package com.example.cyclistance.feature_messaging.presentation.conversation.components
 
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,10 +43,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import coil.compose.AsyncImage
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
@@ -57,10 +55,9 @@ import com.example.cyclistance.core.utils.validation.FormatterUtils.toReadableDa
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.MessageDuration
-import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatItemModel
-import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingUiEvent
-import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingState
-import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingUiState
+import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationUiEvent
+import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationState
+import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationUiState
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -195,11 +192,12 @@ private val conversationsModel = ConversationsModel(
 
 
 @Composable
-fun MessagingConversationContent(
+fun ConversationContent(
     modifier: Modifier = Modifier,
-    uiState: MessagingUiState,
-    state: MessagingState,
-    event: (MessagingUiEvent) -> Unit) {
+    message: TextFieldValue,
+    uiState: ConversationUiState,
+    state: ConversationState,
+    event: (ConversationUiEvent) -> Unit) {
 
     val conversationAvailable by remember(state.conversationsModel) {
         derivedStateOf { state.conversationsModel.messages.isNotEmpty() }
@@ -230,19 +228,15 @@ fun MessagingConversationContent(
         if (!uiState.messageAreaExpanded) {
             return@LaunchedEffect
         }
-        event(MessagingUiEvent.ToggleMessageArea)
+        event(ConversationUiEvent.ToggleMessageArea)
 
     }
-    Dialog(
-        onDismissRequest = { event(MessagingUiEvent.DismissConversationDialog) },
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false,
-            dismissOnClickOutside = false,
-        )) {
-        Scaffold(modifier = modifier, backgroundColor = MaterialTheme.colors.background, topBar = {
+
+
+    Scaffold(modifier = modifier, backgroundColor = MaterialTheme.colors.background, topBar = {
             TopAppBarCreator(
                 icon = Icons.Default.Close,
-                onClickIcon = { event(MessagingUiEvent.DismissConversationDialog) },
+                onClickIcon = { event(ConversationUiEvent.CloseConversationScreen) },
                 topAppBarTitle = {
 
 
@@ -252,19 +246,18 @@ fun MessagingConversationContent(
                         horizontalArrangement = Arrangement.spacedBy(5.dp)) {
 
                         AsyncImage(
-                            model = uiState.selectedConversationItem?.userPhotoUrl,
+                            model = state.chatPhotoUrl,
                             alignment = Alignment.Center,
                             contentDescription = "User Profile Image",
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .size(45.dp)
-                                .clickable { event(MessagingUiEvent.DismissConversationDialog) },
+                                .size(45.dp),
                             contentScale = ContentScale.Crop,
                             placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
                             error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
                             fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
                         TitleTopAppBar(
-                            title = uiState.selectedConversationItem!!.name,
+                            title = state.chatName,
                             modifier = Modifier.padding(start = 5.dp))
                     }
                 })
@@ -278,10 +271,10 @@ fun MessagingConversationContent(
                     .fillMaxSize()
                     .noRippleClickable {
 
-                        event(MessagingUiEvent.ResetSelectedIndex)
+                        event(ConversationUiEvent.ResetSelectedIndex)
 
                         if (uiState.messageAreaExpanded) {
-                            event(MessagingUiEvent.ToggleMessageArea)
+                            event(ConversationUiEvent.ToggleMessageArea)
                         }
                         focusManager.clearFocus()
                     },
@@ -334,7 +327,7 @@ fun MessagingConversationContent(
                                         selectedIndex = uiState.chatItemSelectedIndex,
                                         onSelectChatMessage = {
                                             event(
-                                                MessagingUiEvent.SelectChatItem(
+                                                ConversationUiEvent.SelectChatItem(
                                                     index = it))
                                         }
                                     )
@@ -353,11 +346,11 @@ fun MessagingConversationContent(
 
 
                         MessagingTextArea(
-                            message = uiState.message,
-                            onValueChange = { event(MessagingUiEvent.OnChangeMessage(it)) },
+                            message = message,
+                            onValueChange = { event(ConversationUiEvent.OnChangeValueMessage(it)) },
                             modifier = Modifier.wrapContentHeight(),
-                            onClickSend = { event(MessagingUiEvent.OnSendMessage) },
-                            onToggleExpand = { event(MessagingUiEvent.ToggleMessageArea) },
+                            onClickSend = { event(ConversationUiEvent.OnSendMessage) },
+                            onToggleExpand = { event(ConversationUiEvent.ToggleMessageArea) },
                             isExpanded = uiState.messageAreaExpanded)
 
                     }
@@ -375,7 +368,6 @@ fun MessagingConversationContent(
 
             }
         }
-    }
 
 }
 
@@ -422,14 +414,13 @@ fun PreviewPlaceholderEmptyConversation() {
 fun PreviewMessagingConversationContentDark() {
     CompositionLocalProvider(IsDarkTheme provides true) {
         CyclistanceTheme(darkTheme = true) {
-            MessagingConversationContent(
-                uiState = MessagingUiState(
-                    messageAreaExpanded = true, selectedConversationItem = ChatItemModel(
-
-                    )),
-                event = {}, state = MessagingState(
+            ConversationContent(
+                uiState = ConversationUiState(
+                    messageAreaExpanded = true,
+                ),
+                event = {}, state = ConversationState(
                     conversationsModel = conversationsModel
-                ))
+                ), message = TextFieldValue("Hello"))
         }
     }
 }
@@ -439,9 +430,13 @@ fun PreviewMessagingConversationContentDark() {
 fun PreviewMessagingConversationContentLight() {
     CompositionLocalProvider(IsDarkTheme provides false) {
         CyclistanceTheme(darkTheme = false) {
-            MessagingConversationContent(
-                uiState = MessagingUiState(messageAreaExpanded = true),
-                event = {}, state = MessagingState())
+            ConversationContent(
+                uiState = ConversationUiState(
+                    messageAreaExpanded = true,
+                ),
+                event = {}, state = ConversationState(
+                    conversationsModel = conversationsModel
+                ), message = TextFieldValue("Hello"))
         }
     }
 }

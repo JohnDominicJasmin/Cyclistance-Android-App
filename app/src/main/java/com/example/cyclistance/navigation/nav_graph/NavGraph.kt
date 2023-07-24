@@ -94,11 +94,22 @@ fun NavController.navigateScreenInclusively(
 
 }
 
-fun NavController.navigateScreen(destination: String) {
+fun NavController.navigateScreen(
+    destination: String,
+    popUpToDestination: Any = graph.findStartDestination().id) {
+
     navigate(destination) {
-        popUpTo(graph.findStartDestination().id) {
-            saveState = true
+
+        if (popUpToDestination is String) {
+            popUpTo(popUpToDestination) {
+                saveState = true
+            }
+        } else {
+            popUpTo(popUpToDestination as Int) {
+                saveState = true
+            }
         }
+
         launchSingleTop = true
         restoreState = true
     }

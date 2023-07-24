@@ -27,6 +27,7 @@ sealed class Screens {
         }
 
         object MessagingScreen : Messaging(screenRoute = "messaging_screen")
+        object ConversationScreen : Messaging(screenRoute = "conversation_screen")
     }
 
     open class OnBoarding(val screenRoute: String = "") : Screens() {

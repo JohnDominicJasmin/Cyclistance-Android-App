@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_messaging.presentation.messaging.components.messaging_list
+package com.example.cyclistance.feature_messaging.presentation.chats.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,6 +16,8 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,87 +31,87 @@ import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatsModel
-import com.example.cyclistance.feature_messaging.presentation.messaging.components.conversation.MessagingConversationContent
-import com.example.cyclistance.feature_messaging.presentation.messaging.event.MessagingUiEvent
-import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingState
-import com.example.cyclistance.feature_messaging.presentation.messaging.state.MessagingUiState
+import com.example.cyclistance.feature_messaging.presentation.chats.event.MessagingUiEvent
+import com.example.cyclistance.feature_messaging.presentation.chats.state.MessagingState
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
+import com.example.cyclistance.top_bars.TitleTopAppBar
+import com.example.cyclistance.top_bars.TopAppBarCreator
 import java.util.Date
 
 @Composable
 fun MessagingScreenContent(
     modifier: Modifier = Modifier,
-    uiState: MessagingUiState,
     state: MessagingState,
     event: (MessagingUiEvent) -> Unit) {
 
 
     val messageAvailable =
         remember(state.chatsModel.messages) { state.chatsModel.messages.isNotEmpty() }
-    val shouldShowConversationDialog =
-        remember(uiState.selectedConversationItem) { uiState.selectedConversationItem != null }
+
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
-        if (shouldShowConversationDialog) {
-            MessagingConversationContent(
-                modifier = Modifier.fillMaxSize(),
-                uiState = uiState,
-                state = state,
-                event = event
-            )
-        }
 
-        if (messageAvailable && !shouldShowConversationDialog) {
+        Column(modifier = Modifier.fillMaxSize()) {
 
-            Box(contentAlignment = Alignment.TopCenter, modifier = Modifier.fillMaxWidth()) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.SpaceEvenly) {
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = { event(MessagingUiEvent.CloseMessagingScreen) },
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Chats")
+                })
 
-                    MessagingSearchBar(
+            if (messageAvailable) {
+
+                Box(contentAlignment = Alignment.TopCenter, modifier = Modifier.fillMaxWidth()) {
+                    Column(
                         modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp)
-                            .padding(horizontal = 8.dp),
+                            .fillMaxWidth(),
+                        horizontalAlignment = Alignment.Start,
+                        verticalArrangement = Arrangement.SpaceEvenly) {
 
-                        value = "",
-                        onValueChange = {},
-                        onClickClearSearch = {})
+                        MessagingSearchBar(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 12.dp)
+                                .padding(horizontal = 8.dp),
 
-                    Text(
-                        text = "Recent Messages",
-                        style = MaterialTheme.typography.body2.copy(
-                            letterSpacing = TextUnit(
-                                2f,
-                                type = TextUnitType.Sp)),
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
-                    )
+                            value = "",
+                            onValueChange = {},
+                            onClickClearSearch = {})
 
-                    MessagesSection(chatsModel = state.chatsModel, onClick = {
-                        event(MessagingUiEvent.OnSelectedConversation(it))
-                    })
+                        Text(
+                            text = "Recent Messages",
+                            style = MaterialTheme.typography.body2.copy(
+                                letterSpacing = TextUnit(
+                                    2f,
+                                    type = TextUnitType.Sp)),
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
+                        )
+
+                        MessagesSection(chatsModel = state.chatsModel, onClick = {
+                            event(MessagingUiEvent.OnSelectConversation(it))
+                        })
+                    }
                 }
             }
-        }
-        if (!messageAvailable && !shouldShowConversationDialog) {
+            if (!messageAvailable) {
 
-            Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
-                Text(
-                    text = "Start a conversation by sending a message. Connect with others and let the chat come alive!",
-                    color = Black500,
-                    style = MaterialTheme.typography.subtitle1,
-                    modifier = Modifier.fillMaxWidth(0.7f),
-                    textAlign = TextAlign.Center, lineHeight = TextUnit(20f, TextUnitType.Sp))
+                    Text(
+                        text = "Start a conversation by sending a message. Connect with others and let the chat come alive!",
+                        color = Black500,
+                        style = MaterialTheme.typography.subtitle1,
+                        modifier = Modifier.fillMaxWidth(0.7f),
+                        textAlign = TextAlign.Center, lineHeight = TextUnit(20f, TextUnitType.Sp))
 
-                AddMessageButton(modifier = Modifier.align(Alignment.BottomEnd)) {}
+                    AddMessageButton(modifier = Modifier.align(Alignment.BottomEnd)) {}
 
+                }
             }
-        }
 
+        }
     }
 }
 
@@ -221,7 +223,6 @@ val fakeMessages = ChatsModel(
 fun PreviewMessagingScreenContentDark() {
     CyclistanceTheme(darkTheme = true) {
         MessagingScreenContent(
-            uiState = MessagingUiState(),
             state = MessagingState(),
             event = {})
     }
@@ -232,7 +233,6 @@ fun PreviewMessagingScreenContentDark() {
 fun PreviewMessagingScreenContentLight() {
     CyclistanceTheme(darkTheme = false) {
         MessagingScreenContent(
-            uiState = MessagingUiState(),
             state = MessagingState(),
             event = {})
     }
