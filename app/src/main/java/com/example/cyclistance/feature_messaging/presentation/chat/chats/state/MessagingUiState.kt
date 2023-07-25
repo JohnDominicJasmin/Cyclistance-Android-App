@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_messaging.presentation.chat.state
+package com.example.cyclistance.feature_messaging.presentation.chat.chats.state
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState
