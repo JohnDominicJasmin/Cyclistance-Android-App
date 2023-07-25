@@ -4,4 +4,5 @@ object MessagingExceptions {
     class NetworkException(message: String) : RuntimeException(message)
     class TokenException(message: String) : RuntimeException(message)
     class SendMessagingFailure(message: String) : RuntimeException(message)
+    class ListenMessagingFailure(message: String) : RuntimeException(message)
 }

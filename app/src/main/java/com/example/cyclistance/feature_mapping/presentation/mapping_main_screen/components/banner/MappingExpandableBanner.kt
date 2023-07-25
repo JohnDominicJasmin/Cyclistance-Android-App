@@ -20,6 +20,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -30,6 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 import com.example.cyclistance.theme.Black440
@@ -91,8 +94,17 @@ fun MappingExpandableBanner(
 
                 val (roundedImage, nameText, issueText, distanceAndTime, expandedSection) = createRefs()
 
+
+
+
                 AsyncImage(
-                    model = banner.userProfileImage,
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(banner.userProfileImage)
+                        .crossfade(true)
+                        .networkCachePolicy(CachePolicy.ENABLED)
+                        .diskCachePolicy(CachePolicy.ENABLED)
+                        .memoryCachePolicy(CachePolicy.ENABLED)
+                        .build(),
                     contentDescription = "User Picture",
                     modifier = Modifier
                         .padding(top = 4.dp)

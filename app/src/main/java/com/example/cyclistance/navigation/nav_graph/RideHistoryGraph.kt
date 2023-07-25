@@ -15,17 +15,17 @@ fun NavGraphBuilder.rideHistoryGraph(
 ) {
 
     navigation(
-        startDestination = Screens.RideHistory.RideHistoryScreen.screenRoute,
-        route = Screens.RideHistory.ROUTE) {
+        startDestination = Screens.RideHistoryNavigation.RideHistoryScreen.screenRoute,
+        route = Screens.RideHistoryNavigation.ROUTE) {
 
 
-        composable(route = Screens.RideHistory.RideHistoryScreen.screenRoute) {
+        composable(route = Screens.RideHistoryNavigation.RideHistoryScreen.screenRoute) {
             RideHistoryScreen(
                 navController = navController,
                 paddingValues = paddingValues)
         }
 
-        composable(route = Screens.RideHistory.RideHistoryDetailsScreen.screenRoute) {
+        composable(route = Screens.RideHistoryNavigation.RideHistoryDetailsScreen.screenRoute) {
             RideHistoryDetailsScreen(
                 navController = navController,
                 paddingValues = paddingValues

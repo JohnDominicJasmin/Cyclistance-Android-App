@@ -30,8 +30,8 @@ fun IntroSliderScreen(
     val onClickSkipButton = remember {{
             introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
             navController.navigateScreenInclusively(
-                Screens.Authentication.ROUTE,
-                Screens.OnBoarding.ROUTE)
+                Screens.AuthenticationNavigation.ROUTE,
+                Screens.OnBoardingNavigation.ROUTE)
         }
     }
 
@@ -41,8 +41,8 @@ fun IntroSliderScreen(
             if (isOnLastPage) {
                 introSliderViewModel.onEvent(event = IntroSliderEvent.UserCompletedWalkThrough)
                 navController.navigateScreenInclusively(
-                    Screens.Authentication.ROUTE,
-                    Screens.OnBoarding.ROUTE)
+                    Screens.AuthenticationNavigation.ROUTE,
+                    Screens.OnBoardingNavigation.ROUTE)
             } else {
                 scope.launch {
                     pagerState.animateScrollToPage(
@@ -50,7 +50,6 @@ fun IntroSliderScreen(
                     )
                 }
             }
-            Unit
         }
     }
 

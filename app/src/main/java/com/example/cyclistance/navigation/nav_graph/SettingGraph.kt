@@ -15,20 +15,20 @@ fun NavGraphBuilder.settingGraph(
     paddingValues: PaddingValues,
     onToggleTheme: () -> Unit) {
     navigation(
-        startDestination = Screens.Settings.SettingScreen.screenRoute,
-        route = Screens.Settings.ROUTE) {
+        startDestination = Screens.SettingsNavigation.SettingScreen.screenRoute,
+        route = Screens.SettingsNavigation.ROUTE) {
 
-        composable(Screens.Settings.ChangePasswordScreen.screenRoute) {
+        composable(Screens.SettingsNavigation.ChangePasswordScreen.screenRoute) {
             ChangePasswordScreen(paddingValues = paddingValues)
         }
 
-        composable(Screens.Settings.EditProfileScreen.screenRoute) {
+        composable(Screens.SettingsNavigation.EditProfileScreen.screenRoute) {
             EditProfileScreen(
                 navController = navController,
                 paddingValues = paddingValues)
         }
 
-        composable(Screens.Settings.SettingScreen.screenRoute) {
+        composable(Screens.SettingsNavigation.SettingScreen.screenRoute) {
             SettingScreen(
                 onToggleTheme = onToggleTheme,
                 navController = navController,

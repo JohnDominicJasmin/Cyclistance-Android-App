@@ -4,7 +4,7 @@ import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepo
 
 class DeleteTokenUseCase(private val repository: MessagingRepository) {
 
-    operator fun invoke() {
+    suspend operator fun invoke() {
         repository.deleteToken()
     }
 }

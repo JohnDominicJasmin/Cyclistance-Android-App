@@ -43,7 +43,7 @@ fun CancellationReasonScreen(
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is CancellationReasonEvent.ConfirmCancellationReasonSuccess -> {
-                    navController.navigateScreen(Screens.Mapping.MappingScreen.screenRoute)
+                    navController.navigateScreen(Screens.MappingNavigation.MappingScreen.screenRoute)
                 }
 
                 is CancellationReasonEvent.UnexpectedError -> {
@@ -92,7 +92,7 @@ fun CancellationReasonScreen(
     }
     val onClickCancelButton = remember {
         {
-            navController.navigateScreen(Screens.Mapping.MappingScreen.screenRoute)
+            navController.navigateScreen(Screens.MappingNavigation.MappingScreen.screenRoute)
         }
     }
     val onSelectReason = remember {

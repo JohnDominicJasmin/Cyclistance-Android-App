@@ -372,7 +372,7 @@ fun MappingScreen(
             val selectionType = if (isRescuee) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
             val clientId = state.rescuer?.id ?: state.rescuee?.id
 
-            navController.navigateScreen(destination = "${Screens.Mapping.CancellationScreen.screenRoute}/$selectionType/$transactionId/$clientId")
+            navController.navigateScreen(destination = "${Screens.MappingNavigation.CancellationScreen.screenRoute}/$selectionType/$transactionId/$clientId")
 
         }
     }
@@ -645,7 +645,7 @@ fun MappingScreen(
 
     val onAddEmergencyContact = remember {
         {
-            navController.navigateScreen(Screens.EmergencyCall.EmergencyCallScreen.screenRoute + "?$SHOULD_OPEN_CONTACT_DIALOG=${true}")
+            navController.navigateScreen(Screens.EmergencyCallNavigation.EmergencyCallScreen.screenRoute + "?$SHOULD_OPEN_CONTACT_DIALOG=${true}")
         }
     }
 
@@ -658,12 +658,12 @@ fun MappingScreen(
 
                 is MappingEvent.RequestHelpSuccess -> {
                     navController.navigateScreen(
-                        Screens.Mapping.ConfirmDetailsScreen.screenRoute + "?$LATITUDE=${state.userLocation?.latitude}&$LONGITUDE=${state.userLocation?.longitude}")
+                        Screens.MappingNavigation.ConfirmDetailsScreen.screenRoute + "?$LATITUDE=${state.userLocation?.latitude}&$LONGITUDE=${state.userLocation?.longitude}")
                 }
 
                 is MappingEvent.InsufficientUserCredential -> {
                     navController.navigateScreen(
-                        Screens.Settings.EditProfileScreen.screenRoute)
+                        Screens.SettingsNavigation.EditProfileScreen.screenRoute)
                 }
 
                 is MappingEvent.LocationNotAvailable -> {

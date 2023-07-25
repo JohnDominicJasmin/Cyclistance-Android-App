@@ -107,8 +107,8 @@ fun SignInScreen(
 
                 is SignInEvent.SignInSuccess -> {
                     navController.navigateScreenInclusively(
-                        Screens.Mapping.ROUTE,
-                        Screens.Authentication.ROUTE)
+                        Screens.MappingNavigation.ROUTE,
+                        Screens.AuthenticationNavigation.ROUTE)
                 }
 
                 is SignInEvent.SignInFailed -> {
@@ -171,8 +171,8 @@ fun SignInScreen(
             when (emailAuthEvent) {
                 is EmailAuthEvent.EmailVerificationSuccess -> {
                     navController.navigateScreenInclusively(
-                        Screens.Mapping.ROUTE,
-                        Screens.Authentication.ROUTE
+                        Screens.MappingNavigation.ROUTE,
+                        Screens.AuthenticationNavigation.ROUTE
                     )
                 }
 
@@ -186,8 +186,8 @@ fun SignInScreen(
 
                 is EmailAuthEvent.EmailVerificationFailed -> {
                     navController.navigateScreenInclusively(
-                        Screens.Authentication.EmailAuthScreen.screenRoute,
-                        Screens.Authentication.SignInScreen.screenRoute)
+                        Screens.AuthenticationNavigation.EmailAuthScreen.screenRoute,
+                        Screens.AuthenticationNavigation.SignInScreen.screenRoute)
                 }
 
                 is EmailAuthEvent.EmailVerificationSent -> {
@@ -286,7 +286,7 @@ fun SignInScreen(
 
     val onClickSignInText = remember {
         {
-            navController.navigateScreen(Screens.Authentication.SignUpScreen.screenRoute)
+            navController.navigateScreen(Screens.AuthenticationNavigation.SignUpScreen.screenRoute)
         }
     }
 
