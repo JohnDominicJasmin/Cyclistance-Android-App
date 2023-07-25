@@ -24,7 +24,7 @@ internal fun MessagesSection(
             it.messageId
         }) { item ->
 
-            MessagingItem(
+            ChatItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
