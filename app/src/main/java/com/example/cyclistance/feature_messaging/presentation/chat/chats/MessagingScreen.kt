@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_messaging.presentation.chats
+package com.example.cyclistance.feature_messaging.presentation.chat.chats
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,11 +15,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatItemModel
-import com.example.cyclistance.feature_messaging.presentation.chats.components.MessagingScreenContent
-import com.example.cyclistance.feature_messaging.presentation.chats.components.fakeMessages
-import com.example.cyclistance.feature_messaging.presentation.chats.event.MessagingUiEvent
-import com.example.cyclistance.feature_messaging.presentation.chats.state.MessagingUiState
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.MessagingScreenContent
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.fakeMessages
+import com.example.cyclistance.feature_messaging.presentation.chat.event.MessagingUiEvent
+import com.example.cyclistance.feature_messaging.presentation.chat.state.MessagingUiState
 import com.example.cyclistance.navigation.Screens
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -47,7 +47,7 @@ fun MessagingScreen(
             val encodedUrl =
                 URLEncoder.encode(chatItem.userPhotoUrl, StandardCharsets.UTF_8.toString())
             navController.navigate(
-                route = "${Screens.Messaging.ConversationScreen.screenRoute}/${chatItem.userId}/$encodedUrl/${chatItem.name}")
+                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userId}/$encodedUrl/${chatItem.name}")
         }
     }
     val onClickSearch = remember {

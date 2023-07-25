@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_messaging.presentation.chats.components
+package com.example.cyclistance.feature_messaging.presentation.chat.common
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth

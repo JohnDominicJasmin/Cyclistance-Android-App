@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_messaging.domain.model.ui.list_messages
+package com.example.cyclistance.feature_messaging.domain.model.ui.chats
 
 import android.os.Parcelable
 import com.example.cyclistance.core.domain.model.UserDetails
@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 
 @StableState
 @Parcelize
-data class UserMessageItemModel(
+data class MessagingUserItemModel(
     val userDetails: UserDetails = UserDetails(),
     val fcmToken: String = ""
 ) : Parcelable

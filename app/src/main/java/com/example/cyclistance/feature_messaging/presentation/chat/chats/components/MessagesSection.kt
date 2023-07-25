@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_messaging.presentation.chats.components
+package com.example.cyclistance.feature_messaging.presentation.chat.chats.components
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,8 +7,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatItemModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatsModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatsModel
 
 
 @Composable

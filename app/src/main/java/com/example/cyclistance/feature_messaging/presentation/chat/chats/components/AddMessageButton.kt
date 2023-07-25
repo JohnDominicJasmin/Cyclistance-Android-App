@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_messaging.presentation.chats.components
+package com.example.cyclistance.feature_messaging.presentation.chat.chats.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
