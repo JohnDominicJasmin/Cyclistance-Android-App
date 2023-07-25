@@ -28,7 +28,7 @@ fun NavGraphBuilder.messagingGraph(
             )
         }
 
-        composable(route = Screens.Messaging.ConversationScreen.screenRoute + "/{$CHAT_ID}/{${CHAT_PHOTO_URL}}/{$CHAT_NAME]}",
+        composable(route = Screens.Messaging.ConversationScreen.screenRoute + "/{$CHAT_ID}/{${CHAT_PHOTO_URL}}/{$CHAT_NAME}",
             arguments =
             listOf(
                 navArgument(CHAT_ID) { type = NavType.StringType },
