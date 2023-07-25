@@ -27,20 +27,19 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatsModel
-import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.MessagingState
-import com.example.cyclistance.feature_messaging.presentation.chat.common.MessagingTopAppBarTitle
-import com.example.cyclistance.feature_messaging.presentation.chat.event.MessagingUiEvent
-import com.example.cyclistance.feature_messaging.presentation.chat.state.MessagingUiState
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.MessagingUiEvent
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.ChatState
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.MessagingUiState
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 import java.util.Date
 
 @Composable
-internal fun MessagingScreenContent(
+internal fun ChatScreenContent(
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester,
     searchQuery: TextFieldValue,
-    state: MessagingState,
+    state: ChatState,
     uiState: MessagingUiState,
     event: (MessagingUiEvent) -> Unit) {
 
@@ -68,7 +67,7 @@ internal fun MessagingScreenContent(
                 },
                 backgroundColor = MaterialTheme.colors.background,
                 navigationIcon = {
-                    IconButton(onClick = { event(MessagingUiEvent.CloseMessagingScreen) }) {
+                    IconButton(onClick = { event(MessagingUiEvent.CloseScreen) }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = "Top App Bar Icon",
@@ -178,10 +177,10 @@ val fakeMessages = ChatsModel(
 
 @Preview
 @Composable
-fun PreviewMessagingScreenContentDark() {
+fun PreviewChatScreenContentDark() {
     CyclistanceTheme(darkTheme = true) {
-        MessagingScreenContent(
-            state = MessagingState(chatsModel = fakeMessages),
+        ChatScreenContent(
+            state = ChatState(chatsModel = fakeMessages),
             uiState = MessagingUiState(),
             searchQuery = TextFieldValue("apiosdmnaisnd"),
             focusRequester = FocusRequester(),
@@ -191,10 +190,10 @@ fun PreviewMessagingScreenContentDark() {
 
 @Preview
 @Composable
-fun PreviewMessagingScreenContentLight() {
+fun PreviewChatScreenContentLight() {
     CyclistanceTheme(darkTheme = false) {
-        MessagingScreenContent(
-            state = MessagingState(chatsModel = fakeMessages),
+        ChatScreenContent(
+            state = ChatState(chatsModel = fakeMessages),
             uiState = MessagingUiState(),
             searchQuery = TextFieldValue("apiosdmnaisnd"),
             focusRequester = FocusRequester(),
