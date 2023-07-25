@@ -49,16 +49,16 @@ class NavViewModel @Inject constructor(
             Timber.e("IntroSlider DataStore Reading Failed: ${it.localizedMessage}")
         }.onEach { userCompletedWalkThrough ->
             if (!userCompletedWalkThrough) {
-                _state.update { it.copy(navigationStartingDestination = Screens.OnBoarding.ROUTE) }
+                _state.update { it.copy(navigationStartingDestination = Screens.OnBoardingNavigation.ROUTE) }
                 return@onEach
             }
 
             if (isUserSignedIn()) {
-                _state.update { it.copy(navigationStartingDestination = Screens.Mapping.ROUTE) }
+                _state.update { it.copy(navigationStartingDestination = Screens.MappingNavigation.ROUTE) }
                 return@onEach
             }
 
-            _state.update { it.copy(navigationStartingDestination = Screens.Authentication.ROUTE) }
+            _state.update { it.copy(navigationStartingDestination = Screens.AuthenticationNavigation.ROUTE) }
         }.launchIn(viewModelScope).invokeOnCompletion {
             savedStateHandle[NAV_VM_STATE_KEY] = state.value
         }

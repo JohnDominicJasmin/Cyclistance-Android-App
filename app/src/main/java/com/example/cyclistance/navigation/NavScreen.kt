@@ -153,7 +153,7 @@ fun NavScreen(
 
                 is SettingUiEvent.SignOutSuccess -> {
                     navController.popBackStack()
-                    navController.navigate(Screens.Authentication.ROUTE)
+                    navController.navigate(Screens.AuthenticationNavigation.ROUTE)
                 }
 
                 is SettingUiEvent.SignOutFailed -> {
@@ -176,7 +176,7 @@ fun NavScreen(
         {
             closeDrawer()
             navController.navigate(
-                Screens.Settings.ROUTE)
+                Screens.SettingsNavigation.ROUTE)
         }
     }
 
@@ -184,7 +184,7 @@ fun NavScreen(
     val onClickChat = remember {
         {
             closeDrawer()
-            navController.navigateScreen(Screens.Messaging.ROUTE)
+            navController.navigateScreen(Screens.MessagingNavigation.ROUTE)
         }
     }
 
@@ -199,14 +199,14 @@ fun NavScreen(
     val onClickEmergencyCall = remember {
         {
             closeDrawer()
-            navController.navigateScreen(Screens.EmergencyCall.ROUTE)
+            navController.navigateScreen(Screens.EmergencyCallNavigation.ROUTE)
         }
     }
 
     val onClickRideHistory = remember {
         {
             closeDrawer()
-            navController.navigateScreen(Screens.RideHistory.ROUTE)
+            navController.navigateScreen(Screens.RideHistoryNavigation.ROUTE)
         }
     }
 

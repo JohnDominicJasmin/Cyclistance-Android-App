@@ -23,7 +23,7 @@ fun SettingScreen(
             .padding(paddingValues),
         onToggleTheme = onToggleTheme,
         onClickEditProfile = {
-            navController.navigate(Screens.Settings.EditProfileScreen.screenRoute)
+            navController.navigate(Screens.SettingsNavigation.EditProfileScreen.screenRoute)
         }
     )
 

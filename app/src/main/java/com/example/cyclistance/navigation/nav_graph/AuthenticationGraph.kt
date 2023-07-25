@@ -14,21 +14,21 @@ fun NavGraphBuilder.authenticationGraph(
     navController: NavHostController,
     paddingValues: PaddingValues) {
     navigation(
-        startDestination = Screens.Authentication.SignInScreen.screenRoute,
-        route = Screens.Authentication.ROUTE) {
+        startDestination = Screens.AuthenticationNavigation.SignInScreen.screenRoute,
+        route = Screens.AuthenticationNavigation.ROUTE) {
 
 
-        composable(route = Screens.Authentication.SignInScreen.screenRoute) {
+        composable(route = Screens.AuthenticationNavigation.SignInScreen.screenRoute) {
             SignInScreen(
                 navController = navController,
                 paddingValues = paddingValues)
         }
-        composable(route = Screens.Authentication.SignUpScreen.screenRoute) {
+        composable(route = Screens.AuthenticationNavigation.SignUpScreen.screenRoute) {
             SignUpScreen(
                 navController = navController,
                 paddingValues = paddingValues)
         }
-        composable(route = Screens.Authentication.EmailAuthScreen.screenRoute) {
+        composable(route = Screens.AuthenticationNavigation.EmailAuthScreen.screenRoute) {
             EmailAuthScreen(
                 navController = navController,
                 paddingValues = paddingValues)

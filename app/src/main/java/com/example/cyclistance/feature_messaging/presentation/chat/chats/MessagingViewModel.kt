@@ -1,11 +1,11 @@
-package com.example.cyclistance.feature_messaging.presentation.chats
+package com.example.cyclistance.feature_messaging.presentation.chat.chats
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_VM_STATE_KEY
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
-import com.example.cyclistance.feature_messaging.presentation.chats.state.MessagingState
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.MessagingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
