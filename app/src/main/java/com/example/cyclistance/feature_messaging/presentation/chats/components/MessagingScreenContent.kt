@@ -3,46 +3,50 @@ package com.example.cyclistance.feature_messaging.presentation.chats.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Cancel
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.R
 import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.list_messages.ChatsModel
 import com.example.cyclistance.feature_messaging.presentation.chats.event.MessagingUiEvent
 import com.example.cyclistance.feature_messaging.presentation.chats.state.MessagingState
+import com.example.cyclistance.feature_messaging.presentation.chats.state.MessagingUiState
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.top_bars.TitleTopAppBar
-import com.example.cyclistance.top_bars.TopAppBarCreator
 import java.util.Date
 
 @Composable
-fun MessagingScreenContent(
+internal fun MessagingScreenContent(
     modifier: Modifier = Modifier,
+    focusRequester: FocusRequester,
+    searchQuery: TextFieldValue,
     state: MessagingState,
+    uiState: MessagingUiState,
     event: (MessagingUiEvent) -> Unit) {
 
 
@@ -54,31 +58,38 @@ fun MessagingScreenContent(
 
         Column(modifier = Modifier.fillMaxSize()) {
 
-            TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
-                onClickIcon = { event(MessagingUiEvent.CloseMessagingScreen) },
-                topAppBarTitle = {
-                    TitleTopAppBar(title = "Chats")
+            TopAppBar(
+                elevation = 10.dp,
+                title = {
+                    TopAppBarSection(
+                        modifier = Modifier,
+                        uiState = uiState,
+                        searchQuery = searchQuery,
+                        event = event,
+                        focusRequester = focusRequester
+                    )
+                },
+                backgroundColor = MaterialTheme.colors.background,
+                navigationIcon = {
+                    IconButton(onClick = { event(MessagingUiEvent.CloseMessagingScreen) }) {
+                        Icon(
+                            imageVector = Icons.Default.ArrowBack,
+                            contentDescription = "Top App Bar Icon",
+                            tint = MaterialTheme.colors.onBackground)
+                    }
                 })
 
-            if (messageAvailable) {
+            Box(
+                modifier = modifier.fillMaxSize(),
+                contentAlignment = if (messageAvailable) Alignment.TopCenter else Alignment.Center) {
 
-                Box(contentAlignment = Alignment.TopCenter, modifier = Modifier.fillMaxWidth()) {
+                if (messageAvailable) {
+
                     Column(
                         modifier = Modifier
                             .fillMaxWidth(),
                         horizontalAlignment = Alignment.Start,
                         verticalArrangement = Arrangement.SpaceEvenly) {
-
-                        MessagingSearchBar(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(top = 12.dp)
-                                .padding(horizontal = 8.dp),
-
-                            value = "",
-                            onValueChange = {},
-                            onClickClearSearch = {})
 
                         Text(
                             text = "Recent Messages",
@@ -94,10 +105,8 @@ fun MessagingScreenContent(
                         })
                     }
                 }
-            }
-            if (!messageAvailable) {
 
-                Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                if (!messageAvailable) {
 
                     Text(
                         text = "Start a conversation by sending a message. Connect with others and let the chat come alive!",
@@ -105,62 +114,75 @@ fun MessagingScreenContent(
                         style = MaterialTheme.typography.subtitle1,
                         modifier = Modifier.fillMaxWidth(0.7f),
                         textAlign = TextAlign.Center, lineHeight = TextUnit(20f, TextUnitType.Sp))
-
-                    AddMessageButton(modifier = Modifier.align(Alignment.BottomEnd)) {}
-
                 }
+
+                AddMessageButton(
+                    modifier = Modifier.padding(all = 4.dp)
+                        .align(Alignment.BottomEnd),
+                    onClick = {})
+            }
+        }
+    }
+}
+
+
+@Composable
+private fun TopAppBarSection(
+    modifier: Modifier = Modifier,
+    focusRequester: FocusRequester,
+    uiState: MessagingUiState,
+    searchQuery: TextFieldValue,
+    event: (MessagingUiEvent) -> Unit) {
+
+
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween) {
+
+        if (uiState.isSearching) {
+
+
+            LaunchedEffect(Unit) {
+                focusRequester.requestFocus()
             }
 
-        }
-    }
-}
-
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun AddMessageButton(modifier: Modifier = Modifier, onClick: () -> Unit) {
-    Surface(
-        color = MaterialTheme.colors.primary,
-        contentColor = MaterialTheme.colors.background,
-        modifier = modifier
-            .padding(all = 12.dp),
-        shape = CircleShape,
-        onClick = onClick) {
-
-        Icon(
-            painter = painterResource(id = R.drawable.baseline_edit_24),
-            contentDescription = "Add Message",
-            modifier = Modifier
-                .padding(12.dp)
-                .size(28.dp),
-        )
-    }
-}
-
-@Composable
-private fun MessagesSection(
-    modifier: Modifier = Modifier,
-    chatsModel: ChatsModel,
-    onClick: (ChatItemModel) -> Unit) {
-
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()) {
-        items(chatsModel.messages, key = {
-            it.messageId
-        }) { item ->
-
-            MessagingItem(
+            MessagingSearchBar(
                 modifier = Modifier
+                    .focusRequester(focusRequester)
                     .fillMaxWidth()
-                    .wrapContentHeight(),
-                chatItemModel = item,
-                onClick = onClick
+                    .weight(0.65f),
+                value = searchQuery,
+                onValueChange = {
+                    event(MessagingUiEvent.OnSearchQueryChanged(it))
+                },
             )
+
+            IconButton(onClick = { event(MessagingUiEvent.ClearSearchQuery) }) {
+                Icon(
+                    imageVector = Icons.Default.Cancel,
+                    contentDescription = "Clear Search",
+                    tint = MaterialTheme.colors.onBackground,
+                    modifier = Modifier.weight(0.35f)
+                )
+            }
+
+        } else {
+
+            TitleTopAppBar(title = "Chats")
+            IconButton(onClick = {
+                event(MessagingUiEvent.OnClickSearch)
+            }) {
+                Icon(
+                    imageVector = Icons.Default.Search,
+                    contentDescription = "Search",
+                    tint = MaterialTheme.colors.onBackground,
+                )
+            }
         }
+
     }
 }
-
 
 val fakeMessages = ChatsModel(
     listOf(
@@ -224,6 +246,9 @@ fun PreviewMessagingScreenContentDark() {
     CyclistanceTheme(darkTheme = true) {
         MessagingScreenContent(
             state = MessagingState(),
+            uiState = MessagingUiState(),
+            searchQuery = TextFieldValue("apiosdmnaisnd"),
+            focusRequester = FocusRequester(),
             event = {})
     }
 }
@@ -234,6 +259,9 @@ fun PreviewMessagingScreenContentLight() {
     CyclistanceTheme(darkTheme = false) {
         MessagingScreenContent(
             state = MessagingState(),
+            uiState = MessagingUiState(),
+            searchQuery = TextFieldValue("apiosdmnaisnd"),
+            focusRequester = FocusRequester(),
             event = {})
     }
 }
