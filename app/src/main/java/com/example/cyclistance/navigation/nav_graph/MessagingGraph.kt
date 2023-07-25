@@ -10,7 +10,7 @@ import androidx.navigation.navigation
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_NAME
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_PHOTO_URL
-import com.example.cyclistance.feature_messaging.presentation.chats.MessagingScreen
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.ChatsScreen
 import com.example.cyclistance.feature_messaging.presentation.conversation.ConversationScreen
 import com.example.cyclistance.navigation.Screens
 
@@ -18,17 +18,17 @@ fun NavGraphBuilder.messagingGraph(
     navController: NavController,
     paddingValues: PaddingValues) {
     navigation(
-        startDestination = Screens.Messaging.MessagingScreen.screenRoute,
-        route = Screens.Messaging.ROUTE
+        startDestination = Screens.MessagingNavigation.ChatScreen.screenRoute,
+        route = Screens.MessagingNavigation.ROUTE
     ) {
-        composable(Screens.Messaging.MessagingScreen.screenRoute) {
-            MessagingScreen(
+        composable(Screens.MessagingNavigation.ChatScreen.screenRoute) {
+            ChatsScreen(
                 navController = navController,
                 paddingValues = paddingValues
             )
         }
 
-        composable(route = Screens.Messaging.ConversationScreen.screenRoute + "/{$CHAT_ID}/{${CHAT_PHOTO_URL}}/{$CHAT_NAME}",
+        composable(route = Screens.MessagingNavigation.ConversationScreen.screenRoute + "/{$CHAT_ID}/{${CHAT_PHOTO_URL}}/{$CHAT_NAME}",
             arguments =
             listOf(
                 navArgument(CHAT_ID) { type = NavType.StringType },

@@ -3,70 +3,71 @@ package com.example.cyclistance.navigation
 sealed class Screens {
 
 
-    open class Authentication(val screenRoute: String = "") : Screens() {
+    open class AuthenticationNavigation(val screenRoute: String = "") : Screens() {
         companion object {
-            const val ROUTE = "authentication"
+            const val ROUTE = "authentication_navigation"
         }
 
-        object SignInScreen : Authentication(screenRoute = "sign_in_screen")
-        object SignUpScreen : Authentication(screenRoute = "sign_up_screen")
-        object EmailAuthScreen : Authentication(screenRoute = "email_auth_screen")
+        object SignInScreen : AuthenticationNavigation(screenRoute = "sign_in_screen")
+        object SignUpScreen : AuthenticationNavigation(screenRoute = "sign_up_screen")
+        object EmailAuthScreen : AuthenticationNavigation(screenRoute = "email_auth_screen")
     }
 
-    open class EmergencyCall(val screenRoute: String = "") : Screens() {
+    open class EmergencyCallNavigation(val screenRoute: String = "") : Screens() {
         companion object {
-            const val ROUTE = "emergency_call"
+            const val ROUTE = "emergency_call_navigation"
         }
 
-        object EmergencyCallScreen : EmergencyCall(screenRoute = "emergency_call_screen")
+        object EmergencyCallScreen : EmergencyCallNavigation(screenRoute = "emergency_call_screen")
     }
 
-    open class Messaging(val screenRoute: String = "") : Screens() {
+    open class MessagingNavigation(val screenRoute: String = "") : Screens() {
         companion object {
-            const val ROUTE = "messaging"
+            const val ROUTE = "messaging_navigation"
         }
 
-        object MessagingScreen : Messaging(screenRoute = "messaging_screen")
-        object ConversationScreen : Messaging(screenRoute = "conversation_screen")
+        object ChatScreen : MessagingNavigation(screenRoute = "chat_screen")
+        object ConversationScreen : MessagingNavigation(screenRoute = "conversation_screen")
     }
 
-    open class OnBoarding(val screenRoute: String = "") : Screens() {
+    open class OnBoardingNavigation(val screenRoute: String = "") : Screens() {
         companion object {
-            const val ROUTE = "on_boarding"
+            const val ROUTE = "on_boarding_navigation"
         }
 
-        object IntroSliderScreen : OnBoarding(screenRoute = "intro_slider_screen")
+        object IntroSliderScreen : OnBoardingNavigation(screenRoute = "intro_slider_screen")
     }
 
-    open class Mapping(val screenRoute: String = "") : Screens() {
+    open class MappingNavigation(val screenRoute: String = "") : Screens() {
         companion object {
-            const val ROUTE = "mapping"
+            const val ROUTE = "mapping_navigation"
         }
 
-        object MappingScreen : Mapping(screenRoute = "mapping_screen")
-        object CancellationScreen : Mapping(screenRoute = "cancellation_screen")
-        object ConfirmDetailsScreen : Mapping(screenRoute = "confirm_details_screen")
+        object MappingScreen : MappingNavigation(screenRoute = "mapping_screen")
+        object CancellationScreen : MappingNavigation(screenRoute = "cancellation_screen")
+        object ConfirmDetailsScreen : MappingNavigation(screenRoute = "confirm_details_screen")
     }
 
-    open class Settings(val screenRoute: String = "") : Screens() {
+    open class SettingsNavigation(val screenRoute: String = "") : Screens() {
 
         companion object {
-            const val ROUTE = "settings"
+            const val ROUTE = "settings_navigation"
         }
 
-        object ChangePasswordScreen : Settings(screenRoute = "change_password_screen")
-        object EditProfileScreen : Settings(screenRoute = "edit_profile_screen")
-        object SettingScreen : Settings(screenRoute = "setting_screen")
+        object ChangePasswordScreen : SettingsNavigation(screenRoute = "change_password_screen")
+        object EditProfileScreen : SettingsNavigation(screenRoute = "edit_profile_screen")
+        object SettingScreen : SettingsNavigation(screenRoute = "setting_screen")
     }
 
 
-    open class RideHistory(val screenRoute: String = "") : Screens() {
+    open class RideHistoryNavigation(val screenRoute: String = "") : Screens() {
         companion object {
-            const val ROUTE = "ride_history"
+            const val ROUTE = "ride_history_navigation"
         }
 
-        object RideHistoryScreen : RideHistory(screenRoute = "ride_history_screen")
-        object RideHistoryDetailsScreen : RideHistory(screenRoute = "ride_history_details_screen")
+        object RideHistoryScreen : RideHistoryNavigation(screenRoute = "ride_history_screen")
+        object RideHistoryDetailsScreen :
+            RideHistoryNavigation(screenRoute = "ride_history_details_screen")
     }
 
 }
