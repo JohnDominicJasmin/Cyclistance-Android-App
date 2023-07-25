@@ -16,17 +16,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
-import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.MessagingScreenContent
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.ChatScreenContent
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.fakeMessages
-import com.example.cyclistance.feature_messaging.presentation.chat.event.MessagingUiEvent
-import com.example.cyclistance.feature_messaging.presentation.chat.state.MessagingUiState
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.MessagingUiEvent
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.MessagingUiState
 import com.example.cyclistance.navigation.Screens
+import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 @Composable
-fun MessagingScreen(
-    viewModel: MessagingViewModel = hiltViewModel(),
+fun ChatsScreen(
+    viewModel: ChatsViewModel = hiltViewModel(),
     navController: NavController,
     paddingValues: PaddingValues) {
 
@@ -37,17 +38,31 @@ fun MessagingScreen(
         mutableStateOf(
             TextFieldValue())
     }
+    val onDismissSearchMessageDialog = remember {
+        {
+            uiState = uiState.copy(
+                isSearching = false
+            )
+        }
+    }
+
     val closeMessagingScreen = remember {
         {
-            navController.popBackStack()
+            if (uiState.isSearching) {
+                onDismissSearchMessageDialog()
+            } else {
+                navController.popBackStack()
+            }
         }
     }
     val onSelectConversation = remember {
         { chatItem: ChatItemModel ->
             val encodedUrl =
                 URLEncoder.encode(chatItem.userPhotoUrl, StandardCharsets.UTF_8.toString())
-            navController.navigate(
-                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userId}/$encodedUrl/${chatItem.name}")
+            navController.navigateScreen(
+                destination = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userId}/$encodedUrl/${chatItem.name}",
+                popUpToDestination = Screens.MessagingNavigation.ChatScreen.screenRoute
+            )
         }
     }
     val onClickSearch = remember {
@@ -71,18 +86,14 @@ fun MessagingScreen(
     }
 
     BackHandler {
-        if (uiState.isSearching) {
-            uiState = uiState.copy(isSearching = false)
-        } else {
-            closeMessagingScreen()
-        }
+        closeMessagingScreen()
     }
 
 
 
 
 
-    MessagingScreenContent(
+    ChatScreenContent(
         state = state.copy(chatsModel = fakeMessages),
         uiState = uiState,
         modifier = Modifier.padding(paddingValues),
@@ -90,11 +101,12 @@ fun MessagingScreen(
         focusRequester = focusRequester,
         event = { event ->
             when (event) {
-                is MessagingUiEvent.CloseMessagingScreen -> closeMessagingScreen()
+                is MessagingUiEvent.CloseScreen -> closeMessagingScreen()
                 is MessagingUiEvent.OnSelectConversation -> onSelectConversation(event.messageItem)
                 is MessagingUiEvent.OnClickSearch -> onClickSearch()
                 is MessagingUiEvent.OnSearchQueryChanged -> onSearchQueryChanged(event.searchQuery)
                 is MessagingUiEvent.ClearSearchQuery -> onClearSearchQuery()
+                is MessagingUiEvent.DismissSearchMessageDialog -> onDismissSearchMessageDialog()
             }
         },
     )
