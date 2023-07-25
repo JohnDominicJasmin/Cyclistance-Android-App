@@ -96,7 +96,7 @@ internal fun ChatScreenContent(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
                         )
 
-                        MessagesSection(chatsModel = state.chatsModel, onClick = {
+                        ChatsSection(chatsModel = state.chatsModel, onClick = {
                             event(MessagingUiEvent.OnSelectConversation(it))
                         })
                     }

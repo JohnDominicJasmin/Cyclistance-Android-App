@@ -12,7 +12,7 @@ import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatsMode
 
 
 @Composable
-internal fun MessagesSection(
+internal fun ChatsSection(
     modifier: Modifier = Modifier,
     chatsModel: ChatsModel,
     onClick: (ChatItemModel) -> Unit) {
