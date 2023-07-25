@@ -113,10 +113,6 @@ internal fun MessagingScreenContent(
                         textAlign = TextAlign.Center, lineHeight = TextUnit(20f, TextUnitType.Sp))
                 }
 
-                AddMessageButton(
-                    modifier = Modifier.padding(all = 4.dp)
-                        .align(Alignment.BottomEnd),
-                    onClick = {})
             }
         }
     }
