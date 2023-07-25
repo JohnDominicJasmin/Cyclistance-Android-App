@@ -41,12 +41,10 @@ import java.util.Date
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun MessagingItem(
+fun ChatItem(
     modifier: Modifier = Modifier,
     chatItemModel: ChatItemModel = ChatItemModel(),
     onClick: (ChatItemModel) -> Unit) {
-
-
 
 
     Surface(
@@ -130,7 +128,7 @@ fun MessagingItem(
 
 @Preview(name = "Messaging Item ", showBackground = false)
 @Composable
-fun PreviewMessagingItemDark() {
+fun PreviewChatItemDark() {
     CyclistanceTheme(darkTheme = true) {
 
         Box(
@@ -139,7 +137,7 @@ fun PreviewMessagingItemDark() {
                 .background(color = MaterialTheme.colors.background),
             contentAlignment = Alignment.TopCenter) {
 
-            MessagingItem(
+            ChatItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
@@ -163,7 +161,7 @@ fun PreviewMessagingItemDark() {
 
 @Preview(showBackground = false)
 @Composable
-fun PreviewMessagingItemLight() {
+fun PreviewChatItemLight() {
     CyclistanceTheme(darkTheme = false) {
 
         Box(
@@ -172,7 +170,7 @@ fun PreviewMessagingItemLight() {
                 .background(color = MaterialTheme.colors.background),
             contentAlignment = Alignment.TopCenter) {
 
-            MessagingItem(
+            ChatItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
