@@ -7,9 +7,6 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @StableState
-data class MessagingState(
-
+data class ChatState(
     val chatsModel: ChatsModel = ChatsModel(),
-
-
-    ) : Parcelable
+) : Parcelable
