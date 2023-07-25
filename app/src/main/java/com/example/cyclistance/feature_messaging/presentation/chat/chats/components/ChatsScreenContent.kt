@@ -75,6 +75,18 @@ internal fun ChatScreenContent(
                     }
                 })
 
+
+            if (uiState.isSearching) {
+
+                SearchUserSection(
+                    searchQuery = searchQuery,
+                    state = state,
+                    event = event
+                )
+            }
+
+
+
             Box(
                 modifier = modifier.fillMaxSize(),
                 contentAlignment = if (messageAvailable) Alignment.TopCenter else Alignment.Center) {
