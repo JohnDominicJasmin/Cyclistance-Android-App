@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_VM_STATE_KEY
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
-import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.MessagingState
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.ChatState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,12 +15,12 @@ import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
-class MessagingViewModel @Inject constructor(
+class ChatsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val messagingUseCase: MessagingUseCase
 ) : ViewModel() {
     private val _state =
-        MutableStateFlow(savedStateHandle[MESSAGING_VM_STATE_KEY] ?: MessagingState())
+        MutableStateFlow(savedStateHandle[MESSAGING_VM_STATE_KEY] ?: ChatState())
     val state = _state.asStateFlow()
 
 
