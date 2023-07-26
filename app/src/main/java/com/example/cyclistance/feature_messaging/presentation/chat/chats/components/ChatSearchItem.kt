@@ -31,13 +31,18 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
+import com.example.cyclistance.core.domain.model.UserDetails
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun ChatSearchItem(modifier: Modifier = Modifier, chatItem: ChatItemModel, onClick: () -> Unit) {
+fun ChatSearchItem(
+    modifier: Modifier = Modifier,
+    messageUser: MessagingUserItemModel,
+    onClick: () -> Unit) {
+
 
     Surface(
         onClick = onClick,
@@ -57,7 +62,7 @@ fun ChatSearchItem(modifier: Modifier = Modifier, chatItem: ChatItemModel, onCli
 
             AsyncImage(
                 model = ImageRequest.Builder(LocalContext.current)
-                    .data(chatItem.userPhotoUrl)
+                    .data(messageUser.userDetails.photo)
                     .crossfade(true)
                     .networkCachePolicy(CachePolicy.ENABLED)
                     .diskCachePolicy(CachePolicy.ENABLED)
@@ -80,7 +85,7 @@ fun ChatSearchItem(modifier: Modifier = Modifier, chatItem: ChatItemModel, onCli
 
 
                 Text(
-                    text = chatItem.name,
+                    text = messageUser.userDetails.name,
                     color = MaterialTheme.colors.onBackground,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -108,13 +113,14 @@ fun ChatSearchItem(modifier: Modifier = Modifier, chatItem: ChatItemModel, onCli
 private fun PreviewChatSearchItem() {
     CyclistanceTheme(darkTheme = true) {
         ChatSearchItem(
-            chatItem = ChatItemModel(
-                messageId = "1",
-                name = "John Doe",
-                userPhotoUrl = "https://i.pravatar.cc/150?img=3",
-                userId = "1",
-
-                ),
+            messageUser = MessagingUserItemModel(
+                userDetails = UserDetails(
+                    uid = "1",
+                    name = "John Doe",
+                    photo = "",
+                    email = ""
+                )
+            ),
             onClick = {}
         )
     }

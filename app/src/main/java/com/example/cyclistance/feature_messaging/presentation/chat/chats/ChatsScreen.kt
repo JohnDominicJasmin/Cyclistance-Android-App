@@ -15,9 +15,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.ChatScreenContent
-import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.fakeMessages
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.MessagingUiEvent
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.MessagingUiState
 import com.example.cyclistance.navigation.Screens
@@ -56,11 +55,11 @@ fun ChatsScreen(
         }
     }
     val onSelectConversation = remember {
-        { chatItem: ChatItemModel ->
+        { chatItem: MessagingUserItemModel ->
             val encodedUrl =
-                URLEncoder.encode(chatItem.userPhotoUrl, StandardCharsets.UTF_8.toString())
+                URLEncoder.encode(chatItem.userDetails.photo, StandardCharsets.UTF_8.toString())
             navController.navigateScreen(
-                destination = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userId}/$encodedUrl/${chatItem.name}",
+                destination = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userDetails.uid}/$encodedUrl/${chatItem.userDetails.name}",
                 popUpToDestination = Screens.MessagingNavigation.ChatScreen.screenRoute
             )
         }
@@ -94,7 +93,7 @@ fun ChatsScreen(
 
 
     ChatScreenContent(
-        state = state.copy(chatsModel = fakeMessages),
+        state = state,
         uiState = uiState,
         modifier = Modifier.padding(paddingValues),
         searchQuery = searchQuery,

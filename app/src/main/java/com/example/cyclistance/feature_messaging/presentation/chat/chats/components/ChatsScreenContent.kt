@@ -108,8 +108,9 @@ internal fun ChatScreenContent(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
                         )
 
-                        ChatsSection(chatsModel = state.chatsModel, onClick = {
-                            event(MessagingUiEvent.OnSelectConversation(it))
+                        ChatsSection(chatsModel = state.chatsModel, onClick = { n ->
+
+
                         })
                     }
                 }

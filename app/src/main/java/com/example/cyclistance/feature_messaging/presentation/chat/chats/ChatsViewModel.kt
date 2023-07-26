@@ -10,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -26,18 +27,45 @@ class ChatsViewModel @Inject constructor(
 
     init {
         refreshToken()
-
+        getUsers()
     }
 
+    private fun isLoading(isLoading: Boolean) {
+        _state.update { it.copy(isLoading = isLoading) }
+    }
+
+    private fun getUsers() {
+        viewModelScope.launch {
+            runCatching {
+                isLoading(true)
+                messagingUseCase.getUsersUseCase()
+            }.onSuccess { model ->
+                _state.update { it.copy(messagingUsers = model) }
+            }.onFailure {
+                Timber.e("Failed to retrieve chats ${it.message}")
+            }
+            isLoading(false)
+            savedStateHandle[MESSAGING_VM_STATE_KEY] = _state.value
+        }
+    }
+
+    /*private fun onEvent(event: ChatEvent) {
+        when (event) {
+            is ChatEvent.GetChats -> getChats()
+        }
+    }
+    */
     private fun refreshToken() {
         viewModelScope.launch(SupervisorJob()) {
             runCatching {
+                isLoading(true)
                 messagingUseCase.refreshTokenUseCase()
             }.onSuccess {
                 Timber.v("Successfully refreshed token")
             }.onFailure {
                 Timber.e("Failed to refresh token ${it.message}")
             }
+            isLoading(false)
         }
     }
 }

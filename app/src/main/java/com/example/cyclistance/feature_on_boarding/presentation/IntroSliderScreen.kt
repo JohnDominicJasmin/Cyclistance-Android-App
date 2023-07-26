@@ -11,7 +11,6 @@ import com.example.cyclistance.feature_on_boarding.presentation.components.Intro
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreenInclusively
 import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
@@ -21,7 +20,7 @@ fun IntroSliderScreen(
     paddingValues: PaddingValues,
     navController: NavController) {
 
-    val pagerState = rememberPagerState()
+    val pagerState = androidx.compose.foundation.pager.rememberPagerState()
     val scope = rememberCoroutineScope()
     val isOnLastPage by remember {
         derivedStateOf { pagerState.currentPage == 2 }
