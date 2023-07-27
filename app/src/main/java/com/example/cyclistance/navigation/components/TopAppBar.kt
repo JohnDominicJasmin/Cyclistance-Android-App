@@ -4,14 +4,22 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG
 import com.example.cyclistance.core.utils.constants.NavigationConstants
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -23,15 +31,17 @@ import com.example.cyclistance.top_bars.TopAppBarCreator
 fun TopAppBar(
     onClickArrowBackIcon: () -> Unit = {},
     onClickMenuIcon: () -> Unit = {},
+    onClickSearchMessagingUser: () -> Unit = {},
     isNavigating: Boolean,
     route: String?) {
 
     when (route) {
+
         Screens.MappingNavigation.MappingScreen.screenRoute -> {
             AnimatedVisibility(
                 visible = isNavigating.not(),
-                enter = fadeIn(initialAlpha = 0.4f),
-                exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
+                enter = fadeIn(initialAlpha = 0.4f, animationSpec = tween(durationMillis = 10000)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 10000))) {
 
                 DefaultTopBar(onClickIcon = onClickMenuIcon)
             }
@@ -84,7 +94,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.EmergencyCallNavigation.EmergencyCallScreen.screenRoute + "?${EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG}={${EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG}}" -> {
+        Screens.EmergencyCallNavigation.EmergencyCallScreen.screenRoute + "?${SHOULD_OPEN_CONTACT_DIALOG}={${SHOULD_OPEN_CONTACT_DIALOG}}" -> {
 
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
@@ -94,6 +104,34 @@ fun TopAppBar(
                 })
         }
 
+        Screens.MessagingNavigation.ChatScreen.screenRoute -> {
+
+            TopAppBarCreator(
+                icon = Icons.Default.ArrowBack,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+
+                        TitleTopAppBar(title = "Chats")
+                        IconButton(onClick = onClickSearchMessagingUser) {
+                            Icon(
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search",
+                                tint = MaterialTheme.colors.onBackground,
+                            )
+                        }
+                    }
+                })
+
+
+
+
+
+
+        }
 
         Screens.RideHistoryNavigation.RideHistoryScreen.screenRoute -> {
             TopAppBarCreator(
