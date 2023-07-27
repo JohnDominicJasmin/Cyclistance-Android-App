@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_messaging.presentation.search_user.components
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,13 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.core.domain.model.UserDetails
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.ChatSearchItem
 import com.example.cyclistance.feature_messaging.presentation.search_user.event.SearchUserUiEvent
 import com.example.cyclistance.feature_messaging.presentation.search_user.state.SearchUserState
+import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun SearchUserSection(
+fun SearchUserContent(
     modifier: Modifier = Modifier,
     searchQuery: TextFieldValue,
     focusRequester: FocusRequester,
@@ -52,33 +58,39 @@ fun SearchUserSection(
     Surface(color = MaterialTheme.colors.background, modifier = modifier.fillMaxSize()) {
 
 
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 4.dp)
-            .padding(horizontal = 8.dp)) {
-            IconButton(onClick = { event(SearchUserUiEvent.CloseScreen) }) {
-                Icon(
-                    imageVector = Icons.Filled.ArrowBack,
-                    contentDescription = "Arrow Back",
-                    tint = MaterialTheme.colors.onBackground
+        Column {
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+                    .padding(horizontal = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+
+                IconButton(onClick = { event(SearchUserUiEvent.CloseScreen) }) {
+                    Icon(
+                        imageVector = Icons.Filled.ArrowBack,
+                        contentDescription = "Arrow Back",
+                        tint = MaterialTheme.colors.onBackground
+                    )
+                }
+
+                MessagingSearchBar(
+                    modifier = Modifier.focusRequester(focusRequester = focusRequester),
+                    value = searchQuery,
+                    onValueChange = { event(SearchUserUiEvent.OnSearchQueryChanged(it)) },
                 )
             }
 
-            MessagingSearchBar(
-                modifier = Modifier.focusRequester(focusRequester = focusRequester),
-                value = searchQuery,
-                onValueChange = { event(SearchUserUiEvent.OnSearchQueryChanged(it)) },
-            )
-        }
 
-        Box(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center) {
 
             if (shouldShowNotFound) {
-                SearchMessageNotFound()
+                Box(
+                    modifier = modifier
+                        .fillMaxSize()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center) {
+                    SearchMessageNotFound()
+                }
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(items = filteredQuery, key = { it.userDetails.uid }) { model ->
@@ -94,5 +106,56 @@ fun SearchUserSection(
             }
 
         }
+    }
+}
+
+val fakeMessageUser = MessagingUserModel(
+    users = listOf(
+        MessagingUserItemModel(
+            userDetails = UserDetails(
+                uid = "1",
+                name = "John Doe",
+                photo = "",
+                email = ""
+            )
+        ),
+        MessagingUserItemModel(
+            userDetails = UserDetails(
+                uid = "2",
+                name = "John Doe",
+                photo = "",
+                email = ""
+            )
+        ),
+        MessagingUserItemModel(
+            userDetails = UserDetails(
+                uid = "3",
+                name = "John Doe",
+                photo = "",
+                email = ""
+            )
+        ),
+        MessagingUserItemModel(
+            userDetails = UserDetails(
+                uid = "4",
+                name = "John Doe",
+                photo = "",
+                email = ""
+            )
+        )
+
+    )
+)
+
+@Preview
+@Composable
+fun PreviewSearchUserContentDark() {
+    CyclistanceTheme(darkTheme = true) {
+        SearchUserContent(
+            searchQuery = TextFieldValue(),
+            focusRequester = FocusRequester(),
+            state = SearchUserState(messagingUsers = fakeMessageUser),
+            event = {}
+        )
     }
 }

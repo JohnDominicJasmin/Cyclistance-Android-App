@@ -30,8 +30,7 @@ fun ChatsScreen(
             val encodedUrl =
                 URLEncoder.encode(chatItem.userPhotoUrl, StandardCharsets.UTF_8.toString())
             navController.navigateScreen(
-                destination = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userId}/$encodedUrl/${chatItem.name}",
-                popUpToDestination = Screens.MessagingNavigation.ChatScreen.screenRoute
+                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userId}/$encodedUrl/${chatItem.name}",
             )
         }
     }

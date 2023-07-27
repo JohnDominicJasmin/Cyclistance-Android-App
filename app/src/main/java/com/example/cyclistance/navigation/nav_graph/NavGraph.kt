@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -22,6 +21,7 @@ fun NavGraph(
     isNavigating: Boolean,
     onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
     onToggleTheme: () -> Unit) {
+
 
     NavHost(
         navController = navController,
@@ -91,26 +91,15 @@ fun NavController.navigateScreenInclusively(
         launchSingleTop = true
     }
 
-
 }
 
 fun NavController.navigateScreen(
-    destination: String,
-    popUpToDestination: Any = graph.findStartDestination().id) {
+    route: String) {
+    navigate(route) {
+        popUpTo(route){
+            saveState = true
 
-    navigate(destination) {
-
-        if (popUpToDestination is String) {
-            popUpTo(popUpToDestination) {
-                saveState = true
-            }
-        } else {
-            popUpTo(popUpToDestination as Int) {
-                saveState = true
-            }
         }
-
-        launchSingleTop = true
         restoreState = true
     }
 }

@@ -19,12 +19,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
-import com.example.cyclistance.feature_messaging.presentation.search_user.components.SearchUserSection
+import com.example.cyclistance.feature_messaging.presentation.search_user.components.SearchUserContent
 import com.example.cyclistance.feature_messaging.presentation.search_user.event.SearchUserUiEvent
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+
 @Composable
 fun SearchUserScreen(
     viewModel: SearchUserViewModel = hiltViewModel(),
@@ -42,7 +43,7 @@ fun SearchUserScreen(
     val closeMessagingScreen = remember {
         {
 
-         navController.popBackStack()
+            navController.popBackStack()
         }
     }
     val onSelectConversation = remember {
@@ -50,11 +51,10 @@ fun SearchUserScreen(
             val encodedUrl =
                 URLEncoder.encode(chatItem.userDetails.photo, StandardCharsets.UTF_8.toString())
             navController.navigateScreen(
-                destination = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userDetails.uid}/$encodedUrl/${chatItem.userDetails.name}",
-                popUpToDestination = Screens.MessagingNavigation.ChatScreen.screenRoute
+                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userDetails.uid}/$encodedUrl/${chatItem.userDetails.name}",
             )
-            }
         }
+    }
 
 
     val onSearchQueryChanged = remember {
@@ -75,18 +75,20 @@ fun SearchUserScreen(
 
 
 
-    SearchUserSection(
-        modifier = Modifier.animateContentSize(
-            animationSpec = tween(
-                durationMillis = 1,
-                easing = FastOutLinearInEasing
+    SearchUserContent(
+        modifier = Modifier
+            .animateContentSize(
+                animationSpec = tween(
+                    durationMillis = 1,
+                    easing = FastOutLinearInEasing
+                )
             )
-        ).padding(paddingValues),
+            .padding(paddingValues),
         searchQuery = searchQuery,
         focusRequester = focusRequester,
         state = state,
-        event =  {event ->
-            when(event){
+        event = { event ->
+            when (event) {
                 is SearchUserUiEvent.OnSelectConversation -> onSelectConversation(event.messageUser)
                 is SearchUserUiEvent.CloseScreen -> closeMessagingScreen()
                 is SearchUserUiEvent.OnSearchQueryChanged -> onSearchQueryChanged(event.searchQuery)

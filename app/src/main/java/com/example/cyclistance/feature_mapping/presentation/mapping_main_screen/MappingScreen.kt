@@ -372,7 +372,7 @@ fun MappingScreen(
             val selectionType = if (isRescuee) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
             val clientId = state.rescuer?.id ?: state.rescuee?.id
 
-            navController.navigateScreen(destination = "${Screens.MappingNavigation.CancellationScreen.screenRoute}/$selectionType/$transactionId/$clientId")
+            navController.navigateScreen(route = "${Screens.MappingNavigation.CancellationScreen.screenRoute}/$selectionType/$transactionId/$clientId")
 
         }
     }
