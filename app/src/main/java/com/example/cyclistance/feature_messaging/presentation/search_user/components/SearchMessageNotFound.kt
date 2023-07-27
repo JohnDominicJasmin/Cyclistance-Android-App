@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_messaging.presentation.chat.chats.components
+package com.example.cyclistance.feature_messaging.presentation.search_user.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

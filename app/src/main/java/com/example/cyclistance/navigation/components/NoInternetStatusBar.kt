@@ -1,8 +1,5 @@
 package com.example.cyclistance.navigation.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,13 +25,11 @@ fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
         route != Screens.OnBoardingNavigation.IntroSliderScreen.screenRoute &&
         route != Screens.RideHistoryNavigation.RideHistoryScreen.screenRoute &&
         route != Screens.RideHistoryNavigation.RideHistoryDetailsScreen.screenRoute &&
-        route != Screens.EmergencyCallNavigation.EmergencyCallScreen.screenRoute
+        route != Screens.EmergencyCallNavigation.EmergencyCallScreen.screenRoute &&
+        route != Screens.MessagingNavigation.SearchUserScreen.screenRoute
 
 
-    AnimatedVisibility(
-        visible = internetAvailable.not() && inShowableScreens,
-        enter = slideInVertically(),
-        exit = slideOutVertically()) {
+ if(internetAvailable.not() && inShowableScreens){
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier

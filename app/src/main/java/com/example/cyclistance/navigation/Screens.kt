@@ -27,6 +27,7 @@ sealed class Screens {
         }
 
         object ChatScreen : MessagingNavigation(screenRoute = "chat_screen")
+        object SearchUserScreen : MessagingNavigation(screenRoute = "search_user_screen")
         object ConversationScreen : MessagingNavigation(screenRoute = "conversation_screen")
     }
 
