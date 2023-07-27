@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
@@ -23,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -67,7 +69,8 @@ fun NavScreen(
     val navController = rememberNavController()
     val context = LocalContext.current
     val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val scaffoldState = rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
+    val scaffoldState =
+        rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
     val settingState by settingViewModel.state.collectAsStateWithLifecycle()
     val navState by navViewModel.state.collectAsStateWithLifecycle()
@@ -223,6 +226,14 @@ fun NavScreen(
         }
     }
 
+    val onClickSearchMessagingUser = remember {
+        {
+            navController.navigateScreen(
+                destination = Screens.MessagingNavigation.SearchUserScreen.screenRoute,
+                popUpToDestination = Screens.MessagingNavigation.ChatScreen.screenRoute)
+        }
+    }
+
     val onClickMenuIcon = remember {
         {
             editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadProfile)
@@ -247,18 +258,23 @@ fun NavScreen(
                     drawerGesturesEnabled = scaffoldState.drawerState.isOpen,
                     scaffoldState = scaffoldState,
                     topBar = {
-                        Column {
 
-                            TopAppBar(
-                                route = navBackStackEntry?.destination?.route,
-                                onClickMenuIcon = onClickMenuIcon,
-                                onClickArrowBackIcon = onClickArrowBackIcon,
-                                isNavigating = navUiState.isNavigating)
+                        Surface(elevation = 10.dp, modifier = Modifier.fillMaxWidth()) {
 
-                            NoInternetStatusBar(
-                                navUiState.internetAvailable,
-                                navBackStackEntry?.destination?.route)
+                            Column {
 
+                                TopAppBar(
+                                    route = navBackStackEntry?.destination?.route,
+                                    onClickMenuIcon = onClickMenuIcon,
+                                    onClickArrowBackIcon = onClickArrowBackIcon,
+                                    onClickSearchMessagingUser = onClickSearchMessagingUser,
+                                    isNavigating = navUiState.isNavigating)
+
+                                NoInternetStatusBar(
+                                    navUiState.internetAvailable,
+                                    navBackStackEntry?.destination?.route)
+
+                            }
                         }
                     },
                     drawerContent = {
