@@ -6,9 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,6 +30,7 @@ import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 import java.util.Date
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ChatScreenContent(
     modifier: Modifier = Modifier,
@@ -35,55 +40,64 @@ internal fun ChatScreenContent(
 
     val messageAvailable =
         remember(state.chatsModel.messages) { state.chatsModel.messages.isNotEmpty() }
+    val pullRefreshState = rememberPullRefreshState(state.isRefreshing, {
+//        viewModel.onEvent(event = ChatUiEvent.OnRefresh)
+    })
+    Surface(
+        modifier = modifier
+            .fillMaxSize()
+            .pullRefresh(pullRefreshState),
+        color = MaterialTheme.colors.background) {
 
-    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
 
-        Column(modifier = Modifier.fillMaxSize()) {
 
 
-            Box(
-                modifier = modifier.fillMaxSize(),
-                contentAlignment = if (messageAvailable) Alignment.TopCenter else Alignment.Center) {
+                Box(
+                    modifier = modifier.fillMaxSize(),
+                    contentAlignment = if (messageAvailable) Alignment.TopCenter else Alignment.Center) {
 
-                if (messageAvailable) {
+                    if (messageAvailable) {
 
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalAlignment = Alignment.Start,
-                        verticalArrangement = Arrangement.SpaceEvenly) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalAlignment = Alignment.Start,
+                            verticalArrangement = Arrangement.SpaceEvenly) {
+
+                            Text(
+                                text = "Recent Messages",
+                                style = MaterialTheme.typography.body2.copy(
+                                    letterSpacing = TextUnit(
+                                        2f,
+                                        type = TextUnitType.Sp)),
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
+                            )
+
+                            ChatsSection(chatsModel = state.chatsModel, onClick = {
+                                event(ChatUiEvent.OnSelectConversation(it))
+                            })
+                        }
+                    }
+
+                    if (!messageAvailable) {
 
                         Text(
-                            text = "Recent Messages",
-                            style = MaterialTheme.typography.body2.copy(
-                                letterSpacing = TextUnit(
-                                    2f,
-                                    type = TextUnitType.Sp)),
-                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
-                        )
-
-                        ChatsSection(chatsModel = state.chatsModel, onClick = {
-                            event(ChatUiEvent.OnSelectConversation(it))
-                        })
+                            text = "Start a conversation by sending a message. Connect with others and let the chat come alive!",
+                            color = Black500,
+                            style = MaterialTheme.typography.subtitle1,
+                            modifier = Modifier.fillMaxWidth(0.7f),
+                            textAlign = TextAlign.Center,
+                            lineHeight = TextUnit(20f, TextUnitType.Sp))
                     }
+
                 }
+            PullRefreshIndicator(state.isRefreshing, pullRefreshState, Modifier.align(Alignment.TopCenter), )
 
-                if (!messageAvailable) {
-
-                    Text(
-                        text = "Start a conversation by sending a message. Connect with others and let the chat come alive!",
-                        color = Black500,
-                        style = MaterialTheme.typography.subtitle1,
-                        modifier = Modifier.fillMaxWidth(0.7f),
-                        textAlign = TextAlign.Center, lineHeight = TextUnit(20f, TextUnitType.Sp))
-                }
-
-            }
         }
     }
 }
-
 
 
 val fakeMessages = ChatsModel(
@@ -148,8 +162,8 @@ fun PreviewChatScreenContentDark() {
     CyclistanceTheme(darkTheme = true) {
         ChatScreenContent(
             state = ChatState(chatsModel = fakeMessages),
-            event =  {}
-           )
+            event = {}
+        )
     }
 }
 
@@ -158,9 +172,9 @@ fun PreviewChatScreenContentDark() {
 fun PreviewChatScreenContentLight() {
     CyclistanceTheme(darkTheme = false) {
         ChatScreenContent(
-            state = ChatState(chatsModel = fakeMessages),
-            event =  {}
-           )
+            state = ChatState(),
+            event = {}
+        )
     }
 }
 
