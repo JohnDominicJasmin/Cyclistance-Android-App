@@ -6,20 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -27,9 +20,8 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatsModel
-import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.MessagingUiEvent
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatUiEvent
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.ChatState
-import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.MessagingUiState
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 import java.util.Date
@@ -37,11 +29,8 @@ import java.util.Date
 @Composable
 internal fun ChatScreenContent(
     modifier: Modifier = Modifier,
-    focusRequester: FocusRequester,
-    searchQuery: TextFieldValue,
     state: ChatState,
-    uiState: MessagingUiState,
-    event: (MessagingUiEvent) -> Unit) {
+    event: (ChatUiEvent) -> Unit) {
 
 
     val messageAvailable =
@@ -51,40 +40,6 @@ internal fun ChatScreenContent(
 
 
         Column(modifier = Modifier.fillMaxSize()) {
-
-            TopAppBar(
-                elevation = 10.dp,
-                title = {
-                    MessagingTopAppBarTitle(
-                        modifier = Modifier,
-                        focusRequester = focusRequester,
-                        searchQuery = searchQuery,
-                        isSearching = uiState.isSearching,
-                        onChangeValueQuery = { event(MessagingUiEvent.OnSearchQueryChanged(it)) },
-                        onClearSearchQuery = { event(MessagingUiEvent.ClearSearchQuery) },
-                        onClickSearch = { event(MessagingUiEvent.OnClickSearch) }
-                    )
-                },
-                backgroundColor = MaterialTheme.colors.background,
-                navigationIcon = {
-                    IconButton(onClick = { event(MessagingUiEvent.CloseScreen) }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Top App Bar Icon",
-                            tint = MaterialTheme.colors.onBackground)
-                    }
-                })
-
-
-            if (uiState.isSearching) {
-
-                SearchUserSection(
-                    searchQuery = searchQuery,
-                    state = state,
-                    event = event
-                )
-            }
-
 
 
             Box(
@@ -108,9 +63,8 @@ internal fun ChatScreenContent(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
                         )
 
-                        ChatsSection(chatsModel = state.chatsModel, onClick = { n ->
-
-
+                        ChatsSection(chatsModel = state.chatsModel, onClick = {
+                            event(ChatUiEvent.OnSelectConversation(it))
                         })
                     }
                 }
@@ -194,10 +148,8 @@ fun PreviewChatScreenContentDark() {
     CyclistanceTheme(darkTheme = true) {
         ChatScreenContent(
             state = ChatState(chatsModel = fakeMessages),
-            uiState = MessagingUiState(),
-            searchQuery = TextFieldValue("apiosdmnaisnd"),
-            focusRequester = FocusRequester(),
-            event = {})
+            event =  {}
+           )
     }
 }
 
@@ -207,10 +159,8 @@ fun PreviewChatScreenContentLight() {
     CyclistanceTheme(darkTheme = false) {
         ChatScreenContent(
             state = ChatState(chatsModel = fakeMessages),
-            uiState = MessagingUiState(),
-            searchQuery = TextFieldValue("apiosdmnaisnd"),
-            focusRequester = FocusRequester(),
-            event = {})
+            event =  {}
+           )
     }
 }
 

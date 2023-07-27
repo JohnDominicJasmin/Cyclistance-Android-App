@@ -27,34 +27,13 @@ class ChatsViewModel @Inject constructor(
 
     init {
         refreshToken()
-        getUsers()
     }
 
     private fun isLoading(isLoading: Boolean) {
         _state.update { it.copy(isLoading = isLoading) }
     }
 
-    private fun getUsers() {
-        viewModelScope.launch {
-            runCatching {
-                isLoading(true)
-                messagingUseCase.getUsersUseCase()
-            }.onSuccess { model ->
-                _state.update { it.copy(messagingUsers = model) }
-            }.onFailure {
-                Timber.e("Failed to retrieve chats ${it.message}")
-            }
-            isLoading(false)
-            savedStateHandle[MESSAGING_VM_STATE_KEY] = _state.value
-        }
-    }
 
-    /*private fun onEvent(event: ChatEvent) {
-        when (event) {
-            is ChatEvent.GetChats -> getChats()
-        }
-    }
-    */
     private fun refreshToken() {
         viewModelScope.launch(SupervisorJob()) {
             runCatching {
