@@ -138,11 +138,11 @@ fun NavScreen(
         editProfileViewModel.eventFlow.distinctUntilChanged().collect { event ->
             when (event) {
                 is EditProfileEvent.GetNameSuccess -> {
-                    navUiState = navUiState.copy(name = event.name)
+                    navUiState = navUiState.copy(drawerDisplayName = event.name)
                 }
 
                 is EditProfileEvent.GetPhotoUrlSuccess -> {
-                    navUiState = navUiState.copy(photoUrl = event.photoUrl)
+                    navUiState = navUiState.copy(drawerPhotoUrl = event.photoUrl)
                 }
 
                 else -> {}
