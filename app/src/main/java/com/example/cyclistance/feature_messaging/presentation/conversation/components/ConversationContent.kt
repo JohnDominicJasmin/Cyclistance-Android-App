@@ -7,25 +7,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -38,18 +31,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
 import com.example.cyclistance.core.utils.composable_utils.keyboardAsState
@@ -64,8 +51,6 @@ import com.example.cyclistance.feature_messaging.presentation.conversation.state
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
-import com.example.cyclistance.top_bars.TitleTopAppBar
-import com.example.cyclistance.top_bars.TopAppBarCreator
 import kotlinx.coroutines.launch
 import java.util.Date
 
@@ -236,148 +221,106 @@ fun ConversationContent(
     }
 
 
-    Scaffold(modifier = modifier, backgroundColor = MaterialTheme.colors.background, topBar = {
-            TopAppBarCreator(
-                icon = Icons.Default.Close,
-                onClickIcon = { event(ConversationUiEvent.CloseConversationScreen) },
-                topAppBarTitle = {
+
+    Surface(
+        modifier = modifier
+            .fillMaxSize()
+            .noRippleClickable {
+
+                event(ConversationUiEvent.ResetSelectedIndex)
+
+                if (uiState.messageAreaExpanded) {
+                    event(ConversationUiEvent.ToggleMessageArea)
+                }
+                focusManager.clearFocus()
+            },
+        color = MaterialTheme.colors.background) {
+
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = if (conversationAvailable) Alignment.BottomCenter else Alignment.Center) {
 
 
-                    Row(
-                        modifier = Modifier.wrapContentSize(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(state.chatPhotoUrl)
-                                .crossfade(true)
-                                .networkCachePolicy(CachePolicy.ENABLED)
-                                .diskCachePolicy(CachePolicy.ENABLED)
-                                .memoryCachePolicy(CachePolicy.ENABLED)
-                                .build(),
-                            alignment = Alignment.Center,
-                            contentDescription = "User Profile Image",
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .size(45.dp),
-                            contentScale = ContentScale.Crop,
-                            placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
-                            error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
-                            fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
-                        TitleTopAppBar(
-                            title = state.chatName,
-                            modifier = Modifier.padding(start = 5.dp))
-                    }
-                })
+            Column(
+                modifier = Modifier.fillMaxSize()) {
 
 
-        }) { paddingValues ->
+                if (conversationAvailable) {
 
-            Surface(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .noRippleClickable {
+                    LazyColumn(
+                        state = listState,
+                        verticalArrangement = Arrangement.Top,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier.weight(1f),
+                        contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)
+                    ) {
 
-                        event(ConversationUiEvent.ResetSelectedIndex)
+                        itemsIndexed(
+                            items = state.conversationsModel.messages,
+                            key = { _, item -> item.messageId }) { index, message ->
 
-                        if (uiState.messageAreaExpanded) {
-                            event(ConversationUiEvent.ToggleMessageArea)
-                        }
-                        focusManager.clearFocus()
-                    },
-                color = MaterialTheme.colors.background) {
+                            val isSender by remember { derivedStateOf { message.senderId != USER_ID } }
+                            val timeStampAvailable by remember { derivedStateOf { message.messageDuration != null && message.timeStamp != null } }
 
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = if (conversationAvailable) Alignment.BottomCenter else Alignment.Center) {
+                            AnimatedVisibility(visible = timeStampAvailable) {
 
-
-                    Column(
-                        modifier = Modifier.fillMaxSize()) {
-
-
-                        if (conversationAvailable) {
-
-                            LazyColumn(
-                                state = listState,
-                                verticalArrangement = Arrangement.Top,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.weight(1f),
-                                contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)
-                            ) {
-
-                                itemsIndexed(
-                                    items = state.conversationsModel.messages,
-                                    key = { _, item -> item.messageId }) { index, message ->
-
-                                    val isSender by remember { derivedStateOf { message.senderId != USER_ID } }
-                                    val timeStampAvailable by remember { derivedStateOf { message.messageDuration != null && message.timeStamp != null } }
-
-                                    AnimatedVisibility(visible = timeStampAvailable) {
-
-                                        MessagingTimeStamp(
-                                            value = message.timeStamp!!.toReadableDateTime(),
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(vertical = 8.dp))
-                                    }
-
-
-                                    ChatItem(
-                                        conversation = message,
-                                        isSender = isSender,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(vertical = 8.dp, horizontal = 6.dp),
-                                        contentAlignment = if (isSender) Alignment.CenterStart else Alignment.CenterEnd,
-                                        currentIndex = index,
-                                        selectedIndex = uiState.chatItemSelectedIndex,
-                                        onSelectChatMessage = {
-                                            event(
-                                                ConversationUiEvent.SelectChatItem(
-                                                    index = it))
-                                        }
-                                    )
-                                }
-
+                                MessagingTimeStamp(
+                                    value = message.timeStamp!!.toReadableDateTime(),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 8.dp))
                             }
 
-                        } else {
-                            PlaceholderEmptyConversation(
+
+                            ChatItem(
+                                conversation = message,
+                                isSender = isSender,
                                 modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxSize())
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp, horizontal = 6.dp),
+                                contentAlignment = if (isSender) Alignment.CenterStart else Alignment.CenterEnd,
+                                currentIndex = index,
+                                selectedIndex = uiState.chatItemSelectedIndex,
+                                onSelectChatMessage = {
+                                    event(
+                                        ConversationUiEvent.SelectChatItem(
+                                            index = it))
+                                }
+                            )
                         }
-
-
-
-
-                        MessagingTextArea(
-                            message = message,
-                            onValueChange = { event(ConversationUiEvent.OnChangeValueMessage(it)) },
-                            modifier = Modifier.wrapContentHeight(),
-                            onClickSend = { event(ConversationUiEvent.OnSendMessage) },
-                            onToggleExpand = { event(ConversationUiEvent.ToggleMessageArea) },
-                            isExpanded = uiState.messageAreaExpanded)
 
                     }
 
-                    ScrollToBottomButton(
-                        modifier = Modifier.absoluteOffset(y = (-85).dp),
-                        isVisible = isScrollingUp,
-                        onClick = {
-                            scope.launch {
-                                listState.animateScrollToItem(index = state.conversationsModel.messages.indices.last)
-                            }
-                        })
-
+                } else {
+                    PlaceholderEmptyConversation(
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxSize())
                 }
 
-            }
-        }
 
+
+
+                MessagingTextArea(
+                    message = message,
+                    onValueChange = { event(ConversationUiEvent.OnChangeValueMessage(it)) },
+                    modifier = Modifier.wrapContentHeight(),
+                    onClickSend = { event(ConversationUiEvent.OnSendMessage) },
+                    onToggleExpand = { event(ConversationUiEvent.ToggleMessageArea) },
+                    isExpanded = uiState.messageAreaExpanded)
+
+            }
+
+            ScrollToBottomButton(
+                modifier = Modifier.absoluteOffset(y = (-85).dp),
+                isVisible = isScrollingUp,
+                onClick = {
+                    scope.launch {
+                        listState.animateScrollToItem(index = state.conversationsModel.messages.indices.last)
+                    }
+                })
+        }
+    }
 }
 
 
