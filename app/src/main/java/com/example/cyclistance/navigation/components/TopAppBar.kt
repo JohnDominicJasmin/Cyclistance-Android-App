@@ -36,7 +36,11 @@ import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.SHOUL
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_NAME
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_PHOTO_URL
-import com.example.cyclistance.core.utils.constants.NavigationConstants
+import com.example.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_ID
+import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.state.NavUiState
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -64,7 +68,7 @@ fun TopAppBar(
             }
         }
 
-        "${Screens.MappingNavigation.CancellationScreen.screenRoute}/{${NavigationConstants.CANCELLATION_TYPE}}/{${NavigationConstants.TRANSACTION_ID}}/{${NavigationConstants.CLIENT_ID}}" -> {
+        "${Screens.MappingNavigation.CancellationScreen.screenRoute}/{${CANCELLATION_TYPE}}/{${TRANSACTION_ID}}/{${CLIENT_ID}}" -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -73,7 +77,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.MappingNavigation.ConfirmDetailsScreen.screenRoute + "?${NavigationConstants.LATITUDE}={${NavigationConstants.LATITUDE}}&${NavigationConstants.LONGITUDE}={${NavigationConstants.LONGITUDE}}" -> {
+        Screens.MappingNavigation.ConfirmDetailsScreen.screenRoute + "?${LATITUDE}={${LATITUDE}}&${LONGITUDE}={${LONGITUDE}}" -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
