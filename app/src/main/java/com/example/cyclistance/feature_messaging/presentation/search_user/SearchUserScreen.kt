@@ -1,10 +1,8 @@
 package com.example.cyclistance.feature_messaging.presentation.search_user
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.FastOutLinearInEasing
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,7 +29,6 @@ fun SearchUserScreen(
     viewModel: SearchUserViewModel = hiltViewModel(),
     navController: NavController,
     paddingValues: PaddingValues) {
-
     val focusRequester = remember { FocusRequester() }
     val state by viewModel.state.collectAsStateWithLifecycle()
     var searchQuery by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -42,7 +39,6 @@ fun SearchUserScreen(
 
     val closeMessagingScreen = remember {
         {
-
             navController.popBackStack()
         }
     }
@@ -74,16 +70,8 @@ fun SearchUserScreen(
     }
 
 
-
     SearchUserContent(
-        modifier = Modifier
-            .animateContentSize(
-                animationSpec = tween(
-                    durationMillis = 1,
-                    easing = FastOutLinearInEasing
-                )
-            )
-            .padding(paddingValues),
+        modifier = Modifier.fillMaxSize().padding(paddingValues = paddingValues),
         searchQuery = searchQuery,
         focusRequester = focusRequester,
         state = state,
