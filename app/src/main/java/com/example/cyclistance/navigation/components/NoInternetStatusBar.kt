@@ -8,6 +8,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -20,21 +21,25 @@ import com.example.cyclistance.theme.White900
 @Composable
 fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 
-    val inShowableScreens =
-        route != Screens.SettingsNavigation.SettingScreen.screenRoute &&
-        route != Screens.OnBoardingNavigation.IntroSliderScreen.screenRoute &&
-        route != Screens.RideHistoryNavigation.RideHistoryScreen.screenRoute &&
-        route != Screens.RideHistoryNavigation.RideHistoryDetailsScreen.screenRoute &&
-        route != Screens.EmergencyCallNavigation.EmergencyCallScreen.screenRoute &&
-        route != Screens.MessagingNavigation.SearchUserScreen.screenRoute
+    val inShowableScreens = remember(route) {
+        val nonShowableScreens = listOf(
+            Screens.SettingsNavigation.SettingScreen.screenRoute,
+            Screens.OnBoardingNavigation.IntroSliderScreen.screenRoute,
+            Screens.RideHistoryNavigation.RideHistoryScreen.screenRoute,
+            Screens.RideHistoryNavigation.RideHistoryDetailsScreen.screenRoute,
+            Screens.EmergencyCallNavigation.EmergencyCallScreen.screenRoute,
+            Screens.MessagingNavigation.SearchUserScreen.screenRoute
+        )
+        route !in nonShowableScreens
+    }
 
 
- if(internetAvailable.not() && inShowableScreens){
+    if (internetAvailable.not() && inShowableScreens) {
         Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .background(Black900)
-                .fillMaxWidth()) {
+                .fillMaxWidth()){
 
             Text(
                 text = "No Connection",
