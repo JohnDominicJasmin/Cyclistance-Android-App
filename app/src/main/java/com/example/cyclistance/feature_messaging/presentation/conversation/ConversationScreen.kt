@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,7 +26,8 @@ import com.example.cyclistance.feature_messaging.presentation.conversation.state
 fun ConversationScreen(
     viewModel: ConversationViewModel = hiltViewModel(),
     navController: NavController,
-    paddingValues: PaddingValues
+    paddingValues: PaddingValues,
+    newConversationDetails: (name: String, photoUrl: String) -> Unit
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -95,9 +97,18 @@ fun ConversationScreen(
         }
     })
 
+    LaunchedEffect(key1 = state.chatName, key2 = state.chatPhotoUrl) {
+        newConversationDetails(
+             state.chatName,
+             state.chatPhotoUrl
+        )
+    }
+
 
     ConversationContent(
-        modifier = Modifier.fillMaxSize().padding(paddingValues = paddingValues),
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues = paddingValues),
         uiState = uiState,
         state = state,
         message = message,

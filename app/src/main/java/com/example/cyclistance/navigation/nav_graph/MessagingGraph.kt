@@ -20,7 +20,8 @@ import com.example.cyclistance.navigation.Screens
 
 fun NavGraphBuilder.messagingGraph(
     navController: NavController,
-    paddingValues: PaddingValues) {
+    paddingValues: PaddingValues,
+    newConversationDetails: (name: String, photoUrl: String) -> Unit) {
 
     navigation(
         startDestination = Screens.MessagingNavigation.ChatScreen.screenRoute,
@@ -57,9 +58,12 @@ fun NavGraphBuilder.messagingGraph(
 
             ConversationScreen(
                 navController = navController,
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
+                newConversationDetails = newConversationDetails
             )
         }
+
+
     }
 }
 
