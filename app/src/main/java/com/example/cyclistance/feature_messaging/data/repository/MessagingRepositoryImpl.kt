@@ -106,8 +106,9 @@ class MessagingRepositoryImpl(
         snapShotListener?.remove()
     }
 
-    override fun addMessageListener(receiverId: String) {
-        checkInternetConnection()
+    override fun addMessageListener(
+        receiverId: String,
+        onNewMessage: (ConversationsModel) -> Unit) {
 
         val userUid = getUid()
 
