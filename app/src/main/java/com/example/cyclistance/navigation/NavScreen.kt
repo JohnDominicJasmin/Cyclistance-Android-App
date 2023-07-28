@@ -2,7 +2,6 @@ package com.example.cyclistance.navigation
 
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,7 +32,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.core.utils.composable_utils.ComposableLifecycle
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping.data.data_source.local.network_observer.NetworkConnectivityChecker
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.drawer.MappingDrawerContent
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.drawer.NavigationDrawerContent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
@@ -43,9 +42,11 @@ import com.example.cyclistance.feature_settings.presentation.setting_screen.even
 import com.example.cyclistance.navigation.components.NoInternetStatusBar
 import com.example.cyclistance.navigation.components.TopAppBar
 import com.example.cyclistance.navigation.event.NavEvent
+import com.example.cyclistance.navigation.event.NavUiEvent
 import com.example.cyclistance.navigation.event.NavVmEvent
 import com.example.cyclistance.navigation.nav_graph.NavGraph
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
+import com.example.cyclistance.navigation.nav_graph.navigateScreenInclusively
 import com.example.cyclistance.navigation.state.NavUiState
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -56,7 +57,7 @@ import kotlinx.coroutines.launch
 
 val IsDarkTheme = compositionLocalOf { false }
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun NavScreen(
     settingViewModel: SettingViewModel = hiltViewModel(),
@@ -155,8 +156,10 @@ fun NavScreen(
             when (event) {
 
                 is SettingUiEvent.SignOutSuccess -> {
-                    navController.popBackStack()
-                    navController.navigate(Screens.AuthenticationNavigation.ROUTE)
+
+                    navController.navigateScreenInclusively(
+                        Screens.AuthenticationNavigation.ROUTE,
+                        Screens.MappingNavigation.ROUTE)
                 }
 
                 is SettingUiEvent.SignOutFailed -> {
@@ -243,6 +246,15 @@ fun NavScreen(
         }
     }
 
+    val newConversationDetails = remember {
+        { name: String, photoUrl: String ->
+            navUiState = navUiState.copy(
+                conversationName = name,
+                conversationPhotoUrl = photoUrl
+            )
+        }
+    }
+
 
 
 
@@ -267,7 +279,7 @@ fun NavScreen(
                                     onClickMenuIcon = onClickMenuIcon,
                                     onClickArrowBackIcon = onClickArrowBackIcon,
                                     onClickSearchMessagingUser = onClickSearchMessagingUser,
-                                    isNavigating = navUiState.isNavigating)
+                                    uiState = navUiState)
 
                                 NoInternetStatusBar(
                                     navUiState.internetAvailable,
@@ -277,7 +289,7 @@ fun NavScreen(
                         }
                     },
                     drawerContent = {
-                        MappingDrawerContent(
+                        NavigationDrawerContent(
                             onClickSettings = onClickSettings,
                             onClickChat = onClickChat,
                             onClickSignOut = onClickSignOut,
@@ -289,13 +301,16 @@ fun NavScreen(
                 ) { paddingValues ->
                     navState.navigationStartingDestination?.let {
                         NavGraph(
-                            hasInternetConnection = navUiState.internetAvailable,
+                            uiState = navUiState.copy(startingDestination = it),
                             navController = navController,
                             paddingValues = paddingValues,
-                            onChangeNavigatingState = onChangeNavigatingState,
-                            onToggleTheme = onToggleTheme,
-                            isNavigating = navUiState.isNavigating,
-                            startingDestination = it
+                            event = { event ->
+                                when (event) {
+                                    is NavUiEvent.NewConversationDetails -> newConversationDetails(event.chatName, event.chatPhotoUrl)
+                                    is NavUiEvent.OnChangeNavigation -> onChangeNavigatingState(event.isNavigating)
+                                    is NavUiEvent.OnToggleTheme -> onToggleTheme()
+                                }
+                            }
                         )
                     }
                 }
