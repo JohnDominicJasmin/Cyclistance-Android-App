@@ -117,6 +117,7 @@ class MessagingRepositoryImpl(
         onNewMessage: (ConversationsModel) -> Unit) {
 
         val userUid = getUid()
+        chatMessages.clearMessage()
 
         val eventListener = { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
             if (value == null) {
