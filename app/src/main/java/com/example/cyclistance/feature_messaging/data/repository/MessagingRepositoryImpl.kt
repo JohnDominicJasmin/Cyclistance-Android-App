@@ -21,16 +21,15 @@ import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.helper.Conversation
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
-import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.MetadataChanges
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
@@ -124,18 +123,21 @@ class MessagingRepositoryImpl(
 
             value.documentChanges.filter { it.type == DocumentChange.Type.ADDED }
                 .forEach { documentChange ->
-                    val document = documentChange.document
-                    handleDocumentChange(document)
+                    val message = documentChange.document.toConversationItem()
+                    chatMessages.addMessage(message)
                 }
 
             chatMessages.getMessages().sortedBy { it.timeStamp }
-            Timber.d("Messages: ${chatMessages.getMessages()}")
+            onNewMessage(
+                ConversationsModel(
+                    messages = chatMessages.getMessages()
+                ))
         }
 
         snapShotListener = fireStore.collection(KEY_CHAT_COLLECTION)
             .whereIn(KEY_SENDER_ID, listOf(userUid, receiverId))
             .whereIn(KEY_RECEIVER_ID, listOf(userUid, receiverId))
-            .addSnapshotListener(eventListener)
+            .addSnapshotListener(MetadataChanges.INCLUDE,eventListener)
 
     }
 
@@ -156,32 +158,35 @@ class MessagingRepositoryImpl(
     }
 
     override suspend fun getUsers(): MessagingUserModel {
-        checkInternetConnection()
         return withContext(scope) {
             suspendCancellableCoroutine { continuation ->
-                fireStore.collection(USER_COLLECTION).get().addOnSuccessListener {
-                    it.documents.let { documents ->
-                        val users: List<MessagingUserItemModel> = documents.map { document ->
-                            document.toMessageUser()
-
+                fireStore.collection(USER_COLLECTION)
+                    .addSnapshotListener(MetadataChanges.INCLUDE) { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
+                        if (value == null) {
+                            throw MessagingExceptions.GetMessageUsersFailure(message = "Cannot get message users, value is null")
+                        }
+                        if (error != null) {
+                            throw MessagingExceptions.GetMessageUsersFailure(
+                                message = error.message ?: "Unknown error occurred")
                         }
 
-                        if (continuation.isActive) {
-                            continuation.resume(MessagingUserModel(users = users))
+                        value.documents.let { documents ->
+
+                            val users: List<MessagingUserItemModel> = documents.map { document ->
+                                document?.toMessageUser() ?: MessagingUserItemModel()
+                            }
+
+                            if (continuation.isActive) {
+                                continuation.resume(MessagingUserModel(users = users))
+                            }
                         }
                     }
-                }.addOnFailureListener {
-                    if (it is FirebaseNetworkException) {
-                        continuation.resumeWithException(
-                            MessagingExceptions.NetworkException(
-                                message = it.message!!))
-                    }
-                }
             }
         }
 
 
     }
+
 
     override fun sendMessage(sendMessageModel: SendMessageModel) {
         checkInternetConnection()
@@ -191,7 +196,7 @@ class MessagingRepositoryImpl(
             KEY_SENDER_ID to uid,
             KEY_RECEIVER_ID to sendMessageModel.receiverId,
             KEY_MESSAGE to sendMessageModel.message,
-            KEY_TIMESTAMP to Date(),
+            KEY_TIMESTAMP to Date()
         )
 
         fireStore.collection(KEY_CHAT_COLLECTION).add(message).addOnSuccessListener {

@@ -5,4 +5,5 @@ object MessagingExceptions {
     class TokenException(message: String) : RuntimeException(message)
     class SendMessagingFailure(message: String) : RuntimeException(message)
     class ListenMessagingFailure(message: String) : RuntimeException(message)
+    class GetMessageUsersFailure(message: String) : RuntimeException(message)
 }
