@@ -10,7 +10,8 @@ import kotlinx.parcelize.Parcelize
 @StableState
 data class ConversationState(
     val conversationsModel: ConversationsModel = ConversationsModel(),
-    val chatName: String = "",
-    val chatId: String = "",
-    val chatPhotoUrl: String = "",
+    val conversationName: String = "",
+    val conversationUid: String = "",
+    val conversationPhotoUrl: String = "",
+    val userUid: String = ""
 ) : Parcelable

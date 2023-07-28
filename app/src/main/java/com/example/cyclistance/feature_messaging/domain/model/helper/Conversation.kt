@@ -12,7 +12,9 @@ class Conversation {
     fun getMessages(): List<ConversationItemModel> {
         return messages
     }
-
+    fun clearMessage() {
+        messages.clear()
+    }
     fun getMessagesBetween(senderId: String, recipientId: String): List<ConversationItemModel> {
         return messages.filter { it.senderId == senderId && it.receiverId == recipientId }
     }
