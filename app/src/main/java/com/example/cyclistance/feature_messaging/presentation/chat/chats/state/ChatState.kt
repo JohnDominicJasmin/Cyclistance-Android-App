@@ -9,5 +9,6 @@ import kotlinx.parcelize.Parcelize
 @StableState
 data class ChatState(
     val chatsModel: ChatsModel = ChatsModel(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val isRefreshing: Boolean = false,
 ) : Parcelable
