@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -14,7 +16,7 @@ apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: "kotlin-parcelize"
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         applicationId "com.example.cyclistance"
@@ -86,7 +88,7 @@ android {
 
 
     subprojects {
-        tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+        tasks.withType(KotlinCompile).configureEach {
             kotlinOptions {
                 if (project.findProperty("myapp.enableComposeCompilerReports") == "true") {
                     freeCompilerArgs += [
@@ -109,8 +111,8 @@ android {
 dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-compose:2.6.1"
     implementation 'androidx.core:core-ktx:1.10.1'
-    implementation "androidx.compose.ui:ui:1.5.0-beta02"
-    implementation "androidx.compose.material:material:1.5.0-beta02"
+    implementation "androidx.compose.ui:ui:1.6.0-alpha01"
+    implementation "androidx.compose.material:material:1.6.0-alpha01"
     implementation "androidx.compose.ui:ui-tooling-preview:1.4.3"
     implementation "androidx.navigation:navigation-compose:2.6.0"
     implementation "androidx.compose.material:material-icons-extended:1.4.3"
@@ -127,7 +129,7 @@ dependencies {
     implementation 'androidx.core:core-ktx:1.10.1'
 
     debugImplementation "androidx.compose.ui:ui-tooling:1.4.3"
-    implementation "androidx.compose.compiler:compiler:1.4.7"
+    implementation "androidx.compose.compiler:compiler:1.5.0"
     implementation "androidx.constraintlayout:constraintlayout-compose:1.0.1"
 
 
@@ -246,9 +248,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-messaging-ktx'
 
 
-    //livedata
-    implementation 'androidx.compose.runtime:runtime-livedata:1.5.0-beta02'
-    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.1"
+
 
     //IOSocket Websocket
     implementation('io.socket:socket.io-client:2.1.0') {
