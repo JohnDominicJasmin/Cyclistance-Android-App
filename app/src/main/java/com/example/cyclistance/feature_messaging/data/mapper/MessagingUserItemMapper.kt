@@ -5,7 +5,7 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.google.firebase.firestore.DocumentSnapshot
 
-object MessagingUserDetailsMapper {
+object MessagingUserItemMapper {
     fun DocumentSnapshot.toMessageUser(): MessagingUserItemModel {
         return MessagingUserItemModel(
             userDetails = UserDetails(
@@ -18,4 +18,6 @@ object MessagingUserDetailsMapper {
 
         )
     }
+
+    
 }
