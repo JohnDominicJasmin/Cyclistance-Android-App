@@ -1,0 +1,86 @@
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/chats/event/MessagingUiEvent.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_messaging.presentation.chat.chats.event\n\nimport androidx.compose.ui.text.input.TextFieldValue\n\nsealed class MessagingUiEvent {\n    object CloseScreen : MessagingUiEvent()\n    data class OnSelectConversation(val name: String, val id: String, val photoUrl: String) :\n        MessagingUiEvent()\n\n    data class OnSearchQueryChanged(val searchQuery: TextFieldValue) : MessagingUiEvent()\n    object OnClickSearch : MessagingUiEvent()\n    object ClearSearchQuery : MessagingUiEvent()\n    object DismissSearchMessageDialog : MessagingUiEvent()\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/chats/event/MessagingUiEvent.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/chats/event/MessagingUiEvent.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/chats/event/MessagingUiEvent.kt	(revision 839d8c84ee350ad3382ff2d0e5077bcc8ff70370)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/chats/event/MessagingUiEvent.kt	(date 1690373844780)
+@@ -4,8 +4,10 @@
+ 
+ sealed class MessagingUiEvent {
+     object CloseScreen : MessagingUiEvent()
+-    data class OnSelectConversation(val name: String, val id: String, val photoUrl: String) :
+-        MessagingUiEvent()
++    data class OnSelectConversation(
++        val name: String,
++        val id: String,
++        val photoUrl: String) : MessagingUiEvent()
+ 
+     data class OnSearchQueryChanged(val searchQuery: TextFieldValue) : MessagingUiEvent()
+     object OnClickSearch : MessagingUiEvent()
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/chats/ChatsScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_messaging.presentation.chat.chats\n\nimport androidx.activity.compose.BackHandler\nimport androidx.compose.foundation.layout.PaddingValues\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.saveable.rememberSaveable\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.focus.FocusRequester\nimport androidx.compose.ui.text.input.TextFieldValue\nimport androidx.hilt.navigation.compose.hiltViewModel\nimport androidx.lifecycle.compose.collectAsStateWithLifecycle\nimport androidx.navigation.NavController\nimport com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel\nimport com.example.cyclistance.feature_messaging.presentation.chat.chats.components.ChatScreenContent\nimport com.example.cyclistance.feature_messaging.presentation.chat.chats.event.MessagingUiEvent\nimport com.example.cyclistance.feature_messaging.presentation.chat.chats.state.MessagingUiState\nimport com.example.cyclistance.navigation.Screens\nimport com.example.cyclistance.navigation.nav_graph.navigateScreen\nimport java.net.URLEncoder\nimport java.nio.charset.StandardCharsets\n\n@Composable\nfun ChatsScreen(\n    viewModel: ChatsViewModel = hiltViewModel(),\n    navController: NavController,\n    paddingValues: PaddingValues) {\n\n    val focusRequester = remember { FocusRequester() }\n    val state by viewModel.state.collectAsStateWithLifecycle()\n    var uiState by rememberSaveable { mutableStateOf(MessagingUiState()) }\n    var searchQuery by rememberSaveable(stateSaver = TextFieldValue.Saver) {\n        mutableStateOf(\n            TextFieldValue())\n    }\n    val onDismissSearchMessageDialog = remember {\n        {\n            uiState = uiState.copy(\n                isSearching = false\n            )\n        }\n    }\n\n    val closeMessagingScreen = remember {\n        {\n            if (uiState.isSearching) {\n                onDismissSearchMessageDialog()\n            } else {\n                navController.popBackStack()\n            }\n        }\n    }\n    val onSelectConversation = remember {\n        { chatItem: MessagingUserItemModel ->\n            val encodedUrl =\n                URLEncoder.encode(chatItem.userDetails.photo, StandardCharsets.UTF_8.toString())\n            navController.navigateScreen(\n                destination = \"${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userDetails.uid}/$encodedUrl/${chatItem.userDetails.name}\",\n                popUpToDestination = Screens.MessagingNavigation.ChatScreen.screenRoute\n            )\n        }\n    }\n    val onClickSearch = remember {\n        {\n            uiState = uiState.copy(\n                isSearching = true\n            )\n        }\n    }\n\n    val onSearchQueryChanged = remember {\n        { _searchQuery: TextFieldValue ->\n            searchQuery = _searchQuery\n        }\n    }\n\n    val onClearSearchQuery = remember {\n        {\n            searchQuery = TextFieldValue()\n        }\n    }\n\n    BackHandler {\n        closeMessagingScreen()\n    }\n\n\n\n\n\n    ChatScreenContent(\n        state = state,\n        uiState = uiState,\n        modifier = Modifier.padding(paddingValues),\n        searchQuery = searchQuery,\n        focusRequester = focusRequester,\n        event = { event ->\n            when (event) {\n                is MessagingUiEvent.CloseScreen -> closeMessagingScreen()\n                is MessagingUiEvent.OnSelectConversation -> onSelectConversation(event.messageItem)\n                is MessagingUiEvent.OnClickSearch -> onClickSearch()\n                is MessagingUiEvent.OnSearchQueryChanged -> onSearchQueryChanged(event.searchQuery)\n                is MessagingUiEvent.ClearSearchQuery -> onClearSearchQuery()\n                is MessagingUiEvent.DismissSearchMessageDialog -> onDismissSearchMessageDialog()\n            }\n        },\n    )\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/chats/ChatsScreen.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/chats/ChatsScreen.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/chats/ChatsScreen.kt	(revision 839d8c84ee350ad3382ff2d0e5077bcc8ff70370)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/chats/ChatsScreen.kt	(date 1690374109762)
+@@ -15,7 +15,6 @@
+ import androidx.hilt.navigation.compose.hiltViewModel
+ import androidx.lifecycle.compose.collectAsStateWithLifecycle
+ import androidx.navigation.NavController
+-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
+ import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.ChatScreenContent
+ import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.MessagingUiEvent
+ import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.MessagingUiState
+@@ -52,14 +51,16 @@
+             } else {
+                 navController.popBackStack()
+             }
++
+         }
+     }
++
+     val onSelectConversation = remember {
+-        { chatItem: MessagingUserItemModel ->
++        { name: String, id: String, photoUrl: String ->
+             val encodedUrl =
+-                URLEncoder.encode(chatItem.userDetails.photo, StandardCharsets.UTF_8.toString())
++                URLEncoder.encode(photoUrl, StandardCharsets.UTF_8.toString())
+             navController.navigateScreen(
+-                destination = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userDetails.uid}/$encodedUrl/${chatItem.userDetails.name}",
++                destination = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/$id/$encodedUrl/$name",
+                 popUpToDestination = Screens.MessagingNavigation.ChatScreen.screenRoute
+             )
+         }
+@@ -73,8 +74,8 @@
+     }
+ 
+     val onSearchQueryChanged = remember {
+-        { _searchQuery: TextFieldValue ->
+-            searchQuery = _searchQuery
++        { input: TextFieldValue ->
++            searchQuery = input
+         }
+     }
+ 
+@@ -101,7 +102,12 @@
+         event = { event ->
+             when (event) {
+                 is MessagingUiEvent.CloseScreen -> closeMessagingScreen()
+-                is MessagingUiEvent.OnSelectConversation -> onSelectConversation(event.messageItem)
++                is MessagingUiEvent.OnSelectConversation -> onSelectConversation(
++                    event.name,
++                    event.id,
++                    event.photoUrl,
++                )
++
+                 is MessagingUiEvent.OnClickSearch -> onClickSearch()
+                 is MessagingUiEvent.OnSearchQueryChanged -> onSearchQueryChanged(event.searchQuery)
+                 is MessagingUiEvent.ClearSearchQuery -> onClearSearchQuery()
