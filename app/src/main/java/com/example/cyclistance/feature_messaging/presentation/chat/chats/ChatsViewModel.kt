@@ -46,5 +46,6 @@ class ChatsViewModel @Inject constructor(
             }
             isLoading(false)
         }
+        savedStateHandle[MESSAGING_VM_STATE_KEY] = _state.value
     }
 }

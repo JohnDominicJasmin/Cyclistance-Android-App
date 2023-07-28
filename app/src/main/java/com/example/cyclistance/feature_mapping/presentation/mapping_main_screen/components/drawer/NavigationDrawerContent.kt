@@ -40,7 +40,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 
 @Composable
-fun MappingDrawerContent(
+fun NavigationDrawerContent(
     onClickEmergencyCall: () -> Unit = {},
     onClickSettings: () -> Unit = {},
     onClickRideHistory: () -> Unit = {},
@@ -69,7 +69,7 @@ fun MappingDrawerContent(
 
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(uiState.photoUrl)
+                        .data(uiState.drawerPhotoUrl)
                         .crossfade(true)
                         .networkCachePolicy(CachePolicy.ENABLED)
                         .diskCachePolicy(CachePolicy.ENABLED)
@@ -90,7 +90,7 @@ fun MappingDrawerContent(
 
 
                 Text(
-                    text = uiState.name.takeIf { it.isNotEmpty() } ?: "-----",
+                    text = uiState.drawerDisplayName.takeIf { it.isNotEmpty() } ?: "-----",
                     color = MaterialTheme.colors.onSecondary,
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(top = 7.dp, bottom = 10.dp))
@@ -164,13 +164,13 @@ fun MappingDrawerContent(
 @Composable
 fun MappingDrawerContentPreview() {
     CyclistanceTheme(true) {
-        MappingDrawerContent(
+        NavigationDrawerContent(
             onClickSettings = {},
             onClickChat = {},
             onClickSignOut = {},
             uiState = NavUiState(
-                name = "John Doe",
-                photoUrl = "https://www.w3schools.com/howto/img_avatar.png"
+                drawerDisplayName = "John Doe",
+                drawerPhotoUrl = "https://www.w3schools.com/howto/img_avatar.png"
             )
         )
     }

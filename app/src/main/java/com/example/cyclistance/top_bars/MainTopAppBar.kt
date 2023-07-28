@@ -20,18 +20,22 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun TopAppBarCreator(
+    modifier: Modifier = Modifier,
+    elevation: Dp = 10.dp,
     icon: ImageVector,
     onClickIcon: () -> Unit,
     topAppBarTitle: @Composable () -> Unit) {
 
     TopAppBar(
-        elevation = 10.dp,
+        modifier = modifier,
+        elevation = elevation,
         title = topAppBarTitle,
         backgroundColor = MaterialTheme.colors.background,
         navigationIcon = {

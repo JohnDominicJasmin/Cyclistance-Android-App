@@ -1,8 +1,5 @@
 package com.example.cyclistance.navigation.nav_graph
 
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -20,7 +17,8 @@ import com.example.cyclistance.navigation.Screens
 
 fun NavGraphBuilder.messagingGraph(
     navController: NavController,
-    paddingValues: PaddingValues) {
+    paddingValues: PaddingValues,
+    newConversationDetails: (name: String, photoUrl: String) -> Unit) {
 
     navigation(
         startDestination = Screens.MessagingNavigation.ChatScreen.screenRoute,
@@ -35,14 +33,7 @@ fun NavGraphBuilder.messagingGraph(
             )
         }
 
-        composable(Screens.MessagingNavigation.SearchUserScreen.screenRoute, exitTransition = {
-            scaleOut(
-                animationSpec = tween(
-                    durationMillis = 1,
-                    easing = FastOutSlowInEasing
-                )
-            )
-        }) {
+        composable(Screens.MessagingNavigation.SearchUserScreen.screenRoute) {
             SearchUserScreen(
                 navController = navController,
                 paddingValues = paddingValues
@@ -57,9 +48,12 @@ fun NavGraphBuilder.messagingGraph(
 
             ConversationScreen(
                 navController = navController,
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
+                newConversationDetails = newConversationDetails
             )
         }
+
+
     }
 }
 

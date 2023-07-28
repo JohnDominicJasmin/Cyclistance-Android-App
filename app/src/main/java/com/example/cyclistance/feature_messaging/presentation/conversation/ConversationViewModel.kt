@@ -74,7 +74,9 @@ class ConversationViewModel @Inject constructor(
     private fun addMessageListener(receiverId: String) {
         viewModelScope.launch {
             runCatching {
-                messagingUseCase.addMessageListenerUseCase(receiverId = receiverId)
+                messagingUseCase.addMessageListenerUseCase(receiverId = receiverId, onNewMessage = { messages ->
+
+                })
             }.onSuccess {
                 Timber.v("Successfully added message listener")
             }.onFailure {

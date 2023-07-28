@@ -9,6 +9,9 @@ import kotlinx.parcelize.Parcelize
 data class NavUiState(
     val internetAvailable: Boolean = false,
     val isNavigating: Boolean = false,
-    val photoUrl: String = "",
-    val name: String = "",
+    val startingDestination: String = "",
+    val drawerPhotoUrl: String = "",
+    val drawerDisplayName: String = "",
+    val conversationName: String = "",
+    val conversationPhotoUrl: String = "",
 ):Parcelable

@@ -53,7 +53,7 @@ fun ChatSearchItem(
             modifier = Modifier
                 .height(IntrinsicSize.Max)
                 .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+                .padding(horizontal = 12.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(
                 4.dp,
@@ -97,7 +97,7 @@ fun ChatSearchItem(
 
                 Divider(
                     modifier = Modifier.fillMaxWidth().padding(start = 12.dp),
-                    thickness = 0.8.dp,
+                    thickness = 0.4.dp,
                     color = Black500
                 )
             }

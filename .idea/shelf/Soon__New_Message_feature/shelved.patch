@@ -1,0 +1,640 @@
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/components/NewMessageContent.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/components/NewMessageContent.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/components/NewMessageContent.kt
+new file mode 100644
+--- /dev/null	(date 1690273748517)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/components/NewMessageContent.kt	(date 1690273748517)
+@@ -0,0 +1,135 @@
++package com.example.cyclistance.feature_messaging.presentation.chat.new_message.components
++
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.fillMaxSize
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.lazy.LazyColumn
++import androidx.compose.foundation.lazy.items
++import androidx.compose.material.Icon
++import androidx.compose.material.IconButton
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Surface
++import androidx.compose.material.TopAppBar
++import androidx.compose.material.icons.Icons
++import androidx.compose.material.icons.filled.ArrowBack
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.focus.FocusRequester
++import androidx.compose.ui.text.input.TextFieldValue
++import androidx.compose.ui.tooling.preview.Preview
++import androidx.compose.ui.unit.dp
++import com.example.cyclistance.core.domain.model.UserDetails
++import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
++import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
++import com.example.cyclistance.feature_messaging.presentation.chat.common.MessagingTopAppBarTitle
++import com.example.cyclistance.feature_messaging.presentation.chat.event.MessagingUiEvent
++import com.example.cyclistance.feature_messaging.presentation.chat.new_message.state.NewMessageState
++import com.example.cyclistance.feature_messaging.presentation.chat.state.MessagingUiState
++import com.example.cyclistance.theme.CyclistanceTheme
++
++@Composable
++fun NewMessageContent(
++    modifier: Modifier = Modifier,
++    focusRequester: FocusRequester,
++    searchQuery: TextFieldValue,
++    state: NewMessageState,
++    uiState: MessagingUiState,
++    event: (MessagingUiEvent) -> Unit) {
++
++    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
++        Column(modifier = Modifier.fillMaxSize()) {
++            TopAppBar(
++                elevation = 10.dp,
++                title = {
++                    MessagingTopAppBarTitle(
++                        modifier = Modifier,
++                        focusRequester = focusRequester,
++                        searchQuery = searchQuery,
++                        isSearching = uiState.isSearching,
++                        onChangeValueQuery = { event(MessagingUiEvent.OnSearchQueryChanged(it)) },
++                        onClearSearchQuery = { event(MessagingUiEvent.ClearSearchQuery) },
++                        onClickSearch = { event(MessagingUiEvent.OnClickSearch) }
++                    )
++                },
++                backgroundColor = MaterialTheme.colors.background,
++                navigationIcon = {
++                    IconButton(onClick = { event(MessagingUiEvent.CloseScreen) }) {
++                        Icon(
++                            imageVector = Icons.Default.ArrowBack,
++                            contentDescription = "Top App Bar Icon",
++                            tint = MaterialTheme.colors.onBackground)
++                    }
++                })
++
++
++
++            LazyColumn(modifier = Modifier.fillMaxSize()) {
++                items(items = state.messageUsers.users, key = { it.userDetails.uid }) { item ->
++                    NewMessageUserItem(
++                        modifier = Modifier.fillMaxWidth(),
++                        name = item.userDetails.name,
++                        photoUrl = item.userDetails.photo
++                    )
++                }
++            }
++
++
++        }
++    }
++}
++
++
++private val fakeMessageUsers = MessagingUserModel(
++    users = listOf(
++        MessagingUserItemModel(
++            userDetails = UserDetails(
++                uid = "001",
++                name = "John Doe",
++                photo = "https://img.freepik.com/free-photo/portrait-handsome-man-with-dark-hairstyle-bristle-toothy-smile-dressed-white-sweatshirt-feels-very-glad-poses-indoor-pleased-european-guy-being-good-mood-smiles-positively-emotions-concept_273609-61405.jpg"),
++        ),
++        MessagingUserItemModel(
++            userDetails = UserDetails(
++                uid = "002",
++                name = "John Doe",
++                photo = "https://img.freepik.com/free-photo/portrait-handsome-man-with-dark-hairstyle-bristle-toothy-smile-dressed-white-sweatshirt-feels-very-glad-poses-indoor-pleased-european-guy-being-good-mood-smiles-positively-emotions-concept_273609-61405.jpg"),
++        ),
++        MessagingUserItemModel(
++            userDetails = UserDetails(
++                uid = "003",
++                name = "John Doe",
++                photo = "https://img.freepik.com/free-photo/portrait-handsome-man-with-dark-hairstyle-bristle-toothy-smile-dressed-white-sweatshirt-feels-very-glad-poses-indoor-pleased-european-guy-being-good-mood-smiles-positively-emotions-concept_273609-61405.jpg"),
++        ),
++        MessagingUserItemModel(
++            userDetails = UserDetails(
++                uid = "004",
++                name = "John Doe",
++                photo = "https://img.freepik.com/free-photo/portrait-handsome-man-with-dark-hairstyle-bristle-toothy-smile-dressed-white-sweatshirt-feels-very-glad-poses-indoor-pleased-european-guy-being-good-mood-smiles-positively-emotions-concept_273609-61405.jpg"),
++        ),
++        MessagingUserItemModel(
++            userDetails = UserDetails(
++                uid = "005",
++                name = "John Doe",
++                photo = "https://img.freepik.com/free-photo/portrait-handsome-man-with-dark-hairstyle-bristle-toothy-smile-dressed-white-sweatshirt-feels-very-glad-poses-indoor-pleased-european-guy-being-good-mood-smiles-positively-emotions-concept_273609-61405.jpg"),
++        ),
++
++
++        )
++)
++
++
++@Preview
++@Composable
++private fun PreviewNewMessageContent() {
++    CyclistanceTheme(darkTheme = true) {
++        NewMessageContent(
++            modifier = Modifier,
++            focusRequester = FocusRequester(),
++            searchQuery = TextFieldValue(),
++            state = NewMessageState(
++                messageUsers = fakeMessageUsers
++            ),
++            uiState = MessagingUiState(),
++            event = {}
++        )
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/navigation/nav_graph/MessagingGraph.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.navigation.nav_graph\n\nimport androidx.compose.foundation.layout.PaddingValues\nimport androidx.navigation.NavController\nimport androidx.navigation.NavGraphBuilder\nimport androidx.navigation.NavType\nimport androidx.navigation.compose.composable\nimport androidx.navigation.navArgument\nimport androidx.navigation.navigation\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_ID\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_NAME\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_PHOTO_URL\nimport com.example.cyclistance.feature_messaging.presentation.chats.MessagingScreen\nimport com.example.cyclistance.feature_messaging.presentation.conversation.ConversationScreen\nimport com.example.cyclistance.navigation.Screens\n\nfun NavGraphBuilder.messagingGraph(\n    navController: NavController,\n    paddingValues: PaddingValues) {\n    navigation(\n        startDestination = Screens.Messaging.MessagingScreen.screenRoute,\n        route = Screens.Messaging.ROUTE\n    ) {\n        composable(Screens.Messaging.MessagingScreen.screenRoute) {\n            MessagingScreen(\n                navController = navController,\n                paddingValues = paddingValues\n            )\n        }\n\n        composable(route = Screens.Messaging.ConversationScreen.screenRoute + \"/{$CHAT_ID}/{${CHAT_PHOTO_URL}}/{$CHAT_NAME}\",\n            arguments =\n            listOf(\n                navArgument(CHAT_ID) { type = NavType.StringType },\n                navArgument(CHAT_PHOTO_URL) { type = NavType.StringType },\n                navArgument(CHAT_NAME) { type = NavType.StringType }\n            )\n        ) {\n            ConversationScreen(\n                navController = navController,\n                paddingValues = paddingValues\n            )\n        }\n    }\n}\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/navigation/nav_graph/MessagingGraph.kt b/app/src/main/java/com/example/cyclistance/navigation/nav_graph/MessagingGraph.kt
+--- a/app/src/main/java/com/example/cyclistance/navigation/nav_graph/MessagingGraph.kt	(revision 962f6630a279d1fc4b1d1b7e109041d80a3349c0)
++++ b/app/src/main/java/com/example/cyclistance/navigation/nav_graph/MessagingGraph.kt	(date 1690273748504)
+@@ -10,7 +10,8 @@
+ import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_ID
+ import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_NAME
+ import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_PHOTO_URL
+-import com.example.cyclistance.feature_messaging.presentation.chats.MessagingScreen
++import com.example.cyclistance.feature_messaging.presentation.chat.chats.ChatsScreen
++import com.example.cyclistance.feature_messaging.presentation.chat.new_message.NewMessageScreen
+ import com.example.cyclistance.feature_messaging.presentation.conversation.ConversationScreen
+ import com.example.cyclistance.navigation.Screens
+ 
+@@ -18,17 +19,31 @@
+     navController: NavController,
+     paddingValues: PaddingValues) {
+     navigation(
+-        startDestination = Screens.Messaging.MessagingScreen.screenRoute,
+-        route = Screens.Messaging.ROUTE
+-    ) {
+-        composable(Screens.Messaging.MessagingScreen.screenRoute) {
+-            MessagingScreen(
+-                navController = navController,
+-                paddingValues = paddingValues
+-            )
+-        }
++        startDestination = Screens.MessagingNavigation.ChatNavigation.ROUTE,
++        route = Screens.MessagingNavigation.ROUTE
++    ) {
++
++        navigation(
++            startDestination = Screens.MessagingNavigation.ChatNavigation.ChatScreen.screenRoute,
++            route = Screens.MessagingNavigation.ChatNavigation.ROUTE) {
++            composable(route = Screens.MessagingNavigation.ChatNavigation.ChatScreen.screenRoute) {
++                ChatsScreen(
++                    navController = navController,
++                    paddingValues = paddingValues
++                )
++            }
+ 
+-        composable(route = Screens.Messaging.ConversationScreen.screenRoute + "/{$CHAT_ID}/{${CHAT_PHOTO_URL}}/{$CHAT_NAME}",
++            composable(route = Screens.MessagingNavigation.ChatNavigation.NewMessage.screenRoute) {
++                NewMessageScreen(
++                    navController = navController,
++                    paddingValues = paddingValues
++                )
++            }
++
++
++        }
++
++        composable(route = Screens.MessagingNavigation.ConversationScreen.screenRoute + "/{$CHAT_ID}/{${CHAT_PHOTO_URL}}/{$CHAT_NAME}",
+             arguments =
+             listOf(
+                 navArgument(CHAT_ID) { type = NavType.StringType },
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/event/NewMessageUiEvent.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/event/NewMessageUiEvent.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/event/NewMessageUiEvent.kt
+new file mode 100644
+--- /dev/null	(date 1690273748330)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/event/NewMessageUiEvent.kt	(date 1690273748330)
+@@ -0,0 +1,3 @@
++package com.example.cyclistance.feature_messaging.presentation.chat.new_message.event
++
++sealed class NewMessageUiEvent
+Index: app/src/main/java/com/example/cyclistance/navigation/Screens.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.navigation\n\nsealed class Screens {\n\n\n    open class Authentication(val screenRoute: String = \"\") : Screens() {\n        companion object {\n            const val ROUTE = \"authentication\"\n        }\n\n        object SignInScreen : Authentication(screenRoute = \"sign_in_screen\")\n        object SignUpScreen : Authentication(screenRoute = \"sign_up_screen\")\n        object EmailAuthScreen : Authentication(screenRoute = \"email_auth_screen\")\n    }\n\n    open class EmergencyCall(val screenRoute: String = \"\") : Screens() {\n        companion object {\n            const val ROUTE = \"emergency_call\"\n        }\n\n        object EmergencyCallScreen : EmergencyCall(screenRoute = \"emergency_call_screen\")\n    }\n\n    open class Messaging(val screenRoute: String = \"\") : Screens() {\n        companion object {\n            const val ROUTE = \"messaging\"\n        }\n\n        object MessagingScreen : Messaging(screenRoute = \"messaging_screen\")\n        object ConversationScreen : Messaging(screenRoute = \"conversation_screen\")\n    }\n\n    open class OnBoarding(val screenRoute: String = \"\") : Screens() {\n        companion object {\n            const val ROUTE = \"on_boarding\"\n        }\n\n        object IntroSliderScreen : OnBoarding(screenRoute = \"intro_slider_screen\")\n    }\n\n    open class Mapping(val screenRoute: String = \"\") : Screens() {\n        companion object {\n            const val ROUTE = \"mapping\"\n        }\n\n        object MappingScreen : Mapping(screenRoute = \"mapping_screen\")\n        object CancellationScreen : Mapping(screenRoute = \"cancellation_screen\")\n        object ConfirmDetailsScreen : Mapping(screenRoute = \"confirm_details_screen\")\n    }\n\n    open class Settings(val screenRoute: String = \"\") : Screens() {\n\n        companion object {\n            const val ROUTE = \"settings\"\n        }\n\n        object ChangePasswordScreen : Settings(screenRoute = \"change_password_screen\")\n        object EditProfileScreen : Settings(screenRoute = \"edit_profile_screen\")\n        object SettingScreen : Settings(screenRoute = \"setting_screen\")\n    }\n\n\n    open class RideHistory(val screenRoute: String = \"\") : Screens() {\n        companion object {\n            const val ROUTE = \"ride_history\"\n        }\n\n        object RideHistoryScreen : RideHistory(screenRoute = \"ride_history_screen\")\n        object RideHistoryDetailsScreen : RideHistory(screenRoute = \"ride_history_details_screen\")\n    }\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/navigation/Screens.kt b/app/src/main/java/com/example/cyclistance/navigation/Screens.kt
+--- a/app/src/main/java/com/example/cyclistance/navigation/Screens.kt	(revision 962f6630a279d1fc4b1d1b7e109041d80a3349c0)
++++ b/app/src/main/java/com/example/cyclistance/navigation/Screens.kt	(date 1690273748510)
+@@ -3,70 +3,87 @@
+ sealed class Screens {
+ 
+ 
+-    open class Authentication(val screenRoute: String = "") : Screens() {
++    open class AuthenticationNavigation(val screenRoute: String = "") : Screens() {
+         companion object {
+-            const val ROUTE = "authentication"
++            const val ROUTE = "authentication_navigation"
+         }
+ 
+-        object SignInScreen : Authentication(screenRoute = "sign_in_screen")
+-        object SignUpScreen : Authentication(screenRoute = "sign_up_screen")
+-        object EmailAuthScreen : Authentication(screenRoute = "email_auth_screen")
++        object SignInScreen : AuthenticationNavigation(screenRoute = "sign_in_screen")
++        object SignUpScreen : AuthenticationNavigation(screenRoute = "sign_up_screen")
++        object EmailAuthScreen : AuthenticationNavigation(screenRoute = "email_auth_screen")
+     }
+ 
+-    open class EmergencyCall(val screenRoute: String = "") : Screens() {
++
++    open class EmergencyCallNavigation(val screenRoute: String = "") : Screens() {
+         companion object {
+-            const val ROUTE = "emergency_call"
++            const val ROUTE = "emergency_call_navigation"
+         }
+ 
+-        object EmergencyCallScreen : EmergencyCall(screenRoute = "emergency_call_screen")
++        object EmergencyCallScreen : EmergencyCallNavigation(screenRoute = "emergency_call_screen")
+     }
+ 
+-    open class Messaging(val screenRoute: String = "") : Screens() {
++
++    open class MessagingNavigation(open val screenRoute: String = "") : Screens() {
++
+         companion object {
+-            const val ROUTE = "messaging"
++            const val ROUTE = "messaging_navigation"
+         }
+-
+-        object MessagingScreen : Messaging(screenRoute = "messaging_screen")
+-        object ConversationScreen : Messaging(screenRoute = "conversation_screen")
+-    }
+ 
+-    open class OnBoarding(val screenRoute: String = "") : Screens() {
+-        companion object {
+-            const val ROUTE = "on_boarding"
++        sealed class ChatNavigation(override val screenRoute: String = "") : MessagingNavigation() {
++            companion object {
++                const val ROUTE = "chat_navigation"
++            }
++
++            object ChatScreen : ChatNavigation(screenRoute = "chat_screen")
++            object NewMessage : ChatNavigation(screenRoute = "new_message_screen")
+         }
+ 
+-        object IntroSliderScreen : OnBoarding(screenRoute = "intro_slider_screen")
++
++        object ConversationScreen : MessagingNavigation(screenRoute = "conversation_screen")
+     }
+ 
+-    open class Mapping(val screenRoute: String = "") : Screens() {
++
++    open class OnBoardingNavigation(val screenRoute: String = "") : Screens() {
+         companion object {
+-            const val ROUTE = "mapping"
++            const val ROUTE = "on_boarding_navigation"
+         }
+ 
+-        object MappingScreen : Mapping(screenRoute = "mapping_screen")
+-        object CancellationScreen : Mapping(screenRoute = "cancellation_screen")
+-        object ConfirmDetailsScreen : Mapping(screenRoute = "confirm_details_screen")
++        object IntroSliderScreen : OnBoardingNavigation(screenRoute = "intro_slider_screen")
+     }
+ 
+-    open class Settings(val screenRoute: String = "") : Screens() {
+ 
++    open class MappingNavigation(val screenRoute: String = "") : Screens() {
+         companion object {
+-            const val ROUTE = "settings"
++            const val ROUTE = "mapping_navigation"
+         }
+ 
+-        object ChangePasswordScreen : Settings(screenRoute = "change_password_screen")
+-        object EditProfileScreen : Settings(screenRoute = "edit_profile_screen")
+-        object SettingScreen : Settings(screenRoute = "setting_screen")
++        object MappingScreen : MappingNavigation(screenRoute = "mapping_screen")
++        object CancellationScreen : MappingNavigation(screenRoute = "cancellation_screen")
++        object ConfirmDetailsScreen : MappingNavigation(screenRoute = "confirm_details_screen")
+     }
+ 
+ 
+-    open class RideHistory(val screenRoute: String = "") : Screens() {
++    open class SettingsNavigation(val screenRoute: String = "") : Screens() {
++
+         companion object {
+-            const val ROUTE = "ride_history"
++            const val ROUTE = "settings_navigation"
++        }
++
++        object ChangePasswordScreen : SettingsNavigation(screenRoute = "change_password_screen")
++        object EditProfileScreen : SettingsNavigation(screenRoute = "edit_profile_screen")
++        object SettingScreen : SettingsNavigation(screenRoute = "setting_screen")
++    }
++
++
++    open class RideHistoryNavigation(val screenRoute: String = "") : Screens() {
++        companion object {
++            const val ROUTE = "ride_history_navigation"
+         }
+ 
+-        object RideHistoryScreen : RideHistory(screenRoute = "ride_history_screen")
+-        object RideHistoryDetailsScreen : RideHistory(screenRoute = "ride_history_details_screen")
++        object RideHistoryScreen : RideHistoryNavigation(screenRoute = "ride_history_screen")
++        object RideHistoryDetailsScreen :
++            RideHistoryNavigation(screenRoute = "ride_history_details_screen")
+     }
++
+ 
+ }
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/state/NewMessageState.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/state/NewMessageState.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/state/NewMessageState.kt
+new file mode 100644
+--- /dev/null	(date 1690268434475)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/state/NewMessageState.kt	(date 1690268434475)
+@@ -0,0 +1,12 @@
++package com.example.cyclistance.feature_messaging.presentation.chat.new_message.state
++
++import android.os.Parcelable
++import com.example.cyclistance.core.utils.annotations.StableState
++import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
++import kotlinx.parcelize.Parcelize
++
++@Parcelize
++@StableState
++data class NewMessageState(
++    val messageUsers: MessagingUserModel = MessagingUserModel()
++) : Parcelable
+Index: app/src/main/java/com/example/cyclistance/core/utils/constants/MessagingConstants.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.core.utils.constants\n\nimport androidx.datastore.preferences.core.stringPreferencesKey\n\nobject MessagingConstants {\n    const val MESSAGING_VM_STATE_KEY = \"messaging_vm_state_key\"\n    const val CONVERSATION_VM_STATE_KEY = \"conversation_vm_state_key\"\n    const val KEY_FCM_TOKEN = \"fcmToken\"\n    const val KEY_EMAIL = \"email\"\n    const val KEY_PHOTO = \"photo\"\n    const val KEY_NAME = \"name\"\n    const val KEY_UID = \"key_uid\"\n    const val KEY_CHAT_COLLECTION = \"chat\"\n    const val KEY_SENDER_ID = \"senderId\"\n    const val KEY_RECEIVER_ID = \"receiverId\"\n    const val KEY_MESSAGE = \"message\"\n    const val KEY_TIMESTAMP = \"timestamp\"\n    val SAVED_TOKEN = stringPreferencesKey(\"saved_token\")\n\n    const val CHAT_ID = \"chatId\"\n    const val CHAT_PHOTO_URL = \"chatPhotoUrl\"\n    const val CHAT_NAME = \"chatName\"\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/core/utils/constants/MessagingConstants.kt b/app/src/main/java/com/example/cyclistance/core/utils/constants/MessagingConstants.kt
+--- a/app/src/main/java/com/example/cyclistance/core/utils/constants/MessagingConstants.kt	(revision 962f6630a279d1fc4b1d1b7e109041d80a3349c0)
++++ b/app/src/main/java/com/example/cyclistance/core/utils/constants/MessagingConstants.kt	(date 1690273723114)
+@@ -5,6 +5,7 @@
+ object MessagingConstants {
+     const val MESSAGING_VM_STATE_KEY = "messaging_vm_state_key"
+     const val CONVERSATION_VM_STATE_KEY = "conversation_vm_state_key"
++    const val NEW_MESSAGE_VM_STATE_KEY = "new_message_vm_state_key"
+     const val KEY_FCM_TOKEN = "fcmToken"
+     const val KEY_EMAIL = "email"
+     const val KEY_PHOTO = "photo"
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/components/NewMessageUserItem.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/components/NewMessageUserItem.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/components/NewMessageUserItem.kt
+new file mode 100644
+--- /dev/null	(date 1690273748527)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/components/NewMessageUserItem.kt	(date 1690273748527)
+@@ -0,0 +1,92 @@
++package com.example.cyclistance.feature_messaging.presentation.chat.new_message.components
++
++import androidx.compose.foundation.background
++import androidx.compose.foundation.layout.Box
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.fillMaxSize
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.layout.size
++import androidx.compose.foundation.shape.CircleShape
++import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.material.ExperimentalMaterialApi
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Surface
++import androidx.compose.material.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.draw.clip
++import androidx.compose.ui.layout.ContentScale
++import androidx.compose.ui.platform.LocalContext
++import androidx.compose.ui.res.painterResource
++import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.text.style.TextOverflow
++import androidx.compose.ui.tooling.preview.Preview
++import androidx.compose.ui.unit.dp
++import coil.compose.AsyncImage
++import coil.request.CachePolicy
++import coil.request.ImageRequest
++import com.example.cyclistance.R
++import com.example.cyclistance.theme.CyclistanceTheme
++
++@OptIn(ExperimentalMaterialApi::class)
++@Composable
++fun NewMessageUserItem(modifier: Modifier = Modifier, photoUrl: String, name: String) {
++
++    Surface(
++        onClick = { },
++        modifier = modifier.fillMaxWidth(),
++        color = MaterialTheme.colors.background, shape = RoundedCornerShape(4.dp)) {
++
++        Row(
++            modifier = Modifier
++                .fillMaxWidth()
++                .padding(horizontal = 16.dp, vertical = 4.dp)) {
++
++            AsyncImage(
++                model = ImageRequest.Builder(LocalContext.current)
++                    .data(photoUrl)
++                    .crossfade(true)
++                    .networkCachePolicy(CachePolicy.ENABLED)
++                    .diskCachePolicy(CachePolicy.ENABLED)
++                    .memoryCachePolicy(CachePolicy.ENABLED)
++                    .build(),
++                alignment = Alignment.Center,
++                contentDescription = "User Profile Image",
++                modifier = Modifier
++                    .clip(CircleShape)
++                    .size(54.dp),
++                contentScale = ContentScale.Crop,
++                placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
++                error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
++                fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
++
++            Text(
++                text = name,
++                color = MaterialTheme.colors.onBackground,
++                maxLines = 1,
++                overflow = TextOverflow.Ellipsis,
++                style = MaterialTheme.typography.body1.copy(
++                    fontWeight = FontWeight.SemiBold,
++                ),
++                modifier = Modifier.padding(top = 4.dp).padding(horizontal = 12.dp)
++            )
++        }
++    }
++}
++
++
++@Preview
++@Composable
++private fun PreviewNewMessageUserItem() {
++    CyclistanceTheme(darkTheme = true) {
++        Box(modifier = Modifier.fillMaxSize().background(MaterialTheme.colors.background)) {
++            NewMessageUserItem(
++                modifier = Modifier,
++                photoUrl = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREz8aDOvFn1m2fCQ020dcrr-RCxey0NyF_XG6JOG1HzYoQRdBwB8U3fQJKEwG7t6Yr72Q",
++                name = "John Doe"
++            )
++        }
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/NewMessageViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/NewMessageViewModel.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/NewMessageViewModel.kt
+new file mode 100644
+--- /dev/null	(date 1690273748497)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/NewMessageViewModel.kt	(date 1690273748497)
+@@ -0,0 +1,53 @@
++package com.example.cyclistance.feature_messaging.presentation.chat.new_message
++
++import androidx.lifecycle.SavedStateHandle
++import androidx.lifecycle.ViewModel
++import androidx.lifecycle.viewModelScope
++import com.example.cyclistance.core.utils.constants.MessagingConstants.NEW_MESSAGE_VM_STATE_KEY
++import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
++import com.example.cyclistance.feature_messaging.presentation.chat.new_message.event.NewMessageUiEvent
++import com.example.cyclistance.feature_messaging.presentation.chat.new_message.state.NewMessageState
++import dagger.hilt.android.lifecycle.HiltViewModel
++import kotlinx.coroutines.flow.MutableSharedFlow
++import kotlinx.coroutines.flow.MutableStateFlow
++import kotlinx.coroutines.flow.asSharedFlow
++import kotlinx.coroutines.flow.asStateFlow
++import kotlinx.coroutines.flow.update
++import kotlinx.coroutines.launch
++import javax.inject.Inject
++
++@HiltViewModel
++class NewMessageViewModel @Inject constructor(
++    private val savedStateHandle: SavedStateHandle,
++    private val messagingUseCase: MessagingUseCase
++) : ViewModel() {
++
++
++    private val _state =
++        MutableStateFlow(savedStateHandle[NEW_MESSAGE_VM_STATE_KEY] ?: NewMessageState())
++    val state = _state.asStateFlow()
++
++    private val _event = MutableSharedFlow<NewMessageUiEvent>()
++    val event = _event.asSharedFlow()
++
++    init {
++        getUsers()
++    }
++
++    private fun getUsers() {
++        viewModelScope.launch {
++            runCatching {
++                messagingUseCase.getUsersUseCase()
++            }.onSuccess { model ->
++                _state.update {
++                    it.copy(
++                        messageUsers = model
++                    )
++                }
++            }.onFailure {
++
++            }
++        }
++
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/NewMessageScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/NewMessageScreen.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/NewMessageScreen.kt
+new file mode 100644
+--- /dev/null	(date 1690273748520)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/chat/new_message/NewMessageScreen.kt	(date 1690273748520)
+@@ -0,0 +1,71 @@
++package com.example.cyclistance.feature_messaging.presentation.chat.new_message
++
++import androidx.compose.foundation.layout.PaddingValues
++import androidx.compose.foundation.layout.padding
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.remember
++import androidx.compose.runtime.saveable.rememberSaveable
++import androidx.compose.runtime.setValue
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.focus.FocusRequester
++import androidx.compose.ui.text.input.TextFieldValue
++import androidx.hilt.navigation.compose.hiltViewModel
++import androidx.lifecycle.compose.collectAsStateWithLifecycle
++import androidx.navigation.NavController
++import com.example.cyclistance.feature_messaging.presentation.chat.event.MessagingUiEvent
++import com.example.cyclistance.feature_messaging.presentation.chat.new_message.components.NewMessageContent
++import com.example.cyclistance.feature_messaging.presentation.chat.state.MessagingUiState
++
++@Composable
++fun NewMessageScreen(
++    viewModel: NewMessageViewModel = hiltViewModel(),
++    navController: NavController,
++    paddingValues: PaddingValues) {
++
++    val state by viewModel.state.collectAsStateWithLifecycle()
++    var uiState by rememberSaveable { mutableStateOf(MessagingUiState()) }
++    var searchQuery by rememberSaveable(stateSaver = TextFieldValue.Saver) {
++        mutableStateOf(TextFieldValue())
++    }
++    val focusRequester = remember { FocusRequester() }
++    val onClickSearch = remember {
++        {
++            uiState = uiState.copy(
++                isSearching = true
++            )
++        }
++    }
++
++    val onSearchQueryChanged = remember {
++        { _searchQuery: TextFieldValue ->
++            searchQuery = _searchQuery
++        }
++    }
++
++    val onClearSearchQuery = remember {
++        {
++            searchQuery = TextFieldValue()
++        }
++    }
++    NewMessageContent(
++        modifier = Modifier.padding(paddingValues),
++        focusRequester = focusRequester,
++        searchQuery = searchQuery,
++        state = state,
++        uiState = uiState,
++        event = { event ->
++            when (event) {
++                MessagingUiEvent.ClearSearchQuery -> onClearSearchQuery()
++                MessagingUiEvent.CloseScreen -> TODO()
++                MessagingUiEvent.OnClickSearch -> onClickSearch()
++                is MessagingUiEvent.OnSearchQueryChanged -> onSearchQueryChanged(event.searchQuery)
++                is MessagingUiEvent.OnSelectConversation -> TODO()
++            }
++        }
++
++
++    )
++
++}
+\ No newline at end of file
