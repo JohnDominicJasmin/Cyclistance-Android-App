@@ -74,6 +74,12 @@ class MessagingRepositoryImpl(
     private fun getUid(): String {
         return auth.uid ?: throw MessagingExceptions.TokenException(message = "User not logged in")
     }
+//    f80O4Y2BtrqIicuHTgjIYQ06AIPH -- juan id (xiaomi)
+
+
+    override fun getUserUid(): String {
+        return getUid()
+    }
 
     private suspend fun updateMessagingToken(token: String) {
         val uid = getUid()

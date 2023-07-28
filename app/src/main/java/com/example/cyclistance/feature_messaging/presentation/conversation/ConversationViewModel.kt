@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -34,9 +35,9 @@ class ConversationViewModel @Inject constructor(
 
     private val _state = MutableStateFlow(
         savedStateHandle[CONVERSATION_VM_STATE_KEY] ?: ConversationState(
-            chatId = _chatId,
-            chatPhotoUrl = _chatPhotoUrl,
-            chatName = _chatName
+            conversationUid = _chatId,
+            conversationPhotoUrl = _chatPhotoUrl,
+            conversationName = _chatName
         ))
 
     val state = _state.asStateFlow()
@@ -47,11 +48,22 @@ class ConversationViewModel @Inject constructor(
 
     init {
         addMessageListener(_chatId)
+        getUid()
     }
 
     fun onEvent(event: ConversationVmEvent) {
         when (event) {
             is ConversationVmEvent.SendMessage -> sendMessage(event.sendMessageModel)
+        }
+    }
+
+    private fun getUid() {
+        runCatching {
+            messagingUseCase.getUidUseCase()
+        }.onSuccess { id ->
+            _state.update { it.copy(userUid = id)}
+        }.onFailure {
+            Timber.e("Failed to get uid: ${it.message}")
         }
     }
 
@@ -75,7 +87,7 @@ class ConversationViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 messagingUseCase.addMessageListenerUseCase(receiverId = receiverId, onNewMessage = { messages ->
-
+                    Timber.v("New message received: $messages")
                 })
             }.onSuccess {
                 Timber.v("Successfully added message listener")

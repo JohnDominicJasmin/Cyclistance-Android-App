@@ -5,6 +5,7 @@ import androidx.annotation.Keep
 import com.example.cyclistance.feature_messaging.data.repository.MessagingRepositoryImpl
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUidUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUsersUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.AddMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.RemoveMessageListenerUseCase
@@ -62,7 +63,8 @@ object MessagingModule {
             deleteTokenUseCase = DeleteTokenUseCase(repository = repository),
             sendMessageUseCase = SendMessageUseCase(repository = repository),
             addMessageListenerUseCase = AddMessageListenerUseCase(repository = repository),
-            removeMessageListenerUseCase = RemoveMessageListenerUseCase(repository = repository)
+            removeMessageListenerUseCase = RemoveMessageListenerUseCase(repository = repository),
+            getUidUseCase = GetUidUseCase(repository = repository)
         )
     }
 
