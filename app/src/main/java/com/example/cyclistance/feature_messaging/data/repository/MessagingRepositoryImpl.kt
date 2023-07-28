@@ -14,7 +14,8 @@ import com.example.cyclistance.core.utils.constants.UtilsConstants.USER_COLLECTI
 import com.example.cyclistance.core.utils.contexts.dataStore
 import com.example.cyclistance.core.utils.data_store_ext.editData
 import com.example.cyclistance.core.utils.data_store_ext.getData
-import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserDetailsMapper.toMessageUser
+import com.example.cyclistance.feature_messaging.data.mapper.MessagingConversationItemMapper.toConversationItem
+import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserItemMapper.toMessageUser
 import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.helper.Conversation
@@ -99,30 +100,7 @@ class MessagingRepositoryImpl(
     }
 
 
-    private fun handleDocumentChange(document: DocumentSnapshot) {
-        val messageId = document.id
-        val senderId =
-            document.getString(KEY_SENDER_ID) ?: throw MessagingExceptions.ListenMessagingFailure(
-                message = "Sender id not found")
-        val receiverId =
-            document.getString(KEY_RECEIVER_ID) ?: throw MessagingExceptions.ListenMessagingFailure(
-                message = "Receiver id not found")
-        val messageText =
-            document.getString(KEY_MESSAGE) ?: throw MessagingExceptions.ListenMessagingFailure(
-                message = "Message not found")
-        val timeStamp =
-            document.getDate(KEY_TIMESTAMP) ?: throw MessagingExceptions.ListenMessagingFailure(
-                message = "Timestamp not found")
 
-        val message = ConversationItemModel(
-            messageId = messageId,
-            senderId = senderId,
-            receiverId = receiverId,
-            message = messageText,
-            timeStamp = timeStamp
-        )
-        chatMessages.addMessage(message)
-    }
 
 
     override fun removeMessageListener() {
