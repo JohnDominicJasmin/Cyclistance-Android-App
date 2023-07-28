@@ -12,6 +12,7 @@ import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_a
 import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreSettings
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dagger.Module
@@ -43,10 +44,16 @@ object AuthenticationModule {
     @Provides
     @Singleton
     fun provideFirebaseFireStore(): FirebaseFirestore {
+
+        val settings = FirebaseFirestoreSettings.Builder()
+            .setPersistenceEnabled(true)
+            .setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
+            .build()
         return Firebase.firestore.apply {
             if (BuildConfig.DEBUG) {
                 useEmulator("192.168.18.21", 9299)
             }
+            firestoreSettings = settings
         }
     }
 
