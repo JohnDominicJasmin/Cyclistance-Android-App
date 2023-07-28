@@ -8,24 +8,23 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
+import com.example.cyclistance.navigation.event.NavUiEvent
+import com.example.cyclistance.navigation.state.NavUiState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
 
 @ExperimentalPermissionsApi
 @Composable
 fun NavGraph(
-    hasInternetConnection: Boolean,
     navController: NavHostController,
     paddingValues: PaddingValues,
-    startingDestination: String,
-    isNavigating: Boolean,
-    onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
-    onToggleTheme: () -> Unit) {
+    uiState: NavUiState,
+    event: (NavUiEvent) -> Unit) {
 
 
     NavHost(
         navController = navController,
-        startDestination = startingDestination,
+        startDestination = uiState.startingDestination,
         enterTransition = {
             fadeIn(
                 animationSpec = tween(
@@ -46,9 +45,9 @@ fun NavGraph(
         mappingGraph(
             navController = navController,
             paddingValues = paddingValues,
-            hasInternetConnection = hasInternetConnection,
-            isNavigating = isNavigating,
-            onChangeNavigatingState = onChangeNavigatingState
+            hasInternetConnection = uiState.internetAvailable,
+            isNavigating = uiState.isNavigating,
+            onChangeNavigatingState = { event(NavUiEvent.OnChangeNavigation(it)) }
         )
 
         emergencyCallGraph(
@@ -58,7 +57,13 @@ fun NavGraph(
 
         messagingGraph(
             navController = navController,
-            paddingValues = paddingValues
+            paddingValues = paddingValues,
+            newConversationDetails = { name, photoUrl ->
+                event(
+                    NavUiEvent.NewConversationDetails(
+                        chatName = name,
+                        chatPhotoUrl = photoUrl))
+            }
         )
 
         onBoardingGraph(
@@ -69,7 +74,7 @@ fun NavGraph(
         settingGraph(
             navController = navController,
             paddingValues = paddingValues,
-            onToggleTheme = onToggleTheme
+            onToggleTheme = { event(NavUiEvent.OnToggleTheme) }
         )
 
         rideHistoryGraph(
@@ -96,7 +101,7 @@ fun NavController.navigateScreenInclusively(
 fun NavController.navigateScreen(
     route: String) {
     navigate(route) {
-        popUpTo(route){
+        popUpTo(route) {
             saveState = true
 
         }
