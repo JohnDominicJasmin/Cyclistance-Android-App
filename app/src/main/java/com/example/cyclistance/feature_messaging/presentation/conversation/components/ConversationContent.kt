@@ -1,19 +1,14 @@
 package com.example.cyclistance.feature_messaging.presentation.conversation.components
 
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -41,7 +36,6 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
 import com.example.cyclistance.core.utils.composable_utils.keyboardAsState
 import com.example.cyclistance.core.utils.composable_utils.noRippleClickable
-import com.example.cyclistance.core.utils.validation.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.MessageDuration
@@ -54,7 +48,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.launch
 import java.util.Date
 
-private val USER_ID = "1"
+ val USER_ID = "1"
 private val conversationsModel = ConversationsModel(
     messages = listOf(
         ConversationItemModel(
@@ -247,49 +241,12 @@ fun ConversationContent(
 
                 if (conversationAvailable) {
 
-                    LazyColumn(
-                        state = listState,
-                        verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)
-                    ) {
-
-                        itemsIndexed(
-                            items = state.conversationsModel.messages,
-                            key = { _, item -> item.messageId }) { index, message ->
-
-                            val isSender by remember { derivedStateOf { message.senderId != USER_ID } }
-                            val timeStampAvailable by remember { derivedStateOf { message.messageDuration != null && message.timeStamp != null } }
-
-                            AnimatedVisibility(visible = timeStampAvailable) {
-
-                                MessagingTimeStamp(
-                                    value = message.timeStamp!!.toReadableDateTime(),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp))
-                            }
-
-
-                            ChatItem(
-                                conversation = message,
-                                isSender = isSender,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp, horizontal = 6.dp),
-                                contentAlignment = if (isSender) Alignment.CenterStart else Alignment.CenterEnd,
-                                currentIndex = index,
-                                selectedIndex = uiState.chatItemSelectedIndex,
-                                onSelectChatMessage = {
-                                    event(
-                                        ConversationUiEvent.SelectChatItem(
-                                            index = it))
-                                }
-                            )
-                        }
-
-                    }
+                    ConversationChatItems(
+                        listState = listState,
+                        state = state,
+                        uiState = uiState,
+                        event = event
+                    )
 
                 } else {
                     PlaceholderEmptyConversation(
