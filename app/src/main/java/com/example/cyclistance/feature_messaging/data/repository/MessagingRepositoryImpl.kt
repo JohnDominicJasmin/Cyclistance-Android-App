@@ -18,9 +18,9 @@ import com.example.cyclistance.feature_messaging.data.mapper.MessagingConversati
 import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserItemMapper.toMessageUser
 import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
-import com.example.cyclistance.feature_messaging.domain.model.helper.Conversation
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 import com.google.firebase.auth.FirebaseAuth
@@ -48,7 +48,6 @@ class MessagingRepositoryImpl(
     private val firebaseMessaging: FirebaseMessaging,
     private val auth: FirebaseAuth,
     private val appContext: Context,
-    private val chatMessages: Conversation = Conversation(),
     private var snapShotListener: ListenerRegistration? = null
 ) : MessagingRepository {
 
@@ -105,19 +104,16 @@ class MessagingRepositoryImpl(
     }
 
 
-
-
-
     override fun removeMessageListener() {
         snapShotListener?.remove()
     }
+
 
     override fun addMessageListener(
         receiverId: String,
         onNewMessage: (ConversationsModel) -> Unit) {
 
         val userUid = getUid()
-        chatMessages.clearMessage()
 
         val eventListener = { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
             if (value == null) {
@@ -129,26 +125,25 @@ class MessagingRepositoryImpl(
                     message = error.message ?: "Unknown error occurred")
             }
 
-            value.documentChanges.filter { it.type == DocumentChange.Type.ADDED }
-                .forEach { documentChange ->
-                    val message = documentChange.document.toConversationItem()
-                    chatMessages.addMessage(message)
-                }
+            val messages: List<ConversationItemModel> =
+                value.documentChanges.filter { it.type == DocumentChange.Type.ADDED }
+                    .map {
+                        it.document.toConversationItem()
+                    }
 
-            chatMessages.getMessages().sortedBy { it.timeStamp }
             onNewMessage(
                 ConversationsModel(
-                    messages = chatMessages.getMessages()
+                    messages = messages
                 ))
         }
 
         snapShotListener = fireStore.collection(KEY_CHAT_COLLECTION)
             .whereIn(KEY_SENDER_ID, listOf(userUid, receiverId))
             .whereIn(KEY_RECEIVER_ID, listOf(userUid, receiverId))
-            .addSnapshotListener(MetadataChanges.INCLUDE,eventListener)
+            .orderBy(KEY_TIMESTAMP)
+            .addSnapshotListener(MetadataChanges.INCLUDE, eventListener)
 
     }
-
 
     override suspend fun refreshToken() {
         withContext(scope) {
