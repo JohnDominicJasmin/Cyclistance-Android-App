@@ -243,10 +243,10 @@ fun ConversationContent(
 
                     ConversationChatItems(
                         listState = listState,
-                        state = state,
+                        conversation = conversation,
+                        userUid = state.userUid,
                         uiState = uiState,
-                        event = event
-                    )
+                        event = event)
 
                 } else {
                     PlaceholderEmptyConversation(
@@ -273,7 +273,7 @@ fun ConversationContent(
                 isVisible = isScrollingUp,
                 onClick = {
                     scope.launch {
-                        listState.animateScrollToItem(index = state.conversationsModel.messages.indices.last)
+                        listState.animateScrollToItem(index = conversation.indices.last)
                     }
                 })
         }

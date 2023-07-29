@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_messaging.presentation.conversation
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,6 +9,7 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_NAME
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_PHOTO_URL
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_VM_STATE_KEY
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationVmEvent
@@ -33,12 +35,16 @@ class ConversationViewModel @Inject constructor(
     private val _chatId: String = savedStateHandle[CHAT_ID]!!
     private val _chatPhotoUrl: String = savedStateHandle[CHAT_PHOTO_URL]!!
 
+    private val _conversationState = mutableStateListOf<ConversationItemModel>()
+    val conversationState: List<ConversationItemModel> = _conversationState
+
     private val _state = MutableStateFlow(
         savedStateHandle[CONVERSATION_VM_STATE_KEY] ?: ConversationState(
             conversationUid = _chatId,
             conversationPhotoUrl = _chatPhotoUrl,
             conversationName = _chatName
         ))
+
 
     val state = _state.asStateFlow()
 
@@ -61,7 +67,7 @@ class ConversationViewModel @Inject constructor(
         runCatching {
             messagingUseCase.getUidUseCase()
         }.onSuccess { id ->
-            _state.update { it.copy(userUid = id)}
+            _state.update { it.copy(userUid = id) }
         }.onFailure {
             Timber.e("Failed to get uid: ${it.message}")
         }
@@ -86,9 +92,11 @@ class ConversationViewModel @Inject constructor(
     private fun addMessageListener(receiverId: String) {
         viewModelScope.launch {
             runCatching {
-                messagingUseCase.addMessageListenerUseCase(receiverId = receiverId, onNewMessage = { messages ->
-                    Timber.v("New message received: $messages")
-                })
+                messagingUseCase.addMessageListenerUseCase(
+                    receiverId = receiverId,
+                    onNewMessage = { conversation ->
+                        _conversationState.addAll(conversation.messages)
+                    })
             }.onSuccess {
                 Timber.v("Successfully added message listener")
             }.onFailure {
@@ -101,5 +109,6 @@ class ConversationViewModel @Inject constructor(
     override fun onCleared() {
         super.onCleared()
         removeMessageListener()
+        _conversationState.clear()
     }
 }

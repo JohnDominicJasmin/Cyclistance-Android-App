@@ -30,6 +30,8 @@ fun ConversationScreen(
     newConversationDetails: (name: String, photoUrl: String) -> Unit
 ) {
 
+
+    val conversationState = viewModel.conversationState
     val state by viewModel.state.collectAsStateWithLifecycle()
     var uiState by rememberSaveable { mutableStateOf(ConversationUiState()) }
     var message by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -106,6 +108,7 @@ fun ConversationScreen(
 
 
     ConversationContent(
+        conversation = conversationState,
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues = paddingValues),

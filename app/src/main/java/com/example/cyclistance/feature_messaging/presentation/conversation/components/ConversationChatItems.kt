@@ -24,7 +24,8 @@ import com.example.cyclistance.feature_messaging.presentation.conversation.state
 @Composable
 fun ColumnScope.ConversationChatItems(
     listState: LazyListState,
-    state: ConversationState,
+    conversation: List<ConversationItemModel>,
+    userUid: String,
     uiState: ConversationUiState,
     event: (ConversationUiEvent) -> Unit) {
 
@@ -34,15 +35,14 @@ fun ColumnScope.ConversationChatItems(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.weight(1f),
-        contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)
-    ) {
+        contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)) {
 
         itemsIndexed(
-            items = state.conversationsModel.messages,
+            items = conversation,
             key = { _, item -> item.messageId }) { index, message ->
 
-            val isSender by remember { derivedStateOf { message.senderId != state.userUid } }
-            val timeStampAvailable by remember { derivedStateOf { message.messageDuration != null && message.timeStamp != null } }
+            val isSender by remember { derivedStateOf { message.senderId != userUid } }
+            val timeStampAvailable by remember { derivedStateOf { message.messageDuration != null && message.timestamp != null } }
 
             AnimatedVisibility(visible = timeStampAvailable) {
 
