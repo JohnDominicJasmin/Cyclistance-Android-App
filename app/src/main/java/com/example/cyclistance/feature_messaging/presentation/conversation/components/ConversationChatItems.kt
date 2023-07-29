@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -17,8 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.core.utils.validation.FormatterUtils.toReadableDateTime
+import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationUiEvent
-import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationState
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationUiState
 
 @Composable
@@ -29,6 +30,10 @@ fun ColumnScope.ConversationChatItems(
     uiState: ConversationUiState,
     event: (ConversationUiEvent) -> Unit) {
 
+
+    LaunchedEffect(key1 = true, conversation.size){
+        listState.scrollToItem(conversation.indices.last)
+    }
 
     LazyColumn(
         state = listState,

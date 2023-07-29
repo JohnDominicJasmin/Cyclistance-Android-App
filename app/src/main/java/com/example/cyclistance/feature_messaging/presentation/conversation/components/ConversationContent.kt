@@ -49,7 +49,7 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
  val USER_ID = "1"
-private val conversationsModel = ConversationsModel(
+private val fakeConversationsModel = ConversationsModel(
     messages = listOf(
         ConversationItemModel(
             messageId = "OsxvIecqWpbh32mjZPgx",
@@ -185,8 +185,7 @@ fun ConversationContent(
     val conversationAvailable by remember(conversation) {
         derivedStateOf { conversation.isNotEmpty() }
     }
-    val listState =
-        rememberLazyListState(initialFirstVisibleItemIndex = state.conversationsModel.messages.indices.last)
+    val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
     val keyboardState by keyboardAsState()
 
@@ -221,9 +220,7 @@ fun ConversationContent(
         modifier = modifier
             .fillMaxSize()
             .noRippleClickable {
-
                 event(ConversationUiEvent.ResetSelectedIndex)
-
                 if (uiState.messageAreaExpanded) {
                     event(ConversationUiEvent.ToggleMessageArea)
                 }
@@ -231,14 +228,12 @@ fun ConversationContent(
             },
         color = MaterialTheme.colors.background) {
 
-        Box(
-            modifier = Modifier.fillMaxSize(),
+        Box(modifier = Modifier.fillMaxSize(),
             contentAlignment = if (conversationAvailable) Alignment.BottomCenter else Alignment.Center) {
 
 
             Column(
                 modifier = Modifier.fillMaxSize()) {
-
 
                 if (conversationAvailable) {
 
@@ -328,8 +323,8 @@ fun PreviewMessagingConversationContentDark() {
                 uiState = ConversationUiState(
                     messageAreaExpanded = true,
                 ),
+                conversation = fakeConversationsModel.messages,
                 event = {}, state = ConversationState(
-                    conversationsModel = conversationsModel
                 ), message = TextFieldValue("Hello"))
         }
     }
@@ -341,11 +336,12 @@ fun PreviewMessagingConversationContentLight() {
     CompositionLocalProvider(IsDarkTheme provides false) {
         CyclistanceTheme(darkTheme = false) {
             ConversationContent(
+                conversation = fakeConversationsModel.messages,
                 uiState = ConversationUiState(
                     messageAreaExpanded = true,
                 ),
                 event = {}, state = ConversationState(
-                    conversationsModel = conversationsModel
+
                 ), message = TextFieldValue("Hello"))
         }
     }
