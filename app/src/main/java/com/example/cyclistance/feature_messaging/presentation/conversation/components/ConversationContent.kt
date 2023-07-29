@@ -52,11 +52,11 @@ import java.util.Date
 private val conversationsModel = ConversationsModel(
     messages = listOf(
         ConversationItemModel(
-            messageId = "12",
-            senderId = "1",
-            receiverId = "2",
+            messageId = "OsxvIecqWpbh32mjZPgx",
+            senderId = "gfjltEWoLYZ5sQ80bSAL5zljiIS7",
+            receiverId = "f80O4Y2BtrqIicuHTgjIYQ06AIPH",
             message = "Hello",
-            timeStamp = Date(),
+            timestamp = Date(),
             messageDuration = MessageDuration.OneDay,
 
             ),
@@ -65,21 +65,21 @@ private val conversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "How are you?",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "14",
             senderId = "1",
             receiverId = "2",
             message = "I'm fine, thanks",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "15",
             senderId = "1",
             receiverId = "2",
             message = "How about you?",
-            timeStamp = Date(),
+            timestamp = Date(),
             messageDuration = MessageDuration.OneMonth
         ),
         ConversationItemModel(
@@ -87,7 +87,7 @@ private val conversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "I'm fine too",
-            timeStamp = Date(),
+            timestamp = Date(),
             messageDuration = MessageDuration.OneHour
         ),
         ConversationItemModel(
@@ -95,7 +95,7 @@ private val conversationsModel = ConversationsModel(
             senderId = "1",
             receiverId = "2",
             message = "Good to hear that",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "18",
@@ -105,49 +105,49 @@ private val conversationsModel = ConversationsModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "19357846457",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "23457570",
             senderId = "2",
             receiverId = "1",
             message = "Sure",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "19",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "23453450",
             senderId = "2",
             receiverId = "1",
             message = "Sure",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "194533467",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "203223",
             senderId = "2",
             receiverId = "1",
             message = "Sure asdasdasd",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "18553",
@@ -157,7 +157,7 @@ private val conversationsModel = ConversationsModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "2546718",
@@ -167,7 +167,7 @@ private val conversationsModel = ConversationsModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timeStamp = Date()
+            timestamp = Date()
         ),
     )
 )
@@ -175,14 +175,15 @@ private val conversationsModel = ConversationsModel(
 
 @Composable
 fun ConversationContent(
+    conversation: List<ConversationItemModel>,
     modifier: Modifier = Modifier,
     message: TextFieldValue,
     uiState: ConversationUiState,
     state: ConversationState,
     event: (ConversationUiEvent) -> Unit) {
 
-    val conversationAvailable by remember(state.conversationsModel) {
-        derivedStateOf { state.conversationsModel.messages.isNotEmpty() }
+    val conversationAvailable by remember(conversation) {
+        derivedStateOf { conversation.isNotEmpty() }
     }
     val listState =
         rememberLazyListState(initialFirstVisibleItemIndex = state.conversationsModel.messages.indices.last)

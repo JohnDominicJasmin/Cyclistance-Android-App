@@ -51,7 +51,7 @@ fun ChatItem(
 
     val isMessageSent by remember {
         derivedStateOf {
-            conversation.timeStamp != null
+            conversation.timestamp != null
         }
     }
 
@@ -83,7 +83,7 @@ fun ChatItem(
 
 
                 Text(
-                    text = conversation.timeStamp!!.toReadableDateTime(),
+                    text = conversation.timestamp!!.toReadableDateTime(),
                     color = MaterialTheme.colors.onBackground,
                     modifier = Modifier
                         .wrapContentSize()
@@ -140,7 +140,7 @@ fun PreviewChatItemSenderDark() {
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
                 receiverId = "2",
-                timeStamp = Date(),
+                timestamp = Date(),
                 messageId = "1",
             ))
     }
@@ -159,7 +159,7 @@ fun PreviewChatItemSenderLight() {
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
                 receiverId = "2",
-                timeStamp = Date(),
+                timestamp = Date(),
                 messageId = "1",
             ))
     }
@@ -178,7 +178,7 @@ fun PreviewChatItemRecipientDark() {
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
                 receiverId = "2",
-                timeStamp = Date(),
+                timestamp = Date(),
                 messageId = "1",
             ))
     }
@@ -196,7 +196,7 @@ fun PreviewChatItemRecipientLight() {
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                           "molestiae quas vel sint commodi repudiandae consequuntur",
                 receiverId = "2",
-                timeStamp = Date(),
+                timestamp = Date(),
                 messageId = "1",
             ))
     }

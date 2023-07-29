@@ -47,7 +47,7 @@ fun ColumnScope.ConversationChatItems(
             AnimatedVisibility(visible = timeStampAvailable) {
 
                 MessagingTimeStamp(
-                    value = message.timeStamp!!.toReadableDateTime(),
+                    value = message.timestamp!!.toReadableDateTime(),
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 8.dp))

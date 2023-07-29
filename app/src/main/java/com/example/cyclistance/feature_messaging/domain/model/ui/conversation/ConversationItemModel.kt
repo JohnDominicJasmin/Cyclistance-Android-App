@@ -13,7 +13,7 @@ data class ConversationItemModel(
     val senderId: String,
     val receiverId: String,
     val message: String,
-    val timeStamp: Date? = null,
+    val timestamp: Date? = null,
     val messageDuration: MessageDuration? = null,
 ) : Parcelable
 
