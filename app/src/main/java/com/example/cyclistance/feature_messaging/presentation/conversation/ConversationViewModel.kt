@@ -8,12 +8,21 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_NAME
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_PHOTO_URL
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_VM_STATE_KEY
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_LAST_MESSAGE
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_IMAGE
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_NAME
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_ID
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_IMAGE
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_NAME
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_TIMESTAMP
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationVmEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationState
+import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,12 +31,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
 class ConversationViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val messagingUseCase: MessagingUseCase
+    private val messagingUseCase: MessagingUseCase,
+    private val settingUseCase: SettingUseCase
 ) : ViewModel() {
 
 
@@ -53,8 +64,10 @@ class ConversationViewModel @Inject constructor(
 
     init {
         addMessageListener(_chatId)
-        getUid()
         getConversionId()
+        getUid()
+        getName()
+        getPhoto()
     }
 
     fun onEvent(event: ConversationVmEvent) {
@@ -63,6 +76,76 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
+
+    private fun getName(){
+        viewModelScope.launch {
+            runCatching {
+                settingUseCase.getNameUseCase()
+            }.onSuccess { name ->
+                _state.update { it.copy(userName = name) }
+            }.onFailure {
+                Timber.v("Failed to get name: ${it.message}")
+            }
+        }
+    }
+
+    private fun getPhoto(){
+        viewModelScope.launch {
+            runCatching {
+                settingUseCase.getPhotoUrlUseCase()
+            }.onSuccess { photo ->
+                _state.update { it.copy(userPhoto = photo ) }
+            }.onFailure {
+                Timber.v("Failed to get photo: ${it.message}")
+            }
+        }
+    }
+
+    private fun setConversion(message: String){
+        if(state.value.conversionId == null){
+            addConversion(message = message)
+            return
+        }
+        updateConversion(message = message)
+    }
+
+    private fun updateConversion(message: String){
+        val conversionId = state.value.conversionId
+        viewModelScope.launch {
+            runCatching {
+                messagingUseCase.updateConversionUseCase(message = message, conversionId = conversionId!!)
+            }.onSuccess {
+                Timber.v("Success to update conversion")
+            }.onFailure {
+                Timber.e("Failed to update conversion: ${it.message}")
+            }
+        }
+    }
+
+    private fun addConversion(message: String){
+
+        runCatching {
+            messagingUseCase.addConversionUseCase(
+                conversion = hashMapOf(
+                    KEY_SENDER_ID to state.value.userUid,
+                    KEY_SENDER_NAME to state.value.userName,
+                    KEY_SENDER_IMAGE to state.value.userPhoto,
+                    KEY_RECEIVER_ID to _chatId,
+                    KEY_RECEIVER_NAME to _chatName,
+                    KEY_RECEIVER_IMAGE to _chatPhotoUrl,
+                    KEY_LAST_MESSAGE to message,
+                    KEY_TIMESTAMP to Date()
+                ),
+                onNewConversionId = { id ->
+                    _state.update { it.copy(conversionId = id) }
+                }
+            )
+        }.onSuccess {
+            Timber.v("Success to add conversion")
+        }.onFailure {
+            Timber.e("Failed to add conversion: ${it.message}")
+        }
+    }
     private fun getConversionId(){
         viewModelScope.launch {
             runCatching {
@@ -91,6 +174,7 @@ class ConversationViewModel @Inject constructor(
                 messagingUseCase.sendMessageUseCase(sendMessage)
             }.onSuccess {
                 _event.emit(ConversationEvent.MessageSent)
+                setConversion(sendMessage.message)
             }.onFailure {
                 _event.emit(ConversationEvent.MessageNotSent)
             }
@@ -101,17 +185,23 @@ class ConversationViewModel @Inject constructor(
         messagingUseCase.removeMessageListenerUseCase()
     }
 
+    private fun isLoading(isLoading: Boolean){
+        _state.update { it.copy(isLoading = isLoading) }
+    }
     private fun addMessageListener(receiverId: String) {
         viewModelScope.launch {
             runCatching {
+                isLoading(true)
                 messagingUseCase.addMessageListenerUseCase(
                     receiverId = receiverId,
                     onNewMessage = { conversation ->
                         _conversationState.addAll(conversation.messages)
+                        isLoading(false)
                     })
             }.onSuccess {
-
+                Timber.v("Success to add message listener")
             }.onFailure {
+                isLoading(false)
                 Timber.e("Failed to add message listener ${it.message}")
             }
         }

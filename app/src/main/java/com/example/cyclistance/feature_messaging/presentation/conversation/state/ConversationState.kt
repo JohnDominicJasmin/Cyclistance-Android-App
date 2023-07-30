@@ -12,5 +12,8 @@ data class ConversationState(
     val conversationUid: String = "",
     val conversationPhotoUrl: String = "",
     val userUid: String = "",
-    val conversionId: String? = null
+    val userName: String = "",
+    val userPhoto: String = "",
+    val conversionId: String? = null,
+    val isLoading: Boolean = false
 ) : Parcelable
