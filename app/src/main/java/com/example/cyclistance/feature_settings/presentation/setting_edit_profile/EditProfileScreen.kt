@@ -218,13 +218,15 @@ fun EditProfileScreen(
     }
 
     val onValueChangeName = remember {
-        { _name: TextFieldValue ->
-            name = _name
+        { input: TextFieldValue ->
+            name = input
+            uiState = uiState.copy(nameErrorMessage = "")
         }
     }
     val onValueChangePhoneNumber = remember {
-        { _phoneNumber: TextFieldValue ->
-            phoneNumber = _phoneNumber
+        { input: TextFieldValue ->
+            phoneNumber = input
+            uiState = uiState.copy(phoneNumberErrorMessage = "")
         }
     }
     val keyboardActions = remember {
