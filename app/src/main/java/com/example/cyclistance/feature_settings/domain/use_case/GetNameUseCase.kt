@@ -7,7 +7,7 @@ class GetNameUseCase(private val repository: SettingRepository) {
 
      suspend operator fun invoke(): String {
 
-        return repository.getName().takeIf { !it.isNullOrEmpty() } ?: throw MappingExceptions.NameException()
+        return repository.getName().takeIf { !it.isNullOrEmpty() } ?: throw MappingExceptions.NameException(message = "Name not found")
 
     }
 }
