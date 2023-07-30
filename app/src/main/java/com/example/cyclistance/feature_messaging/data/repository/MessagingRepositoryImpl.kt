@@ -4,6 +4,7 @@ import android.content.Context
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_CHAT_COLLECTION
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_COLLECTION_CONVERSATIONS
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
@@ -48,9 +49,9 @@ class MessagingRepositoryImpl(
     private val firebaseMessaging: FirebaseMessaging,
     private val auth: FirebaseAuth,
     private val appContext: Context,
-    private var snapShotListener: ListenerRegistration? = null
-) : MessagingRepository {
 
+    ) : MessagingRepository {
+    private var snapShotListener: ListenerRegistration? = null
     private val scope: CoroutineContext = Dispatchers.IO
     private var dataStore = appContext.dataStore
 
@@ -75,10 +76,6 @@ class MessagingRepositoryImpl(
     }
 //    f80O4Y2BtrqIicuHTgjIYQ06AIPH -- juan id (xiaomi)
 
-
-    override fun getUserUid(): String {
-        return getUid()
-    }
 
     private suspend fun updateMessagingToken(token: String) {
         val uid = getUid()
@@ -108,6 +105,36 @@ class MessagingRepositoryImpl(
         snapShotListener?.remove()
     }
 
+    override suspend fun getConversionId(receiverId: String): String {
+
+        val senderId = getUid()
+
+        return suspendCancellableCoroutine { continuation ->
+            fireStore.collection(KEY_COLLECTION_CONVERSATIONS)
+                .whereIn(KEY_SENDER_ID, listOf(senderId, receiverId))
+                .whereIn(KEY_RECEIVER_ID, listOf(senderId, receiverId))
+                .get()
+                .addOnCompleteListener { task ->
+
+                    val documents = task.result?.documents ?: emptyList()
+                    if (!task.isSuccessful) {
+                        return@addOnCompleteListener
+                    }
+
+                    if (documents.isEmpty()) {
+                        return@addOnCompleteListener
+                    }
+
+                    val documentSnapshot = documents.first()
+                    continuation.resume(documentSnapshot.id)
+                }
+        }
+    }
+
+
+    override fun getUserUid(): String {
+        return getUid()
+    }
 
     override fun addMessageListener(
         receiverId: String,

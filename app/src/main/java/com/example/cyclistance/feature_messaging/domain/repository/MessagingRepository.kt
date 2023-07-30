@@ -13,4 +13,5 @@ interface MessagingRepository {
     fun getUserUid(): String
     fun addMessageListener(receiverId: String, onNewMessage: (ConversationsModel) -> Unit)
     fun removeMessageListener()
+    suspend fun getConversionId(receiverId: String): String
 }

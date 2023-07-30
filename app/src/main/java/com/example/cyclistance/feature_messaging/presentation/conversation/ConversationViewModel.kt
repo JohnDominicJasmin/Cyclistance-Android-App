@@ -45,7 +45,6 @@ class ConversationViewModel @Inject constructor(
             conversationName = _chatName
         ))
 
-
     val state = _state.asStateFlow()
 
     private val _event = MutableSharedFlow<ConversationEvent>()
@@ -55,11 +54,24 @@ class ConversationViewModel @Inject constructor(
     init {
         addMessageListener(_chatId)
         getUid()
+        getConversionId()
     }
 
     fun onEvent(event: ConversationVmEvent) {
         when (event) {
             is ConversationVmEvent.SendMessage -> sendMessage(event.sendMessageModel)
+        }
+    }
+
+    private fun getConversionId(){
+        viewModelScope.launch {
+            runCatching {
+                messagingUseCase.getConversionIdUseCase(receiverId = _chatId)
+            }.onSuccess { id ->
+                _state.update { it.copy(conversionId = id) }
+            }.onFailure {
+                Timber.e("Failed to get conversation id: ${it.message}")
+            }
         }
     }
 
@@ -98,7 +110,7 @@ class ConversationViewModel @Inject constructor(
                         _conversationState.addAll(conversation.messages)
                     })
             }.onSuccess {
-                Timber.v("Successfully added message listener")
+
             }.onFailure {
                 Timber.e("Failed to add message listener ${it.message}")
             }

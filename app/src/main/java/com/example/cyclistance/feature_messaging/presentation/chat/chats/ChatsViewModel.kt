@@ -18,8 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ChatsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val messagingUseCase: MessagingUseCase
-) : ViewModel() {
+    private val messagingUseCase: MessagingUseCase) : ViewModel() {
+
     private val _state =
         MutableStateFlow(savedStateHandle[MESSAGING_VM_STATE_KEY] ?: ChatState())
     val state = _state.asStateFlow()

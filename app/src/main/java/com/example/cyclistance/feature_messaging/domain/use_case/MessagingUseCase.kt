@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_messaging.domain.use_case
 
+import com.example.cyclistance.feature_messaging.domain.use_case.conversion.GetConversionIdUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUidUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUsersUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.AddMessageListenerUseCase
@@ -15,5 +16,6 @@ data class MessagingUseCase(
     val sendMessageUseCase: SendMessageUseCase,
     val addMessageListenerUseCase: AddMessageListenerUseCase,
     val removeMessageListenerUseCase: RemoveMessageListenerUseCase,
-    val getUidUseCase: GetUidUseCase
+    val getUidUseCase: GetUidUseCase,
+    val getConversionIdUseCase: GetConversionIdUseCase
 )
