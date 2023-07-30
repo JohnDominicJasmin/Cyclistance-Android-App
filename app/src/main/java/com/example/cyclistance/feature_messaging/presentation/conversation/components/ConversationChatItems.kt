@@ -2,8 +2,8 @@ package com.example.cyclistance.feature_messaging.presentation.conversation.comp
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -35,11 +35,12 @@ fun ColumnScope.ConversationChatItems(
         listState.scrollToItem(conversation.indices.last)
     }
 
+
     LazyColumn(
         state = listState,
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.weight(1f),
+        modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)) {
 
         itemsIndexed(

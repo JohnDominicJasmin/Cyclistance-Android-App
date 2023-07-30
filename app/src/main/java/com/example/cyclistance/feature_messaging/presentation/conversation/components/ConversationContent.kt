@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_messaging.presentation.conversation.comp
 
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -48,7 +50,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.launch
 import java.util.Date
 
- val USER_ID = "1"
+val USER_ID = "1"
 private val fakeConversationsModel = ConversationsModel(
     messages = listOf(
         ConversationItemModel(
@@ -182,14 +184,12 @@ fun ConversationContent(
     state: ConversationState,
     event: (ConversationUiEvent) -> Unit) {
 
-    val conversationAvailable by remember(conversation) {
-        derivedStateOf { conversation.isNotEmpty() }
+    val conversationAvailable = remember(conversation.size) {
+        conversation.isNotEmpty()
     }
     val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
     val keyboardState by keyboardAsState()
-
-
     val scope = rememberCoroutineScope()
 
 
@@ -201,6 +201,10 @@ fun ConversationContent(
         if (stateFirstVisibleItemIndex > farthestVisibleItemIndex) {
             farthestVisibleItemIndex = stateFirstVisibleItemIndex
         }
+    }
+
+    val keyboardIsOpen by remember(keyboardState) {
+        derivedStateOf { keyboardState == Keyboard.Opened }
     }
 
     LaunchedEffect(key1 = keyboardState) {
@@ -228,29 +232,46 @@ fun ConversationContent(
             },
         color = MaterialTheme.colors.background) {
 
-        Box(modifier = Modifier.fillMaxSize(),
+
+        Box(
+            modifier = Modifier.fillMaxSize(),
             contentAlignment = if (conversationAvailable) Alignment.BottomCenter else Alignment.Center) {
 
 
             Column(
                 modifier = Modifier.fillMaxSize()) {
 
-                if (conversationAvailable) {
 
-                    ConversationChatItems(
-                        listState = listState,
-                        conversation = conversation,
-                        userUid = state.userUid,
-                        uiState = uiState,
-                        event = event)
+                Box(
+                    modifier = Modifier
+                        .border(1.dp, Color.Red)
+                        .fillMaxSize()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center) {
 
-                } else {
-                    PlaceholderEmptyConversation(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize())
+                    if (state.isLoading) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+
+                    if (conversationAvailable) {
+                        ConversationChatItems(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            keyboardIsOpen = keyboardIsOpen,
+                            listState = listState,
+                            conversation = conversation,
+                            userUid = state.userUid,
+                            uiState = uiState,
+                            event = event)
+
+                    }
+
+                    if (!conversationAvailable && !state.isLoading) {
+                        PlaceholderEmptyConversation(
+                            modifier = Modifier
+                                .fillMaxSize())
+                    }
                 }
-
 
 
 
@@ -273,6 +294,8 @@ fun ConversationContent(
                     }
                 })
         }
+
+
     }
 }
 
