@@ -14,4 +14,6 @@ interface MessagingRepository {
     fun addMessageListener(receiverId: String, onNewMessage: (ConversationsModel) -> Unit)
     fun removeMessageListener()
     suspend fun getConversionId(receiverId: String): String
+    fun addConversion(conversion: HashMap<String, Any>, onNewConversionId: (String) -> Unit)
+    fun updateConversion(message: String, conversionId: String)
 }

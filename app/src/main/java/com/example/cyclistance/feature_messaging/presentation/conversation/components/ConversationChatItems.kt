@@ -23,7 +23,9 @@ import com.example.cyclistance.feature_messaging.presentation.conversation.event
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationUiState
 
 @Composable
-fun ColumnScope.ConversationChatItems(
+fun ConversationChatItems(
+    modifier: Modifier = Modifier,
+    keyboardIsOpen: Boolean,
     listState: LazyListState,
     conversation: List<ConversationItemModel>,
     userUid: String,
@@ -31,7 +33,7 @@ fun ColumnScope.ConversationChatItems(
     event: (ConversationUiEvent) -> Unit) {
 
 
-    LaunchedEffect(key1 = true, conversation.size){
+    LaunchedEffect(key1 = true, conversation.size, keyboardIsOpen) {
         listState.scrollToItem(conversation.indices.last)
     }
 

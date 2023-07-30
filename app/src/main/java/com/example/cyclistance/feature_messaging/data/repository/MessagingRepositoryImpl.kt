@@ -6,6 +6,7 @@ import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInterne
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_CHAT_COLLECTION
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_COLLECTION_CONVERSATIONS
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_LAST_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_ID
@@ -131,6 +132,23 @@ class MessagingRepositoryImpl(
         }
     }
 
+    override fun addConversion(
+        conversion: HashMap<String, Any>,
+        onNewConversionId: (String) -> Unit) {
+
+        fireStore.collection(KEY_COLLECTION_CONVERSATIONS)
+            .add(conversion)
+            .addOnSuccessListener { documentReference ->
+                onNewConversionId(documentReference.id)
+            }
+    }
+
+
+    override fun updateConversion(message: String, conversionId: String) {
+        fireStore.collection(KEY_COLLECTION_CONVERSATIONS)
+            .document(conversionId)
+            .update(KEY_LAST_MESSAGE, message, KEY_TIMESTAMP, Date())
+    }
 
     override fun getUserUid(): String {
         return getUid()
