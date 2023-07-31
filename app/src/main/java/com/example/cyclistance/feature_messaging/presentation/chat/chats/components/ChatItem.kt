@@ -69,7 +69,7 @@ fun ChatItem(
 
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data(chatItemModel.userPhotoUrl)
+                        .data(chatItemModel.conversionPhoto)
                         .crossfade(true)
                         .networkCachePolicy(CachePolicy.ENABLED)
                         .diskCachePolicy(CachePolicy.ENABLED)
@@ -92,13 +92,13 @@ fun ChatItem(
                 horizontalAlignment = Alignment.Start) {
 
                 Text(
-                    text = chatItemModel.name,
+                    text = chatItemModel.conversionName,
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colors.onBackground, maxLines = 1,
                 )
 
                 Text(
-                    text = chatItemModel.message,
+                    text = chatItemModel.lastMessage,
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colors.onBackground,
                     maxLines = 1,
@@ -142,12 +142,12 @@ fun PreviewChatItemDark() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 chatItemModel = ChatItemModel(
-                    userPhotoUrl = MappingConstants.IMAGE_PLACEHOLDER_URL,
-                    name = "John Doe",
-                    message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                              "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
-                              "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
-                              "optio, eaque rerum! Provident similique accusantium nemo autem.",
+                    conversionPhoto = MappingConstants.IMAGE_PLACEHOLDER_URL,
+                    conversionName = "John Doe",
+                    lastMessage = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
+                                  "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
+                                  "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
+                                  "optio, eaque rerum! Provident similique accusantium nemo autem.",
                     timeStamp = Date(),
 
                     ),
@@ -175,12 +175,12 @@ fun PreviewChatItemLight() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 chatItemModel = ChatItemModel(
-                    userPhotoUrl = MappingConstants.IMAGE_PLACEHOLDER_URL,
-                    name = "John Doe",
-                    message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                              "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
-                              "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
-                              "optio, eaque rerum! Provident similique accusantium nemo autem.",
+                    conversionPhoto = MappingConstants.IMAGE_PLACEHOLDER_URL,
+                    conversionName = "John Doe",
+                    lastMessage = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
+                                  "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
+                                  "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
+                                  "optio, eaque rerum! Provident similique accusantium nemo autem.",
                     timeStamp = Date(),
 
                     ),

@@ -11,6 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.ChatScreenContent
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.fakeMessages
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatUiEvent
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
@@ -28,16 +29,16 @@ fun ChatsScreen(
     val onSelectConversation = remember {
         { chatItem: ChatItemModel ->
             val encodedUrl =
-                URLEncoder.encode(chatItem.userPhotoUrl, StandardCharsets.UTF_8.toString())
+                URLEncoder.encode(chatItem.conversionPhoto, StandardCharsets.UTF_8.toString())
             navController.navigateScreen(
-                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userId}/$encodedUrl/${chatItem.name}",
+                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.conversionId}/$encodedUrl/${chatItem.conversionName}",
             )
         }
     }
 
 
     ChatScreenContent(
-        state = state,
+        state = state.copy(chatsModel = fakeMessages),
         modifier = Modifier.padding(paddingValues),
         event = { event ->
             when (event) {
