@@ -22,10 +22,10 @@ object MessagingConstants {
     const val CHAT_PHOTO_URL = "chatPhotoUrl"
     const val CHAT_NAME = "chatName"
 
-    const val KEY_COLLECTION_CONVERSATIONS = "collectionConversations"
-    const val KEY_SENDER_NAME = "keySenderName"
-    const val KEY_RECEIVER_NAME = "keyReceiverName"
-    const val KEY_SENDER_IMAGE = "keySenderImage"
-    const val KEY_RECEIVER_IMAGE = "keyReceiverImage"
-    const val KEY_LAST_MESSAGE = "keyLastMessage"
+    const val KEY_COLLECTION_CHATS = "chats"
+    const val KEY_SENDER_NAME = "senderName"
+    const val KEY_SENDER_IMAGE = "senderImage"
+    const val KEY_RECEIVER_NAME = "receiverName"
+    const val KEY_RECEIVER_IMAGE = "receiverImage"
+    const val KEY_LAST_MESSAGE = "lastMessage"
 }
