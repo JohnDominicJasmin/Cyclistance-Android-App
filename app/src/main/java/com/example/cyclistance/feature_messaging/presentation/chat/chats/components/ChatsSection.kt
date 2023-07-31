@@ -20,7 +20,7 @@ internal fun ChatsSection(
     LazyColumn(
         modifier = modifier
             .fillMaxSize()) {
-        items(chatsModel.messages, key = {
+        items(chatsModel.chats, key = {
             it.messageId
         }) { item ->
 
