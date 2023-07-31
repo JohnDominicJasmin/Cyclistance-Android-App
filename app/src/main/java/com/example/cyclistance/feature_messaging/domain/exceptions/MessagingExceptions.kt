@@ -6,4 +6,6 @@ object MessagingExceptions {
     class SendMessagingFailure(message: String) : RuntimeException(message)
     class ListenMessagingFailure(message: String) : RuntimeException(message)
     class GetMessageUsersFailure(message: String) : RuntimeException(message)
+    class GetChatsFailure(message: String) : RuntimeException(message)
+
 }
