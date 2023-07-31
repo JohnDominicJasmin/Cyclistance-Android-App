@@ -26,6 +26,7 @@ import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -126,16 +127,7 @@ class ConversationViewModel @Inject constructor(
 
         runCatching {
             messagingUseCase.addConversionUseCase(
-                conversion = hashMapOf(
-                    KEY_SENDER_ID to state.value.userUid,
-                    KEY_SENDER_NAME to state.value.userName,
-                    KEY_SENDER_IMAGE to state.value.userPhoto,
-                    KEY_RECEIVER_ID to _chatId,
-                    KEY_RECEIVER_NAME to _chatName,
-                    KEY_RECEIVER_IMAGE to _chatPhotoUrl,
-                    KEY_LAST_MESSAGE to message,
-                    KEY_TIMESTAMP to Date()
-                ),
+                conversion = state.handleConversion(message),
                 onNewConversionId = { id ->
                     _state.update { it.copy(conversionId = id) }
                 }
@@ -146,6 +138,22 @@ class ConversationViewModel @Inject constructor(
             Timber.e("Failed to add conversion: ${it.message}")
         }
     }
+
+    private fun StateFlow<ConversationState>.handleConversion(message: String): HashMap<String, Any>{
+        return with(value){
+            hashMapOf(
+                KEY_SENDER_ID to userUid,
+                KEY_SENDER_NAME to userName,
+                KEY_SENDER_IMAGE to userPhoto,
+                KEY_RECEIVER_ID to conversationUid,
+                KEY_RECEIVER_NAME to conversationName,
+                KEY_RECEIVER_IMAGE to conversationPhotoUrl,
+                KEY_LAST_MESSAGE to message,
+                KEY_TIMESTAMP to Date()
+            )
+        }
+    }
+
     private fun getConversionId(){
         viewModelScope.launch {
             runCatching {
