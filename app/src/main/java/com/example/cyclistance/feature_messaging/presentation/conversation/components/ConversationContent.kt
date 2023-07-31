@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_messaging.presentation.conversation.comp
 
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -244,7 +243,6 @@ fun ConversationContent(
 
                 Box(
                     modifier = Modifier
-                        .border(1.dp, Color.Red)
                         .fillMaxSize()
                         .weight(1f),
                     contentAlignment = Alignment.Center) {
