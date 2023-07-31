@@ -31,7 +31,7 @@ class SearchUserViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 isLoading(true)
-                messagingUseCase.getUsersUseCase()
+                messagingUseCase.addUserListenerUseCase()
             }.onSuccess { model ->
                 _state.update { it.copy(messagingUsers = model) }
             }.onFailure {

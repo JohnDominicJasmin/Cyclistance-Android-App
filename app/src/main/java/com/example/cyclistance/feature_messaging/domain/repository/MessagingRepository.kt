@@ -8,7 +8,8 @@ import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.Co
 interface MessagingRepository {
 
     suspend fun refreshToken()
-    suspend fun getUsers(): MessagingUserModel
+    suspend fun addUserListener(): MessagingUserModel
+    fun removeUserListener()
     fun sendMessage(sendMessageModel: SendMessageModel)
     suspend fun deleteToken()
     fun getUserUid(): String

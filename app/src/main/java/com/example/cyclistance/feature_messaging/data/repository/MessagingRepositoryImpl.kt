@@ -264,7 +264,7 @@ class MessagingRepositoryImpl(
         }
     }
 
-    override suspend fun getUsers(): MessagingUserModel {
+    override suspend fun addUserListener(): MessagingUserModel {
         return withContext(scope) {
             suspendCancellableCoroutine { continuation ->
                 messageListener = fireStore.collection(USER_COLLECTION)

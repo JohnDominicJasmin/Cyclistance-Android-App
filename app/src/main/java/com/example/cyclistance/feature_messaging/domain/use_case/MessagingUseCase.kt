@@ -3,8 +3,8 @@ package com.example.cyclistance.feature_messaging.domain.use_case
 import com.example.cyclistance.feature_messaging.domain.use_case.conversion.AddConversionUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.conversion.GetConversionIdUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.conversion.UpdateConversionUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.AddUserListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUidUseCase
-import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUsersUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.AddMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.RemoveMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.SendMessageUseCase
@@ -13,7 +13,7 @@ import com.example.cyclistance.feature_messaging.domain.use_case.token.RefreshTo
 
 data class MessagingUseCase(
     val refreshTokenUseCase: RefreshTokenUseCase,
-    val getUsersUseCase: GetUsersUseCase,
+    val addUserListenerUseCase: AddUserListenerUseCase,
     val deleteTokenUseCase: DeleteTokenUseCase,
     val sendMessageUseCase: SendMessageUseCase,
     val addMessageListenerUseCase: AddMessageListenerUseCase,
