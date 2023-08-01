@@ -10,11 +10,7 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_PHOT
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_LAST_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
-import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_IMAGE
-import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_NAME
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_ID
-import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_IMAGE
-import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_NAME
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_TIMESTAMP
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
@@ -78,6 +74,8 @@ class ConversationViewModel @Inject constructor(
     }
 
 
+
+
     private fun getName(){
         viewModelScope.launch {
             runCatching {
@@ -124,14 +122,12 @@ class ConversationViewModel @Inject constructor(
     }
 
     private fun addConversion(message: String){
-
         runCatching {
             messagingUseCase.addConversionUseCase(
                 conversion = state.handleConversion(message),
                 onNewConversionId = { id ->
                     _state.update { it.copy(conversionId = id) }
-                }
-            )
+                })
         }.onSuccess {
             Timber.v("Success to add conversion")
         }.onFailure {
@@ -143,11 +139,7 @@ class ConversationViewModel @Inject constructor(
         return with(value){
             hashMapOf(
                 KEY_SENDER_ID to userUid,
-                KEY_SENDER_NAME to userName,
-                KEY_SENDER_IMAGE to userPhoto,
                 KEY_RECEIVER_ID to conversationUid,
-                KEY_RECEIVER_NAME to conversationName,
-                KEY_RECEIVER_IMAGE to conversationPhotoUrl,
                 KEY_LAST_MESSAGE to message,
                 KEY_TIMESTAMP to Date()
             )
@@ -196,6 +188,7 @@ class ConversationViewModel @Inject constructor(
     private fun isLoading(isLoading: Boolean){
         _state.update { it.copy(isLoading = isLoading) }
     }
+
     private fun addMessageListener(receiverId: String) {
         viewModelScope.launch {
             runCatching {
