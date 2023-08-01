@@ -129,60 +129,65 @@ class MessagingRepositoryImpl(
         }
     }
 
-    private fun chatListener(onNewChat: (ChatsModel) -> Unit): (QuerySnapshot?, FirebaseFirestoreException?) -> Unit {
+    private inline fun chatListener(
+        crossinline onAddedChat: (ChatItemModel) -> Unit,
+        crossinline onModifiedChat: (ChatItemModel) -> Unit): (QuerySnapshot?, FirebaseFirestoreException?) -> Unit {
+
         return { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
 
             val uid = getUid()
-            val chats: MutableList<ChatItemModel> = mutableListOf()
+
             if (error != null) {
                 throw MessagingExceptions.GetChatsFailure(
                     message = error.message ?: "Unknown error occurred")
             }
+
             if (value == null) {
                 throw MessagingExceptions.GetChatsFailure(message = "Cannot get chats, value is null")
             }
 
-
             value.documentChanges.forEach { item ->
-                val senderId = item.document.getString(KEY_SENDER_ID)
-                val receiverId = item.document.getString(KEY_RECEIVER_ID)
 
                 when (item.type) {
+
                     DocumentChange.Type.ADDED -> {
                         val chat = item.document.toConversionChatItem(uid = uid)
-                        chats.add(chat)
+                        onAddedChat(chat)
                     }
 
                     DocumentChange.Type.MODIFIED -> {
-                        val modifiedIndex = chats.indexOfFirst { it.senderId == senderId && it.receiverId == receiverId }
-                        val hasFound = modifiedIndex != -1
-                        if (hasFound) {
-                            chats[modifiedIndex] =
-                                chats[modifiedIndex].copy(
-                                    lastMessage = item.document.getString(KEY_LAST_MESSAGE) ?: "",
-                                    timeStamp = item.document.getTimestamp(KEY_TIMESTAMP)?.toDate()
-                                )
-                        }
+                        val chat = item.document.toConversionChatItem(uid = uid)
+                        onModifiedChat(chat)
                     }
 
                     else -> {}
                 }
             }
 
-            onNewChat(ChatsModel(chats = chats))
 
         }
     }
 
 
-    override fun addChatListener(receiverId: String, onNewChat: (ChatsModel) -> Unit) {
+    override fun addChatListener(
+        onAddedChat: (ChatItemModel) -> Unit,
+        onModifiedChat: (ChatItemModel) -> Unit) {
         val senderId = getUid()
 
-        fireStore.collection(KEY_COLLECTION_CHATS)
-            .whereIn(KEY_SENDER_ID, listOf(senderId, receiverId))
-            .whereIn(KEY_RECEIVER_ID, listOf(senderId, receiverId))
-            .orderBy(KEY_TIMESTAMP)
-            .addSnapshotListener(chatListener(onNewChat = onNewChat))
+
+        val senderChatListener = fireStore.collection(KEY_COLLECTION_CHATS)
+            .whereIn(KEY_SENDER_ID, listOf(senderId))
+            .orderBy(KEY_TIMESTAMP, Query.Direction.DESCENDING)
+            .addSnapshotListener(chatListener(onAddedChat = onAddedChat, onModifiedChat = onModifiedChat))
+
+        val receiverChatListener = fireStore.collection(KEY_COLLECTION_CHATS)
+            .whereIn(KEY_RECEIVER_ID, listOf(senderId))
+            .orderBy(KEY_TIMESTAMP,Query.Direction.DESCENDING)
+            .addSnapshotListener(chatListener(onAddedChat = onAddedChat, onModifiedChat = onModifiedChat))
+
+        chatListener?.add(senderChatListener)
+        chatListener?.add(receiverChatListener)
+
 
     }
 
