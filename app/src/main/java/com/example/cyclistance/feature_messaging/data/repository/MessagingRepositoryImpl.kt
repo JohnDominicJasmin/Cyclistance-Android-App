@@ -56,7 +56,7 @@ class MessagingRepositoryImpl(
 
     ) : MessagingRepository {
     private var messageListener: ListenerRegistration? = null
-    private var chatListener: ListenerRegistration? = null
+    private var chatListener: MutableList<ListenerRegistration>? = null
     private var messageUserListener: ListenerRegistration? = null
     private val scope: CoroutineContext = Dispatchers.IO
     private var dataStore = appContext.dataStore
@@ -303,7 +303,7 @@ class MessagingRepositoryImpl(
     }
 
     override fun removeChatListener() {
-        chatListener?.remove()
+        chatListener?.forEach { it.remove() }
     }
 
     override fun sendMessage(sendMessageModel: SendMessageModel) {
