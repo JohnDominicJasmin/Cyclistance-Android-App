@@ -34,12 +34,13 @@ import java.util.Date
 @Composable
 internal fun ChatScreenContent(
     modifier: Modifier = Modifier,
+    chatState: List<ChatItemModel>,
     state: ChatState,
     event: (ChatUiEvent) -> Unit) {
 
 
     val messageAvailable =
-        remember(state.chatsModel.chats) { state.chatsModel.chats.isNotEmpty() }
+        remember(chatState.size) { chatState.isNotEmpty() }
     val pullRefreshState = rememberPullRefreshState(state.isRefreshing, {
 //        viewModel.onEvent(event = ChatUiEvent.OnRefresh)
     })
@@ -72,7 +73,7 @@ internal fun ChatScreenContent(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
                         )
 
-                        ChatsSection(chatsModel = state.chatsModel, onClick = {
+                        ChatsSection(chatState = chatState, onClick = {
                             event(ChatUiEvent.OnSelectConversation(it))
                         })
                     }
@@ -109,7 +110,8 @@ val fakeMessages = ChatsModel(
             lastMessage = "Hey there! How are you?",
             timeStamp = Date(),
             messageId = "1",
-            conversionId = "1gaosidnuio2b"
+            conversionId = "1gaosidnuio2b",
+
         ),
         ChatItemModel(
             conversionPhoto = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
@@ -162,7 +164,8 @@ val fakeMessages = ChatsModel(
 fun PreviewChatScreenContentDark() {
     CyclistanceTheme(darkTheme = true) {
         ChatScreenContent(
-            state = ChatState(chatsModel = fakeMessages),
+            chatState = fakeMessages.chats,
+            state = ChatState(),
             event = {}
         )
     }
@@ -173,6 +176,7 @@ fun PreviewChatScreenContentDark() {
 fun PreviewChatScreenContentLight() {
     CyclistanceTheme(darkTheme = false) {
         ChatScreenContent(
+            chatState = fakeMessages.chats,
             state = ChatState(),
             event = {}
         )

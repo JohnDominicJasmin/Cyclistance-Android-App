@@ -11,7 +11,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.ChatScreenContent
-import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.fakeMessages
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatUiEvent
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
@@ -23,8 +22,9 @@ fun ChatsScreen(
     viewModel: ChatsViewModel = hiltViewModel(),
     navController: NavController,
     paddingValues: PaddingValues) {
-
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val chatState = viewModel.chatsState.distinctBy { it.conversionId }
+
 
     val onSelectConversation = remember {
         { chatItem: ChatItemModel ->
@@ -38,7 +38,8 @@ fun ChatsScreen(
 
 
     ChatScreenContent(
-        state = state.copy(chatsModel = fakeMessages),
+        chatState = chatState,
+        state = state,
         modifier = Modifier.padding(paddingValues),
         event = { event ->
             when (event) {

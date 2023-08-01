@@ -8,19 +8,18 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatsModel
 
 
 @Composable
 internal fun ChatsSection(
     modifier: Modifier = Modifier,
-    chatsModel: ChatsModel,
+    chatState: List<ChatItemModel>,
     onClick: (ChatItemModel) -> Unit) {
 
     LazyColumn(
         modifier = modifier
             .fillMaxSize()) {
-        items(chatsModel.chats, key = {
+        items(chatState, key = {
             it.messageId
         }) { item ->
 
