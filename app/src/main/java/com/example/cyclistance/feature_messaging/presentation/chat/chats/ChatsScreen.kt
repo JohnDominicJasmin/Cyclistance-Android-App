@@ -12,6 +12,7 @@ import androidx.navigation.NavController
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.ChatScreenContent
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatUiEvent
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatVmEvent
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import java.net.URLEncoder
@@ -22,6 +23,7 @@ fun ChatsScreen(
     viewModel: ChatsViewModel = hiltViewModel(),
     navController: NavController,
     paddingValues: PaddingValues) {
+
     val state by viewModel.state.collectAsStateWithLifecycle()
     val chatState = viewModel.chatsState.distinctBy { it.conversionId }
 
@@ -36,6 +38,10 @@ fun ChatsScreen(
         }
     }
 
+    val onRefreshChats = remember{{
+        viewModel.onEvent(event = ChatVmEvent.RefreshChat)
+    }}
+
 
     ChatScreenContent(
         chatState = chatState,
@@ -44,6 +50,7 @@ fun ChatsScreen(
         event = { event ->
             when (event) {
                 is ChatUiEvent.OnSelectConversation -> onSelectConversation(event.chatItem)
+                is ChatUiEvent.OnRefreshChat -> onRefreshChats()
             }
         }
     )

@@ -65,15 +65,20 @@ class ConversationViewModel @Inject constructor(
         getUid()
         getName()
         getPhoto()
+        saveState()
     }
 
     fun onEvent(event: ConversationVmEvent) {
         when (event) {
             is ConversationVmEvent.SendMessage -> sendMessage(event.sendMessageModel)
         }
+        saveState()
     }
 
 
+    private fun saveState() {
+        savedStateHandle[CONVERSATION_VM_STATE_KEY] = state.value
+    }
 
 
     private fun getName(){

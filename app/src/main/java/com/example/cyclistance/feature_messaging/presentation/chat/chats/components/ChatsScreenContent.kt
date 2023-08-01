@@ -42,7 +42,7 @@ internal fun ChatScreenContent(
     val messageAvailable =
         remember(chatState.size) { chatState.isNotEmpty() }
     val pullRefreshState = rememberPullRefreshState(state.isRefreshing, {
-//        viewModel.onEvent(event = ChatUiEvent.OnRefresh)
+        event(ChatUiEvent.OnRefreshChat)
     })
     Surface(
         modifier = modifier

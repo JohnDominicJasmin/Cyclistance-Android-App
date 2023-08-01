@@ -9,6 +9,7 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatVmEvent
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.ChatState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.SupervisorJob
@@ -33,7 +34,21 @@ class ChatsViewModel @Inject constructor(
     init {
         refreshToken()
         initializeListener()
+        saveState()
     }
+
+
+
+    fun onEvent(event: ChatVmEvent){
+        when(event){
+            is ChatVmEvent.RefreshChat -> {
+                removeChatListener()
+                removeUserListener()
+                initializeListener()
+            }
+        }
+    }
+
 
     private fun isLoading(isLoading: Boolean) {
         _state.update { it.copy(isLoading = isLoading) }
@@ -54,8 +69,12 @@ class ChatsViewModel @Inject constructor(
                 Timber.e("Failed to retrieve chats ${it.message}")
             }
             isLoading(false)
-            savedStateHandle[MessagingConstants.SEARCH_USER_VM_STATE_KEY] = _state.value
+            saveState()
         }
+    }
+
+    private fun saveState(){
+        savedStateHandle[MessagingConstants.SEARCH_USER_VM_STATE_KEY] = _state.value
     }
 
     private fun addChatListener(messagingModel: MessagingUserModel) {
@@ -72,8 +91,8 @@ class ChatsViewModel @Inject constructor(
                     }
 
                 }, onModifiedChat = { chat ->
-                    val modifiedIndex =
-                        chatsState.indexOfFirst { chat.senderId == it.senderId && chat.receiverId == it.receiverId }
+
+                    val modifiedIndex = chatsState.indexOfFirst { chat.senderId == it.senderId && chat.receiverId == it.receiverId }
                     val hasFound = modifiedIndex != -1
                     if (hasFound) {
                         chatsState[modifiedIndex] = chatsState[modifiedIndex].copy(
@@ -83,9 +102,11 @@ class ChatsViewModel @Inject constructor(
                         chatsState.swap(modifiedIndex, 0)
                     }
                 })
+
             }.onFailure {
                 Timber.e("Failed to retrieve chats ${it.message}")
             }
+            saveState()
         }
     }
 
@@ -97,6 +118,10 @@ class ChatsViewModel @Inject constructor(
 
     private fun removeChatListener() {
         messagingUseCase.removeChatListenerUseCase()
+    }
+
+    private fun removeUserListener() {
+        messagingUseCase.removeUserListenerUseCase()
     }
 
     private fun refreshToken() {
@@ -111,11 +136,12 @@ class ChatsViewModel @Inject constructor(
             }
             isLoading(false)
         }
-        savedStateHandle[MESSAGING_VM_STATE_KEY] = _state.value
+        saveState()
     }
 
     override fun onCleared() {
         super.onCleared()
         removeChatListener()
+        removeUserListener()
     }
 }
