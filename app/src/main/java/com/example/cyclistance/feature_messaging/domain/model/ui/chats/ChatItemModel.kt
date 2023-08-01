@@ -6,14 +6,21 @@ import kotlinx.parcelize.Parcelize
 import java.util.Date
 
 
+
 @StableState
 @Parcelize
 data class ChatItemModel(
-    val messageId: String = "",
-    val userPhotoUrl: String = "",
-    val name: String = "",
-    val userId: String = "",
-    val message: String = "",
+    val messageId: String = "",//for LazyColumn
+
+    val senderId: String = "",
+    val receiverId: String = "",
+
+
+    val conversionPhoto: String = "",
+    val conversionName: String = "",
+    val conversionId: String = "",
+
+    val lastMessage: String = "",
     val timeStamp: Date? = null,
 
 

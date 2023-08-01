@@ -23,7 +23,7 @@ object MessagingConversationItemMapper {
             senderId = senderId,
             receiverId = receiverId,
             message = messageText,
-            timeStamp = timeStamp
+            timestamp = timeStamp
         )
     }
 

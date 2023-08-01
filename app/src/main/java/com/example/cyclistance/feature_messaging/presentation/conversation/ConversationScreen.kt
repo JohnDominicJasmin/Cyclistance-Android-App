@@ -30,6 +30,8 @@ fun ConversationScreen(
     newConversationDetails: (name: String, photoUrl: String) -> Unit
 ) {
 
+
+    val conversationState = viewModel.conversationState
     val state by viewModel.state.collectAsStateWithLifecycle()
     var uiState by rememberSaveable { mutableStateOf(ConversationUiState()) }
     var message by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -79,7 +81,7 @@ fun ConversationScreen(
             viewModel.onEvent(
                 event = ConversationVmEvent.SendMessage(
                     sendMessageModel = SendMessageModel(
-                        receiverId = state.chatId,
+                        receiverId = state.conversationUid,
                         message = message.text
                     )
                 )).also {
@@ -97,15 +99,16 @@ fun ConversationScreen(
         }
     })
 
-    LaunchedEffect(key1 = state.chatName, key2 = state.chatPhotoUrl) {
+    LaunchedEffect(key1 = state.conversationName, key2 = state.conversationPhotoUrl) {
         newConversationDetails(
-             state.chatName,
-             state.chatPhotoUrl
+             state.conversationName,
+             state.conversationPhotoUrl
         )
     }
 
 
     ConversationContent(
+        conversation = conversationState,
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues = paddingValues),

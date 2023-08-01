@@ -22,21 +22,23 @@ fun ChatsScreen(
     viewModel: ChatsViewModel = hiltViewModel(),
     navController: NavController,
     paddingValues: PaddingValues) {
-
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val chatState = viewModel.chatsState.distinctBy { it.conversionId }
+
 
     val onSelectConversation = remember {
         { chatItem: ChatItemModel ->
             val encodedUrl =
-                URLEncoder.encode(chatItem.userPhotoUrl, StandardCharsets.UTF_8.toString())
+                URLEncoder.encode(chatItem.conversionPhoto, StandardCharsets.UTF_8.toString())
             navController.navigateScreen(
-                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userId}/$encodedUrl/${chatItem.name}",
+                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.conversionId}/$encodedUrl/${chatItem.conversionName}",
             )
         }
     }
 
 
     ChatScreenContent(
+        chatState = chatState,
         state = state,
         modifier = Modifier.padding(paddingValues),
         event = { event ->

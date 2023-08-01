@@ -7,5 +7,5 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class ChatsModel(
-    val messages: List<ChatItemModel> = emptyList()
+    val chats: List<ChatItemModel> = emptyList()
 ) : Parcelable

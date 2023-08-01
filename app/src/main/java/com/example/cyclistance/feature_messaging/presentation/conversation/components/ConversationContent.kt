@@ -1,20 +1,16 @@
 package com.example.cyclistance.feature_messaging.presentation.conversation.components
 
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -41,7 +37,6 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
 import com.example.cyclistance.core.utils.composable_utils.keyboardAsState
 import com.example.cyclistance.core.utils.composable_utils.noRippleClickable
-import com.example.cyclistance.core.utils.validation.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.MessageDuration
@@ -54,15 +49,15 @@ import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.launch
 import java.util.Date
 
-private val USER_ID = "1"
-private val conversationsModel = ConversationsModel(
+val USER_ID = "1"
+private val fakeConversationsModel = ConversationsModel(
     messages = listOf(
         ConversationItemModel(
-            messageId = "12",
-            senderId = "1",
-            receiverId = "2",
+            messageId = "OsxvIecqWpbh32mjZPgx",
+            senderId = "gfjltEWoLYZ5sQ80bSAL5zljiIS7",
+            receiverId = "f80O4Y2BtrqIicuHTgjIYQ06AIPH",
             message = "Hello",
-            timeStamp = Date(),
+            timestamp = Date(),
             messageDuration = MessageDuration.OneDay,
 
             ),
@@ -71,21 +66,21 @@ private val conversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "How are you?",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "14",
             senderId = "1",
             receiverId = "2",
             message = "I'm fine, thanks",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "15",
             senderId = "1",
             receiverId = "2",
             message = "How about you?",
-            timeStamp = Date(),
+            timestamp = Date(),
             messageDuration = MessageDuration.OneMonth
         ),
         ConversationItemModel(
@@ -93,7 +88,7 @@ private val conversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "I'm fine too",
-            timeStamp = Date(),
+            timestamp = Date(),
             messageDuration = MessageDuration.OneHour
         ),
         ConversationItemModel(
@@ -101,7 +96,7 @@ private val conversationsModel = ConversationsModel(
             senderId = "1",
             receiverId = "2",
             message = "Good to hear that",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "18",
@@ -111,49 +106,49 @@ private val conversationsModel = ConversationsModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "19357846457",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "23457570",
             senderId = "2",
             receiverId = "1",
             message = "Sure",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "19",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "23453450",
             senderId = "2",
             receiverId = "1",
             message = "Sure",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "194533467",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "203223",
             senderId = "2",
             receiverId = "1",
             message = "Sure asdasdasd",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "18553",
@@ -163,7 +158,7 @@ private val conversationsModel = ConversationsModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timeStamp = Date()
+            timestamp = Date()
         ),
         ConversationItemModel(
             messageId = "2546718",
@@ -173,7 +168,7 @@ private val conversationsModel = ConversationsModel(
                       "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                       "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                       "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timeStamp = Date()
+            timestamp = Date()
         ),
     )
 )
@@ -181,21 +176,19 @@ private val conversationsModel = ConversationsModel(
 
 @Composable
 fun ConversationContent(
+    conversation: List<ConversationItemModel>,
     modifier: Modifier = Modifier,
     message: TextFieldValue,
     uiState: ConversationUiState,
     state: ConversationState,
     event: (ConversationUiEvent) -> Unit) {
 
-    val conversationAvailable by remember(state.conversationsModel) {
-        derivedStateOf { state.conversationsModel.messages.isNotEmpty() }
+    val conversationAvailable = remember(conversation.size) {
+        conversation.isNotEmpty()
     }
-    val listState =
-        rememberLazyListState(initialFirstVisibleItemIndex = state.conversationsModel.messages.indices.last)
+    val listState = rememberLazyListState()
     val focusManager = LocalFocusManager.current
     val keyboardState by keyboardAsState()
-
-
     val scope = rememberCoroutineScope()
 
 
@@ -207,6 +200,10 @@ fun ConversationContent(
         if (stateFirstVisibleItemIndex > farthestVisibleItemIndex) {
             farthestVisibleItemIndex = stateFirstVisibleItemIndex
         }
+    }
+
+    val keyboardIsOpen by remember(keyboardState) {
+        derivedStateOf { keyboardState == Keyboard.Opened }
     }
 
     LaunchedEffect(key1 = keyboardState) {
@@ -226,15 +223,14 @@ fun ConversationContent(
         modifier = modifier
             .fillMaxSize()
             .noRippleClickable {
-
                 event(ConversationUiEvent.ResetSelectedIndex)
-
                 if (uiState.messageAreaExpanded) {
                     event(ConversationUiEvent.ToggleMessageArea)
                 }
                 focusManager.clearFocus()
             },
         color = MaterialTheme.colors.background) {
+
 
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -245,59 +241,35 @@ fun ConversationContent(
                 modifier = Modifier.fillMaxSize()) {
 
 
-                if (conversationAvailable) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .weight(1f),
+                    contentAlignment = Alignment.Center) {
 
-                    LazyColumn(
-                        state = listState,
-                        verticalArrangement = Arrangement.Top,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.weight(1f),
-                        contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)
-                    ) {
+                    if (state.isLoading) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
 
-                        itemsIndexed(
-                            items = state.conversationsModel.messages,
-                            key = { _, item -> item.messageId }) { index, message ->
-
-                            val isSender by remember { derivedStateOf { message.senderId != USER_ID } }
-                            val timeStampAvailable by remember { derivedStateOf { message.messageDuration != null && message.timeStamp != null } }
-
-                            AnimatedVisibility(visible = timeStampAvailable) {
-
-                                MessagingTimeStamp(
-                                    value = message.timeStamp!!.toReadableDateTime(),
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 8.dp))
-                            }
-
-
-                            ChatItem(
-                                conversation = message,
-                                isSender = isSender,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 8.dp, horizontal = 6.dp),
-                                contentAlignment = if (isSender) Alignment.CenterStart else Alignment.CenterEnd,
-                                currentIndex = index,
-                                selectedIndex = uiState.chatItemSelectedIndex,
-                                onSelectChatMessage = {
-                                    event(
-                                        ConversationUiEvent.SelectChatItem(
-                                            index = it))
-                                }
-                            )
-                        }
+                    if (conversationAvailable) {
+                        ConversationChatItems(
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            keyboardIsOpen = keyboardIsOpen,
+                            listState = listState,
+                            conversation = conversation,
+                            userUid = state.userUid,
+                            uiState = uiState,
+                            event = event)
 
                     }
 
-                } else {
-                    PlaceholderEmptyConversation(
-                        modifier = Modifier
-                            .weight(1f)
-                            .fillMaxSize())
+                    if (!conversationAvailable && !state.isLoading) {
+                        PlaceholderEmptyConversation(
+                            modifier = Modifier
+                                .fillMaxSize())
+                    }
                 }
-
 
 
 
@@ -316,10 +288,12 @@ fun ConversationContent(
                 isVisible = isScrollingUp,
                 onClick = {
                     scope.launch {
-                        listState.animateScrollToItem(index = state.conversationsModel.messages.indices.last)
+                        listState.animateScrollToItem(index = conversation.indices.last)
                     }
                 })
         }
+
+
     }
 }
 
@@ -370,8 +344,8 @@ fun PreviewMessagingConversationContentDark() {
                 uiState = ConversationUiState(
                     messageAreaExpanded = true,
                 ),
+                conversation = fakeConversationsModel.messages,
                 event = {}, state = ConversationState(
-                    conversationsModel = conversationsModel
                 ), message = TextFieldValue("Hello"))
         }
     }
@@ -383,11 +357,12 @@ fun PreviewMessagingConversationContentLight() {
     CompositionLocalProvider(IsDarkTheme provides false) {
         CyclistanceTheme(darkTheme = false) {
             ConversationContent(
+                conversation = fakeConversationsModel.messages,
                 uiState = ConversationUiState(
                     messageAreaExpanded = true,
                 ),
                 event = {}, state = ConversationState(
-                    conversationsModel = conversationsModel
+
                 ), message = TextFieldValue("Hello"))
         }
     }

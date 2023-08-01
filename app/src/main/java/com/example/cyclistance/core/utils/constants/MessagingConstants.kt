@@ -21,4 +21,8 @@ object MessagingConstants {
     const val CHAT_ID = "chatId"
     const val CHAT_PHOTO_URL = "chatPhotoUrl"
     const val CHAT_NAME = "chatName"
+
+    const val KEY_COLLECTION_CHATS = "chats"
+    const val USER_COLLECTION = "users"
+    const val KEY_LAST_MESSAGE = "lastMessage"
 }
