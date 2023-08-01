@@ -11,7 +11,7 @@ object MessagingConstants {
     const val KEY_PHOTO = "photo"
     const val KEY_NAME = "name"
     const val KEY_UID = "uid"
-    const val KEY_CHAT_COLLECTION = "chat"
+
     const val KEY_SENDER_ID = "senderId"
     const val KEY_RECEIVER_ID = "receiverId"
     const val KEY_MESSAGE = "message"
@@ -21,7 +21,7 @@ object MessagingConstants {
     const val CHAT_ID = "chatId"
     const val CHAT_PHOTO_URL = "chatPhotoUrl"
     const val CHAT_NAME = "chatName"
-
+    const val KEY_CONVERSATIONS_COLLECTION = "conversations"
     const val KEY_COLLECTION_CHATS = "chats"
     const val USER_COLLECTION = "users"
     const val KEY_LAST_MESSAGE = "lastMessage"

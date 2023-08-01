@@ -3,8 +3,8 @@ package com.example.cyclistance.feature_messaging.data.repository
 import android.content.Context
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
-import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_CHAT_COLLECTION
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_COLLECTION_CHATS
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_CONVERSATIONS_COLLECTION
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_LAST_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSAGE
@@ -246,7 +246,7 @@ class MessagingRepositoryImpl(
 
         val userUid = getUid()
 
-        messageListener = fireStore.collection(KEY_CHAT_COLLECTION)
+        messageListener = fireStore.collection(KEY_CONVERSATIONS_COLLECTION)
             .whereIn(KEY_SENDER_ID, listOf(userUid, receiverId))
             .whereIn(KEY_RECEIVER_ID, listOf(userUid, receiverId))
             .orderBy(KEY_TIMESTAMP, Query.Direction.ASCENDING)
@@ -322,7 +322,7 @@ class MessagingRepositoryImpl(
             KEY_TIMESTAMP to Date()
         )
 
-        fireStore.collection(KEY_CHAT_COLLECTION).add(message).addOnSuccessListener {
+        fireStore.collection(KEY_CONVERSATIONS_COLLECTION).add(message).addOnSuccessListener {
             Timber.v("Message sent successfully ")
         }.addOnFailureListener {
             throw MessagingExceptions.SendMessagingFailure(message = it.message!!)
