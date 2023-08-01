@@ -5,11 +5,14 @@ import androidx.annotation.Keep
 import com.example.cyclistance.feature_messaging.data.repository.MessagingRepositoryImpl
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.chat.AddChatListenerUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.chat.RemoveChatListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.conversion.AddConversionUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.conversion.GetConversionIdUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.conversion.UpdateConversionUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.AddUserListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUidUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.RemoveUserListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.AddMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.RemoveMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.SendMessageUseCase
@@ -70,7 +73,10 @@ object MessagingModule {
             getUidUseCase = GetUidUseCase(repository = repository),
             getConversionIdUseCase = GetConversionIdUseCase(repository = repository),
             addConversionUseCase = AddConversionUseCase(repository = repository),
-            updateConversionUseCase = UpdateConversionUseCase(repository = repository)
+            updateConversionUseCase = UpdateConversionUseCase(repository = repository),
+            removeUserListenerUseCase = RemoveUserListenerUseCase(repository = repository),
+            addChatListenerUseCase = AddChatListenerUseCase(repository = repository),
+            removeChatListenerUseCase = RemoveChatListenerUseCase(repository = repository)
         )
     }
 

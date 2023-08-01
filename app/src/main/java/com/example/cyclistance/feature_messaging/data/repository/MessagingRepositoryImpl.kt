@@ -22,7 +22,6 @@ import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserItemMa
 import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatsModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
@@ -35,6 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.MetadataChanges
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers

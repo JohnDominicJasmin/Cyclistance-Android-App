@@ -45,4 +45,8 @@ class SearchUserViewModel @Inject constructor(
         _state.update { it.copy(isLoading = isLoading) }
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        messagingUseCase.removeUserListenerUseCase()
+    }
 }
