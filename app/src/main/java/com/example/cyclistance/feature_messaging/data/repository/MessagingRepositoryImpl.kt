@@ -249,7 +249,7 @@ class MessagingRepositoryImpl(
         messageListener = fireStore.collection(KEY_CHAT_COLLECTION)
             .whereIn(KEY_SENDER_ID, listOf(userUid, receiverId))
             .whereIn(KEY_RECEIVER_ID, listOf(userUid, receiverId))
-            .orderBy(KEY_TIMESTAMP)
+            .orderBy(KEY_TIMESTAMP, Query.Direction.ASCENDING)
             .addSnapshotListener(MetadataChanges.INCLUDE, messageListener(onNewMessage))
 
     }
