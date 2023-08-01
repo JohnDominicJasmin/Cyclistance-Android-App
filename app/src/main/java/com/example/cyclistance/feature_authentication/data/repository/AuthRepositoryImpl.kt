@@ -6,7 +6,7 @@ import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNECTION_FAILURE
 import com.example.cyclistance.core.utils.constants.AuthConstants.USER_NOT_FOUND
-import com.example.cyclistance.core.utils.constants.UtilsConstants.USER_COLLECTION
+import com.example.cyclistance.core.utils.constants.MessagingConstants.USER_COLLECTION
 import com.example.cyclistance.feature_authentication.data.mapper.AuthResultMapper.toAuthenticationResult
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.model.AuthenticationResult

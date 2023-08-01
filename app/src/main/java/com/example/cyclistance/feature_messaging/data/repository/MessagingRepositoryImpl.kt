@@ -12,7 +12,7 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEI
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_TIMESTAMP
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SAVED_TOKEN
-import com.example.cyclistance.core.utils.constants.UtilsConstants.USER_COLLECTION
+import com.example.cyclistance.core.utils.constants.MessagingConstants.USER_COLLECTION
 import com.example.cyclistance.core.utils.contexts.dataStore
 import com.example.cyclistance.core.utils.data_store_ext.editData
 import com.example.cyclistance.core.utils.data_store_ext.getData
