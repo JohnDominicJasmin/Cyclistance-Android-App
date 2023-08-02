@@ -34,3 +34,7 @@ val White800 = Color(0xFFEBEBEB)
 val White850 = Color(0xFFD9D9D9)
 val Green678 = Color(0xFF3FC5B3)
 
+
+
+val Atlantis = Color(0xFF6EDB3F)
+
