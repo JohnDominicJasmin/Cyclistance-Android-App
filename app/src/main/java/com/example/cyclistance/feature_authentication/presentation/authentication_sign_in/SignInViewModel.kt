@@ -124,7 +124,7 @@ class SignInViewModel @Inject constructor(
                 authUseCase.createUserUseCase(user = user)
             }.onSuccess {
                 _state.update { it.copy(isLoading = false) }
-                messagingUseCase.updateUserAvailability(1)
+                messagingUseCase.updateUserAvailability(true)
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
                 handleException(exception)

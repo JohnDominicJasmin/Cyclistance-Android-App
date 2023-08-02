@@ -40,10 +40,10 @@ class NavViewModel @Inject constructor(
 
     init {
         getStartingDestination()
-        setUserAvailability(1)
+        setUserAvailability(true)
     }
 
-    private fun setUserAvailability(availability: Int){
+    private fun setUserAvailability(availability: Boolean){
         runCatching {
             messagingUseCase.updateUserAvailability(availability)
         }.onSuccess {
@@ -103,7 +103,7 @@ class NavViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        setUserAvailability(0)
+        setUserAvailability(false)
     }
 
 }

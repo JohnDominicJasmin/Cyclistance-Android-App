@@ -24,7 +24,6 @@ import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserItemMa
 import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
@@ -304,7 +303,7 @@ class MessagingRepositoryImpl(
 
     }
 
-    override fun updateUserAvailability(isUserAvailable: Int) {
+    override fun updateUserAvailability(isUserAvailable: Boolean) {
         val uid = getUid()
         fireStore.collection(USER_COLLECTION)
             .document(uid)

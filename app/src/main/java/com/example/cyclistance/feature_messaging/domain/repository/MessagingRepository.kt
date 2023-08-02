@@ -26,5 +26,5 @@ interface MessagingRepository {
     fun addConversion(conversion: HashMap<String, Any>, onNewConversionId: (String) -> Unit)
     fun updateConversion(message: String, conversionId: String)
 
-    fun updateUserAvailability(isUserAvailable: Int)
+    fun updateUserAvailability(isUserAvailable: Boolean)
 }
