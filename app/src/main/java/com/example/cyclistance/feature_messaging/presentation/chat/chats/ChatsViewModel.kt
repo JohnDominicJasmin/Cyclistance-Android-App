@@ -13,6 +13,7 @@ import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.C
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.ChatState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -59,7 +60,7 @@ class ChatsViewModel @Inject constructor(
     }
 
     private fun addUserListener() {
-        viewModelScope.launch {
+        viewModelScope.launch(SupervisorJob()) {
             runCatching {
                 isLoading(true)
                 messagingUseCase.addUserListenerUseCase()
@@ -77,12 +78,13 @@ class ChatsViewModel @Inject constructor(
         savedStateHandle[MessagingConstants.SEARCH_USER_VM_STATE_KEY] = _state.value
     }
 
-    private fun addChatListener(messagingModel: MessagingUserModel) {
-        viewModelScope.launch {
+    private suspend fun addChatListener(messagingModel: MessagingUserModel) {
+        coroutineScope {
             runCatching {
                 messagingUseCase.addChatListenerUseCase(onAddedChat = { chat ->
 
-                    val messageUser = messagingModel.users.find { it.userDetails.uid == chat.conversionId }
+                    val messageUser =
+                        messagingModel.users.find { it.userDetails.uid == chat.conversionId }
 
                     messageUser?.let {
                         val name = it.userDetails.name
@@ -92,7 +94,8 @@ class ChatsViewModel @Inject constructor(
 
                 }, onModifiedChat = { chat ->
 
-                    val modifiedIndex = chatsState.indexOfFirst { chat.senderId == it.senderId && chat.receiverId == it.receiverId }
+                    val modifiedIndex =
+                        chatsState.indexOfFirst { chat.senderId == it.senderId && chat.receiverId == it.receiverId }
                     val hasFound = modifiedIndex != -1
                     if (hasFound) {
                         chatsState[modifiedIndex] = chatsState[modifiedIndex].copy(
