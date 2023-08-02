@@ -4,22 +4,17 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.CompositionLocalProvider
 import com.example.cyclistance.feature_authentication.domain.util.ActivityResultCallbackManager
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
 import com.example.cyclistance.navigation.NavScreen
 import com.facebook.FacebookSdk.sdkInitialize
 import com.facebook.appevents.AppEventsLogger
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.mapbox.mapboxsdk.Mapbox
 import dagger.hilt.android.AndroidEntryPoint
 
 
-@ExperimentalPermissionsApi
-@ExperimentalAnimationApi
-@ExperimentalPagerApi
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
