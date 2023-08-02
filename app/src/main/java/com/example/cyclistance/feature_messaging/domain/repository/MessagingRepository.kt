@@ -12,7 +12,7 @@ interface MessagingRepository {
     suspend fun deleteToken()
     fun getUserUid(): String
 
-    suspend fun addUserListener(): MessagingUserModel
+    fun addUserListener(onNewMessageUser: (MessagingUserModel) -> Unit)
     fun removeUserListener()
 
     fun addMessageListener(receiverId: String, onNewMessage: (ConversationsModel) -> Unit)

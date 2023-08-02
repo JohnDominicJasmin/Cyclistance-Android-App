@@ -60,18 +60,17 @@ class ChatsViewModel @Inject constructor(
     }
 
     private fun addUserListener() {
-        viewModelScope.launch(SupervisorJob()) {
-            runCatching {
-                isLoading(true)
-                messagingUseCase.addUserListenerUseCase()
-            }.onSuccess { model ->
-                addChatListener(messagingModel = model)
-            }.onFailure {
-                Timber.e("Failed to retrieve chats ${it.message}")
-            }
-            isLoading(false)
-            saveState()
+
+        runCatching {
+            messagingUseCase.addUserListenerUseCase(onNewMessageUser = {
+                viewModelScope.launch(SupervisorJob()) {
+                    addChatListener(messagingModel = it)
+                }
+            })
+        }.onFailure {
+            Timber.e("Failed to retrieve chats ${it.message}")
         }
+        saveState()
     }
 
     private fun saveState(){

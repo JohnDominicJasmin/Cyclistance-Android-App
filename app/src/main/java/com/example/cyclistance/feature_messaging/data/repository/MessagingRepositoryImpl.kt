@@ -280,34 +280,26 @@ class MessagingRepositoryImpl(
         }
     }
 
-    override suspend fun addUserListener(): MessagingUserModel {
+    override fun addUserListener(onNewMessageUser: (MessagingUserModel) -> Unit) {
         val uid = getUid()
-        return withContext(scope) {
-            suspendCancellableCoroutine { continuation ->
-                messageListener = fireStore.collection(USER_COLLECTION).whereNotEqualTo(KEY_UID, uid)
-                    .addSnapshotListener(MetadataChanges.INCLUDE) { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
-                        if (value == null) {
-                            throw MessagingExceptions.GetMessageUsersFailure(message = "Cannot get message users, value is null")
-                        }
-                        if (error != null) {
-                            throw MessagingExceptions.GetMessageUsersFailure(
-                                message = error.message ?: "Unknown error occurred")
-                        }
+        messageListener = fireStore.collection(USER_COLLECTION).whereNotEqualTo(KEY_UID, uid)
+            .addSnapshotListener(MetadataChanges.INCLUDE) { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
+                if (value == null) {
+                    throw MessagingExceptions.GetMessageUsersFailure(message = "Cannot get message users, value is null")
+                }
+                if (error != null) {
+                    throw MessagingExceptions.GetMessageUsersFailure(
+                        message = error.message ?: "Unknown error occurred")
+                }
 
-                        value.documents.let { documents ->
+                val users = value.documentChanges.map {
+                    it.document.toMessageUser()
+                }
 
-                            val users: List<MessagingUserItemModel> = documents.map { document ->
-                                document?.toMessageUser() ?: MessagingUserItemModel()
-                            }
-
-                            if (continuation.isActive) {
-                                continuation.resume(MessagingUserModel(users = users))
-                            }
-
-                        }
-                    }
+                onNewMessageUser(MessagingUserModel(
+                    users = users
+                ))
             }
-        }
 
 
     }
