@@ -52,7 +52,7 @@ fun MessagingTextArea(
 
 ) {
 
-    val isMessageEmpty by remember(message) { derivedStateOf { message.text.isEmpty() } }
+    val isMessageEmpty by remember(message) { derivedStateOf { message.text.trim().isEmpty() } }
 
 
     Surface(
