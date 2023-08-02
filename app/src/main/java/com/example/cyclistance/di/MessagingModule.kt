@@ -13,6 +13,7 @@ import com.example.cyclistance.feature_messaging.domain.use_case.conversion.Upda
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.AddUserListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUidUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.RemoveUserListenerUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.UpdateUserAvailability
 import com.example.cyclistance.feature_messaging.domain.use_case.message.AddMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.RemoveMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.SendMessageUseCase
@@ -76,7 +77,8 @@ object MessagingModule {
             updateConversionUseCase = UpdateConversionUseCase(repository = repository),
             removeUserListenerUseCase = RemoveUserListenerUseCase(repository = repository),
             addChatListenerUseCase = AddChatListenerUseCase(repository = repository),
-            removeChatListenerUseCase = RemoveChatListenerUseCase(repository = repository)
+            removeChatListenerUseCase = RemoveChatListenerUseCase(repository = repository),
+            updateUserAvailability = UpdateUserAvailability(repository = repository)
         )
     }
 
