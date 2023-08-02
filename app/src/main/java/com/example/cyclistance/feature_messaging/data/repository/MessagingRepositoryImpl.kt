@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_messaging.data.repository
 import android.content.Context
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_AVAILABILITY
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_COLLECTION_CHATS
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_CONVERSATIONS_COLLECTION
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN
@@ -11,6 +12,7 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSA
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_TIMESTAMP
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_UID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SAVED_TOKEN
 import com.example.cyclistance.core.utils.constants.MessagingConstants.USER_COLLECTION
 import com.example.cyclistance.core.utils.contexts.dataStore
@@ -30,6 +32,7 @@ import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepo
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
@@ -56,11 +59,11 @@ class MessagingRepositoryImpl(
 
     ) : MessagingRepository {
     private var messageListener: ListenerRegistration? = null
-    private var chatListener: MutableList<ListenerRegistration>? = null
+    private var chatListener: ListenerRegistration? = null
     private var messageUserListener: ListenerRegistration? = null
     private val scope: CoroutineContext = Dispatchers.IO
     private var dataStore = appContext.dataStore
-
+    private val chats: MutableList<ChatItemModel> = mutableListOf()
     private suspend fun getMessagingToken(): String {
         return suspendCancellableCoroutine { continuation ->
             firebaseMessaging.token.addOnSuccessListener { token: String ->
@@ -172,34 +175,34 @@ class MessagingRepositoryImpl(
     override fun addChatListener(
         onAddedChat: (ChatItemModel) -> Unit,
         onModifiedChat: (ChatItemModel) -> Unit) {
-        val senderId = getUid()
+        val userId = getUid()
 
-
-        val senderChatListener = fireStore.collection(KEY_COLLECTION_CHATS)
-            .whereIn(KEY_SENDER_ID, listOf(senderId))
+        chatListener = fireStore.collection(KEY_COLLECTION_CHATS)
+            .where(
+                Filter.or(
+                    Filter.equalTo(KEY_RECEIVER_ID, userId),
+                    Filter.equalTo(KEY_SENDER_ID, userId)))
             .orderBy(KEY_TIMESTAMP, Query.Direction.DESCENDING)
-            .addSnapshotListener(chatListener(onAddedChat = onAddedChat, onModifiedChat = onModifiedChat))
-
-        val receiverChatListener = fireStore.collection(KEY_COLLECTION_CHATS)
-            .whereIn(KEY_RECEIVER_ID, listOf(senderId))
-            .orderBy(KEY_TIMESTAMP,Query.Direction.DESCENDING)
-            .addSnapshotListener(chatListener(onAddedChat = onAddedChat, onModifiedChat = onModifiedChat))
-
-        chatListener?.add(senderChatListener)
-        chatListener?.add(receiverChatListener)
-
+            .addSnapshotListener(
+                chatListener(onAddedChat = onAddedChat, onModifiedChat = onModifiedChat))
 
     }
 
-
     override suspend fun getConversionId(receiverId: String): String {
-
-        val senderId = getUid()
-
+        val userId = getUid()
         return suspendCancellableCoroutine { continuation ->
             fireStore.collection(KEY_COLLECTION_CHATS)
-                .whereIn(KEY_SENDER_ID, listOf(senderId, receiverId))
-                .whereIn(KEY_RECEIVER_ID, listOf(senderId, receiverId))
+                .where(
+                    Filter.and(
+                        Filter.or(
+                            Filter.equalTo(KEY_SENDER_ID, userId),
+                            Filter.equalTo(KEY_SENDER_ID, receiverId),
+                        ),
+                        Filter.or(
+                            Filter.equalTo(KEY_RECEIVER_ID, userId),
+                            Filter.equalTo(KEY_RECEIVER_ID, receiverId)
+                        )
+                    ))
                 .get()
                 .addOnCompleteListener { task ->
 
@@ -247,8 +250,16 @@ class MessagingRepositoryImpl(
         val userUid = getUid()
 
         messageListener = fireStore.collection(KEY_CONVERSATIONS_COLLECTION)
-            .whereIn(KEY_SENDER_ID, listOf(userUid, receiverId))
-            .whereIn(KEY_RECEIVER_ID, listOf(userUid, receiverId))
+            .where(
+                Filter.and(
+                    Filter.or(
+                        Filter.equalTo(KEY_SENDER_ID, userUid),
+                        Filter.equalTo(KEY_SENDER_ID, receiverId),
+                    ),
+                    Filter.or(
+                        Filter.equalTo(KEY_RECEIVER_ID, userUid),
+                        Filter.equalTo(KEY_RECEIVER_ID, receiverId)
+                    )))
             .orderBy(KEY_TIMESTAMP, Query.Direction.ASCENDING)
             .addSnapshotListener(MetadataChanges.INCLUDE, messageListener(onNewMessage))
 
@@ -270,9 +281,10 @@ class MessagingRepositoryImpl(
     }
 
     override suspend fun addUserListener(): MessagingUserModel {
+        val uid = getUid()
         return withContext(scope) {
             suspendCancellableCoroutine { continuation ->
-                messageListener = fireStore.collection(USER_COLLECTION)
+                messageListener = fireStore.collection(USER_COLLECTION).whereNotEqualTo(KEY_UID, uid)
                     .addSnapshotListener(MetadataChanges.INCLUDE) { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
                         if (value == null) {
                             throw MessagingExceptions.GetMessageUsersFailure(message = "Cannot get message users, value is null")
@@ -291,12 +303,25 @@ class MessagingRepositoryImpl(
                             if (continuation.isActive) {
                                 continuation.resume(MessagingUserModel(users = users))
                             }
+
                         }
                     }
             }
         }
 
 
+    }
+
+    override fun updateUserAvailability(isUserAvailable: Int) {
+        val uid = getUid()
+        fireStore.collection(USER_COLLECTION)
+            .document(uid)
+            .update(KEY_AVAILABILITY, isUserAvailable)
+            .addOnSuccessListener {
+                Timber.v("User availability updated successfully")
+            }.addOnFailureListener {
+                Timber.v("User availability update failed")
+            }
     }
 
     override fun removeMessageListener() {
@@ -308,7 +333,7 @@ class MessagingRepositoryImpl(
     }
 
     override fun removeChatListener() {
-        chatListener?.forEach { it.remove() }
+        chatListener?.remove()
     }
 
     override fun sendMessage(sendMessageModel: SendMessageModel) {
