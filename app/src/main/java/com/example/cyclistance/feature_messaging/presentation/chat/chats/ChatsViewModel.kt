@@ -81,6 +81,7 @@ class ChatsViewModel @Inject constructor(
     private suspend fun addChatListener(messagingModel: MessagingUserModel) {
         coroutineScope {
             runCatching {
+
                 messagingUseCase.addChatListenerUseCase(onAddedChat = { chat ->
 
                     val messageUser =
@@ -92,6 +93,7 @@ class ChatsViewModel @Inject constructor(
                         chatsState.add(chat.copy(conversionName = name, conversionPhoto = photo))
                     }
 
+                    isLoading(false)
                 }, onModifiedChat = { chat ->
 
                     val modifiedIndex =
@@ -104,12 +106,14 @@ class ChatsViewModel @Inject constructor(
                         )
                         chatsState.swap(modifiedIndex, 0)
                     }
+                    isLoading(false)
                 })
 
             }.onFailure {
                 Timber.e("Failed to retrieve chats ${it.message}")
             }
             saveState()
+
         }
     }
 
@@ -137,7 +141,7 @@ class ChatsViewModel @Inject constructor(
             }.onFailure {
                 Timber.e("Failed to refresh token ${it.message}")
             }
-            isLoading(false)
+
         }
         saveState()
     }

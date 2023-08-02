@@ -79,7 +79,7 @@ internal fun ChatScreenContent(
                     }
                 }
 
-                if (!messageAvailable) {
+                if (!messageAvailable && !state.isLoading) {
 
                     Text(
                         text = "Start a conversation by sending a message. Connect with others and let the chat come alive!",
@@ -164,8 +164,8 @@ val fakeMessages = ChatsModel(
 fun PreviewChatScreenContentDark() {
     CyclistanceTheme(darkTheme = true) {
         ChatScreenContent(
-            chatState = fakeMessages.chats,
-            state = ChatState(),
+            chatState = emptyList(),
+            state = ChatState(isLoading = true),
             event = {}
         )
     }
