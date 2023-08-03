@@ -33,7 +33,7 @@ fun ChatsScreen(
             val encodedUrl =
                 URLEncoder.encode(chatItem.conversionPhoto, StandardCharsets.UTF_8.toString())
             navController.navigateScreen(
-                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.conversionId}/$encodedUrl/${chatItem.conversionName}",
+                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.conversionId}/$encodedUrl/${chatItem.conversionName}/${chatItem.isUserAvailable}",
             )
         }
     }

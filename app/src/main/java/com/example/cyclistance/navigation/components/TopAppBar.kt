@@ -2,7 +2,6 @@ package com.example.cyclistance.navigation.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -12,9 +11,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -26,17 +23,10 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
-import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG
+import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_AVAILABILITY
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_NAME
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_PHOTO_URL
@@ -45,6 +35,7 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_I
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
+import com.example.cyclistance.feature_messaging.presentation.common.MessageUserImage
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.state.NavUiState
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -152,7 +143,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.MessagingNavigation.ConversationScreen.screenRoute + "/{${CHAT_ID}}/{${CHAT_PHOTO_URL}}/{${CHAT_NAME}}" -> {
+        Screens.MessagingNavigation.ConversationScreen.screenRoute + "/{$CHAT_ID}/{${CHAT_PHOTO_URL}}/{$CHAT_NAME}/{${CHAT_AVAILABILITY}}" -> {
             TopAppBarCreator(
                 icon = Icons.Default.Close,
                 onClickIcon = onClickArrowBackIcon,
@@ -163,30 +154,19 @@ fun TopAppBar(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(5.dp)) {
 
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(uiState.conversationPhotoUrl)
-                                .crossfade(true)
-                                .networkCachePolicy(CachePolicy.ENABLED)
-                                .diskCachePolicy(CachePolicy.ENABLED)
-                                .memoryCachePolicy(CachePolicy.ENABLED)
-                                .build(),
-                            alignment = Alignment.Center,
-                            contentDescription = "User Profile Image",
-                            modifier = Modifier
-                                .animateContentSize(tween(1000, easing = FastOutSlowInEasing))
-                                .clip(CircleShape)
-                                .size(45.dp),
-                            contentScale = ContentScale.Crop,
-                            placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
-                            error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
-                            fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
+                        MessageUserImage(
+                            modifier = Modifier,
+                            isOnline = uiState.conversationAvailability,
+                            photoUrl = uiState.conversationPhotoUrl)
 
                         TitleTopAppBar(
                             title = uiState.conversationName,
-                            modifier = Modifier.padding(start = 5.dp).animateContentSize(animationSpec = spring(
-                                stiffness = Spring.StiffnessLow,
-                            )))
+                            modifier = Modifier
+                                .padding(start = 5.dp)
+                                .animateContentSize(
+                                    animationSpec = spring(
+                                        stiffness = Spring.StiffnessLow,
+                                    )))
 
                     }
                 })

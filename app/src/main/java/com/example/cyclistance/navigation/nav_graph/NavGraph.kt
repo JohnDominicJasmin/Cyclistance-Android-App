@@ -58,11 +58,12 @@ fun NavGraph(
         messagingGraph(
             navController = navController,
             paddingValues = paddingValues,
-            newConversationDetails = { name, photoUrl ->
+            newConversationDetails = { name, photoUrl, availability ->
                 event(
                     NavUiEvent.NewConversationDetails(
                         chatName = name,
-                        chatPhotoUrl = photoUrl))
+                        chatPhotoUrl = photoUrl,
+                        chatAvailability = availability))
             }
         )
 

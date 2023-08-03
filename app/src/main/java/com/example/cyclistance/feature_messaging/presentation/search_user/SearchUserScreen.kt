@@ -47,7 +47,7 @@ fun SearchUserScreen(
             val encodedUrl =
                 URLEncoder.encode(chatItem.userDetails.photo, StandardCharsets.UTF_8.toString())
             navController.navigateScreen(
-                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userDetails.uid}/$encodedUrl/${chatItem.userDetails.name}",
+                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userDetails.uid}/$encodedUrl/${chatItem.userDetails.name}/${chatItem.userAvailability}",
             )
         }
     }

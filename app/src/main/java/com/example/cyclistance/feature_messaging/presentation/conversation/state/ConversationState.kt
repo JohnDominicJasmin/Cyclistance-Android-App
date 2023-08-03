@@ -11,6 +11,7 @@ data class ConversationState(
     val conversationName: String = "",
     val conversationUid: String = "",
     val conversationPhotoUrl: String = "",
+    val conversationAvailability: Boolean = false,
     val userUid: String = "",
     val userName: String = "",
     val userPhoto: String = "",

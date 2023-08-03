@@ -14,4 +14,5 @@ data class NavUiState(
     val drawerDisplayName: String = "",
     val conversationName: String = "",
     val conversationPhotoUrl: String = "",
+    val conversationAvailability: Boolean = false,
 ):Parcelable

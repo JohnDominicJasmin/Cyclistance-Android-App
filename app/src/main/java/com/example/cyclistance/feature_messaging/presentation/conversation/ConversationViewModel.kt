@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_AVAILABILITY
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_NAME
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_PHOTO_URL
@@ -42,6 +43,7 @@ class ConversationViewModel @Inject constructor(
     private val _chatName: String = savedStateHandle[CHAT_NAME]!!
     private val _chatId: String = savedStateHandle[CHAT_ID]!!
     private val _chatPhotoUrl: String = savedStateHandle[CHAT_PHOTO_URL]!!
+    private val _chatUserAvailability: Boolean = savedStateHandle[CHAT_AVAILABILITY]!!
 
     private val _conversationState = mutableStateListOf<ConversationItemModel>()
     val conversationState: List<ConversationItemModel> = _conversationState
@@ -50,7 +52,8 @@ class ConversationViewModel @Inject constructor(
         savedStateHandle[CONVERSATION_VM_STATE_KEY] ?: ConversationState(
             conversationUid = _chatId,
             conversationPhotoUrl = _chatPhotoUrl,
-            conversationName = _chatName
+            conversationName = _chatName,
+            conversationAvailability = _chatUserAvailability
         ))
 
     val state = _state.asStateFlow()
