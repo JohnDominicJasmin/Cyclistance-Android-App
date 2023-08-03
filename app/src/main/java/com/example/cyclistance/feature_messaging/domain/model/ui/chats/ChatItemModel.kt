@@ -10,7 +10,7 @@ import java.util.Date
 @StableState
 @Parcelize
 data class ChatItemModel(
-    val messageId: String = "",//for LazyColumn
+    val messageId: String = "",
 
     val senderId: String = "",
     val receiverId: String = "",
@@ -19,6 +19,7 @@ data class ChatItemModel(
     val conversionPhoto: String = "",
     val conversionName: String = "",
     val conversionId: String = "",
+    val isUserAvailable: Boolean = false,
 
     val lastMessage: String = "",
     val timeStamp: Date? = null,

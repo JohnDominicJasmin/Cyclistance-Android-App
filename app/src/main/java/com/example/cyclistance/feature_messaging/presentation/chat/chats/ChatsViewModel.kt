@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MessagingConstants
 import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_VM_STATE_KEY
+import com.example.cyclistance.feature_messaging.domain.model.helper.MessagingUserHandler
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
@@ -29,8 +30,11 @@ class ChatsViewModel @Inject constructor(
     private val _state = MutableStateFlow(savedStateHandle[MESSAGING_VM_STATE_KEY] ?: ChatState())
     val state = _state.asStateFlow()
 
+    private val messageUserFlow = MutableStateFlow(MessagingUserModel())
+
+
     private val _chatsState = mutableStateListOf<ChatItemModel>()
-    val chatsState = _chatsState
+    val chatsState: List<ChatItemModel> = _chatsState
 
     init {
         refreshToken()
@@ -39,10 +43,10 @@ class ChatsViewModel @Inject constructor(
     }
 
 
-
-    fun onEvent(event: ChatVmEvent){
-        when(event){
+    fun onEvent(event: ChatVmEvent) {
+        when (event) {
             is ChatVmEvent.RefreshChat -> {
+                _chatsState.clear()
                 removeChatListener()
                 removeUserListener()
                 initializeListener()
@@ -55,72 +59,85 @@ class ChatsViewModel @Inject constructor(
         _state.update { it.copy(isLoading = isLoading) }
     }
 
-    private fun initializeListener(){
-        addUserListener()
-    }
-
-    private fun addUserListener() {
-
-        runCatching {
-            messagingUseCase.addUserListenerUseCase(onNewMessageUser = {
-                viewModelScope.launch(SupervisorJob()) {
-                    addChatListener(messagingModel = it)
-                }
-            })
-        }.onFailure {
-            Timber.e("Failed to retrieve chats ${it.message}")
+    private fun initializeListener() {
+        viewModelScope.launch(SupervisorJob()) {
+            addUserListener()
+            addChatListener()
         }
-        saveState()
+
     }
 
-    private fun saveState(){
-        savedStateHandle[MessagingConstants.SEARCH_USER_VM_STATE_KEY] = _state.value
-    }
+    private suspend fun addUserListener() {
 
-    private suspend fun addChatListener(messagingModel: MessagingUserModel) {
         coroutineScope {
             runCatching {
-
-                messagingUseCase.addChatListenerUseCase(onAddedChat = { chat ->
-
-                    val messageUser =
-                        messagingModel.users.find { it.userDetails.uid == chat.conversionId }
-
-                    messageUser?.let {
-                        val name = it.userDetails.name
-                        val photo = it.userDetails.photo
-                        chatsState.add(chat.copy(conversionName = name, conversionPhoto = photo))
+                messagingUseCase.addUserListenerUseCase(onNewMessageUser = { messageUser ->
+                    this.launch(SupervisorJob()) {
+                        messageUserFlow.emit(value = messageUser)
                     }
-
-                    isLoading(false)
-                }, onModifiedChat = { chat ->
-
-                    val modifiedIndex =
-                        chatsState.indexOfFirst { chat.senderId == it.senderId && chat.receiverId == it.receiverId }
-                    val hasFound = modifiedIndex != -1
-                    if (hasFound) {
-                        chatsState[modifiedIndex] = chatsState[modifiedIndex].copy(
-                            lastMessage = chat.lastMessage,
-                            timeStamp = chat.timeStamp
-                        )
-                        chatsState.swap(modifiedIndex, 0)
-                    }
-                    isLoading(false)
                 })
-
             }.onFailure {
                 Timber.e("Failed to retrieve chats ${it.message}")
             }
             saveState()
-
         }
     }
 
-    private fun <T> MutableList<T>.swap(index1: Int, index2: Int) {
-        val tmp = this[index1]
-        this[index1] = this[index2]
-        this[index2] = tmp
+    private fun saveState() {
+        savedStateHandle[MessagingConstants.SEARCH_USER_VM_STATE_KEY] = _state.value
     }
+
+    private suspend fun addChatListener() {
+        coroutineScope {
+            runCatching {
+                messagingUseCase.addChatListenerUseCase(onAddedChat = { chat ->
+                    this.launch(SupervisorJob()) {
+                        handleAddChat(chat)
+                    }
+                }, onModifiedChat = { chat ->
+                    handleModifiedChat(chat)
+                })
+
+            }.onFailure {
+                Timber.e("Failed to retrieve chats ${it.message}")
+            }.also {
+                isLoading(false)
+                saveState()
+            }
+        }
+    }
+
+
+    private suspend fun handleAddChat(chat: ChatItemModel){
+
+            messageUserFlow.collect { messageUser ->
+                val matchedMessageUser =
+                    messageUser.users.find { it.userDetails.uid == chat.conversionId }
+                val messagingUserHandler = matchedMessageUser?.let {
+                    MessagingUserHandler(
+                        messagingUserItem = it,
+                        chatItem = chat,
+                        chats = _chatsState
+                    )
+                }
+                messagingUserHandler?.handleNewAddedChat()
+                _chatsState.addAll(messagingUserHandler?.chats ?: emptyList())
+                isLoading(false)
+            }
+
+        }
+
+
+    private fun handleModifiedChat(chat: ChatItemModel){
+        val messagingUserHandler = MessagingUserHandler(
+            chatItem = chat,
+            chats = _chatsState
+        )
+        messagingUserHandler.handleModifiedChat()
+        _chatsState.addAll(messagingUserHandler.chats)
+        isLoading(false)
+    }
+
 
     private fun removeChatListener() {
         messagingUseCase.removeChatListenerUseCase()
@@ -151,3 +168,5 @@ class ChatsViewModel @Inject constructor(
         removeUserListener()
     }
 }
+
+

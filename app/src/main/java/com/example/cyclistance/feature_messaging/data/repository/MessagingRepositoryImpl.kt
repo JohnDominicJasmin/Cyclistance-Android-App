@@ -295,9 +295,13 @@ class MessagingRepositoryImpl(
                     it.document.toMessageUser()
                 }
 
-                onNewMessageUser(MessagingUserModel(
-                    users = users
-                ))
+                if (users.isNotEmpty()) {
+                    onNewMessageUser(
+                        MessagingUserModel(
+                            users = users
+                        ))
+                }
+
             }
 
 
@@ -338,7 +342,10 @@ class MessagingRepositoryImpl(
             KEY_TIMESTAMP to Date()
         )
 
-        fireStore.collection(KEY_CONVERSATIONS_COLLECTION).add(message).addOnSuccessListener {
+        fireStore
+            .collection(KEY_CONVERSATIONS_COLLECTION)
+            .add(message)
+            .addOnSuccessListener {
             Timber.v("Message sent successfully ")
         }.addOnFailureListener {
             throw MessagingExceptions.SendMessagingFailure(message = it.message!!)

@@ -60,7 +60,7 @@ fun ChatItem(
 
                 MessageUserImage(
                     modifier = Modifier.wrapContentSize(),
-                    isOnline = true,
+                    isOnline = chatItemModel.isUserAvailable,
                     photoUrl = chatItemModel.conversionPhoto
                 )
             }

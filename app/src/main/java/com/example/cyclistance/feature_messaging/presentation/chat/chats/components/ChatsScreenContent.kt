@@ -165,7 +165,7 @@ fun PreviewChatScreenContentDark() {
     CyclistanceTheme(darkTheme = true) {
         ChatScreenContent(
             chatState = emptyList(),
-            state = ChatState(isLoading = true),
+            state = ChatState(isLoading = false),
             event = {}
         )
     }
