@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_authentication.data.mapper
 
 import com.example.cyclistance.core.domain.model.UserDetails
+import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.feature_authentication.domain.model.AuthenticationResult
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
@@ -13,7 +14,7 @@ object AuthResultMapper {
             user = UserDetails(
                 uid = user?.uid ?: "",
                 name = user?.displayName ?: "",
-                photo = user?.photoUrl.toString(),
+                photo = user?.photoUrl.toString().takeIf { it != "null" } ?: IMAGE_PLACEHOLDER_URL,
                 email = user?.email ?: ""
             )
         )
