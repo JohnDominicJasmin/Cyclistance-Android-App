@@ -19,6 +19,7 @@ import com.example.cyclistance.navigation.Screens
 fun NavGraphBuilder.messagingGraph(
     navController: NavController,
     paddingValues: PaddingValues,
+    isInternetAvailable: Boolean,
     newConversationDetails: (name: String, photoUrl: String, availability: Boolean) -> Unit) {
 
     navigation(
@@ -30,7 +31,8 @@ fun NavGraphBuilder.messagingGraph(
         composable(Screens.MessagingNavigation.ChatScreen.screenRoute, ) {
             ChatsScreen(
                 navController = navController,
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
+                isInternetAvailable = isInternetAvailable
             )
         }
 

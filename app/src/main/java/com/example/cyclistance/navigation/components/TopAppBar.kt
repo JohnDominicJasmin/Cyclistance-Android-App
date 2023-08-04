@@ -156,17 +156,14 @@ fun TopAppBar(
 
                         MessageUserImage(
                             modifier = Modifier,
-                            isOnline = uiState.conversationAvailability,
+                            isOnline = if(!uiState.internetAvailable) null else uiState.conversationAvailability,
                             photoUrl = uiState.conversationPhotoUrl)
 
                         TitleTopAppBar(
                             title = uiState.conversationName,
                             modifier = Modifier
                                 .padding(start = 5.dp)
-                                .animateContentSize(
-                                    animationSpec = spring(
-                                        stiffness = Spring.StiffnessLow,
-                                    )))
+                                .animateContentSize(animationSpec = spring(stiffness = Spring.StiffnessLow)))
 
                     }
                 })

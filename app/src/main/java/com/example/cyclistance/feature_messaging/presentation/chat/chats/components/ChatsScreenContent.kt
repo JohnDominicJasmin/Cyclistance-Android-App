@@ -35,6 +35,7 @@ import java.util.Date
 internal fun ChatScreenContent(
     modifier: Modifier = Modifier,
     chatState: List<ChatItemModel>,
+    isInternetAvailable: Boolean,
     state: ChatState,
     event: (ChatUiEvent) -> Unit) {
 
@@ -73,7 +74,7 @@ internal fun ChatScreenContent(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
                         )
 
-                        ChatsSection(chatState = chatState, onClick = {
+                        ChatsSection(isInternetAvailable = isInternetAvailable, chatState = chatState, onClick = {
                             event(ChatUiEvent.OnSelectConversation(it))
                         })
                     }
@@ -96,7 +97,6 @@ internal fun ChatScreenContent(
                 pullRefreshState,
                 Modifier.align(Alignment.TopCenter),
             )
-
         }
     }
 }
@@ -111,6 +111,7 @@ val fakeMessages = ChatsModel(
             timeStamp = Date(),
             messageId = "1",
             conversionId = "1gaosidnuio2b",
+            isUserAvailable = true
 
         ),
         ChatItemModel(
@@ -166,7 +167,9 @@ fun PreviewChatScreenContentDark() {
         ChatScreenContent(
             chatState = emptyList(),
             state = ChatState(isLoading = false),
-            event = {}
+            event = {},
+            isInternetAvailable = false
+
         )
     }
 }
@@ -178,7 +181,8 @@ fun PreviewChatScreenContentLight() {
         ChatScreenContent(
             chatState = fakeMessages.chats,
             state = ChatState(),
-            event = {}
+            event = {},
+            isInternetAvailable = true
         )
     }
 }

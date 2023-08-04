@@ -33,6 +33,7 @@ import java.util.Date
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ChatItem(
+    isInternetAvailable: Boolean,
     modifier: Modifier = Modifier,
     chatItemModel: ChatItemModel = ChatItemModel(),
     onClick: (ChatItemModel) -> Unit) {
@@ -60,7 +61,7 @@ fun ChatItem(
 
                 MessageUserImage(
                     modifier = Modifier.wrapContentSize(),
-                    isOnline = chatItemModel.isUserAvailable,
+                    isOnline = if(!isInternetAvailable) null else chatItemModel.isUserAvailable,
                     photoUrl = chatItemModel.conversionPhoto
                 )
             }
@@ -120,6 +121,7 @@ fun PreviewChatItemDark() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
+                isInternetAvailable = false,
                 chatItemModel = ChatItemModel(
                     conversionPhoto = MappingConstants.IMAGE_PLACEHOLDER_URL,
                     conversionName = "John Doe",
@@ -153,6 +155,7 @@ fun PreviewChatItemLight() {
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
+                isInternetAvailable = true,
                 chatItemModel = ChatItemModel(
                     conversionPhoto = MappingConstants.IMAGE_PLACEHOLDER_URL,
                     conversionName = "John Doe",

@@ -58,6 +58,7 @@ fun NavGraph(
         messagingGraph(
             navController = navController,
             paddingValues = paddingValues,
+            isInternetAvailable = uiState.internetAvailable,
             newConversationDetails = { name, photoUrl, availability ->
                 event(
                     NavUiEvent.NewConversationDetails(

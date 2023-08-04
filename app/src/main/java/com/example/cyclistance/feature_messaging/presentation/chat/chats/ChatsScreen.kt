@@ -22,7 +22,8 @@ import java.nio.charset.StandardCharsets
 fun ChatsScreen(
     viewModel: ChatsViewModel = hiltViewModel(),
     navController: NavController,
-    paddingValues: PaddingValues) {
+    paddingValues: PaddingValues,
+    isInternetAvailable: Boolean) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
     val chatState = viewModel.chatsState.distinctBy { it.conversionId }
@@ -47,6 +48,7 @@ fun ChatsScreen(
         chatState = chatState,
         state = state,
         modifier = Modifier.padding(paddingValues),
+        isInternetAvailable = isInternetAvailable,
         event = { event ->
             when (event) {
                 is ChatUiEvent.OnSelectConversation -> onSelectConversation(event.chatItem)

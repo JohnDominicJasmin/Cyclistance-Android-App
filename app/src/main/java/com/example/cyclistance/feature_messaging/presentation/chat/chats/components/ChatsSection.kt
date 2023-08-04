@@ -13,6 +13,7 @@ import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemM
 @Composable
 internal fun ChatsSection(
     modifier: Modifier = Modifier,
+    isInternetAvailable: Boolean,
     chatState: List<ChatItemModel>,
     onClick: (ChatItemModel) -> Unit) {
 
@@ -27,6 +28,7 @@ internal fun ChatsSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
+                isInternetAvailable = isInternetAvailable,
                 chatItemModel = item,
                 onClick = onClick
             )
