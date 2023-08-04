@@ -46,6 +46,8 @@ android {
             resValue("string", "FacebookClientToken", localProperties.getProperty("FACEBOOK_CLIENT_TOKEN"))
             resValue("string", "DefaultWebClientId", localProperties.getProperty("DEFAULT_WEB_CLIENT_ID"))
             resValue("string", "CyclistanceApiBaseUrl", localProperties.getProperty("CYCLISTANCE_API_BASE_URL_LOCAL"))
+            resValue("string", "FcmServerKey", localProperties.getProperty("FCM_SERVER_KEY"))
+            resValue("string", "FcmBaseUrl", localProperties.getProperty("FCM_BASE_URL"))
 //            resValue("string", "CyclistanceApiBaseUrlLocal", localProperties.getProperty("CYCLISTANCE_API_BASE_URL_LOCAL"))
         }
         release {
@@ -60,6 +62,8 @@ android {
             resValue("string", "FacebookClientToken", localProperties.getProperty("FACEBOOK_CLIENT_TOKEN"))
             resValue("string", "DefaultWebClientId", localProperties.getProperty("DEFAULT_WEB_CLIENT_ID"))
             resValue("string", "CyclistanceApiBaseUrl", localProperties.getProperty("CYCLISTANCE_API_BASE_URL"))
+            resValue("string", "FcmServerKey", localProperties.getProperty("FCM_SERVER_KEY"))
+            resValue("string", "FcmBaseUrl", localProperties.getProperty("FCM_BASE_URL"))
 //            resValue("string", "CyclistanceApiBaseUrlLocal", localProperties.getProperty("CYCLISTANCE_API_BASE_URL_LOCAL"))
         }
     }
@@ -157,6 +161,7 @@ dependencies {
     def retrofit_version = "2.9.0"
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-scalars:$retrofit_version"
 
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
