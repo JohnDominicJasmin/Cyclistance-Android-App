@@ -23,9 +23,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.validation.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.common.MessageUserImage
 import com.example.cyclistance.theme.CyclistanceTheme
 import java.util.Date
@@ -35,12 +37,13 @@ import java.util.Date
 fun ChatItem(
     isInternetAvailable: Boolean,
     modifier: Modifier = Modifier,
-    chatItemModel: ChatItemModel = ChatItemModel(),
-    onClick: (ChatItemModel) -> Unit) {
+    user: MessagingUserItemModel,
+    chatItem: ChatItemModel,
+    onClick: (MessagingUserItemModel) -> Unit) {
 
 
     Surface(
-        onClick = { onClick(chatItemModel) },
+        onClick = { onClick(user) },
         modifier = modifier.fillMaxWidth(),
         color = MaterialTheme.colors.background, shape = RoundedCornerShape(4.dp)) {
 
@@ -61,8 +64,8 @@ fun ChatItem(
 
                 MessageUserImage(
                     modifier = Modifier.wrapContentSize(),
-                    isOnline = if(!isInternetAvailable) null else chatItemModel.isUserAvailable,
-                    photoUrl = chatItemModel.conversionPhoto
+                    isOnline = if(!isInternetAvailable) null else user.userAvailability,
+                    photoUrl = user.userDetails.photo
                 )
             }
 
@@ -72,13 +75,13 @@ fun ChatItem(
                 horizontalAlignment = Alignment.Start) {
 
                 Text(
-                    text = chatItemModel.conversionName,
+                    text = user.userDetails.name,
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colors.onBackground, maxLines = 1,
                 )
 
                 Text(
-                    text = chatItemModel.lastMessage,
+                    text = chatItem.lastMessage,
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colors.onBackground,
                     maxLines = 1,
@@ -94,7 +97,7 @@ fun ChatItem(
                 horizontalAlignment = Alignment.End) {
 
                 Text(
-                    text = chatItemModel.timeStamp!!.toReadableDateTime(pattern = "hh:mm a"),
+                    text = chatItem.timeStamp!!.toReadableDateTime(pattern = "hh:mm a"),
                     color = MaterialTheme.colors.onBackground,
                     style = MaterialTheme.typography.body2.copy(
                         fontWeight = FontWeight.Light,
@@ -122,9 +125,14 @@ fun PreviewChatItemDark() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 isInternetAvailable = false,
-                chatItemModel = ChatItemModel(
-                    conversionPhoto = MappingConstants.IMAGE_PLACEHOLDER_URL,
-                    conversionName = "John Doe",
+                user = MessagingUserItemModel(
+                    userDetails = UserDetails(
+                        name = "John Doe",
+                        photo = MappingConstants.IMAGE_PLACEHOLDER_URL
+                    )
+                ),
+                chatItem = ChatItemModel(
+
                     lastMessage = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                                   "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                                   "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
@@ -156,9 +164,13 @@ fun PreviewChatItemLight() {
                     .fillMaxWidth()
                     .wrapContentHeight(),
                 isInternetAvailable = true,
-                chatItemModel = ChatItemModel(
-                    conversionPhoto = MappingConstants.IMAGE_PLACEHOLDER_URL,
-                    conversionName = "John Doe",
+                user = MessagingUserItemModel(
+                    userDetails = UserDetails(
+                        name = "John Doe",
+                        photo = MappingConstants.IMAGE_PLACEHOLDER_URL
+                    )
+                ),
+                chatItem = ChatItemModel(
                     lastMessage = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                                   "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                                   "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +

@@ -15,11 +15,7 @@ data class ChatItemModel(
     val senderId: String = "",
     val receiverId: String = "",
 
-
-    val conversionPhoto: String = "",
-    val conversionName: String = "",
     val conversionId: String = "",
-    val isUserAvailable: Boolean = false,
 
     val lastMessage: String = "",
     val timeStamp: Date? = null,

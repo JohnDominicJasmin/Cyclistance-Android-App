@@ -1,8 +1,8 @@
 package com.example.cyclistance.feature_messaging.presentation.chat.chats.event
 
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 
 sealed class ChatUiEvent {
-    data class OnSelectConversation(val chatItem: ChatItemModel) : ChatUiEvent()
+    data class OnSelectConversation(val user: MessagingUserItemModel) : ChatUiEvent()
     object OnRefreshChat: ChatUiEvent()
 }

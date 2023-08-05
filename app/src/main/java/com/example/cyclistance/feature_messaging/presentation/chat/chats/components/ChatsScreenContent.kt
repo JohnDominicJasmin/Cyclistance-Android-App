@@ -23,18 +23,17 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatsModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatUiEvent
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.ChatState
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
-import java.util.Date
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ChatScreenContent(
     modifier: Modifier = Modifier,
-    chatState: List<ChatItemModel>,
+    chatState: List<Pair<MessagingUserItemModel,ChatItemModel>>,
     isInternetAvailable: Boolean,
     state: ChatState,
     event: (ChatUiEvent) -> Unit) {
@@ -101,17 +100,18 @@ internal fun ChatScreenContent(
     }
 }
 
-
+/*
 val fakeMessages = ChatsModel(
     listOf(
         ChatItemModel(
             conversionPhoto = "https://www.liquidsandsolids.com/wp-content/uploads/2022/09/talking-to-a-dead-person.jpg",
             conversionName = "John Doe",
+            isUserAvailable = true,
             lastMessage = "Hey there! How are you?",
             timeStamp = Date(),
             messageId = "1",
             conversionId = "1gaosidnuio2b",
-            isUserAvailable = true
+
 
         ),
         ChatItemModel(
@@ -158,7 +158,7 @@ val fakeMessages = ChatsModel(
         ),
 
         )
-)
+)*/
 
 @Preview
 @Composable
@@ -179,7 +179,7 @@ fun PreviewChatScreenContentDark() {
 fun PreviewChatScreenContentLight() {
     CyclistanceTheme(darkTheme = false) {
         ChatScreenContent(
-            chatState = fakeMessages.chats,
+            chatState = emptyList(),
             state = ChatState(),
             event = {},
             isInternetAvailable = true
