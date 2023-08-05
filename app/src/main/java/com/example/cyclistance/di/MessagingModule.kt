@@ -2,6 +2,8 @@ package com.example.cyclistance.di
 
 import android.content.Context
 import androidx.annotation.Keep
+import com.example.cyclistance.R
+import com.example.cyclistance.feature_messaging.data.MessagingApi
 import com.example.cyclistance.feature_messaging.data.repository.MessagingRepositoryImpl
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
@@ -27,6 +29,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import javax.inject.Singleton
 
 
@@ -51,13 +55,15 @@ object MessagingModule {
         @ApplicationContext context: Context,
         firebaseFiresStore: FirebaseFirestore,
         firebaseMessaging: FirebaseMessaging,
-        firebaseAuth: FirebaseAuth): MessagingRepository {
+        firebaseAuth: FirebaseAuth,
+        api: MessagingApi): MessagingRepository {
 
         return MessagingRepositoryImpl(
             fireStore = firebaseFiresStore,
             firebaseMessaging = firebaseMessaging,
             auth = firebaseAuth,
-            appContext = context
+            appContext = context,
+            api = api
         )
     }
 
@@ -80,6 +86,18 @@ object MessagingModule {
             removeChatListenerUseCase = RemoveChatListenerUseCase(repository = repository),
             updateUserAvailability = UpdateUserAvailability(repository = repository)
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideMessagingApi(@ApplicationContext context: Context): MessagingApi{
+        return lazy {
+            Retrofit.Builder()
+                .baseUrl(context.getString(R.string.FcmBaseUrl))
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .build()
+                .create(MessagingApi::class.java)
+        }.value
     }
 
 
