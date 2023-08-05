@@ -9,20 +9,26 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_CONVE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_LAST_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSAGE
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_NAME
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_TIMESTAMP
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_UID
+import com.example.cyclistance.core.utils.constants.MessagingConstants.REMOTE_MSG_DATA
+import com.example.cyclistance.core.utils.constants.MessagingConstants.REMOTE_MSG_REGISTRATION_IDS
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SAVED_TOKEN
 import com.example.cyclistance.core.utils.constants.MessagingConstants.USER_COLLECTION
 import com.example.cyclistance.core.utils.contexts.dataStore
 import com.example.cyclistance.core.utils.data_store_ext.editData
 import com.example.cyclistance.core.utils.data_store_ext.getData
+import com.example.cyclistance.feature_messaging.data.MessagingApi
+import com.example.cyclistance.feature_messaging.data.data_source.remote.header.RemoteHeader
 import com.example.cyclistance.feature_messaging.data.mapper.MessagingChatItemMapper.toConversionChatItem
 import com.example.cyclistance.feature_messaging.data.mapper.MessagingConversationItemMapper.toConversationItem
 import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserItemMapper.toMessageUser
 import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
+import com.example.cyclistance.feature_messaging.domain.model.SendNotificationModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
@@ -44,6 +50,11 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import timber.log.Timber
 import java.util.Date
 import kotlin.coroutines.CoroutineContext
@@ -55,6 +66,7 @@ class MessagingRepositoryImpl(
     private val firebaseMessaging: FirebaseMessaging,
     private val auth: FirebaseAuth,
     private val appContext: Context,
+    private val api: MessagingApi,
 
     ) : MessagingRepository {
     private var messageListener: ListenerRegistration? = null
@@ -62,7 +74,7 @@ class MessagingRepositoryImpl(
     private var messageUserListener: ListenerRegistration? = null
     private val scope: CoroutineContext = Dispatchers.IO
     private var dataStore = appContext.dataStore
-    private val chats: MutableList<ChatItemModel> = mutableListOf()
+
     private suspend fun getMessagingToken(): String {
         return suspendCancellableCoroutine { continuation ->
             firebaseMessaging.token.addOnSuccessListener { token: String ->
@@ -364,4 +376,38 @@ class MessagingRepositoryImpl(
             throw MessagingExceptions.TokenException(message = it.message!!)
         }
     }
+
+    override suspend fun sendNotification(model: SendNotificationModel) {
+
+        val userToken: String = dataStore.getData(key = SAVED_TOKEN, defaultValue = "").firstOrNull()!!
+        val uid = getUid()
+
+        val tokens = JSONArray().put(model.receiverToken)
+        val data = JSONObject().apply {
+            put(KEY_UID, uid)
+            put(KEY_NAME, model.senderName)
+            put(KEY_FCM_TOKEN, userToken)
+            put(KEY_MESSAGE, model.message)
+        }
+        val body = JSONObject().apply {
+            put(REMOTE_MSG_DATA,data)
+            put(REMOTE_MSG_REGISTRATION_IDS, tokens)
+        }
+
+
+        api.sendMessage(
+            headers = RemoteHeader.getRemoteMsgHeader(appContext),
+            message = body.toString()
+        ).enqueue(object: Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                Timber.v("Notification sent successfully ${response.isSuccessful} | ${response.raw()}")
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                Timber.v("Notification sending failed ${t.message}")
+            }
+
+        })
+    }
 }
+
