@@ -1,5 +1,8 @@
 package com.example.cyclistance.core.utils.constants
 
+import android.app.NotificationManager
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object MessagingConstants {
@@ -11,7 +14,7 @@ object MessagingConstants {
     const val KEY_PHOTO = "photo"
     const val KEY_NAME = "name"
     const val KEY_UID = "uid"
-    const val KEY_CHAT_COLLECTION = "chat"
+
     const val KEY_SENDER_ID = "senderId"
     const val KEY_RECEIVER_ID = "receiverId"
     const val KEY_MESSAGE = "message"
@@ -21,8 +24,27 @@ object MessagingConstants {
     const val CHAT_ID = "chatId"
     const val CHAT_PHOTO_URL = "chatPhotoUrl"
     const val CHAT_NAME = "chatName"
+    const val CHAT_AVAILABILITY = "chatAvailability"
 
+    const val KEY_CONVERSATIONS_COLLECTION = "conversations"
     const val KEY_COLLECTION_CHATS = "chats"
     const val USER_COLLECTION = "users"
     const val KEY_LAST_MESSAGE = "lastMessage"
+    const val KEY_AVAILABILITY = "availability"
+
+    const val REMOTE_MSG_AUTHORIZATION = "Authorization"
+    const val REMOTE_MSG_CONTENT_TYPE = "Content-Type"
+    const val REMOTE_MSG_CONTENT_FORMAT = "application/json"
+    const val REMOTE_MSG_DATA = "data"
+    const val REMOTE_MSG_REGISTRATION_IDS = "registration_ids"
+    const val MESSAGING_NOTIFICATION_ID = 101
+    const val MESSAGING_NOTIFICATION_CHANNEL = "messaging_notification_channel"
+
+    const val NOTIFICATION_REQUEST_CODE = 200
+    const val CHANNEL_NAME = "Messaging"
+    const val CHANNEL_DESCRIPTION = "Messaging Notifications"
+    @RequiresApi(Build.VERSION_CODES.N)
+    const val CHANNEL_IMPORTANCE = NotificationManager.IMPORTANCE_HIGH
+
+
 }

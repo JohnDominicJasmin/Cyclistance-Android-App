@@ -15,6 +15,7 @@ import com.example.cyclistance.feature_authentication.domain.util.ActivityResult
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInVmEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInState
+import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -39,6 +40,7 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase,
+    private val messagingUseCase: MessagingUseCase,
     private val defaultDispatcher: CoroutineDispatcher
     ) : ViewModel(), ActivityResultCallbackI {
 
@@ -122,6 +124,7 @@ class SignInViewModel @Inject constructor(
                 authUseCase.createUserUseCase(user = user)
             }.onSuccess {
                 _state.update { it.copy(isLoading = false) }
+                messagingUseCase.updateUserAvailability(true)
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
                 handleException(exception)

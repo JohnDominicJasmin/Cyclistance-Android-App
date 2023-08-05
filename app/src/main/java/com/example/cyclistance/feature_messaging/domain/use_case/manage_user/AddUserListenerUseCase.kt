@@ -4,7 +4,7 @@ import com.example.cyclistance.feature_messaging.domain.model.ui.chats.Messaging
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 
 class AddUserListenerUseCase(private val repository: MessagingRepository) {
-    suspend operator fun invoke(): MessagingUserModel {
-        return repository.addUserListener()
+    operator fun invoke(onNewMessageUser: (MessagingUserModel) -> Unit) {
+        repository.addUserListener(onNewMessageUser = onNewMessageUser)
     }
 }

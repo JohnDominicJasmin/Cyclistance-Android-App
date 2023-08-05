@@ -1,7 +1,10 @@
 package com.example.cyclistance.feature_messaging.data.mapper
 
 import com.example.cyclistance.core.domain.model.UserDetails
+import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MessagingConstants
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_AVAILABILITY
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_PHOTO
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.google.firebase.firestore.DocumentSnapshot
 
@@ -11,10 +14,11 @@ object MessagingUserItemMapper {
             userDetails = UserDetails(
                 uid = this[MessagingConstants.KEY_UID].toString(),
                 name = this[MessagingConstants.KEY_NAME].toString(),
-                photo = this[MessagingConstants.KEY_PHOTO].toString(),
+                photo = getString(KEY_PHOTO) ?: IMAGE_PLACEHOLDER_URL,
                 email = this[MessagingConstants.KEY_EMAIL].toString(),
             ),
-            fcmToken = this[MessagingConstants.KEY_FCM_TOKEN].toString()
+            fcmToken = this[MessagingConstants.KEY_FCM_TOKEN].toString(),
+            userAvailability = getBoolean(KEY_AVAILABILITY) ?: false
 
         )
     }

@@ -31,9 +31,9 @@ class SearchUserViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 isLoading(true)
-                messagingUseCase.addUserListenerUseCase()
-            }.onSuccess { model ->
-                _state.update { it.copy(messagingUsers = model) }
+                messagingUseCase.addUserListenerUseCase(onNewMessageUser = { model ->
+                    _state.update { it.copy(messagingUsers = model) }
+                })
             }.onFailure {
                 Timber.e("Failed to retrieve chats ${it.message}")
             }

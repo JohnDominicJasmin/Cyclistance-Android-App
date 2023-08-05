@@ -9,9 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.ChatScreenContent
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatUiEvent
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatVmEvent
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import java.net.URLEncoder
@@ -21,29 +22,37 @@ import java.nio.charset.StandardCharsets
 fun ChatsScreen(
     viewModel: ChatsViewModel = hiltViewModel(),
     navController: NavController,
-    paddingValues: PaddingValues) {
+    paddingValues: PaddingValues,
+    isInternetAvailable: Boolean) {
+
     val state by viewModel.state.collectAsStateWithLifecycle()
-    val chatState = viewModel.chatsState.distinctBy { it.conversionId }
+    val chatState = viewModel.chatsState.distinctBy { it.second.conversionId }
 
 
     val onSelectConversation = remember {
-        { chatItem: ChatItemModel ->
+        { user: MessagingUserItemModel ->
             val encodedUrl =
-                URLEncoder.encode(chatItem.conversionPhoto, StandardCharsets.UTF_8.toString())
+                URLEncoder.encode(user.userDetails.photo, StandardCharsets.UTF_8.toString())
             navController.navigateScreen(
-                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.conversionId}/$encodedUrl/${chatItem.conversionName}",
+                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${user.userDetails.uid}/$encodedUrl/${user.userDetails.name}/${user.userAvailability}",
             )
         }
     }
+
+    val onRefreshChats = remember{{
+        viewModel.onEvent(event = ChatVmEvent.RefreshChat)
+    }}
 
 
     ChatScreenContent(
         chatState = chatState,
         state = state,
         modifier = Modifier.padding(paddingValues),
+        isInternetAvailable = isInternetAvailable,
         event = { event ->
             when (event) {
-                is ChatUiEvent.OnSelectConversation -> onSelectConversation(event.chatItem)
+                is ChatUiEvent.OnSelectConversation -> onSelectConversation(event.user)
+                is ChatUiEvent.OnRefreshChat -> onRefreshChats()
             }
         }
     )

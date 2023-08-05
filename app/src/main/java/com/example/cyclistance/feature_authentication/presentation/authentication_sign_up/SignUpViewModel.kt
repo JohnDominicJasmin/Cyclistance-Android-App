@@ -11,6 +11,7 @@ import com.example.cyclistance.feature_authentication.domain.use_case.Authentica
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpVmEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state.SignUpState
+import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,6 +28,7 @@ import javax.inject.Inject
 class SignUpViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase,
+    private val messagingUseCase: MessagingUseCase,
     private val defaultDispatcher: CoroutineDispatcher
     ) : ViewModel() {
 
@@ -106,6 +108,7 @@ class SignUpViewModel @Inject constructor(
                 authUseCase.createUserUseCase(user)
             }.onSuccess {
                 _state.update { it.copy(isLoading = false) }
+                messagingUseCase.updateUserAvailability(true)
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
                 handleException(exception)

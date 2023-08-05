@@ -247,10 +247,11 @@ fun NavScreen(
     }
 
     val newConversationDetails = remember {
-        { name: String, photoUrl: String ->
+        { name: String, photoUrl: String, availability: Boolean->
             navUiState = navUiState.copy(
                 conversationName = name,
-                conversationPhotoUrl = photoUrl
+                conversationPhotoUrl = photoUrl,
+                conversationAvailability = availability
             )
         }
     }
@@ -306,7 +307,7 @@ fun NavScreen(
                             paddingValues = paddingValues,
                             event = { event ->
                                 when (event) {
-                                    is NavUiEvent.NewConversationDetails -> newConversationDetails(event.chatName, event.chatPhotoUrl)
+                                    is NavUiEvent.NewConversationDetails -> newConversationDetails(event.chatName, event.chatPhotoUrl, event.chatAvailability)
                                     is NavUiEvent.OnChangeNavigation -> onChangeNavigatingState(event.isNavigating)
                                     is NavUiEvent.OnToggleTheme -> onToggleTheme()
                                 }

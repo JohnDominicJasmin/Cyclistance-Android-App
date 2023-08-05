@@ -27,7 +27,7 @@ fun ConversationScreen(
     viewModel: ConversationViewModel = hiltViewModel(),
     navController: NavController,
     paddingValues: PaddingValues,
-    newConversationDetails: (name: String, photoUrl: String) -> Unit
+    newConversationDetails: (name: String, photoUrl: String, availability: Boolean) -> Unit
 ) {
 
 
@@ -99,10 +99,11 @@ fun ConversationScreen(
         }
     })
 
-    LaunchedEffect(key1 = state.conversationName, key2 = state.conversationPhotoUrl) {
+    LaunchedEffect(key1 = state.conversationName, key2 = state.conversationPhotoUrl, key3 = state.conversationAvailability) {
         newConversationDetails(
              state.conversationName,
-             state.conversationPhotoUrl
+             state.conversationPhotoUrl,
+             state.conversationAvailability
         )
     }
 

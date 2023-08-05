@@ -2,6 +2,8 @@ package com.example.cyclistance.di
 
 import android.content.Context
 import androidx.annotation.Keep
+import com.example.cyclistance.R
+import com.example.cyclistance.feature_messaging.data.MessagingApi
 import com.example.cyclistance.feature_messaging.data.repository.MessagingRepositoryImpl
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
@@ -13,9 +15,11 @@ import com.example.cyclistance.feature_messaging.domain.use_case.conversion.Upda
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.AddUserListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUidUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.RemoveUserListenerUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.UpdateUserAvailability
 import com.example.cyclistance.feature_messaging.domain.use_case.message.AddMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.RemoveMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.SendMessageUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.notification.SendNotificationUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.token.DeleteTokenUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.token.RefreshTokenUseCase
 import com.google.firebase.auth.FirebaseAuth
@@ -26,6 +30,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import retrofit2.Retrofit
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import javax.inject.Singleton
 
 
@@ -50,13 +56,15 @@ object MessagingModule {
         @ApplicationContext context: Context,
         firebaseFiresStore: FirebaseFirestore,
         firebaseMessaging: FirebaseMessaging,
-        firebaseAuth: FirebaseAuth): MessagingRepository {
+        firebaseAuth: FirebaseAuth,
+        api: MessagingApi): MessagingRepository {
 
         return MessagingRepositoryImpl(
             fireStore = firebaseFiresStore,
             firebaseMessaging = firebaseMessaging,
             auth = firebaseAuth,
-            appContext = context
+            appContext = context,
+            api = api
         )
     }
 
@@ -76,8 +84,22 @@ object MessagingModule {
             updateConversionUseCase = UpdateConversionUseCase(repository = repository),
             removeUserListenerUseCase = RemoveUserListenerUseCase(repository = repository),
             addChatListenerUseCase = AddChatListenerUseCase(repository = repository),
-            removeChatListenerUseCase = RemoveChatListenerUseCase(repository = repository)
+            removeChatListenerUseCase = RemoveChatListenerUseCase(repository = repository),
+            updateUserAvailability = UpdateUserAvailability(repository = repository),
+            sendNotificationUseCase = SendNotificationUseCase(repository = repository)
         )
+    }
+
+    @Provides
+    @Singleton
+    fun provideMessagingApi(@ApplicationContext context: Context): MessagingApi{
+        return lazy {
+            Retrofit.Builder()
+                .baseUrl(context.getString(R.string.FcmBaseUrl))
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .build()
+                .create(MessagingApi::class.java)
+        }.value
     }
 
 

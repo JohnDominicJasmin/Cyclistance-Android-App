@@ -40,6 +40,17 @@ class NavViewModel @Inject constructor(
 
     init {
         getStartingDestination()
+        setUserAvailability(true)
+    }
+
+    private fun setUserAvailability(availability: Boolean){
+        runCatching {
+            messagingUseCase.updateUserAvailability(availability)
+        }.onSuccess {
+            Timber.v("User Availability Updated Successfully")
+        }.onFailure {
+            Timber.e("User Availability Update Failed: ${it.localizedMessage}")
+        }
     }
 
     private fun getStartingDestination() {
@@ -90,5 +101,9 @@ class NavViewModel @Inject constructor(
                authUseCase.hasAccountSignedInUseCase()
     }
 
+    override fun onCleared() {
+        super.onCleared()
+        setUserAvailability(false)
+    }
 
 }
