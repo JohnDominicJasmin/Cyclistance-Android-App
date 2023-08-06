@@ -147,7 +147,7 @@ fun TopAppBar(
                 topAppBarTitle = {
 
                     Row(
-                        modifier = Modifier.wrapContentSize(),
+                        modifier = Modifier.wrapContentSize().padding(vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(5.dp)) {
 

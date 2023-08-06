@@ -43,7 +43,7 @@ fun MessageUserImage(
             modifier = Modifier
                 .align(Alignment.Center)
                 .clip(CircleShape)
-                .size(54.dp),
+                .size(48.dp),
             contentScale = ContentScale.Crop,
             placeholder = rememberAsyncImagePainter(model = R.drawable.ic_empty_profile_placeholder_large),
             error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
