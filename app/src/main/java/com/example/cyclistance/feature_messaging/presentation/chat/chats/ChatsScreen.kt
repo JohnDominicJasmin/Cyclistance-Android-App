@@ -15,6 +15,7 @@ import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.C
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatVmEvent
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
+import com.google.gson.Gson
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -33,8 +34,10 @@ fun ChatsScreen(
         { user: MessagingUserItemModel ->
             val encodedUrl =
                 URLEncoder.encode(user.userDetails.photo, StandardCharsets.UTF_8.toString())
+            val jsonString = Gson().toJson(user.copy(userDetails = user.userDetails.copy(photo = encodedUrl)))
+
             navController.navigateScreen(
-                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${user.userDetails.uid}/$encodedUrl/${user.userDetails.name}/${user.userAvailability}",
+                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${jsonString}",
             )
         }
     }

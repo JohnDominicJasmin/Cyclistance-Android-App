@@ -17,6 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.conversation.components.ConversationContent
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationUiEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationVmEvent
@@ -27,7 +28,7 @@ fun ConversationScreen(
     viewModel: ConversationViewModel = hiltViewModel(),
     navController: NavController,
     paddingValues: PaddingValues,
-    newConversationDetails: (name: String, photoUrl: String, availability: Boolean) -> Unit
+    newConversationDetails: (MessagingUserItemModel) -> Unit
 ) {
 
 
@@ -81,7 +82,7 @@ fun ConversationScreen(
             viewModel.onEvent(
                 event = ConversationVmEvent.SendMessage(
                     sendMessageModel = SendMessageModel(
-                        receiverId = state.conversationUid,
+                        receiverId = state.messageUser.userDetails.uid,
                         message = message.text
                     )
                 )).also {
@@ -99,11 +100,9 @@ fun ConversationScreen(
         }
     })
 
-    LaunchedEffect(key1 = state.conversationName, key2 = state.conversationPhotoUrl, key3 = state.conversationAvailability) {
+    LaunchedEffect(key1 = state.messageUser) {
         newConversationDetails(
-             state.conversationName,
-             state.conversationPhotoUrl,
-             state.conversationAvailability
+            state.messageUser
         )
     }
 

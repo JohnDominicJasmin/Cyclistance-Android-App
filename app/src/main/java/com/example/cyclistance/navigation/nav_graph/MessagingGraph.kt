@@ -7,10 +7,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_AVAILABILITY
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_ID
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_NAME
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_PHOTO_URL
+import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_USER
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.ChatsScreen
 import com.example.cyclistance.feature_messaging.presentation.conversation.ConversationScreen
 import com.example.cyclistance.feature_messaging.presentation.search_user.SearchUserScreen
@@ -20,7 +18,7 @@ fun NavGraphBuilder.messagingGraph(
     navController: NavController,
     paddingValues: PaddingValues,
     isInternetAvailable: Boolean,
-    newConversationDetails: (name: String, photoUrl: String, availability: Boolean) -> Unit) {
+    newConversationDetails: (MessagingUserItemModel) -> Unit) {
 
     navigation(
         startDestination = Screens.MessagingNavigation.ChatScreen.screenRoute,
@@ -43,12 +41,8 @@ fun NavGraphBuilder.messagingGraph(
             )
         }
 
-        composable(route = Screens.MessagingNavigation.ConversationScreen.screenRoute + "/{$CHAT_ID}/{${CHAT_PHOTO_URL}}/{$CHAT_NAME}/{$CHAT_AVAILABILITY}",
-            arguments = listOf(
-                navArgument(CHAT_ID) { type = NavType.StringType },
-                navArgument(CHAT_PHOTO_URL) { type = NavType.StringType },
-                navArgument(CHAT_NAME) { type = NavType.StringType },
-                navArgument(CHAT_AVAILABILITY) { type = NavType.BoolType }),
+        composable(route = Screens.MessagingNavigation.ConversationScreen.screenRoute + "/{$CONVERSATION_USER}",
+            arguments = listOf(navArgument(CONVERSATION_USER) { type = NavType.StringType })
         ) {
 
             ConversationScreen(
