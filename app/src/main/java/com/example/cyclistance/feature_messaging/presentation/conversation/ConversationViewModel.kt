@@ -172,15 +172,37 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    private fun sendMessage(sendMessage: SendMessageModel) {
+    private fun sendMessage(model: SendMessageModel) {
         viewModelScope.launch {
             runCatching {
-                messagingUseCase.sendMessageUseCase(sendMessage)
+                messagingUseCase.sendMessageUseCase(model)
+                sendMessageNotification(model.message)
             }.onSuccess {
                 _event.emit(ConversationEvent.MessageSent)
-                setConversion(sendMessage.message)
+                setConversion(model.message)
             }.onFailure {
                 _event.emit(ConversationEvent.MessageNotSent)
+            }
+        }
+    }
+
+    private fun sendMessageNotification(message: String){
+        val messageUser = state.value.messageUser
+        if(messageUser.isUserAvailable){
+            return
+        }
+        viewModelScope.launch {
+            runCatching {
+                messagingUseCase.sendNotificationUseCase(
+                    SendNotificationModel(
+                        receiverToken = messageUser.fcmToken,
+                        senderName = state.value.userName,
+                        message = message
+                    ))
+            }.onSuccess {
+                Timber.v("Successfully send message notification")
+            }.onFailure {
+                Timber.e("Failed to send message notification")
             }
         }
     }
