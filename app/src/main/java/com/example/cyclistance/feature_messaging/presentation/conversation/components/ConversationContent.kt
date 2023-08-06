@@ -34,6 +34,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
+import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogNotificationPermission
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
 import com.example.cyclistance.core.utils.composable_utils.keyboardAsState
 import com.example.cyclistance.core.utils.composable_utils.noRippleClickable
@@ -232,65 +233,75 @@ fun ConversationContent(
         color = MaterialTheme.colors.background) {
 
 
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = if (conversationAvailable) Alignment.BottomCenter else Alignment.Center) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
-
-            Column(
-                modifier = Modifier.fillMaxSize()) {
-
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .weight(1f),
-                    contentAlignment = Alignment.Center) {
-
-                    if (state.isLoading) {
-                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                    }
-
-                    if (conversationAvailable) {
-                        ConversationChatItems(
-                            modifier = Modifier
-                                .fillMaxSize(),
-                            keyboardIsOpen = keyboardIsOpen,
-                            listState = listState,
-                            conversation = conversation,
-                            userUid = state.userUid,
-                            uiState = uiState,
-                            event = event)
-
-                    }
-
-                    if (!conversationAvailable && !state.isLoading) {
-                        PlaceholderEmptyConversation(
-                            modifier = Modifier
-                                .fillMaxSize())
-                    }
-                }
-
-
-
-                MessagingTextArea(
-                    message = message,
-                    onValueChange = { event(ConversationUiEvent.OnChangeValueMessage(it)) },
-                    modifier = Modifier.wrapContentHeight(),
-                    onClickSend = { event(ConversationUiEvent.OnSendMessage) },
-                    onToggleExpand = { event(ConversationUiEvent.ToggleMessageArea) },
-                    isExpanded = uiState.messageAreaExpanded)
-
+            if(uiState.notificationPermissionVisible){
+                DialogNotificationPermission(
+                    modifier = Modifier.align(Alignment.Center),
+                    onDismiss = {event(ConversationUiEvent.DismissNotificationPermissionDialog)}
+                )
             }
 
-            ScrollToBottomButton(
-                modifier = Modifier.absoluteOffset(y = (-85).dp),
-                isVisible = isScrollingUp,
-                onClick = {
-                    scope.launch {
-                        listState.animateScrollToItem(index = conversation.indices.last)
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = if (conversationAvailable) Alignment.BottomCenter else Alignment.Center) {
+
+
+                Column(
+                    modifier = Modifier.fillMaxSize()) {
+
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f),
+                        contentAlignment = Alignment.Center) {
+
+                        if (state.isLoading) {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        }
+
+                        if (conversationAvailable) {
+                            ConversationChatItems(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                keyboardIsOpen = keyboardIsOpen,
+                                listState = listState,
+                                conversation = conversation,
+                                userUid = state.userUid,
+                                uiState = uiState,
+                                event = event)
+
+                        }
+
+                        if (!conversationAvailable && !state.isLoading) {
+                            PlaceholderEmptyConversation(
+                                modifier = Modifier
+                                    .fillMaxSize())
+                        }
                     }
-                })
+
+
+
+                    MessagingTextArea(
+                        message = message,
+                        onValueChange = { event(ConversationUiEvent.OnChangeValueMessage(it)) },
+                        modifier = Modifier.wrapContentHeight(),
+                        onClickSend = { event(ConversationUiEvent.OnSendMessage) },
+                        onToggleExpand = { event(ConversationUiEvent.ToggleMessageArea) },
+                        isExpanded = uiState.messageAreaExpanded)
+
+                }
+
+                ScrollToBottomButton(
+                    modifier = Modifier.absoluteOffset(y = (-85).dp),
+                    isVisible = isScrollingUp,
+                    onClick = {
+                        scope.launch {
+                            listState.animateScrollToItem(index = conversation.indices.last)
+                        }
+                    })
+            }
         }
 
 
@@ -360,6 +371,7 @@ fun PreviewMessagingConversationContentLight() {
                 conversation = fakeConversationsModel.messages,
                 uiState = ConversationUiState(
                     messageAreaExpanded = true,
+                    notificationPermissionVisible = true
                 ),
                 event = {}, state = ConversationState(
 
