@@ -252,7 +252,7 @@ fun NavScreen(
             navUiState = navUiState.copy(
                 conversationName = user.userDetails.name,
                 conversationPhotoUrl = user.userDetails.photo,
-                conversationAvailability = user.userAvailability
+                conversationAvailability = user.isUserAvailable
             )
         }
     }
