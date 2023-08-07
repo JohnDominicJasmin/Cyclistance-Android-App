@@ -13,10 +13,11 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_NAME
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_TIMESTAMP
-import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_UID
+import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_ARG
 import com.example.cyclistance.core.utils.constants.MessagingConstants.REMOTE_MSG_DATA
 import com.example.cyclistance.core.utils.constants.MessagingConstants.REMOTE_MSG_REGISTRATION_IDS
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SAVED_TOKEN
+import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_ARG
 import com.example.cyclistance.core.utils.constants.MessagingConstants.USER_COLLECTION
 import com.example.cyclistance.core.utils.contexts.dataStore
 import com.example.cyclistance.core.utils.data_store_ext.editData
@@ -30,6 +31,7 @@ import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExce
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.SendNotificationModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel.Companion.toJsonString
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
@@ -292,8 +294,8 @@ class MessagingRepositoryImpl(
     }
 
     override fun addUserListener(onNewMessageUser: (MessagingUserModel) -> Unit) {
-        val uid = getUid()
-        messageListener = fireStore.collection(USER_COLLECTION).whereNotEqualTo(KEY_UID, uid)
+
+        messageListener = fireStore.collection(USER_COLLECTION)
             .addSnapshotListener(MetadataChanges.INCLUDE) { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
                 if (value == null) {
                     throw MessagingExceptions.GetMessageUsersFailure(message = "Cannot get message users, value is null")
@@ -379,16 +381,14 @@ class MessagingRepositoryImpl(
 
     override suspend fun sendNotification(model: SendNotificationModel) {
 
-        val userToken: String = dataStore.getData(key = SAVED_TOKEN, defaultValue = "").firstOrNull()!!
-        val uid = getUid()
-
-        val tokens = JSONArray().put(model.receiverToken)
+        val tokens = JSONArray().put(model.userReceiverMessage.fcmToken)
         val data = JSONObject().apply {
-            put(KEY_UID, uid)
             put(KEY_NAME, model.senderName)
-            put(KEY_FCM_TOKEN, userToken)
             put(KEY_MESSAGE, model.message)
+            put(RECEIVER_MESSAGE_ARG, model.userReceiverMessage.toJsonString())
+            put(SENDER_MESSAGE_ARG, model.userSenderMessage.toJsonString())
         }
+
         val body = JSONObject().apply {
             put(REMOTE_MSG_DATA,data)
             put(REMOTE_MSG_REGISTRATION_IDS, tokens)
