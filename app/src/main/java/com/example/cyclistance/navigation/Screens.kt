@@ -1,6 +1,7 @@
 package com.example.cyclistance.navigation
 
-import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_ARG
+import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_ARG
+import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_ARG
 
 sealed class Screens {
 
@@ -30,8 +31,8 @@ sealed class Screens {
 
         object ChatScreen : MessagingNavigation(screenRoute = "chat_screen")
         object SearchUserScreen : MessagingNavigation(screenRoute = "search_user_screen")
-        object ConversationScreen : MessagingNavigation(screenRoute = "conversation_screen/{$MESSAGING_ARG}"){
-            fun passArgument(message: String) = "conversation_screen/$message"
+        object ConversationScreen : MessagingNavigation(screenRoute = "conversation_screen/{$RECEIVER_MESSAGE_ARG}/{$SENDER_MESSAGE_ARG}") {
+            fun passArgument(receiverMessageUser: String, senderMessageUser: String) = "conversation_screen/$receiverMessageUser/$senderMessageUser"
         }
     }
 

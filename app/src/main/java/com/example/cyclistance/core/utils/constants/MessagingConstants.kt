@@ -44,7 +44,9 @@ object MessagingConstants {
 
 
     const val MESSAGING_URI = "cyclistance://messaging/conversation/"
-    const val MESSAGING_ARG = "conversation_user"
+    const val RECEIVER_MESSAGE_ARG = "receiver_message"
+    const val SENDER_MESSAGE_ARG = "sender_message"
+
 
 
 

@@ -38,9 +38,6 @@ class ConversationViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-
-
-
     private val _conversationState = mutableStateListOf<ConversationItemModel>()
     val conversationState: List<ConversationItemModel> = _conversationState
 
@@ -53,15 +50,22 @@ class ConversationViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
 
+    private fun initialize(
+        userReceiverMessage: MessagingUserItemModel,
+        userSenderMessage: MessagingUserItemModel) {
 
-    private fun initialize(messageUser: MessagingUserItemModel){
-        val isInitialized = state.value.messageUser != null
-        if(isInitialized) {
+        val isInitialized = state.value.userReceiverMessage != null
+        if (isInitialized) {
             return
         }
 
-        _state.update { it.copy(messageUser = messageUser) }
-        val receiverId = messageUser.userDetails.uid
+        _state.update {
+            it.copy(
+                userReceiverMessage = userReceiverMessage,
+                userSenderMessage = userSenderMessage)
+        }
+
+        val receiverId = userReceiverMessage.userDetails.uid
         addMessageListener(receiverId = receiverId)
         getConversionId(receiverId = receiverId)
         getUid()
@@ -73,7 +77,9 @@ class ConversationViewModel @Inject constructor(
     fun onEvent(event: ConversationVmEvent) {
         when (event) {
             is ConversationVmEvent.SendMessage -> sendMessage(event.sendMessageModel)
-            is ConversationVmEvent.OnInitialized -> initialize(event.messageUser)
+            is ConversationVmEvent.OnInitialized -> initialize(
+                userReceiverMessage = event.userReceiverMessage,
+                userSenderMessage = event.userSenderMessage)
         }
         saveState()
     }
@@ -84,7 +90,7 @@ class ConversationViewModel @Inject constructor(
     }
 
 
-    private fun getName(){
+    private fun getName() {
         viewModelScope.launch {
             runCatching {
                 settingUseCase.getNameUseCase()
@@ -96,31 +102,33 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    private fun getPhoto(){
+    private fun getPhoto() {
         viewModelScope.launch {
             runCatching {
                 settingUseCase.getPhotoUrlUseCase()
             }.onSuccess { photo ->
-                _state.update { it.copy(userPhoto = photo ) }
+                _state.update { it.copy(userPhoto = photo) }
             }.onFailure {
                 Timber.v("Failed to get photo: ${it.message}")
             }
         }
     }
 
-    private fun setConversion(message: String){
-        if(state.value.conversionId == null){
+    private fun setConversion(message: String) {
+        if (state.value.conversionId == null) {
             addConversion(message = message)
             return
         }
         updateConversion(message = message)
     }
 
-    private fun updateConversion(message: String){
+    private fun updateConversion(message: String) {
         val conversionId = state.value.conversionId
         viewModelScope.launch {
             runCatching {
-                messagingUseCase.updateConversionUseCase(message = message, conversionId = conversionId!!)
+                messagingUseCase.updateConversionUseCase(
+                    message = message,
+                    conversionId = conversionId!!)
             }.onSuccess {
                 Timber.v("Success to update conversion")
             }.onFailure {
@@ -129,7 +137,7 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    private fun addConversion(message: String){
+    private fun addConversion(message: String) {
         runCatching {
             messagingUseCase.addConversionUseCase(
                 conversion = state.handleConversion(message),
@@ -143,18 +151,18 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    private fun StateFlow<ConversationState>.handleConversion(message: String): HashMap<String, Any>{
-        return with(value){
+    private fun StateFlow<ConversationState>.handleConversion(message: String): HashMap<String, Any> {
+        return with(value) {
             hashMapOf(
                 KEY_SENDER_ID to userUid,
-                KEY_RECEIVER_ID to messageUser?.userDetails?.uid!!,
+                KEY_RECEIVER_ID to userReceiverMessage?.userDetails?.uid!!,
                 KEY_LAST_MESSAGE to message,
                 KEY_TIMESTAMP to Date()
             )
         }
     }
 
-    private fun getConversionId(receiverId: String){
+    private fun getConversionId(receiverId: String) {
         viewModelScope.launch {
             runCatching {
                 messagingUseCase.getConversionIdUseCase(receiverId = receiverId)
@@ -191,15 +199,17 @@ class ConversationViewModel @Inject constructor(
     }
 
     private fun sendMessageNotification(message: String){
-        val messageUser = state.value.messageUser
-        if(messageUser!!.isUserAvailable){
+        val userReceiver = state.value.userReceiverMessage
+        val messageUser = state.value.userSenderMessage!!
+        if(userReceiver!!.isUserAvailable){
             return
         }
         viewModelScope.launch {
             runCatching {
                 messagingUseCase.sendNotificationUseCase(
                     SendNotificationModel(
-                        receiverToken = messageUser.fcmToken,
+                        userReceiverMessage = userReceiver,
+                        userSenderMessage = messageUser,
                         senderName = state.value.userName,
                         message = message
                     ))
@@ -215,7 +225,7 @@ class ConversationViewModel @Inject constructor(
         messagingUseCase.removeMessageListenerUseCase()
     }
 
-    private fun isLoading(isLoading: Boolean){
+    private fun isLoading(isLoading: Boolean) {
         _state.update { it.copy(isLoading = isLoading) }
     }
 

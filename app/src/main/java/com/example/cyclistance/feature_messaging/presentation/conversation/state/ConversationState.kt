@@ -9,7 +9,8 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @StableState
 data class ConversationState(
-    val messageUser: MessagingUserItemModel? = null,
+    val userReceiverMessage: MessagingUserItemModel? = null,
+    val userSenderMessage: MessagingUserItemModel? = null,
     val userUid: String = "",
     val userName: String = "",
     val userPhoto: String = "",

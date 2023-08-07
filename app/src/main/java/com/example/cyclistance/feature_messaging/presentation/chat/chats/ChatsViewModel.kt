@@ -10,6 +10,8 @@ import com.example.cyclistance.feature_messaging.domain.model.helper.MessagingUs
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel.Companion.filterWithout
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel.Companion.findUser
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatVmEvent
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.ChatState
@@ -34,8 +36,8 @@ class ChatsViewModel @Inject constructor(
     private val messageUserFlow = MutableStateFlow(MessagingUserModel())
 
 
-    private val _chatsState = mutableStateListOf<Pair<MessagingUserItemModel,ChatItemModel>>()
-    val chatsState: List<Pair<MessagingUserItemModel,ChatItemModel>> = _chatsState
+    private val _chatsState = mutableStateListOf<Pair<MessagingUserItemModel, ChatItemModel>>()
+    val chatsState: List<Pair<MessagingUserItemModel, ChatItemModel>> = _chatsState
 
     init {
         refreshToken()
@@ -109,25 +111,29 @@ class ChatsViewModel @Inject constructor(
     }
 
 
-    private suspend fun handleAddChat(chat: ChatItemModel){
-
-            messageUserFlow.collect { messageUser ->
-                val matchedMessageUser = messageUser.users.find { it.userDetails.uid == chat.conversionId }
-                val messagingUserHandler = matchedMessageUser?.let { foundUser ->
-                    MessagingUserHandler(
-                        messagingUserItem = foundUser,
-                        chatItem = chat,
-                        chats = _chatsState)
-                }
-                messagingUserHandler?.handleNewAddedChat()
-                isLoading(false)
+    private suspend fun handleAddChat(chat: ChatItemModel) {
+        val uid = messagingUseCase.getUidUseCase()
+        messageUserFlow.collect { messageUser ->
+            val matchedMessageUser = messageUser.filterWithout(uid).findUser(chat.conversionId)
+            _state.update { it.copy(messageUserInfo = messageUser.findUser(uid)) }
+            val messagingUserHandler = matchedMessageUser?.let { foundUser ->
+                MessagingUserHandler(
+                    messagingUserItem = foundUser,
+                    chatItem = chat,
+                    chats = _chatsState)
             }
-
+            messagingUserHandler?.handleNewAddedChat()
+            isLoading(false)
         }
 
+    }
 
-    private fun handleModifiedChat(chat: ChatItemModel){
-        val matchedMessageUser = messageUserFlow.value.users.find { it.userDetails.uid == chat.conversionId }
+
+    private fun handleModifiedChat(chat: ChatItemModel) {
+        val uid = messagingUseCase.getUidUseCase()
+        _state.update { it.copy(messageUserInfo = messageUserFlow.value.findUser(uid)) }
+
+        val matchedMessageUser = messageUserFlow.value.findUser(chat.conversionId)
         val messagingUserHandler = matchedMessageUser?.let { foundUser ->
             MessagingUserHandler(
                 messagingUserItem = foundUser,

@@ -6,15 +6,15 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
-import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_ARG
 import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_URI
+import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_ARG
+import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_ARG
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.ChatsScreen
 import com.example.cyclistance.feature_messaging.presentation.conversation.ConversationScreen
 import com.example.cyclistance.feature_messaging.presentation.search_user.SearchUserScreen
 import com.example.cyclistance.navigation.Screens
 import com.google.gson.Gson
-
 
 
 fun NavGraphBuilder.messagingGraph(
@@ -29,7 +29,7 @@ fun NavGraphBuilder.messagingGraph(
     ) {
 
 
-        composable(Screens.MessagingNavigation.ChatScreen.screenRoute, ) {
+        composable(Screens.MessagingNavigation.ChatScreen.screenRoute) {
             ChatsScreen(
                 navController = navController,
                 paddingValues = paddingValues,
@@ -37,7 +37,7 @@ fun NavGraphBuilder.messagingGraph(
             )
         }
 
-        composable(Screens.MessagingNavigation.SearchUserScreen.screenRoute,         ) {
+        composable(Screens.MessagingNavigation.SearchUserScreen.screenRoute) {
             SearchUserScreen(
                 navController = navController,
                 paddingValues = paddingValues
@@ -46,24 +46,26 @@ fun NavGraphBuilder.messagingGraph(
 
         composable(route = Screens.MessagingNavigation.ConversationScreen.screenRoute,
             deepLinks = listOf(
-                navDeepLink{
-                    uriPattern = "$MESSAGING_URI/$MESSAGING_ARG={$MESSAGING_ARG}"
+                navDeepLink {
+                    uriPattern =
+                        "$MESSAGING_URI/$RECEIVER_MESSAGE_ARG={$RECEIVER_MESSAGE_ARG}&$SENDER_MESSAGE_ARG={$SENDER_MESSAGE_ARG}"
                 }
             )
         ) {
 
-            val arguments = it.arguments
-            arguments?.getString(MESSAGING_ARG)?.let { messageObject ->
+            val arguments = it.arguments!!
+            val userReceiverObject = arguments.getString(RECEIVER_MESSAGE_ARG)
+            val userSenderObject = arguments.getString(SENDER_MESSAGE_ARG)
+            val userReceiverMessage = Gson().fromJson(userReceiverObject, MessagingUserItemModel::class.java)
+            val userSenderMessage = Gson().fromJson(userSenderObject, MessagingUserItemModel::class.java)
 
-                val messageUser = Gson().fromJson(messageObject, MessagingUserItemModel::class.java)
-
-                ConversationScreen(
-                    navController = navController,
-                    paddingValues = paddingValues,
-                    messageUser = messageUser,
-                    newConversationDetails = newConversationDetails
-                )
-            }
+            ConversationScreen(
+                navController = navController,
+                paddingValues = paddingValues,
+                userReceiverMessage = userReceiverMessage,
+                userSenderMessage = userSenderMessage,
+                newConversationDetails = newConversationDetails
+            )
         }
 
 

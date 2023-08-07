@@ -17,13 +17,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel.Companion.toJsonString
 import com.example.cyclistance.feature_messaging.presentation.search_user.components.SearchUserContent
 import com.example.cyclistance.feature_messaging.presentation.search_user.event.SearchUserUiEvent
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
-import com.google.gson.Gson
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @Composable
 fun SearchUserScreen(
@@ -44,13 +42,14 @@ fun SearchUserScreen(
         }
     }
     val onSelectConversation = remember {
-        { user: MessagingUserItemModel ->
-            val encodedUrl = URLEncoder.encode(user.userDetails.photo, StandardCharsets.UTF_8.toString())
-            val jsonString = Gson().toJson(user.copy(userDetails = user.userDetails.copy(photo = encodedUrl)))
+        { selectedUser: MessagingUserItemModel ->
 
+            val user = state.messageUserInfo
             navController.navigateScreen(
                 route = Screens.MessagingNavigation.ConversationScreen.passArgument(
-                    message =  jsonString
+                    receiverMessageUser =  selectedUser.toJsonString(),
+                    senderMessageUser = user!!.toJsonString()
+
                 )
             )
 

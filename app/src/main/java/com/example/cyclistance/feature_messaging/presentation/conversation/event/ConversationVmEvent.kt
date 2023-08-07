@@ -5,5 +5,7 @@ import com.example.cyclistance.feature_messaging.domain.model.ui.chats.Messaging
 
 sealed class ConversationVmEvent {
     data class SendMessage(val sendMessageModel: SendMessageModel) : ConversationVmEvent()
-    data class OnInitialized(val messageUser: MessagingUserItemModel): ConversationVmEvent()
+    data class OnInitialized(
+        val userReceiverMessage: MessagingUserItemModel,
+        val userSenderMessage: MessagingUserItemModel) : ConversationVmEvent()
 }
