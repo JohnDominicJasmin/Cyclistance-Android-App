@@ -9,10 +9,10 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @StableState
 data class ConversationState(
-    val messageUser: MessagingUserItemModel = MessagingUserItemModel(),
+    val messageUser: MessagingUserItemModel? = null,
     val userUid: String = "",
     val userName: String = "",
     val userPhoto: String = "",
     val conversionId: String? = null,
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
 ) : Parcelable

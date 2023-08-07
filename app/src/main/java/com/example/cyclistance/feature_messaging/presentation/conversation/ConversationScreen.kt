@@ -36,6 +36,7 @@ fun ConversationScreen(
     viewModel: ConversationViewModel = hiltViewModel(),
     navController: NavController,
     paddingValues: PaddingValues,
+    messageUser: MessagingUserItemModel,
     newConversationDetails: (MessagingUserItemModel) -> Unit
 ) {
 
@@ -91,7 +92,7 @@ fun ConversationScreen(
             viewModel.onEvent(
                 event = ConversationVmEvent.SendMessage(
                     sendMessageModel = SendMessageModel(
-                        receiverId = state.messageUser.userDetails.uid,
+                        receiverId = state.messageUser!!.userDetails.uid,
                         message = message.text
                     )
                 )).also {
@@ -152,6 +153,10 @@ fun ConversationScreen(
 
 
 
+    LaunchedEffect(key1 = messageUser){
+        viewModel.onEvent(event = ConversationVmEvent.OnInitialized(messageUser = messageUser))
+        newConversationDetails(messageUser)
+    }
 
     BackHandler(enabled = true, onBack = {
         if (uiState.messageAreaExpanded) {
@@ -161,11 +166,7 @@ fun ConversationScreen(
         }
     })
 
-    LaunchedEffect(key1 = state.messageUser) {
-        newConversationDetails(
-            state.messageUser
-        )
-    }
+
 
 
     ConversationContent(

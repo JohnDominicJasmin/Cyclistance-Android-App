@@ -37,7 +37,9 @@ fun ChatsScreen(
             val jsonString = Gson().toJson(user.copy(userDetails = user.userDetails.copy(photo = encodedUrl)))
 
             navController.navigateScreen(
-                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${jsonString}",
+                route = Screens.MessagingNavigation.ConversationScreen.passArgument(
+                    message =  jsonString
+                )
             )
         }
     }

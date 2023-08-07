@@ -4,7 +4,6 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_USER
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_LAST_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
@@ -19,7 +18,6 @@ import com.example.cyclistance.feature_messaging.presentation.conversation.event
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationVmEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationState
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
-import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,16 +38,14 @@ class ConversationViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private val _messageUserStringObject: String = savedStateHandle[CONVERSATION_USER]!!
+
 
 
     private val _conversationState = mutableStateListOf<ConversationItemModel>()
     val conversationState: List<ConversationItemModel> = _conversationState
 
     private val _state = MutableStateFlow(
-        savedStateHandle[CONVERSATION_VM_STATE_KEY] ?: ConversationState(
-            messageUser = Gson().fromJson(_messageUserStringObject, MessagingUserItemModel::class.java)
-        ))
+        savedStateHandle[CONVERSATION_VM_STATE_KEY] ?: ConversationState())
 
     val state = _state.asStateFlow()
 
@@ -57,9 +53,17 @@ class ConversationViewModel @Inject constructor(
     val event = _event.asSharedFlow()
 
 
-    init {
-        addMessageListener()
-        getConversionId()
+
+    private fun initialize(messageUser: MessagingUserItemModel){
+        val isInitialized = state.value.messageUser != null
+        if(isInitialized) {
+            return
+        }
+
+        _state.update { it.copy(messageUser = messageUser) }
+        val receiverId = messageUser.userDetails.uid
+        addMessageListener(receiverId = receiverId)
+        getConversionId(receiverId = receiverId)
         getUid()
         getName()
         getPhoto()
@@ -69,6 +73,7 @@ class ConversationViewModel @Inject constructor(
     fun onEvent(event: ConversationVmEvent) {
         when (event) {
             is ConversationVmEvent.SendMessage -> sendMessage(event.sendMessageModel)
+            is ConversationVmEvent.OnInitialized -> initialize(event.messageUser)
         }
         saveState()
     }
@@ -142,17 +147,16 @@ class ConversationViewModel @Inject constructor(
         return with(value){
             hashMapOf(
                 KEY_SENDER_ID to userUid,
-                KEY_RECEIVER_ID to messageUser.userDetails.uid,
+                KEY_RECEIVER_ID to messageUser?.userDetails?.uid!!,
                 KEY_LAST_MESSAGE to message,
                 KEY_TIMESTAMP to Date()
             )
         }
     }
 
-    private fun getConversionId(){
+    private fun getConversionId(receiverId: String){
         viewModelScope.launch {
             runCatching {
-                val receiverId = state.value.messageUser.userDetails.uid
                 messagingUseCase.getConversionIdUseCase(receiverId = receiverId)
             }.onSuccess { id ->
                 _state.update { it.copy(conversionId = id) }
@@ -188,7 +192,7 @@ class ConversationViewModel @Inject constructor(
 
     private fun sendMessageNotification(message: String){
         val messageUser = state.value.messageUser
-        if(messageUser.isUserAvailable){
+        if(messageUser!!.isUserAvailable){
             return
         }
         viewModelScope.launch {
@@ -215,10 +219,9 @@ class ConversationViewModel @Inject constructor(
         _state.update { it.copy(isLoading = isLoading) }
     }
 
-    private fun addMessageListener() {
+    private fun addMessageListener(receiverId: String) {
         viewModelScope.launch {
             runCatching {
-                val receiverId = state.value.messageUser.userDetails.uid
                 isLoading(true)
                 messagingUseCase.addMessageListenerUseCase(
                     receiverId = receiverId,

@@ -26,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_USER
 import com.example.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_ID
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
@@ -140,7 +139,8 @@ fun TopAppBar(
                 })
         }
 
-        Screens.MessagingNavigation.ConversationScreen.screenRoute + "/{$CONVERSATION_USER}" -> {
+
+        Screens.MessagingNavigation.ConversationScreen.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.Close,
                 onClickIcon = onClickArrowBackIcon,

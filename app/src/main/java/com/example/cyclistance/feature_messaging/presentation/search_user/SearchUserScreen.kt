@@ -47,9 +47,13 @@ fun SearchUserScreen(
         { user: MessagingUserItemModel ->
             val encodedUrl = URLEncoder.encode(user.userDetails.photo, StandardCharsets.UTF_8.toString())
             val jsonString = Gson().toJson(user.copy(userDetails = user.userDetails.copy(photo = encodedUrl)))
+
             navController.navigateScreen(
-                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${jsonString}",
+                route = Screens.MessagingNavigation.ConversationScreen.passArgument(
+                    message =  jsonString
+                )
             )
+
         }
     }
 

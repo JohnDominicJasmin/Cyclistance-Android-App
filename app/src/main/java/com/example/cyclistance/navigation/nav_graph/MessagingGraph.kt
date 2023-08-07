@@ -3,16 +3,19 @@ package com.example.cyclistance.navigation.nav_graph
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_USER
+import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_ARG
+import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_URI
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.ChatsScreen
 import com.example.cyclistance.feature_messaging.presentation.conversation.ConversationScreen
 import com.example.cyclistance.feature_messaging.presentation.search_user.SearchUserScreen
 import com.example.cyclistance.navigation.Screens
+import com.google.gson.Gson
+
+
 
 fun NavGraphBuilder.messagingGraph(
     navController: NavController,
@@ -41,15 +44,26 @@ fun NavGraphBuilder.messagingGraph(
             )
         }
 
-        composable(route = Screens.MessagingNavigation.ConversationScreen.screenRoute + "/{$CONVERSATION_USER}",
-            arguments = listOf(navArgument(CONVERSATION_USER) { type = NavType.StringType })
+        composable(route = Screens.MessagingNavigation.ConversationScreen.screenRoute,
+            deepLinks = listOf(
+                navDeepLink{
+                    uriPattern = "$MESSAGING_URI/$MESSAGING_ARG={$MESSAGING_ARG}"
+                }
+            )
         ) {
 
-            ConversationScreen(
-                navController = navController,
-                paddingValues = paddingValues,
-                newConversationDetails = newConversationDetails
-            )
+            val arguments = it.arguments
+            arguments?.getString(MESSAGING_ARG)?.let { messageObject ->
+
+                val messageUser = Gson().fromJson(messageObject, MessagingUserItemModel::class.java)
+
+                ConversationScreen(
+                    navController = navController,
+                    paddingValues = paddingValues,
+                    messageUser = messageUser,
+                    newConversationDetails = newConversationDetails
+                )
+            }
         }
 
 
