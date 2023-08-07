@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SEARCH_USER_VM_STATE_KEY
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel.Companion.filterWithout
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel.Companion.findUser
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.example.cyclistance.feature_messaging.presentation.search_user.state.SearchUserState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,12 +20,13 @@ import javax.inject.Inject
 class SearchUserViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val messagingUseCase: MessagingUseCase
-): ViewModel(){
+) : ViewModel() {
 
-    private val _state = MutableStateFlow(savedStateHandle[SEARCH_USER_VM_STATE_KEY] ?: SearchUserState())
+    private val _state =
+        MutableStateFlow(savedStateHandle[SEARCH_USER_VM_STATE_KEY] ?: SearchUserState())
     val state = _state.asStateFlow()
 
-    init{
+    init {
         getUsers()
     }
 
@@ -32,7 +35,13 @@ class SearchUserViewModel @Inject constructor(
             runCatching {
                 isLoading(true)
                 messagingUseCase.addUserListenerUseCase(onNewMessageUser = { model ->
-                    _state.update { it.copy(messagingUsers = model) }
+                    val uid = messagingUseCase.getUidUseCase()
+                    _state.update {
+                        it.copy(
+                            messagingUsers = model.filterWithout(uid),
+                            messageUserInfo = model.findUser(uid)
+                        )
+                    }
                 })
             }.onFailure {
                 Timber.e("Failed to retrieve chats ${it.message}")
@@ -41,6 +50,7 @@ class SearchUserViewModel @Inject constructor(
             savedStateHandle[SEARCH_USER_VM_STATE_KEY] = _state.value
         }
     }
+
     private fun isLoading(isLoading: Boolean) {
         _state.update { it.copy(isLoading = isLoading) }
     }

@@ -3,24 +3,25 @@ package com.example.cyclistance.navigation.nav_graph
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
 import androidx.navigation.compose.composable
-import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_AVAILABILITY
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_ID
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_NAME
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CHAT_PHOTO_URL
+import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_URI
+import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_ARG
+import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_ARG
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.ChatsScreen
 import com.example.cyclistance.feature_messaging.presentation.conversation.ConversationScreen
 import com.example.cyclistance.feature_messaging.presentation.search_user.SearchUserScreen
 import com.example.cyclistance.navigation.Screens
+import com.google.gson.Gson
+
 
 fun NavGraphBuilder.messagingGraph(
     navController: NavController,
     paddingValues: PaddingValues,
     isInternetAvailable: Boolean,
-    newConversationDetails: (name: String, photoUrl: String, availability: Boolean) -> Unit) {
+    newConversationDetails: (MessagingUserItemModel) -> Unit) {
 
     navigation(
         startDestination = Screens.MessagingNavigation.ChatScreen.screenRoute,
@@ -28,7 +29,7 @@ fun NavGraphBuilder.messagingGraph(
     ) {
 
 
-        composable(Screens.MessagingNavigation.ChatScreen.screenRoute, ) {
+        composable(Screens.MessagingNavigation.ChatScreen.screenRoute) {
             ChatsScreen(
                 navController = navController,
                 paddingValues = paddingValues,
@@ -36,24 +37,33 @@ fun NavGraphBuilder.messagingGraph(
             )
         }
 
-        composable(Screens.MessagingNavigation.SearchUserScreen.screenRoute,         ) {
+        composable(Screens.MessagingNavigation.SearchUserScreen.screenRoute) {
             SearchUserScreen(
                 navController = navController,
                 paddingValues = paddingValues
             )
         }
 
-        composable(route = Screens.MessagingNavigation.ConversationScreen.screenRoute + "/{$CHAT_ID}/{${CHAT_PHOTO_URL}}/{$CHAT_NAME}/{$CHAT_AVAILABILITY}",
-            arguments = listOf(
-                navArgument(CHAT_ID) { type = NavType.StringType },
-                navArgument(CHAT_PHOTO_URL) { type = NavType.StringType },
-                navArgument(CHAT_NAME) { type = NavType.StringType },
-                navArgument(CHAT_AVAILABILITY) { type = NavType.BoolType }),
+        composable(route = Screens.MessagingNavigation.ConversationScreen.screenRoute,
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern =
+                        "$MESSAGING_URI/$RECEIVER_MESSAGE_ARG={$RECEIVER_MESSAGE_ARG}&$SENDER_MESSAGE_ARG={$SENDER_MESSAGE_ARG}"
+                }
+            )
         ) {
+
+            val arguments = it.arguments!!
+            val userReceiverObject = arguments.getString(RECEIVER_MESSAGE_ARG)
+            val userSenderObject = arguments.getString(SENDER_MESSAGE_ARG)
+            val userReceiverMessage = Gson().fromJson(userReceiverObject, MessagingUserItemModel::class.java)
+            val userSenderMessage = Gson().fromJson(userSenderObject, MessagingUserItemModel::class.java)
 
             ConversationScreen(
                 navController = navController,
                 paddingValues = paddingValues,
+                userReceiverMessage = userReceiverMessage,
+                userSenderMessage = userSenderMessage,
                 newConversationDetails = newConversationDetails
             )
         }

@@ -17,12 +17,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel.Companion.toJsonString
 import com.example.cyclistance.feature_messaging.presentation.search_user.components.SearchUserContent
 import com.example.cyclistance.feature_messaging.presentation.search_user.event.SearchUserUiEvent
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 @Composable
 fun SearchUserScreen(
@@ -43,12 +42,17 @@ fun SearchUserScreen(
         }
     }
     val onSelectConversation = remember {
-        { chatItem: MessagingUserItemModel ->
-            val encodedUrl =
-                URLEncoder.encode(chatItem.userDetails.photo, StandardCharsets.UTF_8.toString())
+        { selectedUser: MessagingUserItemModel ->
+
+            val user = state.messageUserInfo
             navController.navigateScreen(
-                route = "${Screens.MessagingNavigation.ConversationScreen.screenRoute}/${chatItem.userDetails.uid}/$encodedUrl/${chatItem.userDetails.name}/${chatItem.userAvailability}",
+                route = Screens.MessagingNavigation.ConversationScreen.passArgument(
+                    receiverMessageUser =  selectedUser.toJsonString(),
+                    senderMessageUser = user!!.toJsonString()
+
+                )
             )
+
         }
     }
 

@@ -9,5 +9,7 @@ sealed class ConversationUiEvent {
     data class SelectChatItem(val index: Int) : ConversationUiEvent()
     data class OnChangeValueMessage(val message: TextFieldValue) : ConversationUiEvent()
     object CloseConversationScreen : ConversationUiEvent()
+    object DismissNotificationPermissionDialog : ConversationUiEvent()
+
 
 }

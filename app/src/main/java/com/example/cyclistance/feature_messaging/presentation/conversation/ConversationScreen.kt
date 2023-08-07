@@ -1,6 +1,10 @@
 package com.example.cyclistance.feature_messaging.presentation.conversation
 
+import android.Manifest
+import android.os.Build
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,18 +20,25 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.conversation.components.ConversationContent
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationUiEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationVmEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationUiState
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ConversationScreen(
     viewModel: ConversationViewModel = hiltViewModel(),
     navController: NavController,
     paddingValues: PaddingValues,
-    newConversationDetails: (name: String, photoUrl: String, availability: Boolean) -> Unit
+    userReceiverMessage: MessagingUserItemModel,
+    userSenderMessage: MessagingUserItemModel,
+    newConversationDetails: (MessagingUserItemModel) -> Unit
 ) {
 
 
@@ -76,12 +87,15 @@ fun ConversationScreen(
         }
     }
 
-    val onSendMessage = remember {
+
+    val sendMessage = remember {
         {
+
+            val receiverId = state.userReceiverMessage!!.userDetails.uid
             viewModel.onEvent(
                 event = ConversationVmEvent.SendMessage(
                     sendMessageModel = SendMessageModel(
-                        receiverId = state.conversationUid,
+                        receiverId = receiverId,
                         message = message.text
                     )
                 )).also {
@@ -89,6 +103,68 @@ fun ConversationScreen(
             }
 
         }
+    }
+
+
+
+
+
+    val notificationLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { isGranted ->
+            if (isGranted){
+                sendMessage()
+            }
+        }
+    )
+
+
+
+    val notificationPermissionState = rememberPermissionState(
+        permission = Manifest.permission.POST_NOTIFICATIONS
+    ){ permissionGranted ->
+        if(permissionGranted){
+            notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+    }
+
+
+    val showPermissionDialog = remember{{
+        uiState = uiState.copy(notificationPermissionVisible = true)
+    }}
+
+    val dismissPermissionDialog = remember{{
+        uiState = uiState.copy(notificationPermissionVisible = false)
+    }}
+
+
+
+    val onSendMessage = remember{{
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationPermissionState.requestPermission(onGranted = {
+                notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }, onExplain = {
+                showPermissionDialog()
+            })
+        } else {
+            sendMessage()
+        }
+    }}
+
+
+
+
+
+    LaunchedEffect(key1 = userReceiverMessage){
+
+        viewModel.onEvent(
+            event = ConversationVmEvent.OnInitialized(
+                userReceiverMessage = userReceiverMessage,
+                userSenderMessage = userSenderMessage))
+
+        newConversationDetails(userReceiverMessage)
     }
 
     BackHandler(enabled = true, onBack = {
@@ -99,13 +175,7 @@ fun ConversationScreen(
         }
     })
 
-    LaunchedEffect(key1 = state.conversationName, key2 = state.conversationPhotoUrl, key3 = state.conversationAvailability) {
-        newConversationDetails(
-             state.conversationName,
-             state.conversationPhotoUrl,
-             state.conversationAvailability
-        )
-    }
+
 
 
     ConversationContent(
@@ -118,12 +188,13 @@ fun ConversationScreen(
         message = message,
         event = { event ->
             when (event) {
-                ConversationUiEvent.CloseConversationScreen -> closeConversationMessage()
-                ConversationUiEvent.OnSendMessage -> onSendMessage()
-                ConversationUiEvent.ResetSelectedIndex -> resetSelectedIndex()
+                is ConversationUiEvent.CloseConversationScreen -> closeConversationMessage()
+                is ConversationUiEvent.OnSendMessage -> onSendMessage()
+                is ConversationUiEvent.ResetSelectedIndex -> resetSelectedIndex()
                 is ConversationUiEvent.SelectChatItem -> onClickChatItem(event.index)
-                ConversationUiEvent.ToggleMessageArea -> onToggleExpand()
+                is ConversationUiEvent.ToggleMessageArea -> onToggleExpand()
                 is ConversationUiEvent.OnChangeValueMessage -> onChangeValueMessage(event.message)
+                is ConversationUiEvent.DismissNotificationPermissionDialog -> dismissPermissionDialog()
             }
         }
     )

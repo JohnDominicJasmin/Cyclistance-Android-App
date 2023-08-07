@@ -21,10 +21,6 @@ object MessagingConstants {
     const val KEY_TIMESTAMP = "timestamp"
     val SAVED_TOKEN = stringPreferencesKey("saved_token")
 
-    const val CHAT_ID = "chatId"
-    const val CHAT_PHOTO_URL = "chatPhotoUrl"
-    const val CHAT_NAME = "chatName"
-    const val CHAT_AVAILABILITY = "chatAvailability"
 
     const val KEY_CONVERSATIONS_COLLECTION = "conversations"
     const val KEY_COLLECTION_CHATS = "chats"
@@ -45,6 +41,13 @@ object MessagingConstants {
     const val CHANNEL_DESCRIPTION = "Messaging Notifications"
     @RequiresApi(Build.VERSION_CODES.N)
     const val CHANNEL_IMPORTANCE = NotificationManager.IMPORTANCE_HIGH
+
+
+    const val MESSAGING_URI = "cyclistance://messaging/conversation/"
+    const val RECEIVER_MESSAGE_ARG = "receiver_message"
+    const val SENDER_MESSAGE_ARG = "sender_message"
+
+
 
 
 }

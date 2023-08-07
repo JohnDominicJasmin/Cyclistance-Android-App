@@ -18,7 +18,7 @@ object MessagingUserItemMapper {
                 email = this[MessagingConstants.KEY_EMAIL].toString(),
             ),
             fcmToken = this[MessagingConstants.KEY_FCM_TOKEN].toString(),
-            userAvailability = getBoolean(KEY_AVAILABILITY) ?: false
+            isUserAvailable = getBoolean(KEY_AVAILABILITY) ?: false
 
         )
     }

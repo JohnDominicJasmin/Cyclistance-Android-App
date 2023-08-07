@@ -33,6 +33,7 @@ import com.example.cyclistance.core.utils.composable_utils.ComposableLifecycle
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping.data.data_source.local.network_observer.NetworkConnectivityChecker
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.drawer.NavigationDrawerContent
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
@@ -247,11 +248,11 @@ fun NavScreen(
     }
 
     val newConversationDetails = remember {
-        { name: String, photoUrl: String, availability: Boolean->
+        {user: MessagingUserItemModel ->
             navUiState = navUiState.copy(
-                conversationName = name,
-                conversationPhotoUrl = photoUrl,
-                conversationAvailability = availability
+                conversationName = user.userDetails.name,
+                conversationPhotoUrl = user.userDetails.photo,
+                conversationAvailability = user.isUserAvailable
             )
         }
     }
@@ -307,7 +308,7 @@ fun NavScreen(
                             paddingValues = paddingValues,
                             event = { event ->
                                 when (event) {
-                                    is NavUiEvent.NewConversationDetails -> newConversationDetails(event.chatName, event.chatPhotoUrl, event.chatAvailability)
+                                    is NavUiEvent.NewConversationDetails -> newConversationDetails(event.messageUser)
                                     is NavUiEvent.OnChangeNavigation -> onChangeNavigatingState(event.isNavigating)
                                     is NavUiEvent.OnToggleTheme -> onToggleTheme()
                                 }

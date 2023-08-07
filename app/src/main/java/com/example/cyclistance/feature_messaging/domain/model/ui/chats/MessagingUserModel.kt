@@ -8,4 +8,14 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class MessagingUserModel(
     val users: List<MessagingUserItemModel> = emptyList()
-) : Parcelable
+) : Parcelable{
+    companion object{
+        fun MessagingUserModel.filterWithout(userUid: String): MessagingUserModel {
+            return MessagingUserModel(users.filter { it.userDetails.uid != userUid })
+        }
+
+        fun MessagingUserModel.findUser(userUid: String): MessagingUserItemModel? {
+            return users.find { it.userDetails.uid == userUid }
+        }
+    }
+}

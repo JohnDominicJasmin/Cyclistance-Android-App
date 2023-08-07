@@ -59,12 +59,9 @@ fun NavGraph(
             navController = navController,
             paddingValues = paddingValues,
             isInternetAvailable = uiState.internetAvailable,
-            newConversationDetails = { name, photoUrl, availability ->
+            newConversationDetails = {
                 event(
-                    NavUiEvent.NewConversationDetails(
-                        chatName = name,
-                        chatPhotoUrl = photoUrl,
-                        chatAvailability = availability))
+                    NavUiEvent.NewConversationDetails(it))
             }
         )
 
