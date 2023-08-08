@@ -26,4 +26,7 @@ data class MappingState(
     val rescuerDistance: String = "",
     val nearbyCyclists: NearbyCyclist? = null,
     val newRescueRequest: NewRescueRequestsModel? = null,
-) : Parcelable
+) : Parcelable{
+
+    fun getCurrentLocation() = user.location ?: userLocation
+}

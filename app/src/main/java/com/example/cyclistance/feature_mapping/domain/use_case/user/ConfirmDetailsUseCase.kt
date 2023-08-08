@@ -6,12 +6,13 @@ import com.example.cyclistance.feature_mapping.domain.repository.MappingReposito
 
 class ConfirmDetailsUseCase (private val repository: MappingRepository) {
     suspend operator fun invoke(user: UserItem) {
-        val confirmation = user.userAssistance?.confirmationDetail
+        val bikeType = user.getBikeType()
+        val description = user.getDescription()
 
-        if (confirmation?.bikeType.isNullOrEmpty()) {
+        if (bikeType.isNullOrEmpty()) {
             throw MappingExceptions.BikeTypeException()
         }
-        if (confirmation?.description.isNullOrEmpty()) {
+        if (description.isNullOrEmpty()) {
             throw MappingExceptions.DescriptionException()
         }
         repository.createUser(user)

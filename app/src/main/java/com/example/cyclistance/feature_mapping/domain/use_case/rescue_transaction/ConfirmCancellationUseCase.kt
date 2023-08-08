@@ -6,7 +6,7 @@ import com.example.cyclistance.feature_mapping.domain.repository.MappingReposito
 
 class ConfirmCancellationUseCase(private val repository : MappingRepository) {
     suspend operator fun invoke(rescueTransaction : RescueTransactionItem) {
-        val cancellationReason = rescueTransaction.cancellation?.cancellationReason?.reason
+        val cancellationReason = rescueTransaction.getCancellationReason()
 
         if(rescueTransaction.id.isNullOrEmpty()){
             throw MappingExceptions.RescueTransactionNotFoundException()

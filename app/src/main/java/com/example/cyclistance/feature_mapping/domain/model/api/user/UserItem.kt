@@ -17,6 +17,16 @@ data class UserItem(
     val transaction: TransactionModel? = null,
     val userAssistance: UserAssistanceModel? = null,
 ): Parcelable{
+
+
+    fun getRole() = transaction?.role
+    fun getTransactionId() = transaction?.transactionId
+    fun isUserNeedHelp() = userAssistance?.needHelp
+    fun getMessage() = userAssistance?.confirmationDetail?.message
+    fun getBikeType() = userAssistance?.confirmationDetail?.bikeType
+    fun getDescription() = userAssistance?.confirmationDetail?.description
+
+
     companion object {
         fun empty(id:String?, role:String, transactionId:String) = UserItem(
             id = id, userAssistance = UserAssistanceModel(needHelp = false),
