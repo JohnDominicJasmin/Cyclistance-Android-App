@@ -316,14 +316,13 @@ fun MappingScreen(
 
     val openNavigationApp = remember(state.rescueTransaction?.route) {
         {
-            val route = state.rescueTransaction?.route
-            val location = route?.destinationLocation
-            location?.let {
-                it.latitude ?: return@let
-                it.longitude ?: return@let
-                context.openNavigationApp(latitude = it.latitude, longitude = it.longitude)
+            val rescueTransaction = state.rescueTransaction
+            rescueTransaction?.let{
+                val latitude =  it.getDestinationLatitude() ?: return@let
+                val longitude = it.getDestinationLongitude() ?: return@let
+                context.openNavigationApp(latitude = latitude, longitude = longitude)
             }
-            Unit
+
         }
     }
 
@@ -811,9 +810,7 @@ fun MappingScreen(
         key2 = hasTransaction,
         key3 = isRescueCancelled) {
 
-        val transactionRoute = state.rescueTransaction?.route
-        val startingLocation = transactionRoute?.startingLocation
-        val destinationLocation = transactionRoute?.destinationLocation
+        val rescueTransaction = state.rescueTransaction
 
 
         if (hasTransaction.not() || isRescueCancelled) {
@@ -821,17 +818,19 @@ fun MappingScreen(
             return@LaunchedEffect
         }
 
-        startingLocation?.longitude ?: return@LaunchedEffect
-        startingLocation.latitude ?: return@LaunchedEffect
-        destinationLocation?.longitude ?: return@LaunchedEffect
-        destinationLocation.latitude ?: return@LaunchedEffect
+
+        val startingLongitude = rescueTransaction?.getStartingLongitude() ?: return@LaunchedEffect
+        val startingLatitude = rescueTransaction.getStartingLatitude() ?: return@LaunchedEffect
+        val destinationLongitude = rescueTransaction.getDestinationLongitude() ?: return@LaunchedEffect
+        val destinationLatitude = rescueTransaction.getDestinationLatitude() ?: return@LaunchedEffect
 
         mappingViewModel.onEvent(
             event = MappingVmEvent.GetRouteDirections(
-                origin = Point.fromLngLat(startingLocation.longitude, startingLocation.latitude),
+                origin = Point.fromLngLat(startingLongitude, startingLatitude),
                 destination = Point.fromLngLat(
-                    destinationLocation.longitude,
-                    destinationLocation.latitude)))
+                    destinationLongitude,
+                    destinationLatitude)))
+
 
     }
 

@@ -20,7 +20,7 @@ class BroadcastTransactionLocationUseCase(
             return
         }
 
-        if(rescueTransactionItem.cancellation?.rescueCancelled == true){
+        if(rescueTransactionItem.isRescueCancelled()){
             return
         }
 

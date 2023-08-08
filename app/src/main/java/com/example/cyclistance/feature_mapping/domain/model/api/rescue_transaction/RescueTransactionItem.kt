@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_mapping.domain.model.api.rescue_transact
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState
+import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -13,4 +14,39 @@ data class RescueTransactionItem(
     val rescuerId: String? = null,
     val status: StatusModel? = null,
     val route: RouteModel? = null
-):Parcelable
+):Parcelable{
+
+    fun getCancellationMessage() = cancellation?.cancellationReason?.message ?: ""
+    fun getCancellationReason() = cancellation?.cancellationReason?.reason ?: ""
+    fun getCancellationId() = cancellation?.idCancelledBy ?: ""
+    fun getCancellationName() = cancellation?.nameCancelledBy ?: ""
+    fun isRescueCancelled() = cancellation?.rescueCancelled ?: false
+
+    fun isRescueOnGoing() = status?.onGoing ?: false
+    fun isRescueFinished() = status?.finished ?: false
+    fun isRescueStarted() = status?.started ?: false
+
+    fun getStartingLocation(): LocationModel? {
+        return route?.startingLocation
+    }
+
+    fun getStartingLatitude(): Double? {
+        return route?.startingLocation?.latitude
+    }
+
+    fun getStartingLongitude(): Double? {
+        return route?.startingLocation?.longitude
+    }
+
+    fun getDestinationLatitude(): Double? {
+        return route?.destinationLocation?.latitude
+    }
+
+    fun getDestinationLongitude(): Double? {
+        return route?.destinationLocation?.longitude
+    }
+
+    fun getDestinationLocation(): LocationModel?{
+        return route?.destinationLocation
+    }
+}

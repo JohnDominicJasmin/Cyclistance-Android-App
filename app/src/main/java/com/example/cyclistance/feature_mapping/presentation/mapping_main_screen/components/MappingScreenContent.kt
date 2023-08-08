@@ -308,19 +308,16 @@ fun MappingScreenContent(
                         enter = fadeIn(),
                         exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
 
-                        val rescueTransaction = state.rescueTransaction
-                        val cancellation = rescueTransaction?.cancellation
-                        val cancellationReason =
-                            cancellation?.cancellationReason ?: return@AnimatedVisibility
+                        val rescueTransaction = state.rescueTransaction ?: return@AnimatedVisibility
 
                         MappingRequestCancelled(
                             modifier = Modifier.fillMaxSize(),
                             onClickOkButton = { event(MappingUiEvent.CancelledRescueConfirmed) },
                             cancelledRescueModel = CancelledRescueModel(
                                 transactionID = rescueTransaction.id,
-                                rescueCancelledBy = cancellation.nameCancelledBy,
-                                reason = cancellationReason.reason,
-                                message = cancellationReason.message
+                                rescueCancelledBy = rescueTransaction.getCancellationName(),
+                                reason = rescueTransaction.getCancellationReason(),
+                                message = rescueTransaction.getCancellationMessage()
                             ))
                     }
 

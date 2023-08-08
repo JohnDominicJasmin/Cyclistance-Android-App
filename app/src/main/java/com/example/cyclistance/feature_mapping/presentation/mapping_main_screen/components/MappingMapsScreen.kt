@@ -79,12 +79,12 @@ fun MappingMapsScreen(
             dismissNearbyCyclistsIcon()
 
             nearbyCyclists?.filter {
-                it.userAssistance?.needHelp == true
+                it.isUserNeedHelp() == true
             }?.forEach { cyclist ->
                 val location = cyclist.location
                 val latitude = location?.latitude ?: return@forEach
                 val longitude = location.longitude ?: return@forEach
-                val description = cyclist.userAssistance?.confirmationDetail?.description
+                val description = cyclist.getDescription()
                 val iconImage = description?.getMapIconImageDescription(context)
                     ?.toBitmap(width = 120, height = 120)
                 iconImage?.let { bitmap ->
