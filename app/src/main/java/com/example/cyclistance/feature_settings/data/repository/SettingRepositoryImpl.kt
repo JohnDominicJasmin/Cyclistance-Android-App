@@ -159,7 +159,10 @@ class SettingRepositoryImpl(
             val jsonObject = infoString?.let(::JSONObject)
             val fbName = jsonObject?.getString("name")
             val authName: String? = auth.currentUser?.displayName
-            authName?.takeIf { it.isNotEmpty() } ?: fbName
+            val authEmail: String? = auth.currentUser?.email
+            val extractedNameFromEmail = authEmail?.substringBefore("@")
+            val possibleName = authName?.takeIf { it.isNotEmpty() } ?: fbName
+            possibleName.takeIf { !it.isNullOrEmpty() } ?: extractedNameFromEmail
         }
 
     }
