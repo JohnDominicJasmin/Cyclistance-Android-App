@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.presentation.authentication_email.components
+package com.example.cyclistance.feature_authentication.presentation.auth_email.components
 
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet

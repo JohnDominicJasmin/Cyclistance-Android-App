@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.presentation.authentication_email.event
+package com.example.cyclistance.feature_authentication.presentation.auth_email.event
 
 sealed class EmailUiEvent{
     object DismissAlertDialog: EmailUiEvent()

@@ -24,7 +24,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
 import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
 import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthState
+import com.example.cyclistance.feature_authentication.presentation.auth_email.state.EmailAuthState
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInState
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInUiState

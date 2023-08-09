@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.presentation.authentication_email.state
+package com.example.cyclistance.feature_authentication.presentation.auth_email.state
 
 import android.os.Parcelable
 import com.example.cyclistance.core.domain.model.AlertDialogState
