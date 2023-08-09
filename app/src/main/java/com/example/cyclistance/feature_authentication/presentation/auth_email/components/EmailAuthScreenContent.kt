@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.presentation.authentication_email.components
+package com.example.cyclistance.feature_authentication.presentation.auth_email.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -22,9 +22,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
 import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
 import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthUiEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthState
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthUiState
+import com.example.cyclistance.feature_authentication.presentation.auth_email.event.EmailAuthUiEvent
+import com.example.cyclistance.feature_authentication.presentation.auth_email.state.EmailAuthState
+import com.example.cyclistance.feature_authentication.presentation.auth_email.state.EmailAuthUiState
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.navigation.IsDarkTheme

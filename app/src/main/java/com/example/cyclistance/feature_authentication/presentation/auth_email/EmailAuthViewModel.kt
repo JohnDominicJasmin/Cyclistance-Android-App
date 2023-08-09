@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_authentication.presentation.authentication_email
+package com.example.cyclistance.feature_authentication.presentation.auth_email
 
 import android.os.CountDownTimer
 import androidx.lifecycle.SavedStateHandle
@@ -10,9 +10,9 @@ import com.example.cyclistance.core.utils.constants.AuthConstants.REFRESH_EMAIL_
 import com.example.cyclistance.core.utils.constants.AuthConstants.TIMER_COUNTS
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthVmEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.state.EmailAuthState
+import com.example.cyclistance.feature_authentication.presentation.auth_email.event.EmailAuthEvent
+import com.example.cyclistance.feature_authentication.presentation.auth_email.event.EmailAuthVmEvent
+import com.example.cyclistance.feature_authentication.presentation.auth_email.state.EmailAuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers

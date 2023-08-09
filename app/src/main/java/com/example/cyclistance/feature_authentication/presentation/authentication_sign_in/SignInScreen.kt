@@ -28,9 +28,9 @@ import com.example.cyclistance.feature_authentication.domain.model.SignInCredent
 import com.example.cyclistance.feature_authentication.domain.util.AuthResult
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthVmEvent
+import com.example.cyclistance.feature_authentication.presentation.auth_email.EmailAuthViewModel
+import com.example.cyclistance.feature_authentication.presentation.auth_email.event.EmailAuthEvent
+import com.example.cyclistance.feature_authentication.presentation.auth_email.event.EmailAuthVmEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInScreenContent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInVmEvent
