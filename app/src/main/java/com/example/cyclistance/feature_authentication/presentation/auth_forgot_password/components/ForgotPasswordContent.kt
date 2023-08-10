@@ -131,9 +131,17 @@ fun ForgotPasswordContent(
 
             if (uiState.alertDialogState.visible()) {
                 AlertDialog(
+                    modifier = Modifier.layoutId(DIALOG_ID),
                     alertDialog = uiState.alertDialogState, onDismissRequest = {
                         event(ForgotPasswordUiEvent.DismissAlertDialog)
                     })
+            }
+
+            if (uiState.isNoInternetVisible) {
+                NoInternetDialog(
+                    modifier = Modifier.layoutId(DIALOG_ID),
+                    onDismiss = { event(ForgotPasswordUiEvent.DismissNoInternetDialog) }
+                )
             }
 
 
