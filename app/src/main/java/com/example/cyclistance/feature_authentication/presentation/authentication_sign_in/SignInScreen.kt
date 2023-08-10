@@ -193,6 +193,7 @@ fun SignInScreen(
                         alertDialogState = AlertDialogState(
                             title = "New Email Sent.",
                             description = "New verification email has been sent to your email address.",
+                            icon = R.raw.success
                         )
                     )
                 }
