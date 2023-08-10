@@ -135,8 +135,8 @@ fun AddEditContactContent(
                                 width = Dimension.percent(0.8f)
                             },
                             positiveButtonText = "Save",
-                            onClickCancelButton = { event(EmergencyCallUiEvent.CancelEditContact) },
-                            onClickConfirmButton = { event(EmergencyCallUiEvent.SaveEditContact) },
+                            onClickNegativeButton = { event(EmergencyCallUiEvent.CancelEditContact) },
+                            onClickPositiveButton = { event(EmergencyCallUiEvent.SaveEditContact) },
                             negativeButtonEnabled = !state.isLoading,
                             positiveButtonEnabled = !state.isLoading && isUserInformationChanges
                         )

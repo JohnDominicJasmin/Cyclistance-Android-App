@@ -191,8 +191,8 @@ fun ReportAccountDialogContent(
                             width = Dimension.percent(0.9f)
                         },
 
-                        onClickCancelButton = { event(ReportAccountUiEvent.DismissReportAccountDialog) },
-                        onClickConfirmButton = { event(ReportAccountUiEvent.ShowReportFeedback) },
+                        onClickNegativeButton = { event(ReportAccountUiEvent.DismissReportAccountDialog) },
+                        onClickPositiveButton = { event(ReportAccountUiEvent.ShowReportFeedback) },
                         positiveButtonEnabled = uiState.isReportButtonEnabled
                     )
                 }
