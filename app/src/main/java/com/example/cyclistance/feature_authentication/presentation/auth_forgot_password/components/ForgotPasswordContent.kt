@@ -51,7 +51,10 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun ForgotPasswordContent(
     modifier: Modifier = Modifier,
-    state: ForgotPasswordState
+    email: TextFieldValue,
+    state: ForgotPasswordState,
+    uiState: ForgotPasswordUiState,
+    event: (ForgotPasswordUiEvent) -> Unit
 ) {
 
     Surface(
@@ -103,10 +106,10 @@ fun ForgotPasswordContent(
                     .layoutId(TEXT_FIELDS_ID)
                     .padding(horizontal = 15.dp),
                 enabled = !state.isLoading,
-                email = TextFieldValue(""),
-                emailErrorMessage = "",
-                clearIconOnClick = { /*TODO*/ },
-                onValueChange = {})
+                email = email,
+                emailErrorMessage = uiState.emailErrorMessage,
+                clearIconOnClick = { event(ForgotPasswordUiEvent.ClearEmailInput) },
+                onValueChange = { event(ForgotPasswordUiEvent.OnChangeEmail(it)) })
 
 
             ButtonNavigation(
@@ -115,9 +118,23 @@ fun ForgotPasswordContent(
                 positiveButtonEnabled = !state.isLoading,
                 negativeButtonText = "Cancel",
                 positiveButtonText = "Submit",
-                onClickNegativeButton = {},
-                onClickPositiveButton = {}
+                onClickNegativeButton = { event(ForgotPasswordUiEvent.OnClickCancel) },
+                onClickPositiveButton = { event(ForgotPasswordUiEvent.OnClickSubmit) }
             )
+
+
+            if (state.isLoading) {
+                CircularProgressIndicator(
+                    modifier = Modifier.layoutId(PROGRESS_BAR_ID)
+                )
+            }
+
+            if (uiState.alertDialogState.visible()) {
+                AlertDialog(
+                    alertDialog = uiState.alertDialogState, onDismissRequest = {
+                        event(ForgotPasswordUiEvent.DismissAlertDialog)
+                    })
+            }
 
 
         }
