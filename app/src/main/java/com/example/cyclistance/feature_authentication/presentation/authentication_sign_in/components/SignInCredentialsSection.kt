@@ -24,7 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.FB_AND_GOOGLE_ID
 import com.example.cyclistance.theme.Black450
 import com.example.cyclistance.theme.Blue500
 
@@ -35,7 +35,7 @@ fun SignInCredentialsSection(
     onClickGoogleButton: () -> Unit) {
     Row(
         modifier = Modifier
-            .layoutId(AuthenticationConstraintsItem.OtherSignIns.layoutId)
+            .layoutId(FB_AND_GOOGLE_ID)
             .wrapContentSize(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center) {

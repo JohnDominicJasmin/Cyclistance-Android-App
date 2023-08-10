@@ -15,14 +15,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BUTTONS_ID
 
 @Composable
 fun SignInButton(enabled: Boolean, onClickSignInButton: () -> Unit) {
 
     Box(
         modifier = Modifier
-            .layoutId(layoutId = AuthenticationConstraintsItem.SignInButton.layoutId)
+            .layoutId(layoutId = BUTTONS_ID)
             .wrapContentSize(),
         contentAlignment = Alignment.Center) {
         Button(

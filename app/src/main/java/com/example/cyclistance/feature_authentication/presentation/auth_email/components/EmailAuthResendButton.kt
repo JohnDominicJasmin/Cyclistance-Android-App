@@ -14,7 +14,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.RESEND_EMAIL_BUTTON_ID
 import com.example.cyclistance.theme.Black440
 
 
@@ -23,7 +23,7 @@ fun EmailAuthResendButton(text: String, isEnabled: Boolean, onClickResendButton:
 
     Box(
         modifier = Modifier
-            .layoutId(AuthenticationConstraintsItem.ResendButton.layoutId)
+            .layoutId(RESEND_EMAIL_BUTTON_ID)
             .wrapContentSize(),
         contentAlignment = Alignment.Center) {
 

@@ -49,10 +49,10 @@ fun ChangePasswordScreen(paddingValues: PaddingValues) {
                     width = Dimension.percent(0.8f)
                 },
                 positiveButtonText = "Save",
-                onClickCancelButton = {
+                onClickNegativeButton = {
 
                 },
-                onClickConfirmButton = {
+                onClickPositiveButton = {
 
                 })
 

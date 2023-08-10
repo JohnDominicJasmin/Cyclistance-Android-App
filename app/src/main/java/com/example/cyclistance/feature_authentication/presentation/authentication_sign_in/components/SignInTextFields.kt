@@ -12,7 +12,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInState
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TEXT_FIELDS_ID
 import com.example.cyclistance.feature_authentication.presentation.common.ConfirmPasswordTextField
 import com.example.cyclistance.feature_authentication.presentation.common.EmailTextField
 
@@ -34,7 +34,7 @@ fun SignInTextFieldsArea(
 
     Column(
         modifier = Modifier
-            .layoutId(AuthenticationConstraintsItem.TextFields.layoutId)
+            .layoutId(TEXT_FIELDS_ID)
             .fillMaxWidth(fraction = 0.9f),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(13.dp)) {

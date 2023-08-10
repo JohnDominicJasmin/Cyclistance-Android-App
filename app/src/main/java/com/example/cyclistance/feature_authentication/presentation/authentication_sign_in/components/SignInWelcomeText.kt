@@ -12,11 +12,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains
+
 @Preview
 @Composable
 fun SignUpTextArea() {
-    Column(modifier = Modifier.layoutId(AuthenticationConstraintsItem.WelcomeTextArea.layoutId)) {
+    Column(modifier = Modifier.layoutId(AuthenticationConstrains.TEXT_LABEL)) {
 
 
         Text(

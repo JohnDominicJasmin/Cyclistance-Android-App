@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.VERIFY_EMAIL_BUTTON_ID
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
@@ -30,7 +30,7 @@ fun EmailAuthVerifyEmailButton(enabled: Boolean = false, onClickVerifyButton: ()
             .widthIn(max = 650.dp)
             .fillMaxWidth(0.73f)
             .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)
-            .layoutId(AuthenticationConstraintsItem.VerifyEmailButton.layoutId),
+            .layoutId(VERIFY_EMAIL_BUTTON_ID),
 
         colors = ButtonDefaults.buttonColors(
             backgroundColor = MaterialTheme.colors.primary,

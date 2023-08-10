@@ -53,8 +53,8 @@ fun DeleteContactDialog(
 
             ButtonNavigation(
                 modifier = Modifier.fillMaxWidth(0.8f),
-                onClickCancelButton = onDismissRequest,
-                onClickConfirmButton = onClickConfirmButton)
+                onClickNegativeButton = onDismissRequest,
+                onClickPositiveButton = onClickConfirmButton)
 
         }
     }
