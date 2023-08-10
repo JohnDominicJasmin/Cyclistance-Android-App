@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -22,6 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,11 +34,13 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
 import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
+import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.auth_forgot_password.event.ForgotPasswordUiEvent
 import com.example.cyclistance.feature_authentication.presentation.auth_forgot_password.state.ForgotPasswordState
 import com.example.cyclistance.feature_authentication.presentation.auth_forgot_password.state.ForgotPasswordUiState
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BOTTOM_WAVE_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BUTTONS_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.ICON_DISPLAY_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.PROGRESS_BAR_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TEXT_FIELDS_ID
@@ -109,7 +116,16 @@ fun ForgotPasswordContent(
                 email = email,
                 emailErrorMessage = uiState.emailErrorMessage,
                 clearIconOnClick = { event(ForgotPasswordUiEvent.ClearEmailInput) },
-                onValueChange = { event(ForgotPasswordUiEvent.OnChangeEmail(it)) })
+                onValueChange = { event(ForgotPasswordUiEvent.OnChangeEmail(it)) },
+                keyboardActions = KeyboardActions(onDone = {
+                    event(ForgotPasswordUiEvent.KeyboardActionDone)
+                }),
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Done,
+                    autoCorrect = false,
+                    keyboardType = KeyboardType.Email,
+                    capitalization = KeyboardCapitalization.None)
+                )
 
 
             ButtonNavigation(

@@ -225,6 +225,10 @@ fun EmailTextField(
     modifier: Modifier = Modifier,
     enabled: Boolean,
     email: TextFieldValue,
+    keyboardActions: KeyboardActions = KeyboardActions(),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Email,
+        imeAction = ImeAction.Next),
     emailErrorMessage: String,
     clearIconOnClick: () -> Unit,
     onValueChange: (TextFieldValue) -> Unit) {
@@ -232,6 +236,7 @@ fun EmailTextField(
     val hasError = emailErrorMessage.isNotEmpty()
 
     SetupTextField(
+        keyboardActions = keyboardActions,
         modifier = modifier,
         enabled = enabled,
         textFieldValue = email,
@@ -270,9 +275,7 @@ fun EmailTextField(
             }
 
         },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next),
+        keyboardOptions = keyboardOptions,
     )
 }
 
