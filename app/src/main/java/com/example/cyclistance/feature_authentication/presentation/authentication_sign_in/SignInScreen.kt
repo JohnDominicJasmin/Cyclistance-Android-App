@@ -14,7 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.TextFieldValue
@@ -56,7 +55,7 @@ fun SignInScreen(
     val scope = rememberCoroutineScope()
     val signInState by signInViewModel.state.collectAsStateWithLifecycle()
     val emailAuthState by emailAuthViewModel.state.collectAsStateWithLifecycle()
-    val focusRequester = remember { FocusRequester() }
+
     var uiState by rememberSaveable {
         mutableStateOf(SignInUiState())
     }
@@ -96,7 +95,6 @@ fun SignInScreen(
 
 
     LaunchedEffect(key1 = true) {
-        focusRequester.requestFocus()
         signInViewModel.eventFlow.collectLatest { signInEvent ->
 
             when (signInEvent) {
@@ -306,7 +304,6 @@ fun SignInScreen(
         modifier = Modifier.padding(paddingValues),
         signInState = signInState,
         emailAuthState = emailAuthState,
-        focusRequester = focusRequester,
         uiState = uiState,
         email = email,
         password = password,

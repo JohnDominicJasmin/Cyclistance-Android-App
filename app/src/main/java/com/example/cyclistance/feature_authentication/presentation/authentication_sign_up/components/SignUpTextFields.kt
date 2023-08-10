@@ -7,7 +7,6 @@ import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
@@ -27,7 +26,6 @@ fun SignUpTextFieldsArea(
     confirmPassword: TextFieldValue,
     confirmPasswordErrorMessage: String,
     passwordVisibility: Boolean,
-    focusRequester: FocusRequester,
     onValueChangeEmail: (TextFieldValue) -> Unit,
     onValueChangePassword: (TextFieldValue) -> Unit,
     onValueChangeConfirmPassword: (TextFieldValue) -> Unit,
@@ -45,7 +43,6 @@ fun SignUpTextFieldsArea(
 
 
             EmailTextField(
-                focusRequester = focusRequester,
                 email = email,
                 emailErrorMessage = emailErrorMessage,
                 clearIconOnClick = {

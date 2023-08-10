@@ -31,8 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.TextStyle
@@ -146,7 +144,6 @@ fun PasswordTextField(
 private fun SetupTextField(
     modifier: Modifier = Modifier,
     enabled: Boolean,
-    focusRequester: FocusRequester = FocusRequester(),
     textFieldValue: TextFieldValue,
     failureMessage: String,
     onValueChange: (TextFieldValue) -> Unit,
@@ -171,7 +168,6 @@ private fun SetupTextField(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp), clip = true)
-                .focusRequester(focusRequester)
                 .clearAndSetSemantics { },
             value = textFieldValue,
             onValueChange = onValueChange,
@@ -228,7 +224,6 @@ private fun SetupTextField(
 fun EmailTextField(
     modifier: Modifier = Modifier,
     enabled: Boolean,
-    focusRequester: FocusRequester,
     email: TextFieldValue,
     emailErrorMessage: String,
     clearIconOnClick: () -> Unit,
@@ -239,7 +234,6 @@ fun EmailTextField(
     SetupTextField(
         modifier = modifier,
         enabled = enabled,
-        focusRequester = focusRequester,
         textFieldValue = email,
         failureMessage = emailErrorMessage,
         onValueChange = onValueChange,

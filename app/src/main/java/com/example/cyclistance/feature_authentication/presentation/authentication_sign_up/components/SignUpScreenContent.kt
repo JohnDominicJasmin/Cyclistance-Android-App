@@ -8,7 +8,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -61,7 +60,7 @@ fun PreviewSignUpScreenLight() {
 fun SignUpScreenContent(
     modifier: Modifier = Modifier,
     signUpState: SignUpState = SignUpState(),
-    focusRequester: FocusRequester = FocusRequester(),
+
     uiState: SignUpUiState = SignUpUiState(),
     email: TextFieldValue,
     password: TextFieldValue,
@@ -105,7 +104,6 @@ fun SignUpScreenContent(
             }
 
             SignUpTextFieldsArea(
-                focusRequester = focusRequester,
                 state = signUpState,
                 keyboardActionOnDone = {
                     event(SignUpUiEvent.KeyboardActionDone)
