@@ -79,9 +79,9 @@ val forgotPasswordConstraints = ConstraintSet{
         height = Dimension.wrapContent
     }
     constrain(buttons){
+        top.linkTo(textField.bottom, margin = 50.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
-        bottom.linkTo(parent.bottom, margin = 45.dp)
         height = Dimension.wrapContent
         width = Dimension.percent(0.8f)
     }
