@@ -12,6 +12,7 @@ sealed class Screens {
         }
 
         object SignInScreen : AuthenticationNavigation(screenRoute = "sign_in_screen")
+        object ForgotPasswordScreen : AuthenticationNavigation(screenRoute = "forgot_password_screen")
         object SignUpScreen : AuthenticationNavigation(screenRoute = "sign_up_screen")
         object EmailAuthScreen : AuthenticationNavigation(screenRoute = "email_auth_screen")
     }

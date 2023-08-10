@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.example.cyclistance.feature_authentication.presentation.auth_email.EmailAuthScreen
+import com.example.cyclistance.feature_authentication.presentation.auth_forgot_password.ForgotPasswordScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.SignInScreen
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.SignUpScreen
 import com.example.cyclistance.navigation.Screens
@@ -33,6 +34,13 @@ fun NavGraphBuilder.authenticationGraph(
                 navController = navController,
                 paddingValues = paddingValues)
         }
+        composable(route = Screens.AuthenticationNavigation.ForgotPasswordScreen.screenRoute){
+            ForgotPasswordScreen(
+                navController = navController,
+                paddingValues = paddingValues
+            )
+        }
+
     }
 
 }
