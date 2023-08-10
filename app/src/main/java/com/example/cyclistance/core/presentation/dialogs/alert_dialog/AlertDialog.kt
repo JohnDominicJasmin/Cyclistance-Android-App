@@ -29,12 +29,14 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun AlertDialog(
+    modifier: Modifier = Modifier,
     alertDialog: AlertDialogState,
     onDismissRequest: () -> Unit = {}) {
 
     val (isDialogOpen, onDialogVisibilityToggle) = rememberSaveable { mutableStateOf(true) }
 
     DialogAnimatedIconCreator(
+        modifier = modifier,
         icon = alertDialog.icon,
         isDialogOpen = isDialogOpen,
         onDialogVisibilityToggle = { onDialogVisibilityToggle(!isDialogOpen) },
