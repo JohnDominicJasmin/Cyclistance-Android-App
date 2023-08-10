@@ -298,6 +298,10 @@ fun SignInScreen(
         }
     }
 
+    val onClickForgotPassword = remember{{
+        navController.navigateScreen(route = Screens.AuthenticationNavigation.ForgotPasswordScreen.screenRoute)
+    }}
+
     SignInScreenContent(
         modifier = Modifier.padding(paddingValues),
         signInState = signInState,
@@ -318,6 +322,7 @@ fun SignInScreen(
                 is SignUiEvent.SignInWithEmailAndPassword -> onClickSignInButton()
                 is SignUiEvent.NavigateToSignUp -> onClickSignInText()
                 is SignUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
+                is SignUiEvent.NavigateToForgotPassword -> onClickForgotPassword()
             }
         }
     )

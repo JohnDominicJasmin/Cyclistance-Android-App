@@ -12,5 +12,6 @@ sealed class SignUiEvent {
     object SignInWithGoogle : SignUiEvent()
     object SignInWithEmailAndPassword : SignUiEvent()
     object NavigateToSignUp : SignUiEvent()
+    object NavigateToForgotPassword : SignUiEvent()
     object DismissNoInternetDialog : SignUiEvent()
 }
