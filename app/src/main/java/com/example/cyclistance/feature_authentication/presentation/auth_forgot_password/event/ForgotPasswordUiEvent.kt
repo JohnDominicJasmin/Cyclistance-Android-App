@@ -8,4 +8,6 @@ sealed class ForgotPasswordUiEvent{
     object ClearEmailInput: ForgotPasswordUiEvent()
     data class OnChangeEmail(val email: TextFieldValue): ForgotPasswordUiEvent()
     object DismissAlertDialog: ForgotPasswordUiEvent()
+    object DismissNoInternetDialog: ForgotPasswordUiEvent()
+    object KeyboardActionDone: ForgotPasswordUiEvent()
 }

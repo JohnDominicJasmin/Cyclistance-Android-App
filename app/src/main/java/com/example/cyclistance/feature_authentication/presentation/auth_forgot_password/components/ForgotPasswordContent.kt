@@ -236,6 +236,8 @@ private fun PreviewForgotPasswordContentDark3() {
                         ForgotPasswordUiEvent.OnClickCancel -> onClickCancel()
                         ForgotPasswordUiEvent.OnClickSubmit -> TODO()
                         ForgotPasswordUiEvent.DismissAlertDialog -> TODO()
+                        ForgotPasswordUiEvent.DismissNoInternetDialog -> TODO()
+                        ForgotPasswordUiEvent.KeyboardActionDone -> TODO()
                     }
                 }
             )
