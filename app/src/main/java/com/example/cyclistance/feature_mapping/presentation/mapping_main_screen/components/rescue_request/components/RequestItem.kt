@@ -157,8 +157,8 @@ fun RequestItem(
                     .align(alignment = Alignment.CenterHorizontally),
                 negativeButtonText = "Decline",
                 positiveButtonText = "Accept",
-                onClickCancelButton = onClickCancelButton,
-                onClickConfirmButton = onClickConfirmButton)
+                onClickNegativeButton = onClickCancelButton,
+                onClickPositiveButton = onClickConfirmButton)
 
         }
     }

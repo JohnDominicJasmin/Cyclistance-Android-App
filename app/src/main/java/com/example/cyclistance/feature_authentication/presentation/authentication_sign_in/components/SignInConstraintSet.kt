@@ -3,21 +3,31 @@ package com.example.cyclistance.feature_authentication.presentation.authenticati
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BOTTOM_WAVE_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BUTTONS_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.DONT_HAVE_ACCOUNT_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.FB_AND_GOOGLE_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.ICON_DISPLAY_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.NO_INTERNET_DIALOG_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.PROGRESS_BAR_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TEXT_FIELDS_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TEXT_LABEL
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TOP_SPACER_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TOP_WAVE_ID
 
 
 val signInConstraints = ConstraintSet {
-    val appIcon = createRefFor(id = AuthenticationConstraintsItem.IconDisplay.layoutId)
-    val topWave = createRefFor(id = AuthenticationConstraintsItem.TopWave.layoutId)
-    val bottomWave = createRefFor(id = AuthenticationConstraintsItem.BottomWave.layoutId)
-    val welcomeTextSection = createRefFor(id = AuthenticationConstraintsItem.WelcomeTextArea.layoutId)
-    val textFieldSection = createRefFor(id = AuthenticationConstraintsItem.TextFields.layoutId)
-    val facebookAndGoogle = createRefFor(id = AuthenticationConstraintsItem.OtherSignIns.layoutId)
-    val signInButton = createRefFor(id = AuthenticationConstraintsItem.SignInButton.layoutId)
-    val dontHaveAccountText = createRefFor(id = AuthenticationConstraintsItem.ClickableTextSection.layoutId)
-    val progressBar = createRefFor(id = AuthenticationConstraintsItem.ProgressBar.layoutId)
-    val noInternetScreen = createRefFor(id = AuthenticationConstraintsItem.NoInternetScreen.layoutId)
-    val topSpacer = createRefFor(id = AuthenticationConstraintsItem.TopSpacer.layoutId)
+    val appIcon = createRefFor(id = ICON_DISPLAY_ID)
+    val topWave = createRefFor(id = TOP_WAVE_ID)
+    val bottomWave = createRefFor(id = BOTTOM_WAVE_ID)
+    val welcomeTextSection = createRefFor(id = TEXT_LABEL)
+    val textFieldSection = createRefFor(id = TEXT_FIELDS_ID)
+    val facebookAndGoogle = createRefFor(id = FB_AND_GOOGLE_ID)
+    val buttons = createRefFor(id = BUTTONS_ID)
+    val dontHaveAccountText = createRefFor(id = DONT_HAVE_ACCOUNT_ID)
+    val progressBar = createRefFor(id = PROGRESS_BAR_ID)
+    val noInternetScreen = createRefFor(id = NO_INTERNET_DIALOG_ID)
+    val topSpacer = createRefFor(id = TOP_SPACER_ID)
 
     constrain(topSpacer){
         top.linkTo(parent.top)
@@ -90,7 +100,7 @@ val signInConstraints = ConstraintSet {
         height = Dimension.wrapContent
     }
 
-    constrain(signInButton) {
+    constrain(buttons) {
         top.linkTo(facebookAndGoogle.bottom, margin = 10.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
@@ -98,7 +108,7 @@ val signInConstraints = ConstraintSet {
         height = Dimension.wrapContent
     }
     constrain(dontHaveAccountText){
-        top.linkTo(signInButton.bottom, margin = 16.dp)
+        top.linkTo(buttons.bottom, margin = 16.dp)
         end.linkTo(parent.end)
         start.linkTo(parent.start)
         width = Dimension.wrapContent

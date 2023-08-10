@@ -25,7 +25,9 @@ import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoIn
 import com.example.cyclistance.feature_authentication.presentation.auth_email.event.EmailAuthUiEvent
 import com.example.cyclistance.feature_authentication.presentation.auth_email.state.EmailAuthState
 import com.example.cyclistance.feature_authentication.presentation.auth_email.state.EmailAuthUiState
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.ICON_DISPLAY_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.NO_INTERNET_DIALOG_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.PROGRESS_BAR_ID
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -89,7 +91,7 @@ fun EmailAuthScreenContent(
                     contentDescription = "App Icon",
                     painter = painterResource(id = if (isDarkTheme) R.drawable.ic_dark_email else R.drawable.ic_light_email),
                     modifier = Modifier
-                        .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId),
+                        .layoutId(ICON_DISPLAY_ID),
                     contentScale = ContentScale.FillBounds
                 )
 
@@ -108,7 +110,7 @@ fun EmailAuthScreenContent(
                 if (emailAuthState.isLoading) {
                     CircularProgressIndicator(
                         modifier = Modifier.layoutId(
-                            AuthenticationConstraintsItem.ProgressBar.layoutId))
+                            PROGRESS_BAR_ID))
                 }
 
 
@@ -135,7 +137,7 @@ fun EmailAuthScreenContent(
                         onDismiss = {
                             event(EmailAuthUiEvent.DismissNoInternetDialog)
                         },
-                        modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                        modifier = Modifier.layoutId(NO_INTERNET_DIALOG_ID),
                     )
                 }
             }

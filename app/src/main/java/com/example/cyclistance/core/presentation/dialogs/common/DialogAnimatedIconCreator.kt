@@ -38,6 +38,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 
 @Composable
 fun DialogAnimatedIconCreator(
+    modifier: Modifier = Modifier,
     icon: Int,
     isDialogOpen: Boolean,
     usePlatformDefaultWidth: Boolean = true,
@@ -59,7 +60,7 @@ fun DialogAnimatedIconCreator(
             )) {
 
             Box(
-                modifier = Modifier
+                modifier = modifier
                     .widthIn(max = 600.dp)
                     .fillMaxWidth()
                     .wrapContentHeight(),

@@ -193,6 +193,7 @@ fun SignInScreen(
                         alertDialogState = AlertDialogState(
                             title = "New Email Sent.",
                             description = "New verification email has been sent to your email address.",
+                            icon = R.raw.success
                         )
                     )
                 }
@@ -296,6 +297,10 @@ fun SignInScreen(
         }
     }
 
+    val onClickForgotPassword = remember{{
+        navController.navigateScreen(route = Screens.AuthenticationNavigation.ForgotPasswordScreen.screenRoute)
+    }}
+
     SignInScreenContent(
         modifier = Modifier.padding(paddingValues),
         signInState = signInState,
@@ -315,6 +320,7 @@ fun SignInScreen(
                 is SignUiEvent.SignInWithEmailAndPassword -> onClickSignInButton()
                 is SignUiEvent.NavigateToSignUp -> onClickSignInText()
                 is SignUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
+                is SignUiEvent.NavigateToForgotPassword -> onClickForgotPassword()
             }
         }
     )

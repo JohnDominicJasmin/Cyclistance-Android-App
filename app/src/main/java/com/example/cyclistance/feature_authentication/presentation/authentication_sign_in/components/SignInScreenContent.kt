@@ -1,9 +1,13 @@
 package com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
@@ -15,10 +19,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
 import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
@@ -27,7 +36,13 @@ import com.example.cyclistance.feature_authentication.presentation.auth_email.st
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInState
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInUiState
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BOTTOM_WAVE_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.ICON_DISPLAY_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.NO_INTERNET_DIALOG_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.PROGRESS_BAR_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TEXT_FIELDS_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TOP_SPACER_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TOP_WAVE_ID
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -36,7 +51,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun SignInScreenContent(
     modifier: Modifier = Modifier,
-
+    focusRequester: FocusRequester = FocusRequester(),
     signInState: SignInState = SignInState(),
     emailAuthState: EmailAuthState = EmailAuthState(),
     uiState: SignInUiState = SignInUiState(),
@@ -53,13 +68,13 @@ fun SignInScreenContent(
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())) {
 
-            Spacer(modifier = Modifier.layoutId(AuthenticationConstraintsItem.TopSpacer.layoutId))
+            Spacer(modifier = Modifier.layoutId(TOP_SPACER_ID))
 
             Image(
                 contentDescription = "App Icon",
                 painter = painterResource(R.drawable.ic_app_icon_cyclistance),
                 modifier = Modifier
-                    .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId)
+                    .layoutId(ICON_DISPLAY_ID)
             )
 
 
@@ -74,24 +89,37 @@ fun SignInScreenContent(
             }
 
             Waves(
-                topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
-                bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId,
+                topWaveLayoutId = TOP_WAVE_ID,
+                bottomWaveLayoutId = BOTTOM_WAVE_ID,
             )
 
-            SignInTextFieldsArea(
-                state = signInState,
-                keyboardActionOnDone = {
-                    event(SignUiEvent.KeyboardActionDone)
-                },
-                onValueChangeEmail = { event(SignUiEvent.OnChangeEmail(it)) },
-                onValueChangePassword = { event(SignUiEvent.OnChangePassword(it)) },
-                onClickPasswordVisibility = { event(SignUiEvent.TogglePasswordVisibility) },
-                email = email,
-                emailErrorMessage = uiState.emailErrorMessage,
-                password = password,
-                passwordErrorMessage = uiState.passwordErrorMessage,
-                passwordVisible = uiState.isPasswordVisible
-            )
+            Column(
+                modifier = Modifier.layoutId(TEXT_FIELDS_ID)
+            ) {
+                SignInTextFieldsArea(
+                    modifier = Modifier
+                        .fillMaxWidth(fraction = 0.9f),
+                    state = signInState,
+                    keyboardActionOnDone = {
+                        event(SignUiEvent.KeyboardActionDone)
+                    },
+                    onValueChangeEmail = { event(SignUiEvent.OnChangeEmail(it)) },
+                    onValueChangePassword = { event(SignUiEvent.OnChangePassword(it)) },
+                    onClickPasswordVisibility = { event(SignUiEvent.TogglePasswordVisibility) },
+                    email = email,
+                    emailErrorMessage = uiState.emailErrorMessage,
+                    password = password,
+                    passwordErrorMessage = uiState.passwordErrorMessage,
+                    passwordVisible = uiState.isPasswordVisible
+                )
+                ClickableText(modifier = Modifier.padding(top = 8.dp), text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(color = MaterialTheme.colors.onBackground)) {
+                        append("Forgot your password?")
+                    }
+                }, onClick = {
+                    event(SignUiEvent.NavigateToForgotPassword)
+                })
+            }
 
             val isLoading = remember(signInState.isLoading, emailAuthState.isLoading) {
                 (signInState.isLoading || emailAuthState.isLoading)
@@ -113,7 +141,7 @@ fun SignInScreenContent(
 
             if (isLoading) {
                 CircularProgressIndicator(
-                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId)
+                    modifier = Modifier.layoutId(PROGRESS_BAR_ID)
                 )
             }
 
@@ -122,7 +150,7 @@ fun SignInScreenContent(
                     onDismiss = {
                         event(SignUiEvent.DismissNoInternetDialog)
                     },
-                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId))
+                    modifier = Modifier.layoutId(NO_INTERNET_DIALOG_ID))
 
             }
 

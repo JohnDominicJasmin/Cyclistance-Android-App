@@ -3,15 +3,20 @@ package com.example.cyclistance.feature_authentication.presentation.auth_email.c
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.ICON_DISPLAY_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.NO_INTERNET_DIALOG_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.PROGRESS_BAR_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.RESEND_EMAIL_BUTTON_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TEXT_LABEL
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.VERIFY_EMAIL_BUTTON_ID
 
 val emailAuthConstraints = ConstraintSet {
-    val emailIcon =  createRefFor(id = AuthenticationConstraintsItem.IconDisplay.layoutId)
-    val textDisplay = createRefFor(id = AuthenticationConstraintsItem.WelcomeTextArea.layoutId)
-    val resendEmail = createRefFor(id = AuthenticationConstraintsItem.ResendButton.layoutId)
-    val verifyEmail = createRefFor(id = AuthenticationConstraintsItem.VerifyEmailButton.layoutId)
-    val progressBar = createRefFor(id = AuthenticationConstraintsItem.ProgressBar.layoutId)
-    val noInternetScreen = createRefFor(id = AuthenticationConstraintsItem.NoInternetScreen.layoutId)
+    val emailIcon =  createRefFor(id = ICON_DISPLAY_ID)
+    val textDisplay = createRefFor(id = TEXT_LABEL)
+    val resendEmail = createRefFor(id = RESEND_EMAIL_BUTTON_ID)
+    val verifyEmail = createRefFor(id = VERIFY_EMAIL_BUTTON_ID)
+    val progressBar = createRefFor(id = PROGRESS_BAR_ID)
+    val noInternetScreen = createRefFor(id = NO_INTERNET_DIALOG_ID)
 
     constrain(emailIcon){
         top.linkTo(parent.top, margin = 10.dp)

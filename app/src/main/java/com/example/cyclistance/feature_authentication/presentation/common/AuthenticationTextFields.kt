@@ -49,6 +49,7 @@ import com.example.cyclistance.theme.Black500
 
 @Composable
 fun ConfirmPasswordTextField(
+    modifier: Modifier = Modifier,
     enabled: Boolean,
     password: TextFieldValue,
     passwordErrorMessage: String,
@@ -59,6 +60,7 @@ fun ConfirmPasswordTextField(
 
 
     SetupTextField(
+        modifier = modifier,
         enabled = enabled,
         textFieldValue = password,
         failureMessage = passwordErrorMessage,
@@ -83,6 +85,8 @@ fun ConfirmPasswordTextField(
 
 @Composable
 fun PasswordTextField(
+    modifier: Modifier = Modifier,
+    placeholderText: String = "Password",
     enabled: Boolean,
     password: TextFieldValue,
     passwordExceptionMessage: String,
@@ -93,11 +97,12 @@ fun PasswordTextField(
 
 
     SetupTextField(
+        modifier = modifier,
         enabled = enabled,
         textFieldValue = password,
         failureMessage = passwordExceptionMessage,
         onValueChange = onValueChange,
-        placeholderText = "Password",
+        placeholderText = placeholderText,
         trailingIcon = {
 
             AnimatedVisibility(
@@ -137,6 +142,7 @@ fun PasswordTextField(
 
 @Composable
 private fun SetupTextField(
+    modifier: Modifier = Modifier,
     enabled: Boolean,
     textFieldValue: TextFieldValue,
     failureMessage: String,
@@ -152,7 +158,7 @@ private fun SetupTextField(
     val hasError = failureMessage.isNotEmpty()
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(3.dp)) {
 
@@ -216,8 +222,13 @@ private fun SetupTextField(
 
 @Composable
 fun EmailTextField(
+    modifier: Modifier = Modifier,
     enabled: Boolean,
     email: TextFieldValue,
+    keyboardActions: KeyboardActions = KeyboardActions(),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Email,
+        imeAction = ImeAction.Next),
     emailErrorMessage: String,
     clearIconOnClick: () -> Unit,
     onValueChange: (TextFieldValue) -> Unit) {
@@ -225,6 +236,8 @@ fun EmailTextField(
     val hasError = emailErrorMessage.isNotEmpty()
 
     SetupTextField(
+        keyboardActions = keyboardActions,
+        modifier = modifier,
         enabled = enabled,
         textFieldValue = email,
         failureMessage = emailErrorMessage,
@@ -262,9 +275,7 @@ fun EmailTextField(
             }
 
         },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next),
+        keyboardOptions = keyboardOptions,
     )
 }
 
