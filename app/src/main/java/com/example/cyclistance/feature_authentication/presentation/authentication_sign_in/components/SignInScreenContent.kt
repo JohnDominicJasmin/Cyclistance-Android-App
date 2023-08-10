@@ -99,7 +99,6 @@ fun SignInScreenContent(
                 SignInTextFieldsArea(
                     modifier = Modifier
                         .fillMaxWidth(fraction = 0.9f),
-                    focusRequester = focusRequester,
                     state = signInState,
                     keyboardActionOnDone = {
                         event(SignUiEvent.KeyboardActionDone)

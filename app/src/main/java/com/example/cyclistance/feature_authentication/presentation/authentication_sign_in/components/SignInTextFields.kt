@@ -6,7 +6,6 @@ import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInState
@@ -23,7 +22,6 @@ fun SignInTextFieldsArea(
     password: TextFieldValue,
     passwordErrorMessage: String,
     passwordVisible: Boolean,
-    focusRequester: FocusRequester,
     onValueChangeEmail: (TextFieldValue) -> Unit,
     onValueChangePassword: (TextFieldValue) -> Unit,
     keyboardActionOnDone: (KeyboardActionScope.() -> Unit),
@@ -37,7 +35,6 @@ fun SignInTextFieldsArea(
 
 
         EmailTextField(
-            focusRequester = focusRequester,
             email = email,
             emailErrorMessage = emailErrorMessage,
             onValueChange = onValueChangeEmail,
