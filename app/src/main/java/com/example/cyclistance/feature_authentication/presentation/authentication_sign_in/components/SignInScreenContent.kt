@@ -15,7 +15,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -37,7 +36,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun SignInScreenContent(
     modifier: Modifier = Modifier,
-    focusRequester: FocusRequester = FocusRequester(),
+
     signInState: SignInState = SignInState(),
     emailAuthState: EmailAuthState = EmailAuthState(),
     uiState: SignInUiState = SignInUiState(),
@@ -80,7 +79,6 @@ fun SignInScreenContent(
             )
 
             SignInTextFieldsArea(
-                focusRequester = focusRequester,
                 state = signInState,
                 keyboardActionOnDone = {
                     event(SignUiEvent.KeyboardActionDone)
