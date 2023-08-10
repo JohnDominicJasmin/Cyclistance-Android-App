@@ -5,6 +5,7 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BOTTOM_WAVE_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BUTTONS_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.ICON_DISPLAY_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.PROGRESS_BAR_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TEXT_FIELDS_ID
@@ -21,6 +22,7 @@ val forgotPasswordConstraints = ConstraintSet{
     val topSpacer = createRefFor(id = TOP_SPACER_ID)
     val progressBar = createRefFor(id = PROGRESS_BAR_ID)
     val buttons = createRefFor(id = BUTTONS_ID)
+    val dialogs = createRefFor(id = DIALOG_ID)
 
     constrain(topSpacer){
         top.linkTo(parent.top)
@@ -84,5 +86,13 @@ val forgotPasswordConstraints = ConstraintSet{
         start.linkTo(parent.start)
         height = Dimension.wrapContent
         width = Dimension.percent(0.8f)
+    }
+
+    constrain(dialogs){
+        top.linkTo(parent.top)
+        end.linkTo(parent.end)
+        start.linkTo(parent.start)
+        bottom.linkTo(parent.bottom)
+        this.centerTo(parent)
     }
 }

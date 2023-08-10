@@ -17,4 +17,5 @@ object AuthenticationConstrains {
     const val PROGRESS_BAR_ID = "progress_bar"
     const val NO_INTERNET_DIALOG_ID = "no_internet_screen"
     const val TOP_SPACER_ID = "top_spacer"
+    const val DIALOG_ID = "dialogs"
 }
