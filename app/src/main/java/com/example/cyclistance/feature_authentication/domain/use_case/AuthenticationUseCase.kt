@@ -12,6 +12,7 @@ import com.example.cyclistance.feature_authentication.domain.use_case.verify_acc
 import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.IsSignedInWithProviderUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.ReloadEmailUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.SendEmailVerificationUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.SendPasswordResetEmailUseCase
 
 data class AuthenticationUseCase(
     val reloadEmailUseCase: ReloadEmailUseCase,
@@ -25,6 +26,7 @@ data class AuthenticationUseCase(
     val sendEmailVerificationUseCase: SendEmailVerificationUseCase,
     val signInWithEmailAndPasswordUseCase: SignInWithEmailAndPasswordUseCase,
     val signInWithCredentialUseCase: SignInWithCredentialUseCase,
-    val createUserUseCase: CreateUserUseCase
+    val createUserUseCase: CreateUserUseCase,
+    val sendPasswordResetEmailUseCase: SendPasswordResetEmailUseCase
 
     )

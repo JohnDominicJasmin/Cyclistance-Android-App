@@ -290,5 +290,22 @@ class AuthRepositoryImpl(
         return auth.currentUser != null
     }
 
-
+    override suspend fun sendPasswordResetEmail(email: String) {
+        checkInternetConnection()
+        suspendCancellableCoroutine { continuation ->
+            auth.sendPasswordResetEmail(email).addOnSuccessListener {
+                continuation.resume(Unit)
+            }.addOnFailureListener { exception ->
+                if (exception is FirebaseNetworkException) {
+                    continuation.resumeWithException(AuthExceptions.NetworkException(message = appContext.getString(
+                                R.string.no_internet_message)))
+                }
+                if (exception is FirebaseAuthInvalidUserException) {
+                    if (exception.errorCode == USER_NOT_FOUND) {
+                        continuation.resumeWithException(AuthExceptions.EmailException(message = appContext.getString(R.string.couldntFindAccount)))
+                    }
+                }
+            }
+        }
+    }
 }
