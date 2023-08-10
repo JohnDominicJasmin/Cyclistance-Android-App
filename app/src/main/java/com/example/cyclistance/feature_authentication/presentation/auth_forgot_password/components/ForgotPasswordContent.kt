@@ -114,23 +114,113 @@ fun ForgotPasswordContent(
 }
 
 
-@Preview(device = "id:Galaxy Nexus")
+@Preview(device = "id:Galaxy Nexus", name = "Dark Theme and Loading is showing")
 @Composable
-fun PreviewForgotPasswordContentDark() {
+private fun PreviewForgotPasswordContentDark1() {
     CompositionLocalProvider(IsDarkTheme provides true) {
         CyclistanceTheme(darkTheme = true) {
-            ForgotPasswordContent(state = ForgotPasswordState())
+            ForgotPasswordContent(
+                state = ForgotPasswordState(isLoading = true),
+                uiState = ForgotPasswordUiState(),
+                event = {},
+                email = TextFieldValue("aisndoaisndoian"))
+        }
+    }
+}
+
+@Preview(device = "id:Galaxy Nexus", name = "Dark Theme and Loading is not shown")
+@Composable
+private fun PreviewForgotPasswordContentDark2() {
+    CompositionLocalProvider(IsDarkTheme provides true) {
+        CyclistanceTheme(darkTheme = true) {
+            ForgotPasswordContent(
+                state = ForgotPasswordState(isLoading = false),
+                uiState = ForgotPasswordUiState(),
+                event = {},
+                email = TextFieldValue("aisndoaisndoian"))
+        }
+    }
+}
+
+@Preview(device = "id:Galaxy Nexus", name = "Dark Theme and Loading is not shown")
+@Composable
+private fun PreviewForgotPasswordContentDark3() {
+    CompositionLocalProvider(IsDarkTheme provides true) {
+        CyclistanceTheme(darkTheme = true) {
+            val uiState by rememberSaveable {
+                mutableStateOf(ForgotPasswordUiState())
+            }
+            var email by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+                mutableStateOf(TextFieldValue())
+            }
+
+            val clearEmail = remember {
+                {
+                    email = TextFieldValue()
+                }
+            }
+
+            val onChangeEmail = remember {
+                { input: TextFieldValue ->
+                    email = input
+                }
+            }
+
+            val onClickCancel = remember {
+                {
+
+                }
+            }
+
+
+            ForgotPasswordContent(state = ForgotPasswordState(), modifier = Modifier.padding(),
+                email = email,
+                uiState = uiState,
+                event = { event ->
+                    when (event) {
+                        ForgotPasswordUiEvent.ClearEmailInput -> clearEmail()
+                        is ForgotPasswordUiEvent.OnChangeEmail -> onChangeEmail(event.email)
+                        ForgotPasswordUiEvent.OnClickCancel -> onClickCancel()
+                        ForgotPasswordUiEvent.OnClickSubmit -> TODO()
+                        ForgotPasswordUiEvent.DismissAlertDialog -> TODO()
+                    }
+                }
+            )
         }
     }
 }
 
 
+@Preview(device = "id:Galaxy Nexus", name = "Dark Theme Alert dialog is shown")
+@Composable
+private fun PreviewShowingAlertDialog() {
+    CompositionLocalProvider(IsDarkTheme provides true) {
+        CyclistanceTheme(darkTheme = true) {
+            ForgotPasswordContent(
+                state = ForgotPasswordState(isLoading = true),
+                uiState = ForgotPasswordUiState(
+                    alertDialogState = AlertDialogState(
+                        title = "Successfully sent",
+                        description = "Please check your email for the reset password link",
+                        icon = R.raw.success
+                    )
+                ),
+                event = {},
+                email = TextFieldValue("aisndoaisndoian"))
+        }
+    }
+}
+
 @Preview(device = "id:Galaxy Nexus")
 @Composable
-fun PreviewForgotPasswordContentLight() {
+private fun PreviewForgotPasswordContentLight() {
     CompositionLocalProvider(IsDarkTheme provides false) {
         CyclistanceTheme(darkTheme = false) {
-            ForgotPasswordContent(state = ForgotPasswordState())
+            ForgotPasswordContent(
+                state = ForgotPasswordState(),
+                uiState = ForgotPasswordUiState(),
+                event = {},
+                email = TextFieldValue("aisndoaisndoian"))
         }
     }
 }
