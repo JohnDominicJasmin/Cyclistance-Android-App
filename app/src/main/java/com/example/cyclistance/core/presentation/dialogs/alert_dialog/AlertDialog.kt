@@ -16,6 +16,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -48,7 +49,7 @@ fun AlertDialog(
             Text(
                 alertDialog.title,
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.h6,
+                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium),
                 color = MaterialTheme.colors.onSurface)
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -100,9 +101,9 @@ fun PreviewAlertDialogDark() {
     CyclistanceTheme(true) {
         AlertDialog(
             alertDialog = AlertDialogState(
-                title = "Success!",
-                description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quod.",
-                icon = R.raw.question),
+                title = "Successfully Updated the Password!",
+                description = "You can now login using your updated password",
+                icon = R.raw.success),
             onDismissRequest = {})
 
     }
