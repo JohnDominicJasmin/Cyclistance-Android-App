@@ -51,6 +51,7 @@ import com.example.cyclistance.theme.Black500
 
 @Composable
 fun ConfirmPasswordTextField(
+    modifier: Modifier = Modifier,
     enabled: Boolean,
     password: TextFieldValue,
     passwordErrorMessage: String,
@@ -61,6 +62,7 @@ fun ConfirmPasswordTextField(
 
 
     SetupTextField(
+        modifier = modifier,
         enabled = enabled,
         textFieldValue = password,
         failureMessage = passwordErrorMessage,
@@ -85,6 +87,8 @@ fun ConfirmPasswordTextField(
 
 @Composable
 fun PasswordTextField(
+    modifier: Modifier = Modifier,
+    placeholderText: String = "Password",
     enabled: Boolean,
     password: TextFieldValue,
     passwordExceptionMessage: String,
@@ -95,11 +99,12 @@ fun PasswordTextField(
 
 
     SetupTextField(
+        modifier = modifier,
         enabled = enabled,
         textFieldValue = password,
         failureMessage = passwordExceptionMessage,
         onValueChange = onValueChange,
-        placeholderText = "Password",
+        placeholderText = placeholderText,
         trailingIcon = {
 
             AnimatedVisibility(
@@ -139,6 +144,7 @@ fun PasswordTextField(
 
 @Composable
 private fun SetupTextField(
+    modifier: Modifier = Modifier,
     enabled: Boolean,
     focusRequester: FocusRequester = FocusRequester(),
     textFieldValue: TextFieldValue,
@@ -155,7 +161,7 @@ private fun SetupTextField(
     val hasError = failureMessage.isNotEmpty()
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(3.dp)) {
 
@@ -220,6 +226,7 @@ private fun SetupTextField(
 
 @Composable
 fun EmailTextField(
+    modifier: Modifier = Modifier,
     enabled: Boolean,
     focusRequester: FocusRequester,
     email: TextFieldValue,
@@ -230,6 +237,7 @@ fun EmailTextField(
     val hasError = emailErrorMessage.isNotEmpty()
 
     SetupTextField(
+        modifier = modifier,
         enabled = enabled,
         focusRequester = focusRequester,
         textFieldValue = email,
