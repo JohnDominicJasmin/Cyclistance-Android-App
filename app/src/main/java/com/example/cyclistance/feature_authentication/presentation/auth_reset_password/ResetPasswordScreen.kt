@@ -33,6 +33,8 @@ fun ResetPasswordScreen(
     paddingValues: PaddingValues
 ) {
 
+    val focusManager = LocalFocusManager.current
+    val context = LocalContext.current
     var uiState by rememberSaveable { mutableStateOf(ResetPasswordUiState()) }
     val state by viewModel.state.collectAsStateWithLifecycle()
     var currentPassword by rememberSaveable(stateSaver = TextFieldValue.Saver) {
@@ -45,6 +47,15 @@ fun ResetPasswordScreen(
         mutableStateOf(TextFieldValue())
     }
 
+    val resetPassword = remember {
+        {
+            viewModel.onEvent(
+                event = ResetPasswordVmEvent.ResetPassword(
+                    currentPassword = currentPassword.text.trim(),
+                    newPassword = newPassword.text.trim(),
+                    confirmPassword = confirmPassword.text.trim()))
+        }
+    }
 
     val dismissAlertDialog = remember {
         {
@@ -60,7 +71,8 @@ fun ResetPasswordScreen(
 
     val onKeyboardActionDone = remember {
         {
-
+            resetPassword()
+            focusManager.clearFocus()
         }
     }
 
@@ -78,7 +90,15 @@ fun ResetPasswordScreen(
         }
     }
 
-   val onChangeConfirmPassword = remember {
+    val onClickUpdate = remember {
+        {
+            resetPassword()
+            focusManager.clearFocus()
+        }
+    }
+
+
+    val onChangeConfirmPassword = remember {
         { input: TextFieldValue ->
             uiState = uiState.copy(confirmPasswordErrorMessage = "")
             confirmPassword = input
