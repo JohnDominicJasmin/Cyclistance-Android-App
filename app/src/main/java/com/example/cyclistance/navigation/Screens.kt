@@ -11,10 +11,11 @@ sealed class Screens {
             const val ROUTE = "authentication_navigation"
         }
 
-        object SignInScreen : AuthenticationNavigation(screenRoute = "sign_in_screen")
-        object ForgotPasswordScreen : AuthenticationNavigation(screenRoute = "forgot_password_screen")
-        object SignUpScreen : AuthenticationNavigation(screenRoute = "sign_up_screen")
-        object EmailAuthScreen : AuthenticationNavigation(screenRoute = "email_auth_screen")
+        object SignIn : AuthenticationNavigation(screenRoute = "sign_in_screen")
+        object ForgotPassword : AuthenticationNavigation(screenRoute = "forgot_password_screen")
+        object ResetPassword : AuthenticationNavigation(screenRoute = "change_password_screen")
+        object SignUp : AuthenticationNavigation(screenRoute = "sign_up_screen")
+        object EmailAuth : AuthenticationNavigation(screenRoute = "email_auth_screen")
     }
 
     open class EmergencyCallNavigation(val screenRoute: String = "") : Screens() {
@@ -22,7 +23,7 @@ sealed class Screens {
             const val ROUTE = "emergency_call_navigation"
         }
 
-        object EmergencyCallScreen : EmergencyCallNavigation(screenRoute = "emergency_call_screen")
+        object EmergencyCall : EmergencyCallNavigation(screenRoute = "emergency_call_screen")
     }
 
     open class MessagingNavigation(val screenRoute: String = "") : Screens() {
@@ -30,9 +31,9 @@ sealed class Screens {
             const val ROUTE = "messaging_navigation"
         }
 
-        object ChatScreen : MessagingNavigation(screenRoute = "chat_screen")
-        object SearchUserScreen : MessagingNavigation(screenRoute = "search_user_screen")
-        object ConversationScreen : MessagingNavigation(screenRoute = "conversation_screen/{$RECEIVER_MESSAGE_ARG}/{$SENDER_MESSAGE_ARG}") {
+        object Chat : MessagingNavigation(screenRoute = "chat_screen")
+        object SearchUser : MessagingNavigation(screenRoute = "search_user_screen")
+        object Conversation : MessagingNavigation(screenRoute = "conversation_screen/{$RECEIVER_MESSAGE_ARG}/{$SENDER_MESSAGE_ARG}") {
             fun passArgument(receiverMessageUser: String, senderMessageUser: String) = "conversation_screen/$receiverMessageUser/$senderMessageUser"
         }
     }
@@ -42,7 +43,7 @@ sealed class Screens {
             const val ROUTE = "on_boarding_navigation"
         }
 
-        object IntroSliderScreen : OnBoardingNavigation(screenRoute = "intro_slider_screen")
+        object IntroSlider : OnBoardingNavigation(screenRoute = "intro_slider_screen")
     }
 
     open class MappingNavigation(val screenRoute: String = "") : Screens() {
@@ -50,9 +51,9 @@ sealed class Screens {
             const val ROUTE = "mapping_navigation"
         }
 
-        object MappingScreen : MappingNavigation(screenRoute = "mapping_screen")
-        object CancellationScreen : MappingNavigation(screenRoute = "cancellation_screen")
-        object ConfirmDetailsScreen : MappingNavigation(screenRoute = "confirm_details_screen")
+        object Mapping : MappingNavigation(screenRoute = "mapping_screen")
+        object Cancellation : MappingNavigation(screenRoute = "cancellation_screen")
+        object ConfirmDetails : MappingNavigation(screenRoute = "confirm_details_screen")
     }
 
     open class SettingsNavigation(val screenRoute: String = "") : Screens() {
@@ -61,9 +62,8 @@ sealed class Screens {
             const val ROUTE = "settings_navigation"
         }
 
-        object ChangePasswordScreen : SettingsNavigation(screenRoute = "change_password_screen")
-        object EditProfileScreen : SettingsNavigation(screenRoute = "edit_profile_screen")
-        object SettingScreen : SettingsNavigation(screenRoute = "setting_screen")
+        object EditProfile : SettingsNavigation(screenRoute = "edit_profile_screen")
+        object Setting : SettingsNavigation(screenRoute = "setting_screen")
     }
 
 
@@ -72,8 +72,8 @@ sealed class Screens {
             const val ROUTE = "ride_history_navigation"
         }
 
-        object RideHistoryScreen : RideHistoryNavigation(screenRoute = "ride_history_screen")
-        object RideHistoryDetailsScreen :
+        object RideHistory : RideHistoryNavigation(screenRoute = "ride_history_screen")
+        object RideHistoryDetails :
             RideHistoryNavigation(screenRoute = "ride_history_details_screen")
     }
 

@@ -117,8 +117,8 @@ fun SignUpScreen(
     val onClickSignUpText = remember {
         {
             navController.navigateScreenInclusively(
-                Screens.AuthenticationNavigation.SignInScreen.screenRoute,
-                Screens.AuthenticationNavigation.SignUpScreen.screenRoute)
+                Screens.AuthenticationNavigation.SignIn.screenRoute,
+                Screens.AuthenticationNavigation.SignUp.screenRoute)
         }
     }
     val onDismissNoInternetDialog = remember {
@@ -135,8 +135,8 @@ fun SignUpScreen(
             when (event) {
                 is SignUpEvent.SignUpSuccess -> {
                     navController.navigateScreenInclusively(
-                        Screens.AuthenticationNavigation.EmailAuthScreen.screenRoute,
-                        Screens.AuthenticationNavigation.SignUpScreen.screenRoute)
+                        Screens.AuthenticationNavigation.EmailAuth.screenRoute,
+                        Screens.AuthenticationNavigation.SignUp.screenRoute)
 
                 }
 

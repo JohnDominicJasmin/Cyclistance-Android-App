@@ -28,10 +28,10 @@ fun NavGraphBuilder.mappingGraph(
     onChangeNavigatingState: (isNavigating: Boolean) -> Unit) {
 
     navigation(
-        startDestination = Screens.MappingNavigation.MappingScreen.screenRoute,
+        startDestination = Screens.MappingNavigation.Mapping.screenRoute,
         route = Screens.MappingNavigation.ROUTE) {
 
-        composable(route = Screens.MappingNavigation.MappingScreen.screenRoute) {
+        composable(route = Screens.MappingNavigation.Mapping.screenRoute) {
             MappingScreen(
                 hasInternetConnection = hasInternetConnection,
                 navController = navController,
@@ -42,7 +42,7 @@ fun NavGraphBuilder.mappingGraph(
         }
 
         composable(
-            route = "${Screens.MappingNavigation.CancellationScreen.screenRoute}/{$CANCELLATION_TYPE}/{$TRANSACTION_ID}/{$CLIENT_ID}",
+            route = "${Screens.MappingNavigation.Cancellation.screenRoute}/{$CANCELLATION_TYPE}/{$TRANSACTION_ID}/{$CLIENT_ID}",
             arguments = listOf(
                 navArgument(CANCELLATION_TYPE) {
                     defaultValue = SELECTION_RESCUEE_TYPE
@@ -60,7 +60,7 @@ fun NavGraphBuilder.mappingGraph(
         }
 
 
-        composable(route = Screens.MappingNavigation.ConfirmDetailsScreen.screenRoute + "?${LATITUDE}={${LATITUDE}}&${LONGITUDE}={${LONGITUDE}}",
+        composable(route = Screens.MappingNavigation.ConfirmDetails.screenRoute + "?${LATITUDE}={${LATITUDE}}&${LONGITUDE}={${LONGITUDE}}",
             arguments = listOf(
                 navArgument(LATITUDE) {
                     type = NavType.FloatType; defaultValue = -1f
