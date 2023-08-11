@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.AuthConstants.RESET_PASSWORD_VM_STATE_KEY
+import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_authentication.presentation.auth_reset_password.event.ResetPasswordEvent
 import com.example.cyclistance.feature_authentication.presentation.auth_reset_password.event.ResetPasswordVmEvent
@@ -15,6 +16,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -43,9 +45,26 @@ class ResetPasswordViewModel @Inject constructor(
             }.onSuccess {
 
             }.onFailure {
-
+                it.handleResetPasswordException()
+                Timber.v("ResetPasswordViewModel: resetPassword: onFailure: ${it.message}")
             }.also {
                 isLoading(false)
+            }
+        }
+    }
+
+    private suspend fun Throwable.handleResetPasswordException(){
+        when (this) {
+            is AuthExceptions.CurrentPasswordException -> {
+                _eventFlow.emit(value = ResetPasswordEvent.CurrentPasswordFailed(message.toString()))
+            }
+
+            is AuthExceptions.NewPasswordException -> {
+                _eventFlow.emit(value = ResetPasswordEvent.NewPasswordFailed(message.toString()))
+            }
+
+            is AuthExceptions.ConfirmPasswordException -> {
+                _eventFlow.emit(value = ResetPasswordEvent.ConfirmPasswordFailed(message.toString()))
             }
         }
     }
