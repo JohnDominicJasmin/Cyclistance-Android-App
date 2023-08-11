@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_settings.presentation.setting_screen.com
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,9 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingScreen
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -25,7 +22,9 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun SettingScreenContent(
     modifier: Modifier = Modifier,
     onToggleTheme: () -> Unit = {},
-    onClickEditProfile: () -> Unit = {}) {
+    onClickEditProfile: () -> Unit = {},
+    onClickChangePassword: () -> Unit = {},
+    ) {
 
     val isDarkTheme = IsDarkTheme.current
     Surface(modifier = modifier, color = MaterialTheme.colors.background) {
@@ -63,6 +62,20 @@ fun SettingScreenContent(
 
             }
 
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth(0.9f)
+                    .padding(top = 30.dp),
+                verticalArrangement = Arrangement.spacedBy(3.dp)) {
+
+
+                SectionTitle(iconId = R.drawable.baseline_lock_24, title = "Security")
+                SettingsButtonItem(buttonText = "Change Password", onClick = onClickChangePassword)
+
+            }
+
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth(0.9f)
@@ -92,11 +105,10 @@ fun SettingScreenContent(
 fun PreviewSettingScreenDark() {
     CompositionLocalProvider(IsDarkTheme provides true) {
         CyclistanceTheme(true) {
-            val navController = rememberNavController()
-            SettingScreen(
+
+            SettingScreenContent(
                 onToggleTheme = {},
-                navController = navController,
-                paddingValues = PaddingValues())
+            )
         }
     }
 }
@@ -107,11 +119,10 @@ fun PreviewSettingScreenDark() {
 fun PreviewSettingScreenLight() {
     CompositionLocalProvider(IsDarkTheme provides true) {
         CyclistanceTheme(false) {
-            val navController = rememberNavController()
-            SettingScreen(
+
+            SettingScreenContent(
                 onToggleTheme = {},
-                navController = navController,
-                paddingValues = PaddingValues())
+            )
         }
     }
 }
