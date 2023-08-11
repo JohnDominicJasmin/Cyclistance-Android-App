@@ -5,13 +5,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -56,17 +60,21 @@ fun ResetPasswordContent(
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Box(
+            modifier = Modifier
+
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .navigationBarsPadding()
+                .imePadding()
+                .verticalScroll(rememberScrollState()),
+            contentAlignment = Alignment.TopCenter) {
 
 
             Column(
+                modifier = Modifier.align(Alignment.TopCenter),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally) {
-
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxHeight(0.06f)
-                )
 
                 Image(
                     contentDescription = "Display Image",
@@ -225,7 +233,12 @@ private fun PreviewResetPasswordContent3() {
                 newPassword = TextFieldValue(),
                 confirmPassword = TextFieldValue(),
                 state = ResetPasswordState(isLoading = false),
-                uiState = ResetPasswordUiState(isNoInternetVisible = false, alertDialogState = AlertDialogState(title = "Title", description = "aoisdnaoisdnaoinoaisn", icon = R.raw.success)),
+                uiState = ResetPasswordUiState(
+                    isNoInternetVisible = false,
+                    alertDialogState = AlertDialogState(
+                        title = "Title",
+                        description = "aoisdnaoisdnaoinoaisn",
+                        icon = R.raw.success)),
                 event = {}
             )
         }
