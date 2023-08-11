@@ -84,7 +84,7 @@ fun TopAppBar(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
-                    TitleTopAppBar(title = "Change Password")
+                    TitleTopAppBar(title = "Reset Password")
                 })
         }
 
