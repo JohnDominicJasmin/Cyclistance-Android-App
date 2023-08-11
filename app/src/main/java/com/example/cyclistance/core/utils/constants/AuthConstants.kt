@@ -32,5 +32,6 @@ object AuthConstants {
     const val SIGN_IN_VM_STATE_KEY = "sign_in_vm_state_key"
     const val SIGN_UP_VM_STATE_KEY = "sign_up_vm_state_key"
     const val FORGOT_PASSWORD_VM_STATE_KEY = "forgot_password_vm_state_key"
+    const val RESET_PASSWORD_VM_STATE_KEY = "reset_password_vm_state_key"
 
 }
