@@ -14,6 +14,7 @@ import com.example.cyclistance.feature_authentication.domain.model.SignInCredent
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FacebookAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
@@ -307,5 +308,20 @@ class AuthRepositoryImpl(
                 }
             }
         }
+    }
+
+    override suspend fun changePassword(currentPassword: String, confirmPassword: String) {
+        checkInternetConnection()
+
+        val email = auth.currentUser?.email
+        val credential = EmailAuthProvider.getCredential(email!!, currentPassword)
+
+        auth.currentUser?.reauthenticate(credential)?.addOnSuccessListener {
+                Timber.v("User re-authenticated.")
+            }?.addOnFailureListener {
+                Timber.e("User re-authentication failed. ${it.message}")
+            }
+
+
     }
 }

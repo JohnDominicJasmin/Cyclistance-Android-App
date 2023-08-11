@@ -89,7 +89,8 @@ object AuthenticationModule {
             signInWithEmailAndPasswordUseCase = SignInWithEmailAndPasswordUseCase(repository = repository),
             signInWithCredentialUseCase = SignInWithCredentialUseCase(repository = repository),
             createUserUseCase = CreateUserUseCase(repository = repository),
-            sendPasswordResetEmailUseCase = SendPasswordResetEmailUseCase(repository = repository)
+            sendPasswordResetEmailUseCase = SendPasswordResetEmailUseCase(repository = repository),
+            changePasswordUseCase = ChangePasswordUseCase(repository = repository),
         )
 
 
