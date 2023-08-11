@@ -43,7 +43,7 @@ class ResetPasswordViewModel @Inject constructor(
             runCatching {
                 isLoading(true)
             }.onSuccess {
-
+                _eventFlow.emit(value = ResetPasswordEvent.ResetPasswordSuccess)
             }.onFailure {
                 it.handleResetPasswordException()
                 Timber.v("ResetPasswordViewModel: resetPassword: onFailure: ${it.message}")
