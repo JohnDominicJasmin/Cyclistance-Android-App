@@ -187,7 +187,7 @@ class AuthRepositoryImpl(
 
         if (exception is FirebaseAuthInvalidCredentialsException) {
             resumeWithException(
-                AuthExceptions.PasswordException(
+                AuthExceptions.NewPasswordException(
                     message = appContext.getString(
                         R.string.incorrectPasswordMessage)))
             return

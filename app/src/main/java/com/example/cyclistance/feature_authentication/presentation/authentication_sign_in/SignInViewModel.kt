@@ -165,7 +165,7 @@ class SignInViewModel @Inject constructor(
             is AuthExceptions.EmailException -> {
                 _eventFlow.emit(value = SignInEvent.InvalidEmail(exception.message ?: "Email is Invalid."))
             }
-            is AuthExceptions.PasswordException -> {
+            is AuthExceptions.NewPasswordException -> {
                 _eventFlow.emit(value = SignInEvent.InvalidPassword(exception.message ?: "Password is Invalid."))
             }
 
