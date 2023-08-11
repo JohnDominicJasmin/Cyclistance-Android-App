@@ -30,8 +30,8 @@ class ResetPasswordViewModel @Inject constructor(
         MutableStateFlow(savedStateHandle[RESET_PASSWORD_VM_STATE_KEY] ?: ResetPasswordState())
     val state = _state.asStateFlow()
 
-    private val _event = MutableSharedFlow<ResetPasswordEvent>()
-    val event = _event.asSharedFlow()
+    private val _eventFlow = MutableSharedFlow<ResetPasswordEvent>()
+    val eventFlow = _eventFlow.asSharedFlow()
 
 
     private fun isLoading(loading: Boolean){
