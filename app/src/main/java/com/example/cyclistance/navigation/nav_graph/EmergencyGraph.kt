@@ -16,10 +16,10 @@ fun NavGraphBuilder.emergencyCallGraph(
     paddingValues: PaddingValues
 ) {
     navigation(
-        startDestination = Screens.EmergencyCallNavigation.EmergencyCallScreen.screenRoute + "?$SHOULD_OPEN_CONTACT_DIALOG={$SHOULD_OPEN_CONTACT_DIALOG}",
+        startDestination = Screens.EmergencyCallNavigation.EmergencyCall.screenRoute + "?$SHOULD_OPEN_CONTACT_DIALOG={$SHOULD_OPEN_CONTACT_DIALOG}",
         route = Screens.EmergencyCallNavigation.ROUTE) {
         composable(
-            route = Screens.EmergencyCallNavigation.EmergencyCallScreen.screenRoute + "?${SHOULD_OPEN_CONTACT_DIALOG}={${SHOULD_OPEN_CONTACT_DIALOG}}",
+            route = Screens.EmergencyCallNavigation.EmergencyCall.screenRoute + "?${SHOULD_OPEN_CONTACT_DIALOG}={${SHOULD_OPEN_CONTACT_DIALOG}}",
             arguments = listOf(navArgument(SHOULD_OPEN_CONTACT_DIALOG) {
                 type = NavType.BoolType
 

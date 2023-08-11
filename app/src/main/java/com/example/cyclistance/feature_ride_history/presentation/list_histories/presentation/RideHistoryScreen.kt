@@ -18,7 +18,7 @@ fun RideHistoryScreen(
     RideHistoryContent(
         rideHistory = fakeHistory,
         modifier = Modifier.padding(paddingValues), onClick = {
-            navController.navigate(Screens.RideHistoryNavigation.RideHistoryDetailsScreen.screenRoute)
+            navController.navigate(Screens.RideHistoryNavigation.RideHistoryDetails.screenRoute)
         })
 
 

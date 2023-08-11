@@ -27,7 +27,7 @@ class CreateWithEmailAndPasswordUseCase(
                 throw AuthExceptions.EmailException(message = ResourceText.EmailIsInvalid().message)
 
             password.isEmpty() ->
-                throw AuthExceptions.PasswordException(message = ResourceText.FieldLeftBlank().message)
+                throw AuthExceptions.NewPasswordException(message = ResourceText.FieldLeftBlank().message)
 
             confirmPassword.isEmpty() ->
                 throw AuthExceptions.ConfirmPasswordException(message = ResourceText.FieldLeftBlank().message)

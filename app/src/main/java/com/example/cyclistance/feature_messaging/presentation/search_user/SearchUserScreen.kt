@@ -46,7 +46,7 @@ fun SearchUserScreen(
 
             val user = state.messageUserInfo
             navController.navigateScreen(
-                route = Screens.MessagingNavigation.ConversationScreen.passArgument(
+                route = Screens.MessagingNavigation.Conversation.passArgument(
                     receiverMessageUser =  selectedUser.toJsonString(),
                     senderMessageUser = user!!.toJsonString()
 

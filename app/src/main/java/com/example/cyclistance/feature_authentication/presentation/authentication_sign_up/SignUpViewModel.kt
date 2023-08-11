@@ -129,7 +129,7 @@ class SignUpViewModel @Inject constructor(
                         reason = exception.message ?: "Invalid email. Please try again."))
             }
 
-            is AuthExceptions.PasswordException -> {
+            is AuthExceptions.NewPasswordException -> {
                 _eventFlow.emit(
                     value = SignUpEvent.InvalidPassword(
                         reason = exception.message ?: "Invalid password. Please try again."))

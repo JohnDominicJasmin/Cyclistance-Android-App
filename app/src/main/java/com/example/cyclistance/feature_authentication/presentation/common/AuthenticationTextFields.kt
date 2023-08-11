@@ -89,8 +89,13 @@ fun PasswordTextField(
     placeholderText: String = "Password",
     enabled: Boolean,
     password: TextFieldValue,
+    hasTrailingIcon: Boolean = true,
     passwordExceptionMessage: String,
-    clearIconOnClick: () -> Unit,
+    keyboardActions: KeyboardActions = KeyboardActions(),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Password,
+        imeAction = ImeAction.Next),
+    clearIconOnClick: () -> Unit = {},
     onValueChange: (TextFieldValue) -> Unit) {
 
     val hasError = passwordExceptionMessage.isNotEmpty()
@@ -103,38 +108,40 @@ fun PasswordTextField(
         failureMessage = passwordExceptionMessage,
         onValueChange = onValueChange,
         placeholderText = placeholderText,
+        keyboardActions = keyboardActions,
         trailingIcon = {
 
-            AnimatedVisibility(
-                visible = hasError,
-                enter = fadeIn(animationSpec = tween(durationMillis = 100)),
-                exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
+            if(hasTrailingIcon) {
 
-                Icon(
-                    imageVector = Icons.Filled.Error,
-                    contentDescription = "error",
-                    tint = MaterialTheme.colors.error)
-            }
+                AnimatedVisibility(
+                    visible = hasError,
+                    enter = fadeIn(animationSpec = tween(durationMillis = 100)),
+                    exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
 
-            AnimatedVisibility(
-                visible = password.text.isNotEmpty() && !hasError,
-                enter = fadeIn(animationSpec = tween(durationMillis = 100)),
-                exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
-
-                IconButton(onClick = clearIconOnClick) {
                     Icon(
-                        imageVector = Icons.Default.Cancel,
-                        contentDescription = "",
-                        tint = Black500,
-                        modifier = Modifier.size(20.dp)
-                    )
+                        imageVector = Icons.Filled.Error,
+                        contentDescription = "error",
+                        tint = MaterialTheme.colors.error)
                 }
+
+                AnimatedVisibility(
+                    visible = password.text.isNotEmpty() && !hasError,
+                    enter = fadeIn(animationSpec = tween(durationMillis = 100)),
+                    exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
+
+                    IconButton(onClick = clearIconOnClick) {
+                        Icon(
+                            imageVector = Icons.Default.Cancel,
+                            contentDescription = "",
+                            tint = Black500,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
             }
         },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            autoCorrect = false,
-            imeAction = ImeAction.Next),
+        keyboardOptions = keyboardOptions,
         visualTransformation = PasswordVisualTransformation()
     )
 }

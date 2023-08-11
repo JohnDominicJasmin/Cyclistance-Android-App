@@ -22,7 +22,7 @@ class SignInWithEmailAndPasswordUseCase(
                 throw AuthExceptions.EmailException(message = ResourceText.EmailIsInvalid().message)
 
             password.isEmpty() ->
-                throw AuthExceptions.PasswordException(message = ResourceText.FieldLeftBlank().message)
+                throw AuthExceptions.NewPasswordException(message = ResourceText.FieldLeftBlank().message)
 
 
             else -> repository.signInWithEmailAndPassword(email, password)
