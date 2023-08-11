@@ -42,6 +42,11 @@ class ResetPasswordViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 isLoading(true)
+                authUseCase.changePasswordUseCase(
+                    currentPassword = currentPassword,
+                    newPassword = newPassword,
+                    confirmPassword = confirmPassword
+                )
             }.onSuccess {
                 _eventFlow.emit(value = ResetPasswordEvent.ResetPasswordSuccess)
             }.onFailure {
@@ -71,7 +76,12 @@ class ResetPasswordViewModel @Inject constructor(
 
     fun onEvent(event: ResetPasswordVmEvent) {
         when (event) {
-            is ResetPasswordVmEvent.ResetPassword -> {}
+
+            is ResetPasswordVmEvent.ResetPassword -> resetPassword(
+                currentPassword = event.currentPassword,
+                newPassword = event.newPassword,
+                confirmPassword = event.confirmPassword
+            )
         }
         savedStateHandle[RESET_PASSWORD_VM_STATE_KEY] = state.value
     }
