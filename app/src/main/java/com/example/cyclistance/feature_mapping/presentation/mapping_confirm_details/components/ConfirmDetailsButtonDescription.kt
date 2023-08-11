@@ -202,7 +202,7 @@ fun ButtonDescriptionItem() {
 
             ButtonDescriptionDetails(
                 modifier = Modifier.fillMaxWidth(0.9f),
-                errorMessage = "Field cannot be left blank.",
+                errorMessage = "Field cannot be left blank",
                 selectedOption = "",
                 onClickButton = { selectedDescription ->
 
