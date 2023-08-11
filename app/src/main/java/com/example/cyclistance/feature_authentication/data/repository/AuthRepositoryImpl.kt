@@ -20,6 +20,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
 import com.google.firebase.auth.FirebaseAuthUserCollisionException
+import com.google.firebase.auth.FirebaseAuthWeakPasswordException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CancellableContinuation
@@ -298,12 +299,17 @@ class AuthRepositoryImpl(
                 continuation.resume(Unit)
             }.addOnFailureListener { exception ->
                 if (exception is FirebaseNetworkException) {
-                    continuation.resumeWithException(AuthExceptions.NetworkException(message = appContext.getString(
+                    continuation.resumeWithException(
+                        AuthExceptions.NetworkException(
+                            message = appContext.getString(
                                 R.string.no_internet_message)))
                 }
                 if (exception is FirebaseAuthInvalidUserException) {
                     if (exception.errorCode == USER_NOT_FOUND) {
-                        continuation.resumeWithException(AuthExceptions.EmailException(message = appContext.getString(R.string.couldntFindAccount)))
+                        continuation.resumeWithException(
+                            AuthExceptions.EmailException(
+                                message = appContext.getString(
+                                    R.string.couldntFindAccount)))
                     }
                 }
             }
@@ -313,15 +319,58 @@ class AuthRepositoryImpl(
     override suspend fun changePassword(currentPassword: String, confirmPassword: String) {
         checkInternetConnection()
 
+
+        val user = auth.currentUser
         val email = auth.currentUser?.email
         val credential = EmailAuthProvider.getCredential(email!!, currentPassword)
 
-        auth.currentUser?.reauthenticate(credential)?.addOnSuccessListener {
-                Timber.v("User re-authenticated.")
-            }?.addOnFailureListener {
-                Timber.e("User re-authentication failed. ${it.message}")
+        suspendCancellableCoroutine { continuation ->
+
+            user?.reauthenticate(credential)?.addOnSuccessListener {
+                user.updatePassword(confirmPassword).addOnSuccessListener {
+                    continuation.resume(Unit)
+                }.addOnFailureListener { exception ->
+
+                    if (exception is FirebaseAuthWeakPasswordException) {
+                        continuation.resumeWithException(
+                            AuthExceptions.ConfirmPasswordException(
+                                message = exception.message
+                                          ?: "Password must be at least 8 characters long."))
+                    }
+
+                    if (exception is FirebaseAuthInvalidUserException) {
+                        if (exception.errorCode == USER_NOT_FOUND) {
+                            continuation.resumeWithException(
+                                AuthExceptions.CurrentPasswordException(
+                                    message = appContext.getString(
+                                        R.string.couldntFindAccount)))
+                        }
+                    }
+
+
+                }
+            }?.addOnFailureListener { exception ->
+
+                if (exception is FirebaseAuthInvalidUserException) {
+                    if (exception.errorCode == USER_NOT_FOUND) {
+                        continuation.resumeWithException(
+                            AuthExceptions.CurrentPasswordException(
+                                message = appContext.getString(
+                                    R.string.couldntFindAccount)))
+                    }
+                }
+
+
+                if (exception is FirebaseAuthInvalidCredentialsException) {
+                    continuation.resumeWithException(
+                        AuthExceptions.CurrentPasswordException(
+                            message = appContext.getString(
+                                R.string.incorrectPasswordMessage)))
+                }
+
             }
 
+        }
 
     }
 }
