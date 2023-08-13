@@ -35,7 +35,7 @@ import com.example.cyclistance.core.presentation.dialogs.privacy_policy_dialog.P
 import com.example.cyclistance.core.presentation.dialogs.webview_dialog.DialogWebView
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.presentation.auth_email.state.EmailAuthState
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignUiEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInState
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInUiState
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BOTTOM_WAVE_ID
@@ -58,7 +58,7 @@ fun SignInScreenContent(
     uiState: SignInUiState = SignInUiState(),
     email: TextFieldValue,
     password: TextFieldValue,
-    event: (SignUiEvent) -> Unit = {}) {
+    event: (SignInUiEvent) -> Unit = {}) {
 
     var lastClicked by remember {
         mutableStateOf("")
@@ -88,7 +88,7 @@ fun SignInScreenContent(
                 AlertDialog(
                     alertDialog = uiState.alertDialogState,
                     onDismissRequest = {
-                        event(SignUiEvent.DismissAlertDialog)
+                        event(SignInUiEvent.DismissAlertDialog)
                     })
             }
 
@@ -105,11 +105,11 @@ fun SignInScreenContent(
                         .fillMaxWidth(fraction = 0.9f),
                     state = signInState,
                     keyboardActionOnDone = {
-                        event(SignUiEvent.KeyboardActionDone)
+                        event(SignInUiEvent.KeyboardActionDone)
                     },
-                    onValueChangeEmail = { event(SignUiEvent.OnChangeEmail(it)) },
-                    onValueChangePassword = { event(SignUiEvent.OnChangePassword(it)) },
-                    onClickPasswordVisibility = { event(SignUiEvent.TogglePasswordVisibility) },
+                    onValueChangeEmail = { event(SignInUiEvent.OnChangeEmail(it)) },
+                    onValueChangePassword = { event(SignInUiEvent.OnChangePassword(it)) },
+                    onClickPasswordVisibility = { event(SignInUiEvent.TogglePasswordVisibility) },
                     email = email,
                     emailErrorMessage = uiState.emailErrorMessage,
                     password = password,
@@ -121,7 +121,7 @@ fun SignInScreenContent(
                         append("Forgot your password?")
                     }
                 }, onClick = {
-                    event(SignUiEvent.NavigateToForgotPassword)
+                    event(SignInUiEvent.NavigateToForgotPassword)
                 })
             }
 
@@ -139,10 +139,10 @@ fun SignInScreenContent(
                 onClickFacebookButton = {
 
                     if (signInState.userAgreedToPrivacyPolicy) {
-                        event(SignUiEvent.SignInWithFacebook)
+                        event(SignInUiEvent.SignInWithFacebook)
                     }
                     else{
-                        event(SignUiEvent.SetPrivacyPolicyVisibility(true))
+                        event(SignInUiEvent.SetPrivacyPolicyVisibility(true))
                         lastClicked=""
                         lastClicked = SignInCredential.Facebook::javaClass.name
                     }
@@ -150,10 +150,10 @@ fun SignInScreenContent(
                 },
                 onClickGoogleButton = {
                     if (signInState.userAgreedToPrivacyPolicy){
-                        event(SignUiEvent.SignInWithGoogle)
+                        event(SignInUiEvent.SignInWithGoogle)
                     }
                     else {
-                        event(SignUiEvent.SetPrivacyPolicyVisibility(true))
+                        event(SignInUiEvent.SetPrivacyPolicyVisibility(true))
                         lastClicked=""
                         lastClicked = SignInCredential.Google::javaClass.name
                     }
@@ -162,11 +162,11 @@ fun SignInScreenContent(
             )
 
             SignInButton(
-                onClickSignInButton = { event(SignUiEvent.SignInWithEmailAndPassword) },
+                onClickSignInButton = { event(SignInUiEvent.SignInWithEmailAndPassword) },
                 enabled = !isLoading)
 
             SignInClickableText(
-                onClickSignInText = { event(SignUiEvent.NavigateToSignUp) },
+                onClickSignInText = { event(SignInUiEvent.NavigateToSignUp) },
                 enabled = !isLoading)
 
             if (isLoading) {
@@ -178,7 +178,7 @@ fun SignInScreenContent(
             if (uiState.isNoInternetVisible) {
                 NoInternetDialog(
                     onDismiss = {
-                        event(SignUiEvent.DismissNoInternetDialog)
+                        event(SignInUiEvent.DismissNoInternetDialog)
                     },
                     modifier = Modifier.layoutId(DIALOG_ID))
 
@@ -187,17 +187,17 @@ fun SignInScreenContent(
             if (shouldShowPrivacyPolicyDialog) {
                 PrivacyPolicyDialog(
                     modifier = Modifier.layoutId(DIALOG_ID),
-                    onDismiss = { event(SignUiEvent.SetPrivacyPolicyVisibility(false)) },
+                    onDismiss = { event(SignInUiEvent.SetPrivacyPolicyVisibility(false)) },
                     onClickAgree = {
-                        event(SignUiEvent.AgreedToPrivacyPolicy)
+                        event(SignInUiEvent.AgreedToPrivacyPolicy)
                         if (lastClicked == SignInCredential.Facebook::javaClass.name) {
-                            event(SignUiEvent.SignInWithFacebook)
+                            event(SignInUiEvent.SignInWithFacebook)
                             return@PrivacyPolicyDialog
                         }
-                        event(SignUiEvent.SignInWithGoogle)
+                        event(SignInUiEvent.SignInWithGoogle)
                     },
                     onClickLink = {
-                        event(SignUiEvent.OpenWebView(it))
+                        event(SignInUiEvent.OpenWebView(it))
                     })
             }
 
@@ -207,7 +207,7 @@ fun SignInScreenContent(
                         .fillMaxSize()
                         .layoutId(DIALOG_ID),
                     mUrl = uiState.urlToOpen,
-                    onDismiss = { event(SignUiEvent.DismissWebView) })
+                    onDismiss = { event(SignInUiEvent.DismissWebView) })
             }
 
 
@@ -251,8 +251,8 @@ fun PreviewSignInScreenDark() {
     CyclistanceTheme(true) {
         SignInScreenContent(uiState = uiState, email = email, password = password, event = {
             when (it) {
-                is SignUiEvent.OnChangeEmail -> onValueChangeEmail(it.email)
-                is SignUiEvent.OnChangePassword -> onValueChangePassword(it.password)
+                is SignInUiEvent.OnChangeEmail -> onValueChangeEmail(it.email)
+                is SignInUiEvent.OnChangePassword -> onValueChangePassword(it.password)
                 else -> {}
             }
         })
@@ -295,8 +295,8 @@ fun PreviewSignInScreenLight() {
     CyclistanceTheme(false) {
         SignInScreenContent(uiState = uiState, email = email, password = password, event = {
             when (it) {
-                is SignUiEvent.OnChangeEmail -> onValueChangeEmail(it.email)
-                is SignUiEvent.OnChangePassword -> onValueChangePassword(it.password)
+                is SignInUiEvent.OnChangeEmail -> onValueChangeEmail(it.email)
+                is SignInUiEvent.OnChangePassword -> onValueChangePassword(it.password)
                 else -> {}
             }
         })
