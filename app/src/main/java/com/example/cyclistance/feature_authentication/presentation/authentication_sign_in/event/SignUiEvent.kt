@@ -14,4 +14,8 @@ sealed class SignUiEvent {
     object NavigateToSignUp : SignUiEvent()
     object NavigateToForgotPassword : SignUiEvent()
     object DismissNoInternetDialog : SignUiEvent()
+    data class SetPrivacyPolicyVisibility(val isVisible: Boolean) : SignUiEvent()
+    object AgreedToPrivacyPolicy : SignUiEvent()
+    object DismissWebView : SignUiEvent()
+    data class OpenWebView(val url: String) : SignUiEvent()
 }

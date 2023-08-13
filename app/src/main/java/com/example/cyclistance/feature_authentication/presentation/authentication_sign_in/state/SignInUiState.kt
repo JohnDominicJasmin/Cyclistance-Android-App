@@ -10,6 +10,8 @@ import kotlinx.parcelize.Parcelize
 data class SignInUiState(
     val alertDialogState: AlertDialogState = AlertDialogState(),
     val isNoInternetVisible: Boolean = false,
+    val isPrivacyPolicyDialogVisible: Boolean = false,
+    val urlToOpen: String? = null,
     val emailErrorMessage: String = "",
     val passwordErrorMessage: String = "",
     val isPasswordVisible: Boolean = false

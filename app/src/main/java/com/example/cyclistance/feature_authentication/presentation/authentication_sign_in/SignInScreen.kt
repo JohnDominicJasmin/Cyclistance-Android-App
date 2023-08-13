@@ -301,6 +301,21 @@ fun SignInScreen(
         navController.navigateScreen(route = Screens.AuthenticationNavigation.ForgotPassword.screenRoute)
     }}
 
+    val setPrivacyPolicyDialogVisibility = remember{{ visible: Boolean ->
+        uiState = uiState.copy(
+           isPrivacyPolicyDialogVisible = visible
+        )
+    }}
+
+    val agreedToPrivacyPolicy = remember{{
+        signInViewModel.onEvent(event = SignInVmEvent.AgreedToPrivacyPolicy)
+    }}
+
+
+    val setUrlToOpen = remember{{ urlToOpen: String? ->
+        uiState = uiState.copy(urlToOpen = urlToOpen)
+    }}
+
     SignInScreenContent(
         modifier = Modifier.padding(paddingValues),
         signInState = signInState,
@@ -321,6 +336,13 @@ fun SignInScreen(
                 is SignUiEvent.NavigateToSignUp -> onClickSignInText()
                 is SignUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
                 is SignUiEvent.NavigateToForgotPassword -> onClickForgotPassword()
+                is SignUiEvent.SetPrivacyPolicyVisibility -> setPrivacyPolicyDialogVisibility(event.isVisible)
+                is SignUiEvent.AgreedToPrivacyPolicy -> agreedToPrivacyPolicy()
+                is SignUiEvent.OpenWebView -> {
+                    setUrlToOpen(event.url)
+                    setPrivacyPolicyDialogVisibility(false)
+                }
+                is SignUiEvent.DismissWebView -> setUrlToOpen(null)
             }
         }
     )

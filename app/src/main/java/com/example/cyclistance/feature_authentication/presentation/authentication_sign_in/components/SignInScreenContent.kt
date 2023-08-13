@@ -19,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -32,13 +31,16 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
 import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
 import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
+import com.example.cyclistance.core.presentation.dialogs.privacy_policy_dialog.PrivacyPolicyDialog
+import com.example.cyclistance.core.presentation.dialogs.webview_dialog.DialogWebView
+import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.presentation.auth_email.state.EmailAuthState
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInState
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInUiState
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BOTTOM_WAVE_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.ICON_DISPLAY_ID
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.NO_INTERNET_DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.PROGRESS_BAR_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TEXT_FIELDS_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TOP_SPACER_ID
@@ -51,7 +53,6 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun SignInScreenContent(
     modifier: Modifier = Modifier,
-    focusRequester: FocusRequester = FocusRequester(),
     signInState: SignInState = SignInState(),
     emailAuthState: EmailAuthState = EmailAuthState(),
     uiState: SignInUiState = SignInUiState(),
@@ -59,6 +60,9 @@ fun SignInScreenContent(
     password: TextFieldValue,
     event: (SignUiEvent) -> Unit = {}) {
 
+    var lastClicked by remember {
+        mutableStateOf("")
+    }
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
 
@@ -125,9 +129,35 @@ fun SignInScreenContent(
                 (signInState.isLoading || emailAuthState.isLoading)
             }
 
+            val shouldShowPrivacyPolicyDialog = remember(
+                key1 = signInState.userAgreedToPrivacyPolicy,
+                key2 = uiState.isPrivacyPolicyDialogVisible) {
+                (!signInState.userAgreedToPrivacyPolicy && uiState.isPrivacyPolicyDialogVisible)
+            }
+
             SignInCredentialsSection(
-                onClickFacebookButton = { event(SignUiEvent.SignInWithFacebook) },
-                onClickGoogleButton = { event(SignUiEvent.SignInWithGoogle) },
+                onClickFacebookButton = {
+
+                    if (signInState.userAgreedToPrivacyPolicy) {
+                        event(SignUiEvent.SignInWithFacebook)
+                    }
+                    else{
+                        event(SignUiEvent.SetPrivacyPolicyVisibility(true))
+                        lastClicked=""
+                        lastClicked = SignInCredential.Facebook::javaClass.name
+                    }
+
+                },
+                onClickGoogleButton = {
+                    if (signInState.userAgreedToPrivacyPolicy){
+                        event(SignUiEvent.SignInWithGoogle)
+                    }
+                    else {
+                        event(SignUiEvent.SetPrivacyPolicyVisibility(true))
+                        lastClicked=""
+                        lastClicked = SignInCredential.Google::javaClass.name
+                    }
+                },
                 enabled = !isLoading
             )
 
@@ -150,9 +180,36 @@ fun SignInScreenContent(
                     onDismiss = {
                         event(SignUiEvent.DismissNoInternetDialog)
                     },
-                    modifier = Modifier.layoutId(NO_INTERNET_DIALOG_ID))
+                    modifier = Modifier.layoutId(DIALOG_ID))
 
             }
+
+            if (shouldShowPrivacyPolicyDialog) {
+                PrivacyPolicyDialog(
+                    modifier = Modifier.layoutId(DIALOG_ID),
+                    onDismiss = { event(SignUiEvent.SetPrivacyPolicyVisibility(false)) },
+                    onClickAgree = {
+                        event(SignUiEvent.AgreedToPrivacyPolicy)
+                        if (lastClicked == SignInCredential.Facebook::javaClass.name) {
+                            event(SignUiEvent.SignInWithFacebook)
+                            return@PrivacyPolicyDialog
+                        }
+                        event(SignUiEvent.SignInWithGoogle)
+                    },
+                    onClickLink = {
+                        event(SignUiEvent.OpenWebView(it))
+                    })
+            }
+
+            if (uiState.urlToOpen != null) {
+                DialogWebView(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .layoutId(DIALOG_ID),
+                    mUrl = uiState.urlToOpen,
+                    onDismiss = { event(SignUiEvent.DismissWebView) })
+            }
+
 
         }
     }
