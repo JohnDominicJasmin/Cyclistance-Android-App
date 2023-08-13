@@ -17,6 +17,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.example.cyclistance.R
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
@@ -38,6 +40,7 @@ fun PrivacyPolicyDialog(
 
     var dialogOpen by rememberSaveable { mutableStateOf(true) }
 
+    val context = LocalContext.current
     if (dialogOpen) {
         Dialog(
             onDismissRequest = {
@@ -75,7 +78,7 @@ fun PrivacyPolicyDialog(
 
                         pushStringAnnotation(
                             tag = "policy",
-                            annotation = "https://doc-hosting.flycricket.io/cyclistance-app-privacy-policy/3412984a-539a-4058-b5d8-58fcc3f82dd1/privacy")
+                            annotation = context.getString(R.string.privacy_policy_url))
 
                         withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
                             append("privacy policy")
@@ -89,7 +92,7 @@ fun PrivacyPolicyDialog(
 
                         pushStringAnnotation(
                             tag = "terms",
-                            annotation = "https://doc-hosting.flycricket.io/cyclistance-app-terms-of-use/9f3cd4ae-0d5d-43fc-a2e9-3720104a6149/terms")
+                            annotation = context.getString(R.string.terms_and_condition_url))
 
                         withStyle(style = SpanStyle(color = MaterialTheme.colors.primary)) {
                             append("terms of use")
