@@ -63,6 +63,10 @@ class SignUpViewModel @Inject constructor(
             is SignUpVmEvent.SignOut -> {
                 authUseCase.signOutUseCase()
             }
+
+            is SignUpVmEvent.AgreedToPrivacyPolicy -> {
+                _state.update { it.copy(userAgreedToPrivacyPolicy = true) }
+            }
         }
         savedStateHandle[SIGN_UP_VM_STATE_KEY] = state.value
     }

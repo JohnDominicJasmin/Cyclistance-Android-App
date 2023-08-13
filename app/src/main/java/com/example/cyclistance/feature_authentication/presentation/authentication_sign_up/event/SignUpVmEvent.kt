@@ -9,5 +9,5 @@ sealed class SignUpVmEvent{
     ): SignUpVmEvent()
 
     object SignOut: SignUpVmEvent()
-
+    object AgreedToPrivacyPolicy : SignUpVmEvent()
 }

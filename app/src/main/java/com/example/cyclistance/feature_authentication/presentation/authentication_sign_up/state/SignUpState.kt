@@ -11,4 +11,5 @@ data class SignUpState(
     val isLoading: Boolean = false,
     val hasAccountSignedIn: Boolean = false,
     val savedAccountEmail: String = "",
+    val userAgreedToPrivacyPolicy: Boolean = false,
 ):Parcelable

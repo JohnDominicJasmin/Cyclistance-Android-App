@@ -7,6 +7,7 @@ import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
@@ -16,6 +17,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.R
 import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
 import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
+import com.example.cyclistance.core.presentation.dialogs.privacy_policy_dialog.PrivacyPolicyDialog
+import com.example.cyclistance.core.presentation.dialogs.webview_dialog.DialogWebView
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state.SignUpState
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state.SignUpUiState
@@ -128,10 +131,19 @@ fun SignUpScreenContent(
                 confirmPasswordErrorMessage = uiState.confirmPasswordErrorMessage,
                 passwordVisibility = uiState.passwordVisible
             )
-
+            val shouldShowPrivacyPolicyDialog = remember(
+                key1 = signUpState.userAgreedToPrivacyPolicy,
+                key2 = uiState.isPrivacyPolicyDialogVisible) {
+                (!signUpState.userAgreedToPrivacyPolicy && uiState.isPrivacyPolicyDialogVisible)
+            }
 
             SignUpButton(enabled = !signUpState.isLoading, onClickSignUpButton = {
-                event(SignUpUiEvent.SignUpWithEmailAndPassword)
+
+                if (signUpState.userAgreedToPrivacyPolicy) {
+                    event(SignUpUiEvent.SignUpWithEmailAndPassword)
+                } else {
+                    event(SignUpUiEvent.SetPrivacyPolicyVisibility(true))
+                }
             })
             SignUpClickableText(enabled = !signUpState.isLoading, onSignUpTextClick = {
                 event(SignUpUiEvent.NavigateToSignIn)
@@ -149,6 +161,28 @@ fun SignUpScreenContent(
                     },
                     modifier = Modifier.layoutId(DIALOG_ID),
                 )
+            }
+
+            if (shouldShowPrivacyPolicyDialog) {
+                PrivacyPolicyDialog(
+                    modifier = Modifier.layoutId(DIALOG_ID),
+                    onDismiss = { event(SignUpUiEvent.SetPrivacyPolicyVisibility(false)) },
+                    onClickAgree = {
+                        event(SignUpUiEvent.AgreedToPrivacyPolicy)
+                        event(SignUpUiEvent.SignUpWithEmailAndPassword)
+                    },
+                    onClickLink = {
+                        event(SignUpUiEvent.OpenWebView(it))
+                    })
+            }
+
+            if (uiState.urlToOpen != null) {
+                DialogWebView(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .layoutId(DIALOG_ID),
+                    mUrl = uiState.urlToOpen,
+                    onDismiss = { event(SignUpUiEvent.DismissWebView) })
             }
 
         }
