@@ -284,7 +284,7 @@ dependencies {
     def multidex_version = "2.0.1"
     implementation("androidx.multidex:multidex:$multidex_version")
 
-
+    implementation 'com.github.ahmmedrejowan.CuteToast:CuteToast:1.2'
     implementation 'com.google.code.gson:gson:2.10.1'
 }
 

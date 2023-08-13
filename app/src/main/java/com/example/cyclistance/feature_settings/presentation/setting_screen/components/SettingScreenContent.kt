@@ -89,6 +89,11 @@ fun SettingScreenContent(
                 SettingsButtonItem(buttonText = "Privacy Policy", onClick = {
 
                 })
+
+                SettingsButtonItem(buttonText = "Terms and Condition", onClick = {
+
+                })
+
                 SettingsButtonItem(buttonText = "Rate this app", onClick = {
 
                 })

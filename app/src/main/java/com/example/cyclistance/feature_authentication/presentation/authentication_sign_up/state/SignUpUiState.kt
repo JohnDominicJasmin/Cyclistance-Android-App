@@ -15,4 +15,7 @@ data class SignUpUiState(
     val alertDialogState: AlertDialogState = AlertDialogState(),
     val passwordVisible: Boolean = false,
     val isNoInternetVisible: Boolean = false,
+    val isPrivacyPolicyDialogVisible: Boolean = false,
+    val urlToOpen: String? = null,
+
 ): Parcelable

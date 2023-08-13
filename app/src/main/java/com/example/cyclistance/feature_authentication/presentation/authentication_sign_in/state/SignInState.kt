@@ -8,4 +8,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class SignInState(
     val isLoading: Boolean = false,
+    val userAgreedToPrivacyPolicy: Boolean = false,
 ) : Parcelable

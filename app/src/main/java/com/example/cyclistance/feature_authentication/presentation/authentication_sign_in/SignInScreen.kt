@@ -32,8 +32,8 @@ import com.example.cyclistance.feature_authentication.presentation.auth_email.ev
 import com.example.cyclistance.feature_authentication.presentation.auth_email.event.EmailAuthVmEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInScreenContent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInEvent
+import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInVmEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.state.SignInUiState
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
@@ -301,6 +301,21 @@ fun SignInScreen(
         navController.navigateScreen(route = Screens.AuthenticationNavigation.ForgotPassword.screenRoute)
     }}
 
+    val setPrivacyPolicyDialogVisibility = remember{{ visible: Boolean ->
+        uiState = uiState.copy(
+           isPrivacyPolicyDialogVisible = visible
+        )
+    }}
+
+    val agreedToPrivacyPolicy = remember{{
+        signInViewModel.onEvent(event = SignInVmEvent.AgreedToPrivacyPolicy)
+    }}
+
+
+    val setUrlToOpen = remember{{ urlToOpen: String? ->
+        uiState = uiState.copy(urlToOpen = urlToOpen)
+    }}
+
     SignInScreenContent(
         modifier = Modifier.padding(paddingValues),
         signInState = signInState,
@@ -310,17 +325,24 @@ fun SignInScreen(
         password = password,
         event = { event ->
             when (event) {
-                is SignUiEvent.DismissAlertDialog -> onDismissAlertDialog()
-                is SignUiEvent.KeyboardActionDone -> onDoneKeyboardAction()
-                is SignUiEvent.OnChangeEmail -> onValueChangeEmail(event.email)
-                is SignUiEvent.OnChangePassword -> onValueChangePassword(event.password)
-                is SignUiEvent.TogglePasswordVisibility -> onClickPasswordVisibility()
-                is SignUiEvent.SignInWithFacebook -> onClickFacebookButton()
-                is SignUiEvent.SignInWithGoogle -> onClickGoogleButton()
-                is SignUiEvent.SignInWithEmailAndPassword -> onClickSignInButton()
-                is SignUiEvent.NavigateToSignUp -> onClickSignInText()
-                is SignUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
-                is SignUiEvent.NavigateToForgotPassword -> onClickForgotPassword()
+                is SignInUiEvent.DismissAlertDialog -> onDismissAlertDialog()
+                is SignInUiEvent.KeyboardActionDone -> onDoneKeyboardAction()
+                is SignInUiEvent.OnChangeEmail -> onValueChangeEmail(event.email)
+                is SignInUiEvent.OnChangePassword -> onValueChangePassword(event.password)
+                is SignInUiEvent.TogglePasswordVisibility -> onClickPasswordVisibility()
+                is SignInUiEvent.SignInWithFacebook -> onClickFacebookButton()
+                is SignInUiEvent.SignInWithGoogle -> onClickGoogleButton()
+                is SignInUiEvent.SignInWithEmailAndPassword -> onClickSignInButton()
+                is SignInUiEvent.NavigateToSignUp -> onClickSignInText()
+                is SignInUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
+                is SignInUiEvent.NavigateToForgotPassword -> onClickForgotPassword()
+                is SignInUiEvent.SetPrivacyPolicyVisibility -> setPrivacyPolicyDialogVisibility(event.isVisible)
+                is SignInUiEvent.AgreedToPrivacyPolicy -> agreedToPrivacyPolicy()
+                is SignInUiEvent.OpenWebView -> {
+                    setUrlToOpen(event.url)
+                    setPrivacyPolicyDialogVisibility(false)
+                }
+                is SignInUiEvent.DismissWebView -> setUrlToOpen(null)
             }
         }
     )

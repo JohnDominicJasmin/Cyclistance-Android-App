@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.cyclistance.R
 import com.example.cyclistance.core.domain.model.DialogModel
-import com.example.cyclistance.core.presentation.dialogs.common.DialogCreator
+import com.example.cyclistance.core.presentation.dialogs.common.PermissionDialogCreator
 import com.example.cyclistance.core.utils.contexts.openAppSettings
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -21,7 +21,7 @@ fun DialogBackgroundLocationPermission(
 
     val context = LocalContext.current
 
-    DialogCreator(
+    PermissionDialogCreator(
         modifier = modifier,
         dialogModel = DialogModel(
             icon = R.drawable.ic_background_location_permission,
