@@ -21,8 +21,8 @@ import com.example.cyclistance.feature_authentication.presentation.authenticatio
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state.SignUpUiState
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BOTTOM_WAVE_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.ICON_DISPLAY_ID
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.NO_INTERNET_DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.PROGRESS_BAR_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TOP_SPACER_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TOP_WAVE_ID
@@ -147,7 +147,7 @@ fun SignUpScreenContent(
                     onDismiss = {
                         event(SignUpUiEvent.DismissNoInternetDialog)
                     },
-                    modifier = Modifier.layoutId(NO_INTERNET_DIALOG_ID),
+                    modifier = Modifier.layoutId(DIALOG_ID),
                 )
             }
 

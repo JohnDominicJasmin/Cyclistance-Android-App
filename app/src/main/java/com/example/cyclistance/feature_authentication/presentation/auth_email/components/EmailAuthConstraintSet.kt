@@ -3,8 +3,8 @@ package com.example.cyclistance.feature_authentication.presentation.auth_email.c
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.ICON_DISPLAY_ID
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.NO_INTERNET_DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.PROGRESS_BAR_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.RESEND_EMAIL_BUTTON_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TEXT_LABEL
@@ -16,7 +16,7 @@ val emailAuthConstraints = ConstraintSet {
     val resendEmail = createRefFor(id = RESEND_EMAIL_BUTTON_ID)
     val verifyEmail = createRefFor(id = VERIFY_EMAIL_BUTTON_ID)
     val progressBar = createRefFor(id = PROGRESS_BAR_ID)
-    val noInternetScreen = createRefFor(id = NO_INTERNET_DIALOG_ID)
+    val noInternetScreen = createRefFor(id = DIALOG_ID)
 
     constrain(emailIcon){
         top.linkTo(parent.top, margin = 10.dp)

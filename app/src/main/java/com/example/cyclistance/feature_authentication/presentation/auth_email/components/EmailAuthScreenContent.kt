@@ -25,8 +25,8 @@ import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoIn
 import com.example.cyclistance.feature_authentication.presentation.auth_email.event.EmailAuthUiEvent
 import com.example.cyclistance.feature_authentication.presentation.auth_email.state.EmailAuthState
 import com.example.cyclistance.feature_authentication.presentation.auth_email.state.EmailAuthUiState
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.ICON_DISPLAY_ID
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.NO_INTERNET_DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.PROGRESS_BAR_ID
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.navigation.IsDarkTheme
@@ -137,7 +137,7 @@ fun EmailAuthScreenContent(
                         onDismiss = {
                             event(EmailAuthUiEvent.DismissNoInternetDialog)
                         },
-                        modifier = Modifier.layoutId(NO_INTERNET_DIALOG_ID),
+                        modifier = Modifier.layoutId(DIALOG_ID),
                     )
                 }
             }
