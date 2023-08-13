@@ -190,8 +190,8 @@ fun EditProfileScreenContent(
                             width = Dimension.percent(0.8f)
                         },
                     positiveButtonText = "Save",
-                    onClickCancelButton = { event(EditProfileUiEvent.CancelEditProfile) },
-                    onClickConfirmButton = { event(EditProfileUiEvent.ConfirmEditProfile) },
+                    onClickNegativeButton = { event(EditProfileUiEvent.CancelEditProfile) },
+                    onClickPositiveButton = { event(EditProfileUiEvent.ConfirmEditProfile) },
                     negativeButtonEnabled = !state.isLoading,
                     positiveButtonEnabled = !state.isLoading && isUserInformationChanges,
                 )

@@ -7,12 +7,11 @@ import androidx.compose.foundation.text.KeyboardActionScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state.SignUpState
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains
 import com.example.cyclistance.feature_authentication.presentation.common.ConfirmPasswordTextField
 import com.example.cyclistance.feature_authentication.presentation.common.EmailTextField
 import com.example.cyclistance.feature_authentication.presentation.common.PasswordTextField
@@ -27,7 +26,6 @@ fun SignUpTextFieldsArea(
     confirmPassword: TextFieldValue,
     confirmPasswordErrorMessage: String,
     passwordVisibility: Boolean,
-    focusRequester: FocusRequester,
     onValueChangeEmail: (TextFieldValue) -> Unit,
     onValueChangePassword: (TextFieldValue) -> Unit,
     onValueChangeConfirmPassword: (TextFieldValue) -> Unit,
@@ -38,14 +36,13 @@ fun SignUpTextFieldsArea(
     with(state) {
         Column(
             modifier = Modifier
-                .layoutId(AuthenticationConstraintsItem.TextFields.layoutId)
+                .layoutId(AuthenticationConstrains.TEXT_FIELDS_ID)
                 .fillMaxWidth(fraction = 0.9f),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(13.dp)) {
 
 
             EmailTextField(
-                focusRequester = focusRequester,
                 email = email,
                 emailErrorMessage = emailErrorMessage,
                 clearIconOnClick = {

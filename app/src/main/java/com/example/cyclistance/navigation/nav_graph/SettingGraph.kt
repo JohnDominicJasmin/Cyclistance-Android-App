@@ -5,7 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.cyclistance.feature_settings.presentation.setting_change_password.ChangePasswordScreen
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileScreen
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingScreen
 import com.example.cyclistance.navigation.Screens
@@ -15,20 +14,17 @@ fun NavGraphBuilder.settingGraph(
     paddingValues: PaddingValues,
     onToggleTheme: () -> Unit) {
     navigation(
-        startDestination = Screens.SettingsNavigation.SettingScreen.screenRoute,
+        startDestination = Screens.SettingsNavigation.Setting.screenRoute,
         route = Screens.SettingsNavigation.ROUTE) {
 
-        composable(Screens.SettingsNavigation.ChangePasswordScreen.screenRoute) {
-            ChangePasswordScreen(paddingValues = paddingValues)
-        }
 
-        composable(Screens.SettingsNavigation.EditProfileScreen.screenRoute) {
+        composable(Screens.SettingsNavigation.EditProfile.screenRoute) {
             EditProfileScreen(
                 navController = navController,
                 paddingValues = paddingValues)
         }
 
-        composable(Screens.SettingsNavigation.SettingScreen.screenRoute) {
+        composable(Screens.SettingsNavigation.Setting.screenRoute) {
             SettingScreen(
                 onToggleTheme = onToggleTheme,
                 navController = navController,

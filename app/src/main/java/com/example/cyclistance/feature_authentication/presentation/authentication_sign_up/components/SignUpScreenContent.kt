@@ -8,7 +8,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -20,7 +19,13 @@ import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoIn
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.event.SignUpUiEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state.SignUpState
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_up.state.SignUpUiState
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BOTTOM_WAVE_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.ICON_DISPLAY_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.NO_INTERNET_DIALOG_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.PROGRESS_BAR_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TOP_SPACER_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TOP_WAVE_ID
 import com.example.cyclistance.feature_authentication.presentation.common.Waves
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -55,7 +60,7 @@ fun PreviewSignUpScreenLight() {
 fun SignUpScreenContent(
     modifier: Modifier = Modifier,
     signUpState: SignUpState = SignUpState(),
-    focusRequester: FocusRequester = FocusRequester(),
+
     uiState: SignUpUiState = SignUpUiState(),
     email: TextFieldValue,
     password: TextFieldValue,
@@ -71,22 +76,22 @@ fun SignUpScreenContent(
 
             Spacer(
                 modifier = Modifier.layoutId(
-                    AuthenticationConstraintsItem.TopSpacer.layoutId
+                    TOP_SPACER_ID
                 ))
 
             Image(
                 contentDescription = "App Icon",
                 painter = painterResource(R.drawable.ic_app_icon_cyclistance),
                 modifier = Modifier
-                    .layoutId(AuthenticationConstraintsItem.IconDisplay.layoutId),
+                    .layoutId(ICON_DISPLAY_ID),
             )
 
-            SignUpTextArea()
+            SignUpTextArea(modifier = Modifier.layoutId(AuthenticationConstrains.TEXT_LABEL))
 
 
             Waves(
-                topWaveLayoutId = AuthenticationConstraintsItem.TopWave.layoutId,
-                bottomWaveLayoutId = AuthenticationConstraintsItem.BottomWave.layoutId)
+                topWaveLayoutId = TOP_WAVE_ID,
+                bottomWaveLayoutId = BOTTOM_WAVE_ID)
 
 
 
@@ -99,7 +104,6 @@ fun SignUpScreenContent(
             }
 
             SignUpTextFieldsArea(
-                focusRequester = focusRequester,
                 state = signUpState,
                 keyboardActionOnDone = {
                     event(SignUpUiEvent.KeyboardActionDone)
@@ -135,7 +139,7 @@ fun SignUpScreenContent(
 
 
             if (signUpState.isLoading) {
-                CircularProgressIndicator(modifier = Modifier.layoutId(AuthenticationConstraintsItem.ProgressBar.layoutId))
+                CircularProgressIndicator(modifier = Modifier.layoutId(PROGRESS_BAR_ID))
             }
 
             if (uiState.isNoInternetVisible) {
@@ -143,7 +147,7 @@ fun SignUpScreenContent(
                     onDismiss = {
                         event(SignUpUiEvent.DismissNoInternetDialog)
                     },
-                    modifier = Modifier.layoutId(AuthenticationConstraintsItem.NoInternetScreen.layoutId),
+                    modifier = Modifier.layoutId(NO_INTERNET_DIALOG_ID),
                 )
             }
 

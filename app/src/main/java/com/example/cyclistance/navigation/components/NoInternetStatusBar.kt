@@ -23,12 +23,12 @@ fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
 
     val inShowableScreens = remember(route) {
         val nonShowableScreens = listOf(
-            Screens.SettingsNavigation.SettingScreen.screenRoute,
-            Screens.OnBoardingNavigation.IntroSliderScreen.screenRoute,
-            Screens.RideHistoryNavigation.RideHistoryScreen.screenRoute,
-            Screens.RideHistoryNavigation.RideHistoryDetailsScreen.screenRoute,
-            Screens.EmergencyCallNavigation.EmergencyCallScreen.screenRoute,
-            Screens.MessagingNavigation.SearchUserScreen.screenRoute
+            Screens.SettingsNavigation.Setting.screenRoute,
+            Screens.OnBoardingNavigation.IntroSlider.screenRoute,
+            Screens.RideHistoryNavigation.RideHistory.screenRoute,
+            Screens.RideHistoryNavigation.RideHistoryDetails.screenRoute,
+            Screens.EmergencyCallNavigation.EmergencyCall.screenRoute,
+            Screens.MessagingNavigation.SearchUser.screenRoute
         )
         route !in nonShowableScreens
     }

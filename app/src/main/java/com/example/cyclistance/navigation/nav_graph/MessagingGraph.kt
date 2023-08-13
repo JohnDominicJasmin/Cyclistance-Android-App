@@ -24,12 +24,12 @@ fun NavGraphBuilder.messagingGraph(
     newConversationDetails: (MessagingUserItemModel) -> Unit) {
 
     navigation(
-        startDestination = Screens.MessagingNavigation.ChatScreen.screenRoute,
+        startDestination = Screens.MessagingNavigation.Chat.screenRoute,
         route = Screens.MessagingNavigation.ROUTE
     ) {
 
 
-        composable(Screens.MessagingNavigation.ChatScreen.screenRoute) {
+        composable(Screens.MessagingNavigation.Chat.screenRoute) {
             ChatsScreen(
                 navController = navController,
                 paddingValues = paddingValues,
@@ -37,14 +37,14 @@ fun NavGraphBuilder.messagingGraph(
             )
         }
 
-        composable(Screens.MessagingNavigation.SearchUserScreen.screenRoute) {
+        composable(Screens.MessagingNavigation.SearchUser.screenRoute) {
             SearchUserScreen(
                 navController = navController,
                 paddingValues = paddingValues
             )
         }
 
-        composable(route = Screens.MessagingNavigation.ConversationScreen.screenRoute,
+        composable(route = Screens.MessagingNavigation.Conversation.screenRoute,
             deepLinks = listOf(
                 navDeepLink {
                     uriPattern =

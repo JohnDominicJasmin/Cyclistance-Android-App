@@ -233,7 +233,7 @@ fun NavScreen(
     val onClickSearchMessagingUser = remember {
         {
             navController.navigateScreen(
-                route = Screens.MessagingNavigation.SearchUserScreen.screenRoute)
+                route = Screens.MessagingNavigation.SearchUser.screenRoute)
         }
     }
 

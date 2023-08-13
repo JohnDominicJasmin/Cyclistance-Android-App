@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class UserDetails(
     val uid: String = "",
-    val name: String = "",
-    val photo: String = MappingConstants.IMAGE_PLACEHOLDER_URL,
+    val name: String = "",//
+    val photo: String = MappingConstants.IMAGE_PLACEHOLDER_URL,//
     val email: String = "",
 ) : Parcelable

@@ -31,8 +31,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.TextStyle
@@ -51,6 +49,7 @@ import com.example.cyclistance.theme.Black500
 
 @Composable
 fun ConfirmPasswordTextField(
+    modifier: Modifier = Modifier,
     enabled: Boolean,
     password: TextFieldValue,
     passwordErrorMessage: String,
@@ -61,6 +60,7 @@ fun ConfirmPasswordTextField(
 
 
     SetupTextField(
+        modifier = modifier,
         enabled = enabled,
         textFieldValue = password,
         failureMessage = passwordErrorMessage,
@@ -85,53 +85,63 @@ fun ConfirmPasswordTextField(
 
 @Composable
 fun PasswordTextField(
+    modifier: Modifier = Modifier,
+    placeholderText: String = "Password",
     enabled: Boolean,
     password: TextFieldValue,
+    hasTrailingIcon: Boolean = true,
     passwordExceptionMessage: String,
-    clearIconOnClick: () -> Unit,
+    keyboardActions: KeyboardActions = KeyboardActions(),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Password,
+        imeAction = ImeAction.Next),
+    clearIconOnClick: () -> Unit = {},
     onValueChange: (TextFieldValue) -> Unit) {
 
     val hasError = passwordExceptionMessage.isNotEmpty()
 
 
     SetupTextField(
+        modifier = modifier,
         enabled = enabled,
         textFieldValue = password,
         failureMessage = passwordExceptionMessage,
         onValueChange = onValueChange,
-        placeholderText = "Password",
+        placeholderText = placeholderText,
+        keyboardActions = keyboardActions,
         trailingIcon = {
 
-            AnimatedVisibility(
-                visible = hasError,
-                enter = fadeIn(animationSpec = tween(durationMillis = 100)),
-                exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
+            if(hasTrailingIcon) {
 
-                Icon(
-                    imageVector = Icons.Filled.Error,
-                    contentDescription = "error",
-                    tint = MaterialTheme.colors.error)
-            }
+                AnimatedVisibility(
+                    visible = hasError,
+                    enter = fadeIn(animationSpec = tween(durationMillis = 100)),
+                    exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
 
-            AnimatedVisibility(
-                visible = password.text.isNotEmpty() && !hasError,
-                enter = fadeIn(animationSpec = tween(durationMillis = 100)),
-                exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
-
-                IconButton(onClick = clearIconOnClick) {
                     Icon(
-                        imageVector = Icons.Default.Cancel,
-                        contentDescription = "",
-                        tint = Black500,
-                        modifier = Modifier.size(20.dp)
-                    )
+                        imageVector = Icons.Filled.Error,
+                        contentDescription = "error",
+                        tint = MaterialTheme.colors.error)
                 }
+
+                AnimatedVisibility(
+                    visible = password.text.isNotEmpty() && !hasError,
+                    enter = fadeIn(animationSpec = tween(durationMillis = 100)),
+                    exit = fadeOut(animationSpec = tween(durationMillis = 100))) {
+
+                    IconButton(onClick = clearIconOnClick) {
+                        Icon(
+                            imageVector = Icons.Default.Cancel,
+                            contentDescription = "",
+                            tint = Black500,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                }
+
             }
         },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Password,
-            autoCorrect = false,
-            imeAction = ImeAction.Next),
+        keyboardOptions = keyboardOptions,
         visualTransformation = PasswordVisualTransformation()
     )
 }
@@ -139,8 +149,8 @@ fun PasswordTextField(
 
 @Composable
 private fun SetupTextField(
+    modifier: Modifier = Modifier,
     enabled: Boolean,
-    focusRequester: FocusRequester = FocusRequester(),
     textFieldValue: TextFieldValue,
     failureMessage: String,
     onValueChange: (TextFieldValue) -> Unit,
@@ -155,7 +165,7 @@ private fun SetupTextField(
     val hasError = failureMessage.isNotEmpty()
 
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.spacedBy(3.dp)) {
 
@@ -165,7 +175,6 @@ private fun SetupTextField(
                 .fillMaxWidth()
                 .wrapContentHeight()
                 .shadow(elevation = 4.dp, shape = RoundedCornerShape(12.dp), clip = true)
-                .focusRequester(focusRequester)
                 .clearAndSetSemantics { },
             value = textFieldValue,
             onValueChange = onValueChange,
@@ -220,9 +229,13 @@ private fun SetupTextField(
 
 @Composable
 fun EmailTextField(
+    modifier: Modifier = Modifier,
     enabled: Boolean,
-    focusRequester: FocusRequester,
     email: TextFieldValue,
+    keyboardActions: KeyboardActions = KeyboardActions(),
+    keyboardOptions: KeyboardOptions = KeyboardOptions(
+        keyboardType = KeyboardType.Email,
+        imeAction = ImeAction.Next),
     emailErrorMessage: String,
     clearIconOnClick: () -> Unit,
     onValueChange: (TextFieldValue) -> Unit) {
@@ -230,8 +243,9 @@ fun EmailTextField(
     val hasError = emailErrorMessage.isNotEmpty()
 
     SetupTextField(
+        keyboardActions = keyboardActions,
+        modifier = modifier,
         enabled = enabled,
-        focusRequester = focusRequester,
         textFieldValue = email,
         failureMessage = emailErrorMessage,
         onValueChange = onValueChange,
@@ -268,9 +282,7 @@ fun EmailTextField(
             }
 
         },
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next),
+        keyboardOptions = keyboardOptions,
     )
 }
 

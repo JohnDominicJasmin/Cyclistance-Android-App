@@ -13,10 +13,10 @@ fun NavGraphBuilder.onBoardingGraph(
     paddingValues: PaddingValues
 ) {
     navigation(
-        startDestination = Screens.OnBoardingNavigation.IntroSliderScreen.screenRoute,
+        startDestination = Screens.OnBoardingNavigation.IntroSlider.screenRoute,
         route = Screens.OnBoardingNavigation.ROUTE
     ) {
-        composable(Screens.OnBoardingNavigation.IntroSliderScreen.screenRoute) {
+        composable(Screens.OnBoardingNavigation.IntroSlider.screenRoute) {
             IntroSliderScreen(
                 navController = navController,
                 paddingValues = paddingValues)

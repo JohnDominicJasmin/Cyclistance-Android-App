@@ -10,7 +10,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -35,7 +34,7 @@ fun SignUpScreen(
 
     val signUpState by signUpViewModel.state.collectAsStateWithLifecycle()
     val focusManager = LocalFocusManager.current
-    val focusRequester = remember { FocusRequester() }
+
     var email by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
@@ -118,8 +117,8 @@ fun SignUpScreen(
     val onClickSignUpText = remember {
         {
             navController.navigateScreenInclusively(
-                Screens.AuthenticationNavigation.SignInScreen.screenRoute,
-                Screens.AuthenticationNavigation.SignUpScreen.screenRoute)
+                Screens.AuthenticationNavigation.SignIn.screenRoute,
+                Screens.AuthenticationNavigation.SignUp.screenRoute)
         }
     }
     val onDismissNoInternetDialog = remember {
@@ -131,14 +130,13 @@ fun SignUpScreen(
     }
 
     LaunchedEffect(key1 = true) {
-        focusRequester.requestFocus()
         signUpViewModel.eventFlow.collectLatest { event ->
 
             when (event) {
                 is SignUpEvent.SignUpSuccess -> {
                     navController.navigateScreenInclusively(
-                        Screens.AuthenticationNavigation.EmailAuthScreen.screenRoute,
-                        Screens.AuthenticationNavigation.SignUpScreen.screenRoute)
+                        Screens.AuthenticationNavigation.EmailAuth.screenRoute,
+                        Screens.AuthenticationNavigation.SignUp.screenRoute)
 
                 }
 
@@ -195,7 +193,6 @@ fun SignUpScreen(
 
     SignUpScreenContent(
         modifier = Modifier.padding(paddingValues),
-        focusRequester = focusRequester,
         signUpState = signUpState,
         uiState = uiState,
         email = email,

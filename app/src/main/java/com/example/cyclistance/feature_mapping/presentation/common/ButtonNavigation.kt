@@ -34,8 +34,8 @@ fun ButtonNavigation(
     positiveButtonEnabled: Boolean = true,
     negativeButtonText: String = "Cancel",
     positiveButtonText: String = "Confirm",
-    onClickCancelButton: () -> Unit = {},
-    onClickConfirmButton: () -> Unit = {}) {
+    onClickNegativeButton: () -> Unit = {},
+    onClickPositiveButton: () -> Unit = {}) {
 
     Column(modifier = modifier) {
 
@@ -46,7 +46,7 @@ fun ButtonNavigation(
 
             OutlinedButton(
                 enabled = negativeButtonEnabled,
-                onClick = onClickCancelButton,
+                onClick = onClickNegativeButton,
                 border = BorderStroke(1.dp, Black500),
                 modifier = Modifier
                     .wrapContentHeight()
@@ -68,7 +68,7 @@ fun ButtonNavigation(
 
             Button(
                 enabled = positiveButtonEnabled,
-                onClick = onClickConfirmButton,
+                onClick = onClickPositiveButton,
                 modifier = Modifier
                     .wrapContentHeight()
                     .weight(0.5f)

@@ -23,4 +23,8 @@ interface AuthRepository {
     suspend fun signInWithCredential(credential: SignInCredential): AuthenticationResult
     suspend fun createUser(user: UserDetails)
 
+    suspend fun sendPasswordResetEmail(email: String)
+
+    suspend fun changePassword(currentPassword: String, confirmPassword: String)
+
 }

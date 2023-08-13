@@ -82,8 +82,8 @@ fun CancellationReasonScreenContent(
                         height = Dimension.percent(0.1f)
                         width = Dimension.percent(0.9f)
                     },
-                onClickCancelButton = { event(CancellationReasonUiEvent.NavigateToMapping) },
-                onClickConfirmButton = { event(CancellationReasonUiEvent.ConfirmCancellationReason) },
+                onClickNegativeButton = { event(CancellationReasonUiEvent.NavigateToMapping) },
+                onClickPositiveButton = { event(CancellationReasonUiEvent.ConfirmCancellationReason) },
                 negativeButtonEnabled = state.isLoading.not(),
                 positiveButtonEnabled = state.isLoading.not())
 

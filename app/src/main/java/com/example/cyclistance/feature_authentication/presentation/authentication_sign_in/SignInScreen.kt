@@ -14,7 +14,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.TextFieldValue
@@ -28,9 +27,9 @@ import com.example.cyclistance.feature_authentication.domain.model.SignInCredent
 import com.example.cyclistance.feature_authentication.domain.util.AuthResult
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
 import com.example.cyclistance.feature_authentication.domain.util.findActivity
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.EmailAuthViewModel
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthEvent
-import com.example.cyclistance.feature_authentication.presentation.authentication_email.event.EmailAuthVmEvent
+import com.example.cyclistance.feature_authentication.presentation.auth_email.EmailAuthViewModel
+import com.example.cyclistance.feature_authentication.presentation.auth_email.event.EmailAuthEvent
+import com.example.cyclistance.feature_authentication.presentation.auth_email.event.EmailAuthVmEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.components.SignInScreenContent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInEvent
 import com.example.cyclistance.feature_authentication.presentation.authentication_sign_in.event.SignInVmEvent
@@ -56,7 +55,7 @@ fun SignInScreen(
     val scope = rememberCoroutineScope()
     val signInState by signInViewModel.state.collectAsStateWithLifecycle()
     val emailAuthState by emailAuthViewModel.state.collectAsStateWithLifecycle()
-    val focusRequester = remember { FocusRequester() }
+
     var uiState by rememberSaveable {
         mutableStateOf(SignInUiState())
     }
@@ -96,7 +95,6 @@ fun SignInScreen(
 
 
     LaunchedEffect(key1 = true) {
-        focusRequester.requestFocus()
         signInViewModel.eventFlow.collectLatest { signInEvent ->
 
             when (signInEvent) {
@@ -186,8 +184,8 @@ fun SignInScreen(
 
                 is EmailAuthEvent.EmailVerificationFailed -> {
                     navController.navigateScreenInclusively(
-                        Screens.AuthenticationNavigation.EmailAuthScreen.screenRoute,
-                        Screens.AuthenticationNavigation.SignInScreen.screenRoute)
+                        Screens.AuthenticationNavigation.EmailAuth.screenRoute,
+                        Screens.AuthenticationNavigation.SignIn.screenRoute)
                 }
 
                 is EmailAuthEvent.EmailVerificationSent -> {
@@ -195,6 +193,7 @@ fun SignInScreen(
                         alertDialogState = AlertDialogState(
                             title = "New Email Sent.",
                             description = "New verification email has been sent to your email address.",
+                            icon = R.raw.success
                         )
                     )
                 }
@@ -286,7 +285,7 @@ fun SignInScreen(
 
     val onClickSignInText = remember {
         {
-            navController.navigateScreen(Screens.AuthenticationNavigation.SignUpScreen.screenRoute)
+            navController.navigateScreen(Screens.AuthenticationNavigation.SignUp.screenRoute)
         }
     }
 
@@ -298,11 +297,14 @@ fun SignInScreen(
         }
     }
 
+    val onClickForgotPassword = remember{{
+        navController.navigateScreen(route = Screens.AuthenticationNavigation.ForgotPassword.screenRoute)
+    }}
+
     SignInScreenContent(
         modifier = Modifier.padding(paddingValues),
         signInState = signInState,
         emailAuthState = emailAuthState,
-        focusRequester = focusRequester,
         uiState = uiState,
         email = email,
         password = password,
@@ -318,6 +320,7 @@ fun SignInScreen(
                 is SignUiEvent.SignInWithEmailAndPassword -> onClickSignInButton()
                 is SignUiEvent.NavigateToSignUp -> onClickSignInText()
                 is SignUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
+                is SignUiEvent.NavigateToForgotPassword -> onClickForgotPassword()
             }
         }
     )

@@ -23,7 +23,10 @@ fun SettingScreen(
             .padding(paddingValues),
         onToggleTheme = onToggleTheme,
         onClickEditProfile = {
-            navController.navigate(Screens.SettingsNavigation.EditProfileScreen.screenRoute)
+            navController.navigate(Screens.SettingsNavigation.EditProfile.screenRoute)
+        },
+        onClickChangePassword = {
+            navController.navigate(Screens.AuthenticationNavigation.ResetPassword.screenRoute)
         }
     )
 

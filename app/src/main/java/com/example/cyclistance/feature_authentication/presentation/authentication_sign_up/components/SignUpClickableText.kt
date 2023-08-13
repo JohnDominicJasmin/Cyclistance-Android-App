@@ -10,7 +10,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.withStyle
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.DONT_HAVE_ACCOUNT_ID
 import com.example.cyclistance.theme.Blue600
 
 @Composable
@@ -18,7 +18,7 @@ fun SignUpClickableText(enabled: Boolean, onSignUpTextClick: () -> Unit) {
     Box(
         modifier = Modifier
             .wrapContentSize()
-            .layoutId(AuthenticationConstraintsItem.ClickableTextSection.layoutId)) {
+            .layoutId(DONT_HAVE_ACCOUNT_ID)) {
         ClickableText(
             style = MaterialTheme.typography.subtitle2,
             text = buildAnnotatedString {

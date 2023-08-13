@@ -177,8 +177,8 @@ fun RescueResultsScreenContent(
                         .fillMaxWidth(0.8f),
                     negativeButtonText = "No",
                     positiveButtonText = "Yes",
-                    onClickCancelButton = { event(MappingUiEvent.DismissRescueResultsDialog) },
-                    onClickConfirmButton = stepUp)
+                    onClickNegativeButton = { event(MappingUiEvent.DismissRescueResultsDialog) },
+                    onClickPositiveButton = stepUp)
 
             }
 
@@ -198,8 +198,8 @@ fun RescueResultsScreenContent(
                     positiveButtonEnabled = isRated,
                     negativeButtonText = "Cancel",
                     positiveButtonText = "Rate",
-                    onClickCancelButton = stepDown,
-                    onClickConfirmButton = stepUp)
+                    onClickNegativeButton = stepDown,
+                    onClickPositiveButton = stepUp)
 
             }
 

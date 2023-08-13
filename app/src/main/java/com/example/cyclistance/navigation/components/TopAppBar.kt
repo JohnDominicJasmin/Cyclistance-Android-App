@@ -49,7 +49,7 @@ fun TopAppBar(
 
     when (route) {
 
-        Screens.MappingNavigation.MappingScreen.screenRoute -> {
+        Screens.MappingNavigation.Mapping.screenRoute -> {
             AnimatedVisibility(
                 visible = uiState.isNavigating.not(),
                 enter = fadeIn(initialAlpha = 0.4f, animationSpec = tween(durationMillis = 10000)),
@@ -59,7 +59,7 @@ fun TopAppBar(
             }
         }
 
-        "${Screens.MappingNavigation.CancellationScreen.screenRoute}/{${CANCELLATION_TYPE}}/{${TRANSACTION_ID}}/{${CLIENT_ID}}" -> {
+        "${Screens.MappingNavigation.Cancellation.screenRoute}/{${CANCELLATION_TYPE}}/{${TRANSACTION_ID}}/{${CLIENT_ID}}" -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -68,7 +68,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.MappingNavigation.ConfirmDetailsScreen.screenRoute + "?${LATITUDE}={${LATITUDE}}&${LONGITUDE}={${LONGITUDE}}" -> {
+        Screens.MappingNavigation.ConfirmDetails.screenRoute + "?${LATITUDE}={${LATITUDE}}&${LONGITUDE}={${LONGITUDE}}" -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -79,16 +79,16 @@ fun TopAppBar(
         }
 
 
-        Screens.SettingsNavigation.ChangePasswordScreen.screenRoute -> {
+        Screens.AuthenticationNavigation.ResetPassword.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
-                    TitleTopAppBar(title = "Change Password")
+                    TitleTopAppBar(title = "Reset Password")
                 })
         }
 
-        Screens.SettingsNavigation.EditProfileScreen.screenRoute -> {
+        Screens.SettingsNavigation.EditProfile.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -97,7 +97,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.SettingsNavigation.SettingScreen.screenRoute -> {
+        Screens.SettingsNavigation.Setting.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -106,7 +106,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.EmergencyCallNavigation.EmergencyCallScreen.screenRoute + "?${SHOULD_OPEN_CONTACT_DIALOG}={${SHOULD_OPEN_CONTACT_DIALOG}}" -> {
+        Screens.EmergencyCallNavigation.EmergencyCall.screenRoute + "?${SHOULD_OPEN_CONTACT_DIALOG}={${SHOULD_OPEN_CONTACT_DIALOG}}" -> {
 
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
@@ -116,7 +116,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.MessagingNavigation.ChatScreen.screenRoute -> {
+        Screens.MessagingNavigation.Chat.screenRoute -> {
 
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
@@ -140,7 +140,7 @@ fun TopAppBar(
         }
 
 
-        Screens.MessagingNavigation.ConversationScreen.screenRoute -> {
+        Screens.MessagingNavigation.Conversation.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.Close,
                 onClickIcon = onClickArrowBackIcon,
@@ -166,7 +166,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.RideHistoryNavigation.RideHistoryScreen.screenRoute -> {
+        Screens.RideHistoryNavigation.RideHistory.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -175,7 +175,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.RideHistoryNavigation.RideHistoryDetailsScreen.screenRoute -> {
+        Screens.RideHistoryNavigation.RideHistoryDetails.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.Close,
                 onClickIcon = onClickArrowBackIcon,
@@ -196,7 +196,7 @@ fun PreviewTopAppBarDark() {
     CyclistanceTheme(true) {
         Surface(color = MaterialTheme.colors.background) {
             TopAppBar(
-                route = Screens.SettingsNavigation.EditProfileScreen.screenRoute,
+                route = Screens.SettingsNavigation.EditProfile.screenRoute,
                 uiState = NavUiState(isNavigating = false))
         }
     }
@@ -209,7 +209,7 @@ fun PreviewTopAppBarLight() {
     CyclistanceTheme(false) {
         Surface(color = MaterialTheme.colors.background) {
             TopAppBar(
-                route = Screens.SettingsNavigation.EditProfileScreen.screenRoute,
+                route = Screens.SettingsNavigation.EditProfile.screenRoute,
                 uiState = NavUiState(isNavigating = false))
         }
     }

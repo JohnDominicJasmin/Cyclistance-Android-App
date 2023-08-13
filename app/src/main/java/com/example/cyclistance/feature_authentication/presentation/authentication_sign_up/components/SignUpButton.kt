@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstraintsItem
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.SIGN_UP_BUTTON_ID
 
 
 @Composable
@@ -24,7 +24,7 @@ fun SignUpButton(enabled: Boolean, onClickSignUpButton: () -> Unit) {
 
     Box(
         modifier = Modifier
-            .layoutId(layoutId = AuthenticationConstraintsItem.SignUpButton.layoutId)
+            .layoutId(layoutId = SIGN_UP_BUTTON_ID)
             .wrapContentSize()
             .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true),
         contentAlignment = Alignment.Center) {

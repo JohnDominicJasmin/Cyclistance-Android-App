@@ -200,10 +200,10 @@ fun ConfirmDetailsContent(
                             height = Dimension.wrapContent
                             width = Dimension.percent(0.9f)
                         },
-                    onClickCancelButton = {
+                    onClickNegativeButton = {
                         event(ConfirmDetailsUiEvent.CancelConfirmation)
                     },
-                    onClickConfirmButton = {
+                    onClickPositiveButton = {
                         event(ConfirmDetailsUiEvent.ConfirmDetails)
                     },
                     negativeButtonEnabled = !state.isLoading,
