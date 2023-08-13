@@ -7,7 +7,8 @@ import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.SettingConstants.SETTING_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
-import com.example.cyclistance.feature_settings.presentation.setting_screen.event.SettingUiEvent
+import com.example.cyclistance.feature_settings.presentation.setting_screen.event.SettingEvent
+import com.example.cyclistance.feature_settings.presentation.setting_screen.event.SettingVmEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.state.SettingState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -34,7 +35,7 @@ class SettingViewModel @Inject constructor(
     private val _state = MutableStateFlow(savedStateHandle[SETTING_VM_STATE_KEY] ?: SettingState())
     val state = _state.asStateFlow()
 
-    private val _eventFlow = MutableSharedFlow<SettingUiEvent>()
+    private val _eventFlow = MutableSharedFlow<SettingEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
@@ -46,9 +47,9 @@ class SettingViewModel @Inject constructor(
             runCatching {
                 authUseCase.signOutUseCase()
             }.onSuccess {
-                _eventFlow.emit(value = SettingUiEvent.SignOutSuccess)
+                _eventFlow.emit(value = SettingEvent.SignOutSuccess)
             }.onFailure {
-                _eventFlow.emit(value = SettingUiEvent.SignOutFailed)
+                _eventFlow.emit(value = SettingEvent.SignOutFailed)
             }
         }.invokeOnCompletion {
             savedStateHandle[MappingConstants.MAPPING_VM_STATE_KEY] = state.value
@@ -82,13 +83,13 @@ class SettingViewModel @Inject constructor(
     }
 
 
-    fun onEvent(event: SettingEvent) {
+    fun onEvent(event: SettingVmEvent) {
         when (event) {
-            is SettingEvent.ToggleTheme -> {
+            is SettingVmEvent.ToggleTheme -> {
                 toggleTheme()
             }
 
-            is SettingEvent.SignOut -> {
+            is SettingVmEvent.SignOut -> {
                 signOutAccount()
             }
         }

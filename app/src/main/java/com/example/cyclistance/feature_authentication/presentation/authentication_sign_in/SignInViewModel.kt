@@ -83,6 +83,10 @@ class SignInViewModel @Inject constructor(
                 signInWithEmailAndPassword(email = event.email, password = event.password)
             }
 
+            is SignInVmEvent.AgreedToPrivacyPolicy -> {
+                _state.update { it.copy(userAgreedToPrivacyPolicy= true) }
+            }
+
         }
         savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
     }

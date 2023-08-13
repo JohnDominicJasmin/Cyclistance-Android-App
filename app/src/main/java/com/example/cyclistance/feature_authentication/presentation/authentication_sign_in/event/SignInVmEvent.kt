@@ -7,4 +7,5 @@ sealed class SignInVmEvent {
     data class SignInFacebook(val activity: Activity?) : SignInVmEvent()
     data class SignInGoogle(var authCredential: SignInCredential.Google) : SignInVmEvent()
     data class SignInWithEmailAndPassword(val email: String, val password: String) : SignInVmEvent()
+    object AgreedToPrivacyPolicy : SignInVmEvent()
 }

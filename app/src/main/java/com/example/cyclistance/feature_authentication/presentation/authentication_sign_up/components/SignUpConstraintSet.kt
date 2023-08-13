@@ -4,9 +4,9 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BOTTOM_WAVE_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.DONT_HAVE_ACCOUNT_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.ICON_DISPLAY_ID
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.NO_INTERNET_DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.PROGRESS_BAR_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.SIGN_UP_BUTTON_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TEXT_FIELDS_ID
@@ -24,7 +24,7 @@ val signUpConstraints = ConstraintSet {
     val signUpButton = createRefFor(id = SIGN_UP_BUTTON_ID)
     val alreadyHaveAnAccountText = createRefFor(id = DONT_HAVE_ACCOUNT_ID)
     val progressBar = createRefFor(id = PROGRESS_BAR_ID)
-    val noInternetScreen = createRefFor(id = NO_INTERNET_DIALOG_ID)
+    val noInternetScreen = createRefFor(id = DIALOG_ID)
     val topSpacer = createRefFor(id = TOP_SPACER_ID)
 
     constrain(topSpacer){

@@ -5,10 +5,10 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BOTTOM_WAVE_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.BUTTONS_ID
+import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.DONT_HAVE_ACCOUNT_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.FB_AND_GOOGLE_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.ICON_DISPLAY_ID
-import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.NO_INTERNET_DIALOG_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.PROGRESS_BAR_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TEXT_FIELDS_ID
 import com.example.cyclistance.feature_authentication.presentation.common.AuthenticationConstrains.TEXT_LABEL
@@ -26,7 +26,7 @@ val signInConstraints = ConstraintSet {
     val buttons = createRefFor(id = BUTTONS_ID)
     val dontHaveAccountText = createRefFor(id = DONT_HAVE_ACCOUNT_ID)
     val progressBar = createRefFor(id = PROGRESS_BAR_ID)
-    val noInternetScreen = createRefFor(id = NO_INTERNET_DIALOG_ID)
+    val noInternetScreen = createRefFor(id = DIALOG_ID)
     val topSpacer = createRefFor(id = TOP_SPACER_ID)
 
     constrain(topSpacer){
@@ -42,7 +42,7 @@ val signInConstraints = ConstraintSet {
         top.linkTo(topSpacer.bottom, margin = 12.dp)
         start.linkTo(parent.start)
         end.linkTo(parent.end)
-        width = Dimension.percent(0.2f)
+        width = Dimension.percent(0.3f)
         height = Dimension.wrapContent
     }
 

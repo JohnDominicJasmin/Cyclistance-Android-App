@@ -188,6 +188,20 @@ fun SignUpScreen(
         }
     }
 
+    val setPrivacyPolicyDialogVisibility = remember{{ visible: Boolean ->
+        uiState = uiState.copy(
+            isPrivacyPolicyDialogVisible = visible
+        )
+    }}
+
+    val agreedToPrivacyPolicy = remember{{
+        signUpViewModel.onEvent(event = SignUpVmEvent.AgreedToPrivacyPolicy)
+    }}
+
+
+    val setUrlToOpen = remember{{ urlToOpen: String? ->
+        uiState = uiState.copy(urlToOpen = urlToOpen)
+    }}
 
 
 
@@ -209,6 +223,13 @@ fun SignUpScreen(
                 is SignUpUiEvent.TogglePasswordVisibility -> onClickPasswordVisibility()
                 is SignUpUiEvent.SignUpWithEmailAndPassword -> onClickSignUpButton()
                 is SignUpUiEvent.NavigateToSignIn -> onClickSignUpText()
+                is SignUpUiEvent.AgreedToPrivacyPolicy -> agreedToPrivacyPolicy()
+                is SignUpUiEvent.DismissWebView -> setUrlToOpen(null)
+                is SignUpUiEvent.OpenWebView -> {
+                    setUrlToOpen(event.url)
+                    setPrivacyPolicyDialogVisibility(false)
+                }
+                is SignUpUiEvent.SetPrivacyPolicyVisibility -> setPrivacyPolicyDialogVisibility(event.isVisible)
             }
         }
     )

@@ -40,7 +40,7 @@ import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun DialogCreator(
+fun PermissionDialogCreator(
     modifier: Modifier = Modifier,
     dialogModel: DialogModel,
     onDismiss: () -> Unit,
@@ -160,7 +160,7 @@ fun DialogCreator(
 fun PreviewDialogCreatorLight() {
     CyclistanceTheme(darkTheme = true) {
         Surface(modifier = Modifier.fillMaxWidth(), color = MaterialTheme.colors.background) {
-            DialogCreator(
+            PermissionDialogCreator(
                 dialogModel = DialogModel(
                     icon = R.drawable.ic_no_internet_connection,
                     iconContentDescription = "sample",
@@ -182,7 +182,7 @@ fun PreviewDialogCreatorLight() {
 fun PreviewDialogCreatorDark() {
     CyclistanceTheme(darkTheme = false) {
         Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
-            DialogCreator(
+            PermissionDialogCreator(
                 dialogModel = DialogModel(
                     icon = R.drawable.ic_notification_permission,
                     iconContentDescription = "sample",

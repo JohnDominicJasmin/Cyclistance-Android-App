@@ -37,9 +37,9 @@ import com.example.cyclistance.feature_messaging.domain.model.ui.chats.Messaging
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileEvent
 import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
-import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingViewModel
-import com.example.cyclistance.feature_settings.presentation.setting_screen.event.SettingUiEvent
+import com.example.cyclistance.feature_settings.presentation.setting_screen.event.SettingEvent
+import com.example.cyclistance.feature_settings.presentation.setting_screen.event.SettingVmEvent
 import com.example.cyclistance.navigation.components.NoInternetStatusBar
 import com.example.cyclistance.navigation.components.TopAppBar
 import com.example.cyclistance.navigation.event.NavEvent
@@ -122,7 +122,7 @@ fun NavScreen(
         navViewModel.event.collectLatest { event ->
             when (event) {
                 NavEvent.DeleteMessagingTokenSuccess -> {
-                    settingViewModel.onEvent(event = SettingEvent.SignOut)
+                    settingViewModel.onEvent(event = SettingVmEvent.SignOut)
                 }
 
                 is NavEvent.DeleteMessagingTokenFailure -> {
@@ -156,14 +156,14 @@ fun NavScreen(
         settingViewModel.eventFlow.collectLatest { event ->
             when (event) {
 
-                is SettingUiEvent.SignOutSuccess -> {
+                is SettingEvent.SignOutSuccess -> {
 
                     navController.navigateScreenInclusively(
                         Screens.AuthenticationNavigation.ROUTE,
                         Screens.MappingNavigation.ROUTE)
                 }
 
-                is SettingUiEvent.SignOutFailed -> {
+                is SettingEvent.SignOutFailed -> {
                     Toast.makeText(context, "Failed to Sign out account", Toast.LENGTH_SHORT).show()
                 }
 
@@ -219,7 +219,7 @@ fun NavScreen(
 
     val onToggleTheme = remember {
         {
-            settingViewModel.onEvent(event = SettingEvent.ToggleTheme)
+            settingViewModel.onEvent(event = SettingVmEvent.ToggleTheme)
         }
     }
 

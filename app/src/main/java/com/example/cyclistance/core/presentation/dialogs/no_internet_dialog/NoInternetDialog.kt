@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.cyclistance.R
 import com.example.cyclistance.core.domain.model.DialogModel
-import com.example.cyclistance.core.presentation.dialogs.common.DialogCreator
+import com.example.cyclistance.core.presentation.dialogs.common.PermissionDialogCreator
 import com.example.cyclistance.core.utils.contexts.openWifiSettings
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -20,7 +20,7 @@ fun NoInternetDialog(
 
     val context = LocalContext.current
 
-    DialogCreator(
+    PermissionDialogCreator(
         modifier = modifier,
         dialogModel = DialogModel(
             icon = R.drawable.ic_no_internet_connection,
