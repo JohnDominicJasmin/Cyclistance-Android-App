@@ -28,9 +28,7 @@ fun DialogWebView(modifier: Modifier, mUrl: String, onDismiss: () -> Unit) {
                 settings.javaScriptEnabled = true
                 settings.loadWithOverviewMode = true
                 settings.setSupportZoom(true)
-                settings.builtInZoomControls = true
                 settings.displayZoomControls = true
-                settings.setSupportZoom(true)
                 settings.setGeolocationEnabled(true)
                 settings.useWideViewPort = true
                 settings.domStorageEnabled = true
