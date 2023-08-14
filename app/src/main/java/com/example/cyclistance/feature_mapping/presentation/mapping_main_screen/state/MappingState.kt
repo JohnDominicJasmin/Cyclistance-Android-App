@@ -26,7 +26,14 @@ data class MappingState(
     val rescuerDistance: String = "",
     val nearbyCyclists: NearbyCyclist? = null,
     val newRescueRequest: NewRescueRequestsModel? = null,
+    val speedometerState: SpeedometerState = SpeedometerState(),
 ) : Parcelable{
+
+
+    fun getTravelledDistance() = speedometerState.travelledDistance
+    fun getTopSpeed() = speedometerState.topSpeed
+    fun getCurrentSpeedKph() = speedometerState.currentSpeedKph
+
 
     fun getCurrentLocation() = user.location ?: userLocation
 }
