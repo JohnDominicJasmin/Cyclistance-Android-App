@@ -11,7 +11,7 @@ import java.util.Date
 import java.util.Locale
 
 object FormatterUtils {
-
+    private const val METER_TO_KILOMETER = 1000
 
     fun Double.formatToDistanceKm(): String {
 
@@ -20,7 +20,7 @@ object FormatterUtils {
         } else if (this < 1000) {
             "%.2f m".format(this)
         } else {
-            "%.2f km".format((this / 1000))
+            "%.2f km".format((this / METER_TO_KILOMETER))
         }
     }
 
