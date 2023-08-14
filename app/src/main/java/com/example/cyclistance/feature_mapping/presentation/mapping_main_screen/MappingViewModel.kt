@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,6 +31,8 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.SphericalUtil
 import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -75,6 +78,8 @@ class MappingViewModel @Inject constructor(
 
     private val _eventFlow: MutableSharedFlow<MappingEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingEvent> = _eventFlow.asSharedFlow()
+    private var travelledPath: MutableList<LatLng> = mutableStateListOf()
+
 
 
     init {
@@ -391,6 +396,7 @@ class MappingViewModel @Inject constructor(
 
             is MappingVmEvent.CancelRescueTransaction -> {
                 removeAssignedTransaction()
+                clearTravelledPath()
             }
 
 
@@ -401,6 +407,7 @@ class MappingViewModel @Inject constructor(
 
             is MappingVmEvent.DeclineRescueRequest -> {
                 declineRescueRequest(event.id)
+                clearTravelledPath()
             }
 
             is MappingVmEvent.AcceptRescueRequest -> {
@@ -409,6 +416,7 @@ class MappingViewModel @Inject constructor(
 
             is MappingVmEvent.CancelRequestHelp -> {
                 cancelHelpRequest()
+                clearTravelledPath()
             }
 
         }
@@ -487,6 +495,7 @@ class MappingViewModel @Inject constructor(
                 if (distance <= NEAREST_METERS) {
                     _eventFlow.emit(value = MappingEvent.DestinationReached)
                     removeAssignedTransaction()
+                    clearTravelledPath()
                 }
 
             }
@@ -742,10 +751,22 @@ class MappingViewModel @Inject constructor(
             }.onEach { location ->
                 broadcastRescueTransactionToRespondent(location)
                 trackingHandler.updateLocation(location)
+                updateSpeedometer(location)
                 getNearbyCyclist()
             }.launchIn(this@launch).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }
+        }
+    }
+
+    private fun updateSpeedometer(location: LocationModel){
+        val isUserRescuer = state.value.user.isRescuer()
+        if(isUserRescuer) {
+            trackingHandler.setSpeed(location.speed)
+            trackingHandler.getTopSpeed(location.speed)
+            travelledPath.add(element = LatLng(location.latitude!!, location.longitude!!))
+            val distance = SphericalUtil.computeLength(travelledPath).formatToDistanceKm()
+            trackingHandler.setTravelledDistance(distance)
         }
     }
 
@@ -877,6 +898,11 @@ class MappingViewModel @Inject constructor(
         settingUseCase.getPhoneNumberUseCase()
 
     private suspend fun getPhotoUrl() = settingUseCase.getPhotoUrlUseCase()
+
+    private fun clearTravelledPath(){
+        travelledPath = mutableListOf()
+    }
+
 
 
 }
