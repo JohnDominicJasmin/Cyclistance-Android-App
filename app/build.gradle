@@ -202,8 +202,6 @@ dependencies {
     //datastore
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-    //flowrow
-    implementation "androidx.compose.foundation:foundation:<compose-version>"
 
     //permissions
     implementation "com.google.accompanist:accompanist-permissions:0.31.3-beta"
@@ -286,6 +284,7 @@ dependencies {
 
     implementation 'com.github.ahmmedrejowan.CuteToast:CuteToast:1.2'
     implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'com.google.maps.android:android-maps-utils:0.5'
 }
 
 apply plugin: 'com.google.gms.google-services'
