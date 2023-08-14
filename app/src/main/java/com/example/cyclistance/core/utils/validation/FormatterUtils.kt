@@ -5,11 +5,7 @@ import android.graphics.drawable.Drawable
 import androidx.appcompat.content.res.AppCompatResources
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -28,19 +24,8 @@ object FormatterUtils {
         }
     }
 
-    // TODO: test this code
-    fun RescueTransaction.findRescueTransaction(id: String): RescueTransactionItem {
-        return this.transactions.find {
-            it.id == id
-        } ?: RescueTransactionItem()
-    }
 
-    // TODO: test this code
-    fun NearbyCyclist.findUser(id: String): UserItem {
-        return this.users.find {
-            it.id == id
-        } ?: UserItem()
-    }
+
 
     // TODO: test this code
     fun LocationModel?.isLocationAvailable() = (this?.latitude != null).and(this?.longitude != null)

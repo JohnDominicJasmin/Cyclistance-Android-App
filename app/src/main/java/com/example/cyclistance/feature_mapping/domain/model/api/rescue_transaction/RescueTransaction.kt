@@ -9,4 +9,10 @@ import kotlinx.parcelize.Parcelize
 @StableState
 data class RescueTransaction(
     val transactions: List<RescueTransactionItem> = emptyList()
-):Parcelable
+):Parcelable{
+    fun findTransaction(id: String): RescueTransactionItem {
+        return transactions.find {
+            it.id == id
+        } ?: RescueTransactionItem()
+    }
+}

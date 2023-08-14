@@ -7,5 +7,9 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class NearbyCyclist(
-    val users: List<UserItem> = emptyList()
-):Parcelable
+    val users: List<UserItem> = emptyList(),
+) : Parcelable {
+    fun findUser(id: String): UserItem {
+        return users.find { it.id == id } ?: UserItem()
+    }
+}

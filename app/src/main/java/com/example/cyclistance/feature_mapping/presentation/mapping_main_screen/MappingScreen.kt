@@ -392,7 +392,7 @@ fun MappingScreen(
     }
 
     val isRescueCancelled =
-        remember(state.rescueTransaction?.cancellation?.rescueCancelled, state.rescueTransaction) {
+        remember(state.rescueTransaction) {
             (state.rescueTransaction?.cancellation)?.rescueCancelled == true
         }
 
