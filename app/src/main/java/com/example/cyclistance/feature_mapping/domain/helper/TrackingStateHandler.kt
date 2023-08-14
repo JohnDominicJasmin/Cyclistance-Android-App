@@ -197,7 +197,7 @@ class TrackingStateHandler(
     suspend fun checkRescueRequestAccepted(rescueTransaction: RescueTransaction, id: String) {
         val respondedToHelp = state.value.respondedToHelp
         val user = state.value.user
-        val role = user.transaction?.role
+
         val userId = state.value.user.id ?: id
 
         if (respondedToHelp.not()) {
@@ -217,7 +217,7 @@ class TrackingStateHandler(
                     return@let
                 }
 
-                if (role == Role.RESCUEE.name.lowercase()) {
+                if (user.isRescuee()) {
                     return@let
                 }
 
@@ -271,6 +271,23 @@ class TrackingStateHandler(
             }
 
         }
+    }
+
+
+    fun getTopSpeed(currentSpeed: Double) {
+        val topSpeed = state.value.getTopSpeed()
+        if (currentSpeed > topSpeed) {
+            state.update { it.copy(speedometerState = it.speedometerState.copy(topSpeed = currentSpeed)) }
+        }
+    }
+
+    fun setSpeed(currentSpeedKph: Double){
+        state.update { it.copy(speedometerState = it.speedometerState.copy(currentSpeedKph = currentSpeedKph)) }
+    }
+
+    fun setTravelledDistance(distance: String){
+
+        state.update { it.copy(speedometerState = it.speedometerState.copy(travelledDistance = distance)) }
     }
 }
 

@@ -1,7 +1,7 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event
 
-import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
+import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 
 
 sealed class MappingEvent{
@@ -22,7 +22,6 @@ sealed class MappingEvent{
     data class NewSelectedRescuee(val selectedRescuee: MapSelectedRescuee): MappingEvent()
 
 
-    object GetUserIdFailed: MappingEvent()
 
 
     data class NewRouteDirection(val routeDirection: RouteDirection): MappingEvent()

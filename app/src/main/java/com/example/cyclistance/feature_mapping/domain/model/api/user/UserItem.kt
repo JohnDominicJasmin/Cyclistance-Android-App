@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_mapping.domain.model.api.user
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState
+import com.example.cyclistance.feature_mapping.domain.model.Role
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -20,6 +21,10 @@ data class UserItem(
 
 
     fun getRole() = transaction?.role
+
+    fun isRescuee() = transaction?.role == Role.RESCUEE.name.lowercase()
+    fun isRescuer() = transaction?.role == Role.RESCUER.name.lowercase()
+
     fun getTransactionId() = transaction?.transactionId
     fun isUserNeedHelp() = userAssistance?.needHelp
     fun getMessage() = userAssistance?.confirmationDetail?.message
