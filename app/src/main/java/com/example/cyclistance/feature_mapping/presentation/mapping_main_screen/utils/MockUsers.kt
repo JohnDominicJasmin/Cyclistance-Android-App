@@ -9,6 +9,7 @@ import com.example.cyclistance.feature_mapping.domain.model.api.user.Transaction
 import com.example.cyclistance.feature_mapping.domain.model.api.user.UserAssistanceModel
 import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.BikeType
 
 
 val userItems = listOf(
@@ -38,7 +39,7 @@ val userItems = listOf(
         userAssistance = UserAssistanceModel(
             needHelp = true,
             confirmationDetail = ConfirmationDetailModel(
-                bikeType = "Road Bike",
+                bikeType = BikeType.RoadBike.type,
                 description = MappingConstants.BROKEN_CHAIN_TEXT,
                 message = "I need help with my flat tire",
             ),

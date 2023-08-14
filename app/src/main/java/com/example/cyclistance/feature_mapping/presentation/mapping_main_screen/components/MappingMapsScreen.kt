@@ -102,7 +102,7 @@ fun MappingMapsScreen(
 
 
     val hasActiveTransaction = remember(hasTransaction, isRescueCancelled) {
-        hasTransaction || isRescueCancelled.not()
+        hasTransaction || isRescueCancelled
     }
 
     val isUserNavigating = remember(key1 = isNavigating, key2 = routeDirection?.geometry) {
