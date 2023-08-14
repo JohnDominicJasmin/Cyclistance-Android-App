@@ -33,6 +33,28 @@ data class UserItem(
             transaction = TransactionModel(role = role, transactionId = transactionId),
             rescueRequest = RescueRequest()
         )
+
+        fun cancelUserHelpRequest(id: String): UserItem {
+            //todo: create breakpoint
+            return UserItem(
+                id = id,
+                userAssistance = UserAssistanceModel(
+                    needHelp = false,
+                    confirmationDetail = ConfirmationDetailModel()
+                )
+            )
+        }
+
+        fun removeUserTransaction(id: String): UserItem{
+            //todo: create breakpoint
+            return UserItem(
+                id = id,
+                transaction = TransactionModel(),
+                userAssistance = UserAssistanceModel(needHelp = false),
+                rescueRequest = RescueRequest()
+            )
+        }
+
     }
 
 
