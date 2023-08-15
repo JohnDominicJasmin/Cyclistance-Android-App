@@ -110,7 +110,10 @@ fun MappingMapsScreen(
         isNavigating || geometry?.isNotEmpty() == true
     }
 
-    LaunchedEffect(key1 = nearbyCyclists, key2 = isUserNavigating, key3 = hasActiveTransaction) {
+    val shouldShowNearbyCyclists = remember(nearbyCyclists, isUserNavigating, hasActiveTransaction) {
+        isUserNavigating || hasActiveTransaction
+    }
+    LaunchedEffect(key1 = shouldShowNearbyCyclists, key2 = mapboxMap) {
 
         if (isUserNavigating || hasActiveTransaction) {
             dismissNearbyCyclistsIcon()
