@@ -22,6 +22,7 @@ import com.example.cyclistance.databinding.ActivityMappingBinding
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
@@ -57,6 +58,7 @@ fun MappingMapsScreen(
     isNavigating: Boolean,
     routeDirection: RouteDirection?,
     isRescueCancelled: Boolean,
+    nearbyCyclist: List<UserItem>,
     event: (MappingUiEvent) -> Unit
 //    requestNavigationCameraToOverview: () -> Unit, //todo use this one
 ) {
@@ -65,24 +67,25 @@ fun MappingMapsScreen(
     val context = LocalContext.current
 
 
-    val nearbyCyclists = remember(state.nearbyCyclists?.users?.size, mapboxMap) {
-        state.nearbyCyclists?.users
-    }
+
     val dismissNearbyCyclistsIcon = remember(mapboxMap) {
         {
             mapboxMap?.removeAnnotations()
         }
     }
 
-    val showNearbyCyclistsIcon = remember(nearbyCyclists, mapboxMap) {
+    val showNearbyCyclistsIcon = remember(nearbyCyclist.size, mapboxMap) {
         {
             dismissNearbyCyclistsIcon()
 
-            nearbyCyclists?.filter{
+            nearbyCyclist.distinctBy {
+                it.id
+            }.filter{
                 it.id != state.user.id
-            }?.filter {
+            }.filter {
                 it.isUserNeedHelp() == true
-            }?.forEach { cyclist ->
+            }.forEach { cyclist ->
+                Timber.v("Cyclist Name: ${cyclist.name}")
                 val location = cyclist.location
                 val latitude = location?.latitude ?: return@forEach
                 val longitude = location.longitude ?: return@forEach
@@ -112,10 +115,10 @@ fun MappingMapsScreen(
         isNavigating || geometry?.isNotEmpty() == true
     }
 
-    val shouldDismissNearbyIcons = remember(nearbyCyclists, isUserNavigating, hasActiveTransaction) {
+    val shouldDismissNearbyIcons = remember(nearbyCyclist, isUserNavigating, hasActiveTransaction) {
         isUserNavigating || hasActiveTransaction
     }
-    LaunchedEffect(key1 = shouldDismissNearbyIcons, key2 = mapboxMap, key3= nearbyCyclists) {
+    LaunchedEffect(key1 = shouldDismissNearbyIcons, key2 = mapboxMap, key3= nearbyCyclist.size) {
 
         if (shouldDismissNearbyIcons) {
             dismissNearbyCyclistsIcon()
