@@ -78,7 +78,9 @@ fun MappingMapsScreen(
         {
             dismissNearbyCyclistsIcon()
 
-            nearbyCyclists?.filter {
+            nearbyCyclists?.filter{
+                it.id != state.user.id
+            }?.filter {
                 it.isUserNeedHelp() == true
             }?.forEach { cyclist ->
                 val location = cyclist.location
