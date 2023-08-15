@@ -1,11 +1,13 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
 import com.example.cyclistance.core.utils.validation.FormatterUtils
+import com.example.cyclistance.core.utils.validation.FormatterUtils.findUser
 import com.example.cyclistance.core.utils.validation.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.validation.FormatterUtils.isLocationAvailable
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
@@ -30,6 +32,8 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
+import com.google.android.gms.maps.model.LatLng
+import com.google.maps.android.SphericalUtil
 import com.mapbox.geojson.Point
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
@@ -75,10 +79,16 @@ class MappingViewModel @Inject constructor(
 
     private val _eventFlow: MutableSharedFlow<MappingEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingEvent> = _eventFlow.asSharedFlow()
+    private var travelledPath: MutableList<LatLng> = mutableStateListOf()
+    private var _nearbyCyclistState = mutableStateListOf<UserItem>()
+    val nearbyCyclistState = _nearbyCyclistState
 
 
     init {
-        trackingHandler = TrackingStateHandler(state = _state, eventFlow = _eventFlow)
+        trackingHandler = TrackingStateHandler(
+            state = _state,
+            eventFlow = _eventFlow,
+            nearbyCyclist = _nearbyCyclistState)
         loadData()
         observeDataChanges()
     }
@@ -116,11 +126,11 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun getNearbyCyclist() {
         val userLocation = state.value.getCurrentLocation()
-
+        val dataLoaded = state.value.user.id != null
         userLocation?.latitude ?: return
         userLocation.longitude ?: return
 
-        if (state.value.nearbyCyclists != null) {
+        if (dataLoaded) {
             return
         }
 
@@ -133,7 +143,7 @@ class MappingViewModel @Inject constructor(
                 it.handleException()
             }.onEach {
                 it.getUser()
-                it.getNearbyCyclist()
+                it.updateNearbyCyclists()
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }.launchIn(this)
 
@@ -162,10 +172,11 @@ class MappingViewModel @Inject constructor(
     }
 
 
+
     private fun acceptRescueRequest(id: String) {
         viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
-            val rescuer = state.value.nearbyCyclists?.findUser(id) ?: return@launch
+            val rescuer = nearbyCyclistState.findUser(id) ?: return@launch
             _state.update { it.copy(rescueRequestAcceptedUser = rescuer) }
             val transactionId = trackingHandler.getTransactionId(rescuer)
             val user = state.value.user
@@ -179,7 +190,7 @@ class MappingViewModel @Inject constructor(
                             transactionId = transactionId,
                             rescuer = rescuer
                         ).apply {
-                            mappingUseCase.createRescueTransactionUseCase(rescueTransaction = this)
+                            mappingUseCase.acceptRescueRequestUseCase(rescueTransaction = this)
                         }
 
                     }.onSuccess { rescueTransaction ->
@@ -391,6 +402,7 @@ class MappingViewModel @Inject constructor(
 
             is MappingVmEvent.CancelRescueTransaction -> {
                 removeAssignedTransaction()
+                clearTravelledPath()
             }
 
 
@@ -401,6 +413,7 @@ class MappingViewModel @Inject constructor(
 
             is MappingVmEvent.DeclineRescueRequest -> {
                 declineRescueRequest(event.id)
+                clearTravelledPath()
             }
 
             is MappingVmEvent.AcceptRescueRequest -> {
@@ -409,6 +422,7 @@ class MappingViewModel @Inject constructor(
 
             is MappingVmEvent.CancelRequestHelp -> {
                 cancelHelpRequest()
+                clearTravelledPath()
             }
 
         }
@@ -417,7 +431,7 @@ class MappingViewModel @Inject constructor(
 
 
     private suspend fun calculateSelectedRescueeDistance(userLocation: LocationModel?, id: String) {
-        val selectedRescuee = state.value.nearbyCyclists?.findUser(id) ?: return
+        val selectedRescuee = nearbyCyclistState.findUser(id) ?: return
         val selectedRescueeLocation = selectedRescuee.location
 
 
@@ -487,6 +501,7 @@ class MappingViewModel @Inject constructor(
                 if (distance <= NEAREST_METERS) {
                     _eventFlow.emit(value = MappingEvent.DestinationReached)
                     removeAssignedTransaction()
+                    clearTravelledPath()
                 }
 
             }
@@ -652,8 +667,12 @@ class MappingViewModel @Inject constructor(
         )
     }
 
-    private fun NearbyCyclist.getNearbyCyclist() {
-        _state.update { it.copy(nearbyCyclists = this.apply { users.distinct() }) }
+    private fun NearbyCyclist.updateNearbyCyclists() {
+        _nearbyCyclistState.apply {
+            addAll(this@updateNearbyCyclists.users)
+            distinct()
+        }
+
     }
 
     private suspend fun broadcastRescueTransactionToRespondent(location: LocationModel) {
@@ -692,6 +711,7 @@ class MappingViewModel @Inject constructor(
                     Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
 
                 }.onEach {
+                    Timber.v("NEW WEBSOCKET UPDATES: subscribeToRescueTransactionUpdates:: ${it.transactions.size}")
                     it.updateRescueTransaction()
                     it.updateRescueClient()
                     trackingHandler.checkRescueRequestAccepted(
@@ -740,12 +760,24 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.getUserLocationUseCase().catch {
                 Timber.e("Error Location Updates: ${it.message}")
             }.onEach { location ->
-                broadcastRescueTransactionToRespondent(location)
                 trackingHandler.updateLocation(location)
+                broadcastRescueTransactionToRespondent(location)
+                updateSpeedometer(location)
                 getNearbyCyclist()
             }.launchIn(this@launch).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }
+        }
+    }
+
+    private fun updateSpeedometer(location: LocationModel){
+        val isUserRescuer = state.value.user.isRescuer()
+        if(isUserRescuer) {
+            trackingHandler.setSpeed(location.speed)
+            trackingHandler.getTopSpeed(location.speed)
+            travelledPath.add(element = LatLng(location.latitude!!, location.longitude!!))
+            val distance = SphericalUtil.computeLength(travelledPath).formatToDistanceKm()
+            trackingHandler.setTravelledDistance(distance)
         }
     }
 
@@ -760,8 +792,9 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.getUserUpdatesUseCase().catch {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
             }.onEach {
+                Timber.v("NEW WEBSOCKET UPDATES: subscribeToNearbyUsersChanges:: ${it.users.size}")
                 it.getUser()
-                it.getNearbyCyclist()
+                it.updateNearbyCyclists()
                 trackingHandler.updateClient()
             }.launchIn(this).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
@@ -877,6 +910,11 @@ class MappingViewModel @Inject constructor(
         settingUseCase.getPhoneNumberUseCase()
 
     private suspend fun getPhotoUrl() = settingUseCase.getPhotoUrlUseCase()
+
+    private fun clearTravelledPath(){
+        travelledPath = mutableListOf()
+    }
+
 
 
 }

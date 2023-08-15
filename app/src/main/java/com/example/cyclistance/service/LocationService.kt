@@ -81,7 +81,8 @@ class LocationService(
             .catch {
                 Timber.e("Start Service: ${it.message}")
             }.onEach { location ->
-                address.emit(LocationModel(latitude = location.latitude, longitude = location.longitude))
+                val speed = location.speed * 3600 / 1000
+                address.emit(LocationModel(latitude = location.latitude, longitude = location.longitude, speed = speed.toDouble()))
             }.launchIn(serviceScope)
     }
 

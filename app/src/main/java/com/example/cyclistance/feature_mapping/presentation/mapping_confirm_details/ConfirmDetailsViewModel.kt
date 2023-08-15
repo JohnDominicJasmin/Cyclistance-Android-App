@@ -143,6 +143,8 @@ class ConfirmDetailsViewModel @Inject constructor(
                     latitude = latitude,
                     longitude = longitude
                 ))
+        }.onSuccess {
+            Timber.v("BROADCASTING CONFIRMATION DETAILS: broadcastUser")
         }.onFailure {
             it.handleException()
         }
@@ -151,6 +153,8 @@ class ConfirmDetailsViewModel @Inject constructor(
     private suspend fun broadcastRescueTransaction() {
         runCatching {
             mappingUseCase.broadcastRescueTransactionUseCase()
+        }.onSuccess {
+            Timber.v("BROADCASTING CONFIRMATION DETAILS: broadcastRescueTransaction")
         }.onFailure {
             it.handleException()
         }

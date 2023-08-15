@@ -7,4 +7,5 @@ import kotlinx.parcelize.Parcelize
 data class LocationModel(
     val latitude: Double? = null,
     val longitude: Double? = null,
+    val speed: Double = 0.0
 ):Parcelable

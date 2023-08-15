@@ -24,6 +24,9 @@ fun FloatingButtonSection(
     onClickRecenterButton: () -> Unit = {},
     onClickOpenNavigationButton: () -> Unit = {}) {
 
+
+    val shouldShowLocationUserButton = isNavigating.not() && uiState.isFabExpanded.not() && uiState.mapSelectedRescuee == null
+
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
         MappingUtils.FabAnimated(isNavigating) {
             RouteOverViewButton(
@@ -47,7 +50,7 @@ fun FloatingButtonSection(
                 )
             }
 
-            MappingUtils.FabAnimated(isNavigating.not() && uiState.isFabExpanded.not()) {
+            MappingUtils.FabAnimated(shouldShowLocationUserButton) {
                 LocateUserButton(
                     modifier = Modifier.size(53.dp),
                     locationPermissionGranted = locationPermissionGranted,

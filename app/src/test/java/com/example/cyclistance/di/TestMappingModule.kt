@@ -9,12 +9,19 @@ import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.SetBike
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.AcceptRescueRequestUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDirectionsUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.user.*
+import com.example.cyclistance.feature_mapping.domain.use_case.user.AddRescueRespondentUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.user.ConfirmDetailsUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.user.CreateUserUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.user.DeleteAllRespondentsUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.user.DeleteRescueRespondentUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.user.DeleteUserUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.user.GetUserByIdUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.user.GetUsersUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
@@ -35,7 +42,7 @@ object TestMappingModule {
             deleteUserUseCase = DeleteUserUseCase(repository),
 
             getRescueTransactionByIdUseCase = GetRescueTransactionByIdUseCase(repository),
-            createRescueTransactionUseCase = CreateRescueTransactionUseCase(repository),
+            acceptRescueRequestUseCase = AcceptRescueRequestUseCase(repository),
             deleteRescueTransactionUseCase = DeleteRescueTransactionUseCase(repository),
 
 

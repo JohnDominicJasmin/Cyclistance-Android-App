@@ -21,8 +21,8 @@ import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.SetBike
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.AcceptRescueRequestUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.CreateRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDirectionsUseCase
@@ -122,7 +122,7 @@ object MappingModule {
             deleteUserUseCase = DeleteUserUseCase(repository),
 
             getRescueTransactionByIdUseCase = GetRescueTransactionByIdUseCase(repository),
-            createRescueTransactionUseCase = CreateRescueTransactionUseCase(repository),
+            acceptRescueRequestUseCase = AcceptRescueRequestUseCase(repository),
             deleteRescueTransactionUseCase = DeleteRescueTransactionUseCase(repository),
 
 
