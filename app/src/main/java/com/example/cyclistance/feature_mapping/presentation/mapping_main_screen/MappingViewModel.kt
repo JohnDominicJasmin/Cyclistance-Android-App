@@ -138,7 +138,7 @@ class MappingViewModel @Inject constructor(
                 it.handleException()
             }.onEach {
                 it.getUser()
-                it.getNearbyCyclist()
+                it.updateNearbyCyclists()
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }.launchIn(this)
 
@@ -661,8 +661,9 @@ class MappingViewModel @Inject constructor(
         )
     }
 
-    private fun NearbyCyclist.getNearbyCyclist() {
-        _state.update { it.copy(nearbyCyclists = this.apply { users.distinct() }) }
+    private fun NearbyCyclist.updateNearbyCyclists() {
+        _state.update { it.copy(nearbyCyclists = this.apply { users.distinctBy { v -> v.id } }) }
+        Timber.v("NEARBY CYCLISTS: ${this.users}")
     }
 
     private suspend fun broadcastRescueTransactionToRespondent(location: LocationModel) {
@@ -749,8 +750,8 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.getUserLocationUseCase().catch {
                 Timber.e("Error Location Updates: ${it.message}")
             }.onEach { location ->
-                broadcastRescueTransactionToRespondent(location)
                 trackingHandler.updateLocation(location)
+                broadcastRescueTransactionToRespondent(location)
                 updateSpeedometer(location)
                 getNearbyCyclist()
             }.launchIn(this@launch).invokeOnCompletion {
@@ -782,7 +783,7 @@ class MappingViewModel @Inject constructor(
                 Timber.e("ERROR GETTING USERS: ${it.message}")
             }.onEach {
                 it.getUser()
-                it.getNearbyCyclist()
+                it.updateNearbyCyclists()
                 trackingHandler.updateClient()
             }.launchIn(this).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
