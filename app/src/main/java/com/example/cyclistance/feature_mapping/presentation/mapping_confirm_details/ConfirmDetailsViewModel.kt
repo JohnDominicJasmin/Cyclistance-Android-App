@@ -53,7 +53,7 @@ class ConfirmDetailsViewModel @Inject constructor(
 
 
     private fun getBikeType() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             runCatching {
                 mappingUseCase.getBikeTypeUseCase().first()
             }.onSuccess { bikeType ->
@@ -66,7 +66,7 @@ class ConfirmDetailsViewModel @Inject constructor(
     }
 
     private fun getAddress() {
-        viewModelScope.launch(Dispatchers.IO) {
+        viewModelScope.launch {
             runCatching {
                 mappingUseCase.getAddressUseCase().first()
             }.onSuccess { address ->
@@ -100,6 +100,9 @@ class ConfirmDetailsViewModel @Inject constructor(
                 )
                 _state.update { it.copy(isLoading = true) }
 
+                    mappingUseCase.setAddressUseCase(address = confirmationDetail.address)
+                    mappingUseCase.setBikeTypeUseCase(bikeType = confirmationDetail.bikeType)
+
                     mappingUseCase.confirmDetailsUseCase(
                         user = UserItem(
                             id = getId(),
@@ -107,11 +110,7 @@ class ConfirmDetailsViewModel @Inject constructor(
                             userAssistance = UserAssistanceModel(
                                 confirmationDetail = confirmedDetails,
                                 needHelp = true
-                            ))).also {
-
-                        mappingUseCase.setAddressUseCase(address = confirmationDetail.address)
-                        mappingUseCase.setBikeTypeUseCase(bikeType = confirmationDetail.bikeType)
-                    }
+                            )))
 
 
             }.onSuccess {

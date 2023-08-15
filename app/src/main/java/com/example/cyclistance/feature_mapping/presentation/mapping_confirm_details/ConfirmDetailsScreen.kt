@@ -30,7 +30,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_deta
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
-import kotlinx.coroutines.flow.distinctUntilChanged
 
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -64,7 +63,7 @@ fun ConfirmDetailsScreen(
 
 
     LaunchedEffect(key1 = true) {
-        viewModel.eventFlow.distinctUntilChanged().collect { event ->
+        viewModel.eventFlow.collect { event ->
             when (event) {
                 is ConfirmDetailsEvent.ConfirmDetailsSuccess -> {
                     navController.popBackStack()

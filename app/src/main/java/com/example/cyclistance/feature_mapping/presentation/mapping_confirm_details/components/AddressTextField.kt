@@ -71,7 +71,8 @@ fun AddressTextField(
             colors = textFieldColors(),
             textStyle = TextStyle(
                 fontSize = MaterialTheme.typography.subtitle1.fontSize
-            )
+            ),
+            singleLine = true
         )
 
         if(hasError) {
