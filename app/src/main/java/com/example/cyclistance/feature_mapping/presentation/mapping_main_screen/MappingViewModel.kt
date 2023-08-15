@@ -710,6 +710,7 @@ class MappingViewModel @Inject constructor(
                     Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
 
                 }.onEach {
+                    Timber.v("NEW WEBSOCKET UPDATES: subscribeToRescueTransactionUpdates:: ${it.transactions.size}")
                     it.updateRescueTransaction()
                     it.updateRescueClient()
                     trackingHandler.checkRescueRequestAccepted(
@@ -790,6 +791,7 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.getUserUpdatesUseCase().catch {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
             }.onEach {
+                Timber.v("NEW WEBSOCKET UPDATES: subscribeToNearbyUsersChanges:: ${it.users.size}")
                 it.getUser()
                 it.updateNearbyCyclists()
                 trackingHandler.updateClient()

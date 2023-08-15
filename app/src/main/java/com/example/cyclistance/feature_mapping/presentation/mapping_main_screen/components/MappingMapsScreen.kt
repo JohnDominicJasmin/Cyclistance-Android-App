@@ -76,6 +76,7 @@ fun MappingMapsScreen(
 
     val showNearbyCyclistsIcon = remember(nearbyCyclist.size, mapboxMap) {
         {
+            Timber.v("Nearby Cyclist Size: ${nearbyCyclist.size}")
             dismissNearbyCyclistsIcon()
 
             nearbyCyclist.distinctBy {
