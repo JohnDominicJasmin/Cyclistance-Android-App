@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
 import com.example.cyclistance.core.utils.validation.FormatterUtils
+import com.example.cyclistance.core.utils.validation.FormatterUtils.findUser
 import com.example.cyclistance.core.utils.validation.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.validation.FormatterUtils.isLocationAvailable
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
@@ -125,7 +126,7 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun getNearbyCyclist() {
         val userLocation = state.value.getCurrentLocation()
-
+        val dataLoaded = state.value.user.id != null
         userLocation?.latitude ?: return
         userLocation.longitude ?: return
 
@@ -189,7 +190,7 @@ class MappingViewModel @Inject constructor(
                             transactionId = transactionId,
                             rescuer = rescuer
                         ).apply {
-                            mappingUseCase.createRescueTransactionUseCase(rescueTransaction = this)
+                            mappingUseCase.acceptRescueRequestUseCase(rescueTransaction = this)
                         }
 
                     }.onSuccess { rescueTransaction ->
