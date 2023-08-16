@@ -12,7 +12,11 @@ import com.example.cyclistance.feature_mapping.data.data_source.network.websocke
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.TransactionLiveLocationWSClient
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.UserWSClient
 import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
+import com.example.cyclistance.feature_mapping.data.repository.MappingSocketRepositoryImpl
+import com.example.cyclistance.feature_mapping.data.repository.MappingUiStoreRepositoryImpl
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
+import com.example.cyclistance.feature_mapping.domain.repository.MappingSocketRepository
+import com.example.cyclistance.feature_mapping.domain.repository.MappingUiStoreRepository
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.address.GetAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.address.SetAddressUseCase
@@ -78,7 +82,7 @@ object MappingModule {
 
     @Singleton
     @Provides
-    fun providesMapOptimizationDirections(@ApplicationContext context: Context): MapboxOptimization.Builder{
+    fun providesMapOptimizationDirections(@ApplicationContext context: Context): MapboxOptimization.Builder {
         return lazy {
             MapboxOptimization.builder()
                 .accessToken(context.getString(R.string.MapsDownloadToken))
@@ -93,59 +97,82 @@ object MappingModule {
         api: CyclistanceApi,
         mapboxDirections: MapboxOptimization.Builder): MappingRepository {
 
-        val socket = IO.socket(context.getString(R.string.CyclistanceApiBaseUrl))
-        val userWSClient = UserWSClient(socket)
-        val rescueTransactionWSClient = RescueTransactionWSClient(socket)
-        val liveLocation = TransactionLiveLocationWSClient(socket)
+
         val geocoder = Geocoder(context)
 
         return MappingRepositoryImpl(
             api = api,
             context = context,
-            rescueTransactionClient = rescueTransactionWSClient,
-            nearbyCyclistClient = userWSClient,
-            liveLocation = liveLocation,
+
             mapboxDirections = mapboxDirections,
             geocoder = geocoder
         )
     }
 
+    @Provides
+    @Singleton
+    fun provideMappingSocketRepository(@ApplicationContext context: Context): MappingSocketRepository {
+        val socket = IO.socket(context.getString(R.string.CyclistanceApiBaseUrl))
+        val userWSClient = UserWSClient(socket)
+        val rescueTransactionWSClient = RescueTransactionWSClient(socket)
+        val liveLocation = TransactionLiveLocationWSClient(socket)
+        return MappingSocketRepositoryImpl(
+            context = context,
+            rescueTransactionClient = rescueTransactionWSClient,
+            nearbyCyclistClient = userWSClient,
+            liveLocation = liveLocation,
+        )
+    }
 
     @Provides
     @Singleton
-    fun provideMappingUseCase(repository: MappingRepository): MappingUseCase {
+    fun provideMappingUiStoreRepository(@ApplicationContext context: Context): MappingUiStoreRepository {
+        return MappingUiStoreRepositoryImpl(context)
+    }
+
+
+    @Provides
+    @Singleton
+    fun provideMappingUseCase(
+        mappingRepository: MappingRepository,
+        mappingUiStoreRepository: MappingUiStoreRepository,
+        mappingSocketRepository: MappingSocketRepository): MappingUseCase {
         return MappingUseCase(
 
-            getUsersUseCase = GetUsersUseCase(repository),
-            getUserByIdUseCase = GetUserByIdUseCase(repository),
-            createUserUseCase = CreateUserUseCase(repository),
-            deleteUserUseCase = DeleteUserUseCase(repository),
+            getUsersUseCase = GetUsersUseCase(mappingRepository),
+            getUserByIdUseCase = GetUserByIdUseCase(mappingRepository),
+            createUserUseCase = CreateUserUseCase(mappingRepository),
+            deleteUserUseCase = DeleteUserUseCase(mappingRepository),
 
-            getRescueTransactionByIdUseCase = GetRescueTransactionByIdUseCase(repository),
-            acceptRescueRequestUseCase = AcceptRescueRequestUseCase(repository),
-            deleteRescueTransactionUseCase = DeleteRescueTransactionUseCase(repository),
+            getRescueTransactionByIdUseCase = GetRescueTransactionByIdUseCase(mappingRepository),
+            acceptRescueRequestUseCase = AcceptRescueRequestUseCase(mappingRepository),
+            deleteRescueTransactionUseCase = DeleteRescueTransactionUseCase(mappingRepository),
 
 
-            getUserLocationUseCase = GetUserLocationUseCase(repository),
-            getFullAddressUseCase = GetFullAddressUseCase(repository),
+            getUserLocationUseCase = GetUserLocationUseCase(mappingRepository),
+            getFullAddressUseCase = GetFullAddressUseCase(mappingRepository),
 
-            getBikeTypeUseCase = GetBikeTypeUseCase(repository),
-            setBikeTypeUseCase = SetBikeTypeUseCase(repository),
-            getAddressUseCase = GetAddressUseCase(repository),
-            setAddressUseCase = SetAddressUseCase(repository),
-            broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(repository),
-            broadcastToNearbyCyclists = BroadcastToNearbyCyclists(repository),
-            getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(repository),
-            getUserUpdatesUseCase = GetUserUpdatesUseCase(repository),
-            broadcastRescueTransactionToRespondent = BroadcastTransactionLocationUseCase(repository),
-            getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(repository),
-            deleteRescueRespondentUseCase = DeleteRescueRespondentUseCase(repository),
-            addRescueRespondentUseCase = AddRescueRespondentUseCase(repository),
-            deleteAllRespondentsUseCase = DeleteAllRespondentsUseCase(repository),
-            confirmDetailsUseCase = ConfirmDetailsUseCase(repository),
-            confirmCancellationUseCase = ConfirmCancellationUseCase(repository),
-            getRouteDirectionsUseCase = GetRouteDirectionsUseCase(repository),
-            getCalculatedDistanceUseCase = GetCalculatedDistanceUseCase(repository),
+            getBikeTypeUseCase = GetBikeTypeUseCase(mappingUiStoreRepository),
+            setBikeTypeUseCase = SetBikeTypeUseCase(mappingUiStoreRepository),
+            getAddressUseCase = GetAddressUseCase(mappingUiStoreRepository),
+            setAddressUseCase = SetAddressUseCase(mappingUiStoreRepository),
+            broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(
+                mappingSocketRepository),
+            broadcastToNearbyCyclists = BroadcastToNearbyCyclists(mappingSocketRepository),
+            getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(
+                mappingSocketRepository),
+            getUserUpdatesUseCase = GetUserUpdatesUseCase(mappingSocketRepository),
+            broadcastRescueTransactionToRespondent = BroadcastTransactionLocationUseCase(
+                mappingSocketRepository),
+            getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(
+                mappingSocketRepository),
+            deleteRescueRespondentUseCase = DeleteRescueRespondentUseCase(mappingRepository),
+            addRescueRespondentUseCase = AddRescueRespondentUseCase(mappingRepository),
+            deleteAllRespondentsUseCase = DeleteAllRespondentsUseCase(mappingRepository),
+            confirmDetailsUseCase = ConfirmDetailsUseCase(mappingRepository),
+            confirmCancellationUseCase = ConfirmCancellationUseCase(mappingRepository),
+            getRouteDirectionsUseCase = GetRouteDirectionsUseCase(mappingRepository),
+            getCalculatedDistanceUseCase = GetCalculatedDistanceUseCase(mappingRepository),
         )
     }
 
