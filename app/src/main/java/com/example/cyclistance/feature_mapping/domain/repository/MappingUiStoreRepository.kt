@@ -10,4 +10,7 @@ interface MappingUiStoreRepository {
     suspend fun getAddress(): Flow<String>
     suspend fun setAddress(address: String)
 
+    suspend fun getBottomSheetType(): Flow<String>?
+    suspend fun setBottomSheetType(bottomSheetType: String)
+
 }

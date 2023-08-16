@@ -20,7 +20,7 @@ sealed class MappingEvent{
 
 
     data class NewSelectedRescuee(val selectedRescuee: MapSelectedRescuee): MappingEvent()
-
+    data class NewBottomSheetType(val bottomSheetType: String): MappingEvent()
 
 
 
