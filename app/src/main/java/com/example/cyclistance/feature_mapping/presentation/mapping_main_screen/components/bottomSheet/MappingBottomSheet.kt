@@ -86,7 +86,10 @@ fun MappingBottomSheet(
                         role = state.user.transaction?.role ?: "",
                         onGoingRescueModel = OnGoingRescueModel(
                             estimatedTime = state.rescuerETA,
-                            estimatedDistance = state.rescuerDistance))
+                            estimatedDistance = state.rescuerDistance,
+                            currentSpeed = state.speedometerState.currentSpeedKph.toString(),
+                            ridingDistance = state.speedometerState.travelledDistance,
+                            maxSpeed = state.speedometerState.topSpeed.toString()))
                 }
 
             }
