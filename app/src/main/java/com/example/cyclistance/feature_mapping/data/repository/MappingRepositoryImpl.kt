@@ -6,12 +6,7 @@ import android.location.Geocoder
 import android.os.Build
 import androidx.annotation.WorkerThread
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
-import com.example.cyclistance.core.utils.constants.MappingConstants.ADDRESS_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.API_CALL_RETRY_COUNT
-import com.example.cyclistance.core.utils.constants.MappingConstants.BIKE_TYPE_KEY
-import com.example.cyclistance.core.utils.contexts.dataStore
-import com.example.cyclistance.core.utils.data_store_ext.editData
-import com.example.cyclistance.core.utils.data_store_ext.getData
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransactionDto
@@ -21,15 +16,12 @@ import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItem
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItemDto
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.model.*
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
 import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
-import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClient
 import com.example.cyclistance.service.LocationService
 import com.mapbox.api.directions.v5.DirectionsCriteria
 import com.mapbox.api.directions.v5.models.DirectionsRoute
@@ -57,17 +49,15 @@ import kotlin.coroutines.suspendCoroutine
 
 
 class MappingRepositoryImpl(
-    val rescueTransactionClient: WebSocketClient<RescueTransaction, LiveLocationWSModel>,
-    val nearbyCyclistClient: WebSocketClient<NearbyCyclist, LiveLocationWSModel>,
-    val liveLocation: WebSocketClient<LiveLocationWSModel, LiveLocationWSModel>,
+
     private val api: CyclistanceApi,
     private val mapboxDirections: MapboxOptimization.Builder,
-    val context: Context,
+    private val context: Context,
     private val geocoder: Geocoder,
 ) : MappingRepository {
 
     private val scope: CoroutineContext = Dispatchers.IO
-    private var dataStore = context.dataStore
+
 
     override suspend fun getFullAddress(latitude: Double, longitude: Double): String {
         return withContext(scope) {
@@ -140,41 +130,8 @@ class MappingRepositoryImpl(
     }
 
 
-    override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {
 
-        return liveLocation.getResult().retry(API_CALL_RETRY_COUNT) {
-            return@retry context.hasInternetConnection().not()
-        }
-    }
 
-    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel) {
-        if (context.hasInternetConnection().not()) {
-            throw MappingExceptions.NetworkException()
-        }
-        return withContext(scope) {
-            liveLocation.broadcastEvent(locationModel)
-        }
-    }
-
-    override suspend fun getBikeType(): Flow<String> {
-        return withContext(scope) {
-            dataStore.getData(key = BIKE_TYPE_KEY, defaultValue = "")
-        }
-    }
-
-    override suspend fun setBikeType(bikeType: String) {
-        withContext(scope) { dataStore.editData(BIKE_TYPE_KEY, bikeType) }
-    }
-
-    override suspend fun getAddress(): Flow<String> {
-        return withContext(scope) { dataStore.getData(key = ADDRESS_KEY, defaultValue = "") }
-    }
-
-    override suspend fun setAddress(address: String) {
-        withContext(scope) {
-            dataStore.editData(ADDRESS_KEY, address)
-        }
-    }
 
     override suspend fun getUserById(userId: String): Flow<UserItem> =
         flow {
@@ -252,35 +209,8 @@ class MappingRepositoryImpl(
         }
     }
 
-    override suspend fun getUserUpdates(): Flow<NearbyCyclist> {
-        return nearbyCyclistClient.getResult().retry(API_CALL_RETRY_COUNT) {
-            return@retry context.hasInternetConnection().not()
-        }
-    }
 
-    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel) {
-        if (context.hasInternetConnection().not()) {
-            throw MappingExceptions.NetworkException()
-        }
-        withContext(scope) { nearbyCyclistClient.broadcastEvent(locationModel) }
-    }
 
-    override suspend fun broadcastRescueTransactionToRespondent() {
-        if (context.hasInternetConnection().not()) {
-            throw MappingExceptions.NetworkException()
-        }
-
-        withContext(scope) {
-            rescueTransactionClient.broadcastEvent()
-        }
-    }
-
-    override suspend fun getRescueTransactionUpdates(): Flow<RescueTransaction> {
-
-        return rescueTransactionClient.getResult().retry(API_CALL_RETRY_COUNT) {
-            return@retry context.hasInternetConnection().not()
-        }
-    }
 
     override suspend fun deleteRescueRespondent(userId: String, respondentId: String) {
         withContext(scope) {

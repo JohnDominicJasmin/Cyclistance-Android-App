@@ -3,10 +3,10 @@ package com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
-import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
+import com.example.cyclistance.feature_mapping.domain.repository.MappingSocketRepository
 
 class BroadcastTransactionLocationUseCase(
-    private val repository: MappingRepository) {
+    private val repository: MappingSocketRepository) {
     suspend operator fun invoke(
         locationModel: LiveLocationWSModel,
         user: UserItem,
