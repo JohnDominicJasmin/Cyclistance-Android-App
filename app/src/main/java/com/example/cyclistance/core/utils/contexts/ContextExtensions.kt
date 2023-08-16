@@ -37,3 +37,18 @@ fun Context.callPhoneNumber(phoneNumber: String) {
 }
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "preferences")
+
+fun Context.shareLocation(latitude: Double, longitude: Double){
+    val uri = "http://maps.google.com/maps?saddr=$latitude,$longitude"
+
+    val sharingIntent = Intent(Intent.ACTION_SEND)
+    sharingIntent.type = "text/plain"
+    val subject = "My Location"
+    val message = "Check out my location:\n$uri"
+
+    sharingIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
+    sharingIntent.putExtra(Intent.EXTRA_TEXT, message)
+
+    val chooserIntent = Intent.createChooser(sharingIntent, "Share your Location via")
+    startActivity(chooserIntent)
+}
