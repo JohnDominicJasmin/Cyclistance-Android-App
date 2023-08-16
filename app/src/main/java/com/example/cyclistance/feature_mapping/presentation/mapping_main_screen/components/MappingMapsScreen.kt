@@ -2,12 +2,15 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
 import android.annotation.SuppressLint
 import android.graphics.Color
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import android.os.Bundle
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.viewinterop.AndroidViewBinding
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.*
@@ -18,7 +21,6 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_LAYER
 import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_SOURCE_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.TRANSACTION_ICON_ID
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getMapIconImageDescription
-import com.example.cyclistance.databinding.ActivityMappingBinding
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
@@ -35,6 +37,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.annotations.IconFactory
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
+import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.style.expressions.Expression.*
@@ -43,6 +46,9 @@ import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
@@ -234,122 +240,118 @@ private fun Map(
 
 
     val isDarkTheme = IsDarkTheme.current
-    Box(modifier = modifier) {
+    val mapView = rememberMapViewWithLifecycle()
+    var isInitialized by remember {
+        mutableStateOf(false)
+    }
 
-        AndroidViewBinding(
-            factory = ActivityMappingBinding::inflate,
-            modifier = Modifier.fillMaxSize()) {
-            val viewContext = this.root.context
-            var mapboxMap: MapboxMap? = null
 
-            val initSource = { loadedMapStyle: Style ->
-                loadedMapStyle.addSource(GeoJsonSource(ICON_SOURCE_ID))
-                loadedMapStyle.addSource(GeoJsonSource(ROUTE_SOURCE_ID))
+    Column(
+        modifier = modifier
+            .fillMaxHeight()
+            .fillMaxWidth()
+
+    ) {
+
+
+        AndroidView(factory = {mapView}){
+            if(isInitialized){
+                return@AndroidView
             }
-
-            val initLayers = { loadedMapStyle: Style ->
-
-
-                val drawableIcon = ContextCompat.getDrawable(viewContext, R.drawable.ic_map_rescuer)
-                val bitmapIcon = drawableIcon?.toBitmap(width = 100, height = 100)
-                bitmapIcon?.let { loadedMapStyle.addImage(TRANSACTION_ICON_ID, it) }
-
-                loadedMapStyle.addLayer(
-                    SymbolLayer(ICON_LAYER_ID, ICON_SOURCE_ID).apply {
-                        setProperties(
-                            iconImage(TRANSACTION_ICON_ID),
-                            iconAllowOverlap(true),
-                            iconIgnorePlacement(true)
-                        )
-                    }
-                )
+            CoroutineScope(Dispatchers.Main).launch {
+                Timber.v("Successfully recomposed in Map")
 
 
-                loadedMapStyle.addLayerBelow(
-                    LineLayer(ROUTE_LAYER_ID, ROUTE_SOURCE_ID).apply {
-                        setProperties(
-                            lineCap(Property.LINE_CAP_ROUND),
-                            lineJoin(Property.LINE_JOIN_ROUND),
-                            lineWidth(5f),
-                            lineColor(Color.parseColor("#006eff"))
-                        )
-                    }, ICON_LAYER_ID)
 
-
-            }
-
-
-            root.findViewTreeLifecycleOwner()?.lifecycle?.addObserver(
-                LifecycleEventObserver { _, event ->
-                    when (event) {
-                        Lifecycle.Event.ON_CREATE -> {
-
-                            Timber.v("Lifecycle Event: ON_CREATE")
-                            mapView.getMapAsync {
-
-
-                                it.setStyle(if (isDarkTheme) Style.DARK else Style.LIGHT) { loadedStyle ->
-
-                                    if (loadedStyle.isFullyLoaded) {
-                                        event(MappingUiEvent.OnInitializeMap(it))
-                                        mapboxMap = it
-                                        initSource(loadedStyle)
-                                        initLayers(loadedStyle)
-                                    }
-                                }
-                                it.setDefaultSettings()
-                            }
-                        }
-
-                        Lifecycle.Event.ON_START -> {
-                            Timber.v("Lifecycle Event: ON_START")
-                            mapView.onStart()
-                        }
-
-                        Lifecycle.Event.ON_RESUME -> {
-                            Timber.v("Lifecycle Event: ON_RESUME")
-                        }
-
-                        Lifecycle.Event.ON_PAUSE -> {
-                            val camera = mapboxMap?.cameraPosition
-                            val cameraCenter = camera?.target
-                            val cameraZoom = camera?.zoom
-                            cameraCenter?.let {
-                                cameraZoom?.let {
-                                    val cameraMoved =
-                                        cameraCenter.latitude != 0.0 && cameraCenter.longitude != 0.0 && cameraZoom != 3.0
-
-                                    if (!cameraMoved) {
-                                        return@let
-                                    }
-
-
-                                    /*  event(
-                                          MappingUiEvent.OnChangeCameraState(
-                                              cameraState = CameraState(
-                                                  position = cameraCenter,
-                                                  zoom = cameraZoom)))*/
-                                }
-                            }
-                        }
-
-                        Lifecycle.Event.ON_STOP -> {
-                            Timber.v("Lifecycle Event: ON_STOP")
-
-                            mapView.onStop()
-                        }
-
-                        Lifecycle.Event.ON_DESTROY -> {
-
-                            mapView.onDestroy()
-                        }
-
-                        else -> {}
-
-                    }
+                val initSource = { loadedMapStyle: Style ->
+                    loadedMapStyle.addSource(GeoJsonSource(ICON_SOURCE_ID))
+                    loadedMapStyle.addSource(GeoJsonSource(ROUTE_SOURCE_ID))
                 }
-            )
+
+                val initLayers = { loadedMapStyle: Style ->
+
+
+                    val drawableIcon =
+                        ContextCompat.getDrawable(it.context, R.drawable.ic_map_rescuer)
+                    val bitmapIcon = drawableIcon?.toBitmap(width = 100, height = 100)
+                    bitmapIcon?.let { loadedMapStyle.addImage(TRANSACTION_ICON_ID, it) }
+
+                    loadedMapStyle.addLayer(
+                        SymbolLayer(ICON_LAYER_ID, ICON_SOURCE_ID).apply {
+                            setProperties(
+                                iconImage(TRANSACTION_ICON_ID),
+                                iconAllowOverlap(true),
+                                iconIgnorePlacement(true)
+                            )
+                        }
+                    )
+
+
+                    loadedMapStyle.addLayerBelow(
+                        LineLayer(ROUTE_LAYER_ID, ROUTE_SOURCE_ID).apply {
+                            setProperties(
+                                lineCap(Property.LINE_CAP_ROUND),
+                                lineJoin(Property.LINE_JOIN_ROUND),
+                                lineWidth(5f),
+                                lineColor(Color.parseColor("#006eff"))
+                            )
+                        }, ICON_LAYER_ID)
+
+
+                }
+                mapView.getMapAsync{
+                    it.setStyle(if (isDarkTheme) Style.DARK else Style.LIGHT) { loadedStyle ->
+
+                        if (loadedStyle.isFullyLoaded) {
+                            event(MappingUiEvent.OnInitializeMap(it))
+                            initSource(loadedStyle)
+                            initLayers(loadedStyle)
+                        }
+                    }
+                    it.setDefaultSettings()
+                }
+                isInitialized = true
+
+            }
         }
+
     }
 }
 
+@Composable
+fun rememberMapViewWithLifecycle(): MapView {
+    val context = LocalContext.current
+    val mapView = remember {
+        MapView(context).apply {
+            id = R.id.mapView
+        }
+    }
+
+    // Makes MapView follow the lifecycle of this composable
+    val lifecycleObserver = rememberMapLifecycleObserver(mapView)
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    DisposableEffect(lifecycle) {
+        lifecycle.addObserver(lifecycleObserver)
+        onDispose {
+            lifecycle.removeObserver(lifecycleObserver)
+        }
+    }
+
+    return mapView
+}
+
+@Composable
+fun rememberMapLifecycleObserver(mapView: MapView): LifecycleEventObserver =
+    remember(mapView) {
+        LifecycleEventObserver { _, event ->
+            when (event) {
+                Lifecycle.Event.ON_CREATE -> mapView.onCreate(Bundle())
+                Lifecycle.Event.ON_START -> mapView.onStart()
+                Lifecycle.Event.ON_RESUME -> mapView.onResume()
+                Lifecycle.Event.ON_PAUSE -> mapView.onPause()
+                Lifecycle.Event.ON_STOP -> mapView.onStop()
+                Lifecycle.Event.ON_DESTROY -> mapView.onDestroy()
+                else -> throw IllegalStateException()
+            }
+        }
+    }

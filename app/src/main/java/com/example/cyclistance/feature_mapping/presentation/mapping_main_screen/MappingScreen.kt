@@ -357,11 +357,22 @@ fun MappingScreen(
             Unit
         }
     }
-
     val onChangeCameraPosition = remember {
         { _cameraState: CameraState ->
             cameraState = _cameraState
+        }
+    }
 
+
+    DisposableEffect(key1 = true){
+        onDispose {
+            val camera = mapboxMap?.cameraPosition
+            val cameraCenter = camera?.target
+            val cameraZoom = camera?.zoom
+            onChangeCameraPosition(CameraState(
+                position = cameraCenter!!,
+                zoom = cameraZoom ?: 0.0
+            ))
         }
     }
 
@@ -667,7 +678,7 @@ fun MappingScreen(
     }}
 
 
-    LaunchedEffect(key1 = true, key2 = state.userLocation) {
+    LaunchedEffect(key1 = true) {
 
         mappingViewModel.eventFlow.distinctUntilChanged().collect { event ->
             when (event) {
@@ -918,7 +929,9 @@ fun MappingScreen(
 
     }
 
-
+    LaunchedEffect(true){
+        Timber.v("Successfully recomposed in MappingScreen")
+    }
 
 
 
