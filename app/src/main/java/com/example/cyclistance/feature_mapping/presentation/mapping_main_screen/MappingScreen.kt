@@ -30,6 +30,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_R
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.contexts.callPhoneNumber
+import com.example.cyclistance.core.utils.contexts.shareLocation
 import com.example.cyclistance.core.utils.contexts.startLocationServiceIntentAction
 import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.EmergencyCallViewModel
@@ -649,6 +650,22 @@ fun MappingScreen(
         }
     }
 
+    val shareLocation = remember(state.userLocation, state.user.location){{
+
+        val location = state.userLocation ?: state.user.location
+
+        if(location == null){
+            Toast.makeText(context, "Searching for GPS", Toast.LENGTH_SHORT).show()
+        }else{
+            context.shareLocation(
+                latitude = location.latitude!!,
+                longitude = location.longitude!!
+            )
+        }
+
+
+    }}
+
 
     LaunchedEffect(key1 = true, key2 = state.userLocation) {
 
@@ -940,7 +957,7 @@ fun MappingScreen(
                 is MappingUiEvent.OnToggleExpandableFAB -> onToggleExpandedFAB()
                 is MappingUiEvent.ShowEmergencyCallDialog -> showEmergencyCallDialog()
                 is MappingUiEvent.DismissEmergencyCallDialog -> dismissEmergencyCallDialog()
-                is MappingUiEvent.OpenFamilyTracker -> {}
+                is MappingUiEvent.OpenFamilyTracker -> shareLocation()
                 is MappingUiEvent.ShowRescueRequestDialog -> onShowRescueRequestDialog()
                 is MappingUiEvent.DismissRescueRequestDialog -> onDismissRescueRequestDialog()
                 is MappingUiEvent.CancelRequestHelp -> onClickCancelButton(event.id)
