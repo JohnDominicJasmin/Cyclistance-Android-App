@@ -98,6 +98,17 @@ class MappingViewModel @Inject constructor(
         subscribeToNearbyUsersChanges()
         subscribeToRescueTransactionUpdates()
         subscribeToTransactionLocationUpdates()
+        subscribeToBottomSheetTypeUpdates()
+    }
+
+    private fun subscribeToBottomSheetTypeUpdates(){
+        viewModelScope.launch(context = defaultDispatcher) {
+            mappingUseCase.getBottomSheetTypeUseCase()?.catch {
+                it.handleException()
+            }?.onEach {
+                _eventFlow.emit(value = MappingEvent.NewBottomSheetType(it))
+            }?.launchIn(this)
+        }
     }
 
     private fun loadData() {
@@ -898,7 +909,6 @@ class MappingViewModel @Inject constructor(
         unSubscribeToNearbyUsersChanges()
         unSubscribeToRescueTransactionUpdates()
         unSubscribeToTransactionLocationUpdates()
-
     }
 
 

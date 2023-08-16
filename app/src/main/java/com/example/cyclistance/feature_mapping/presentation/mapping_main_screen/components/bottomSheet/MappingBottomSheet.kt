@@ -63,8 +63,7 @@ fun MappingBottomSheet(
                             scope.launch {
                                 bottomSheetScaffoldState.bottomSheetState.collapse()
                             }
-                        }
-                    )
+                        })
 
                 }
 
@@ -87,9 +86,7 @@ fun MappingBottomSheet(
                         role = state.user.transaction?.role ?: "",
                         onGoingRescueModel = OnGoingRescueModel(
                             estimatedTime = state.rescuerETA,
-                            estimatedDistance = state.rescuerDistance
-                        )
-                    )
+                            estimatedDistance = state.rescuerDistance))
                 }
 
             }

@@ -4,6 +4,8 @@ import com.example.cyclistance.feature_mapping.domain.use_case.address.GetAddres
 import com.example.cyclistance.feature_mapping.domain.use_case.address.SetAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.GetBikeTypeUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.SetBikeTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.bottom_sheet_type.GetBottomSheetTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.bottom_sheet_type.SetBottomSheetTypeUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
@@ -54,6 +56,9 @@ data class MappingUseCase(
 
     val getAddressUseCase: GetAddressUseCase,
     val setAddressUseCase: SetAddressUseCase,
+
+    val getBottomSheetTypeUseCase: GetBottomSheetTypeUseCase,
+    val setBottomSheetTypeUseCase: SetBottomSheetTypeUseCase,
 
     val broadcastRescueTransactionUseCase: BroadcastRescueTransactionUseCase,
     val broadcastToNearbyCyclists: BroadcastToNearbyCyclists,

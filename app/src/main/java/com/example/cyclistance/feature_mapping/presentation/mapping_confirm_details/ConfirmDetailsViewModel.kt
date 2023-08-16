@@ -16,6 +16,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -102,6 +103,7 @@ class ConfirmDetailsViewModel @Inject constructor(
 
                     mappingUseCase.setAddressUseCase(address = confirmationDetail.address)
                     mappingUseCase.setBikeTypeUseCase(bikeType = confirmationDetail.bikeType)
+                    mappingUseCase.setBottomSheetTypeUseCase(bottomSheet = BottomSheetType.SearchAssistance.type)
 
                     mappingUseCase.confirmDetailsUseCase(
                         user = UserItem(
