@@ -38,7 +38,7 @@ class MappingSocketRepositoryImpl(
         }
     }
 
-    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel) {
+    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationSocketModel) {
         if (context.hasInternetConnection().not()) {
             throw MappingExceptions.NetworkException()
         }
@@ -62,14 +62,14 @@ class MappingSocketRepositoryImpl(
         }
     }
 
-    override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {
+    override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationSocketModel> {
 
         return liveLocation.getResult().retry(MappingConstants.API_CALL_RETRY_COUNT) {
             return@retry context.hasInternetConnection().not()
         }
     }
 
-    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel) {
+    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationSocketModel) {
         if (context.hasInternetConnection().not()) {
             throw MappingExceptions.NetworkException()
         }
