@@ -9,14 +9,14 @@ import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserItemDto
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toLocationDto
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toLocationModel
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.ConfirmationDetailModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
-import com.example.cyclistance.feature_mapping.domain.model.api.user.RescueRequest
-import com.example.cyclistance.feature_mapping.domain.model.api.user.RespondentModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.TransactionModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserAssistanceModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue.RescueRequestItemModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.ConfirmationDetailModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RescueRequest
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RespondentModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.TransactionModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserAssistanceModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 
 object UserMapper {
 

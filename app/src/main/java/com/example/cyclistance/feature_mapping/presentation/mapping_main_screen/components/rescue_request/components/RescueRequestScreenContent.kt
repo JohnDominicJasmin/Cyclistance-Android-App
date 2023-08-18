@@ -28,7 +28,7 @@ import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
 import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.feature_authentication.presentation.common.visible
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue.RescueRequestItemModel
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState

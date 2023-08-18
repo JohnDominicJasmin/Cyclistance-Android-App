@@ -1,6 +1,6 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event
 
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 
 
@@ -35,6 +35,9 @@ sealed class MappingEvent{
     object DestinationReached: MappingEvent()
     object FailedToCalculateDistance: MappingEvent()
     data class RemoveRespondentFailed(val reason: String = "Failed to remove respondent"): MappingEvent()
+
+    object ReportIncidentSuccess: MappingEvent()
+    data class ReportIncidentFailed(val reason: String): MappingEvent()
 
 
 

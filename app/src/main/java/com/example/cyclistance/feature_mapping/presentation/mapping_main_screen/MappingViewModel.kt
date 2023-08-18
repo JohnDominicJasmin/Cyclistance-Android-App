@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
 import com.example.cyclistance.core.utils.validation.FormatterUtils
-import com.example.cyclistance.core.utils.validation.FormatterUtils.findUser
 import com.example.cyclistance.core.utils.validation.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.validation.FormatterUtils.isLocationAvailable
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
@@ -15,15 +14,16 @@ import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toRescueRe
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.helper.TrackingStateHandler
 import com.example.cyclistance.feature_mapping.domain.model.Role
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
-import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
-import com.example.cyclistance.feature_mapping.domain.model.api.user.RescueRequest
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserAssistanceModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue.RescueRequestItemModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RescueRequest
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserAssistanceModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
@@ -32,9 +32,9 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
-import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.SphericalUtil
 import com.mapbox.geojson.Point
+import com.mapbox.mapboxsdk.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
@@ -54,6 +54,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import com.google.android.gms.maps.model.LatLng as GoogleLatLng
 
 @HiltViewModel
 class MappingViewModel @Inject constructor(
@@ -79,18 +80,27 @@ class MappingViewModel @Inject constructor(
 
     private val _eventFlow: MutableSharedFlow<MappingEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingEvent> = _eventFlow.asSharedFlow()
-    private var travelledPath: MutableList<LatLng> = mutableStateListOf()
-    private var _nearbyCyclistState = mutableStateListOf<UserItem>()
-    val nearbyCyclistState = _nearbyCyclistState
+    private var travelledPath: MutableList<GoogleLatLng> = mutableStateListOf()
+
 
 
     init {
-        trackingHandler = TrackingStateHandler(
-            state = _state,
-            eventFlow = _eventFlow,
-            nearbyCyclist = _nearbyCyclistState)
+        trackingHandler = TrackingStateHandler(state = _state, eventFlow = _eventFlow)
         loadData()
         observeDataChanges()
+        requestHazardousLane()
+    }
+
+    private fun requestHazardousLane(){
+        viewModelScope.launch {
+            runCatching {
+                mappingUseCase.requestHazardousLaneUseCase()
+            }.onSuccess {
+                Timber.v("SUCCESS REQUESTING HAZARDOUS LANE")
+            }.onFailure {
+                Timber.e("ERROR REQUESTING HAZARDOUS LANE: ${it.message}")
+            }
+        }
     }
 
     private fun observeDataChanges() {
@@ -99,8 +109,21 @@ class MappingViewModel @Inject constructor(
         subscribeToRescueTransactionUpdates()
         subscribeToTransactionLocationUpdates()
         subscribeToBottomSheetTypeUpdates()
+        subscribeToHazardousLaneUpdates()
     }
 
+    private fun subscribeToHazardousLaneUpdates(){
+        viewModelScope.launch {
+            mappingUseCase.newHazardousLaneUseCase().catch {
+                Timber.e("ERROR GETTING HAZARDOUS LANE: ${it.message}")
+            }.onEach { hazardousLane ->
+                _state.update {
+                    it.copy(hazardousLane = hazardousLane)
+                }
+
+            }.launchIn(this)
+        }
+    }
     private fun subscribeToBottomSheetTypeUpdates(){
         viewModelScope.launch(context = defaultDispatcher) {
             mappingUseCase.getBottomSheetTypeUseCase()?.catch {
@@ -187,7 +210,7 @@ class MappingViewModel @Inject constructor(
     private fun acceptRescueRequest(id: String) {
         viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
-            val rescuer = nearbyCyclistState.findUser(id) ?: return@launch
+            val rescuer = state.value.nearbyCyclist?.findUser(id) ?: return@launch
             _state.update { it.copy(rescueRequestAcceptedUser = rescuer) }
             val transactionId = trackingHandler.getTransactionId(rescuer)
             val user = state.value.user
@@ -327,8 +350,8 @@ class MappingViewModel @Inject constructor(
     private suspend fun broadcastToNearbyCyclists() {
         val location = state.value.userLocation ?: return
         runCatching {
-            mappingUseCase.broadcastToNearbyCyclists(
-                locationModel = LiveLocationWSModel(
+            mappingUseCase.nearbyCyclistsUseCase(
+                locationModel = LiveLocationSocketModel(
                     latitude = location.latitude,
                     longitude = location.longitude
                 )
@@ -392,6 +415,7 @@ class MappingViewModel @Inject constructor(
 
             is MappingVmEvent.SubscribeToDataChanges -> {
                 observeDataChanges()
+                requestHazardousLane()
             }
 
 
@@ -436,13 +460,34 @@ class MappingViewModel @Inject constructor(
                 clearTravelledPath()
             }
 
+            is MappingVmEvent.ReportIncident -> {
+                reportIncident(label = event.label, latLng = event.latLng)
+            }
+
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
+    private fun reportIncident(label: String, latLng: LatLng){
+        viewModelScope.launch {
+            runCatching {
+                mappingUseCase.newHazardousLaneUseCase(hazardousLaneMarker = HazardousLaneMarker(
+                    id = getId() + System.currentTimeMillis(),
+                    idCreator = getId(),
+                    latitude = latLng.latitude,
+                    longitude = latLng.longitude,
+                    label = label
+                ))
+            }.onSuccess {
+                _eventFlow.emit(value = MappingEvent.ReportIncidentSuccess)
+            }.onFailure {
+                _eventFlow.emit(value = MappingEvent.ReportIncidentFailed(reason = it.message ?: "Failed to report incident"))
+            }
+        }
+    }
 
     private suspend fun calculateSelectedRescueeDistance(userLocation: LocationModel?, id: String) {
-        val selectedRescuee = nearbyCyclistState.findUser(id) ?: return
+        val selectedRescuee = state.value.nearbyCyclist?.findUser(id) ?: return
         val selectedRescueeLocation = selectedRescuee.location
 
 
@@ -484,7 +529,7 @@ class MappingViewModel @Inject constructor(
         }
         getTransactionLocationUpdatesJob =
             viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
-                mappingUseCase.getTransactionLocationUpdatesUseCase().distinctUntilChanged().catch {
+                mappingUseCase.transactionLocationUseCase().distinctUntilChanged().catch {
                     Timber.e("ERROR GETTING TRANSACTION LOCATION: ${it.message}")
                 }.onEach { liveLocation ->
                     trackingHandler.updateTransactionLocation(location = liveLocation)
@@ -495,7 +540,7 @@ class MappingViewModel @Inject constructor(
             }
     }
 
-    private suspend fun LiveLocationWSModel.updateTransactionDistance() {
+    private suspend fun LiveLocationSocketModel.updateTransactionDistance() {
         coroutineScope {
             val rescueTransaction = state.value.userLocation
             latitude ?: return@coroutineScope
@@ -520,7 +565,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun LiveLocationWSModel.updateTransactionETA() {
+    private fun LiveLocationSocketModel.updateTransactionETA() {
         val userLocation = state.value.userLocation
         userLocation ?: return
         this.latitude ?: return
@@ -679,11 +724,13 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun NearbyCyclist.updateNearbyCyclists() {
-        _nearbyCyclistState.apply {
-            addAll(this@updateNearbyCyclists.users)
-            distinct()
-        }
 
+        _state.update {
+            it.copy(nearbyCyclist = NearbyCyclist())
+        }
+        _state.update {
+            it.copy(nearbyCyclist = this)
+        }
     }
 
     private suspend fun broadcastRescueTransactionToRespondent(location: LocationModel) {
@@ -691,8 +738,8 @@ class MappingViewModel @Inject constructor(
         runCatching {
 
             val user = state.value.user
-            mappingUseCase.broadcastRescueTransactionToRespondent(
-                LiveLocationWSModel(
+            mappingUseCase.transactionLocationUseCase(
+                LiveLocationSocketModel(
                     latitude = location.latitude,
                     longitude = location.longitude,
                     room = rescueTransaction.id
@@ -786,7 +833,7 @@ class MappingViewModel @Inject constructor(
         if(isUserRescuer) {
             trackingHandler.setSpeed(location.speed)
             trackingHandler.getTopSpeed(location.speed)
-            travelledPath.add(element = LatLng(location.latitude!!, location.longitude!!))
+            travelledPath.add(element = GoogleLatLng(location.latitude!!, location.longitude!!))
             val distance = SphericalUtil.computeLength(travelledPath).formatToDistanceKm()
             trackingHandler.setTravelledDistance(distance)
         }
@@ -800,10 +847,10 @@ class MappingViewModel @Inject constructor(
 
         getUsersUpdatesJob = viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
-            mappingUseCase.getUserUpdatesUseCase().catch {
+            mappingUseCase.nearbyCyclistsUseCase().catch {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
             }.onEach {
-                Timber.v("NEW WEBSOCKET UPDATES: subscribeToNearbyUsersChanges:: ${it.users.size}")
+                Timber.v("NEW WEBSOCKET UPDATES: subscribeToNearbyUsersChanges:: ${it.users}")
                 it.getUser()
                 it.updateNearbyCyclists()
                 trackingHandler.updateClient()

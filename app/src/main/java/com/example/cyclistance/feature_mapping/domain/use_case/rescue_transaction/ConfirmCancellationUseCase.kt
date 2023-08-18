@@ -1,7 +1,7 @@
 package com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction
 
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 
 class ConfirmCancellationUseCase(private val repository : MappingRepository) {

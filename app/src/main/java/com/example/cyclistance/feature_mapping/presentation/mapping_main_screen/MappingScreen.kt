@@ -63,7 +63,6 @@ import com.mapbox.mapboxsdk.location.modes.CameraMode
 import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -87,7 +86,6 @@ fun MappingScreen(
     val emergencyState by emergencyViewModel.state.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
-    val nearbyCyclist = mappingViewModel.nearbyCyclistState.distinct()
     var uiState by rememberSaveable { mutableStateOf(MappingUiState()) }
     var cameraState by rememberSaveable { mutableStateOf(CameraState()) }
     val locationComponentOptions = MappingUtils.rememberLocationComponentOptions()
@@ -507,10 +505,12 @@ fun MappingScreen(
     }
 
     val onMapLongClick = remember {
-        {
+        { latLng: LatLng ->
             onDismissRescueeBanner()
             onCollapseExpandableFAB()
-            uiState = uiState.copy(bottomSheetType = BottomSheetType.ReportIncident.type).also {
+            uiState = uiState.copy(
+                lastLongPressedLocation = latLng,
+                bottomSheetType = BottomSheetType.ReportIncident.type).also {
                 expandBottomSheet()
             }
         }
@@ -563,8 +563,14 @@ fun MappingScreen(
     }
 
     val onClickReportIncident = remember {
-        {
-
+        { incidentLabel: String ->
+            uiState.lastLongPressedLocation?.let { locationLatLng ->
+                mappingViewModel.onEvent(
+                    event = MappingVmEvent.ReportIncident(
+                        label = incidentLabel,
+                        latLng = locationLatLng
+                    ))
+            }
         }
     }
 
@@ -682,7 +688,7 @@ fun MappingScreen(
 
     LaunchedEffect(key1 = true) {
 
-        mappingViewModel.eventFlow.distinctUntilChanged().collect { event ->
+        mappingViewModel.eventFlow.collect { event ->
             when (event) {
 
 
@@ -823,11 +829,20 @@ fun MappingScreen(
                     }
                 }
 
+                is MappingEvent.ReportIncidentFailed -> {
+                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
+                }
 
+                MappingEvent.ReportIncidentSuccess -> {
+                    Toast.makeText(context, "Incident Reported", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
 
+    LaunchedEffect(key1 = state.hazardousLane?.markers?.size){
+        Timber.v("Hazardous Lane Size: ${state.hazardousLane?.markers?.size}")
+    }
 
     LaunchedEffect(key1 = uiState.routeDirection, key2 = mapboxMap) {
 
@@ -873,7 +888,7 @@ fun MappingScreen(
 
 
     LaunchedEffect(key1 = hasInternetConnection) {
-        val nearbyCyclistLoaded = nearbyCyclist.isNotEmpty()
+        val nearbyCyclistLoaded = state.nearbyCyclist?.users?.isNotEmpty() ?: false
         val userLoaded = state.user.id != null
         val dataHaveBeenLoaded = userLoaded && nearbyCyclistLoaded
 
@@ -931,16 +946,12 @@ fun MappingScreen(
 
     }
 
-    LaunchedEffect(true){
-        Timber.v("Successfully recomposed in MappingScreen")
-    }
 
 
 
     MappingScreenContent(
         modifier = Modifier.padding(paddingValues),
         state = state,
-        nearbyCyclist = nearbyCyclist,
         locationPermissionState = foregroundLocationPermissionsState,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         hasTransaction = hasTransaction,
@@ -984,8 +995,8 @@ fun MappingScreen(
                 is MappingUiEvent.ConfirmRequestHelp -> onClickConfirmButton(event.id)
                 is MappingUiEvent.DismissAlertDialog -> onDismissAlertDialog()
                 is MappingUiEvent.OnCollapseExpandableFAB -> onCollapseExpandableFAB()
-                is MappingUiEvent.OnMapLongClick -> onMapLongClick()
-                is MappingUiEvent.OnReportIncident -> onClickReportIncident()
+                is MappingUiEvent.OnMapLongClick -> onMapLongClick(event.latLng)
+                is MappingUiEvent.OnReportIncident -> onClickReportIncident(event.labelIncident)
                 is MappingUiEvent.DismissSinoTrackWebView -> onDismissSinoTrackWebView()
                 is MappingUiEvent.ShowSinoTrackWebView -> onShowSinoTrackWebView()
                 is MappingUiEvent.DismissRescueResultsDialog -> onDismissRescueResultsDialog()

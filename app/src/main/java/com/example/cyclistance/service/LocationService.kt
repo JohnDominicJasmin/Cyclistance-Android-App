@@ -12,7 +12,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_STAR
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_STOP
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATION_SERVICE_CHANNEL_ID
 import com.example.cyclistance.feature_mapping.domain.location.LocationClient
-import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

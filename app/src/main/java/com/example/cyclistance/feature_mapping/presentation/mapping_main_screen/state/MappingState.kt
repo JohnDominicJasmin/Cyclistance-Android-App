@@ -2,9 +2,11 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
-import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLane
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
 import kotlinx.parcelize.Parcelize
 
@@ -25,6 +27,8 @@ data class MappingState(
     val rescuerDistance: String = "",
     val newRescueRequest: NewRescueRequestsModel? = null,
     val speedometerState: SpeedometerState = SpeedometerState(),
+    val hazardousLane: HazardousLane? = null,
+    val nearbyCyclist: NearbyCyclist? = null,
 ) : Parcelable{
 
 

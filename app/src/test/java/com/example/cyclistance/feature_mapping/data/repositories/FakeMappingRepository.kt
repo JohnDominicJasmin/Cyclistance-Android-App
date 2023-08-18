@@ -3,12 +3,12 @@ package com.example.cyclistance.feature_mapping.data.repositories
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
 import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Respondent
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.mapbox.geojson.Point
 import kotlinx.coroutines.flow.Flow
@@ -24,7 +24,7 @@ class FakeMappingRepository : MappingRepository {
         val bikeType = MutableStateFlow("")
         val address = MutableStateFlow("")
         val nearbyCyclist = MutableStateFlow(NearbyCyclist())
-        val liveLocation = MutableStateFlow(LiveLocationWSModel())
+        val liveLocation = MutableStateFlow(LiveLocationSocketModel())
         val rescueTransaction = MutableStateFlow(RescueTransaction())
 
         val users = nearbyCyclist.value.users.toMutableList()
@@ -203,14 +203,14 @@ class FakeMappingRepository : MappingRepository {
         return rescueTransaction
     }
 
-    override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {
+    override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationSocketModel> {
         if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
         return liveLocation
     }
 
-    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel) {
+    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationSocketModel) {
         if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()
         }
@@ -230,7 +230,7 @@ class FakeMappingRepository : MappingRepository {
         println("broadcastRescueTransaction")
     }
 
-    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel) {
+    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationSocketModel) {
 
         if (shouldReturnNetworkError) {
             throw MappingExceptions.NetworkException()

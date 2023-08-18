@@ -22,12 +22,13 @@ import com.example.cyclistance.feature_mapping.domain.use_case.user.DeleteRescue
 import com.example.cyclistance.feature_mapping.domain.use_case.user.DeleteUserUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.user.GetUserByIdUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.user.GetUsersUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.DeleteHazardousLaneUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.NewHazardousLaneUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.RequestHazardousLaneUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.TransactionLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.BroadcastToNearbyCyclists
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.GetUserUpdatesUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.NearbyCyclistsUseCase
 
 data class MappingUseCase(
 
@@ -61,11 +62,12 @@ data class MappingUseCase(
     val setBottomSheetTypeUseCase: SetBottomSheetTypeUseCase,
 
     val broadcastRescueTransactionUseCase: BroadcastRescueTransactionUseCase,
-    val broadcastToNearbyCyclists: BroadcastToNearbyCyclists,
-    val broadcastRescueTransactionToRespondent: BroadcastTransactionLocationUseCase,
+    val nearbyCyclistsUseCase: NearbyCyclistsUseCase,
+    val transactionLocationUseCase: TransactionLocationUseCase,
     val getRescueTransactionUpdatesUseCase: GetRescueTransactionUpdatesUseCase,
-    val getUserUpdatesUseCase: GetUserUpdatesUseCase,
-    val getTransactionLocationUpdatesUseCase: GetTransactionLocationUpdatesUseCase,
     val getRouteDirectionsUseCase: GetRouteDirectionsUseCase,
     val getCalculatedDistanceUseCase: GetCalculatedDistanceUseCase,
+    val newHazardousLaneUseCase: NewHazardousLaneUseCase,
+    val deleteHazardousLaneUseCase: DeleteHazardousLaneUseCase,
+    val requestHazardousLaneUseCase: RequestHazardousLaneUseCase
     )

@@ -1,6 +1,6 @@
 package com.example.cyclistance.feature_mapping.domain.use_case.user
 
-import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import kotlinx.coroutines.flow.Flow
 

@@ -1,13 +1,13 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils
 
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.feature_mapping.domain.model.api.user.ConfirmationDetailModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.RescueRequest
-import com.example.cyclistance.feature_mapping.domain.model.api.user.RespondentModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.TransactionModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserAssistanceModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.ConfirmationDetailModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RescueRequest
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RespondentModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.TransactionModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserAssistanceModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.BikeType
 

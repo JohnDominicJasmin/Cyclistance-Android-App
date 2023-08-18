@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event
 
 import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
+import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
 
 sealed class MappingUiEvent{
@@ -20,7 +21,7 @@ sealed class MappingUiEvent{
     object DismissEmergencyCallDialog : MappingUiEvent()
     data class RescueeMapIconSelected(val id: String) : MappingUiEvent()
     object OnMapClick : MappingUiEvent()
-    object OnMapLongClick : MappingUiEvent()
+    data class OnMapLongClick(val latLng: LatLng) : MappingUiEvent()
     object DismissBanner : MappingUiEvent()
     object LocateUser : MappingUiEvent()
     object RouteOverview : MappingUiEvent()
@@ -29,7 +30,7 @@ sealed class MappingUiEvent{
     object OnRequestNavigationCameraToOverview : MappingUiEvent()
     object DismissLocationPermission : MappingUiEvent()
     object DismissPhonePermission : MappingUiEvent()
-    data class OnReportIncident(val incident: String) : MappingUiEvent()
+    data class OnReportIncident(val labelIncident: String) : MappingUiEvent()
     object OnToggleExpandableFAB : MappingUiEvent()
     object OnCollapseExpandableFAB : MappingUiEvent()
 
