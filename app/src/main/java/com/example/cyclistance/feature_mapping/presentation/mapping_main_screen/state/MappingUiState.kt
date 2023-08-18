@@ -5,6 +5,7 @@ import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.utils.annotations.StableState
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
+import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.parcelize.Parcelize
 
 
@@ -27,6 +28,7 @@ data class MappingUiState(
     val isEmergencyCallDialogVisible: Boolean = false,
     val isRescueResultsDialogVisible: Boolean = false,
     val selectedPhoneNumber: String = "",
+    val lastLongPressedLocation: LatLng? = null,
 
 
     ) : Parcelable

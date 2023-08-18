@@ -155,7 +155,7 @@ fun MappingMapsScreen(
         }
 
         mapboxMap?.addOnMapLongClickListener {
-            event(MappingUiEvent.OnMapLongClick)
+            event(MappingUiEvent.OnMapLongClick(it))
             true
         }
 

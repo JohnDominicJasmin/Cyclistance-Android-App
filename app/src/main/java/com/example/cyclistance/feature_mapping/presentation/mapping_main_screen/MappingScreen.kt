@@ -507,10 +507,12 @@ fun MappingScreen(
     }
 
     val onMapLongClick = remember {
-        {
+        { latLng: LatLng ->
             onDismissRescueeBanner()
             onCollapseExpandableFAB()
-            uiState = uiState.copy(bottomSheetType = BottomSheetType.ReportIncident.type).also {
+            uiState = uiState.copy(
+                lastLongPressedLocation = latLng,
+                bottomSheetType = BottomSheetType.ReportIncident.type).also {
                 expandBottomSheet()
             }
         }
@@ -987,8 +989,8 @@ fun MappingScreen(
                 is MappingUiEvent.ConfirmRequestHelp -> onClickConfirmButton(event.id)
                 is MappingUiEvent.DismissAlertDialog -> onDismissAlertDialog()
                 is MappingUiEvent.OnCollapseExpandableFAB -> onCollapseExpandableFAB()
-                is MappingUiEvent.OnMapLongClick -> onMapLongClick()
-                is MappingUiEvent.OnReportIncident -> onClickReportIncident()
+                is MappingUiEvent.OnMapLongClick -> onMapLongClick(event.latLng)
+                is MappingUiEvent.OnReportIncident -> onClickReportIncident(event.labelIncident)
                 is MappingUiEvent.DismissSinoTrackWebView -> onDismissSinoTrackWebView()
                 is MappingUiEvent.ShowSinoTrackWebView -> onShowSinoTrackWebView()
                 is MappingUiEvent.DismissRescueResultsDialog -> onDismissRescueResultsDialog()
