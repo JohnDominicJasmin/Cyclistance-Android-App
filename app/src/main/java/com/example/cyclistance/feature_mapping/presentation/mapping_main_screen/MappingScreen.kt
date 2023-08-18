@@ -63,7 +63,6 @@ import com.mapbox.mapboxsdk.location.modes.CameraMode
 import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -690,7 +689,7 @@ fun MappingScreen(
 
     LaunchedEffect(key1 = true) {
 
-        mappingViewModel.eventFlow.distinctUntilChanged().collect { event ->
+        mappingViewModel.eventFlow.collect { event ->
             when (event) {
 
 
