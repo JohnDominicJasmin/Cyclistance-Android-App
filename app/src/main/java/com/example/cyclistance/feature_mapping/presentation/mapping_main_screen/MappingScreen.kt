@@ -836,6 +836,9 @@ fun MappingScreen(
         }
     }
 
+    LaunchedEffect(key1 = state.hazardousLane?.markers?.size){
+        Timber.v("Hazardous Lane Size: ${state.hazardousLane?.markers?.size}")
+    }
 
     LaunchedEffect(key1 = uiState.routeDirection, key2 = mapboxMap) {
 
