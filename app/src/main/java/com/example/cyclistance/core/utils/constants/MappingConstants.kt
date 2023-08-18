@@ -46,6 +46,7 @@ object MappingConstants {
     const val BUTTON_ANIMATION_DURATION = 1500L
     const val NEW_HAZARDOUS_LANE = "new_hazardous_lane"
     const val DELETE_HAZARDOUS_LANE = "delete_hazardous_lane"
+    const val GET_ALL_HAZARDOUS_LANE = "get_all_hazardous_lane"
 
     const val INJURY_TEXT = "Injury"
     const val BROKEN_FRAME_TEXT  = "Broken Frame"
