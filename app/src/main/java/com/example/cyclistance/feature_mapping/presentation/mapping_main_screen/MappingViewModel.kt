@@ -99,8 +99,18 @@ class MappingViewModel @Inject constructor(
         subscribeToRescueTransactionUpdates()
         subscribeToTransactionLocationUpdates()
         subscribeToBottomSheetTypeUpdates()
+        subscribeToHazardousLaneUpdates()
     }
 
+    private fun subscribeToHazardousLaneUpdates(){
+        viewModelScope.launch {
+            mappingUseCase.newHazardousLaneUseCase().catch {
+                Timber.e("ERROR GETTING HAZARDOUS LANE: ${it.message}")
+            }.onEach {
+                Timber.v("NEW HAZARDOUS LANE: $it")
+            }.launchIn(this)
+        }
+    }
     private fun subscribeToBottomSheetTypeUpdates(){
         viewModelScope.launch(context = defaultDispatcher) {
             mappingUseCase.getBottomSheetTypeUseCase()?.catch {
