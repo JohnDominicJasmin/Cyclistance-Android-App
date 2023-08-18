@@ -337,8 +337,8 @@ class MappingViewModel @Inject constructor(
     private suspend fun broadcastToNearbyCyclists() {
         val location = state.value.userLocation ?: return
         runCatching {
-            mappingUseCase.broadcastToNearbyCyclists(
-                locationModel = LiveLocationWSModel(
+            mappingUseCase.nearbyCyclistsUseCase(
+                locationModel = LiveLocationSocketModel(
                     latitude = location.latitude,
                     longitude = location.longitude
                 )
@@ -494,7 +494,7 @@ class MappingViewModel @Inject constructor(
         }
         getTransactionLocationUpdatesJob =
             viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
-                mappingUseCase.getTransactionLocationUpdatesUseCase().distinctUntilChanged().catch {
+                mappingUseCase.transactionLocationUseCase().distinctUntilChanged().catch {
                     Timber.e("ERROR GETTING TRANSACTION LOCATION: ${it.message}")
                 }.onEach { liveLocation ->
                     trackingHandler.updateTransactionLocation(location = liveLocation)
@@ -505,7 +505,7 @@ class MappingViewModel @Inject constructor(
             }
     }
 
-    private suspend fun LiveLocationWSModel.updateTransactionDistance() {
+    private suspend fun LiveLocationSocketModel.updateTransactionDistance() {
         coroutineScope {
             val rescueTransaction = state.value.userLocation
             latitude ?: return@coroutineScope
@@ -530,7 +530,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun LiveLocationWSModel.updateTransactionETA() {
+    private fun LiveLocationSocketModel.updateTransactionETA() {
         val userLocation = state.value.userLocation
         userLocation ?: return
         this.latitude ?: return
@@ -701,8 +701,8 @@ class MappingViewModel @Inject constructor(
         runCatching {
 
             val user = state.value.user
-            mappingUseCase.broadcastRescueTransactionToRespondent(
-                LiveLocationWSModel(
+            mappingUseCase.transactionLocationUseCase(
+                LiveLocationSocketModel(
                     latitude = location.latitude,
                     longitude = location.longitude,
                     room = rescueTransaction.id
@@ -810,7 +810,7 @@ class MappingViewModel @Inject constructor(
 
         getUsersUpdatesJob = viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
-            mappingUseCase.getUserUpdatesUseCase().catch {
+            mappingUseCase.nearbyCyclistsUseCase().catch {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
             }.onEach {
                 Timber.v("NEW WEBSOCKET UPDATES: subscribeToNearbyUsersChanges:: ${it.users.size}")
