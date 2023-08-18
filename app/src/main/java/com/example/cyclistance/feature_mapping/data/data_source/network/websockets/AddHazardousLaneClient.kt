@@ -5,8 +5,7 @@ import com.example.cyclistance.feature_mapping.data.data_source.network.dto.haza
 import com.example.cyclistance.feature_mapping.data.mapper.HazardousLaneMapper.toHazardousLane
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLane
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
-import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClientReceiver
-import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClientSender
+import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClient
 import com.google.gson.Gson
 import io.socket.client.Socket
 import io.socket.emitter.Emitter
@@ -17,7 +16,7 @@ import kotlinx.coroutines.flow.callbackFlow
 
 class AddHazardousLaneClient(
     private val socket: Socket
-) : WebSocketClientReceiver<HazardousLane>, WebSocketClientSender<HazardousLaneMarker> {
+) : WebSocketClient<HazardousLane,HazardousLaneMarker> {
 
     override suspend fun getResult(): Flow<HazardousLane> {
         return callbackFlow {

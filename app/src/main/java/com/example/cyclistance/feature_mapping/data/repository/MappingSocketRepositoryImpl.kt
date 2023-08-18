@@ -20,11 +20,12 @@ import kotlin.coroutines.CoroutineContext
 
 class MappingSocketRepositoryImpl(
     private val context: Context,
-    private val nearbyCyclistClient: WebSocketClientSender<LiveLocationSocketModel>, WebSocketClientReceiver<NearbyCyclist>,
+    private val nearbyCyclistClient: WebSocketClient<NearbyCyclist, LiveLocationSocketModel>,
     private val rescueTransactionClient: WebSocketClient<RescueTransaction, LiveLocationSocketModel>,
     private val liveLocation: WebSocketClient<LiveLocationSocketModel, LiveLocationSocketModel>,
     private val addHazardousLaneClient: WebSocketClient<HazardousLane, HazardousLaneMarker>,
-    private val deleteHazardousLane: WebSocketClient<HazardousLane, String>
+    private val deleteHazardousLane: WebSocketResultSender<String>,
+    private val requestHazardousLaneClient: WebSocketResultSender<Any>
 
 
     ) : MappingSocketRepository {
