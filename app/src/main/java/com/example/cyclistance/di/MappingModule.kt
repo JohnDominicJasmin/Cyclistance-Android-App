@@ -9,7 +9,8 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACH
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.AddHazardousLaneClient
-import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.DeleteHazardousLane
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.DeleteHazardousLaneClient
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.RequestHazardousLaneClient
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.RescueTransactionClient
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.TransactionLiveLocationClient
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.UserClient
@@ -35,12 +36,13 @@ import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transactio
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDirectionsUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.user.*
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.DeleteHazardousLaneUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.NewHazardousLaneUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.RequestHazardousLaneUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.TransactionLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.BroadcastToNearbyCyclists
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.GetUserUpdatesUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.NearbyCyclistsUseCase
 import com.google.gson.GsonBuilder
 import com.mapbox.api.optimization.v1.MapboxOptimization
 import dagger.Module
@@ -121,15 +123,16 @@ object MappingModule {
         val rescueTransactionClient = RescueTransactionClient(socket)
         val liveLocation = TransactionLiveLocationClient(socket)
         val addHazardousLaneClient = AddHazardousLaneClient(socket)
-        val deleteHazardousLane = DeleteHazardousLane(socket)
+        val deleteHazardousLaneClient = DeleteHazardousLaneClient(socket)
+        val requestHazardousLaneClient = RequestHazardousLaneClient(socket)
         return MappingSocketRepositoryImpl(
             context = context,
             nearbyCyclistClient = nearbyCyclistClient,
             rescueTransactionClient = rescueTransactionClient,
             liveLocation = liveLocation,
             addHazardousLaneClient = addHazardousLaneClient,
-            deleteHazardousLane = deleteHazardousLane
-
+            deleteHazardousLane = deleteHazardousLaneClient,
+            requestHazardousLaneClient = requestHazardousLaneClient
 
         )
     }
@@ -168,13 +171,10 @@ object MappingModule {
             setAddressUseCase = SetAddressUseCase(mappingUiStoreRepository),
             broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(
                 mappingSocketRepository),
-            broadcastToNearbyCyclists = BroadcastToNearbyCyclists(mappingSocketRepository),
+            nearbyCyclistsUseCase = NearbyCyclistsUseCase(mappingSocketRepository),
             getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(
                 mappingSocketRepository),
-            getUserUpdatesUseCase = GetUserUpdatesUseCase(mappingSocketRepository),
-            broadcastRescueTransactionToRespondent = BroadcastTransactionLocationUseCase(
-                mappingSocketRepository),
-            getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(
+            transactionLocationUseCase = TransactionLocationUseCase(
                 mappingSocketRepository),
             deleteRescueRespondentUseCase = DeleteRescueRespondentUseCase(mappingRepository),
             addRescueRespondentUseCase = AddRescueRespondentUseCase(mappingRepository),
@@ -184,7 +184,10 @@ object MappingModule {
             getRouteDirectionsUseCase = GetRouteDirectionsUseCase(mappingRepository),
             getCalculatedDistanceUseCase = GetCalculatedDistanceUseCase(mappingRepository),
             getBottomSheetTypeUseCase = GetBottomSheetTypeUseCase(mappingUiStoreRepository),
-            setBottomSheetTypeUseCase = SetBottomSheetTypeUseCase(mappingUiStoreRepository)
+            setBottomSheetTypeUseCase = SetBottomSheetTypeUseCase(mappingUiStoreRepository),
+            newHazardousLaneUseCase = NewHazardousLaneUseCase(mappingSocketRepository),
+            deleteHazardousLaneUseCase = DeleteHazardousLaneUseCase(mappingSocketRepository),
+            requestHazardousLaneUseCase = RequestHazardousLaneUseCase(mappingSocketRepository)
         )
     }
 

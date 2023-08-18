@@ -4,11 +4,14 @@ import android.content.Context
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
-import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLane
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.repository.MappingSocketRepository
 import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClient
+import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketResultSender
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.retry
@@ -87,6 +90,24 @@ class MappingSocketRepositoryImpl(
         }
         return withContext(scope) {
             addHazardousLaneClient.broadcastEvent(hazardousLaneMarker)
+        }
+    }
+
+    override suspend fun deleteHazardousLane(id: String) {
+        if (context.hasInternetConnection().not()) {
+            throw MappingExceptions.NetworkException()
+        }
+        return withContext(scope) {
+            deleteHazardousLane.broadcastEvent(id)
+        }
+    }
+
+    override suspend fun requestHazardousLane() {
+        if (context.hasInternetConnection().not()) {
+            throw MappingExceptions.NetworkException()
+        }
+        return withContext(scope) {
+            requestHazardousLaneClient.broadcastEvent()
         }
     }
 }
