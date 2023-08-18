@@ -97,7 +97,6 @@ fun BottomSheetOnGoingRescue(
                         currentSpeed = onGoingRescueModel.currentSpeed,
                         distance = onGoingRescueModel.ridingDistance,
                         maxSpeed = onGoingRescueModel.maxSpeed,
-                        time = onGoingRescueModel.ridingTime
                     )
                 }
 
@@ -172,8 +171,7 @@ fun SpeedometerSection(
     modifier: Modifier = Modifier,
     currentSpeed: String,
     distance: String,
-    maxSpeed: String,
-    time: String) {
+    maxSpeed: String) {
 
     Column(
         modifier = modifier.padding(vertical = 4.dp),
@@ -241,20 +239,8 @@ fun SpeedometerSection(
                         .weight(0.3f),
                     title = "Max Speed",
                     content = maxSpeed)
-
-                Divider(
-                    color = Black440, modifier = Modifier
-                        .fillMaxHeight()
-                        .width(1.dp))
-
-                ItemSpeed(
-                    modifier = Modifier
-                        .padding(vertical = 4.dp)
-                        .weight(0.3f),
-                    title = "Time",
-                    content = time)
-
             }
+
             Divider(
                 modifier = Modifier.fillMaxWidth(),
                 color = Black440,
@@ -346,7 +332,6 @@ private fun PreviewBottomSheetOnGoingRescueDark() {
                     currentSpeed = "13.3",
                     ridingDistance = "10.0 km",
                     maxSpeed = "36 km/h",
-                    ridingTime = "1:30:00",
                     estimatedDistance = "9.0 km",
                     estimatedTime = "1h 20m",
                 ),
@@ -378,7 +363,6 @@ private fun PreviewBottomSheetOnGoingRescueLight() {
                     currentSpeed = "13.3",
                     ridingDistance = "10.0 km",
                     maxSpeed = "36 km/h",
-                    ridingTime = "1:30:00",
                     estimatedDistance = "9.0 km",
                     estimatedTime = "1h 20m",
                 ),

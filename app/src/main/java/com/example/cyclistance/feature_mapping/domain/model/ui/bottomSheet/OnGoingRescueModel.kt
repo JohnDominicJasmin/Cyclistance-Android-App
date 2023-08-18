@@ -10,7 +10,6 @@ data class OnGoingRescueModel(
     val currentSpeed: String = "",
     val ridingDistance: String = "",
     val maxSpeed: String = "",
-    val ridingTime: String = "",
     val estimatedTime: String = "",
     val estimatedDistance: String = "",
 

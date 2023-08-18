@@ -91,7 +91,6 @@ fun MappingBottomSheet(
                             ridingDistance = state.speedometerState.travelledDistance,
                             maxSpeed = String.format("%.2f", state.speedometerState.topSpeed)))
 
-
                 }
 
             }

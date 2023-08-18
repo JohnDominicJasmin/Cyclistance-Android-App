@@ -30,7 +30,7 @@ object LocationServiceModule {
                 .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
                 .setInterval(MappingConstants.LOCATION_UPDATES_INTERVAL)
                 .setFastestInterval(MappingConstants.FASTEST_LOCATION_UPDATES_INTERVAL)
-                .setSmallestDisplacement(2f)
+                .setSmallestDisplacement(1.5f)
         }.value
     }
 
