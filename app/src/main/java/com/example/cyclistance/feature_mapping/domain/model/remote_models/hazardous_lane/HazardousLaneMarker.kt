@@ -9,6 +9,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class HazardousLaneMarker(
     val id: String = "",
+    val idCreator: String = "",
     val latitude: Double? = null,
     val longitude: Double? = null,
     val label: String = ""
