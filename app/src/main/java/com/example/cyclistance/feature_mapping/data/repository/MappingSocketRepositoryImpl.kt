@@ -17,10 +17,15 @@ import kotlin.coroutines.CoroutineContext
 
 class MappingSocketRepositoryImpl(
     private val context: Context,
-    private val rescueTransactionClient: WebSocketClient<RescueTransaction, LiveLocationWSModel>,
-    private val nearbyCyclistClient: WebSocketClient<NearbyCyclist, LiveLocationWSModel>,
-    private val liveLocation: WebSocketClient<LiveLocationWSModel, LiveLocationWSModel>,
-): MappingSocketRepository {
+    private val nearbyCyclistClient: WebSocketClientSender<LiveLocationSocketModel>, WebSocketClientReceiver<NearbyCyclist>,
+    private val rescueTransactionClient: WebSocketClient<RescueTransaction, LiveLocationSocketModel>,
+    private val liveLocation: WebSocketClient<LiveLocationSocketModel, LiveLocationSocketModel>,
+    private val addHazardousLaneClient: WebSocketClient<HazardousLane, HazardousLaneMarker>,
+    private val deleteHazardousLane: WebSocketClient<HazardousLane, String>
+
+
+    ) : MappingSocketRepository {
+
 
     private val scope: CoroutineContext = Dispatchers.IO
     override suspend fun getUserUpdates(): Flow<NearbyCyclist> {
@@ -66,6 +71,22 @@ class MappingSocketRepositoryImpl(
         }
         return withContext(scope) {
             liveLocation.broadcastEvent(locationModel)
+        }
+    }
+
+    override suspend fun getNewHazardousLaneUpdates(): Flow<HazardousLane> {
+
+        return addHazardousLaneClient.getResult().retry(MappingConstants.API_CALL_RETRY_COUNT) {
+            return@retry context.hasInternetConnection().not()
+        }
+    }
+
+    override suspend fun addNewHazardousLane(hazardousLaneMarker: HazardousLaneMarker) {
+        if (context.hasInternetConnection().not()) {
+            throw MappingExceptions.NetworkException()
+        }
+        return withContext(scope) {
+            addHazardousLaneClient.broadcastEvent(hazardousLaneMarker)
         }
     }
 }

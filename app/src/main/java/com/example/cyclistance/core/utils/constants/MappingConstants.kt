@@ -44,6 +44,8 @@ object MappingConstants {
     const val JOIN_LIVE_LOCATION_UPDATES = "joinLiveLocationUpdates"
     const val DEFAULT_BIKE_AVERAGE_SPEED_KM = 20.5
     const val BUTTON_ANIMATION_DURATION = 1500L
+    const val NEW_HAZARDOUS_LANE = "new_hazardous_lane"
+    const val DELETE_HAZARDOUS_LANE = "delete_hazardous_lane"
 
     const val INJURY_TEXT = "Injury"
     const val BROKEN_FRAME_TEXT  = "Broken Frame"

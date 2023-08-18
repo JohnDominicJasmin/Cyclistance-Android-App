@@ -9,8 +9,10 @@ interface MappingSocketRepository {
 
     suspend fun getUserUpdates(): Flow<NearbyCyclist>
     suspend fun getRescueTransactionUpdates(): Flow<RescueTransaction>
-    suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel>
-    suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel)
+    suspend fun getTransactionLocationUpdates(): Flow<LiveLocationSocketModel>
+    suspend fun getNewHazardousLaneUpdates(): Flow<HazardousLane>
+
+    suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationSocketModel)
     suspend fun broadcastRescueTransactionToRespondent()
     suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel)
 }
