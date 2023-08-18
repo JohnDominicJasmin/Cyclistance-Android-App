@@ -36,6 +36,9 @@ sealed class MappingEvent{
     object FailedToCalculateDistance: MappingEvent()
     data class RemoveRespondentFailed(val reason: String = "Failed to remove respondent"): MappingEvent()
 
+    object ReportIncidentSuccess: MappingEvent()
+    data class ReportIncidentFailed(val reason: String): MappingEvent()
+
 
 
 }

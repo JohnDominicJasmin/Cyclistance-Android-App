@@ -823,7 +823,13 @@ fun MappingScreen(
                     }
                 }
 
+                is MappingEvent.ReportIncidentFailed -> {
+                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
+                }
 
+                MappingEvent.ReportIncidentSuccess -> {
+                    Toast.makeText(context, "Incident Reported", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -931,9 +937,6 @@ fun MappingScreen(
 
     }
 
-    LaunchedEffect(true){
-        Timber.v("Successfully recomposed in MappingScreen")
-    }
 
 
 
