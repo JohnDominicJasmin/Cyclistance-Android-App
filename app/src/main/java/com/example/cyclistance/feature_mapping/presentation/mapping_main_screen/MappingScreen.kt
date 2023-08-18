@@ -86,7 +86,6 @@ fun MappingScreen(
     val emergencyState by emergencyViewModel.state.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
-    val nearbyCyclist = mappingViewModel.nearbyCyclistState.distinct()
     var uiState by rememberSaveable { mutableStateOf(MappingUiState()) }
     var cameraState by rememberSaveable { mutableStateOf(CameraState()) }
     val locationComponentOptions = MappingUtils.rememberLocationComponentOptions()
@@ -889,7 +888,7 @@ fun MappingScreen(
 
 
     LaunchedEffect(key1 = hasInternetConnection) {
-        val nearbyCyclistLoaded = nearbyCyclist.isNotEmpty()
+        val nearbyCyclistLoaded = state.nearbyCyclist?.users?.isNotEmpty() ?: false
         val userLoaded = state.user.id != null
         val dataHaveBeenLoaded = userLoaded && nearbyCyclistLoaded
 
@@ -953,7 +952,6 @@ fun MappingScreen(
     MappingScreenContent(
         modifier = Modifier.padding(paddingValues),
         state = state,
-        nearbyCyclist = nearbyCyclist,
         locationPermissionState = foregroundLocationPermissionsState,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         hasTransaction = hasTransaction,

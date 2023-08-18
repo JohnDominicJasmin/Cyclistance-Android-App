@@ -30,7 +30,6 @@ import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.Dial
 import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogPhonePermission
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call.EmergencyCallDialog
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.banner.MappingExpandableBanner
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
@@ -64,7 +63,6 @@ fun MappingScreenContent(
     isRescueCancelled: Boolean = false,
     isNavigating: Boolean,
     uiState: MappingUiState,
-    nearbyCyclist: List<UserItem>,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     event: (MappingUiEvent) -> Unit = {},
 ) {
@@ -143,7 +141,6 @@ fun MappingScreenContent(
                         isNavigating = isNavigating,
                         event = event,
                         uiState = uiState,
-                        nearbyCyclist = nearbyCyclist,
                     )
 
 

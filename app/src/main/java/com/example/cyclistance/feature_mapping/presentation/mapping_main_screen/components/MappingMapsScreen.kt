@@ -24,7 +24,6 @@ import com.example.cyclistance.core.utils.validation.FormatterUtils.getMapIconIm
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
@@ -64,14 +63,13 @@ fun MappingMapsScreen(
     isNavigating: Boolean,
     routeDirection: RouteDirection?,
     isRescueCancelled: Boolean,
-    nearbyCyclist: List<UserItem>,
     event: (MappingUiEvent) -> Unit
 //    requestNavigationCameraToOverview: () -> Unit, //todo use this one
 ) {
 
 
     val context = LocalContext.current
-
+    val nearbyCyclist = state.nearbyCyclist?.users
 
 
     val dismissNearbyCyclistsIcon = remember(mapboxMap) {
@@ -80,18 +78,19 @@ fun MappingMapsScreen(
         }
     }
 
-    val showNearbyCyclistsIcon = remember(nearbyCyclist.size, mapboxMap) {
+    val showNearbyCyclistsIcon = remember(nearbyCyclist, mapboxMap) {
         {
+
             Timber.v("Nearby Cyclist: ${nearbyCyclist}")
             dismissNearbyCyclistsIcon()
 
-            nearbyCyclist.distinctBy {
+            nearbyCyclist?.distinctBy {
                 it.id
-            }.filter{
+            }?.filter {
                 it.id != state.user.id
-            }.filter {
+            }?.filter {
                 it.isUserNeedHelp() == true
-            }.forEach { cyclist ->
+            }?.forEach { cyclist ->
                 Timber.v("Cyclist Name: ${cyclist.name}")
                 val location = cyclist.location
                 val latitude = location?.latitude ?: return@forEach
@@ -122,16 +121,26 @@ fun MappingMapsScreen(
         isNavigating || geometry?.isNotEmpty() == true
     }
 
-    val shouldDismissNearbyIcons = remember(nearbyCyclist, isUserNavigating, hasActiveTransaction) {
-        isUserNavigating || hasActiveTransaction
+    val shouldDismissNearbyIcons =
+        remember(nearbyCyclist, isUserNavigating, hasActiveTransaction) {
+            isUserNavigating || hasActiveTransaction
+
+        }
+
+
+    LaunchedEffect(key1 = nearbyCyclist) {
+        Timber.v("Nearby Cyclist Size : ${nearbyCyclist}")
     }
-    LaunchedEffect(key1 = shouldDismissNearbyIcons, key2 = mapboxMap, key3= nearbyCyclist.size) {
+
+
+    LaunchedEffect(key1 = shouldDismissNearbyIcons, key2 = mapboxMap, key3 = nearbyCyclist) {
 
         if (shouldDismissNearbyIcons) {
             dismissNearbyCyclistsIcon()
             return@LaunchedEffect
         }
 
+        Timber.v("Showing Nearby Cyclists")
         showNearbyCyclistsIcon()
     }
 
@@ -254,13 +263,12 @@ private fun Map(
     ) {
 
 
-        AndroidView(factory = {mapView}){
-            if(isInitialized){
+        AndroidView(factory = { mapView }) {
+            if (isInitialized) {
                 return@AndroidView
             }
             CoroutineScope(Dispatchers.Main).launch {
                 Timber.v("Successfully recomposed in Map")
-
 
 
                 val initSource = { loadedMapStyle: Style ->
@@ -299,7 +307,7 @@ private fun Map(
 
 
                 }
-                mapView.getMapAsync{
+                mapView.getMapAsync {
                     it.setStyle(if (isDarkTheme) Style.DARK else Style.LIGHT) { loadedStyle ->
 
                         if (loadedStyle.isFullyLoaded) {

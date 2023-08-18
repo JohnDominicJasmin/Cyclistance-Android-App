@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_mapping.domain.helper
 
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.core.utils.validation.FormatterUtils.findUser
 import com.example.cyclistance.core.utils.validation.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.validation.FormatterUtils.isLocationAvailable
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
@@ -27,7 +26,6 @@ import kotlinx.coroutines.flow.update
 import timber.log.Timber
 
 class TrackingStateHandler(
-    val nearbyCyclist: MutableList<UserItem>,
     val state: MutableStateFlow<MappingState>,
     val eventFlow: MutableSharedFlow<MappingEvent>) {
 
@@ -36,18 +34,18 @@ class TrackingStateHandler(
 
         coroutineScope {
             val rescueTransaction = state.value.rescueTransaction
-            val cyclists = nearbyCyclist
+            val cyclists = state.value.nearbyCyclist
             val userRole = state.value.user.getRole()
 
             if (userRole == Role.RESCUEE.name.lowercase()) {
                 rescueTransaction?.rescuerId?.let { id ->
-                    state.update { it.copy(rescuer = cyclists.findUser(id), rescuee = null) }
+                    state.update { it.copy(rescuer = cyclists?.findUser(id), rescuee = null) }
                 }
                 return@coroutineScope
             }
 
             rescueTransaction?.rescueeId?.let { rescueeId ->
-                state.update { it.copy(rescuee = cyclists.findUser(rescueeId), rescuer = null) }
+                state.update { it.copy(rescuee = cyclists?.findUser(rescueeId), rescuer = null) }
             }
 
         }

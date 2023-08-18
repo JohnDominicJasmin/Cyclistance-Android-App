@@ -7,7 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
 import com.example.cyclistance.core.utils.validation.FormatterUtils
-import com.example.cyclistance.core.utils.validation.FormatterUtils.findUser
 import com.example.cyclistance.core.utils.validation.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.validation.FormatterUtils.isLocationAvailable
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
@@ -82,15 +81,11 @@ class MappingViewModel @Inject constructor(
     private val _eventFlow: MutableSharedFlow<MappingEvent> = MutableSharedFlow()
     val eventFlow: SharedFlow<MappingEvent> = _eventFlow.asSharedFlow()
     private var travelledPath: MutableList<GoogleLatLng> = mutableStateListOf()
-    private var _nearbyCyclistState = mutableStateListOf<UserItem>()
-    val nearbyCyclistState = _nearbyCyclistState
+
 
 
     init {
-        trackingHandler = TrackingStateHandler(
-            state = _state,
-            eventFlow = _eventFlow,
-            nearbyCyclist = _nearbyCyclistState)
+        trackingHandler = TrackingStateHandler(state = _state, eventFlow = _eventFlow)
         loadData()
         observeDataChanges()
         requestHazardousLane()
@@ -123,7 +118,6 @@ class MappingViewModel @Inject constructor(
                 Timber.e("ERROR GETTING HAZARDOUS LANE: ${it.message}")
             }.onEach { hazardousLane ->
                 _state.update {
-                    it.copy(hazardousLane = null)
                     it.copy(hazardousLane = hazardousLane)
                 }
 
@@ -216,7 +210,7 @@ class MappingViewModel @Inject constructor(
     private fun acceptRescueRequest(id: String) {
         viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
-            val rescuer = nearbyCyclistState.findUser(id) ?: return@launch
+            val rescuer = state.value.nearbyCyclist?.findUser(id) ?: return@launch
             _state.update { it.copy(rescueRequestAcceptedUser = rescuer) }
             val transactionId = trackingHandler.getTransactionId(rescuer)
             val user = state.value.user
@@ -493,7 +487,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private suspend fun calculateSelectedRescueeDistance(userLocation: LocationModel?, id: String) {
-        val selectedRescuee = nearbyCyclistState.findUser(id)
+        val selectedRescuee = state.value.nearbyCyclist?.findUser(id) ?: return
         val selectedRescueeLocation = selectedRescuee.location
 
 
@@ -730,11 +724,13 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun NearbyCyclist.updateNearbyCyclists() {
-        _nearbyCyclistState.apply {
-            addAll(this@updateNearbyCyclists.users)
-            distinct()
-        }
 
+        _state.update {
+            it.copy(nearbyCyclist = NearbyCyclist())
+        }
+        _state.update {
+            it.copy(nearbyCyclist = this)
+        }
     }
 
     private suspend fun broadcastRescueTransactionToRespondent(location: LocationModel) {
