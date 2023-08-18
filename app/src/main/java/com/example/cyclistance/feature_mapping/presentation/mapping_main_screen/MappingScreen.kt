@@ -565,8 +565,14 @@ fun MappingScreen(
     }
 
     val onClickReportIncident = remember {
-        {
-
+        { incidentLabel: String ->
+            uiState.lastLongPressedLocation?.let { locationLatLng ->
+                mappingViewModel.onEvent(
+                    event = MappingVmEvent.ReportIncident(
+                        label = incidentLabel,
+                        latLng = locationLatLng
+                    ))
+            }
         }
     }
 

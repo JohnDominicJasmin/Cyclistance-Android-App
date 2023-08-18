@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 import com.mapbox.geojson.Point
+import com.mapbox.mapboxsdk.geometry.LatLng
 
 
 sealed class MappingVmEvent {
@@ -21,6 +22,6 @@ sealed class MappingVmEvent {
     object SubscribeToDataChanges: MappingVmEvent()
     object CancelRescueTransaction: MappingVmEvent()
     data class GetRouteDirections(val origin: Point, val destination: Point): MappingVmEvent()
-
+    data class ReportIncident(val label: String, val latLng: LatLng): MappingVmEvent()
 
 }

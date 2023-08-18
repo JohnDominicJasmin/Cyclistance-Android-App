@@ -446,10 +446,31 @@ class MappingViewModel @Inject constructor(
                 clearTravelledPath()
             }
 
+            is MappingVmEvent.ReportIncident -> {
+                reportIncident(label = event.label, latLng = event.latLng)
+            }
+
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
+    private fun reportIncident(label: String, latLng: LatLng){
+        viewModelScope.launch {
+            runCatching {
+                mappingUseCase.newHazardousLaneUseCase(hazardousLaneMarker = HazardousLaneMarker(
+                    id = getId() + System.currentTimeMillis(),
+                    idCreator = getId(),
+                    latitude = latLng.latitude,
+                    longitude = latLng.longitude,
+                    label = label
+                ))
+            }.onSuccess {
+                _eventFlow.emit(value = MappingEvent.ReportIncidentSuccess)
+            }.onFailure {
+                _eventFlow.emit(value = MappingEvent.ReportIncidentFailed(reason = it.message ?: "Failed to report incident"))
+            }
+        }
+    }
 
     private suspend fun calculateSelectedRescueeDistance(userLocation: LocationModel?, id: String) {
         val selectedRescuee = nearbyCyclistState.findUser(id) ?: return
