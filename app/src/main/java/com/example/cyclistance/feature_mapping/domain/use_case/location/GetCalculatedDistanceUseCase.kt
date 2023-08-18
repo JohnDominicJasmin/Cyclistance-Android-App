@@ -1,6 +1,6 @@
 package com.example.cyclistance.feature_mapping.domain.use_case.location
 
-import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 
 class GetCalculatedDistanceUseCase(private val repository: MappingRepository){

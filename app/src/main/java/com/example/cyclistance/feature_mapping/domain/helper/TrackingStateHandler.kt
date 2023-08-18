@@ -7,14 +7,14 @@ import com.example.cyclistance.core.utils.validation.FormatterUtils.isLocationAv
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.model.Role
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteModel
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.StatusModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.TransactionModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.StatusModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.TransactionModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
@@ -112,7 +112,7 @@ class TrackingStateHandler(
 
     }
 
-    fun updateTransactionLocation(location: LiveLocationWSModel) {
+    fun updateTransactionLocation(location: LiveLocationSocketModel) {
         val longitude = location.longitude ?: return
         val latitude = location.latitude ?: return
         state.update {

@@ -8,9 +8,11 @@ import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInterne
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
-import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.RescueTransactionWSClient
-import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.TransactionLiveLocationWSClient
-import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.UserWSClient
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.AddHazardousLaneClient
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.DeleteHazardousLane
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.RescueTransactionClient
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.TransactionLiveLocationClient
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.UserClient
 import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping.data.repository.MappingSocketRepositoryImpl
 import com.example.cyclistance.feature_mapping.data.repository.MappingUiStoreRepositoryImpl
@@ -115,14 +117,20 @@ object MappingModule {
     @Singleton
     fun provideMappingSocketRepository(@ApplicationContext context: Context): MappingSocketRepository {
         val socket = IO.socket(context.getString(R.string.CyclistanceApiBaseUrl))
-        val userWSClient = UserWSClient(socket)
-        val rescueTransactionWSClient = RescueTransactionWSClient(socket)
-        val liveLocation = TransactionLiveLocationWSClient(socket)
+        val nearbyCyclistClient = UserClient(socket)
+        val rescueTransactionClient = RescueTransactionClient(socket)
+        val liveLocation = TransactionLiveLocationClient(socket)
+        val addHazardousLaneClient = AddHazardousLaneClient(socket)
+        val deleteHazardousLane = DeleteHazardousLane(socket)
         return MappingSocketRepositoryImpl(
             context = context,
-            rescueTransactionClient = rescueTransactionWSClient,
-            nearbyCyclistClient = userWSClient,
+            nearbyCyclistClient = nearbyCyclistClient,
+            rescueTransactionClient = rescueTransactionClient,
             liveLocation = liveLocation,
+            addHazardousLaneClient = addHazardousLaneClient,
+            deleteHazardousLane = deleteHazardousLane
+
+
         )
     }
 

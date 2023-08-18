@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.domain.model.api.rescue
+package com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState

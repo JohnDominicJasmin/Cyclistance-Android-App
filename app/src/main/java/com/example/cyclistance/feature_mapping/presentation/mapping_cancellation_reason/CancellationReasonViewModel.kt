@@ -8,11 +8,11 @@ import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExce
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.CancellationModel
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.CancellationReasonModel
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteModel
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.StatusModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.CancellationModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.CancellationReasonModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.StatusModel
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.event.CancellationReasonEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.event.CancellationReasonVmEvent

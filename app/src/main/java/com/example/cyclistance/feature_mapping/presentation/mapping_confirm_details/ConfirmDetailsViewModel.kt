@@ -8,10 +8,10 @@ import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExce
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetails
-import com.example.cyclistance.feature_mapping.domain.model.api.user.ConfirmationDetailModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserAssistanceModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.ConfirmationDetailModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserAssistanceModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsVmEvent
@@ -139,8 +139,8 @@ class ConfirmDetailsViewModel @Inject constructor(
         val longitude = _longitude.toDouble()
 
         runCatching {
-            mappingUseCase.broadcastToNearbyCyclists(
-                locationModel = LiveLocationWSModel(
+            mappingUseCase.nearbyCyclistsUseCase(
+                locationModel = LiveLocationSocketModel(
                     latitude = latitude,
                     longitude = longitude
                 ))

@@ -22,12 +22,10 @@ import com.example.cyclistance.feature_mapping.domain.use_case.user.DeleteRescue
 import com.example.cyclistance.feature_mapping.domain.use_case.user.DeleteUserUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.user.GetUserByIdUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.user.GetUsersUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.TransactionLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.BroadcastToNearbyCyclists
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.GetUserUpdatesUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.NearbyCyclistsUseCase
 
 object TestMappingModule {
     private val fakeMappingRepository: FakeMappingRepository = FakeMappingRepository()
@@ -53,10 +51,10 @@ object TestMappingModule {
             getAddressUseCase = GetAddressUseCase(repository),
             setAddressUseCase = SetAddressUseCase(repository),
             broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(repository),
-            broadcastToNearbyCyclists = BroadcastToNearbyCyclists(repository),
+            nearbyCyclistsUseCase = NearbyCyclistsUseCase(repository),
             getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(repository),
             getUserUpdatesUseCase = GetUserUpdatesUseCase(repository),
-            broadcastRescueTransactionToRespondent = BroadcastTransactionLocationUseCase(repository),
+            transactionLocationUseCase = TransactionLocationUseCase(repository),
             getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(repository),
             deleteRescueRespondentUseCase = DeleteRescueRespondentUseCase(repository),
             addRescueRespondentUseCase = AddRescueRespondentUseCase(repository),

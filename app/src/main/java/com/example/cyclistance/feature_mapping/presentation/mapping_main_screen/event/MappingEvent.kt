@@ -1,6 +1,6 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event
 
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 
 

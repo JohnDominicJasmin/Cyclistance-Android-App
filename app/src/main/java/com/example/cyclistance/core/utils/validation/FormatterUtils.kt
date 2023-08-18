@@ -5,8 +5,8 @@ import android.graphics.drawable.Drawable
 import androidx.appcompat.content.res.AppCompatResources
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

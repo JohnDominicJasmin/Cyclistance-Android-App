@@ -7,13 +7,13 @@ import com.example.cyclistance.feature_mapping.data.data_source.network.dto.resc
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.rescue_transaction.RouteDto
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.rescue_transaction.StatusDto
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.LocationDto
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.CancellationModel
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.CancellationReasonModel
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteModel
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.StatusModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.CancellationModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.CancellationReasonModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.StatusModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
 
 object RescueTransactionMapper {
     fun RescueTransactionItemDto.toRescueTransaction(): RescueTransactionItem {

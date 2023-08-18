@@ -22,9 +22,9 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_SOURC
 import com.example.cyclistance.core.utils.constants.MappingConstants.TRANSACTION_ICON_ID
 import com.example.cyclistance.core.utils.validation.FormatterUtils.getMapIconImageDescription
 import com.example.cyclistance.feature_mapping.domain.model.Role
-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
-import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
