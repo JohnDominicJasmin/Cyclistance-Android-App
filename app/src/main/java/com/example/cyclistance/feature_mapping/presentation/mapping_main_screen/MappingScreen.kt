@@ -96,7 +96,9 @@ fun MappingScreen(
     }
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberBottomSheetState(initialValue = BottomSheetValue.Collapsed)
+        bottomSheetState = rememberBottomSheetState(
+            initialValue = BottomSheetValue.Collapsed,
+            confirmStateChange = {false})
     )
 
     val collapseBottomSheet = remember {

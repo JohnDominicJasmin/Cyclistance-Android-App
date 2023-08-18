@@ -60,7 +60,7 @@ fun BottomSheetOnGoingRescue(
             modifier = Modifier
                 .fillMaxWidth()) {
 
-            val (time, roundedButtonSection, lineGrip, distance, etaIcon, speedometer) = createRefs()
+            val (time, roundedButtonSection, distance, etaIcon, speedometer) = createRefs()
 
             val etaAvailable by remember(onGoingRescueModel.estimatedTime) {
                 derivedStateOf {
@@ -68,14 +68,6 @@ fun BottomSheetOnGoingRescue(
                 }
             }
 
-
-            Divider(modifier = Modifier
-                .fillMaxWidth(0.1f)
-                .constrainAs(lineGrip) {
-                    top.linkTo(parent.top, margin = 10.dp)
-                    end.linkTo(parent.end, margin = 0.dp)
-                    start.linkTo(parent.start, margin = 0.dp)
-                }, color = MaterialTheme.colors.primary, thickness = 1.5.dp)
 
 
             if (!etaAvailable) {
@@ -85,7 +77,7 @@ fun BottomSheetOnGoingRescue(
                     color = MaterialTheme.colors.onSurface,
                     style = MaterialTheme.typography.subtitle2,
                     modifier = Modifier.constrainAs(time) {
-                        top.linkTo(lineGrip.bottom, margin = 10.dp)
+                        top.linkTo(parent.top, margin = 12.dp)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
@@ -98,7 +90,7 @@ fun BottomSheetOnGoingRescue(
                 if (isRescuer) {
                     SpeedometerSection(
                         modifier = Modifier.constrainAs(speedometer) {
-                            top.linkTo(lineGrip.bottom, margin = 4.dp)
+                            top.linkTo(parent.top, margin = 4.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                         },
@@ -116,7 +108,7 @@ fun BottomSheetOnGoingRescue(
                         .padding(horizontal = 12.dp)
                         .constrainAs(time) {
                             top.linkTo(
-                                if (isRescuer) speedometer.bottom else lineGrip.bottom,
+                                if (isRescuer) speedometer.bottom else parent.top,
                                 margin = 5.dp)
                             end.linkTo(etaIcon.start)
                         }
@@ -130,7 +122,7 @@ fun BottomSheetOnGoingRescue(
                         .size(20.dp)
                         .constrainAs(etaIcon) {
                             top.linkTo(
-                                if (isRescuer) speedometer.bottom else lineGrip.bottom,
+                                if (isRescuer) speedometer.bottom else parent.top,
                                 margin = 7.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
@@ -147,7 +139,7 @@ fun BottomSheetOnGoingRescue(
                         .padding(horizontal = 12.dp)
                         .constrainAs(distance) {
                             top.linkTo(
-                                if (isRescuer) speedometer.bottom else lineGrip.bottom,
+                                if (isRescuer) speedometer.bottom else parent.top,
                                 margin = 5.dp,
                             )
                             start.linkTo(etaIcon.end)

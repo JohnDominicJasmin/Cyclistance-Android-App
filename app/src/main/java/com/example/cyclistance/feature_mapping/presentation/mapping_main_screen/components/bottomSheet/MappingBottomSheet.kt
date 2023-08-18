@@ -31,7 +31,7 @@ fun MappingBottomSheet(
     val scope = rememberCoroutineScope()
     MappingBottomSheet(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
-        sheetGesturesEnabled = bottomSheetType != BottomSheetType.SearchAssistance.type,
+        sheetGesturesEnabled = bottomSheetType != BottomSheetType.SearchAssistance.type && bottomSheetType != BottomSheetType.OnGoingRescue.type,
         sheetContent = {
             when (bottomSheetType) {
 
@@ -87,9 +87,10 @@ fun MappingBottomSheet(
                         onGoingRescueModel = OnGoingRescueModel(
                             estimatedTime = state.rescuerETA,
                             estimatedDistance = state.rescuerDistance,
-                            currentSpeed = state.speedometerState.currentSpeedKph.toString(),
+                            currentSpeed = String.format("%.2f", state.speedometerState.currentSpeedKph),
                             ridingDistance = state.speedometerState.travelledDistance,
-                            maxSpeed = state.speedometerState.topSpeed.toString()))
+                            maxSpeed = String.format("%.2f", state.speedometerState.topSpeed)))
+
                 }
 
             }
