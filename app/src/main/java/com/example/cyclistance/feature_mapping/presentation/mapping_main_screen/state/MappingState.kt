@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLane
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
@@ -25,6 +26,7 @@ data class MappingState(
     val rescuerDistance: String = "",
     val newRescueRequest: NewRescueRequestsModel? = null,
     val speedometerState: SpeedometerState = SpeedometerState(),
+    val hazardousLane: HazardousLane? = null,
 ) : Parcelable{
 
 
