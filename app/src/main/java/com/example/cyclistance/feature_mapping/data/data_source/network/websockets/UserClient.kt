@@ -3,8 +3,8 @@ package com.example.cyclistance.feature_mapping.data.data_source.network.websock
 import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_USERS
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUser
-import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClient
 import com.google.gson.Gson
 import io.socket.client.Socket
@@ -13,12 +13,12 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class UserWSClient(
+class UserClient(
     private val socket: Socket
-): WebSocketClient<NearbyCyclist, LiveLocationWSModel> {
+): WebSocketClient<NearbyCyclist, LiveLocationSocketModel> {
 
 
-    override suspend fun broadcastEvent(t: LiveLocationWSModel?) {
+    override suspend fun broadcastEvent(t: LiveLocationSocketModel?) {
         t?.let{ locationModel ->
             socket.emit(BROADCAST_USERS, locationModel.latitude, locationModel.longitude)
         }

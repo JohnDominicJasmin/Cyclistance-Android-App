@@ -2,7 +2,7 @@ package com.example.cyclistance.feature_mapping.data.data_source.network.websock
 
 import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_LOCATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.JOIN_LIVE_LOCATION_UPDATES
-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
 import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClient
 import com.google.gson.Gson
 import io.socket.client.Socket
@@ -11,16 +11,16 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-class TransactionLiveLocationWSClient(
+class TransactionLiveLocationClient(
     private val socket: Socket
-): WebSocketClient<LiveLocationWSModel, LiveLocationWSModel> {
+): WebSocketClient<LiveLocationSocketModel, LiveLocationSocketModel> {
     
-    override suspend fun getResult(): Flow<LiveLocationWSModel> {
+    override suspend fun getResult(): Flow<LiveLocationSocketModel> {
         return callbackFlow {
             val onNewLocationUpdates = Emitter.Listener { response ->
                 val gson = Gson()
                 val responseResult = response[0].toString().trimIndent()
-                val result = gson.fromJson(responseResult, LiveLocationWSModel::class.java)
+                val result = gson.fromJson(responseResult, LiveLocationSocketModel::class.java)
                 trySend(result)
             }
 
@@ -35,8 +35,8 @@ class TransactionLiveLocationWSClient(
     }
 
 
-    override suspend fun broadcastEvent(t: LiveLocationWSModel?) {
-        t?.let{ locationModel ->
+    override suspend fun broadcastEvent(broadcastItem: LiveLocationSocketModel?) {
+        broadcastItem?.let{ locationModel ->
             socket.emit(JOIN_LIVE_LOCATION_UPDATES, locationModel.latitude, locationModel.longitude, "room-${locationModel.room}")
         }
     }
