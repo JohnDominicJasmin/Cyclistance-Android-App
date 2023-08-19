@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import com.example.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MapType
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -92,6 +93,19 @@ fun MappingBottomSheet(
                             maxSpeed = String.format("%.2f", state.speedometerState.topSpeed)))
 
                 }
+
+                BottomSheetType.HazardousLane.type -> {
+
+                    BottomSheetHazardousLane(
+                        bottomSheetScaffoldState = bottomSheetScaffoldState,
+                        modifier = modifier,
+                        selectedMapType = MapType.Default.type,
+                        onClickMapType = {
+
+                        })
+
+                }
+
 
             }
         }, content = content)
