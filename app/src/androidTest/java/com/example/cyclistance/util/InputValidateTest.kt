@@ -3,7 +3,7 @@ package com.example.cyclistance.util
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getMapIconImage
+import com.example.cyclistance.core.utils.formatter.IconFormatter.getMapIconImage
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

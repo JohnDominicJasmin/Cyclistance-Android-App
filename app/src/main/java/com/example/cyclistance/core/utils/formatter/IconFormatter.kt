@@ -33,7 +33,7 @@ object IconFormatter {
         }
     }
 
-    private fun String.getMapIconImage(): Int {
+     fun String.getMapIconImage(): Int {
         return when (this) {
             MappingConstants.INJURY_TEXT -> R.drawable.ic_injury_em
             MappingConstants.BROKEN_FRAME_TEXT -> R.drawable.ic_broken_frame_em
