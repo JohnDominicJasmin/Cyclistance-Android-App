@@ -3,8 +3,11 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -22,43 +25,60 @@ fun FloatingButtonSection(
     onClickLocateUserButton: () -> Unit = {},
     onClickRouteOverviewButton: () -> Unit = {},
     onClickRecenterButton: () -> Unit = {},
-    onClickOpenNavigationButton: () -> Unit = {}) {
+    onClickOpenNavigationButton: () -> Unit = {},
+    onClickLayerButton: () -> Unit = {}) {
 
+    val shouldShowLocationUserButton =
+        isNavigating.not() && uiState.isFabExpanded.not() && uiState.mapSelectedRescuee == null
 
-    val shouldShowLocationUserButton = isNavigating.not() && uiState.isFabExpanded.not() && uiState.mapSelectedRescuee == null
+    Box(modifier = modifier) {
 
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        MappingUtils.FabAnimated(isNavigating) {
-            RouteOverViewButton(
-                modifier = Modifier.size(53.dp),
-                onClick = onClickRouteOverviewButton
+        MappingUtils.FabAnimated(shouldShowLocationUserButton) {
+            MapLayerButton(
+                modifier = Modifier.size(43.dp),
+                onClick = onClickLayerButton
             )
         }
 
-        MappingUtils.FabAnimated(isNavigating) {
-            RecenterButton(
-                modifier = Modifier.size(53.dp),
-                onClick = onClickRecenterButton)
-        }
+        Column(
+            modifier = Modifier
+                .fillMaxHeight()
+                .wrapContentWidth(),
+            verticalArrangement = Arrangement.spacedBy(6.dp, alignment = Alignment.Bottom)) {
 
-        Box {
-            MappingUtils.FabAnimated(visible = isNavigating) {
 
-                OpenNavigationButton(
+            MappingUtils.FabAnimated(isNavigating) {
+                RouteOverViewButton(
                     modifier = Modifier.size(53.dp),
-                    onClick = onClickOpenNavigationButton
+                    onClick = onClickRouteOverviewButton
                 )
             }
 
-            MappingUtils.FabAnimated(shouldShowLocationUserButton) {
-                LocateUserButton(
+            MappingUtils.FabAnimated(isNavigating) {
+                RecenterButton(
                     modifier = Modifier.size(53.dp),
-                    locationPermissionGranted = locationPermissionGranted,
-                    onClick = onClickLocateUserButton
-                )
+                    onClick = onClickRecenterButton)
             }
-        }
 
+            Box {
+                MappingUtils.FabAnimated(visible = isNavigating) {
+
+                    OpenNavigationButton(
+                        modifier = Modifier.size(53.dp),
+                        onClick = onClickOpenNavigationButton
+                    )
+                }
+
+                MappingUtils.FabAnimated(shouldShowLocationUserButton) {
+                    LocateUserButton(
+                        modifier = Modifier.size(53.dp),
+                        locationPermissionGranted = locationPermissionGranted,
+                        onClick = onClickLocateUserButton
+                    )
+                }
+            }
+
+        }
     }
 }
 @Preview

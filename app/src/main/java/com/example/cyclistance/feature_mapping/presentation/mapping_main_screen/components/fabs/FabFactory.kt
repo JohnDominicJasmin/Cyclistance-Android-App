@@ -8,10 +8,12 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.navigation.IsDarkTheme
 
 @Composable
 fun FabFactory(
@@ -22,7 +24,10 @@ fun FabFactory(
     tint: Color = MaterialTheme.colors.onSurface
 
 ) {
-   Button( modifier = modifier,
+
+    val isDarkTheme = IsDarkTheme.current
+
+   Button( modifier = modifier.shadow(elevation = if(isDarkTheme) 0.dp else 4.dp, shape = CircleShape),
        shape = CircleShape,
        contentPadding = PaddingValues(0.dp),
        colors = ButtonDefaults.buttonColors(

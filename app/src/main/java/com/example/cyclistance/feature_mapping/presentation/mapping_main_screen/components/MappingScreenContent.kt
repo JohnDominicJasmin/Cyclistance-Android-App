@@ -169,6 +169,9 @@ fun MappingScreenContent(
                                 bottom.linkTo(
                                     parent.bottom,
                                     margin = (configuration.screenHeightDp / 2.5).dp)
+                                top.linkTo(parent.top, margin = 15.dp)
+                                height = Dimension.fillToConstraints
+
                             },
                         locationPermissionGranted = locationPermissionState.allPermissionsGranted,
                         onClickLocateUserButton = { event(MappingUiEvent.LocateUser) },
