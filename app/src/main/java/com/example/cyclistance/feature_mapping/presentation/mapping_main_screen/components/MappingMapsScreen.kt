@@ -20,7 +20,8 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.ICON_SOURCE
 import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_LAYER_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_SOURCE_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.TRANSACTION_ICON_ID
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getMapIconImageDescription
+import com.example.cyclistance.core.utils.formatter.IconFormatter.getHazardousLaneImage
+import com.example.cyclistance.core.utils.formatter.IconFormatter.getNearbyCyclistImage
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
@@ -34,6 +35,7 @@ import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.annotations.IconFactory
+import com.mapbox.mapboxsdk.annotations.Marker
 import com.mapbox.mapboxsdk.annotations.MarkerOptions
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapView
@@ -70,9 +72,10 @@ fun MappingMapsScreen(
 
     val context = LocalContext.current
     val nearbyCyclist = state.nearbyCyclist?.users
+    val hazardousLane = state.hazardousLane?.markers
 
 
-    val dismissNearbyCyclistsIcon = remember(mapboxMap) {
+    val dismissAllIcons = remember(mapboxMap) {
         {
             mapboxMap?.removeAnnotations()
         }
@@ -80,9 +83,6 @@ fun MappingMapsScreen(
 
     val showNearbyCyclistsIcon = remember(nearbyCyclist, mapboxMap) {
         {
-
-            Timber.v("Nearby Cyclist: ${nearbyCyclist}")
-            dismissNearbyCyclistsIcon()
 
             nearbyCyclist?.distinctBy {
                 it.id
@@ -96,7 +96,7 @@ fun MappingMapsScreen(
                 val latitude = location?.latitude ?: return@forEach
                 val longitude = location.longitude ?: return@forEach
                 val description = cyclist.getDescription()
-                val iconImage = description?.getMapIconImageDescription(context)
+                val iconImage = description?.getNearbyCyclistImage(context)
                     ?.toBitmap(width = 120, height = 120)
                 iconImage?.let { bitmap ->
                     mapboxMap ?: return@let
@@ -106,6 +106,40 @@ fun MappingMapsScreen(
                         position(LatLng(latitude, longitude))
                         title = cyclist.id
                     }.also(mapboxMap::addMarker)
+                }
+            }
+        }
+    }
+
+    val hazardousMarkers = remember { mutableStateListOf<Marker>() }
+
+    val dismissHazardousMarkers = remember(mapboxMap) {
+        {
+            hazardousMarkers.apply {
+                forEach{ mapboxMap?.removeMarker(it) }
+                clear()
+            }
+        }
+    }
+    val showHazardousLaneIcon = remember(hazardousLane, mapboxMap) {
+        {
+            dismissHazardousMarkers()
+            hazardousLane?.forEach { marker ->
+                val iconImage =
+                    marker.label.getHazardousLaneImage(context)
+                        ?.toBitmap(width = 120, height = 120)
+                val latitude = marker.latitude ?: return@forEach
+                val longitude = marker.longitude ?: return@forEach
+                iconImage?.let { bitmap ->
+                    mapboxMap ?: return@let
+                    val icon = IconFactory.getInstance(context).fromBitmap(bitmap)
+                    val markerOptions = MarkerOptions().apply {
+                        setIcon(icon)
+                        position(LatLng(latitude, longitude))
+                        title = marker.id
+                    }
+                    val addedMarker = mapboxMap.addMarker(markerOptions)
+                    addedMarker.let { hazardousMarkers.add(it) }
                 }
             }
         }
@@ -121,7 +155,7 @@ fun MappingMapsScreen(
         isNavigating || geometry?.isNotEmpty() == true
     }
 
-    val shouldDismissNearbyIcons =
+    val shouldDismissIcons =
         remember(nearbyCyclist, isUserNavigating, hasActiveTransaction) {
             isUserNavigating || hasActiveTransaction
 
@@ -133,15 +167,24 @@ fun MappingMapsScreen(
     }
 
 
-    LaunchedEffect(key1 = shouldDismissNearbyIcons, key2 = mapboxMap, key3 = nearbyCyclist) {
+    LaunchedEffect(key1 = shouldDismissIcons, key2 = mapboxMap, key3 = nearbyCyclist) {
 
-        if (shouldDismissNearbyIcons) {
-            dismissNearbyCyclistsIcon()
+        if (shouldDismissIcons) {
+            dismissAllIcons()
             return@LaunchedEffect
         }
 
-        Timber.v("Showing Nearby Cyclists")
         showNearbyCyclistsIcon()
+    }
+
+
+    LaunchedEffect(key1 = shouldDismissIcons, key2 = mapboxMap, key3 = hazardousLane) {
+        if (shouldDismissIcons) {
+            dismissAllIcons()
+            return@LaunchedEffect
+        }
+
+        showHazardousLaneIcon()
     }
 
 

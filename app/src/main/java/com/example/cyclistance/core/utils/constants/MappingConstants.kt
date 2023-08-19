@@ -56,6 +56,16 @@ object MappingConstants {
     const val FAULTY_BRAKES_TEXT = "Faulty Brakes"
 
 
+    const val CONSTRUCTION = "Construction"
+    const val LANE_CLOSURE = "Lane closure"
+    const val CRASH = "Crash"
+    const val NEED_ASSISTANCE = "Need Assistance"
+    const val OBJECT_ON_ROAD = "Object on Road"
+    const val SLOWDOWN = "Slowdown"
+
+
+
+
 
     const val HEADER_CACHE_CONTROL = "Cache-Control"
     const val HEADER_PRAGMA = "Pragma"
