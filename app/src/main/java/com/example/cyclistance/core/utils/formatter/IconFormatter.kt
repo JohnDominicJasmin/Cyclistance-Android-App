@@ -1,0 +1,61 @@
+package com.example.cyclistance.core.utils.formatter
+
+import android.content.Context
+import android.graphics.drawable.Drawable
+import androidx.appcompat.content.res.AppCompatResources
+import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.constants.MappingConstants
+
+object IconFormatter {
+
+    fun String.toHazardousLaneIconMarker(): Int{
+        return when(this){
+            MappingConstants.CONSTRUCTION -> R.drawable.ic_construction_marker
+            MappingConstants.LANE_CLOSURE -> R.drawable.ic_lane_closure_marker
+            MappingConstants.CRASH -> R.drawable.ic_crash_marker
+            MappingConstants.NEED_ASSISTANCE -> R.drawable.ic_need_assistance_marker
+            MappingConstants.OBJECT_ON_ROAD -> R.drawable.ic_object_on_road_marker
+            MappingConstants.SLOWDOWN -> R.drawable.ic_slowdown_marker
+            else -> throw RuntimeException("No icon found for $this")
+        }
+    }
+
+
+    fun String.rescueDescriptionToIcon(): Int {
+        return when (this) {
+            MappingConstants.INJURY_TEXT -> R.drawable.ic_injury
+            MappingConstants.BROKEN_FRAME_TEXT -> R.drawable.ic_broken_frame
+            MappingConstants.INCIDENT_TEXT -> R.drawable.ic_injury
+            MappingConstants.BROKEN_CHAIN_TEXT -> R.drawable.ic_broken_chain
+            MappingConstants.FLAT_TIRES_TEXT -> R.drawable.ic_flat_tire
+            MappingConstants.FAULTY_BRAKES_TEXT -> R.drawable.ic_faulty_brakes
+            else -> throw RuntimeException("No icon found for $this")
+        }
+    }
+
+    private fun String.getMapIconImage(): Int {
+        return when (this) {
+            MappingConstants.INJURY_TEXT -> R.drawable.ic_injury_em
+            MappingConstants.BROKEN_FRAME_TEXT -> R.drawable.ic_broken_frame_em
+            MappingConstants.INCIDENT_TEXT -> R.drawable.ic_incident_em
+            MappingConstants.BROKEN_CHAIN_TEXT -> R.drawable.ic_broken_chain_em
+            MappingConstants.FLAT_TIRES_TEXT -> R.drawable.ic_flat_tire_em
+            MappingConstants.FAULTY_BRAKES_TEXT -> R.drawable.ic_faulty_brakes_em
+            else -> throw RuntimeException("No icon found for $this")
+        }
+    }
+
+
+    fun String.getHazardousLaneImage(context: Context): Drawable? {
+        return this.toHazardousLaneIconMarker().let { image ->
+            AppCompatResources.getDrawable(context, image)
+        }
+    }
+    fun String.getNearbyCyclistImage(context: Context): Drawable? {
+        return this.getMapIconImage().let { image ->
+             AppCompatResources.getDrawable(context, image)
+        }
+    }
+
+
+}

@@ -1,9 +1,5 @@
 package com.example.cyclistance.core.utils.validation
 
-import android.content.Context
-import android.graphics.drawable.Drawable
-import androidx.appcompat.content.res.AppCompatResources
-import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
@@ -50,74 +46,6 @@ object FormatterUtils {
     }
 
     // TODO: test this code
-    fun String.getMapIconImageDescription(context: Context): Drawable? {
-        this.getMapIconImage().let { image ->
-            return AppCompatResources.getDrawable(context, image)
-        }
-        return null
-    }
-
-    fun String.bikeDescriptionToIcon(): Int {
-        return when (this) {
-            MappingConstants.INJURY_TEXT -> {
-                R.drawable.ic_injury
-            }
-
-            MappingConstants.BROKEN_FRAME_TEXT -> {
-                R.drawable.ic_broken_frame
-            }
-
-            MappingConstants.INCIDENT_TEXT -> {
-                R.drawable.ic_injury
-            }
-
-            MappingConstants.BROKEN_CHAIN_TEXT -> {
-                R.drawable.ic_broken_chain
-            }
-
-            MappingConstants.FLAT_TIRES_TEXT -> {
-                R.drawable.ic_flat_tire
-            }
-
-            MappingConstants.FAULTY_BRAKES_TEXT -> {
-                R.drawable.ic_faulty_brakes
-            }
-
-            else -> throw RuntimeException("No icon found for $this")
-        }
-    }
-
-    fun String.getMapIconImage(): Int {
-        return when (this) {
-            MappingConstants.INJURY_TEXT -> {
-                R.drawable.ic_injury_em
-            }
-
-            MappingConstants.BROKEN_FRAME_TEXT -> {
-                R.drawable.ic_broken_frame_em
-            }
-
-            MappingConstants.INCIDENT_TEXT -> {
-                R.drawable.ic_incident_em
-            }
-
-            MappingConstants.BROKEN_CHAIN_TEXT -> {
-                R.drawable.ic_broken_chain_em
-            }
-
-            MappingConstants.FLAT_TIRES_TEXT -> {
-                R.drawable.ic_flat_tire_em
-            }
-
-            MappingConstants.FAULTY_BRAKES_TEXT -> {
-                R.drawable.ic_faulty_brakes_em
-            }
-
-            else -> throw RuntimeException("No icon found for $this")
-        }
-    }
-
-
     fun Date.toReadableDateTime(pattern: String = "dd/MM/yyyy HH:mm"): String {
         return SimpleDateFormat(pattern, Locale.getDefault()).format(this)
     }

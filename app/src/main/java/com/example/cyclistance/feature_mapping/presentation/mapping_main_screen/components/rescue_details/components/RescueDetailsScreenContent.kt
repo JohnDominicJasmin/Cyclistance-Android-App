@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.core.utils.validation.FormatterUtils.bikeDescriptionToIcon
+import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescriptionToIcon
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue_details.RescueDetailsModel
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -81,7 +81,7 @@ fun RescueDetailsScreenContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 12.dp),
-                        iconDescription = rescueDetailsModel.textDescription.bikeDescriptionToIcon(),
+                        iconDescription = rescueDetailsModel.textDescription.rescueDescriptionToIcon(),
                         textDescription = rescueDetailsModel.textDescription,
                         bikeType = rescueDetailsModel.bikeType
                     )
