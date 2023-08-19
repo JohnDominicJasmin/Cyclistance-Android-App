@@ -2,7 +2,6 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +18,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -29,7 +29,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
@@ -66,122 +65,123 @@ fun BottomSheetReportIncident(
                 elevation = 8.dp),
         shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
     ) {
+        Box(modifier = Modifier.fillMaxWidth()) {
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp)
-        ) {
-
-            Box(modifier = Modifier.fillMaxWidth()) {
-                Divider(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .fillMaxWidth(0.1f)
-                        .padding(top = 4.dp),
-                    color = MaterialTheme.colors.primary,
-                    thickness = 2.dp)
-
+            IconButton(
+                onClick = {
+                    scope.launch {
+                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                    }
+                }, modifier = Modifier.align(Alignment.TopEnd)
+            ) {
 
                 Icon(
                     painter = painterResource(id = if (isDarkTheme) R.drawable.ic_close_darktheme else R.drawable.ic_close_lighttheme),
                     contentDescription = "Close",
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .align(Alignment.CenterEnd)
-                        .padding(top = 4.dp, end = 4.dp)
-                        .clickable {
-                            scope.launch {
-                                bottomSheetScaffoldState.bottomSheetState.collapse()
-                            }
-                        },
                     tint = Color.Unspecified
                 )
 
             }
 
-            Text(
-                text = "Report an Incident",
-                color = MaterialTheme.colors.onBackground,
-                style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-
-
 
             Column(
-                verticalArrangement = Arrangement.spacedBy(
-                    8.dp,
-                    alignment = Alignment.CenterVertically),
-                horizontalAlignment = Alignment.CenterHorizontally) {
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp)
+            ) {
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
-
-                    IncidentItem(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .weight(0.3f),
-                        icon = R.drawable.ic_construction,
-                        incidentLabel = "Construction",
-                        onClick = onClick
-                    )
-
-                    IncidentItem(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .weight(0.3f),
-                        icon = R.drawable.ic_lane_closure,
-                        incidentLabel = "Lane closure",
-                        onClick = onClick
-                    )
-
-                    IncidentItem(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .weight(0.3f),
-                        icon = R.drawable.ic_car_crash,
-                        incidentLabel = "Crash",
-                        buttonColor = Red900,
-                        onClick = onClick
-                    )
+                Divider(
+                    modifier = Modifier
+                        .fillMaxWidth(0.1f)
+                        .padding(top = 8.dp),
+                    color = MaterialTheme.colors.primary,
+                    thickness = 2.dp)
 
 
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly) {
+
+                Text(
+                    text = "Report an Incident",
+                    color = MaterialTheme.colors.onBackground,
+                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.SemiBold),
+                    modifier = Modifier.padding(bottom = 16.dp, top = 8.dp)
+                )
 
 
-                    IncidentItem(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .weight(0.3f),
-                        icon = R.drawable.ic_need_assistance,
-                        incidentLabel = "Need Assistance",
-                        onClick = onClick
-                    )
-                    IncidentItem(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .weight(0.3f),
-                        icon = R.drawable.ic_object_on_road,
-                        incidentLabel = "Object on Road",
-                        onClick = onClick
-                    )
-                    IncidentItem(
-                        modifier = Modifier
-                            .padding(4.dp)
-                            .weight(0.3f),
-                        icon = R.drawable.ic_slowdown,
-                        incidentLabel = "Slowdown",
-                        buttonColor = Red900,
-                        onClick = onClick
-                    )
 
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(
+                        8.dp,
+                        alignment = Alignment.CenterVertically),
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly) {
+
+                        IncidentItem(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .weight(0.3f),
+                            icon = R.drawable.ic_construction,
+                            incidentLabel = "Construction",
+                            onClick = onClick
+                        )
+
+                        IncidentItem(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .weight(0.3f),
+                            icon = R.drawable.ic_lane_closure,
+                            incidentLabel = "Lane closure",
+                            onClick = onClick
+                        )
+
+                        IncidentItem(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .weight(0.3f),
+                            icon = R.drawable.ic_car_crash,
+                            incidentLabel = "Crash",
+                            buttonColor = Red900,
+                            onClick = onClick
+                        )
+
+
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceEvenly) {
+
+
+                        IncidentItem(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .weight(0.3f),
+                            icon = R.drawable.ic_need_assistance,
+                            incidentLabel = "Need Assistance",
+                            onClick = onClick
+                        )
+                        IncidentItem(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .weight(0.3f),
+                            icon = R.drawable.ic_object_on_road,
+                            incidentLabel = "Object on Road",
+                            onClick = onClick
+                        )
+                        IncidentItem(
+                            modifier = Modifier
+                                .padding(4.dp)
+                                .weight(0.3f),
+                            icon = R.drawable.ic_slowdown,
+                            incidentLabel = "Slowdown",
+                            buttonColor = Red900,
+                            onClick = onClick
+                        )
+
+                    }
                 }
             }
         }
