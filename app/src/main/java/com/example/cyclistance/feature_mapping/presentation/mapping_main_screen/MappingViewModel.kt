@@ -126,7 +126,7 @@ class MappingViewModel @Inject constructor(
     }
     private fun subscribeToBottomSheetTypeUpdates(){
         viewModelScope.launch(context = defaultDispatcher) {
-            mappingUseCase.getBottomSheetTypeUseCase()?.catch {
+            mappingUseCase.bottomSheetTypeUseCase()?.catch {
                 it.handleException()
             }?.onEach {
                 _eventFlow.emit(value = MappingEvent.NewBottomSheetType(it))
@@ -915,7 +915,7 @@ class MappingViewModel @Inject constructor(
                         rescueRequest = RescueRequest(), userAssistance = UserAssistanceModel()
                     )
                 )
-                fullAddress?.let { mappingUseCase::setAddressUseCase }
+                fullAddress?.let { mappingUseCase::addressUseCase }
 
             }.onSuccess {
                 isLoading(false)

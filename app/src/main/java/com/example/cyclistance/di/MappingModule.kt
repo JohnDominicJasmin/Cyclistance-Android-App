@@ -21,15 +21,13 @@ import com.example.cyclistance.feature_mapping.domain.repository.MappingReposito
 import com.example.cyclistance.feature_mapping.domain.repository.MappingSocketRepository
 import com.example.cyclistance.feature_mapping.domain.repository.MappingUiStoreRepository
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.address.GetAddressUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.address.SetAddressUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.GetBikeTypeUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.SetBikeTypeUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.bottom_sheet_type.GetBottomSheetTypeUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.bottom_sheet_type.SetBottomSheetTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.address.AddressUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.BikeTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.bottom_sheet_type.BottomSheetTypeUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.map_type.MapTypeUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.AcceptRescueRequestUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
@@ -165,10 +163,8 @@ object MappingModule {
             getUserLocationUseCase = GetUserLocationUseCase(mappingRepository),
             getFullAddressUseCase = GetFullAddressUseCase(mappingRepository),
 
-            getBikeTypeUseCase = GetBikeTypeUseCase(mappingUiStoreRepository),
-            setBikeTypeUseCase = SetBikeTypeUseCase(mappingUiStoreRepository),
-            getAddressUseCase = GetAddressUseCase(mappingUiStoreRepository),
-            setAddressUseCase = SetAddressUseCase(mappingUiStoreRepository),
+            bikeTypeUseCase = BikeTypeUseCase(mappingUiStoreRepository),
+            addressUseCase = AddressUseCase(mappingUiStoreRepository),
             broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(
                 mappingSocketRepository),
             nearbyCyclistsUseCase = NearbyCyclistsUseCase(mappingSocketRepository),
@@ -183,11 +179,11 @@ object MappingModule {
             confirmCancellationUseCase = ConfirmCancellationUseCase(mappingRepository),
             getRouteDirectionsUseCase = GetRouteDirectionsUseCase(mappingRepository),
             getCalculatedDistanceUseCase = GetCalculatedDistanceUseCase(mappingRepository),
-            getBottomSheetTypeUseCase = GetBottomSheetTypeUseCase(mappingUiStoreRepository),
-            setBottomSheetTypeUseCase = SetBottomSheetTypeUseCase(mappingUiStoreRepository),
+            bottomSheetTypeUseCase = BottomSheetTypeUseCase(mappingUiStoreRepository),
             newHazardousLaneUseCase = NewHazardousLaneUseCase(mappingSocketRepository),
             deleteHazardousLaneUseCase = DeleteHazardousLaneUseCase(mappingSocketRepository),
-            requestHazardousLaneUseCase = RequestHazardousLaneUseCase(mappingSocketRepository)
+            requestHazardousLaneUseCase = RequestHazardousLaneUseCase(mappingSocketRepository),
+            mapTypeUseCase = MapTypeUseCase(mappingUiStoreRepository)
         )
     }
 

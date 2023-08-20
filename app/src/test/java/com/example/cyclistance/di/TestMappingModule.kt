@@ -2,10 +2,8 @@ package com.example.cyclistance.di
 
 import com.example.cyclistance.feature_mapping.data.repositories.FakeMappingRepository
 import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.address.GetAddressUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.address.SetAddressUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.GetBikeTypeUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.SetBikeTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.address.AddressUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.BikeTypeUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
@@ -46,9 +44,9 @@ object TestMappingModule {
 
             getUserLocationUseCase = GetUserLocationUseCase(repository),
             getFullAddressUseCase = GetFullAddressUseCase(repository),
-            getBikeTypeUseCase = GetBikeTypeUseCase(repository),
+            bikeTypeUseCase = BikeTypeUseCase(repository),
             setBikeTypeUseCase = SetBikeTypeUseCase(repository),
-            getAddressUseCase = GetAddressUseCase(repository),
+            addressUseCase = AddressUseCase(repository),
             setAddressUseCase = SetAddressUseCase(repository),
             broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(repository),
             nearbyCyclistsUseCase = NearbyCyclistsUseCase(repository),
