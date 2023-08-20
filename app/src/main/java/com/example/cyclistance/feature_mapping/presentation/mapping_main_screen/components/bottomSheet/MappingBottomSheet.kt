@@ -16,18 +16,18 @@ import kotlinx.coroutines.launch
 @Composable
 fun MappingBottomSheet(
     modifier: Modifier = Modifier,
-    state: MappingState = MappingState(),
-    uiState: MappingUiState = MappingUiState(),
+    state: MappingState,
+    uiState: MappingUiState,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-    onClickRescueArrivedButton: () -> Unit = {},
-    onClickReachedDestinationButton: () -> Unit = {},
-    onClickCancelSearchButton: () -> Unit = {},
-    onClickCallRescueTransactionButton: () -> Unit = {},
-    onClickChatRescueTransactionButton: () -> Unit = {},
-    onClickCancelRescueTransactionButton: () -> Unit = {},
-    onClickReportIncident: (label: String) -> Unit = {},
-    onClickMapType: (String) -> Unit = {},
-    content: @Composable (PaddingValues) -> Unit = {},
+    onClickRescueArrivedButton: () -> Unit,
+    onClickReachedDestinationButton: () -> Unit,
+    onClickCancelSearchButton: () -> Unit,
+    onClickCallRescueTransactionButton: () -> Unit,
+    onClickChatRescueTransactionButton: () -> Unit,
+    onClickCancelRescueTransactionButton: () -> Unit,
+    onClickReportIncident: (label: String) -> Unit,
+    onSelectMapType: (String) -> Unit,
+    content: @Composable (PaddingValues) -> Unit,
 ) {
 
 
@@ -106,8 +106,8 @@ fun MappingBottomSheet(
                     BottomSheetHazardousLane(
                         bottomSheetScaffoldState = bottomSheetScaffoldState,
                         modifier = modifier,
-                        selectedMapType = uiState.mapType,
-                        onClickMapType = onClickMapType)
+                        selectedMapType = state.mapType,
+                        onClickMapType = onSelectMapType)
 
                 }
 
