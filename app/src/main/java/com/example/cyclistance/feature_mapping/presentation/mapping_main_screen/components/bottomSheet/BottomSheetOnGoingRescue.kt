@@ -48,7 +48,7 @@ fun BottomSheetOnGoingRescue(
 
     Card(
         modifier = modifier
-            .fillMaxWidth(0.92f)
+            .fillMaxWidth()
             .shadow(
                 elevation = 12.dp,
                 shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),

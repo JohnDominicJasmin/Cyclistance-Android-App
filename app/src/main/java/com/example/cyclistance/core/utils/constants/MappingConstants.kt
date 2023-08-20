@@ -28,6 +28,7 @@ object MappingConstants {
 
     val BIKE_TYPE_KEY = stringPreferencesKey("bike_type")
     val ADDRESS_KEY = stringPreferencesKey("address")
+    val MAP_TYPE_KEY = stringPreferencesKey("map_type")
 
 
     const val LOCATION_NAME = "cyclistance-location"
@@ -54,6 +55,16 @@ object MappingConstants {
     const val BROKEN_CHAIN_TEXT = "Broken Chain"
     const val FLAT_TIRES_TEXT = "Flat tires"
     const val FAULTY_BRAKES_TEXT = "Faulty Brakes"
+
+
+    const val CONSTRUCTION = "Construction"
+    const val LANE_CLOSURE = "Lane closure"
+    const val CRASH = "Crash"
+    const val NEED_ASSISTANCE = "Need Assistance"
+    const val OBJECT_ON_ROAD = "Object on Road"
+    const val SLOWDOWN = "Slowdown"
+
+
 
 
 

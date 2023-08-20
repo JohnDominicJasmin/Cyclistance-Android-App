@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.core.presentation.dialogs.common.AnimatedRawResIcon
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.core.utils.validation.FormatterUtils.bikeDescriptionToIcon
+import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescriptionToIcon
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue_details.RescueDetailsModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_details.components.RatingCard
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_details.components.RescueDescription
@@ -90,7 +90,7 @@ fun RideHistoryDetailsContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
-                    iconDescription = rideHistoryDetailsModel.rescueDetailsModel.textDescription.bikeDescriptionToIcon(),
+                    iconDescription = rideHistoryDetailsModel.rescueDetailsModel.textDescription.rescueDescriptionToIcon(),
                     textDescription = rideHistoryDetailsModel.rescueDetailsModel.textDescription,
                     bikeType = rideHistoryDetailsModel.rescueDetailsModel.bikeType
                 )

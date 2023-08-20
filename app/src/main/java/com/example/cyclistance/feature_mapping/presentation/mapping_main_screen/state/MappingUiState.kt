@@ -31,4 +31,5 @@ data class MappingUiState(
     val lastLongPressedLocation: LatLng? = null,
 
 
+
     ) : Parcelable

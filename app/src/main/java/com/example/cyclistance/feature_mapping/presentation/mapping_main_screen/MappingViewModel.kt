@@ -83,15 +83,15 @@ class MappingViewModel @Inject constructor(
     private var travelledPath: MutableList<GoogleLatLng> = mutableStateListOf()
 
 
-
     init {
         trackingHandler = TrackingStateHandler(state = _state, eventFlow = _eventFlow)
         loadData()
         observeDataChanges()
         requestHazardousLane()
+        getMapType()
     }
 
-    private fun requestHazardousLane(){
+    private fun requestHazardousLane() {
         viewModelScope.launch {
             runCatching {
                 mappingUseCase.requestHazardousLaneUseCase()
@@ -112,7 +112,20 @@ class MappingViewModel @Inject constructor(
         subscribeToHazardousLaneUpdates()
     }
 
-    private fun subscribeToHazardousLaneUpdates(){
+    private fun getMapType() {
+        viewModelScope.launch {
+            mappingUseCase.mapTypeUseCase()
+                .distinctUntilChanged()
+                .catch {
+                Timber.v("Error getting map type: ${it.message}")
+            }.onEach { mapType ->
+                _state.update { it.copy(mapType = mapType) }
+            }.launchIn(viewModelScope)
+
+        }
+    }
+
+    private fun subscribeToHazardousLaneUpdates() {
         viewModelScope.launch {
             mappingUseCase.newHazardousLaneUseCase().catch {
                 Timber.e("ERROR GETTING HAZARDOUS LANE: ${it.message}")
@@ -124,9 +137,10 @@ class MappingViewModel @Inject constructor(
             }.launchIn(this)
         }
     }
-    private fun subscribeToBottomSheetTypeUpdates(){
+
+    private fun subscribeToBottomSheetTypeUpdates() {
         viewModelScope.launch(context = defaultDispatcher) {
-            mappingUseCase.getBottomSheetTypeUseCase()?.catch {
+            mappingUseCase.bottomSheetTypeUseCase()?.catch {
                 it.handleException()
             }?.onEach {
                 _eventFlow.emit(value = MappingEvent.NewBottomSheetType(it))
@@ -464,24 +478,43 @@ class MappingViewModel @Inject constructor(
                 reportIncident(label = event.label, latLng = event.latLng)
             }
 
+            is MappingVmEvent.SetMapType -> {
+                setMapType(mapType = event.mapType)
+            }
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
-    private fun reportIncident(label: String, latLng: LatLng){
+
+    private fun setMapType(mapType: String) {
         viewModelScope.launch {
             runCatching {
-                mappingUseCase.newHazardousLaneUseCase(hazardousLaneMarker = HazardousLaneMarker(
-                    id = getId() + System.currentTimeMillis(),
-                    idCreator = getId(),
-                    latitude = latLng.latitude,
-                    longitude = latLng.longitude,
-                    label = label
-                ))
+                mappingUseCase.mapTypeUseCase(mapType = mapType)
+            }.onSuccess {
+                Timber.v("Success setting map type: $it")
+            }.onFailure {
+                Timber.e("Error setting map type: ${it.message}")
+            }
+        }
+    }
+
+    private fun reportIncident(label: String, latLng: LatLng) {
+        viewModelScope.launch {
+            runCatching {
+                mappingUseCase.newHazardousLaneUseCase(
+                    hazardousLaneMarker = HazardousLaneMarker(
+                        id = getId() + System.currentTimeMillis(),
+                        idCreator = getId(),
+                        latitude = latLng.latitude,
+                        longitude = latLng.longitude,
+                        label = label
+                    ))
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.ReportIncidentSuccess)
             }.onFailure {
-                _eventFlow.emit(value = MappingEvent.ReportIncidentFailed(reason = it.message ?: "Failed to report incident"))
+                _eventFlow.emit(
+                    value = MappingEvent.ReportIncidentFailed(
+                        reason = it.message ?: "Failed to report incident"))
             }
         }
     }
@@ -695,7 +728,8 @@ class MappingViewModel @Inject constructor(
 
         rescueRequest?.respondents?.forEach { respondent ->
             val userRespondent = nearbyCyclist.findUser(id = respondent.clientId)
-            val distance = calculateDistance(startLocation = location, endLocation = userRespondent.location)
+            val distance =
+                calculateDistance(startLocation = location, endLocation = userRespondent.location)
 
             distance?.let {
                 val formattedETA = FormatterUtils.getCalculatedETA(distanceMeters = it)
@@ -711,7 +745,9 @@ class MappingViewModel @Inject constructor(
         return rescueRespondentsSnapShot.distinct()
     }
 
-    private fun calculateDistance(startLocation: LocationModel?, endLocation: LocationModel?): Double? {
+    private fun calculateDistance(
+        startLocation: LocationModel?,
+        endLocation: LocationModel?): Double? {
         val startLatitude = startLocation?.latitude ?: return null
         val startLongitude = startLocation.longitude ?: return null
         val endLatitude = endLocation?.latitude ?: return null
@@ -828,9 +864,9 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun updateSpeedometer(location: LocationModel){
+    private fun updateSpeedometer(location: LocationModel) {
         val isUserRescuer = state.value.user.isRescuer()
-        if(isUserRescuer) {
+        if (isUserRescuer) {
             trackingHandler.setSpeed(location.speed)
             trackingHandler.getTopSpeed(location.speed)
             travelledPath.add(element = GoogleLatLng(location.latitude!!, location.longitude!!))
@@ -915,7 +951,7 @@ class MappingViewModel @Inject constructor(
                         rescueRequest = RescueRequest(), userAssistance = UserAssistanceModel()
                     )
                 )
-                fullAddress?.let { mappingUseCase::setAddressUseCase }
+                fullAddress?.let { mappingUseCase::addressUseCase }
 
             }.onSuccess {
                 isLoading(false)

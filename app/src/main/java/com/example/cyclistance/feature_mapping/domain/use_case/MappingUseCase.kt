@@ -1,14 +1,12 @@
 package com.example.cyclistance.feature_mapping.domain.use_case
 
-import com.example.cyclistance.feature_mapping.domain.use_case.address.GetAddressUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.address.SetAddressUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.GetBikeTypeUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.SetBikeTypeUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.bottom_sheet_type.GetBottomSheetTypeUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.bottom_sheet_type.SetBottomSheetTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.address.AddressUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.BikeTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.bottom_sheet_type.BottomSheetTypeUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.map_type.MapTypeUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.AcceptRescueRequestUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
@@ -52,14 +50,9 @@ data class MappingUseCase(
     val getFullAddressUseCase: GetFullAddressUseCase,
 
 
-    val getBikeTypeUseCase: GetBikeTypeUseCase,
-    val setBikeTypeUseCase: SetBikeTypeUseCase,
-
-    val getAddressUseCase: GetAddressUseCase,
-    val setAddressUseCase: SetAddressUseCase,
-
-    val getBottomSheetTypeUseCase: GetBottomSheetTypeUseCase,
-    val setBottomSheetTypeUseCase: SetBottomSheetTypeUseCase,
+    val bikeTypeUseCase: BikeTypeUseCase,
+    val addressUseCase: AddressUseCase,
+    val bottomSheetTypeUseCase: BottomSheetTypeUseCase,
 
     val broadcastRescueTransactionUseCase: BroadcastRescueTransactionUseCase,
     val nearbyCyclistsUseCase: NearbyCyclistsUseCase,
@@ -69,5 +62,7 @@ data class MappingUseCase(
     val getCalculatedDistanceUseCase: GetCalculatedDistanceUseCase,
     val newHazardousLaneUseCase: NewHazardousLaneUseCase,
     val deleteHazardousLaneUseCase: DeleteHazardousLaneUseCase,
-    val requestHazardousLaneUseCase: RequestHazardousLaneUseCase
+    val requestHazardousLaneUseCase: RequestHazardousLaneUseCase,
+
+    val mapTypeUseCase: MapTypeUseCase,
     )

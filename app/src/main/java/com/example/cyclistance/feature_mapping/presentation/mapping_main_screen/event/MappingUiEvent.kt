@@ -27,6 +27,7 @@ sealed class MappingUiEvent{
     object RouteOverview : MappingUiEvent()
     object RecenterRoute : MappingUiEvent()
     object OpenNavigation : MappingUiEvent()
+    object OpenHazardousLaneBottomSheet : MappingUiEvent()
     object OnRequestNavigationCameraToOverview : MappingUiEvent()
     object DismissLocationPermission : MappingUiEvent()
     object DismissPhonePermission : MappingUiEvent()
@@ -42,6 +43,7 @@ sealed class MappingUiEvent{
     object DismissSinoTrackWebView : MappingUiEvent()
     object ShowSinoTrackWebView : MappingUiEvent()
     data class OnEmergencyCall(val phoneNumber: String) : MappingUiEvent()
+    data class OnSelectMapType(val mapType: String) : MappingUiEvent()
 
 
     data class CancelRequestHelp(val id: String) : MappingUiEvent()

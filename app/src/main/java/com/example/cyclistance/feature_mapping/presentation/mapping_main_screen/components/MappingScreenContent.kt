@@ -113,12 +113,13 @@ fun MappingScreenContent(
                 onClickCallRescueTransactionButton = { event(MappingUiEvent.CallRescueTransaction) },
                 onClickChatRescueTransactionButton = { event(MappingUiEvent.ChatRescueTransaction) },
                 onClickCancelRescueTransactionButton = { event(MappingUiEvent.CancelRescueTransaction) },
+                onClickReportIncident = { event(MappingUiEvent.OnReportIncident(it)) },
+                onSelectMapType = { event(MappingUiEvent.OnSelectMapType(it)) },
                 bottomSheetScaffoldState = bottomSheetScaffoldState,
-                bottomSheetType = uiState.bottomSheetType,
+                uiState = uiState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
-                onClickReportIncident = { event(MappingUiEvent.OnReportIncident(it)) }) {
+                    .padding(horizontal = 12.dp)) {
 
 
                 ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -169,12 +170,16 @@ fun MappingScreenContent(
                                 bottom.linkTo(
                                     parent.bottom,
                                     margin = (configuration.screenHeightDp / 2.5).dp)
+                                top.linkTo(parent.top, margin = 15.dp)
+                                height = Dimension.fillToConstraints
+
                             },
                         locationPermissionGranted = locationPermissionState.allPermissionsGranted,
                         onClickLocateUserButton = { event(MappingUiEvent.LocateUser) },
                         onClickRouteOverviewButton = { event(MappingUiEvent.RouteOverview) },
                         onClickRecenterButton = { event(MappingUiEvent.RecenterRoute) },
                         onClickOpenNavigationButton = { event(MappingUiEvent.OpenNavigation) },
+                        onClickLayerButton = { event(MappingUiEvent.OpenHazardousLaneBottomSheet) },
                         isNavigating = isNavigating,
                         uiState = uiState
                     )

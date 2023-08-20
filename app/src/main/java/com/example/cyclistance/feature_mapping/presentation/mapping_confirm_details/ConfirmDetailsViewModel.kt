@@ -56,7 +56,7 @@ class ConfirmDetailsViewModel @Inject constructor(
     private fun getBikeType() {
         viewModelScope.launch {
             runCatching {
-                mappingUseCase.getBikeTypeUseCase().first()
+                mappingUseCase.bikeTypeUseCase().first()
             }.onSuccess { bikeType ->
                 _eventFlow.emit(value = ConfirmDetailsEvent.GetSavedBikeType(bikeType))
                 savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
@@ -69,7 +69,7 @@ class ConfirmDetailsViewModel @Inject constructor(
     private fun getAddress() {
         viewModelScope.launch {
             runCatching {
-                mappingUseCase.getAddressUseCase().first()
+                mappingUseCase.addressUseCase().first()
             }.onSuccess { address ->
                 _eventFlow.emit(value = ConfirmDetailsEvent.GetSavedAddress(address))
                 savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] = state.value
@@ -101,9 +101,9 @@ class ConfirmDetailsViewModel @Inject constructor(
                 )
                 _state.update { it.copy(isLoading = true) }
 
-                    mappingUseCase.setAddressUseCase(address = confirmationDetail.address)
-                    mappingUseCase.setBikeTypeUseCase(bikeType = confirmationDetail.bikeType)
-                    mappingUseCase.setBottomSheetTypeUseCase(bottomSheet = BottomSheetType.SearchAssistance.type)
+                    mappingUseCase.addressUseCase(address = confirmationDetail.address)
+                    mappingUseCase.bikeTypeUseCase(bikeType = confirmationDetail.bikeType)
+                    mappingUseCase.bottomSheetTypeUseCase(bottomSheet = BottomSheetType.SearchAssistance.type)
 
                     mappingUseCase.confirmDetailsUseCase(
                         user = UserItem(

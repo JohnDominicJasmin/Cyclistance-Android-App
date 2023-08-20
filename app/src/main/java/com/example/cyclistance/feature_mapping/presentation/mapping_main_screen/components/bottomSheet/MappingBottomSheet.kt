@@ -3,10 +3,12 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import com.example.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import kotlinx.coroutines.launch
 
@@ -14,24 +16,30 @@ import kotlinx.coroutines.launch
 @Composable
 fun MappingBottomSheet(
     modifier: Modifier = Modifier,
-    state: MappingState = MappingState(),
-    bottomSheetType: String?,
+    state: MappingState,
+    uiState: MappingUiState,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-    onClickRescueArrivedButton: () -> Unit = {},
-    onClickReachedDestinationButton: () -> Unit = {},
-    onClickCancelSearchButton: () -> Unit = {},
-    onClickCallRescueTransactionButton: () -> Unit = {},
-    onClickChatRescueTransactionButton: () -> Unit = {},
-    onClickCancelRescueTransactionButton: () -> Unit = {},
-    onClickReportIncident: (label: String) -> Unit = {},
-    content: @Composable (PaddingValues) -> Unit = {},
+    onClickRescueArrivedButton: () -> Unit,
+    onClickReachedDestinationButton: () -> Unit,
+    onClickCancelSearchButton: () -> Unit,
+    onClickCallRescueTransactionButton: () -> Unit,
+    onClickChatRescueTransactionButton: () -> Unit,
+    onClickCancelRescueTransactionButton: () -> Unit,
+    onClickReportIncident: (label: String) -> Unit,
+    onSelectMapType: (String) -> Unit,
+    content: @Composable (PaddingValues) -> Unit,
 ) {
 
 
     val scope = rememberCoroutineScope()
+    val bottomSheetType = uiState.bottomSheetType
+    val sheetGesturesEnabled = remember(bottomSheetType){
+        bottomSheetType != BottomSheetType.SearchAssistance.type &&
+        bottomSheetType != BottomSheetType.OnGoingRescue.type
+    }
     MappingBottomSheet(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
-        sheetGesturesEnabled = bottomSheetType != BottomSheetType.SearchAssistance.type && bottomSheetType != BottomSheetType.OnGoingRescue.type,
+        sheetGesturesEnabled = sheetGesturesEnabled,
         sheetContent = {
             when (bottomSheetType) {
 
@@ -92,6 +100,17 @@ fun MappingBottomSheet(
                             maxSpeed = String.format("%.2f", state.speedometerState.topSpeed)))
 
                 }
+
+                BottomSheetType.HazardousLane.type -> {
+
+                    BottomSheetHazardousLane(
+                        bottomSheetScaffoldState = bottomSheetScaffoldState,
+                        modifier = modifier,
+                        selectedMapType = state.mapType,
+                        onClickMapType = onSelectMapType)
+
+                }
+
 
             }
         }, content = content)
