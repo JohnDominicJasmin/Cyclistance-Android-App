@@ -22,11 +22,11 @@ fun FloatingButtonSection(
     locationPermissionGranted: Boolean = true,
     isNavigating: Boolean,
     uiState: MappingUiState,
-    onClickLocateUserButton: () -> Unit = {},
-    onClickRouteOverviewButton: () -> Unit = {},
-    onClickRecenterButton: () -> Unit = {},
-    onClickOpenNavigationButton: () -> Unit = {},
-    onClickLayerButton: () -> Unit = {}) {
+    onClickLocateUserButton: () -> Unit,
+    onClickRouteOverviewButton: () -> Unit,
+    onClickRecenterButton: () -> Unit,
+    onClickOpenNavigationButton: () -> Unit,
+    onClickLayerButton: () -> Unit) {
 
     val shouldShowLocationUserButton =
         isNavigating.not() && uiState.isFabExpanded.not() && uiState.mapSelectedRescuee == null
@@ -85,7 +85,12 @@ fun FloatingButtonSection(
 @Composable
 fun PreviewFloatingButtons() {
     CyclistanceTheme(true) {
-        FloatingButtonSection(isNavigating = true, uiState = MappingUiState())
+        FloatingButtonSection(isNavigating = true, uiState = MappingUiState(),
+            onClickLocateUserButton = {},
+            onClickRouteOverviewButton = {},
+            onClickRecenterButton = {},
+            onClickOpenNavigationButton = {},
+            onClickLayerButton = {})
     }
 }
 

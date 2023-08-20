@@ -681,8 +681,20 @@ fun MappingScreen(
                 longitude = location.longitude!!
             )
         }
+    }}
 
+    val onOpenHazardousLaneBottomSheet = remember{{
 
+        uiState = if(uiState.bottomSheetType == BottomSheetType.HazardousLane.type){
+            collapseBottomSheet()
+            uiState.copy(bottomSheetType = null)
+        }else{
+            uiState.copy(
+                bottomSheetType = BottomSheetType.HazardousLane.type
+            ).also {
+                expandBottomSheet()
+            }
+        }
     }}
 
 
@@ -1002,8 +1014,7 @@ fun MappingScreen(
                 is MappingUiEvent.DismissRescueResultsDialog -> onDismissRescueResultsDialog()
                 is MappingUiEvent.OnEmergencyCall -> onEmergencyCall(event.phoneNumber)
                 is MappingUiEvent.OnAddEmergencyContact -> onAddEmergencyContact()
-
-
+                MappingUiEvent.OpenHazardousLaneBottomSheet -> onOpenHazardousLaneBottomSheet()
             }
         }
 

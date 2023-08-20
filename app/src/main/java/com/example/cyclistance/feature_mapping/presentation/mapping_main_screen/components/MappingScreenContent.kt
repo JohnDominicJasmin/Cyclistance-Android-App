@@ -114,7 +114,7 @@ fun MappingScreenContent(
                 onClickChatRescueTransactionButton = { event(MappingUiEvent.ChatRescueTransaction) },
                 onClickCancelRescueTransactionButton = { event(MappingUiEvent.CancelRescueTransaction) },
                 bottomSheetScaffoldState = bottomSheetScaffoldState,
-                bottomSheetType = uiState.bottomSheetType,
+                uiState = uiState,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp),
@@ -178,6 +178,7 @@ fun MappingScreenContent(
                         onClickRouteOverviewButton = { event(MappingUiEvent.RouteOverview) },
                         onClickRecenterButton = { event(MappingUiEvent.RecenterRoute) },
                         onClickOpenNavigationButton = { event(MappingUiEvent.OpenNavigation) },
+                        onClickLayerButton = { event(MappingUiEvent.OpenHazardousLaneBottomSheet) },
                         isNavigating = isNavigating,
                         uiState = uiState
                     )
