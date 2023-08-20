@@ -113,12 +113,13 @@ fun MappingScreenContent(
                 onClickCallRescueTransactionButton = { event(MappingUiEvent.CallRescueTransaction) },
                 onClickChatRescueTransactionButton = { event(MappingUiEvent.ChatRescueTransaction) },
                 onClickCancelRescueTransactionButton = { event(MappingUiEvent.CancelRescueTransaction) },
+                onClickReportIncident = { event(MappingUiEvent.OnReportIncident(it)) },
+                onSelectMapType = { event(MappingUiEvent.OnSelectMapType(it)) },
                 bottomSheetScaffoldState = bottomSheetScaffoldState,
                 uiState = uiState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
-                onClickReportIncident = { event(MappingUiEvent.OnReportIncident(it)) }) {
+                    .padding(horizontal = 12.dp)) {
 
 
                 ConstraintLayout(modifier = Modifier.fillMaxSize()) {

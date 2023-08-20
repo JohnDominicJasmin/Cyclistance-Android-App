@@ -8,6 +8,7 @@ import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.L
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MapType
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -29,6 +30,7 @@ data class MappingState(
     val speedometerState: SpeedometerState = SpeedometerState(),
     val hazardousLane: HazardousLane? = null,
     val nearbyCyclist: NearbyCyclist? = null,
+    val mapType: String = MapType.Default.type,
 ) : Parcelable{
 
 

@@ -697,6 +697,10 @@ fun MappingScreen(
         }
     }}
 
+    val onSelectMapType = remember{{ mapType: String ->
+        mappingViewModel.onEvent(event = MappingVmEvent.SetMapType(mapType))
+    }}
+
 
     LaunchedEffect(key1 = true) {
 
@@ -848,13 +852,14 @@ fun MappingScreen(
                 MappingEvent.ReportIncidentSuccess -> {
                     Toast.makeText(context, "Incident Reported", Toast.LENGTH_SHORT).show()
                 }
+
+
+
             }
         }
     }
 
-    LaunchedEffect(key1 = state.hazardousLane?.markers?.size){
-        Timber.v("Hazardous Lane Size: ${state.hazardousLane?.markers?.size}")
-    }
+
 
     LaunchedEffect(key1 = uiState.routeDirection, key2 = mapboxMap) {
 
@@ -1015,6 +1020,7 @@ fun MappingScreen(
                 is MappingUiEvent.OnEmergencyCall -> onEmergencyCall(event.phoneNumber)
                 is MappingUiEvent.OnAddEmergencyContact -> onAddEmergencyContact()
                 MappingUiEvent.OpenHazardousLaneBottomSheet -> onOpenHazardousLaneBottomSheet()
+                is MappingUiEvent.OnSelectMapType -> onSelectMapType(event.mapType)
             }
         }
 
