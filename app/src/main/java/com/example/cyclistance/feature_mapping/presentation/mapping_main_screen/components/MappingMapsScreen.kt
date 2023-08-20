@@ -162,12 +162,9 @@ fun MappingMapsScreen(
         }
 
 
-    LaunchedEffect(key1 = nearbyCyclist) {
-        Timber.v("Nearby Cyclist Size : ${nearbyCyclist}")
-    }
 
 
-    LaunchedEffect(key1 = shouldDismissIcons, key2 = mapboxMap, key3 = nearbyCyclist) {
+    LaunchedEffect(key1 = shouldDismissIcons, key2 = nearbyCyclist) {
 
         if (shouldDismissIcons) {
             dismissAllIcons()
@@ -178,7 +175,7 @@ fun MappingMapsScreen(
     }
 
 
-    LaunchedEffect(key1 = shouldDismissIcons, key2 = mapboxMap, key3 = hazardousLane) {
+    LaunchedEffect(key1 = shouldDismissIcons, key2 = hazardousLane) {
         if (shouldDismissIcons) {
             dismissAllIcons()
             return@LaunchedEffect
