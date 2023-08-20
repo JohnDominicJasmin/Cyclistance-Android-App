@@ -28,6 +28,7 @@ object MappingConstants {
 
     val BIKE_TYPE_KEY = stringPreferencesKey("bike_type")
     val ADDRESS_KEY = stringPreferencesKey("address")
+    val MAP_TYPE_KEY = stringPreferencesKey("map_type")
 
 
     const val LOCATION_NAME = "cyclistance-location"

@@ -2,10 +2,12 @@ package com.example.cyclistance.feature_mapping.data.repository
 
 import android.content.Context
 import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.constants.MappingConstants.MAP_TYPE_KEY
 import com.example.cyclistance.core.utils.contexts.dataStore
 import com.example.cyclistance.core.utils.data_store_ext.editData
 import com.example.cyclistance.core.utils.data_store_ext.getData
 import com.example.cyclistance.feature_mapping.domain.repository.MappingUiStoreRepository
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MapType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -53,6 +55,18 @@ class MappingUiStoreRepositoryImpl(
             bikeTypeFlow = flow{
                 emit(bottomSheetType)
             }
+        }
+    }
+
+    override suspend fun setMapType(mapType: String) {
+        withContext(scope){
+            dataStore.editData(MAP_TYPE_KEY, mapType)
+        }
+    }
+
+    override suspend fun getMapType(): Flow<String> {
+        return withContext(scope){
+            dataStore.getData(key = MAP_TYPE_KEY, defaultValue = MapType.Default.type)
         }
     }
 }

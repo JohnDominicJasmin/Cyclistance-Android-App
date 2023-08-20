@@ -13,4 +13,7 @@ interface MappingUiStoreRepository {
     suspend fun getBottomSheetType(): Flow<String>?
     suspend fun setBottomSheetType(bottomSheetType: String)
 
+    suspend fun setMapType(mapType: String)
+    suspend fun getMapType(): Flow<String>
+
 }
