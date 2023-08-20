@@ -75,15 +75,18 @@ fun MappingMapsScreen(
     val hazardousLane = state.hazardousLane?.markers
 
 
-    val dismissAllIcons = remember(mapboxMap) {
-        {
-            mapboxMap?.removeAnnotations()
+    val nearbyUserMarkers = remember { mutableStateListOf<Marker>() }
+
+    val dismissNearbyUserMarkers = remember(mapboxMap){{
+        nearbyUserMarkers.apply {
+            forEach{ mapboxMap?.removeMarker(it) }
+            clear()
         }
-    }
+    }}
 
     val showNearbyCyclistsIcon = remember(nearbyCyclist, mapboxMap) {
         {
-
+            dismissNearbyUserMarkers()
             nearbyCyclist?.distinctBy {
                 it.id
             }?.filter {
@@ -101,17 +104,20 @@ fun MappingMapsScreen(
                 iconImage?.let { bitmap ->
                     mapboxMap ?: return@let
                     val icon = IconFactory.getInstance(context).fromBitmap(bitmap)
-                    MarkerOptions().apply {
+                    val markerOptions = MarkerOptions().apply {
                         setIcon(icon)
                         position(LatLng(latitude, longitude))
                         title = cyclist.id
-                    }.also(mapboxMap::addMarker)
+                    }
+                    val addedMarker = mapboxMap.addMarker(markerOptions)
+                    addedMarker.let { nearbyUserMarkers.add(it) }
                 }
             }
         }
     }
 
     val hazardousMarkers = remember { mutableStateListOf<Marker>() }
+
 
     val dismissHazardousMarkers = remember(mapboxMap) {
         {
@@ -164,10 +170,15 @@ fun MappingMapsScreen(
 
 
 
-    LaunchedEffect(key1 = shouldDismissIcons, key2 = nearbyCyclist) {
+    LaunchedEffect(key1 = shouldDismissIcons, key2 = nearbyCyclist, key3 = state.mapType) {
+
+        if(state.mapType == MapType.HazardousLane.type){
+            dismissNearbyUserMarkers()
+            return@LaunchedEffect
+        }
 
         if (shouldDismissIcons) {
-            dismissAllIcons()
+            dismissNearbyUserMarkers()
             return@LaunchedEffect
         }
 
@@ -175,9 +186,15 @@ fun MappingMapsScreen(
     }
 
 
-    LaunchedEffect(key1 = shouldDismissIcons, key2 = hazardousLane) {
+    LaunchedEffect(key1 = shouldDismissIcons, key2 = hazardousLane, key3 = state.mapType) {
+
+        if(state.mapType == MapType.Default.type){
+            dismissHazardousMarkers()
+            return@LaunchedEffect
+        }
+
         if (shouldDismissIcons) {
-            dismissAllIcons()
+            dismissHazardousMarkers()
             return@LaunchedEffect
         }
 
