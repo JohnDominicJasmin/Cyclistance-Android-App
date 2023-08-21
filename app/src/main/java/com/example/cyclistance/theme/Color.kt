@@ -27,7 +27,7 @@ val Blue600 = Color(0xFF5786FF)
 val Blue500 = Color(0xFF3B5998)
 
 
-val White200 = Color(0xFFEDEDED)
+val White200 = Color(0xFFD7D7D7)
 val White100 = Color(0xFFF2F2F2)
 val White900 = Color(0xFFFDFDFD)
 val White800 = Color(0xFFEBEBEB)
