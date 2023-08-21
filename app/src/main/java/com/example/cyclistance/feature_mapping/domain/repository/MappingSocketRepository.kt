@@ -1,7 +1,5 @@
 package com.example.cyclistance.feature_mapping.domain.repository
 
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLane
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist

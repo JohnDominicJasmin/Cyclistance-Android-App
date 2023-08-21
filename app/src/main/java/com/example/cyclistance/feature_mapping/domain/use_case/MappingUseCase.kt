@@ -22,7 +22,6 @@ import com.example.cyclistance.feature_mapping.domain.use_case.user.GetUserByIdU
 import com.example.cyclistance.feature_mapping.domain.use_case.user.GetUsersUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.DeleteHazardousLaneUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.NewHazardousLaneUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.RequestHazardousLaneUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.TransactionLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
@@ -62,7 +61,6 @@ data class MappingUseCase(
     val getCalculatedDistanceUseCase: GetCalculatedDistanceUseCase,
     val newHazardousLaneUseCase: NewHazardousLaneUseCase,
     val deleteHazardousLaneUseCase: DeleteHazardousLaneUseCase,
-    val requestHazardousLaneUseCase: RequestHazardousLaneUseCase,
 
     val mapTypeUseCase: MapTypeUseCase,
     )

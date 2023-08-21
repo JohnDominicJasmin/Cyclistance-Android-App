@@ -87,21 +87,10 @@ class MappingViewModel @Inject constructor(
         trackingHandler = TrackingStateHandler(state = _state, eventFlow = _eventFlow)
         loadData()
         observeDataChanges()
-        requestHazardousLane()
         getMapType()
     }
 
-    private fun requestHazardousLane() {
-        viewModelScope.launch {
-            runCatching {
-                mappingUseCase.requestHazardousLaneUseCase()
-            }.onSuccess {
-                Timber.v("SUCCESS REQUESTING HAZARDOUS LANE")
-            }.onFailure {
-                Timber.e("ERROR REQUESTING HAZARDOUS LANE: ${it.message}")
-            }
-        }
-    }
+
 
     private fun observeDataChanges() {
         subscribeToLocationUpdates()
