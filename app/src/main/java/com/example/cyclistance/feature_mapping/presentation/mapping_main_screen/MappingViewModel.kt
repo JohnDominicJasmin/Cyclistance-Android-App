@@ -115,20 +115,19 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun subscribeToHazardousLaneUpdates() {
-        viewModelScope.launch {
-            mappingUseCase.newHazardousLaneUseCase().catch {
-                Timber.e("ERROR GETTING HAZARDOUS LANE: ${it.message}")
-            }.onEach { hazardousLane ->
+        viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
+            mappingUseCase.newHazardousLaneUseCase(onNewHazardousLane = { hazardousLane ->
                 _state.update {
                     it.copy(hazardousLane = hazardousLane)
                 }
+            }, onModifiedHazardousLine = { hazardousLane ->
 
-            }.launchIn(this)
+            })
         }
     }
 
     private fun subscribeToBottomSheetTypeUpdates() {
-        viewModelScope.launch(context = defaultDispatcher) {
+        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
             mappingUseCase.bottomSheetTypeUseCase()?.catch {
                 it.handleException()
             }?.onEach {
@@ -418,7 +417,6 @@ class MappingViewModel @Inject constructor(
 
             is MappingVmEvent.SubscribeToDataChanges -> {
                 observeDataChanges()
-                requestHazardousLane()
             }
 
 
@@ -838,7 +836,7 @@ class MappingViewModel @Inject constructor(
         if (locationUpdatesJob?.isActive == true) {
             return
         }
-        locationUpdatesJob = viewModelScope.launch(context = defaultDispatcher) {
+        locationUpdatesJob = viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
             mappingUseCase.getUserLocationUseCase().catch {
                 Timber.e("Error Location Updates: ${it.message}")
