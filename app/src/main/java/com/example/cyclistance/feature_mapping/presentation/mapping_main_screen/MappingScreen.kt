@@ -22,6 +22,8 @@ import com.example.cyclistance.core.utils.connection.ConnectionStatus.checkLocat
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.FAST_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
 import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_SOURCE_ID
@@ -367,10 +369,13 @@ fun MappingScreen(
     DisposableEffect(key1 = true){
         onDispose {
             val camera = mapboxMap?.cameraPosition
-            val cameraCenter = camera?.target
+            val cameraCenter = camera?.target ?: LatLng(
+                 DEFAULT_LATITUDE,
+                 DEFAULT_LONGITUDE,
+            )
             val cameraZoom = camera?.zoom
             onChangeCameraPosition(CameraState(
-                position = cameraCenter!!,
+                position = cameraCenter,
                 zoom = cameraZoom ?: 0.0
             ))
         }
