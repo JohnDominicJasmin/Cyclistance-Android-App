@@ -19,6 +19,7 @@ import com.example.cyclistance.feature_messaging.presentation.conversation.event
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationState
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -185,7 +186,7 @@ class ConversationViewModel @Inject constructor(
     }
 
     private fun sendMessage(model: SendMessageModel) {
-        viewModelScope.launch {
+        viewModelScope.launch(SupervisorJob()) {
             runCatching {
                 messagingUseCase.sendMessageUseCase(model)
                 sendMessageNotification(model.message)

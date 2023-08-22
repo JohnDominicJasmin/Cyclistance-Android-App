@@ -196,8 +196,7 @@ class MessagingRepositoryImpl(
                     Filter.equalTo(KEY_RECEIVER_ID, userId),
                     Filter.equalTo(KEY_SENDER_ID, userId)))
             .orderBy(KEY_TIMESTAMP, Query.Direction.DESCENDING)
-            .addSnapshotListener(
-                chatListener(onAddedChat = onAddedChat, onModifiedChat = onModifiedChat))
+            .addSnapshotListener(chatListener(onAddedChat = onAddedChat, onModifiedChat = onModifiedChat))
 
     }
 
@@ -295,7 +294,7 @@ class MessagingRepositoryImpl(
 
     override fun addUserListener(onNewMessageUser: (MessagingUserModel) -> Unit) {
 
-        messageListener = fireStore.collection(USER_COLLECTION)
+        messageUserListener = fireStore.collection(USER_COLLECTION)
             .addSnapshotListener(MetadataChanges.INCLUDE) { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
                 if (value == null) {
                     throw MessagingExceptions.GetMessageUsersFailure(message = "Cannot get message users, value is null")
@@ -345,7 +344,7 @@ class MessagingRepositoryImpl(
         chatListener?.remove()
     }
 
-    override fun sendMessage(sendMessageModel: SendMessageModel) {
+    override suspend fun sendMessage(sendMessageModel: SendMessageModel) {
         checkInternetConnection()
 
         val uid = getUid()
@@ -356,15 +355,17 @@ class MessagingRepositoryImpl(
             KEY_TIMESTAMP to Date()
         )
 
-        fireStore
-            .collection(KEY_CONVERSATIONS_COLLECTION)
-            .add(message)
-            .addOnSuccessListener {
-            Timber.v("Message sent successfully ")
-        }.addOnFailureListener {
-            throw MessagingExceptions.SendMessagingFailure(message = it.message!!)
-        }.addOnCanceledListener {
-            Timber.e("Message sending cancelled by user")
+        suspendCancellableCoroutine { continuation ->
+            fireStore
+                .collection(KEY_CONVERSATIONS_COLLECTION)
+                .add(message)
+                .addOnSuccessListener {
+                    continuation.resume(Unit)
+                }.addOnFailureListener {
+                    continuation.resumeWithException(MessagingExceptions.SendMessagingFailure(message = it.message!!))
+                }.addOnCanceledListener {
+                    Timber.e("Message sending cancelled by user")
+                }
         }
 
     }
@@ -372,10 +373,14 @@ class MessagingRepositoryImpl(
     override suspend fun deleteToken() {
         checkInternetConnection()
         dataStore.editData(key = SAVED_TOKEN, value = "")
-        fireStore.collection(
-            USER_COLLECTION
-        ).document(getUid()).update(KEY_FCM_TOKEN, FieldValue.delete()).addOnFailureListener {
-            throw MessagingExceptions.TokenException(message = it.message!!)
+        suspendCancellableCoroutine<Unit> { continuation ->
+            fireStore.collection(
+                USER_COLLECTION
+            ).document(getUid()).update(KEY_FCM_TOKEN, FieldValue.delete()).addOnSuccessListener {
+                continuation.resume(Unit)
+            }.addOnFailureListener {
+                continuation.resumeWithException(MessagingExceptions.TokenException(message = it.message!!))
+            }
         }
     }
 
