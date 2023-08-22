@@ -37,6 +37,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_l
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.NearbyCyclistsUseCase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.GsonBuilder
 import com.mapbox.api.optimization.v1.MapboxOptimization
 import dagger.Module
@@ -95,6 +96,7 @@ object MappingModule {
     fun provideMappingRepository(
         @ApplicationContext context: Context,
         api: CyclistanceApi,
+        fireStore: FirebaseFirestore,
         mapboxDirections: MapboxOptimization.Builder): MappingRepository {
 
 

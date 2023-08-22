@@ -10,4 +10,6 @@ object MappingExceptions {
     class RescueTransactionNotFoundException(message: String = "Rescue transaction not found"): RuntimeException(message)
     class RescueTransactionReasonException(message: String = "Select cancellation reason"): RuntimeException(message)
     class LocationException(message: String = "Location not found"): RuntimeException(message)
+    class HazardousLaneException(message: String = "Hazardous Lane not found"): RuntimeException(message)
+
 }

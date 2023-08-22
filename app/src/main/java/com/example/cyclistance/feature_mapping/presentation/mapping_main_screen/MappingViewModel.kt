@@ -120,8 +120,6 @@ class MappingViewModel @Inject constructor(
                 _state.update {
                     it.copy(hazardousLane = hazardousLane)
                 }
-            }, onModifiedHazardousLine = { hazardousLane ->
-
             })
         }
     }

@@ -89,4 +89,23 @@ object MappingConstants {
     const val TRANSACTION_ICON_ID = "red-pin-icon-id"
     const val ICON_LAYER_ID = "icon-layer-id"
 
+
+
+
+
+
+
+
+    const val KEY_HAZARDOUS_LANE_COLLECTION = "hazardous_lanes"
+    const val KEY_TIMESTAMP_FIELD = "timestamp"
+    const val KEY_MARKER_FIELD = "marker"
+
+    const val KEY_ID = "id"
+    const val KEY_DATE_POSTED = "datePosted"
+    const val KEY_ID_CREATOR = "idCreator"
+    const val KEY_ID_LABEL = "label"
+    const val KEY_ID_LONGITUDE = "longitude"
+    const val KEY_ID_LATITUDE = "latitude"
+
+
 }
