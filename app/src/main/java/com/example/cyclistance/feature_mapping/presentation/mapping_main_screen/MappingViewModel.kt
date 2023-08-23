@@ -82,6 +82,8 @@ class MappingViewModel @Inject constructor(
     val eventFlow: SharedFlow<MappingEvent> = _eventFlow.asSharedFlow()
     private var travelledPath: MutableList<GoogleLatLng> = mutableStateListOf()
 
+    private val _hazardousLaneMarkers = mutableStateListOf<HazardousLaneMarker>()
+    val hazardousLaneMarkers: List<HazardousLaneMarker> = _hazardousLaneMarkers
 
     init {
         trackingHandler = TrackingStateHandler(state = _state, eventFlow = _eventFlow)
@@ -116,11 +118,24 @@ class MappingViewModel @Inject constructor(
 
     private fun subscribeToHazardousLaneUpdates() {
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
-            mappingUseCase.newHazardousLaneUseCase(onNewHazardousLane = { hazardousLane ->
-                _state.update {
-                    it.copy(hazardousLane = hazardousLane)
+            
+            mappingUseCase.newHazardousLaneUseCase(
+                onAddedHazardousMarker = { marker ->
+                    _hazardousLaneMarkers.add(marker)
+                },
+                onModifiedHazardousMarker = { modifiedMarker ->
+                    _hazardousLaneMarkers.removeAll { marker ->
+                        marker.id == modifiedMarker.id
+                    }
+                    _hazardousLaneMarkers.add(modifiedMarker)
+                },
+                onRemovedHazardousMarker = { markerId ->
+                    _hazardousLaneMarkers.removeAll { marker ->
+                        marker.id == markerId
+                    }
                 }
-            })
+            )
+
         }
     }
 

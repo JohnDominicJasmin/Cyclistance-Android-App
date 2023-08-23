@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_mapping.domain.repository
 
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLane
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
@@ -32,7 +31,10 @@ interface MappingRepository {
 
 
     suspend fun addHazardousLaneListener(
-        onNewHazardousLane: (HazardousLane) -> Unit)
+        onAddedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        onModifiedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        onRemovedHazardousMarker: (id: String) -> Unit)
+
     suspend fun addNewHazardousLane(hazardousLaneMarker: HazardousLaneMarker)
     suspend fun deleteHazardousLane(id: String)
     fun removeHazardousLaneListener()

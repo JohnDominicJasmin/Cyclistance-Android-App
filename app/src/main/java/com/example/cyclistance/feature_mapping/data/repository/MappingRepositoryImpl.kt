@@ -19,7 +19,6 @@ import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItem
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItemDto
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.model.*
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLane
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
@@ -28,6 +27,7 @@ import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.N
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.example.cyclistance.service.LocationService
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.ListenerRegistration
@@ -70,26 +70,47 @@ class MappingRepositoryImpl(
     private val scope: CoroutineContext = Dispatchers.IO
     private var hazardousListener: ListenerRegistration? = null
 
-
     private inline fun hazardousLaneListener(
-        crossinline onNewHazardousLane: (HazardousLane) -> Unit,
+        crossinline onAddedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        crossinline onModifiedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        crossinline onRemovedHazardousMarker: (id: String) -> Unit,
     ) = { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
 
         if (error != null) {
             throw MappingExceptions.HazardousLaneException(
-                message = error.message ?: "Unknown error occurred")
+                message = error?.message ?: "Unknown error occurred")
         }
 
         if (value == null) {
             throw MappingExceptions.HazardousLaneException(message = "No value found")
         }
 
-        val hazardousLane = value.documentChanges.map {
-             it.document.get(KEY_MARKER_FIELD, HazardousLaneMarker::class.java)!!
+        value.documentChanges.forEach { item ->
+
+            when (item.type) {
+
+                DocumentChange.Type.ADDED -> {
+                    onAddedHazardousMarker(
+                        item.document.get(
+                            KEY_MARKER_FIELD,
+                            HazardousLaneMarker::class.java)!!)
+                }
+
+                DocumentChange.Type.MODIFIED -> {
+                    onModifiedHazardousMarker(
+                        item.document.get(
+                            KEY_MARKER_FIELD,
+                            HazardousLaneMarker::class.java)!!)
+                }
+
+                DocumentChange.Type.REMOVED -> {
+                    val hazardousMarker = item.document.get(
+                        KEY_MARKER_FIELD,
+                        HazardousLaneMarker::class.java)!!
+                    onRemovedHazardousMarker(hazardousMarker.id)
+                }
+            }
         }
-        onNewHazardousLane(
-            HazardousLane(markers = hazardousLane)
-        )
     }
 
     override suspend fun addNewHazardousLane(hazardousLaneMarker: HazardousLaneMarker) {
@@ -120,7 +141,10 @@ class MappingRepositoryImpl(
 
     }
 
-    override suspend fun addHazardousLaneListener(onNewHazardousLane: (HazardousLane) -> Unit) {
+    override suspend fun addHazardousLaneListener(
+        onAddedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        onModifiedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        onRemovedHazardousMarker: (id: String) -> Unit) {
 
         val currentTimeMillis = System.currentTimeMillis()
         val oneWeekAgo = currentTimeMillis - TimeUnit.DAYS.toMillis(7)
@@ -128,7 +152,11 @@ class MappingRepositoryImpl(
         hazardousListener = fireStore.collection(KEY_HAZARDOUS_LANE_COLLECTION)
             .whereGreaterThan(KEY_TIMESTAMP_FIELD, oneWeekAgo)
             .orderBy(KEY_TIMESTAMP_FIELD)
-            .addSnapshotListener(hazardousLaneListener(onNewHazardousLane = onNewHazardousLane))
+            .addSnapshotListener(
+                hazardousLaneListener(
+                    onAddedHazardousMarker = onAddedHazardousMarker,
+                    onModifiedHazardousMarker = onModifiedHazardousMarker,
+                    onRemovedHazardousMarker = onRemovedHazardousMarker))
     }
 
     override fun removeHazardousLaneListener() {
