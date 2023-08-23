@@ -2,7 +2,6 @@ package com.example.cyclistance.core.utils.validation
 
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -21,9 +20,7 @@ object FormatterUtils {
         }
     }
 
-    fun List<UserItem>.findUser(id: String): UserItem {
-        return find { it.id == id } ?: UserItem()
-    }
+
 
 
     // TODO: test this code
