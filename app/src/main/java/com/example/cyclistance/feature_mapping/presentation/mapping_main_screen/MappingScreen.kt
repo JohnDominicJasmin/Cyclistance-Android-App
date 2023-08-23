@@ -85,6 +85,7 @@ fun MappingScreen(
 
     val context = LocalContext.current
     val state by mappingViewModel.state.collectAsStateWithLifecycle()
+    val hazardousMarkers = mappingViewModel.hazardousLaneMarkers
     val emergencyState by emergencyViewModel.state.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
@@ -978,6 +979,7 @@ fun MappingScreen(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         hasTransaction = hasTransaction,
         isRescueCancelled = isRescueCancelled,
+        hazardousLaneMarkers = hazardousMarkers,
         isNavigating = isNavigating,
         mapboxMap = mapboxMap,
         uiState = uiState,
