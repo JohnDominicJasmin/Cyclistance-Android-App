@@ -74,7 +74,7 @@ class MappingViewModel @Inject constructor(
     private var trackingHandler: TrackingStateHandler
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(
-        savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState()
+        savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState(userId = getId())
     )
     val state = _state.asStateFlow()
 
