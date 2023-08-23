@@ -208,7 +208,17 @@ fun MappingMapsScreen(
     LaunchedEffect(key1 = mapboxMap, uiState.isFabExpanded) {
 
         mapboxMap?.setOnMarkerClickListener {
-            event(MappingUiEvent.RescueeMapIconSelected(it.title))
+
+            mapboxMap.animateCameraPosition(
+                latLng = it.position,
+                zoomLevel = MappingConstants.LOCATE_USER_ZOOM_LEVEL,
+                cameraAnimationDuration = MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION)
+
+            if (it.snippet == MarkerSnippet.HazardousLaneSnippet.type) {
+                event(MappingUiEvent.HazardousLaneMarkerSelected(it.title))
+            } else {
+                event(MappingUiEvent.RescueeMarkerSelected(it.title))
+            }
             true
         }
 
