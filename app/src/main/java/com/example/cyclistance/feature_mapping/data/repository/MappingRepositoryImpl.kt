@@ -37,7 +37,7 @@ import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.optimization.v1.MapboxOptimization
 import com.mapbox.api.optimization.v1.models.OptimizationResponse
 import com.mapbox.geojson.Point
-import im.delight.android.location.SimpleLocation
+import com.mapbox.mapboxsdk.geometry.LatLng
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
