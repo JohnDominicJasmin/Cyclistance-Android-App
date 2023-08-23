@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_RADIUS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
 import com.example.cyclistance.core.utils.validation.FormatterUtils
@@ -475,7 +476,7 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingVmEvent.ReportIncident -> {
-                reportIncident(label = event.label, latLng = event.latLng)
+                calculateIncidentDistance(latLng = event.latLng, label = event.label)
             }
 
             is MappingVmEvent.SetMapType -> {
@@ -485,6 +486,32 @@ class MappingViewModel @Inject constructor(
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
+
+    private fun calculateIncidentDistance(latLng: LatLng, label: String){
+        viewModelScope.launch {
+            val userLocation = state.value.getCurrentLocation()
+
+            if (userLocation == null) {
+                _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
+                return@launch
+            }
+            val distance = mappingUseCase.getCalculatedDistanceUseCase(
+                    startingLocation = userLocation,
+                    destinationLocation = LocationModel(
+                        latitude = latLng.latitude,
+                        longitude = latLng.longitude
+                    )
+                )
+
+            if(distance > DEFAULT_RADIUS){
+                _eventFlow.emit(MappingEvent.IncidentDistanceTooFar)
+                return@launch
+            }
+
+            reportIncident(label = label, latLng = latLng)
+        }
+
+    }
 
     private fun setMapType(mapType: String) {
         viewModelScope.launch {
@@ -498,8 +525,8 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun reportIncident(label: String, latLng: LatLng) {
-        viewModelScope.launch {
+    private suspend fun reportIncident(label: String, latLng: LatLng) {
+        coroutineScope {
             runCatching {
                 mappingUseCase.newHazardousLaneUseCase(
                     hazardousLaneMarker = HazardousLaneMarker(

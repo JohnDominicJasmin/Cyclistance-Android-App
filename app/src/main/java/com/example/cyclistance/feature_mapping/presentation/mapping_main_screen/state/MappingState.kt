@@ -36,7 +36,8 @@ data class MappingState(
     fun getTravelledDistance() = speedometerState.travelledDistance
     fun getTopSpeed() = speedometerState.topSpeed
     fun getCurrentSpeedKph() = speedometerState.currentSpeedKph
-
-
+    fun isLocationAvailable(): Boolean {
+        return userLocation != null && user.location != null
+    }
     fun getCurrentLocation() = user.location ?: userLocation
 }
