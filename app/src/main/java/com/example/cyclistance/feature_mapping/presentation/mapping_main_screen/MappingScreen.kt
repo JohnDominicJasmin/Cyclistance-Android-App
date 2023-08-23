@@ -995,7 +995,7 @@ fun MappingScreen(
                 is MappingUiEvent.RescueRequestAccepted -> onClickOkAcceptedRescue()
                 is MappingUiEvent.OnChangeCameraState -> onChangeCameraPosition(event.cameraState)
                 is MappingUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
-                is MappingUiEvent.RescueeMapIconSelected -> onClickRescueeMapIcon(event.id)
+                is MappingUiEvent.RescueeMarkerSelected -> onClickRescueeMapIcon(event.id)
                 is MappingUiEvent.OnMapClick -> onMapClick()
                 is MappingUiEvent.DismissBanner -> onDismissRescueeBanner()
                 is MappingUiEvent.LocateUser -> onClickLocateUserButton()
@@ -1026,6 +1026,7 @@ fun MappingScreen(
                 is MappingUiEvent.OnAddEmergencyContact -> onAddEmergencyContact()
                 MappingUiEvent.OpenHazardousLaneBottomSheet -> onOpenHazardousLaneBottomSheet()
                 is MappingUiEvent.OnSelectMapType -> onSelectMapType(event.mapType)
+                is MappingUiEvent.HazardousLaneMarkerSelected -> {}
             }
         }
 
