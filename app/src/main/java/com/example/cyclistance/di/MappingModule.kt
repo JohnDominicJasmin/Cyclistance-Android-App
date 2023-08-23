@@ -33,6 +33,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDi
 import com.example.cyclistance.feature_mapping.domain.use_case.user.*
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.DeleteHazardousLaneUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.NewHazardousLaneUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.RemoveHazardousListenerUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.TransactionLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase

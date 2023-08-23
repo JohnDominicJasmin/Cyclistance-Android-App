@@ -779,6 +779,12 @@ class MappingViewModel @Inject constructor(
         getTransactionLocationUpdatesJob?.cancel()
     }
 
+    private fun removeHazardousLaneListener(){
+        mappingUseCase.removeHazardousListenerUseCase()
+    }
+
+
+
     private fun subscribeToRescueTransactionUpdates() {
         if (getRescueTransactionUpdatesJob?.isActive == true) {
             return
@@ -977,6 +983,8 @@ class MappingViewModel @Inject constructor(
         unSubscribeToNearbyUsersChanges()
         unSubscribeToRescueTransactionUpdates()
         unSubscribeToTransactionLocationUpdates()
+        removeHazardousLaneListener()
+
     }
 
 
