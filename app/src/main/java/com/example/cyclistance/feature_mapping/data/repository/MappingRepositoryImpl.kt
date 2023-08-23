@@ -7,6 +7,9 @@ import android.os.Build
 import androidx.annotation.WorkerThread
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants.API_CALL_RETRY_COUNT
+import com.example.cyclistance.core.utils.constants.MappingConstants.KEY_HAZARDOUS_LANE_COLLECTION
+import com.example.cyclistance.core.utils.constants.MappingConstants.KEY_MARKER_FIELD
+import com.example.cyclistance.core.utils.constants.MappingConstants.KEY_TIMESTAMP_FIELD
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransactionDto
@@ -16,6 +19,7 @@ import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItem
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItemDto
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.model.*
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
@@ -23,6 +27,11 @@ import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.N
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.example.cyclistance.service.LocationService
+import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FirebaseFirestoreException
+import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.QuerySnapshot
 import com.mapbox.api.directions.v5.DirectionsCriteria
 import com.mapbox.api.directions.v5.models.DirectionsRoute
 import com.mapbox.api.optimization.v1.MapboxOptimization
@@ -35,6 +44,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
@@ -42,11 +52,11 @@ import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
-
 
 class MappingRepositoryImpl(
 
@@ -54,10 +64,125 @@ class MappingRepositoryImpl(
     private val mapboxDirections: MapboxOptimization.Builder,
     private val context: Context,
     private val geocoder: Geocoder,
+    private val fireStore: FirebaseFirestore,
 ) : MappingRepository {
 
     private val scope: CoroutineContext = Dispatchers.IO
+    private var hazardousListener: ListenerRegistration? = null
 
+    private inline fun hazardousLaneListener(
+        crossinline onAddedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        crossinline onModifiedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        crossinline onRemovedHazardousMarker: (id: String) -> Unit,
+    ) = { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
+
+        if (error != null) {
+            throw MappingExceptions.HazardousLaneException(
+                message = error?.message ?: "Unknown error occurred")
+        }
+
+        if (value == null) {
+            throw MappingExceptions.HazardousLaneException(message = "No value found")
+        }
+
+        value.documentChanges.forEach { item ->
+
+            when (item.type) {
+
+                DocumentChange.Type.ADDED -> {
+                    onAddedHazardousMarker(
+                        item.document.get(
+                            KEY_MARKER_FIELD,
+                            HazardousLaneMarker::class.java)!!)
+                }
+
+                DocumentChange.Type.MODIFIED -> {
+                    onModifiedHazardousMarker(
+                        item.document.get(
+                            KEY_MARKER_FIELD,
+                            HazardousLaneMarker::class.java)!!)
+                }
+
+                DocumentChange.Type.REMOVED -> {
+                    val hazardousMarker = item.document.get(
+                        KEY_MARKER_FIELD,
+                        HazardousLaneMarker::class.java)!!
+                    onRemovedHazardousMarker(hazardousMarker.id)
+                }
+            }
+        }
+    }
+
+    override suspend fun addNewHazardousLane(hazardousLaneMarker: HazardousLaneMarker) {
+
+        if (context.hasInternetConnection().not()) {
+            throw MappingExceptions.NetworkException()
+        }
+
+        suspendCancellableCoroutine { continuation ->
+
+            fireStore
+                .collection(KEY_HAZARDOUS_LANE_COLLECTION)
+                .add(
+                    mapOf(
+                        KEY_MARKER_FIELD to hazardousLaneMarker,
+                        KEY_TIMESTAMP_FIELD to System.currentTimeMillis()
+                    ))
+                .addOnSuccessListener {
+                    continuation.resume(Unit)
+                }
+                .addOnFailureListener {
+                    continuation.resumeWithException(
+                        MappingExceptions.HazardousLaneException(
+                            message = it.message ?: "Unknown error occurred"))
+                }
+
+        }
+
+    }
+
+    override suspend fun addHazardousLaneListener(
+        onAddedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        onModifiedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        onRemovedHazardousMarker: (id: String) -> Unit) {
+
+        val currentTimeMillis = System.currentTimeMillis()
+        val oneWeekAgo = currentTimeMillis - TimeUnit.DAYS.toMillis(7)
+
+        hazardousListener = fireStore.collection(KEY_HAZARDOUS_LANE_COLLECTION)
+            .whereGreaterThan(KEY_TIMESTAMP_FIELD, oneWeekAgo)
+            .orderBy(KEY_TIMESTAMP_FIELD)
+            .addSnapshotListener(
+                hazardousLaneListener(
+                    onAddedHazardousMarker = onAddedHazardousMarker,
+                    onModifiedHazardousMarker = onModifiedHazardousMarker,
+                    onRemovedHazardousMarker = onRemovedHazardousMarker))
+    }
+
+    override fun removeHazardousLaneListener() {
+        hazardousListener?.remove()
+    }
+
+    override suspend fun deleteHazardousLane(id: String) {
+
+        if (context.hasInternetConnection().not()) {
+            throw MappingExceptions.NetworkException()
+        }
+
+        suspendCancellableCoroutine<Unit> { continuation ->
+
+            fireStore
+                .collection(KEY_HAZARDOUS_LANE_COLLECTION)
+                .document(id)
+                .delete()
+                .addOnFailureListener {
+                    continuation.resumeWithException(
+                        MappingExceptions.HazardousLaneException(
+                            message = it.message ?: "Unknown error occurred"))
+                }
+
+        }
+    }
 
     override suspend fun getFullAddress(latitude: Double, longitude: Double): String {
         return withContext(scope) {
@@ -115,12 +240,14 @@ class MappingRepositoryImpl(
     }
 
     private fun Address.getFullAddress(): String {
-        val subThoroughfare = if (subThoroughfare != "null" && subThoroughfare != null) "$subThoroughfare " else ""
-        val thoroughfare = if (thoroughfare != "null" && thoroughfare != null) "$thoroughfare., " else ""
+        val subThoroughfare =
+            if (subThoroughfare != "null" && subThoroughfare != null) "$subThoroughfare " else ""
+        val thoroughfare =
+            if (thoroughfare != "null" && thoroughfare != null) "$thoroughfare., " else ""
         val subAdminArea = if (subAdminArea != "null" && subAdminArea != null) subAdminArea else ""
 
         val locality = if (locality != "null" && locality != null) "$locality, " else ""
-        val formattedLocality = if(subAdminArea.isNotEmpty()) locality else locality.replace(
+        val formattedLocality = if (subAdminArea.isNotEmpty()) locality else locality.replace(
             oldChar = ',',
             newChar = ' ',
             ignoreCase = true
@@ -128,9 +255,6 @@ class MappingRepositoryImpl(
 
         return "$subThoroughfare$thoroughfare$formattedLocality$subAdminArea"
     }
-
-
-
 
 
     override suspend fun getUserById(userId: String): Flow<UserItem> =
@@ -208,8 +332,6 @@ class MappingRepositoryImpl(
             }
         }
     }
-
-
 
 
     override suspend fun deleteRescueRespondent(userId: String, respondentId: String) {

@@ -1,0 +1,143 @@
+Index: app/src/main/java/com/example/cyclistance/feature_authentication/presentation/auth_reset_password/components/ResetPasswordContent.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_authentication/presentation/auth_reset_password/components/ResetPasswordContent.kt b/app/src/main/java/com/example/cyclistance/feature_authentication/presentation/auth_reset_password/components/ResetPasswordContent.kt
+new file mode 100644
+--- /dev/null	(date 1691636113968)
++++ b/app/src/main/java/com/example/cyclistance/feature_authentication/presentation/auth_reset_password/components/ResetPasswordContent.kt	(date 1691636113968)
+@@ -0,0 +1,132 @@
++package com.example.cyclistance.feature_authentication.presentation.auth_reset_password.components
++
++import androidx.compose.foundation.Image
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.Spacer
++import androidx.compose.foundation.layout.fillMaxHeight
++import androidx.compose.foundation.layout.fillMaxSize
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.height
++import androidx.compose.foundation.layout.padding
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Surface
++import androidx.compose.material.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.CompositionLocalProvider
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.res.painterResource
++import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.text.input.TextFieldValue
++import androidx.compose.ui.tooling.preview.Preview
++import androidx.compose.ui.unit.dp
++import com.example.cyclistance.R
++import com.example.cyclistance.feature_authentication.presentation.common.PasswordTextField
++import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
++import com.example.cyclistance.navigation.IsDarkTheme
++import com.example.cyclistance.theme.Black500
++import com.example.cyclistance.theme.CyclistanceTheme
++
++@Composable
++fun ResetPasswordContent(modifier: Modifier = Modifier) {
++    val isDarkTheme = IsDarkTheme.current
++    Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
++
++        Column(
++
++            verticalArrangement = Arrangement.Top,
++            horizontalAlignment = Alignment.CenterHorizontally
++        ) {
++
++            Spacer(
++                modifier = Modifier
++                    .fillMaxHeight(0.06f)
++            )
++
++            Image(
++                contentDescription = "Display Image",
++                painter = painterResource(id = if (isDarkTheme) R.drawable.ic_reset_pw_dark else R.drawable.ic_reset_pw_light)
++            )
++
++            Column(
++                modifier = Modifier
++                    .padding(top = 25.dp)
++                    .padding(horizontal = 15.dp)
++            ) {
++
++                Text(
++                    text = "Reset Password",
++                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium),
++                    color = MaterialTheme.colors.onBackground,
++                    modifier = Modifier.padding(bottom = 8.dp))
++
++                Text(
++                    text = "Create new password so you can login to your account",
++                    style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Normal),
++                    color = Black500)
++
++            }
++
++
++            Column(
++                modifier = Modifier.padding(horizontal = 15.dp, vertical = 20.dp),
++                verticalArrangement = Arrangement.spacedBy(8.dp)) {
++
++                PasswordTextField(
++                    placeholderText = "Current Password",
++                    enabled = true,
++                    password = TextFieldValue(),
++                    passwordExceptionMessage = "",
++                    clearIconOnClick = { /*TODO*/ },
++                    onValueChange = {})
++
++
++                PasswordTextField(
++                    placeholderText = "New Password",
++                    enabled = true,
++                    password = TextFieldValue(),
++                    passwordExceptionMessage = "",
++                    clearIconOnClick = { /*TODO*/ },
++                    onValueChange = {})
++
++
++                PasswordTextField(
++                    enabled = true,
++                    placeholderText = "Confirm New Password",
++                    password = TextFieldValue(),
++                    passwordExceptionMessage = "",
++                    clearIconOnClick = { /*TODO*/ },
++                    onValueChange = {})
++
++            }
++
++
++            Spacer(modifier = Modifier.weight(1f))
++
++            ButtonNavigation(
++                modifier = Modifier.fillMaxWidth(0.8f),
++                negativeButtonEnabled = true,
++                positiveButtonEnabled = true,
++                positiveButtonText = "Update",
++                onClickNegativeButton = {},
++                onClickPositiveButton = {})
++
++            Spacer(modifier = Modifier.height(45.dp))
++
++        }
++
++    }
++
++
++}
++
++@Preview(device = "id:Galaxy Nexus")
++@Composable
++fun PreviewResetPasswordContent() {
++    CompositionLocalProvider(IsDarkTheme provides true) {
++        CyclistanceTheme(darkTheme = true) {
++            ResetPasswordContent()
++        }
++    }
++}
+\ No newline at end of file

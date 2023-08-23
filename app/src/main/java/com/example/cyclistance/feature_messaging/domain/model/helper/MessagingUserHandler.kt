@@ -11,13 +11,6 @@ class MessagingUserHandler(
 ) {
 
     fun handleNewAddedChat() {
-
-        val index = chats.indexOfFirst { it.second.conversionId == chatItem.conversionId }
-        val hasFound = index != -1
-        if (hasFound) {
-            chats.set(index, element = Pair(first = messagingUserItem, second = chatItem))
-            return
-        }
         chats.add(
             Pair(first = messagingUserItem,
                 second = chatItem))
@@ -28,8 +21,8 @@ class MessagingUserHandler(
         val modifiedIndex = chats.indexOfFirst { chatItem.senderId == it.second.senderId && chatItem.receiverId == it.second.receiverId }
         val hasFound = modifiedIndex != -1
         if (hasFound) {
-            chats[modifiedIndex] = chats[modifiedIndex].copy(first = messagingUserItem, second = chatItem
-            )
+
+            chats.set(modifiedIndex, element = Pair(first = messagingUserItem, second = chatItem))
             chats.swap(modifiedIndex, 0)
         }
     }

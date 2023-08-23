@@ -74,7 +74,7 @@ class MappingViewModel @Inject constructor(
     private var trackingHandler: TrackingStateHandler
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(
-        savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState()
+        savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState(userId = getId())
     )
     val state = _state.asStateFlow()
 
@@ -82,26 +82,17 @@ class MappingViewModel @Inject constructor(
     val eventFlow: SharedFlow<MappingEvent> = _eventFlow.asSharedFlow()
     private var travelledPath: MutableList<GoogleLatLng> = mutableStateListOf()
 
+    private val _hazardousLaneMarkers = mutableStateListOf<HazardousLaneMarker>()
+    val hazardousLaneMarkers: List<HazardousLaneMarker> = _hazardousLaneMarkers
 
     init {
         trackingHandler = TrackingStateHandler(state = _state, eventFlow = _eventFlow)
         loadData()
         observeDataChanges()
-        requestHazardousLane()
         getMapType()
     }
 
-    private fun requestHazardousLane() {
-        viewModelScope.launch {
-            runCatching {
-                mappingUseCase.requestHazardousLaneUseCase()
-            }.onSuccess {
-                Timber.v("SUCCESS REQUESTING HAZARDOUS LANE")
-            }.onFailure {
-                Timber.e("ERROR REQUESTING HAZARDOUS LANE: ${it.message}")
-            }
-        }
-    }
+
 
     private fun observeDataChanges() {
         subscribeToLocationUpdates()
@@ -126,20 +117,30 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun subscribeToHazardousLaneUpdates() {
-        viewModelScope.launch {
-            mappingUseCase.newHazardousLaneUseCase().catch {
-                Timber.e("ERROR GETTING HAZARDOUS LANE: ${it.message}")
-            }.onEach { hazardousLane ->
-                _state.update {
-                    it.copy(hazardousLane = hazardousLane)
+        viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
+            
+            mappingUseCase.newHazardousLaneUseCase(
+                onAddedHazardousMarker = { marker ->
+                    _hazardousLaneMarkers.add(marker)
+                },
+                onModifiedHazardousMarker = { modifiedMarker ->
+                    _hazardousLaneMarkers.removeAll { marker ->
+                        marker.id == modifiedMarker.id
+                    }
+                    _hazardousLaneMarkers.add(modifiedMarker)
+                },
+                onRemovedHazardousMarker = { markerId ->
+                    _hazardousLaneMarkers.removeAll { marker ->
+                        marker.id == markerId
+                    }
                 }
+            )
 
-            }.launchIn(this)
         }
     }
 
     private fun subscribeToBottomSheetTypeUpdates() {
-        viewModelScope.launch(context = defaultDispatcher) {
+        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
             mappingUseCase.bottomSheetTypeUseCase()?.catch {
                 it.handleException()
             }?.onEach {
@@ -429,7 +430,6 @@ class MappingViewModel @Inject constructor(
 
             is MappingVmEvent.SubscribeToDataChanges -> {
                 observeDataChanges()
-                requestHazardousLane()
             }
 
 
@@ -794,6 +794,12 @@ class MappingViewModel @Inject constructor(
         getTransactionLocationUpdatesJob?.cancel()
     }
 
+    private fun removeHazardousLaneListener(){
+        mappingUseCase.removeHazardousListenerUseCase()
+    }
+
+
+
     private fun subscribeToRescueTransactionUpdates() {
         if (getRescueTransactionUpdatesJob?.isActive == true) {
             return
@@ -849,7 +855,7 @@ class MappingViewModel @Inject constructor(
         if (locationUpdatesJob?.isActive == true) {
             return
         }
-        locationUpdatesJob = viewModelScope.launch(context = defaultDispatcher) {
+        locationUpdatesJob = viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
             mappingUseCase.getUserLocationUseCase().catch {
                 Timber.e("Error Location Updates: ${it.message}")
@@ -992,6 +998,8 @@ class MappingViewModel @Inject constructor(
         unSubscribeToNearbyUsersChanges()
         unSubscribeToRescueTransactionUpdates()
         unSubscribeToTransactionLocationUpdates()
+        removeHazardousLaneListener()
+
     }
 
 

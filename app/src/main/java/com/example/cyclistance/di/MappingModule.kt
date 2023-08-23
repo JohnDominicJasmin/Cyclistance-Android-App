@@ -8,9 +8,6 @@ import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInterne
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
-import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.AddHazardousLaneClient
-import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.DeleteHazardousLaneClient
-import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.RequestHazardousLaneClient
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.RescueTransactionClient
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.TransactionLiveLocationClient
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.UserClient
@@ -36,11 +33,12 @@ import com.example.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDi
 import com.example.cyclistance.feature_mapping.domain.use_case.user.*
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.DeleteHazardousLaneUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.NewHazardousLaneUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.RequestHazardousLaneUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.RemoveHazardousListenerUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.TransactionLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.NearbyCyclistsUseCase
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.GsonBuilder
 import com.mapbox.api.optimization.v1.MapboxOptimization
 import dagger.Module
@@ -99,6 +97,7 @@ object MappingModule {
     fun provideMappingRepository(
         @ApplicationContext context: Context,
         api: CyclistanceApi,
+        fireStore: FirebaseFirestore,
         mapboxDirections: MapboxOptimization.Builder): MappingRepository {
 
 
@@ -107,9 +106,9 @@ object MappingModule {
         return MappingRepositoryImpl(
             api = api,
             context = context,
-
             mapboxDirections = mapboxDirections,
-            geocoder = geocoder
+            geocoder = geocoder,
+            fireStore = fireStore
         )
     }
 
@@ -120,17 +119,13 @@ object MappingModule {
         val nearbyCyclistClient = UserClient(socket)
         val rescueTransactionClient = RescueTransactionClient(socket)
         val liveLocation = TransactionLiveLocationClient(socket)
-        val addHazardousLaneClient = AddHazardousLaneClient(socket)
-        val deleteHazardousLaneClient = DeleteHazardousLaneClient(socket)
-        val requestHazardousLaneClient = RequestHazardousLaneClient(socket)
+
         return MappingSocketRepositoryImpl(
             context = context,
             nearbyCyclistClient = nearbyCyclistClient,
             rescueTransactionClient = rescueTransactionClient,
             liveLocation = liveLocation,
-            addHazardousLaneClient = addHazardousLaneClient,
-            deleteHazardousLane = deleteHazardousLaneClient,
-            requestHazardousLaneClient = requestHazardousLaneClient
+
 
         )
     }
@@ -180,11 +175,12 @@ object MappingModule {
             getRouteDirectionsUseCase = GetRouteDirectionsUseCase(mappingRepository),
             getCalculatedDistanceUseCase = GetCalculatedDistanceUseCase(mappingRepository),
             bottomSheetTypeUseCase = BottomSheetTypeUseCase(mappingUiStoreRepository),
-            newHazardousLaneUseCase = NewHazardousLaneUseCase(mappingSocketRepository),
-            deleteHazardousLaneUseCase = DeleteHazardousLaneUseCase(mappingSocketRepository),
-            requestHazardousLaneUseCase = RequestHazardousLaneUseCase(mappingSocketRepository),
-            mapTypeUseCase = MapTypeUseCase(mappingUiStoreRepository)
+            newHazardousLaneUseCase = NewHazardousLaneUseCase(mappingRepository),
+            deleteHazardousLaneUseCase = DeleteHazardousLaneUseCase(mappingRepository),
+            mapTypeUseCase = MapTypeUseCase(mappingUiStoreRepository),
+            removeHazardousListenerUseCase = RemoveHazardousListenerUseCase(mappingRepository)
         )
+
     }
 
 

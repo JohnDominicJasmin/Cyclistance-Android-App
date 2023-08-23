@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping.domain.model.remote_models.hazar
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState
 import kotlinx.parcelize.Parcelize
+import java.util.Date
 
 
 @StableState
@@ -12,5 +13,6 @@ data class HazardousLaneMarker(
     val idCreator: String = "",
     val latitude: Double? = null,
     val longitude: Double? = null,
-    val label: String = ""
+    val label: String = "",
+    val datePosted: Date = Date()
 ):Parcelable

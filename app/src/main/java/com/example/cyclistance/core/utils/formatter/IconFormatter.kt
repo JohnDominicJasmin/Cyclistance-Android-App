@@ -8,14 +8,14 @@ import com.example.cyclistance.core.utils.constants.MappingConstants
 
 object IconFormatter {
 
-    fun String.toHazardousLaneIconMarker(): Int{
+    fun String.toHazardousLaneIconMarker(isMarkerYours: Boolean): Int{
         return when(this){
-            MappingConstants.CONSTRUCTION -> R.drawable.ic_construction_marker
-            MappingConstants.LANE_CLOSURE -> R.drawable.ic_lane_closure_marker
-            MappingConstants.CRASH -> R.drawable.ic_crash_marker
-            MappingConstants.NEED_ASSISTANCE -> R.drawable.ic_need_assistance_marker
-            MappingConstants.OBJECT_ON_ROAD -> R.drawable.ic_object_on_road_marker
-            MappingConstants.SLOWDOWN -> R.drawable.ic_slowdown_marker
+            MappingConstants.CONSTRUCTION -> if(isMarkerYours) R.drawable.ic_construction_white else R.drawable.ic_construction_marker
+            MappingConstants.LANE_CLOSURE -> if(isMarkerYours) R.drawable.ic_lane_closure_white else R.drawable.ic_lane_closure_marker
+            MappingConstants.CRASH -> if(isMarkerYours) R.drawable.ic_crash_white else R.drawable.ic_crash_marker
+            MappingConstants.NEED_ASSISTANCE -> if(isMarkerYours) R.drawable.ic_need_assistance_white else R.drawable.ic_need_assistance_marker
+            MappingConstants.OBJECT_ON_ROAD -> if(isMarkerYours) R.drawable.ic_object_on_road_white else R.drawable.ic_object_on_road_marker
+            MappingConstants.SLOWDOWN -> if(isMarkerYours) R.drawable.ic_slow_down_white else R.drawable.ic_slowdown_marker
             else -> throw RuntimeException("No icon found for $this")
         }
     }
@@ -46,11 +46,13 @@ object IconFormatter {
     }
 
 
-    fun String.getHazardousLaneImage(context: Context): Drawable? {
-        return this.toHazardousLaneIconMarker().let { image ->
+    fun String.getHazardousLaneImage(context: Context, isMarkerYours: Boolean): Drawable? {
+        return this.toHazardousLaneIconMarker(isMarkerYours).let { image ->
             AppCompatResources.getDrawable(context, image)
         }
     }
+
+
     fun String.getNearbyCyclistImage(context: Context): Drawable? {
         return this.getMapIconImage().let { image ->
              AppCompatResources.getDrawable(context, image)

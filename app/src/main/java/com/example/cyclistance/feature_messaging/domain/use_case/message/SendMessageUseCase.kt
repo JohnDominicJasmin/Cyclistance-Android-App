@@ -5,7 +5,7 @@ import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepo
 
 class SendMessageUseCase(private val repository: MessagingRepository) {
 
-    operator fun invoke(sendMessageModel: SendMessageModel) {
+    suspend operator fun invoke(sendMessageModel: SendMessageModel) {
         repository.sendMessage(sendMessageModel = sendMessageModel)
     }
 

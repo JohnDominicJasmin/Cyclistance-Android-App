@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.*
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.ICON_LAYER_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.ICON_SOURCE_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_LAYER_ID
@@ -23,12 +24,14 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.TRANSACTION
 import com.example.cyclistance.core.utils.formatter.IconFormatter.getHazardousLaneImage
 import com.example.cyclistance.core.utils.formatter.IconFormatter.getNearbyCyclistImage
 import com.example.cyclistance.feature_mapping.domain.model.Role
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.*
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.animateCameraPosition
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.setDefaultSettings
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.mapbox.geojson.Feature
@@ -65,6 +68,7 @@ fun MappingMapsScreen(
     isNavigating: Boolean,
     routeDirection: RouteDirection?,
     isRescueCancelled: Boolean,
+    hazardousLaneMarkers: List<HazardousLaneMarker>,
     event: (MappingUiEvent) -> Unit
 //    requestNavigationCameraToOverview: () -> Unit, //todo use this one
 ) {
@@ -72,7 +76,7 @@ fun MappingMapsScreen(
 
     val context = LocalContext.current
     val nearbyCyclist = state.nearbyCyclist?.users
-    val hazardousLane = state.hazardousLane?.markers
+
 
 
     val nearbyUserMarkers = remember { mutableStateListOf<Marker>() }
@@ -87,9 +91,7 @@ fun MappingMapsScreen(
     val showNearbyCyclistsIcon = remember(nearbyCyclist, mapboxMap) {
         {
             dismissNearbyUserMarkers()
-            nearbyCyclist?.distinctBy {
-                it.id
-            }?.filter {
+            nearbyCyclist?.filter {
                 it.id != state.user.id
             }?.filter {
                 it.isUserNeedHelp() == true
@@ -108,6 +110,7 @@ fun MappingMapsScreen(
                         setIcon(icon)
                         position(LatLng(latitude, longitude))
                         title = cyclist.id
+                        this.snippet = MarkerSnippet.NearbyCyclistSnippet.type
                     }
                     val addedMarker = mapboxMap.addMarker(markerOptions)
                     addedMarker.let { nearbyUserMarkers.add(it) }
@@ -127,12 +130,12 @@ fun MappingMapsScreen(
             }
         }
     }
-    val showHazardousLaneIcon = remember(hazardousLane, mapboxMap) {
+    val showHazardousLaneIcon = remember(hazardousLaneMarkers.size, mapboxMap) {
         {
             dismissHazardousMarkers()
-            hazardousLane?.forEach { marker ->
+            hazardousLaneMarkers?.forEach { marker ->
                 val iconImage =
-                    marker.label.getHazardousLaneImage(context)
+                    marker.label.getHazardousLaneImage(context = context, isMarkerYours = marker.idCreator == state.userId)
                         ?.toBitmap(width = 120, height = 120)
                 val latitude = marker.latitude ?: return@forEach
                 val longitude = marker.longitude ?: return@forEach
@@ -143,6 +146,8 @@ fun MappingMapsScreen(
                         setIcon(icon)
                         position(LatLng(latitude, longitude))
                         title = marker.id
+                        snippet = MarkerSnippet.HazardousLaneSnippet.type
+
                     }
                     val addedMarker = mapboxMap.addMarker(markerOptions)
                     addedMarker.let { hazardousMarkers.add(it) }
@@ -186,7 +191,7 @@ fun MappingMapsScreen(
     }
 
 
-    LaunchedEffect(key1 = shouldDismissIcons, key2 = hazardousLane, key3 = state.mapType) {
+    LaunchedEffect(key1 = shouldDismissIcons, key2 = hazardousLaneMarkers.size, key3 = state.mapType) {
 
         if(state.mapType == MapType.Default.type){
             dismissHazardousMarkers()
@@ -205,7 +210,17 @@ fun MappingMapsScreen(
     LaunchedEffect(key1 = mapboxMap, uiState.isFabExpanded) {
 
         mapboxMap?.setOnMarkerClickListener {
-            event(MappingUiEvent.RescueeMapIconSelected(it.title))
+
+            mapboxMap.animateCameraPosition(
+                latLng = it.position,
+                zoomLevel = MappingConstants.LOCATE_USER_ZOOM_LEVEL,
+                cameraAnimationDuration = MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION)
+
+            if (it.snippet == MarkerSnippet.HazardousLaneSnippet.type) {
+                event(MappingUiEvent.HazardousLaneMarkerSelected(it.title))
+            } else {
+                event(MappingUiEvent.RescueeMarkerSelected(it.title))
+            }
             true
         }
 

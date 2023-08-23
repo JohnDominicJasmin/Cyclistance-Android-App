@@ -45,9 +45,7 @@ object MappingConstants {
     const val JOIN_LIVE_LOCATION_UPDATES = "joinLiveLocationUpdates"
     const val DEFAULT_BIKE_AVERAGE_SPEED_KM = 20.5
     const val BUTTON_ANIMATION_DURATION = 1500L
-    const val NEW_HAZARDOUS_LANE = "new_hazardous_lane"
-    const val DELETE_HAZARDOUS_LANE = "delete_hazardous_lane"
-    const val GET_ALL_HAZARDOUS_LANE = "get_all_hazardous_lane"
+
 
     const val INJURY_TEXT = "Injury"
     const val BROKEN_FRAME_TEXT  = "Broken Frame"
@@ -90,5 +88,24 @@ object MappingConstants {
     const val ICON_SOURCE_ID = "icon-source-id"
     const val TRANSACTION_ICON_ID = "red-pin-icon-id"
     const val ICON_LAYER_ID = "icon-layer-id"
+
+
+
+
+
+
+
+
+    const val KEY_HAZARDOUS_LANE_COLLECTION = "hazardous_lanes"
+    const val KEY_TIMESTAMP_FIELD = "timestamp"
+    const val KEY_MARKER_FIELD = "marker"
+
+    const val KEY_ID = "id"
+    const val KEY_DATE_POSTED = "datePosted"
+    const val KEY_ID_CREATOR = "idCreator"
+    const val KEY_ID_LABEL = "label"
+    const val KEY_ID_LONGITUDE = "longitude"
+    const val KEY_ID_LATITUDE = "latitude"
+
 
 }

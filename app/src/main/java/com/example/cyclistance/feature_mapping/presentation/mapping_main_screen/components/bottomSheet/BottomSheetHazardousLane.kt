@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -144,13 +145,20 @@ private fun MapTypeItem(
         verticalArrangement = Arrangement.spacedBy(4.dp, alignment = Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally) {
 
+
         Image(
             painter = painterResource(id = imageId),
             contentDescription = "Map Type Image",
             modifier = Modifier
                 .size(88.dp)
                 .clip(shape = RoundedCornerShape(16.dp))
+                .border(
+                    2.dp,
+                    if (isSelected) MaterialTheme.colors.primary else Color.Transparent,
+                    shape = RoundedCornerShape(16.dp))
                 .clickable { onClick() })
+
+
 
         Text(
             text = mapTypeDescription,

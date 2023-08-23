@@ -6,9 +6,10 @@ import android.net.Uri
 import android.view.animation.DecelerateInterpolator
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.core.FastOutLinearInEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
@@ -97,8 +98,8 @@ internal object MappingUtils {
     internal fun FabAnimated(visible: Boolean, content: @Composable AnimatedVisibilityScope.() -> Unit) {
         AnimatedVisibility(
             visible = visible,
-            enter = fadeIn(initialAlpha = 0.2f),
-            exit = fadeOut(animationSpec = tween(durationMillis = 150)),
+            enter = scaleIn(animationSpec = tween(durationMillis = 200, easing = FastOutLinearInEasing)),
+            exit = scaleOut(animationSpec = tween(durationMillis = 150)),
             content = content
         )
     }

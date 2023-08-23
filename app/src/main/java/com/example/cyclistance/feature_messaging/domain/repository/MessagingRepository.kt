@@ -9,13 +9,15 @@ import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.Co
 interface MessagingRepository {
 
     suspend fun refreshToken()
-    fun sendMessage(sendMessageModel: SendMessageModel)
+
     suspend fun deleteToken()
     fun getUserUid(): String
 
     fun addUserListener(onNewMessageUser: (MessagingUserModel) -> Unit)
     fun removeUserListener()
 
+
+    suspend fun sendMessage(sendMessageModel: SendMessageModel)
     fun addMessageListener(receiverId: String, onNewMessage: (ConversationsModel) -> Unit)
     fun removeMessageListener()
 
