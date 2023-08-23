@@ -176,8 +176,10 @@ object MappingModule {
             bottomSheetTypeUseCase = BottomSheetTypeUseCase(mappingUiStoreRepository),
             newHazardousLaneUseCase = NewHazardousLaneUseCase(mappingRepository),
             deleteHazardousLaneUseCase = DeleteHazardousLaneUseCase(mappingRepository),
-            mapTypeUseCase = MapTypeUseCase(mappingUiStoreRepository)
+            mapTypeUseCase = MapTypeUseCase(mappingUiStoreRepository),
+            removeHazardousListenerUseCase = RemoveHazardousListenerUseCase(mappingRepository)
         )
+
     }
 
 
