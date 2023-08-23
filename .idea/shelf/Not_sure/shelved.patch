@@ -1,0 +1,357 @@
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/domain/sockets/WebSocketClient.kt
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/domain/sockets/WebSocketClient.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/domain/sockets/WebSocketClient.kt
+deleted file mode 100644
+--- a/app/src/main/java/com/example/cyclistance/feature_mapping/domain/sockets/WebSocketClient.kt	(revision 867a76e43d39ff1da3fa26227daa21415ec0b769)
++++ /dev/null	(revision 867a76e43d39ff1da3fa26227daa21415ec0b769)
+@@ -1,8 +0,0 @@
+-package com.example.cyclistance.feature_mapping.domain.sockets
+-
+-import kotlinx.coroutines.flow.Flow
+-
+-interface WebSocketClient<out T, in V : Any?> {
+-    suspend fun getResult(): Flow<T>
+-    suspend fun broadcastEvent(t: V? = null)
+-}
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen\n\nimport androidx.compose.runtime.mutableStateListOf\nimport androidx.lifecycle.SavedStateHandle\nimport androidx.lifecycle.ViewModel\nimport androidx.lifecycle.viewModelScope\nimport com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY\nimport com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS\nimport com.example.cyclistance.core.utils.validation.FormatterUtils\nimport com.example.cyclistance.core.utils.validation.FormatterUtils.findUser\nimport com.example.cyclistance.core.utils.validation.FormatterUtils.formatToDistanceKm\nimport com.example.cyclistance.core.utils.validation.FormatterUtils.isLocationAvailable\nimport com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase\nimport com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toRescueRequest\nimport com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions\nimport com.example.cyclistance.feature_mapping.domain.helper.TrackingStateHandler\nimport com.example.cyclistance.feature_mapping.domain.model.Role\nimport com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel\nimport com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction\nimport com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem\nimport com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel\nimport com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist\nimport com.example.cyclistance.feature_mapping.domain.model.api.user.RescueRequest\nimport com.example.cyclistance.feature_mapping.domain.model.api.user.UserAssistanceModel\nimport com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem\nimport com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel\nimport com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee\nimport com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel\nimport com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase\nimport com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent\nimport com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent\nimport com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState\nimport com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers\nimport com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase\nimport com.google.android.gms.maps.model.LatLng\nimport com.google.maps.android.SphericalUtil\nimport com.mapbox.geojson.Point\nimport dagger.hilt.android.lifecycle.HiltViewModel\nimport kotlinx.coroutines.CoroutineDispatcher\nimport kotlinx.coroutines.Job\nimport kotlinx.coroutines.SupervisorJob\nimport kotlinx.coroutines.coroutineScope\nimport kotlinx.coroutines.delay\nimport kotlinx.coroutines.flow.MutableSharedFlow\nimport kotlinx.coroutines.flow.MutableStateFlow\nimport kotlinx.coroutines.flow.SharedFlow\nimport kotlinx.coroutines.flow.asSharedFlow\nimport kotlinx.coroutines.flow.asStateFlow\nimport kotlinx.coroutines.flow.catch\nimport kotlinx.coroutines.flow.distinctUntilChanged\nimport kotlinx.coroutines.flow.launchIn\nimport kotlinx.coroutines.flow.onEach\nimport kotlinx.coroutines.flow.update\nimport kotlinx.coroutines.launch\nimport timber.log.Timber\nimport javax.inject.Inject\n\n@HiltViewModel\nclass MappingViewModel @Inject constructor(\n    private val savedStateHandle: SavedStateHandle,\n    private val authUseCase: AuthenticationUseCase,\n    private val settingUseCase: SettingUseCase,\n    private val mappingUseCase: MappingUseCase,\n    private val defaultDispatcher: CoroutineDispatcher\n) : ViewModel() {\n\n\n    private var loadDataJob: Job? = null\n    private var getUsersUpdatesJob: Job? = null\n    private var locationUpdatesJob: Job? = null\n    private var getRescueTransactionUpdatesJob: Job? = null\n    private var getTransactionLocationUpdatesJob: Job? = null\n    private var trackingHandler: TrackingStateHandler\n\n    private val _state: MutableStateFlow<MappingState> = MutableStateFlow(\n        savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState()\n    )\n    val state = _state.asStateFlow()\n\n    private val _eventFlow: MutableSharedFlow<MappingEvent> = MutableSharedFlow()\n    val eventFlow: SharedFlow<MappingEvent> = _eventFlow.asSharedFlow()\n    private var travelledPath: MutableList<LatLng> = mutableStateListOf()\n    private var _nearbyCyclistState = mutableStateListOf<UserItem>()\n    val nearbyCyclistState = _nearbyCyclistState\n\n\n    init {\n        trackingHandler = TrackingStateHandler(\n            state = _state,\n            eventFlow = _eventFlow,\n            nearbyCyclist = _nearbyCyclistState)\n        loadData()\n        observeDataChanges()\n    }\n\n    private fun observeDataChanges() {\n        subscribeToLocationUpdates()\n        subscribeToNearbyUsersChanges()\n        subscribeToRescueTransactionUpdates()\n        subscribeToTransactionLocationUpdates()\n        subscribeToBottomSheetTypeUpdates()\n    }\n\n    private fun subscribeToBottomSheetTypeUpdates(){\n        viewModelScope.launch(context = defaultDispatcher) {\n            mappingUseCase.getBottomSheetTypeUseCase()?.catch {\n                it.handleException()\n            }?.onEach {\n                _eventFlow.emit(value = MappingEvent.NewBottomSheetType(it))\n            }?.launchIn(this)\n        }\n    }\n\n    private fun loadData() {\n        if (loadDataJob?.isActive == true) return\n        loadDataJob = viewModelScope.launch(SupervisorJob() + defaultDispatcher) {\n            // TODO: Remove when the backend is ready\n            createMockUpUsers()\n            getNearbyCyclist()\n            loadRescueTransaction()\n            loadClient()\n        }\n\n    }\n\n\n    private suspend fun loadClient() {\n        coroutineScope {\n            trackingHandler.updateClient()\n        }\n    }\n\n    private suspend fun updateClient() {\n        trackingHandler.updateClient()\n    }\n\n\n    private suspend fun getNearbyCyclist() {\n        val userLocation = state.value.getCurrentLocation()\n        val dataLoaded = state.value.user.id != null\n        userLocation?.latitude ?: return\n        userLocation.longitude ?: return\n\n        if (dataLoaded) {\n            return\n        }\n\n        coroutineScope {\n\n            mappingUseCase.getUsersUseCase(\n                latitude = userLocation.latitude,\n                longitude = userLocation.longitude\n            ).distinctUntilChanged().catch {\n                it.handleException()\n            }.onEach {\n                it.getUser()\n                it.updateNearbyCyclists()\n                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n            }.launchIn(this)\n\n        }\n\n    }\n\n\n    private suspend fun loadRescueTransaction() {\n        coroutineScope {\n            val transactionId = state.value.user.getTransactionId()\n            if (transactionId.isNullOrEmpty()) {\n                return@coroutineScope\n            }\n\n            mappingUseCase.getRescueTransactionByIdUseCase(transactionId).catch {\n                it.handleException()\n            }.onEach { rescueTransaction ->\n                _state.update { it.copy(rescueTransaction = rescueTransaction) }\n            }.launchIn(this).invokeOnCompletion {\n                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n            }\n\n        }\n\n    }\n\n\n\n    private fun acceptRescueRequest(id: String) {\n        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {\n\n            val rescuer = nearbyCyclistState.findUser(id) ?: return@launch\n            _state.update { it.copy(rescueRequestAcceptedUser = rescuer) }\n            val transactionId = trackingHandler.getTransactionId(rescuer)\n            val user = state.value.user\n\n            trackingHandler.checkCurrentTransactions(user = user, rescuer = rescuer) {\n\n                coroutineScope {\n                    runCatching {\n                        isLoading(true)\n                        trackingHandler.getAcceptedRescueRequestItem(\n                            transactionId = transactionId,\n                            rescuer = rescuer\n                        ).apply {\n                            mappingUseCase.acceptRescueRequestUseCase(rescueTransaction = this)\n                        }\n\n                    }.onSuccess { rescueTransaction ->\n                        broadcastRescueTransaction()\n                        assignRequestTransaction(\n                            rescueTransaction = rescueTransaction,\n                            user = user,\n                            rescuer = rescuer,\n                            transactionId = transactionId\n                        )\n                        user.location?.let { broadcastRescueTransactionToRespondent(it) }\n                    }.onFailure { exception ->\n                        isLoading(false)\n                        exception.handleException()\n                    }\n                }\n\n                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n\n            }\n        }\n    }\n\n    private fun cancelHelpRequest() {\n        viewModelScope.launch(context = defaultDispatcher) {\n            runCatching {\n                isLoading(true)\n                cancelUserHelpRequest()\n            }.onSuccess {\n                _eventFlow.emit(value = MappingEvent.CancelHelpRequestSuccess)\n                broadcastToNearbyCyclists()\n                _state.update { it.copy(rescueRequestAcceptedUser = null) }\n            }.onFailure { exception ->\n                Timber.e(\"Failed to cancel search assistance: ${exception.message}\")\n                exception.handleException()\n            }\n            isLoading(false)\n            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n        }\n    }\n\n\n    private fun removeAssignedTransaction() {\n        viewModelScope.launch(context = defaultDispatcher) {\n            runCatching {\n                removeUserTransaction(id = getId())\n            }.onSuccess {\n                broadcastToNearbyCyclists()\n                broadcastRescueTransaction()\n                isLoading(false)\n                _eventFlow.emit(value = MappingEvent.RemoveAssignedTransactionSuccess)\n                trackingHandler.clearTransactionRoles()\n            }.onFailure { exception ->\n                isLoading(false)\n                exception.handleException()\n            }\n        }\n\n    }\n\n    private fun selectRescueeMapIcon(id: String) {\n        viewModelScope.launch(context = defaultDispatcher) {\n\n            val userLocation = state.value.user.location ?: state.value.userLocation\n\n            if (!userLocation.isLocationAvailable()) {\n                viewModelScope.launch(context = defaultDispatcher) {\n                    _eventFlow.emit(value = MappingEvent.LocationNotAvailable(\"Tracking your Location\"))\n                }\n                return@launch\n            }\n\n            calculateSelectedRescueeDistance(userLocation, id)\n\n        }\n    }\n\n    private fun respondToHelp(selectedRescuee: MapSelectedRescuee) {\n        viewModelScope.launch(context = defaultDispatcher) {\n            runCatching {\n                uploadUserProfile(onSuccess = {\n                    viewModelScope.launch(context = defaultDispatcher) {\n                        mappingUseCase.addRescueRespondentUseCase(\n                            userId = selectedRescuee.userId,\n                            respondentId = getId()\n                        )\n                    }\n                })\n            }.onSuccess {\n                _eventFlow.emit(value = MappingEvent.RespondToHelpSuccess())\n                broadcastToNearbyCyclists()\n                broadcastRescueTransaction()\n                _state.update { it.copy(respondedToHelp = true) }\n            }.onFailure {\n                it.handleException()\n            }\n\n        }\n    }\n\n    private fun showRouteDirection(origin: Point, destination: Point) {\n        viewModelScope.launch(context = defaultDispatcher) {\n            runCatching {\n                mappingUseCase.getRouteDirectionsUseCase(origin = origin, destination = destination)\n            }.onSuccess { routeDirection ->\n                _eventFlow.emit(value = MappingEvent.NewRouteDirection(routeDirection))\n            }.onFailure {\n                Timber.v(\"Failure: ${it.message}\")\n                it.handleException()\n            }\n        }\n    }\n\n\n    private suspend fun broadcastRescueTransaction() {\n        runCatching {\n            mappingUseCase.broadcastRescueTransactionUseCase()\n        }.onFailure {\n            it.handleException()\n        }\n    }\n\n    private suspend fun broadcastToNearbyCyclists() {\n        val location = state.value.userLocation ?: return\n        runCatching {\n            mappingUseCase.broadcastToNearbyCyclists(\n                locationModel = LiveLocationWSModel(\n                    latitude = location.latitude,\n                    longitude = location.longitude\n                )\n            )\n        }.onFailure {\n            it.handleException()\n        }\n    }\n\n    private fun declineRescueRequest(id: String) {\n        viewModelScope.launch(context = defaultDispatcher) {\n            runCatching {\n                isLoading(true)\n                mappingUseCase.deleteRescueRespondentUseCase(userId = getId(), respondentId = id)\n            }.onSuccess {\n                removeRescueRespondent(id)\n                broadcastToNearbyCyclists()\n            }.onFailure {\n                it.handleDeclineRescueRequest()\n            }\n            isLoading(false)\n            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n\n        }\n    }\n\n    private suspend fun removeRescueRespondent(id: String) {\n        state.value.newRescueRequest?.request?.toMutableList()?.apply {\n            val respondentRemoved = removeAll { it.id == id }\n            if (!respondentRemoved) {\n                _eventFlow.emit(value = MappingEvent.RemoveRespondentFailed())\n                return@apply\n            }\n            _state.update {\n                it.copy(\n                    newRescueRequest = NewRescueRequestsModel(this)\n                )\n            }\n        }\n    }\n\n\n    private fun requestHelp() {\n        viewModelScope.launch(context = defaultDispatcher) {\n            runCatching {\n                uploadUserProfile(onSuccess = {\n                    viewModelScope.launch(context = defaultDispatcher) {\n                        _eventFlow.emit(MappingEvent.RequestHelpSuccess)\n                    }\n                })\n            }.onFailure {\n                it.handleException()\n            }\n        }.invokeOnCompletion {\n            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n        }\n    }\n\n    fun onEvent(event: MappingVmEvent) {\n        when (event) {\n\n            is MappingVmEvent.SubscribeToDataChanges -> {\n                observeDataChanges()\n            }\n\n\n            is MappingVmEvent.GetRouteDirections -> {\n                showRouteDirection(origin = event.origin, destination = event.destination)\n            }\n\n            is MappingVmEvent.RespondToHelp -> {\n                respondToHelp(event.selectedRescuee)\n            }\n\n            is MappingVmEvent.SelectRescueMapIcon -> {\n                selectRescueeMapIcon(event.id)\n            }\n\n            is MappingVmEvent.RequestHelp -> {\n                requestHelp()\n            }\n\n            is MappingVmEvent.CancelRescueTransaction -> {\n                removeAssignedTransaction()\n                clearTravelledPath()\n            }\n\n\n            is MappingVmEvent.LoadData -> {\n                loadData()\n            }\n\n\n            is MappingVmEvent.DeclineRescueRequest -> {\n                declineRescueRequest(event.id)\n                clearTravelledPath()\n            }\n\n            is MappingVmEvent.AcceptRescueRequest -> {\n                acceptRescueRequest(event.id)\n            }\n\n            is MappingVmEvent.CancelRequestHelp -> {\n                cancelHelpRequest()\n                clearTravelledPath()\n            }\n\n        }\n        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n    }\n\n\n    private suspend fun calculateSelectedRescueeDistance(userLocation: LocationModel?, id: String) {\n        val selectedRescuee = nearbyCyclistState.findUser(id) ?: return\n        val selectedRescueeLocation = selectedRescuee.location\n\n\n        runCatching {\n            isLoading(true)\n            mappingUseCase.getCalculatedDistanceUseCase(\n                startingLocation = LocationModel(\n                    latitude = userLocation?.latitude,\n                    longitude = userLocation?.longitude\n                ), destinationLocation = LocationModel(\n                    latitude = selectedRescueeLocation!!.latitude,\n                    longitude = selectedRescueeLocation.longitude\n                )\n            )\n        }.onSuccess { distance ->\n            val timeRemaining = FormatterUtils.getCalculatedETA(distance)\n            trackingHandler.showSelectedRescuee(\n                selectedRescuee = selectedRescuee,\n                distance = distance,\n                timeRemaining = timeRemaining)\n        }.onFailure {\n            _eventFlow.emit(value = MappingEvent.FailedToCalculateDistance)\n        }.also {\n            isLoading(false)\n        }\n    }\n\n\n    private suspend fun removeUserTransaction(id: String) {\n        mappingUseCase.createUserUseCase(\n            user = UserItem.removeUserTransaction(id)\n        )\n    }\n\n\n    private fun subscribeToTransactionLocationUpdates() {\n        if (getRescueTransactionUpdatesJob?.isActive == true) {\n            return\n        }\n        getTransactionLocationUpdatesJob =\n            viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {\n                mappingUseCase.getTransactionLocationUpdatesUseCase().distinctUntilChanged().catch {\n                    Timber.e(\"ERROR GETTING TRANSACTION LOCATION: ${it.message}\")\n                }.onEach { liveLocation ->\n                    trackingHandler.updateTransactionLocation(location = liveLocation)\n                    liveLocation.updateTransactionETA()\n                    liveLocation.updateTransactionDistance()\n                }.launchIn(this@launch)\n\n            }\n    }\n\n    private suspend fun LiveLocationWSModel.updateTransactionDistance() {\n        coroutineScope {\n            val rescueTransaction = state.value.userLocation\n            latitude ?: return@coroutineScope\n            longitude ?: return@coroutineScope\n\n            rescueTransaction?.let { transaction ->\n\n                val distance = mappingUseCase.getCalculatedDistanceUseCase(\n                    startingLocation = LocationModel(latitude, longitude),\n                    destinationLocation = LocationModel(transaction.latitude, transaction.longitude)\n                ).toInt()\n\n\n                if (distance <= NEAREST_METERS) {\n                    _eventFlow.emit(value = MappingEvent.DestinationReached)\n                    removeAssignedTransaction()\n                    clearTravelledPath()\n                }\n\n            }\n        }\n    }\n\n\n    private fun LiveLocationWSModel.updateTransactionETA() {\n        val userLocation = state.value.userLocation\n        userLocation ?: return\n        this.latitude ?: return\n        this.longitude ?: return\n\n        val eta = getETABetweenTwoPoints(\n            startingLocation = LocationModel(\n                latitude = this.latitude,\n                longitude = this.longitude\n            ), endLocation = userLocation\n        )\n        _state.update { it.copy(rescuerETA = eta) }\n    }\n\n    private fun getETABetweenTwoPoints(\n        startingLocation: LocationModel,\n        endLocation: LocationModel\n    ): String {\n        val distance = mappingUseCase.getCalculatedDistanceUseCase(\n            startingLocation = startingLocation,\n            destinationLocation = endLocation\n        )\n\n        return FormatterUtils.getCalculatedETA(distanceMeters = distance)\n    }\n\n\n    private suspend fun assignRequestTransaction(\n        rescueTransaction: RescueTransactionItem,\n        user: UserItem,\n        rescuer: UserItem,\n        transactionId: String\n    ) {\n\n        runCatching {\n\n            transactionId.assignRequestTransaction(\n                role = Role.RESCUEE.name.lowercase(),\n                id = user.id\n            )\n\n            transactionId.assignRequestTransaction(\n                role = Role.RESCUER.name.lowercase(),\n                id = rescuer.id\n            )\n\n        }.onSuccess {\n            broadcastToNearbyCyclists()\n            _eventFlow.emit(value = MappingEvent.AcceptRescueRequestSuccess)\n            delay(500)\n            updateTransactionETA(rescuer, rescueTransaction)\n            isLoading(false)\n            broadcastRescueTransaction()\n        }.onFailure { exception ->\n            isLoading(false)\n            exception.handleException()\n        }\n\n    }\n\n    private fun updateTransactionETA(rescuer: UserItem, rescueTransaction: RescueTransactionItem) {\n        val userLocation = state.value.userLocation ?: return\n\n        val estimatedTimeArrival = rescuer.location?.let {\n            getETABetweenTwoPoints(\n                startingLocation = it,\n                endLocation = userLocation\n            )\n        }\n        _state.update {\n            it.copy(\n                rescueTransaction = rescueTransaction,\n                rescuerETA = estimatedTimeArrival ?: \"\",\n                rescuer = rescuer\n            )\n        }\n    }\n\n    private fun isLoading(loading: Boolean) {\n        _state.update { it.copy(isLoading = loading) }\n    }\n\n\n    private suspend fun String.assignRequestTransaction(role: String, id: String?) {\n        mappingUseCase.createUserUseCase(\n            user = UserItem.empty(id = id, transactionId = this, role = role)\n        )\n    }\n\n\n    private suspend fun Throwable.handleDeclineRescueRequest() {\n        when (this) {\n            is MappingExceptions.NetworkException -> {\n                _eventFlow.emit(value = MappingEvent.NoInternetConnection)\n            }\n\n            else -> {\n                Timber.d(\"Failed to update user\")\n            }\n        }\n    }\n\n\n    private suspend fun cancelUserHelpRequest() {\n\n        mappingUseCase.createUserUseCase(\n            user = UserItem.cancelUserHelpRequest(id = getId()))\n    }\n\n\n    private fun NearbyCyclist.getUser() {\n\n        val user = findUser(id = getId())\n        _state.update { it.copy(user = user) }\n        val respondents = user.getUserRescueRespondents(this)\n        _state.update {\n            it.copy(\n                newRescueRequest = NewRescueRequestsModel(\n                    request = respondents\n                )\n            )\n        }\n    }\n\n    private fun UserItem.getUserRescueRespondents(nearbyCyclist: NearbyCyclist): List<RescueRequestItemModel> {\n        val rescueRespondentsSnapShot: MutableList<RescueRequestItemModel> = mutableListOf()\n\n        rescueRequest?.respondents?.forEach { respondent ->\n            val userRespondent = nearbyCyclist.findUser(id = respondent.clientId)\n            val distance = calculateDistance(startLocation = location, endLocation = userRespondent.location)\n\n            distance?.let {\n                val formattedETA = FormatterUtils.getCalculatedETA(distanceMeters = it)\n                rescueRespondentsSnapShot.add(\n                    element = userRespondent.toRescueRequest(\n                        distance = it.formatToDistanceKm(),\n                        eta = formattedETA\n                    )\n                )\n            }\n        }\n\n        return rescueRespondentsSnapShot.distinct()\n    }\n\n    private fun calculateDistance(startLocation: LocationModel?, endLocation: LocationModel?): Double? {\n        val startLatitude = startLocation?.latitude ?: return null\n        val startLongitude = startLocation.longitude ?: return null\n        val endLatitude = endLocation?.latitude ?: return null\n        val endLongitude = endLocation.longitude ?: return null\n\n        return mappingUseCase.getCalculatedDistanceUseCase(\n            startingLocation = LocationModel(latitude = startLatitude, longitude = startLongitude),\n            destinationLocation = LocationModel(latitude = endLatitude, longitude = endLongitude)\n        )\n    }\n\n    private fun NearbyCyclist.updateNearbyCyclists() {\n        _nearbyCyclistState.apply {\n            addAll(this@updateNearbyCyclists.users)\n            distinct()\n        }\n\n    }\n\n    private suspend fun broadcastRescueTransactionToRespondent(location: LocationModel) {\n        val rescueTransaction = state.value.rescueTransaction ?: return\n        runCatching {\n\n            val user = state.value.user\n            mappingUseCase.broadcastRescueTransactionToRespondent(\n                LiveLocationWSModel(\n                    latitude = location.latitude,\n                    longitude = location.longitude,\n                    room = rescueTransaction.id\n                ),\n                user = user,\n                rescueTransactionItem = rescueTransaction\n            )\n\n        }.onFailure {\n            Timber.v(\"Broadcasting location to transaction failed: ${it.message}\")\n        }\n    }\n\n\n    private fun unSubscribeToTransactionLocationUpdates() {\n        getTransactionLocationUpdatesJob?.cancel()\n    }\n\n    private fun subscribeToRescueTransactionUpdates() {\n        if (getRescueTransactionUpdatesJob?.isActive == true) {\n            return\n        }\n        getRescueTransactionUpdatesJob =\n            viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {\n\n                mappingUseCase.getRescueTransactionUpdatesUseCase().catch {\n                    Timber.e(\"ERROR GETTING RESCUE TRANSACTION: ${it.message}\")\n\n                }.onEach {\n                    Timber.v(\"NEW WEBSOCKET UPDATES: subscribeToRescueTransactionUpdates:: ${it.transactions.size}\")\n                    it.updateRescueTransaction()\n                    it.updateRescueClient()\n                    trackingHandler.checkRescueRequestAccepted(\n                        rescueTransaction = it,\n                        id = getId()\n                    )\n                }.launchIn(this@launch).invokeOnCompletion {\n                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n                }\n\n            }\n    }\n\n\n\n\n    private fun RescueTransaction.updateRescueTransaction() {\n        val rescueTransaction = trackingHandler.getUserRescueTransaction(this)\n        _state.update { it.copy(rescueTransaction = rescueTransaction) }\n    }\n\n    private suspend fun RescueTransaction.updateRescueClient() {\n        coroutineScope {\n            val rescueTransaction =\n                trackingHandler.getUserRescueTransaction(this@updateRescueClient)\n            _state.update { it.copy(rescueTransaction = rescueTransaction) }\n            updateClient()\n\n        }\n    }\n\n    private fun unSubscribeToRescueTransactionUpdates() {\n        getRescueTransactionUpdatesJob?.cancel()\n    }\n\n    private fun unSubscribeToNearbyUsersChanges() {\n        getUsersUpdatesJob?.cancel()\n    }\n\n    private fun subscribeToLocationUpdates() {\n        if (locationUpdatesJob?.isActive == true) {\n            return\n        }\n        locationUpdatesJob = viewModelScope.launch(context = defaultDispatcher) {\n\n            mappingUseCase.getUserLocationUseCase().catch {\n                Timber.e(\"Error Location Updates: ${it.message}\")\n            }.onEach { location ->\n                trackingHandler.updateLocation(location)\n                broadcastRescueTransactionToRespondent(location)\n                updateSpeedometer(location)\n                getNearbyCyclist()\n            }.launchIn(this@launch).invokeOnCompletion {\n                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n            }\n        }\n    }\n\n    private fun updateSpeedometer(location: LocationModel){\n        val isUserRescuer = state.value.user.isRescuer()\n        if(isUserRescuer) {\n            trackingHandler.setSpeed(location.speed)\n            trackingHandler.getTopSpeed(location.speed)\n            travelledPath.add(element = LatLng(location.latitude!!, location.longitude!!))\n            val distance = SphericalUtil.computeLength(travelledPath).formatToDistanceKm()\n            trackingHandler.setTravelledDistance(distance)\n        }\n    }\n\n\n    private fun subscribeToNearbyUsersChanges() {\n        if (getUsersUpdatesJob?.isActive == true) {\n            return\n        }\n\n        getUsersUpdatesJob = viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {\n\n            mappingUseCase.getUserUpdatesUseCase().catch {\n                Timber.e(\"ERROR GETTING USERS: ${it.message}\")\n            }.onEach {\n                Timber.v(\"NEW WEBSOCKET UPDATES: subscribeToNearbyUsersChanges:: ${it.users.size}\")\n                it.getUser()\n                it.updateNearbyCyclists()\n                trackingHandler.updateClient()\n            }.launchIn(this).invokeOnCompletion {\n                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n            }\n        }\n    }\n\n    private fun unSubscribeToLocationUpdates() {\n        locationUpdatesJob?.cancel()\n    }\n\n\n    private suspend inline fun uploadUserProfile(crossinline onSuccess: () -> Unit) {\n        coroutineScope {\n            val userLocation = state.value.userLocation\n\n            if (userLocation == null) {\n                _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = \"Searching for GPS\"))\n                return@coroutineScope\n            }\n\n            uploadProfile(location = userLocation, onSuccess = onSuccess)\n\n        }\n    }\n\n\n    private suspend inline fun uploadProfile(\n        location: LocationModel,\n        crossinline onSuccess: () -> Unit\n    ) {\n\n        val isProfileUploaded = state.value.profileUploaded\n\n        if (isProfileUploaded) {\n            onSuccess()\n            return\n        }\n\n        val fullAddress = mappingUseCase.getFullAddressUseCase(\n            latitude = location.latitude,\n            longitude = location.longitude\n        )\n\n        coroutineScope {\n\n            runCatching {\n                isLoading(true)\n                mappingUseCase.createUserUseCase(\n                    user = UserItem(\n                        id = getId(),\n                        name = getName(),\n                        address = fullAddress,\n                        profilePictureUrl = getPhotoUrl(),\n                        contactNumber = getPhoneNumber(),\n                        location = LocationModel(\n                            latitude = location.latitude,\n                            longitude = location.longitude\n                        ),\n                        rescueRequest = RescueRequest(), userAssistance = UserAssistanceModel()\n                    )\n                )\n                fullAddress?.let { mappingUseCase::setAddressUseCase }\n\n            }.onSuccess {\n                isLoading(false)\n                broadcastToNearbyCyclists()\n                onSuccess()\n                _state.update { it.copy(profileUploaded = true) }\n\n            }.onFailure { exception ->\n                Timber.e(\"Error uploading profile: ${exception.message}\")\n                isLoading(false)\n                exception.handleException()\n            }\n        }\n    }\n\n\n    private suspend fun Throwable.handleException() {\n        trackingHandler.handleException(this)\n        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n    }\n\n\n    private suspend fun createMockUpUsers() {\n        runCatching {\n            mappingUseCase.createMockUsers()\n        }.onSuccess {\n            Timber.v(\"CREATED MOCK USERS!\")\n            broadcastToNearbyCyclists()\n        }.onFailure {\n            Timber.e(\"FAILED TO CREATE MOCK USERS: ${it.message}\")\n        }\n    }\n\n\n    override fun onCleared() {\n        super.onCleared()\n        unSubscribeToLocationUpdates()\n        unSubscribeToNearbyUsersChanges()\n        unSubscribeToRescueTransactionUpdates()\n        unSubscribeToTransactionLocationUpdates()\n    }\n\n\n    private fun getId(): String = authUseCase.getIdUseCase()\n\n    private suspend fun getName(): String = settingUseCase.getNameUseCase()\n\n    private suspend fun getPhoneNumber(): String =\n        settingUseCase.getPhoneNumberUseCase()\n\n    private suspend fun getPhotoUrl() = settingUseCase.getPhotoUrlUseCase()\n\n    private fun clearTravelledPath(){\n        travelledPath = mutableListOf()\n    }\n\n\n\n}\n\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingViewModel.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingViewModel.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingViewModel.kt	(revision 867a76e43d39ff1da3fa26227daa21415ec0b769)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingViewModel.kt	(date 1692348485648)
+@@ -15,15 +15,14 @@
+ import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
+ import com.example.cyclistance.feature_mapping.domain.helper.TrackingStateHandler
+ import com.example.cyclistance.feature_mapping.domain.model.Role
+-import com.example.cyclistance.feature_mapping.domain.model.api.rescue.RescueRequestItemModel
+-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
+-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
+-import com.example.cyclistance.feature_mapping.domain.model.api.user.LocationModel
+-import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
+-import com.example.cyclistance.feature_mapping.domain.model.api.user.RescueRequest
+-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserAssistanceModel
+-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
+-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue.RescueRequestItemModel
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RescueRequest
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserAssistanceModel
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
+ import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
+ import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
+ import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/domain/sockets/WebSocketClientSender.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/domain/sockets/WebSocketClientSender.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/domain/sockets/WebSocketClientSender.kt
+new file mode 100644
+--- /dev/null	(date 1692347138890)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/domain/sockets/WebSocketClientSender.kt	(date 1692347138890)
+@@ -0,0 +1,6 @@
++package com.example.cyclistance.feature_mapping.domain.sockets
++
++
++interface WebSocketClientSender<in V : Any?>{
++    suspend fun broadcastEvent(broadcastItem: V? = null)
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/domain/sockets/WebSocketClientReceiver.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/domain/sockets/WebSocketClientReceiver.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/domain/sockets/WebSocketClientReceiver.kt
+new file mode 100644
+--- /dev/null	(date 1692347063568)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/domain/sockets/WebSocketClientReceiver.kt	(date 1692347063568)
+@@ -0,0 +1,7 @@
++package com.example.cyclistance.feature_mapping.domain.sockets
++
++import kotlinx.coroutines.flow.Flow
++
++interface WebSocketClientReceiver<out T> {
++    suspend fun getResult(): Flow<T>
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/data/repository/MappingSocketRepositoryImpl.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_mapping.data.repository\n\nimport android.content.Context\nimport com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection\nimport com.example.cyclistance.core.utils.constants.MappingConstants\nimport com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions\nimport com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction\nimport com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist\nimport com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel\nimport com.example.cyclistance.feature_mapping.domain.repository.MappingSocketRepository\nimport com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClient\nimport kotlinx.coroutines.Dispatchers\nimport kotlinx.coroutines.flow.Flow\nimport kotlinx.coroutines.flow.retry\nimport kotlinx.coroutines.withContext\nimport kotlin.coroutines.CoroutineContext\n\nclass MappingSocketRepositoryImpl(\n    private val context: Context,\n    private val rescueTransactionClient: WebSocketClient<RescueTransaction, LiveLocationWSModel>,\n    private val nearbyCyclistClient: WebSocketClient<NearbyCyclist, LiveLocationWSModel>,\n    private val liveLocation: WebSocketClient<LiveLocationWSModel, LiveLocationWSModel>,\n): MappingSocketRepository {\n\n    private val scope: CoroutineContext = Dispatchers.IO\n    override suspend fun getUserUpdates(): Flow<NearbyCyclist> {\n        return nearbyCyclistClient.getResult().retry(MappingConstants.API_CALL_RETRY_COUNT) {\n            return@retry context.hasInternetConnection().not()\n        }\n    }\n\n    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel) {\n        if (context.hasInternetConnection().not()) {\n            throw MappingExceptions.NetworkException()\n        }\n        withContext(scope) { nearbyCyclistClient.broadcastEvent(locationModel) }\n    }\n\n    override suspend fun broadcastRescueTransactionToRespondent() {\n        if (context.hasInternetConnection().not()) {\n            throw MappingExceptions.NetworkException()\n        }\n\n        withContext(scope) {\n            rescueTransactionClient.broadcastEvent()\n        }\n    }\n\n    override suspend fun getRescueTransactionUpdates(): Flow<RescueTransaction> {\n\n        return rescueTransactionClient.getResult().retry(MappingConstants.API_CALL_RETRY_COUNT) {\n            return@retry context.hasInternetConnection().not()\n        }\n    }\n\n    override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {\n\n        return liveLocation.getResult().retry(MappingConstants.API_CALL_RETRY_COUNT) {\n            return@retry context.hasInternetConnection().not()\n        }\n    }\n\n    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel) {\n        if (context.hasInternetConnection().not()) {\n            throw MappingExceptions.NetworkException()\n        }\n        return withContext(scope) {\n            liveLocation.broadcastEvent(locationModel)\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/data/repository/MappingSocketRepositoryImpl.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/data/repository/MappingSocketRepositoryImpl.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_mapping/data/repository/MappingSocketRepositoryImpl.kt	(revision 867a76e43d39ff1da3fa26227daa21415ec0b769)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/data/repository/MappingSocketRepositoryImpl.kt	(date 1692348485635)
+@@ -4,9 +4,9 @@
+ import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
+ import com.example.cyclistance.core.utils.constants.MappingConstants
+ import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
+-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
+-import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
+-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
+ import com.example.cyclistance.feature_mapping.domain.repository.MappingSocketRepository
+ import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClient
+ import kotlinx.coroutines.Dispatchers
+@@ -29,7 +29,7 @@
+         }
+     }
+ 
+-    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel) {
++    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationSocketModel) {
+         if (context.hasInternetConnection().not()) {
+             throw MappingExceptions.NetworkException()
+         }
+@@ -53,14 +53,14 @@
+         }
+     }
+ 
+-    override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {
++    override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationSocketModel> {
+ 
+         return liveLocation.getResult().retry(MappingConstants.API_CALL_RETRY_COUNT) {
+             return@retry context.hasInternetConnection().not()
+         }
+     }
+ 
+-    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel) {
++    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationSocketModel) {
+         if (context.hasInternetConnection().not()) {
+             throw MappingExceptions.NetworkException()
+         }
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/UserWSClient.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/UserWSClient.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/UserClient.kt
+rename from app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/UserWSClient.kt
+rename to app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/UserClient.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/UserWSClient.kt	(revision 867a76e43d39ff1da3fa26227daa21415ec0b769)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/UserClient.kt	(date 1692348485655)
+@@ -4,7 +4,6 @@
+ import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserDto
+ import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUser
+ import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
+-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
+ import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClient
+ import com.google.gson.Gson
+ import io.socket.client.Socket
+@@ -13,13 +12,13 @@
+ import kotlinx.coroutines.flow.Flow
+ import kotlinx.coroutines.flow.callbackFlow
+ 
+-class UserWSClient(
++class UserClient(
+     private val socket: Socket
+-): WebSocketClient<NearbyCyclist, LiveLocationWSModel> {
++): WebSocketClient<NearbyCyclist, LiveLocationSocketModel> {
+ 
+ 
+-    override suspend fun broadcastEvent(t: LiveLocationWSModel?) {
+-        t?.let{ locationModel ->
++    override suspend fun broadcastEvent(broadcastItem: LiveLocationSocketModel?) {
++        broadcastItem?.let{ locationModel ->
+             socket.emit(BROADCAST_USERS, locationModel.latitude, locationModel.longitude)
+         }
+     }
+Index: app/src/main/java/com/example/cyclistance/di/MappingModule.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.di\n\nimport android.content.Context\nimport android.location.Geocoder\nimport androidx.annotation.Keep\nimport com.example.cyclistance.R\nimport com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection\nimport com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL\nimport com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA\nimport com.example.cyclistance.feature_mapping.data.CyclistanceApi\nimport com.example.cyclistance.feature_mapping.data.data_source.network.websockets.RescueTransactionWSClient\nimport com.example.cyclistance.feature_mapping.data.data_source.network.websockets.TransactionLiveLocationWSClient\nimport com.example.cyclistance.feature_mapping.data.data_source.network.websockets.UserWSClient\nimport com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl\nimport com.example.cyclistance.feature_mapping.data.repository.MappingSocketRepositoryImpl\nimport com.example.cyclistance.feature_mapping.data.repository.MappingUiStoreRepositoryImpl\nimport com.example.cyclistance.feature_mapping.domain.repository.MappingRepository\nimport com.example.cyclistance.feature_mapping.domain.repository.MappingSocketRepository\nimport com.example.cyclistance.feature_mapping.domain.repository.MappingUiStoreRepository\nimport com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.address.GetAddressUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.address.SetAddressUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.bike_type.GetBikeTypeUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.bike_type.SetBikeTypeUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.bottom_sheet_type.GetBottomSheetTypeUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.bottom_sheet_type.SetBottomSheetTypeUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.AcceptRescueRequestUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDirectionsUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.user.*\nimport com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase\nimport com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.BroadcastToNearbyCyclists\nimport com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.GetUserUpdatesUseCase\nimport com.google.gson.GsonBuilder\nimport com.mapbox.api.optimization.v1.MapboxOptimization\nimport dagger.Module\nimport dagger.Provides\nimport dagger.hilt.InstallIn\nimport dagger.hilt.android.qualifiers.ApplicationContext\nimport dagger.hilt.components.SingletonComponent\nimport io.socket.client.IO\nimport okhttp3.Cache\nimport okhttp3.CacheControl\nimport okhttp3.Interceptor\nimport okhttp3.OkHttpClient\nimport retrofit2.Retrofit\nimport retrofit2.converter.gson.GsonConverterFactory\nimport java.io.File\nimport java.util.concurrent.TimeUnit\nimport javax.inject.Singleton\n\n\n@Keep\n@Module\n@InstallIn(SingletonComponent::class)\nobject MappingModule {\n\n\n    @Provides\n    @Singleton\n    fun provideCyclistanceApi(@ApplicationContext context: Context): CyclistanceApi {\n        val okHttpClient = providesOkhttpClient(context)\n        val gson = GsonBuilder().serializeNulls().create()\n\n        return lazy {\n            Retrofit.Builder()\n                .baseUrl(context.getString(R.string.CyclistanceApiBaseUrl))\n                .addConverterFactory(GsonConverterFactory.create(gson))\n                .client(okHttpClient)\n                .build()\n                .create(CyclistanceApi::class.java)\n        }.value\n\n    }\n\n\n    @Singleton\n    @Provides\n    fun providesMapOptimizationDirections(@ApplicationContext context: Context): MapboxOptimization.Builder {\n        return lazy {\n            MapboxOptimization.builder()\n                .accessToken(context.getString(R.string.MapsDownloadToken))\n        }.value\n    }\n\n\n    @Provides\n    @Singleton\n    fun provideMappingRepository(\n        @ApplicationContext context: Context,\n        api: CyclistanceApi,\n        mapboxDirections: MapboxOptimization.Builder): MappingRepository {\n\n\n        val geocoder = Geocoder(context)\n\n        return MappingRepositoryImpl(\n            api = api,\n            context = context,\n\n            mapboxDirections = mapboxDirections,\n            geocoder = geocoder\n        )\n    }\n\n    @Provides\n    @Singleton\n    fun provideMappingSocketRepository(@ApplicationContext context: Context): MappingSocketRepository {\n        val socket = IO.socket(context.getString(R.string.CyclistanceApiBaseUrl))\n        val userWSClient = UserWSClient(socket)\n        val rescueTransactionWSClient = RescueTransactionWSClient(socket)\n        val liveLocation = TransactionLiveLocationWSClient(socket)\n        return MappingSocketRepositoryImpl(\n            context = context,\n            rescueTransactionClient = rescueTransactionWSClient,\n            nearbyCyclistClient = userWSClient,\n            liveLocation = liveLocation,\n        )\n    }\n\n    @Provides\n    @Singleton\n    fun provideMappingUiStoreRepository(@ApplicationContext context: Context): MappingUiStoreRepository {\n        return MappingUiStoreRepositoryImpl(context)\n    }\n\n\n    @Provides\n    @Singleton\n    fun provideMappingUseCase(\n        mappingRepository: MappingRepository,\n        mappingUiStoreRepository: MappingUiStoreRepository,\n        mappingSocketRepository: MappingSocketRepository): MappingUseCase {\n        return MappingUseCase(\n\n            getUsersUseCase = GetUsersUseCase(mappingRepository),\n            getUserByIdUseCase = GetUserByIdUseCase(mappingRepository),\n            createUserUseCase = CreateUserUseCase(mappingRepository),\n            deleteUserUseCase = DeleteUserUseCase(mappingRepository),\n\n            getRescueTransactionByIdUseCase = GetRescueTransactionByIdUseCase(mappingRepository),\n            acceptRescueRequestUseCase = AcceptRescueRequestUseCase(mappingRepository),\n            deleteRescueTransactionUseCase = DeleteRescueTransactionUseCase(mappingRepository),\n\n\n            getUserLocationUseCase = GetUserLocationUseCase(mappingRepository),\n            getFullAddressUseCase = GetFullAddressUseCase(mappingRepository),\n\n            getBikeTypeUseCase = GetBikeTypeUseCase(mappingUiStoreRepository),\n            setBikeTypeUseCase = SetBikeTypeUseCase(mappingUiStoreRepository),\n            getAddressUseCase = GetAddressUseCase(mappingUiStoreRepository),\n            setAddressUseCase = SetAddressUseCase(mappingUiStoreRepository),\n            broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(\n                mappingSocketRepository),\n            broadcastToNearbyCyclists = BroadcastToNearbyCyclists(mappingSocketRepository),\n            getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(\n                mappingSocketRepository),\n            getUserUpdatesUseCase = GetUserUpdatesUseCase(mappingSocketRepository),\n            broadcastRescueTransactionToRespondent = BroadcastTransactionLocationUseCase(\n                mappingSocketRepository),\n            getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(\n                mappingSocketRepository),\n            deleteRescueRespondentUseCase = DeleteRescueRespondentUseCase(mappingRepository),\n            addRescueRespondentUseCase = AddRescueRespondentUseCase(mappingRepository),\n            deleteAllRespondentsUseCase = DeleteAllRespondentsUseCase(mappingRepository),\n            confirmDetailsUseCase = ConfirmDetailsUseCase(mappingRepository),\n            confirmCancellationUseCase = ConfirmCancellationUseCase(mappingRepository),\n            getRouteDirectionsUseCase = GetRouteDirectionsUseCase(mappingRepository),\n            getCalculatedDistanceUseCase = GetCalculatedDistanceUseCase(mappingRepository),\n            getBottomSheetTypeUseCase = GetBottomSheetTypeUseCase(mappingUiStoreRepository),\n            setBottomSheetTypeUseCase = SetBottomSheetTypeUseCase(mappingUiStoreRepository)\n        )\n    }\n\n\n    @Provides\n    @Singleton\n    fun providesOkhttpClient(@ApplicationContext context: Context): OkHttpClient {\n        val interceptor = Interceptor { chain ->\n            var request = chain.request()\n            if (!context.hasInternetConnection()) {\n                val cacheControl = CacheControl.Builder()\n                    .maxStale(1, TimeUnit.DAYS)\n                    .build()\n\n                request = request.newBuilder()\n                    .removeHeader(HEADER_PRAGMA)\n                    .removeHeader(HEADER_CACHE_CONTROL)\n                    .cacheControl(cacheControl)\n                    .build()\n            }\n            chain.proceed(request)\n        }\n        val httpCacheDirectory = File(context.cacheDir, \"offlineCache\")\n        val cacheSize = 50 * 1024 * 1024\n        val cache = Cache(httpCacheDirectory, cacheSize.toLong())\n\n        return lazy {\n            OkHttpClient.Builder()\n                .cache(cache)\n                .addInterceptor(interceptor)\n                .build()\n        }.value\n    }\n\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/di/MappingModule.kt b/app/src/main/java/com/example/cyclistance/di/MappingModule.kt
+--- a/app/src/main/java/com/example/cyclistance/di/MappingModule.kt	(revision 867a76e43d39ff1da3fa26227daa21415ec0b769)
++++ b/app/src/main/java/com/example/cyclistance/di/MappingModule.kt	(date 1692348438836)
+@@ -33,12 +33,11 @@
+ import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
+ import com.example.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDirectionsUseCase
+ import com.example.cyclistance.feature_mapping.domain.use_case.user.*
+-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.BroadcastTransactionLocationUseCase
+-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.GetTransactionLocationUpdatesUseCase
++import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.NewHazardousLaneUseCase
++import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.TransactionLocationUseCase
+ import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
+ import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
+-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.BroadcastToNearbyCyclists
+-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.GetUserUpdatesUseCase
++import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.NearbyCyclistsUseCase
+ import com.google.gson.GsonBuilder
+ import com.mapbox.api.optimization.v1.MapboxOptimization
+ import dagger.Module
+@@ -160,13 +159,10 @@
+             setAddressUseCase = SetAddressUseCase(mappingUiStoreRepository),
+             broadcastRescueTransactionUseCase = BroadcastRescueTransactionUseCase(
+                 mappingSocketRepository),
+-            broadcastToNearbyCyclists = BroadcastToNearbyCyclists(mappingSocketRepository),
++            nearbyCyclistsUseCase = NearbyCyclistsUseCase(mappingSocketRepository),
+             getRescueTransactionUpdatesUseCase = GetRescueTransactionUpdatesUseCase(
+                 mappingSocketRepository),
+-            getUserUpdatesUseCase = GetUserUpdatesUseCase(mappingSocketRepository),
+-            broadcastRescueTransactionToRespondent = BroadcastTransactionLocationUseCase(
+-                mappingSocketRepository),
+-            getTransactionLocationUpdatesUseCase = GetTransactionLocationUpdatesUseCase(
++            transactionLocationUseCase = TransactionLocationUseCase(
+                 mappingSocketRepository),
+             deleteRescueRespondentUseCase = DeleteRescueRespondentUseCase(mappingRepository),
+             addRescueRespondentUseCase = AddRescueRespondentUseCase(mappingRepository),
+@@ -176,7 +172,8 @@
+             getRouteDirectionsUseCase = GetRouteDirectionsUseCase(mappingRepository),
+             getCalculatedDistanceUseCase = GetCalculatedDistanceUseCase(mappingRepository),
+             getBottomSheetTypeUseCase = GetBottomSheetTypeUseCase(mappingUiStoreRepository),
+-            setBottomSheetTypeUseCase = SetBottomSheetTypeUseCase(mappingUiStoreRepository)
++            setBottomSheetTypeUseCase = SetBottomSheetTypeUseCase(mappingUiStoreRepository),
++            newHazardousLaneUseCase = NewHazardousLaneUseCase(mappingSocketRepository)
+         )
+     }
+ 
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/TransactionLiveLocationWSClient.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/TransactionLiveLocationWSClient.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/TransactionLiveLocationClient.kt
+rename from app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/TransactionLiveLocationWSClient.kt
+rename to app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/TransactionLiveLocationClient.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/TransactionLiveLocationWSClient.kt	(revision 867a76e43d39ff1da3fa26227daa21415ec0b769)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/TransactionLiveLocationClient.kt	(date 1692348485642)
+@@ -2,7 +2,6 @@
+ 
+ import com.example.cyclistance.core.utils.constants.MappingConstants.BROADCAST_LOCATION
+ import com.example.cyclistance.core.utils.constants.MappingConstants.JOIN_LIVE_LOCATION_UPDATES
+-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
+ import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClient
+ import com.google.gson.Gson
+ import io.socket.client.Socket
+@@ -11,16 +10,16 @@
+ import kotlinx.coroutines.flow.Flow
+ import kotlinx.coroutines.flow.callbackFlow
+ 
+-class TransactionLiveLocationWSClient(
++class TransactionLiveLocationClient(
+     private val socket: Socket
+-): WebSocketClient<LiveLocationWSModel, LiveLocationWSModel> {
++): WebSocketClient<LiveLocationSocketModel, LiveLocationSocketModel> {
+     
+-    override suspend fun getResult(): Flow<LiveLocationWSModel> {
++    override suspend fun getResult(): Flow<LiveLocationSocketModel> {
+         return callbackFlow {
+             val onNewLocationUpdates = Emitter.Listener { response ->
+                 val gson = Gson()
+                 val responseResult = response[0].toString().trimIndent()
+-                val result = gson.fromJson(responseResult, LiveLocationWSModel::class.java)
++                val result = gson.fromJson(responseResult, LiveLocationSocketModel::class.java)
+                 trySend(result)
+             }
+ 
+@@ -35,8 +34,8 @@
+     }
+ 
+ 
+-    override suspend fun broadcastEvent(t: LiveLocationWSModel?) {
+-        t?.let{ locationModel ->
++    override suspend fun broadcastEvent(broadcastItem: LiveLocationSocketModel?) {
++        broadcastItem?.let{ locationModel ->
+             socket.emit(JOIN_LIVE_LOCATION_UPDATES, locationModel.latitude, locationModel.longitude, "room-${locationModel.room}")
+         }
+     }
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/domain/repository/MappingSocketRepository.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_mapping.domain.repository\n\nimport com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction\nimport com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist\nimport com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel\nimport kotlinx.coroutines.flow.Flow\n\ninterface MappingSocketRepository {\n\n    suspend fun getUserUpdates(): Flow<NearbyCyclist>\n    suspend fun getRescueTransactionUpdates(): Flow<RescueTransaction>\n    suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel>\n    suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel)\n    suspend fun broadcastRescueTransactionToRespondent()\n    suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel)\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/domain/repository/MappingSocketRepository.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/domain/repository/MappingSocketRepository.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_mapping/domain/repository/MappingSocketRepository.kt	(revision 867a76e43d39ff1da3fa26227daa21415ec0b769)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/domain/repository/MappingSocketRepository.kt	(date 1692348485625)
+@@ -1,8 +1,9 @@
+ package com.example.cyclistance.feature_mapping.domain.repository
+ 
+-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
+-import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
+-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
+ import kotlinx.coroutines.flow.Flow
+ 
+ interface MappingSocketRepository {
+@@ -12,5 +13,6 @@
+     suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel>
+     suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel)
+     suspend fun broadcastRescueTransactionToRespondent()
+-    suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel)
++    suspend fun addNewHazardousLane(hazardousLaneMarker: HazardousLaneMarker)
++    suspend fun broadcastTransactionLocation(locationModel: LiveLocationSocketModel)
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/RescueTransactionWSClient.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/RescueTransactionWSClient.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/RescueTransactionClient.kt
+rename from app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/RescueTransactionWSClient.kt
+rename to app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/RescueTransactionClient.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/RescueTransactionWSClient.kt	(revision 867a76e43d39ff1da3fa26227daa21415ec0b769)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/RescueTransactionClient.kt	(date 1692348438853)
+@@ -14,12 +14,12 @@
+ import kotlinx.coroutines.flow.callbackFlow
+ 
+ 
+-class RescueTransactionWSClient(
++class RescueTransactionClient(
+     private val socket: Socket
+ ): WebSocketClient<RescueTransaction, LiveLocationWSModel> {
+ 
+ 
+-    override suspend fun broadcastEvent(t: LiveLocationWSModel?) {
++    override suspend fun broadcastEvent(broadcastItem: LiveLocationSocketModel?) {
+         socket.emit(BROADCAST_RESCUE_TRANSACTION)
+     }
+ 
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/DeleteHazardousLane.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/DeleteHazardousLane.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/DeleteHazardousLane.kt
+new file mode 100644
+--- /dev/null	(date 1692347138910)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/data/data_source/network/websockets/DeleteHazardousLane.kt	(date 1692347138910)
+@@ -0,0 +1,17 @@
++package com.example.cyclistance.feature_mapping.data.data_source.network.websockets
++
++import com.example.cyclistance.core.utils.constants.MappingConstants.DELETE_HAZARDOUS_LANE
++import com.example.cyclistance.feature_mapping.domain.sockets.WebSocketClientSender
++import io.socket.client.Socket
++
++class DeleteHazardousLane(
++    private val socket: Socket
++): WebSocketClientSender<String> {
++
++
++    override suspend fun broadcastEvent(broadcastItem: String?) {
++        broadcastItem?.let { hazardousId ->
++            socket.emit(DELETE_HAZARDOUS_LANE, hazardousId)
++        }
++    }
++}
+\ No newline at end of file

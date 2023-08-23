@@ -1,0 +1,103 @@
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetDropDown\">\n    <targetSelectedWithDropDown>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetSelectedWithDropDown>\n    <timeTargetWasSelectedWithDropDown value=\"2023-08-15T13:38:43.764073255Z\" />\n    <runningDeviceTargetsSelectedWithDialog>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"SERIAL_NUMBER\" />\n            <value value=\"194a89050404\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </runningDeviceTargetsSelectedWithDialog>\n    <targetsSelectedWithDialog>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetsSelectedWithDialog>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(revision 867a76e43d39ff1da3fa26227daa21415ec0b769)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1692282732625)
+@@ -12,27 +12,7 @@
+         </deviceKey>
+       </Target>
+     </targetSelectedWithDropDown>
+-    <timeTargetWasSelectedWithDropDown value="2023-08-15T13:38:43.764073255Z" />
+-    <runningDeviceTargetsSelectedWithDialog>
+-      <Target>
+-        <type value="RUNNING_DEVICE_TARGET" />
+-        <deviceKey>
+-          <Key>
+-            <type value="VIRTUAL_DEVICE_PATH" />
+-            <value value="$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd" />
+-          </Key>
+-        </deviceKey>
+-      </Target>
+-      <Target>
+-        <type value="RUNNING_DEVICE_TARGET" />
+-        <deviceKey>
+-          <Key>
+-            <type value="SERIAL_NUMBER" />
+-            <value value="194a89050404" />
+-          </Key>
+-        </deviceKey>
+-      </Target>
+-    </runningDeviceTargetsSelectedWithDialog>
++    <timeTargetWasSelectedWithDropDown value="2023-08-17T14:32:10.474973757Z" />
+     <targetsSelectedWithDialog>
+       <Target>
+         <type value="QUICK_BOOT_TARGET" />
+Index: app/src/test/java/com/example/cyclistance/feature_mapping/data/repositories/FakeMappingRepository.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_mapping.data.repositories\n\nimport com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location\nimport com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Respondent\nimport com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions\nimport com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel\nimport com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist\nimport com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction\nimport com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem\nimport com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection\nimport com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem\nimport com.example.cyclistance.feature_mapping.domain.repository.MappingRepository\nimport com.mapbox.geojson.Point\nimport kotlinx.coroutines.flow.Flow\nimport kotlinx.coroutines.flow.MutableStateFlow\nimport kotlinx.coroutines.flow.flow\n\nclass FakeMappingRepository : MappingRepository {\n\n\n    companion object {\n\n\n        val bikeType = MutableStateFlow(\"\")\n        val address = MutableStateFlow(\"\")\n        val nearbyCyclist = MutableStateFlow(NearbyCyclist())\n        val liveLocation = MutableStateFlow(LiveLocationWSModel())\n        val rescueTransaction = MutableStateFlow(RescueTransaction())\n\n        val users = nearbyCyclist.value.users.toMutableList()\n        var location = Location()\n        var shouldReturnNetworkError = false\n        var calculatedDistanceInMeters = 0.0\n        var routeDirectionGeometry: String = \"\"\n        var routeDirectionDuration: Double = 0.0\n    }\n\n\n    override fun getCalculateDistance(\n        startingLocation: Location,\n        destinationLocation: Location,\n    ): Double {\n        return calculatedDistanceInMeters\n    }\n\n    override suspend fun getUserById(userId: String): UserItem {\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n        return users.find { it.id == userId } ?: throw MappingExceptions.UserException()\n    }\n\n    override suspend fun getUsers(): NearbyCyclist {\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n        return NearbyCyclist(users)\n    }\n\n    override suspend fun createUser(userItem: UserItem) {\n\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n\n        if (users.find { it.id == userItem.id } != null) {\n            throw MappingExceptions.UserException(\"User already exists\")\n        }\n\n        users.add(userItem)\n    }\n\n    override suspend fun deleteUser(id: String) {\n\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n\n        if (users.find { it.id == id } == null) {\n            throw MappingExceptions.UserException()\n        }\n\n        users.removeIf { it.id == id }\n\n    }\n\n\n    override suspend fun deleteRescueRespondent(userId: String, respondentId: String) {\n\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n\n        val userFound = nearbyCyclist.value.users.toMutableList().find { it.id == userId } ?: throw MappingExceptions.UserException()\n        userFound.rescueRequest?.respondents?.toMutableList()\n            ?.removeIf { it.clientId == respondentId }\n    }\n\n    override suspend fun addRescueRespondent(userId: String, respondentId: String) {\n\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n\n\n        val userFound = nearbyCyclist.value.users.find { it.id == userId }\n                        ?: throw MappingExceptions.UserException()\n        userFound.rescueRequest?.respondents?.toMutableList()\n            ?.add(Respondent(clientId = respondentId))\n    }\n\n    override suspend fun deleteAllRespondents(userId: String) {\n\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n\n        val userFound = users.find { it.id == userId } ?: throw MappingExceptions.UserException()\n        userFound.rescueRequest?.respondents?.toMutableList()?.clear()\n    }\n\n\n    override suspend fun getRescueTransactionById(transactionId: String): RescueTransactionItem {\n\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n\n        return rescueTransaction.value.transactions.find { it.id == transactionId }\n               ?: throw MappingExceptions.RescueTransactionNotFoundException(\"Rescue transaction not found\")\n\n    }\n\n    override suspend fun createRescueTransaction(rescueTransaction: RescueTransactionItem) {\n\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n\n        if (Companion.rescueTransaction.value.transactions.find { it.id == rescueTransaction.id } != null) {\n            throw MappingExceptions.RescueTransactionNotFoundException(\"Rescue transaction already exists\")\n        }\n\n        Companion.rescueTransaction.value.transactions.toMutableList().add(rescueTransaction)\n    }\n\n    override suspend fun deleteRescueTransaction(transactionId: String) {\n\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n\n        if (rescueTransaction.value.transactions.find { it.id == transactionId } == null) {\n            throw MappingExceptions.RescueTransactionNotFoundException(\"Rescue transaction not found\")\n        }\n\n        rescueTransaction.value.transactions.toMutableList().removeIf { it.id == transactionId }\n    }\n\n    override suspend fun getFullAddress(latitude: Double, longitude: Double): String {\n\n        if(address.value.isEmpty()){\n            throw MappingExceptions.AddressException(\"Address not found\")\n        }\n\n        return address.value\n    }\n\n    override suspend fun getBikeType(): Flow<String> {\n        return bikeType\n    }\n\n    override suspend fun setBikeType(bikeType: String) {\n        Companion.bikeType.value = bikeType\n    }\n\n    override suspend fun getAddress(): Flow<String> {\n        return address\n    }\n\n    override suspend fun setAddress(address: String) {\n        Companion.address.value = address\n    }\n\n    override suspend fun getUserLocation(): Flow<Location> {\n\n        return flow {\n            emit(location)\n        }\n    }\n\n    override suspend fun getUserUpdates(): Flow<NearbyCyclist> {\n        if(shouldReturnNetworkError){\n            throw MappingExceptions.NetworkException()\n        }\n        return nearbyCyclist\n    }\n\n    override suspend fun getRescueTransactionUpdates(): Flow<RescueTransaction> {\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n        return rescueTransaction\n    }\n\n    override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n        return liveLocation\n    }\n\n    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel) {\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n\n        liveLocation.emit(value = locationModel)\n        println(\"broadcastUser\")\n    }\n\n\n    override suspend fun broadcastRescueTransactionToRespondent() {\n\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n\n        rescueTransaction.emit(value = rescueTransaction.value)\n        println(\"broadcastRescueTransaction\")\n    }\n\n    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel) {\n\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n\n        println(\"broadcastLocation\")\n    }\n\n    override suspend fun getRouteDirections(origin: Point, destination: Point): RouteDirection {\n\n        if (shouldReturnNetworkError) {\n            throw MappingExceptions.NetworkException()\n        }\n\n        return RouteDirection(geometry = routeDirectionGeometry, duration = routeDirectionDuration)\n    }\n\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/test/java/com/example/cyclistance/feature_mapping/data/repositories/FakeMappingRepository.kt b/app/src/test/java/com/example/cyclistance/feature_mapping/data/repositories/FakeMappingRepository.kt
+--- a/app/src/test/java/com/example/cyclistance/feature_mapping/data/repositories/FakeMappingRepository.kt	(revision 867a76e43d39ff1da3fa26227daa21415ec0b769)
++++ b/app/src/test/java/com/example/cyclistance/feature_mapping/data/repositories/FakeMappingRepository.kt	(date 1692337778143)
+@@ -3,12 +3,12 @@
+ import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
+ import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Respondent
+ import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
+-import com.example.cyclistance.feature_mapping.domain.model.location.LiveLocationWSModel
+-import com.example.cyclistance.feature_mapping.domain.model.api.user.NearbyCyclist
+-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransaction
+-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RescueTransactionItem
+-import com.example.cyclistance.feature_mapping.domain.model.api.rescue_transaction.RouteDirection
+-import com.example.cyclistance.feature_mapping.domain.model.api.user.UserItem
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
++import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
+ import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
+ import com.mapbox.geojson.Point
+ import kotlinx.coroutines.flow.Flow
+@@ -24,7 +24,7 @@
+         val bikeType = MutableStateFlow("")
+         val address = MutableStateFlow("")
+         val nearbyCyclist = MutableStateFlow(NearbyCyclist())
+-        val liveLocation = MutableStateFlow(LiveLocationWSModel())
++        val liveLocation = MutableStateFlow(LiveLocationSocketModel())
+         val rescueTransaction = MutableStateFlow(RescueTransaction())
+ 
+         val users = nearbyCyclist.value.users.toMutableList()
+@@ -203,14 +203,14 @@
+         return rescueTransaction
+     }
+ 
+-    override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationWSModel> {
++    override suspend fun getTransactionLocationUpdates(): Flow<LiveLocationSocketModel> {
+         if (shouldReturnNetworkError) {
+             throw MappingExceptions.NetworkException()
+         }
+         return liveLocation
+     }
+ 
+-    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationWSModel) {
++    override suspend fun broadcastToNearbyCyclists(locationModel: LiveLocationSocketModel) {
+         if (shouldReturnNetworkError) {
+             throw MappingExceptions.NetworkException()
+         }
+@@ -230,7 +230,7 @@
+         println("broadcastRescueTransaction")
+     }
+ 
+-    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationWSModel) {
++    override suspend fun broadcastTransactionLocation(locationModel: LiveLocationSocketModel) {
+ 
+         if (shouldReturnNetworkError) {
+             throw MappingExceptions.NetworkException()
