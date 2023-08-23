@@ -87,9 +87,7 @@ fun MappingMapsScreen(
     val showNearbyCyclistsIcon = remember(nearbyCyclist, mapboxMap) {
         {
             dismissNearbyUserMarkers()
-            nearbyCyclist?.distinctBy {
-                it.id
-            }?.filter {
+            nearbyCyclist?.filter {
                 it.id != state.user.id
             }?.filter {
                 it.isUserNeedHelp() == true
