@@ -232,11 +232,13 @@ class MappingRepositoryImpl(
         destinationLocation.latitude ?: throw MappingExceptions.LocationException()
         destinationLocation.longitude ?: throw MappingExceptions.LocationException()
 
-        return SimpleLocation.calculateDistance(
-            startingLocation.latitude,
-            startingLocation.longitude,
-            destinationLocation.latitude,
-            destinationLocation.longitude)
+
+        return LatLng(startingLocation.latitude, startingLocation.longitude).distanceTo(
+            LatLng(
+                destinationLocation.latitude, destinationLocation.longitude)
+        )
+
+
     }
 
     private fun Address.getFullAddress(): String {

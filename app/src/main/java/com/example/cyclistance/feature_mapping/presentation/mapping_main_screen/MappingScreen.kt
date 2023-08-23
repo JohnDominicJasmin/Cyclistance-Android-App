@@ -859,6 +859,15 @@ fun MappingScreen(
                     Toast.makeText(context, "Incident Reported", Toast.LENGTH_SHORT).show()
                 }
 
+                is MappingEvent.IncidentDistanceTooFar -> {
+                    uiState = uiState.copy(
+                    alertDialogState = AlertDialogState(
+                        title = "Exceeds Reachable Distance",
+                        description = "The incident is taking place quite a distance away from your current location, making it challenging to directly engage or intervene.",
+                        icon = R.raw.error
+                    ))
+                }
+
 
 
             }
