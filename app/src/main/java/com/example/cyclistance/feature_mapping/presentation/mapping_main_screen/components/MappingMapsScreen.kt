@@ -108,6 +108,7 @@ fun MappingMapsScreen(
                         setIcon(icon)
                         position(LatLng(latitude, longitude))
                         title = cyclist.id
+                        this.snippet = MarkerSnippet.NearbyCyclistSnippet.type
                     }
                     val addedMarker = mapboxMap.addMarker(markerOptions)
                     addedMarker.let { nearbyUserMarkers.add(it) }
@@ -127,12 +128,12 @@ fun MappingMapsScreen(
             }
         }
     }
-    val showHazardousLaneIcon = remember(hazardousLane, mapboxMap) {
+    val showHazardousLaneIcon = remember(hazardousLaneMarkers.size, mapboxMap) {
         {
             dismissHazardousMarkers()
-            hazardousLane?.forEach { marker ->
+            hazardousLaneMarkers?.forEach { marker ->
                 val iconImage =
-                    marker.label.getHazardousLaneImage(context)
+                    marker.label.getHazardousLaneImage(context = context, isMarkerYours = marker.idCreator == state.userId)
                         ?.toBitmap(width = 120, height = 120)
                 val latitude = marker.latitude ?: return@forEach
                 val longitude = marker.longitude ?: return@forEach
@@ -143,6 +144,8 @@ fun MappingMapsScreen(
                         setIcon(icon)
                         position(LatLng(latitude, longitude))
                         title = marker.id
+                        snippet = MarkerSnippet.HazardousLaneSnippet.type
+
                     }
                     val addedMarker = mapboxMap.addMarker(markerOptions)
                     addedMarker.let { hazardousMarkers.add(it) }
