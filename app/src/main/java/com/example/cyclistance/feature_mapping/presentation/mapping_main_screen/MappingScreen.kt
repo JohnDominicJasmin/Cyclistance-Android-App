@@ -1056,6 +1056,8 @@ fun MappingScreen(
                 MappingUiEvent.OpenHazardousLaneBottomSheet -> onOpenHazardousLaneBottomSheet()
                 is MappingUiEvent.OnSelectMapType -> onSelectMapType(event.mapType)
                 is MappingUiEvent.HazardousLaneMarkerSelected -> {}
+                is MappingUiEvent.OnChangeIncidentDescription -> onChangeIncidentDescription(event.description)
+                is MappingUiEvent.OnChangeIncidentLabel -> onChangeIncidentLabel(event.label)
             }
         }
 

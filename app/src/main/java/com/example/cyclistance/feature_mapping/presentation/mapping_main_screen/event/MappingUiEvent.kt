@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event
 
+import androidx.compose.ui.text.input.TextFieldValue
 import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -51,6 +52,9 @@ sealed class MappingUiEvent{
     data class ConfirmRequestHelp(val id: String) : MappingUiEvent()
     object DismissAlertDialog : MappingUiEvent()
     object OnAddEmergencyContact : MappingUiEvent()
+
+    data class OnChangeIncidentDescription(val description: TextFieldValue) : MappingUiEvent()
+    data class OnChangeIncidentLabel(val label: String) : MappingUiEvent()
 
 
 }
