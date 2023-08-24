@@ -268,7 +268,7 @@ private fun IncidentItem(
     onClick: (label: String) -> Unit
 ) {
 
-    val isSelected by remember {
+    val isSelected by remember(incidentLabel, selectedLabel) {
         derivedStateOf { incidentLabel == selectedLabel }
     }
 
