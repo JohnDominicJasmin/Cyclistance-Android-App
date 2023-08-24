@@ -134,38 +134,34 @@ fun MappingMapsScreen(
     val showHazardousLaneIcon = remember(hazardousLaneMarkers.size, mapboxMap, state.userLocation) {
         {
 
+            dismissHazardousMarkers()
+            hazardousLaneMarkers.filter { marker ->
+                val markerLocation = LatLng(marker.latitude!!, marker.longitude!!)
+                val userLocation = LatLng(
+                    state.getCurrentLocation()?.latitude!!,
+                    state.getCurrentLocation()?.longitude!!
+                )
+                markerLocation.distanceTo(userLocation) < MappingConstants.DEFAULT_RADIUS
+            }.forEach { marker ->
+                val iconImage =
+                    marker.label.getHazardousLaneImage(
+                        context = context,
+                        isMarkerYours = marker.idCreator == state.userId)
+                        ?.toBitmap(width = 120, height = 120)
+                val latitude = marker.latitude ?: return@forEach
+                val longitude = marker.longitude ?: return@forEach
+                iconImage?.let { bitmap ->
+                    mapboxMap ?: return@let
+                    val icon = IconFactory.getInstance(context).fromBitmap(bitmap)
+                    val markerOptions = MarkerOptions().apply {
+                        setIcon(icon)
+                        position(LatLng(latitude, longitude))
+                        title = marker.id
+                        snippet = MarkerSnippet.HazardousLaneSnippet.type
 
-
-            if (state.isLocationAvailable()) {
-                dismissHazardousMarkers()
-                hazardousLaneMarkers.filter { marker ->
-                    val markerLocation = LatLng(marker.latitude!!, marker.longitude!!)
-                    val userLocation = LatLng(
-                        state.getCurrentLocation()?.latitude!!,
-                        state.getCurrentLocation()?.longitude!!
-                    )
-                    markerLocation.distanceTo(userLocation) < MappingConstants.DEFAULT_RADIUS
-                }.forEach { marker ->
-                    val iconImage =
-                        marker.label.getHazardousLaneImage(
-                            context = context,
-                            isMarkerYours = marker.idCreator == state.userId)
-                            ?.toBitmap(width = 120, height = 120)
-                    val latitude = marker.latitude ?: return@forEach
-                    val longitude = marker.longitude ?: return@forEach
-                    iconImage?.let { bitmap ->
-                        mapboxMap ?: return@let
-                        val icon = IconFactory.getInstance(context).fromBitmap(bitmap)
-                        val markerOptions = MarkerOptions().apply {
-                            setIcon(icon)
-                            position(LatLng(latitude, longitude))
-                            title = marker.id
-                            snippet = MarkerSnippet.HazardousLaneSnippet.type
-
-                        }
-                        val addedMarker = mapboxMap.addMarker(markerOptions)
-                        addedMarker.let { hazardousMarkers.add(it) }
                     }
+                    val addedMarker = mapboxMap.addMarker(markerOptions)
+                    addedMarker.let { hazardousMarkers.add(it) }
                 }
             }
         }
