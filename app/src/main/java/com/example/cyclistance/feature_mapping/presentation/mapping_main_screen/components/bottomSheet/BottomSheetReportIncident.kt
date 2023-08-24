@@ -135,7 +135,7 @@ fun BottomSheetReportIncident(
                 AdditionalMessage(
                     modifier = Modifier
                         .fillMaxWidth(0.93f)
-                        .fillMaxHeight(0.25f)
+                        .height(120.dp)
                         .padding(bottom = 12.dp),
                     message = incidentDescription,
                     text = null,
