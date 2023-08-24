@@ -13,6 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -94,6 +95,10 @@ fun MappingScreen(
     val locationComponentOptions = MappingUtils.rememberLocationComponentOptions()
     var mapboxMap by remember<MutableState<MapboxMap?>> {
         mutableStateOf(null)
+    }
+
+    var incidentDescription by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
     }
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
@@ -574,8 +579,11 @@ fun MappingScreen(
                 mappingViewModel.onEvent(
                     event = MappingVmEvent.ReportIncident(
                         label = incidentLabel,
-                        latLng = locationLatLng
+                        latLng = locationLatLng,
+                        description = incidentDescription.text
                     ))
+                uiState = uiState.copy(selectedIncidentLabel = "")
+                incidentDescription = TextFieldValue()
             }
         }
     }
