@@ -330,7 +330,7 @@ fun PreviewBottomSheetReportIncidentDark() {
                     selectedLabel = "Lane closure",
                     onClick = {
 
-                    })
+                    }, onChangeDescription = {}, onClickConfirm = {}, incidentDescription = TextFieldValue("Test"))
             }
         }
     }
@@ -356,7 +356,8 @@ fun PreviewBottomSheetReportIncidentLight() {
                     selectedLabel = "Lane closure",
                     onClick = {
 
-                    })
+                    },
+                    onChangeDescription = {}, onClickConfirm = {}, incidentDescription = TextFieldValue("Test"))
             }
         }
     }

@@ -703,9 +703,26 @@ fun MappingScreen(
         }
     }}
 
-    val onSelectMapType = remember{{ mapType: String ->
-        mappingViewModel.onEvent(event = MappingVmEvent.SetMapType(mapType))
+    val onSelectMapType = remember(key1 = state.userLocation){{ mapType: String ->
+        if(state.userLocation == null){
+            Toast.makeText(context, "Searching for GPS", Toast.LENGTH_SHORT).show()
+        }else{
+            mappingViewModel.onEvent(event = MappingVmEvent.SetMapType(mapType))
+        }
     }}
+
+
+    val onChangeIncidentLabel = remember {
+        { incidentLabel: String ->
+            uiState = uiState.copy(selectedIncidentLabel = incidentLabel)
+        }
+    }
+
+    val onChangeIncidentDescription = remember {
+        { input: TextFieldValue ->
+            incidentDescription = input
+        }
+    }
 
 
     LaunchedEffect(key1 = true) {
@@ -993,6 +1010,7 @@ fun MappingScreen(
         mapboxMap = mapboxMap,
         uiState = uiState,
         emergencyState = emergencyState,
+        incidentDescription = incidentDescription,
         event = { event ->
             when (event) {
                 is MappingUiEvent.RequestHelp -> onClickRequestHelpButton()
