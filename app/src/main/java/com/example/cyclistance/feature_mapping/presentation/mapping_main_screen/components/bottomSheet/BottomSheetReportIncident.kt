@@ -5,11 +5,10 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -56,13 +55,16 @@ import com.example.cyclistance.theme.Orange800
 import com.example.cyclistance.theme.Red900
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomSheetReportIncident(
     modifier: Modifier = Modifier,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     selectedLabel: String,
-    onClick: (label: String) -> Unit
+    incidentDescription: TextFieldValue,
+    onClick: (label: String) -> Unit,
+    onChangeDescription: (TextFieldValue) -> Unit,
+    onClickConfirm: () -> Unit
 ) {
 
     val scope = rememberCoroutineScope()
@@ -135,17 +137,19 @@ fun BottomSheetReportIncident(
                         .fillMaxWidth(0.93f)
                         .fillMaxHeight(0.25f)
                         .padding(bottom = 12.dp),
-                    message = TextFieldValue("Bla bla"),
+                    message = incidentDescription,
                     text = null,
                     enabled = true,
-                    onChangeValueMessage = {})
+                    onChangeValueMessage = onChangeDescription,
+                    placeholderText = "Description (Optional)")
 
                 Button(
                     modifier = Modifier.padding(top = 8.dp),
-                    onClick = {},
+                    onClick = onClickConfirm,
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = MaterialTheme.colors.primary
                     ),
+                    enabled = selectedLabel.isNotEmpty(),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
