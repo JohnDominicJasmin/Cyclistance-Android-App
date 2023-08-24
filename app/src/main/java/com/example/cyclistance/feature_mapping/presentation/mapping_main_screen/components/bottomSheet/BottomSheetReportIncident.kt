@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,6 +16,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffoldState
 import androidx.compose.material.BottomSheetValue
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.ExperimentalMaterialApi
@@ -33,13 +37,16 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
+import com.example.cyclistance.feature_mapping.presentation.common.AdditionalMessage
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.Black440
+import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.theme.Orange800
 import com.example.cyclistance.theme.Red900
@@ -65,7 +72,9 @@ fun BottomSheetReportIncident(
                 elevation = 8.dp),
         shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)) {
 
             IconButton(
                 onClick = {
@@ -106,82 +115,39 @@ fun BottomSheetReportIncident(
                     modifier = Modifier.padding(bottom = 16.dp, top = 8.dp)
                 )
 
+                IncidentItemsSection(onClick = onClick)
 
+                Text(
+                    text = "Marker Count: 0/3",
+                    color = Black500,
+                    style = MaterialTheme.typography.caption,
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(
-                        8.dp,
-                        alignment = Alignment.CenterVertically),
-                    horizontalAlignment = Alignment.CenterHorizontally) {
+                AdditionalMessage(
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .fillMaxHeight(0.25f)
+                        .padding(bottom = 12.dp),
+                    message = TextFieldValue("Bla bla"),
+                    text = null,
+                    enabled = true,
+                    onChangeValueMessage = {})
 
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-
-                        IncidentItem(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .weight(0.3f),
-                            icon = R.drawable.ic_construction,
-                            incidentLabel = "Construction",
-                            onClick = onClick
-                        )
-
-                        IncidentItem(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .weight(0.3f),
-                            icon = R.drawable.ic_lane_closure,
-                            incidentLabel = "Lane closure",
-                            onClick = onClick
-                        )
-
-                        IncidentItem(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .weight(0.3f),
-                            icon = R.drawable.ic_car_crash,
-                            incidentLabel = "Crash",
-                            buttonColor = Red900,
-                            onClick = onClick
-                        )
-
-
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceEvenly) {
-
-
-                        IncidentItem(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .weight(0.3f),
-                            icon = R.drawable.ic_need_assistance,
-                            incidentLabel = "Need Assistance",
-                            onClick = onClick
-                        )
-                        IncidentItem(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .weight(0.3f),
-                            icon = R.drawable.ic_object_on_road,
-                            incidentLabel = "Object on Road",
-                            onClick = onClick
-                        )
-                        IncidentItem(
-                            modifier = Modifier
-                                .padding(4.dp)
-                                .weight(0.3f),
-                            icon = R.drawable.ic_slowdown,
-                            incidentLabel = "Slowdown",
-                            buttonColor = Red900,
-                            onClick = onClick
-                        )
-
-                    }
+                Button(
+                    modifier = Modifier.padding(top = 8.dp),
+                    onClick = {},
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = MaterialTheme.colors.primary
+                    ),
+                    shape = RoundedCornerShape(12.dp)
+                ){
+                    Text(
+                        text = "Confirm",
+                        color = MaterialTheme.colors.onPrimary,
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.button
+                    )
                 }
             }
         }
@@ -189,6 +155,92 @@ fun BottomSheetReportIncident(
 }
 
 
+@Composable
+private fun IncidentItemsSection(
+    modifier: Modifier = Modifier,
+    onClick: (label: String) -> Unit
+) {
+
+
+
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(
+            8.dp,
+            alignment = Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly) {
+
+            IncidentItem(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .weight(0.3f),
+                icon = R.drawable.ic_construction,
+                incidentLabel = "Construction",
+                onClick = onClick
+            )
+
+            IncidentItem(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .weight(0.3f),
+                icon = R.drawable.ic_lane_closure,
+                incidentLabel = "Lane closure",
+                onClick = onClick
+            )
+
+            IncidentItem(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .weight(0.3f),
+                icon = R.drawable.ic_car_crash,
+                incidentLabel = "Crash",
+                buttonColor = Red900,
+                onClick = onClick
+            )
+
+
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceEvenly) {
+
+
+            IncidentItem(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .weight(0.3f),
+                icon = R.drawable.ic_need_assistance,
+                incidentLabel = "Need Assistance",
+                onClick = onClick
+            )
+            IncidentItem(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .weight(0.3f),
+                icon = R.drawable.ic_object_on_road,
+                incidentLabel = "Object on Road",
+                onClick = onClick
+            )
+            IncidentItem(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .weight(0.3f),
+                icon = R.drawable.ic_slowdown,
+                incidentLabel = "Slowdown",
+                buttonColor = Red900,
+                onClick = onClick
+            )
+
+        }
+    }
+}
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun IncidentItem(
@@ -236,11 +288,15 @@ fun PreviewBottomSheetReportIncidentDark() {
             initialValue = BottomSheetValue.Expanded))
     CompositionLocalProvider(IsDarkTheme provides isDarkTheme) {
         CyclistanceTheme(darkTheme = isDarkTheme) {
-            BottomSheetReportIncident(
-                bottomSheetScaffoldState = bottomSheetScaffoldState,
-                onClick = {
+            Box(contentAlignment = Alignment.Center,
+                 modifier = Modifier.fillMaxSize()) {
+                BottomSheetReportIncident(
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    bottomSheetScaffoldState = bottomSheetScaffoldState,
+                    onClick = {
 
-                })
+                    })
+            }
         }
     }
 }
@@ -256,11 +312,15 @@ fun PreviewBottomSheetReportIncidentLight() {
             initialValue = BottomSheetValue.Expanded))
     CompositionLocalProvider(IsDarkTheme provides isDarkTheme) {
         CyclistanceTheme(darkTheme = isDarkTheme) {
-            BottomSheetReportIncident(
-                bottomSheetScaffoldState = bottomSheetScaffoldState,
-                onClick = {
+            Box(contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()) {
+                BottomSheetReportIncident(
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    bottomSheetScaffoldState = bottomSheetScaffoldState,
+                    onClick = {
 
-                })
+                    })
+            }
         }
     }
 }

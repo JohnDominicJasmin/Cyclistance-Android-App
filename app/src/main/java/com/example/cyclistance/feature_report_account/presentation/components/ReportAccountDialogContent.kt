@@ -177,7 +177,7 @@ fun ReportAccountDialogContent(
                         onChangeValueMessage = { event(ReportAccountUiEvent.OnChangeMessage(it)) },
                         enabled = true,
                         text = "Comment",
-                        placeholderText = null
+                        placeholderText = "Comment (Optional)"
                     )
 
 
