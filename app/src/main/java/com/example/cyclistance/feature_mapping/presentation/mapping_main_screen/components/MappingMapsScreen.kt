@@ -189,9 +189,7 @@ fun MappingMapsScreen(
 
 
 
-
-    LaunchedEffect(key1 = shouldDismissIcons, key2 = nearbyCyclist, key3 = state.mapType) {
-
+    LaunchedEffect(key1 = state.mapType, key2 = shouldDismissIcons){
         if (state.mapType == MapType.HazardousLane.type) {
             dismissNearbyUserMarkers()
             return@LaunchedEffect
@@ -202,22 +200,51 @@ fun MappingMapsScreen(
             return@LaunchedEffect
         }
 
+    }
+
+    LaunchedEffect(key1 = nearbyCyclist, key2 = state.mapType) {
+
+        if (state.mapType == MapType.HazardousLane.type) {
+            return@LaunchedEffect
+        }
+
+        if (shouldDismissIcons) {
+            return@LaunchedEffect
+        }
+
         showNearbyCyclistsIcon()
     }
 
-
     LaunchedEffect(
         key1 = shouldDismissIcons,
-        key2 = hazardousLaneMarkers.size,
-        key3 = state.mapType) {
+        key2 = state.mapType) {
+
+        if (shouldDismissIcons) {
+            dismissHazardousMarkers()
+            return@LaunchedEffect
+        }
 
         if (state.mapType == MapType.Default.type) {
             dismissHazardousMarkers()
             return@LaunchedEffect
         }
+    }
+
+
+
+    LaunchedEffect(key1 = hazardousLaneMarkers.size, key2 = state.userLocation, key3 = state.mapType) {
+
+        val isLocationAvailable = state.userLocation?.latitude != null && state.userLocation.longitude != null
+
+        if (!isLocationAvailable) {
+            return@LaunchedEffect
+        }
 
         if (shouldDismissIcons) {
-            dismissHazardousMarkers()
+            return@LaunchedEffect
+        }
+
+        if (state.mapType == MapType.Default.type) {
             return@LaunchedEffect
         }
 
