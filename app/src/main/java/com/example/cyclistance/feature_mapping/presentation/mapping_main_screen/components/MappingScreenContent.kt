@@ -113,16 +113,10 @@ fun MappingScreenContent(
 
             MappingBottomSheet(
                 state = state,
-                onClickRescueArrivedButton = { event(MappingUiEvent.RescueArrivedConfirmed) },
-                onClickReachedDestinationButton = { event(MappingUiEvent.DestinationReachedConfirmed) },
-                onClickCancelSearchButton = { event(MappingUiEvent.CancelSearchConfirmed) },
-                onClickCallRescueTransactionButton = { event(MappingUiEvent.CallRescueTransaction) },
-                onClickChatRescueTransactionButton = { event(MappingUiEvent.ChatRescueTransaction) },
-                onClickCancelRescueTransactionButton = { event(MappingUiEvent.CancelRescueTransaction) },
-                onClickReportIncident = { event(MappingUiEvent.OnReportIncident(it)) },
-                onSelectMapType = { event(MappingUiEvent.OnSelectMapType(it)) },
+                event = event,
                 bottomSheetScaffoldState = bottomSheetScaffoldState,
                 uiState = uiState,
+                incidentDescription = incidentDescription,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp)) {
