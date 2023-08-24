@@ -15,7 +15,7 @@ object IconFormatter {
             MappingConstants.CRASH -> if(isMarkerYours) R.drawable.ic_crash_white else R.drawable.ic_crash_marker
             MappingConstants.NEED_ASSISTANCE -> if(isMarkerYours) R.drawable.ic_need_assistance_white else R.drawable.ic_need_assistance_marker
             MappingConstants.OBJECT_ON_ROAD -> if(isMarkerYours) R.drawable.ic_object_on_road_white else R.drawable.ic_object_on_road_marker
-            MappingConstants.SLOWDOWN -> if(isMarkerYours) R.drawable.ic_slow_down_white else R.drawable.ic_slowdown_marker
+            MappingConstants.SLOWDOWN -> if(isMarkerYours) R.drawable.ic_slow_down_white else R.drawable.ic_slow_down_marker
             else -> throw RuntimeException("No icon found for $this")
         }
     }
