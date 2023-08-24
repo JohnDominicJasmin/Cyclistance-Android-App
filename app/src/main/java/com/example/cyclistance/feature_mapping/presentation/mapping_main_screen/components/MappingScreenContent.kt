@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -66,6 +67,7 @@ fun MappingScreenContent(
     isRescueCancelled: Boolean = false,
     isNavigating: Boolean,
     uiState: MappingUiState,
+    incidentDescription: TextFieldValue,
     hazardousLaneMarkers: List<HazardousLaneMarker>,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     event: (MappingUiEvent) -> Unit = {},
