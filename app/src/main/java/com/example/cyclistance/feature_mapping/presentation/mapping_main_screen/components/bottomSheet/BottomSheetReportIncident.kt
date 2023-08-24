@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.BottomSheetScaffoldState
@@ -30,6 +31,9 @@ import androidx.compose.material.rememberBottomSheetScaffoldState
 import androidx.compose.material.rememberBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,6 +61,7 @@ import kotlinx.coroutines.launch
 fun BottomSheetReportIncident(
     modifier: Modifier = Modifier,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
+    selectedLabel: String,
     onClick: (label: String) -> Unit
 ) {
 
@@ -72,9 +77,10 @@ fun BottomSheetReportIncident(
                 elevation = 8.dp),
         shape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)
     ) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)) {
 
             IconButton(
                 onClick = {
@@ -115,7 +121,7 @@ fun BottomSheetReportIncident(
                     modifier = Modifier.padding(bottom = 16.dp, top = 8.dp)
                 )
 
-                IncidentItemsSection(onClick = onClick)
+                IncidentItemsSection(onClick = onClick, selectedLabel = selectedLabel)
 
                 Text(
                     text = "Marker Count: 0/3",
@@ -126,7 +132,7 @@ fun BottomSheetReportIncident(
 
                 AdditionalMessage(
                     modifier = Modifier
-                        .fillMaxWidth(0.9f)
+                        .fillMaxWidth(0.93f)
                         .fillMaxHeight(0.25f)
                         .padding(bottom = 12.dp),
                     message = TextFieldValue("Bla bla"),
@@ -141,7 +147,7 @@ fun BottomSheetReportIncident(
                         backgroundColor = MaterialTheme.colors.primary
                     ),
                     shape = RoundedCornerShape(12.dp)
-                ){
+                ) {
                     Text(
                         text = "Confirm",
                         color = MaterialTheme.colors.onPrimary,
@@ -158,10 +164,9 @@ fun BottomSheetReportIncident(
 @Composable
 private fun IncidentItemsSection(
     modifier: Modifier = Modifier,
+    selectedLabel: String,
     onClick: (label: String) -> Unit
 ) {
-
-
 
 
     Column(
@@ -182,6 +187,7 @@ private fun IncidentItemsSection(
                     .weight(0.3f),
                 icon = R.drawable.ic_construction,
                 incidentLabel = "Construction",
+                selectedLabel = selectedLabel,
                 onClick = onClick
             )
 
@@ -191,6 +197,7 @@ private fun IncidentItemsSection(
                     .weight(0.3f),
                 icon = R.drawable.ic_lane_closure,
                 incidentLabel = "Lane closure",
+                selectedLabel = selectedLabel,
                 onClick = onClick
             )
 
@@ -201,6 +208,7 @@ private fun IncidentItemsSection(
                 icon = R.drawable.ic_car_crash,
                 incidentLabel = "Crash",
                 buttonColor = Red900,
+                selectedLabel = selectedLabel,
                 onClick = onClick
             )
 
@@ -218,6 +226,7 @@ private fun IncidentItemsSection(
                     .weight(0.3f),
                 icon = R.drawable.ic_need_assistance,
                 incidentLabel = "Need Assistance",
+                selectedLabel = selectedLabel,
                 onClick = onClick
             )
             IncidentItem(
@@ -226,6 +235,7 @@ private fun IncidentItemsSection(
                     .weight(0.3f),
                 icon = R.drawable.ic_object_on_road,
                 incidentLabel = "Object on Road",
+                selectedLabel = selectedLabel,
                 onClick = onClick
             )
             IncidentItem(
@@ -235,12 +245,14 @@ private fun IncidentItemsSection(
                 icon = R.drawable.ic_slowdown,
                 incidentLabel = "Slowdown",
                 buttonColor = Red900,
+                selectedLabel = selectedLabel,
                 onClick = onClick
             )
 
         }
     }
 }
+
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun IncidentItem(
@@ -248,8 +260,13 @@ private fun IncidentItem(
     @DrawableRes icon: Int,
     incidentLabel: String,
     buttonColor: Color = Orange800,
+    selectedLabel: String,
     onClick: (label: String) -> Unit
 ) {
+
+    val isSelected by remember {
+        derivedStateOf { incidentLabel == selectedLabel }
+    }
 
     Column(
         modifier = modifier,
@@ -270,11 +287,27 @@ private fun IncidentItem(
 
         Text(
             text = incidentLabel,
-            color = Black440,
+            color = if(isSelected) MaterialTheme.colors.onSurface else Black440,
             style = MaterialTheme.typography.caption.copy(fontWeight = FontWeight.SemiBold),
             overflow = TextOverflow.Clip, textAlign = TextAlign.Center,
         )
 
+    }
+}
+
+
+@Preview
+@Composable
+fun PreviewIncidentItem() {
+    CyclistanceTheme(darkTheme = true) {
+        Box(modifier = Modifier.wrapContentSize()) {
+            IncidentItem(
+                modifier = Modifier,
+                icon = R.drawable.ic_lane_closure,
+                incidentLabel = "Lane closure",
+                selectedLabel = "Lane closure",
+                onClick = {})
+        }
     }
 }
 
@@ -288,11 +321,13 @@ fun PreviewBottomSheetReportIncidentDark() {
             initialValue = BottomSheetValue.Expanded))
     CompositionLocalProvider(IsDarkTheme provides isDarkTheme) {
         CyclistanceTheme(darkTheme = isDarkTheme) {
-            Box(contentAlignment = Alignment.Center,
-                 modifier = Modifier.fillMaxSize()) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.fillMaxSize()) {
                 BottomSheetReportIncident(
                     modifier = Modifier.align(Alignment.BottomCenter),
                     bottomSheetScaffoldState = bottomSheetScaffoldState,
+                    selectedLabel = "Lane closure",
                     onClick = {
 
                     })
@@ -312,11 +347,13 @@ fun PreviewBottomSheetReportIncidentLight() {
             initialValue = BottomSheetValue.Expanded))
     CompositionLocalProvider(IsDarkTheme provides isDarkTheme) {
         CyclistanceTheme(darkTheme = isDarkTheme) {
-            Box(contentAlignment = Alignment.Center,
+            Box(
+                contentAlignment = Alignment.Center,
                 modifier = Modifier.fillMaxSize()) {
                 BottomSheetReportIncident(
                     modifier = Modifier.align(Alignment.BottomCenter),
                     bottomSheetScaffoldState = bottomSheetScaffoldState,
+                    selectedLabel = "Lane closure",
                     onClick = {
 
                     })

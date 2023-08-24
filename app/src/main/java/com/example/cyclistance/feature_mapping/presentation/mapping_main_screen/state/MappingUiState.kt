@@ -29,6 +29,7 @@ data class MappingUiState(
     val isRescueResultsDialogVisible: Boolean = false,
     val selectedPhoneNumber: String = "",
     val lastLongPressedLocation: LatLng? = null,
+    val selectedIncidentLabel: String = "",
 
 
 

@@ -66,6 +66,7 @@ fun MappingBottomSheet(
                     BottomSheetReportIncident(
                         bottomSheetScaffoldState = bottomSheetScaffoldState,
                         modifier = modifier,
+                        selectedLabel = uiState.selectedIncidentLabel,
                         onClick = {
                             onClickReportIncident(it)
                             scope.launch {
