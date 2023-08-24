@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cyclistance.core.utils.validation.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationUiEvent
+import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationState
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationUiState
 
 @Composable
@@ -28,7 +29,7 @@ fun ConversationChatItems(
     keyboardIsOpen: Boolean,
     listState: LazyListState,
     conversation: List<ConversationItemModel>,
-    userUid: String,
+    state: ConversationState,
     uiState: ConversationUiState,
     event: (ConversationUiEvent) -> Unit) {
 
@@ -49,7 +50,7 @@ fun ConversationChatItems(
             items = conversation,
             key = { _, item -> item.messageId }) { index, message ->
 
-            val isSender by remember { derivedStateOf { message.senderId != userUid } }
+            val isSender by remember { derivedStateOf { message.senderId != state.userUid } }
             val timeStampAvailable by remember { derivedStateOf { message.messageDuration != null && message.timestamp != null } }
 
             AnimatedVisibility(visible = timeStampAvailable) {
@@ -70,6 +71,7 @@ fun ConversationChatItems(
                 contentAlignment = if (isSender) Alignment.CenterStart else Alignment.CenterEnd,
                 currentIndex = index,
                 selectedIndex = uiState.chatItemSelectedIndex,
+                state = state,
                 onSelectChatMessage = {
                     event(
                         ConversationUiEvent.SelectChatItem(
