@@ -677,7 +677,7 @@ fun MappingScreen(
 
     val shareLocation = remember(state.userLocation, state.user.location){{
 
-        val location = state.userLocation ?: state.user.location
+        val location = state.getCurrentLocation()
 
         if(location == null){
             Toast.makeText(context, "Searching for GPS", Toast.LENGTH_SHORT).show()
