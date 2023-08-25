@@ -49,6 +49,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.animateCameraPosition
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.changeToNormalPuckIcon
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.openNavigationApp
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MarkerSnippet
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -468,12 +469,6 @@ fun MappingScreen(
         }
     }
 
-    val onClickRescueeMapIcon = remember {
-        { id: String ->
-            mappingViewModel.onEvent(event = MappingVmEvent.SelectRescueMapIcon(id))
-        }
-    }
-
     val onDismissRescueeBanner = remember {
         {
             val isRescueeBannerVisible = uiState.mapSelectedRescuee != null
@@ -504,9 +499,24 @@ fun MappingScreen(
         }
     }
 
+
+    val onMapMarkerClick = remember {
+        { snippet: String, id: String ->
+            if (snippet == MarkerSnippet.HazardousLaneSnippet.type) {
+                mappingViewModel.onEvent(event = MappingVmEvent.SelectHazardousLaneMarker(id))
+            } else {
+                mappingViewModel.onEvent(event = MappingVmEvent.SelectRescueMapIcon(id))
+            }
+        }
+    }
+
     val onMapClick = remember {
         {
             if (uiState.bottomSheetType == BottomSheetType.ReportIncident.type) {
+                collapseBottomSheet()
+            }
+
+            if(uiState.bottomSheetType == BottomSheetType.IncidentDescription.type){
                 collapseBottomSheet()
             }
             onDismissRescueeBanner()
@@ -733,6 +743,28 @@ fun MappingScreen(
     }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     LaunchedEffect(key1 = true) {
 
         mappingViewModel.eventFlow.collect { event ->
@@ -893,14 +925,16 @@ fun MappingScreen(
                     ))
                 }
 
-
-
+                is MappingEvent.SelectHazardousLaneMarker -> {
+                    uiState = uiState.copy(
+                        selectedHazardousMarker = event.marker,
+                        bottomSheetType = BottomSheetType.IncidentDescription.type).also {
+                        expandBottomSheet()
+                    }
+                }
             }
         }
     }
-
-
-
     LaunchedEffect(key1 = uiState.routeDirection, key2 = mapboxMap) {
 
         val route = uiState.routeDirection ?: return@LaunchedEffect
@@ -911,8 +945,6 @@ fun MappingScreen(
         }
         showRouteDirection()
     }
-
-
     LaunchedEffect(
         key1 = state.rescueTransaction?.route,
         key2 = hasTransaction,
@@ -941,9 +973,6 @@ fun MappingScreen(
 
 
     }
-
-
-
     LaunchedEffect(key1 = hasInternetConnection) {
         val nearbyCyclistLoaded = state.nearbyCyclist?.users?.isNotEmpty() ?: false
         val userLoaded = state.user.id != null
@@ -958,13 +987,9 @@ fun MappingScreen(
         }
         mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
     }
-
-
-
     LaunchedEffect(key1 = isNavigating, key2 = userLocationAvailable, key3 = pulsingEnabled) {
         showUserLocation()
     }
-
     LaunchedEffect(key1 = uiState.bottomSheetType) {
         coroutineScope.launch {
             if (uiState.bottomSheetType?.isNotEmpty() == true) {
@@ -972,9 +997,6 @@ fun MappingScreen(
             }
         }
     }
-
-
-
     LaunchedEffect(key1 = hasTransaction, key2 = isRescueCancelled) {
 
         if (hasTransaction.not()) {
@@ -988,7 +1010,6 @@ fun MappingScreen(
         onChangeNavigatingState(false)
 
     }
-
 
     LaunchedEffect(key1 = foregroundLocationPermissionsState.allPermissionsGranted) {
         if (!foregroundLocationPermissionsState.allPermissionsGranted) {
@@ -1032,7 +1053,6 @@ fun MappingScreen(
                 is MappingUiEvent.RescueRequestAccepted -> onClickOkAcceptedRescue()
                 is MappingUiEvent.OnChangeCameraState -> onChangeCameraPosition(event.cameraState)
                 is MappingUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
-                is MappingUiEvent.RescueeMarkerSelected -> onClickRescueeMapIcon(event.id)
                 is MappingUiEvent.OnMapClick -> onMapClick()
                 is MappingUiEvent.DismissBanner -> onDismissRescueeBanner()
                 is MappingUiEvent.LocateUser -> onClickLocateUserButton()
@@ -1063,9 +1083,12 @@ fun MappingScreen(
                 is MappingUiEvent.OnAddEmergencyContact -> onAddEmergencyContact()
                 MappingUiEvent.OpenHazardousLaneBottomSheet -> onOpenHazardousLaneBottomSheet()
                 is MappingUiEvent.OnSelectMapType -> onSelectMapType(event.mapType)
-                is MappingUiEvent.HazardousLaneMarkerSelected -> {}
                 is MappingUiEvent.OnChangeIncidentDescription -> onChangeIncidentDescription(event.description)
                 is MappingUiEvent.OnChangeIncidentLabel -> onChangeIncidentLabel(event.label)
+                MappingUiEvent.OnClickDeleteIncident -> TODO()
+                MappingUiEvent.OnClickEditIncidentDescription -> TODO()
+                MappingUiEvent.OnClickOkayIncidentDescription -> TODO()
+                is MappingUiEvent.OnClickMapMarker -> onMapMarkerClick(event.markerSnippet, event.markerId)
             }
         }
 

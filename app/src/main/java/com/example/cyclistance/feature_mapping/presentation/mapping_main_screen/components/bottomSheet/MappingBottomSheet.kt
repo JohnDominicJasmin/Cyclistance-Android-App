@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
+import com.example.cyclistance.core.utils.formatter.IconFormatter.toHazardousLaneIconMarker
 import com.example.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
@@ -22,10 +23,7 @@ fun MappingBottomSheet(
     uiState: MappingUiState,
     incidentDescription: TextFieldValue,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-
-
     event: (MappingUiEvent) -> Unit = {},
-
     content: @Composable (PaddingValues) -> Unit,
 ) {
 
@@ -100,7 +98,6 @@ fun MappingBottomSheet(
                         onClickCallButton = { event(MappingUiEvent.CallRescueTransaction) },
                         onClickChatButton = { event(MappingUiEvent.ChatRescueTransaction) },
                         onClickCancelButton = { event(MappingUiEvent.CancelRescueTransaction) },
-                        bottomSheetScaffoldState = bottomSheetScaffoldState,
                         role = state.user.transaction?.role ?: "",
                         onGoingRescueModel = OnGoingRescueModel(
                             estimatedTime = state.rescuerETA,
@@ -120,6 +117,19 @@ fun MappingBottomSheet(
                         modifier = modifier,
                         selectedMapType = state.mapType,
                         onClickMapType = { event(MappingUiEvent.OnSelectMapType(it)) })
+
+                }
+
+                BottomSheetType.IncidentDescription.type -> {
+                    BottomSheetIncidentDescription(
+                        modifier = modifier,
+                        bottomSheetScaffoldState = bottomSheetScaffoldState,
+                        uiState = uiState,
+                        state = state,
+                        icon = uiState.selectedHazardousMarker!!.label.toHazardousLaneIconMarker(),
+                        onClickEdit = { event(MappingUiEvent.OnClickEditIncidentDescription) },
+                        onClickDelete = { event(MappingUiEvent.OnClickDeleteIncident) },
+                        onClickOkay = { event(MappingUiEvent.OnClickOkayIncidentDescription) })
 
                 }
 

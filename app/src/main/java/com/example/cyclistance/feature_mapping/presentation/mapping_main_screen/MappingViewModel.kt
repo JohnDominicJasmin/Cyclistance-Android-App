@@ -485,8 +485,20 @@ class MappingViewModel @Inject constructor(
             is MappingVmEvent.SetMapType -> {
                 setMapType(mapType = event.mapType)
             }
+
+            is MappingVmEvent.SelectHazardousLaneMarker -> {
+                selectHazardousLaneMarker(id = event.id)
+            }
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+    }
+
+    private fun selectHazardousLaneMarker(id: String) {
+        viewModelScope.launch {
+            hazardousLaneMarkers.find { it.id == id }?.let { marker ->
+                _eventFlow.emit(value = MappingEvent.SelectHazardousLaneMarker(marker))
+            }
+        }
     }
 
 

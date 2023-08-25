@@ -8,7 +8,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants
 
 object IconFormatter {
 
-    fun String.toHazardousLaneIconMarker(isMarkerYours: Boolean): Int{
+    fun String.toHazardousLaneIconMarker(isMarkerYours: Boolean = false): Int{
         return when(this){
             MappingConstants.CONSTRUCTION -> if(isMarkerYours) R.drawable.ic_construction_white else R.drawable.ic_construction_marker
             MappingConstants.LANE_CLOSURE -> if(isMarkerYours) R.drawable.ic_lane_closure_white else R.drawable.ic_lane_closure_marker

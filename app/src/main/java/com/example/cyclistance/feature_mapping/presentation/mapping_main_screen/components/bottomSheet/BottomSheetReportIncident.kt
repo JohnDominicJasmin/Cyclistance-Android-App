@@ -82,7 +82,7 @@ fun BottomSheetReportIncident(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 8.dp)) {
+                .padding(bottom = 8.dp), contentAlignment = Alignment.Center) {
 
             IconButton(
                 onClick = {

@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
@@ -17,6 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,7 +38,6 @@ fun BottomSheetOnGoingRescue(
     onClickChatButton: () -> Unit,
     onClickCancelButton: () -> Unit,
     role: String,
-    bottomSheetScaffoldState: BottomSheetScaffoldState,
     onGoingRescueModel: OnGoingRescueModel,
 ) {
 
@@ -312,6 +313,49 @@ private fun RoundButtonSection(
 }
 
 
+
+@Composable
+private fun RoundedButtonItem(
+    backgroundColor: Color,
+    contentColor: Color,
+    imageId: Int,
+    buttonSubtitle: String,
+    onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .wrapContentSize(),
+        verticalArrangement = Arrangement.spacedBy(
+            space = 7.dp,
+            alignment = Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally) {
+
+        Button(
+            modifier = Modifier
+                .size(48.dp)
+                .shadow(elevation = 2.dp, shape = CircleShape),
+            onClick = onClick,
+            shape = CircleShape,
+            colors = ButtonDefaults.buttonColors(
+                backgroundColor = backgroundColor,
+                contentColor = contentColor)) {
+
+            Icon(
+                painter = painterResource(id = imageId),
+                contentDescription = null, modifier = Modifier.fillMaxSize())
+        }
+
+        Text(
+            text = buttonSubtitle,
+            color = Black440,
+            style = MaterialTheme.typography.caption,
+            textAlign = TextAlign.Center)
+    }
+}
+
+
+
+
+
 @OptIn(ExperimentalMaterialApi::class)
 @Preview(name = "BottomSheetOnGoingRescue", device = "id:Galaxy Nexus")
 @Composable
@@ -327,7 +371,6 @@ private fun PreviewBottomSheetOnGoingRescueDark() {
                 onClickCancelButton = {},
                 onClickCallButton = {},
                 onClickChatButton = {},
-                bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
                 onGoingRescueModel = OnGoingRescueModel(
                     currentSpeed = "13.3",
                     ridingDistance = "10.0 km",
@@ -358,7 +401,6 @@ private fun PreviewBottomSheetOnGoingRescueLight() {
                 onClickCancelButton = {},
                 onClickCallButton = {},
                 onClickChatButton = {},
-                bottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
                 onGoingRescueModel = OnGoingRescueModel(
                     currentSpeed = "13.3",
                     ridingDistance = "10.0 km",

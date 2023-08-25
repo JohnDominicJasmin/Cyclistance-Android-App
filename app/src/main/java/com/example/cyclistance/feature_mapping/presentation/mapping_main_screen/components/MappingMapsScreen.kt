@@ -16,8 +16,10 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.*
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.ICON_LAYER_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.ICON_SOURCE_ID
+import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
 import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_LAYER_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_SOURCE_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.TRANSACTION_ICON_ID
@@ -254,14 +256,9 @@ fun MappingMapsScreen(
 
             mapboxMap.animateCameraPosition(
                 latLng = it.position,
-                zoomLevel = MappingConstants.LOCATE_USER_ZOOM_LEVEL,
-                cameraAnimationDuration = MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION)
-
-            if (it.snippet == MarkerSnippet.HazardousLaneSnippet.type) {
-                event(MappingUiEvent.HazardousLaneMarkerSelected(it.title))
-            } else {
-                event(MappingUiEvent.RescueeMarkerSelected(it.title))
-            }
+                zoomLevel = LOCATE_USER_ZOOM_LEVEL,
+                cameraAnimationDuration = DEFAULT_CAMERA_ANIMATION_DURATION)
+            event(MappingUiEvent.OnClickMapMarker(markerSnippet = it.snippet, markerId = it.title))
             true
         }
 
