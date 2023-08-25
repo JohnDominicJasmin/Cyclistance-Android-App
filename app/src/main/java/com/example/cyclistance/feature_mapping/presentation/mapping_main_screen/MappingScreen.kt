@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
@@ -762,7 +763,9 @@ fun MappingScreen(
 
 
 
-
+    BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+        collapseBottomSheet()
+    }
 
 
     LaunchedEffect(key1 = true) {
