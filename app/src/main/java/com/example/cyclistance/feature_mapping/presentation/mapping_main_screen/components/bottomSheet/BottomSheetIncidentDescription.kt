@@ -43,7 +43,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.core.presentation.dialogs.common.DropDownMenu
-import com.example.cyclistance.core.utils.validation.FormatterUtils.toReadableDateTime
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
@@ -191,7 +191,7 @@ private fun ReportItemsSection(modifier: Modifier = Modifier, marker: HazardousL
                 .fillMaxWidth(),
             iconImage = Icons.Default.AccessTimeFilled,
             iconDescription = "Date and Time",
-            description = marker.datePosted.toReadableDateTime()
+            description = marker.datePosted.toReadableDateTime(pattern = "MMM dd, yyyy hh:mm a")
         )
 
         ReportItemDescription(
