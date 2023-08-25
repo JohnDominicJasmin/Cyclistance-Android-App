@@ -203,14 +203,17 @@ private fun ReportItemsSection(modifier: Modifier = Modifier, marker: HazardousL
             description = marker.address
         )
 
-        ReportItemDescription(
-            modifier = Modifier
-                .padding(vertical = 4.dp)
-                .fillMaxWidth(),
-            iconImage = Icons.Default.Info,
-            iconDescription = "Description",
-            description = marker.description
-        )
+
+        marker.description.takeIf { it.isNotEmpty() }?.let { description ->
+            ReportItemDescription(
+                modifier = Modifier
+                    .padding(vertical = 4.dp)
+                    .fillMaxWidth(),
+                iconImage = Icons.Default.Info,
+                iconDescription = "Description",
+                description = description
+            )
+        }
 
     }
 }
