@@ -743,6 +743,12 @@ fun MappingScreen(
         }
     }
 
+    val onChangeDeleteIncident = remember(uiState.selectedHazardousMarker){{
+        mappingViewModel.onEvent(event = MappingVmEvent.DeleteHazardousLaneMarker(
+            id = uiState.selectedHazardousMarker!!.id
+        ))
+    }}
+
 
 
 
@@ -772,7 +778,6 @@ fun MappingScreen(
 
         mappingViewModel.eventFlow.collect { event ->
             when (event) {
-
 
                 is MappingEvent.RequestHelpSuccess -> {
                     navController.navigateScreen(
@@ -935,6 +940,16 @@ fun MappingScreen(
                         expandBottomSheet()
                     }
                 }
+
+                is MappingEvent.DeleteHazardousLaneMarkerFailed -> {
+                    collapseBottomSheet()
+                    Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()
+                }
+
+                MappingEvent.DeleteHazardousLaneMarkerSuccess -> {
+                    collapseBottomSheet()
+                    Toast.makeText(context, "Marker Deleted", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
@@ -1088,7 +1103,7 @@ fun MappingScreen(
                 is MappingUiEvent.OnSelectMapType -> onSelectMapType(event.mapType)
                 is MappingUiEvent.OnChangeIncidentDescription -> onChangeIncidentDescription(event.description)
                 is MappingUiEvent.OnChangeIncidentLabel -> onChangeIncidentLabel(event.label)
-                MappingUiEvent.OnClickDeleteIncident -> TODO()
+                MappingUiEvent.OnClickDeleteIncident -> onChangeDeleteIncident()
                 MappingUiEvent.OnClickEditIncidentDescription -> TODO()
                 MappingUiEvent.OnClickOkayIncidentDescription -> TODO()
                 is MappingUiEvent.OnClickMapMarker -> onMapMarkerClick(event.markerSnippet, event.markerId)

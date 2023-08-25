@@ -489,8 +489,25 @@ class MappingViewModel @Inject constructor(
             is MappingVmEvent.SelectHazardousLaneMarker -> {
                 selectHazardousLaneMarker(id = event.id)
             }
+
+            is MappingVmEvent.DeleteHazardousLaneMarker -> {
+                deleteHazardousLaneMarker(id = event.id)
+            }
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+    }
+
+
+    private fun deleteHazardousLaneMarker(id: String){
+        viewModelScope.launch {
+            runCatching {
+                mappingUseCase.deleteHazardousLaneUseCase(id)
+            }.onSuccess {
+                _eventFlow.emit(value = MappingEvent.DeleteHazardousLaneMarkerSuccess)
+            }.onFailure {
+                _eventFlow.emit(value = MappingEvent.DeleteHazardousLaneMarkerFailed(it.message ?: "Failed to delete incident marker"))
+            }
+        }
     }
 
     private fun selectHazardousLaneMarker(id: String) {

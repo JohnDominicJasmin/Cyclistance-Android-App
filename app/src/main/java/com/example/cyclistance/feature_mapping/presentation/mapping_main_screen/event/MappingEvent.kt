@@ -42,6 +42,7 @@ sealed class MappingEvent{
     data class ReportIncidentFailed(val reason: String): MappingEvent()
     data class SelectHazardousLaneMarker(val marker: HazardousLaneMarker): MappingEvent()
 
-
+    object DeleteHazardousLaneMarkerSuccess: MappingEvent()
+    data class DeleteHazardousLaneMarkerFailed(val reason: String): MappingEvent()
 
 }
