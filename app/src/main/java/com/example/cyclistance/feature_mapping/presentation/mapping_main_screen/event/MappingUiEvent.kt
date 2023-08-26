@@ -20,6 +20,7 @@ sealed class MappingUiEvent{
     data class OnChangeCameraState(val cameraState: CameraState) : MappingUiEvent()
     object DismissNoInternetDialog : MappingUiEvent()
     object DismissEmergencyCallDialog : MappingUiEvent()
+    object DismissHazardousLaneMarkerDialog : MappingUiEvent()
     object OnMapClick : MappingUiEvent()
     data class OnMapLongClick(val latLng: LatLng) : MappingUiEvent()
     object DismissBanner : MappingUiEvent()
@@ -57,6 +58,7 @@ sealed class MappingUiEvent{
     object OnClickEditIncidentDescription : MappingUiEvent()
     object OnClickDeleteIncident : MappingUiEvent()
     object OnClickOkayIncidentDescription : MappingUiEvent()
+    object OnConfirmDeleteIncident: MappingUiEvent()
 
     data class OnClickMapMarker(val markerSnippet: String, val markerId: String): MappingUiEvent()
 

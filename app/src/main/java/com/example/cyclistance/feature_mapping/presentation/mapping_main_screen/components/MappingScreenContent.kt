@@ -39,6 +39,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RequestHelpButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RespondToHelpButton
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.DeleteHazardousLaneMarkerDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.ExpandableFABSection
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.FloatingButtonSection
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.request.MappingRequestAccepted
@@ -79,6 +80,12 @@ fun MappingScreenContent(
 
 
     val configuration = LocalConfiguration.current
+    val markerPostedCount by remember(hazardousLaneMarkers.size){
+        derivedStateOf {
+            hazardousLaneMarkers.count { it.idCreator == state.userId }
+        }
+    }
+
 
     Surface(
         modifier = modifier
@@ -119,7 +126,8 @@ fun MappingScreenContent(
                 incidentDescription = incidentDescription,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp)) {
+                    .padding(horizontal = 12.dp),
+                markerPostedCount = markerPostedCount) {
 
 
                 ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -272,6 +280,16 @@ fun MappingScreenContent(
                             }
 
                         )
+                    }
+
+                    if(uiState.deleteHazardousMarkerVisible){
+                        DeleteHazardousLaneMarkerDialog(
+                            onDismissRequest = { event(MappingUiEvent.DismissHazardousLaneMarkerDialog) },
+                            modifier = Modifier,
+                            onClickConfirmButton = {
+                                event(MappingUiEvent.OnConfirmDeleteIncident)
+                                event(MappingUiEvent.DismissHazardousLaneMarkerDialog)
+                            })
                     }
 
                     if (uiState.isNoInternetVisible) {

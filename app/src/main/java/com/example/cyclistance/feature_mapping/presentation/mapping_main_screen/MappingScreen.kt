@@ -511,6 +511,12 @@ fun MappingScreen(
         }
     }
 
+    val onDismissHazardousLaneMarkerDialog = remember{{
+        uiState = uiState.copy(
+            deleteHazardousMarkerVisible = false
+        )
+    }}
+
     val onMapClick = remember {
         {
             if (uiState.bottomSheetType == BottomSheetType.ReportIncident.type) {
@@ -743,7 +749,16 @@ fun MappingScreen(
         }
     }
 
-    val onChangeDeleteIncident = remember(uiState.selectedHazardousMarker){{
+
+    val onClickDeleteIncident = remember{{
+
+        uiState = uiState.copy(
+            deleteHazardousMarkerVisible = true
+        )
+
+    }}
+
+    val onConfirmDeleteIncident = remember(uiState.selectedHazardousMarker){{
         mappingViewModel.onEvent(event = MappingVmEvent.DeleteHazardousLaneMarker(
             id = uiState.selectedHazardousMarker!!.id
         ))
@@ -1099,14 +1114,16 @@ fun MappingScreen(
                 is MappingUiEvent.DismissRescueResultsDialog -> onDismissRescueResultsDialog()
                 is MappingUiEvent.OnEmergencyCall -> onEmergencyCall(event.phoneNumber)
                 is MappingUiEvent.OnAddEmergencyContact -> onAddEmergencyContact()
-                MappingUiEvent.OpenHazardousLaneBottomSheet -> onOpenHazardousLaneBottomSheet()
+                is MappingUiEvent.OpenHazardousLaneBottomSheet -> onOpenHazardousLaneBottomSheet()
                 is MappingUiEvent.OnSelectMapType -> onSelectMapType(event.mapType)
                 is MappingUiEvent.OnChangeIncidentDescription -> onChangeIncidentDescription(event.description)
                 is MappingUiEvent.OnChangeIncidentLabel -> onChangeIncidentLabel(event.label)
-                MappingUiEvent.OnClickDeleteIncident -> onChangeDeleteIncident()
-                MappingUiEvent.OnClickEditIncidentDescription -> TODO()
-                MappingUiEvent.OnClickOkayIncidentDescription -> TODO()
+                is MappingUiEvent.OnClickDeleteIncident -> onClickDeleteIncident()
+                is MappingUiEvent.OnClickEditIncidentDescription -> TODO()
+                is MappingUiEvent.OnClickOkayIncidentDescription -> TODO()
                 is MappingUiEvent.OnClickMapMarker -> onMapMarkerClick(event.markerSnippet, event.markerId)
+                MappingUiEvent.DismissHazardousLaneMarkerDialog -> onDismissHazardousLaneMarkerDialog()
+                MappingUiEvent.OnConfirmDeleteIncident -> onConfirmDeleteIncident()
             }
         }
 
