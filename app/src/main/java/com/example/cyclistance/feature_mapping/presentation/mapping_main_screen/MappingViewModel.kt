@@ -122,6 +122,10 @@ class MappingViewModel @Inject constructor(
             
             mappingUseCase.newHazardousLaneUseCase(
                 onAddedHazardousMarker = { marker ->
+
+                    _hazardousLaneMarkers.removeAll { modifiedMarker ->
+                        marker.id == modifiedMarker.id
+                    }
                     _hazardousLaneMarkers.add(marker)
                 },
                 onModifiedHazardousMarker = { modifiedMarker ->
