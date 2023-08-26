@@ -46,10 +46,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.constants.MappingConstants.MAXIMUM_HAZARDOUS_MARKER
 import com.example.cyclistance.feature_mapping.presentation.common.AdditionalMessage
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black500
+import com.example.cyclistance.theme.Black900
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.theme.Orange800
 import com.example.cyclistance.theme.Red900
@@ -63,6 +65,7 @@ fun BottomSheetReportIncident(
     selectedLabel: String,
     incidentDescription: TextFieldValue,
     onClick: (label: String) -> Unit,
+    markerPostedCount: Int,
     onChangeDescription: (TextFieldValue) -> Unit,
     onClickConfirm: () -> Unit
 ) {
@@ -91,13 +94,10 @@ fun BottomSheetReportIncident(
                     }
                 }, modifier = Modifier.align(Alignment.TopEnd)
             ) {
-
                 Icon(
                     painter = painterResource(id = if (isDarkTheme) R.drawable.ic_close_darktheme else R.drawable.ic_close_lighttheme),
                     contentDescription = "Close",
-                    tint = Color.Unspecified
-                )
-
+                    tint = Color.Unspecified)
             }
 
 
@@ -125,9 +125,21 @@ fun BottomSheetReportIncident(
 
                 IncidentItemsSection(onClick = onClick, selectedLabel = selectedLabel)
 
+                val markerReachedLimit by remember(markerPostedCount) {
+                    derivedStateOf {
+                        markerPostedCount >= MAXIMUM_HAZARDOUS_MARKER
+                    }
+                }
+
+                val startingText = remember(markerReachedLimit){
+                    if(markerReachedLimit) "You have reached the maximum number of markers"
+                    else "You have posted $markerPostedCount out of $MAXIMUM_HAZARDOUS_MARKER markers"
+                }
+
+
                 Text(
-                    text = "Marker Count: 0/3",
-                    color = Black500,
+                    text = startingText,
+                    color = if (markerReachedLimit) Red900 else MaterialTheme.colors.onBackground,
                     style = MaterialTheme.typography.caption,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )
@@ -146,10 +158,12 @@ fun BottomSheetReportIncident(
                 Button(
                     modifier = Modifier.padding(top = 8.dp),
                     onClick = onClickConfirm,
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = MaterialTheme.colors.primary
-                    ),
-                    enabled = selectedLabel.isNotEmpty(),
+                    colors =  ButtonDefaults.buttonColors(
+                        backgroundColor = MaterialTheme.colors.primary,
+                        contentColor = MaterialTheme.colors.onPrimary,
+                        disabledBackgroundColor = Black500,
+                        disabledContentColor = Black900),
+                    enabled = selectedLabel.isNotEmpty() && !markerReachedLimit,
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text(
@@ -334,7 +348,9 @@ fun PreviewBottomSheetReportIncidentDark() {
                     selectedLabel = "Lane closure",
                     onClick = {
 
-                    }, onChangeDescription = {}, onClickConfirm = {}, incidentDescription = TextFieldValue("Test"))
+                    }, onChangeDescription = {},
+                    onClickConfirm = {},
+                    incidentDescription = TextFieldValue("Test"), markerPostedCount = 3)
             }
         }
     }
@@ -361,7 +377,10 @@ fun PreviewBottomSheetReportIncidentLight() {
                     onClick = {
 
                     },
-                    onChangeDescription = {}, onClickConfirm = {}, incidentDescription = TextFieldValue("Test"))
+                    onChangeDescription = {},
+                    onClickConfirm = {},
+                    incidentDescription = TextFieldValue("Test"),
+                    markerPostedCount = 3)
             }
         }
     }

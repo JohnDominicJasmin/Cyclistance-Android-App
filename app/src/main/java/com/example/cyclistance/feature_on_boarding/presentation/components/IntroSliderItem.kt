@@ -100,7 +100,7 @@ fun IntroSliderItem(
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun PagerIndicator(pagerState: PagerState,modifier: Modifier) {
+private fun PagerIndicator(pagerState: PagerState,modifier: Modifier) {
     HorizontalPagerIndicator(
         pagerState = pagerState,
         modifier = modifier,

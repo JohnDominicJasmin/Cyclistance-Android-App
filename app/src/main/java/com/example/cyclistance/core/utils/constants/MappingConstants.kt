@@ -108,4 +108,6 @@ object MappingConstants {
     const val KEY_ID_LATITUDE = "latitude"
 
 
+    const val MAXIMUM_HAZARDOUS_MARKER = 3
+
 }

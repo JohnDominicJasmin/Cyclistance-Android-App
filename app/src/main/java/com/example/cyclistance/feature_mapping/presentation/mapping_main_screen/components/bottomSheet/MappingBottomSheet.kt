@@ -23,6 +23,7 @@ fun MappingBottomSheet(
     uiState: MappingUiState,
     incidentDescription: TextFieldValue,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
+    markerPostedCount: Int,
     event: (MappingUiEvent) -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
@@ -77,7 +78,8 @@ fun MappingBottomSheet(
                             scope.launch {
                                 bottomSheetScaffoldState.bottomSheetState.collapse()
                             }
-                        }, incidentDescription = incidentDescription)
+                        }, incidentDescription = incidentDescription,
+                        markerPostedCount = markerPostedCount)
 
                 }
 
