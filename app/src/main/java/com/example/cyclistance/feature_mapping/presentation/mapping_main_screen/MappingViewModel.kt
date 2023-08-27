@@ -7,9 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_RADIUS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
-import com.example.cyclistance.core.utils.validation.FormatterUtils
-import com.example.cyclistance.core.utils.validation.FormatterUtils.formatToDistanceKm
-import com.example.cyclistance.core.utils.validation.FormatterUtils.isLocationAvailable
+import com.example.cyclistance.core.utils.formatter.FormatterUtils
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.isLocationAvailable
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toRescueRequest
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
@@ -122,6 +122,10 @@ class MappingViewModel @Inject constructor(
             
             mappingUseCase.newHazardousLaneUseCase(
                 onAddedHazardousMarker = { marker ->
+
+                    _hazardousLaneMarkers.removeAll { modifiedMarker ->
+                        marker.id == modifiedMarker.id
+                    }
                     _hazardousLaneMarkers.add(marker)
                 },
                 onModifiedHazardousMarker = { modifiedMarker ->
@@ -476,18 +480,54 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingVmEvent.ReportIncident -> {
-                calculateIncidentDistance(latLng = event.latLng, label = event.label)
+                calculateIncidentDistance(
+                    latLng = event.latLng,
+                    label = event.label,
+                    incidentDescription = event.description)
             }
 
             is MappingVmEvent.SetMapType -> {
                 setMapType(mapType = event.mapType)
+            }
+
+            is MappingVmEvent.SelectHazardousLaneMarker -> {
+                selectHazardousLaneMarker(id = event.id)
+            }
+
+            is MappingVmEvent.DeleteHazardousLaneMarker -> {
+                deleteHazardousLaneMarker(id = event.id)
             }
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
 
-    private fun calculateIncidentDistance(latLng: LatLng, label: String){
+    private fun deleteHazardousLaneMarker(id: String){
+        viewModelScope.launch {
+            runCatching {
+                mappingUseCase.deleteHazardousLaneUseCase(id)
+            }.onSuccess {
+                _eventFlow.emit(value = MappingEvent.DeleteHazardousLaneMarkerSuccess)
+            }.onFailure {
+                _eventFlow.emit(value = MappingEvent.DeleteHazardousLaneMarkerFailed(it.message ?: "Failed to delete incident marker"))
+            }
+        }
+    }
+
+    private fun selectHazardousLaneMarker(id: String) {
+        viewModelScope.launch {
+            hazardousLaneMarkers.find { it.id == id }?.let { marker ->
+                _eventFlow.emit(value = MappingEvent.SelectHazardousLaneMarker(marker))
+            }
+        }
+    }
+
+
+    private fun calculateIncidentDistance(
+        latLng: LatLng,
+        label: String,
+        incidentDescription: String) {
+
         viewModelScope.launch {
             val userLocation = state.value.getCurrentLocation()
 
@@ -495,20 +535,30 @@ class MappingViewModel @Inject constructor(
                 _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
                 return@launch
             }
-            val distance = mappingUseCase.getCalculatedDistanceUseCase(
-                    startingLocation = userLocation,
-                    destinationLocation = LocationModel(
-                        latitude = latLng.latitude,
-                        longitude = latLng.longitude
-                    )
-                )
 
-            if(distance > DEFAULT_RADIUS){
+            val distance = mappingUseCase.getCalculatedDistanceUseCase(
+                startingLocation = userLocation,
+                destinationLocation = LocationModel(
+                    latitude = latLng.latitude,
+                    longitude = latLng.longitude
+                )
+            )
+
+            val fullAddress = mappingUseCase.getFullAddressUseCase(
+                latitude = latLng.latitude,
+                longitude = latLng.longitude
+            )
+
+            if (distance > DEFAULT_RADIUS) {
                 _eventFlow.emit(MappingEvent.IncidentDistanceTooFar)
                 return@launch
             }
 
-            reportIncident(label = label, latLng = latLng)
+            reportIncident(
+                label = label,
+                latLng = latLng,
+                incidentDescription = incidentDescription,
+                address = fullAddress!!)
         }
 
     }
@@ -525,7 +575,13 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun reportIncident(label: String, latLng: LatLng) {
+    private suspend fun reportIncident(
+        label: String,
+        latLng: LatLng,
+        incidentDescription: String,
+        address: String) {
+
+
         coroutineScope {
             runCatching {
                 mappingUseCase.newHazardousLaneUseCase(
@@ -534,7 +590,9 @@ class MappingViewModel @Inject constructor(
                         idCreator = getId(),
                         latitude = latLng.latitude,
                         longitude = latLng.longitude,
-                        label = label
+                        label = label,
+                        description = incidentDescription,
+                        address = address
                     ))
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.ReportIncidentSuccess)
@@ -891,6 +949,7 @@ class MappingViewModel @Inject constructor(
                 broadcastRescueTransactionToRespondent(location)
                 updateSpeedometer(location)
                 getNearbyCyclist()
+                broadcastToNearbyCyclists()
             }.launchIn(this@launch).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }

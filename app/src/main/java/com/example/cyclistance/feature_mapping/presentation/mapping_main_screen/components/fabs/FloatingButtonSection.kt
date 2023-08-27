@@ -28,12 +28,12 @@ fun FloatingButtonSection(
     onClickOpenNavigationButton: () -> Unit,
     onClickLayerButton: () -> Unit) {
 
-    val shouldShowLocationUserButton =
-        isNavigating.not() && uiState.isFabExpanded.not() && uiState.mapSelectedRescuee == null
+    val shouldShowFab =
+        !isNavigating && !uiState.isFabExpanded && uiState.mapSelectedRescuee == null
 
     Box(modifier = modifier) {
 
-        MappingUtils.FabAnimated(shouldShowLocationUserButton) {
+        MappingUtils.FabAnimated(shouldShowFab) {
             MapLayerButton(
                 modifier = Modifier.size(43.dp),
                 onClick = onClickLayerButton
@@ -69,7 +69,7 @@ fun FloatingButtonSection(
                     )
                 }
 
-                MappingUtils.FabAnimated(shouldShowLocationUserButton) {
+                MappingUtils.FabAnimated(shouldShowFab) {
                     LocateUserButton(
                         modifier = Modifier.size(53.dp),
                         locationPermissionGranted = locationPermissionGranted,

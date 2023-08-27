@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.*
@@ -13,6 +14,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -48,6 +50,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.animateCameraPosition
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.changeToNormalPuckIcon
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.openNavigationApp
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MarkerSnippet
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -94,6 +97,10 @@ fun MappingScreen(
     val locationComponentOptions = MappingUtils.rememberLocationComponentOptions()
     var mapboxMap by remember<MutableState<MapboxMap?>> {
         mutableStateOf(null)
+    }
+
+    var incidentDescription by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
     }
 
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
@@ -463,12 +470,6 @@ fun MappingScreen(
         }
     }
 
-    val onClickRescueeMapIcon = remember {
-        { id: String ->
-            mappingViewModel.onEvent(event = MappingVmEvent.SelectRescueMapIcon(id))
-        }
-    }
-
     val onDismissRescueeBanner = remember {
         {
             val isRescueeBannerVisible = uiState.mapSelectedRescuee != null
@@ -499,9 +500,30 @@ fun MappingScreen(
         }
     }
 
+
+    val onMapMarkerClick = remember {
+        { snippet: String, id: String ->
+            if (snippet == MarkerSnippet.HazardousLaneSnippet.type) {
+                mappingViewModel.onEvent(event = MappingVmEvent.SelectHazardousLaneMarker(id))
+            } else {
+                mappingViewModel.onEvent(event = MappingVmEvent.SelectRescueMapIcon(id))
+            }
+        }
+    }
+
+    val onDismissHazardousLaneMarkerDialog = remember{{
+        uiState = uiState.copy(
+            deleteHazardousMarkerVisible = false
+        )
+    }}
+
     val onMapClick = remember {
         {
             if (uiState.bottomSheetType == BottomSheetType.ReportIncident.type) {
+                collapseBottomSheet()
+            }
+
+            if(uiState.bottomSheetType == BottomSheetType.IncidentDescription.type){
                 collapseBottomSheet()
             }
             onDismissRescueeBanner()
@@ -574,8 +596,11 @@ fun MappingScreen(
                 mappingViewModel.onEvent(
                     event = MappingVmEvent.ReportIncident(
                         label = incidentLabel,
-                        latLng = locationLatLng
+                        latLng = locationLatLng,
+                        description = incidentDescription.text
                     ))
+                uiState = uiState.copy(selectedIncidentLabel = "")
+                incidentDescription = TextFieldValue()
             }
         }
     }
@@ -677,7 +702,7 @@ fun MappingScreen(
 
     val shareLocation = remember(state.userLocation, state.user.location){{
 
-        val location = state.userLocation ?: state.user.location
+        val location = state.getCurrentLocation()
 
         if(location == null){
             Toast.makeText(context, "Searching for GPS", Toast.LENGTH_SHORT).show()
@@ -703,16 +728,71 @@ fun MappingScreen(
         }
     }}
 
-    val onSelectMapType = remember{{ mapType: String ->
-        mappingViewModel.onEvent(event = MappingVmEvent.SetMapType(mapType))
+    val onSelectMapType = remember(key1 = state.userLocation){{ mapType: String ->
+        if(state.userLocation == null){
+            Toast.makeText(context, "Searching for GPS", Toast.LENGTH_SHORT).show()
+        }else{
+            mappingViewModel.onEvent(event = MappingVmEvent.SetMapType(mapType))
+        }
     }}
+
+
+    val onChangeIncidentLabel = remember {
+        { incidentLabel: String ->
+            uiState = uiState.copy(selectedIncidentLabel = incidentLabel)
+        }
+    }
+
+    val onChangeIncidentDescription = remember {
+        { input: TextFieldValue ->
+            incidentDescription = input
+        }
+    }
+
+
+    val onClickDeleteIncident = remember{{
+
+        uiState = uiState.copy(
+            deleteHazardousMarkerVisible = true
+        )
+
+    }}
+
+    val onConfirmDeleteIncident = remember(uiState.selectedHazardousMarker){{
+        mappingViewModel.onEvent(event = MappingVmEvent.DeleteHazardousLaneMarker(
+            id = uiState.selectedHazardousMarker!!.id
+        ))
+    }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
+        collapseBottomSheet()
+    }
 
 
     LaunchedEffect(key1 = true) {
 
         mappingViewModel.eventFlow.collect { event ->
             when (event) {
-
 
                 is MappingEvent.RequestHelpSuccess -> {
                     navController.navigateScreen(
@@ -868,14 +948,26 @@ fun MappingScreen(
                     ))
                 }
 
+                is MappingEvent.SelectHazardousLaneMarker -> {
+                    uiState = uiState.copy(
+                        selectedHazardousMarker = event.marker,
+                        bottomSheetType = BottomSheetType.IncidentDescription.type).also {
+                        expandBottomSheet()
+                    }
+                }
 
+                is MappingEvent.DeleteHazardousLaneMarkerFailed -> {
+                    collapseBottomSheet()
+                    Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()
+                }
 
+                MappingEvent.DeleteHazardousLaneMarkerSuccess -> {
+                    collapseBottomSheet()
+                    Toast.makeText(context, "Marker Deleted", Toast.LENGTH_LONG).show()
+                }
             }
         }
     }
-
-
-
     LaunchedEffect(key1 = uiState.routeDirection, key2 = mapboxMap) {
 
         val route = uiState.routeDirection ?: return@LaunchedEffect
@@ -886,8 +978,6 @@ fun MappingScreen(
         }
         showRouteDirection()
     }
-
-
     LaunchedEffect(
         key1 = state.rescueTransaction?.route,
         key2 = hasTransaction,
@@ -916,9 +1006,6 @@ fun MappingScreen(
 
 
     }
-
-
-
     LaunchedEffect(key1 = hasInternetConnection) {
         val nearbyCyclistLoaded = state.nearbyCyclist?.users?.isNotEmpty() ?: false
         val userLoaded = state.user.id != null
@@ -933,13 +1020,9 @@ fun MappingScreen(
         }
         mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
     }
-
-
-
     LaunchedEffect(key1 = isNavigating, key2 = userLocationAvailable, key3 = pulsingEnabled) {
         showUserLocation()
     }
-
     LaunchedEffect(key1 = uiState.bottomSheetType) {
         coroutineScope.launch {
             if (uiState.bottomSheetType?.isNotEmpty() == true) {
@@ -947,9 +1030,6 @@ fun MappingScreen(
             }
         }
     }
-
-
-
     LaunchedEffect(key1 = hasTransaction, key2 = isRescueCancelled) {
 
         if (hasTransaction.not()) {
@@ -963,7 +1043,6 @@ fun MappingScreen(
         onChangeNavigatingState(false)
 
     }
-
 
     LaunchedEffect(key1 = foregroundLocationPermissionsState.allPermissionsGranted) {
         if (!foregroundLocationPermissionsState.allPermissionsGranted) {
@@ -993,6 +1072,7 @@ fun MappingScreen(
         mapboxMap = mapboxMap,
         uiState = uiState,
         emergencyState = emergencyState,
+        incidentDescription = incidentDescription,
         event = { event ->
             when (event) {
                 is MappingUiEvent.RequestHelp -> onClickRequestHelpButton()
@@ -1006,7 +1086,6 @@ fun MappingScreen(
                 is MappingUiEvent.RescueRequestAccepted -> onClickOkAcceptedRescue()
                 is MappingUiEvent.OnChangeCameraState -> onChangeCameraPosition(event.cameraState)
                 is MappingUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
-                is MappingUiEvent.RescueeMarkerSelected -> onClickRescueeMapIcon(event.id)
                 is MappingUiEvent.OnMapClick -> onMapClick()
                 is MappingUiEvent.DismissBanner -> onDismissRescueeBanner()
                 is MappingUiEvent.LocateUser -> onClickLocateUserButton()
@@ -1035,9 +1114,16 @@ fun MappingScreen(
                 is MappingUiEvent.DismissRescueResultsDialog -> onDismissRescueResultsDialog()
                 is MappingUiEvent.OnEmergencyCall -> onEmergencyCall(event.phoneNumber)
                 is MappingUiEvent.OnAddEmergencyContact -> onAddEmergencyContact()
-                MappingUiEvent.OpenHazardousLaneBottomSheet -> onOpenHazardousLaneBottomSheet()
+                is MappingUiEvent.OpenHazardousLaneBottomSheet -> onOpenHazardousLaneBottomSheet()
                 is MappingUiEvent.OnSelectMapType -> onSelectMapType(event.mapType)
-                is MappingUiEvent.HazardousLaneMarkerSelected -> {}
+                is MappingUiEvent.OnChangeIncidentDescription -> onChangeIncidentDescription(event.description)
+                is MappingUiEvent.OnChangeIncidentLabel -> onChangeIncidentLabel(event.label)
+                is MappingUiEvent.OnClickDeleteIncident -> onClickDeleteIncident()
+                is MappingUiEvent.OnClickEditIncidentDescription -> TODO()
+                is MappingUiEvent.OnClickOkayIncidentDescription -> TODO()
+                is MappingUiEvent.OnClickMapMarker -> onMapMarkerClick(event.markerSnippet, event.markerId)
+                MappingUiEvent.DismissHazardousLaneMarkerDialog -> onDismissHazardousLaneMarkerDialog()
+                MappingUiEvent.OnConfirmDeleteIncident -> onConfirmDeleteIncident()
             }
         }
 

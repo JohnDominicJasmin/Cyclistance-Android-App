@@ -17,7 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.core.utils.validation.FormatterUtils.toReadableDateTime
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationUiEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationState

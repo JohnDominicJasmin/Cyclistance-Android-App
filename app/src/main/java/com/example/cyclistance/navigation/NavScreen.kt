@@ -30,7 +30,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.core.utils.composable_utils.ComposableLifecycle
-import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_mapping.data.data_source.local.network_observer.NetworkConnectivityChecker
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.drawer.NavigationDrawerContent
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
@@ -87,15 +86,9 @@ fun NavScreen(
     }
 
 
-    BackHandler(enabled = true, onBack = {
+    BackHandler(enabled = scaffoldState.drawerState.isOpen, onBack = {
         coroutineScope.launch {
-
-            if (scaffoldState.drawerState.isOpen) {
-                scaffoldState.drawerState.close()
-                return@launch
-            }
-
-            context.findActivity()?.finish()
+            scaffoldState.drawerState.close()
         }
     })
 

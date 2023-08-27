@@ -22,7 +22,9 @@ sealed class MappingVmEvent {
     object SubscribeToDataChanges: MappingVmEvent()
     object CancelRescueTransaction: MappingVmEvent()
     data class GetRouteDirections(val origin: Point, val destination: Point): MappingVmEvent()
-    data class ReportIncident(val label: String, val latLng: LatLng): MappingVmEvent()
+    data class ReportIncident(val label: String, val latLng: LatLng, val description: String): MappingVmEvent()
     data class SetMapType(val mapType: String): MappingVmEvent()
+    data class SelectHazardousLaneMarker(val id: String): MappingVmEvent()
+    data class DeleteHazardousLaneMarker(val id: String): MappingVmEvent()
 
 }

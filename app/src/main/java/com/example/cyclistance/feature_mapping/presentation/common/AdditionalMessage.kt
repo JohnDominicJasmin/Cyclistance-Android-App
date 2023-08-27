@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import com.example.cyclistance.core.utils.constants.MappingConstants.CHARACTER_LIMIT
+import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.Black500
 
@@ -39,6 +40,9 @@ fun AdditionalMessage(
     message: TextFieldValue,
     enabled: Boolean,
     onChangeValueMessage: (TextFieldValue) -> Unit) {
+
+    val isDarkTheme = IsDarkTheme.current
+
     Column(modifier = modifier) {
 
 
@@ -68,7 +72,10 @@ fun AdditionalMessage(
                     enabled = enabled,
                     modifier = Modifier
                         .fillMaxSize()
-                        .shadow(7.dp, shape = RoundedCornerShape(12.dp), clip = true)
+                        .shadow(
+                            elevation = if (isDarkTheme) 0.dp else 7.dp,
+                            shape = RoundedCornerShape(12.dp),
+                            clip = true)
                         .constrainAs(textField) {
                             top.linkTo(parent.top)
                             end.linkTo(parent.end)

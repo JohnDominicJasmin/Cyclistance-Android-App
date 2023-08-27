@@ -8,14 +8,14 @@ import com.example.cyclistance.core.utils.constants.MappingConstants
 
 object IconFormatter {
 
-    fun String.toHazardousLaneIconMarker(isMarkerYours: Boolean): Int{
+    fun String.toHazardousLaneIconMarker(isMarkerYours: Boolean = false): Int{
         return when(this){
             MappingConstants.CONSTRUCTION -> if(isMarkerYours) R.drawable.ic_construction_white else R.drawable.ic_construction_marker
             MappingConstants.LANE_CLOSURE -> if(isMarkerYours) R.drawable.ic_lane_closure_white else R.drawable.ic_lane_closure_marker
             MappingConstants.CRASH -> if(isMarkerYours) R.drawable.ic_crash_white else R.drawable.ic_crash_marker
             MappingConstants.NEED_ASSISTANCE -> if(isMarkerYours) R.drawable.ic_need_assistance_white else R.drawable.ic_need_assistance_marker
             MappingConstants.OBJECT_ON_ROAD -> if(isMarkerYours) R.drawable.ic_object_on_road_white else R.drawable.ic_object_on_road_marker
-            MappingConstants.SLOWDOWN -> if(isMarkerYours) R.drawable.ic_slow_down_white else R.drawable.ic_slowdown_marker
+            MappingConstants.SLOWDOWN -> if(isMarkerYours) R.drawable.ic_slow_down_white else R.drawable.ic_slow_down_marker
             else -> throw RuntimeException("No icon found for $this")
         }
     }

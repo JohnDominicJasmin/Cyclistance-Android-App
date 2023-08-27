@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.core.utils.validation.FormatterUtils.toReadableDateTime
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.common.MessageUserImage

@@ -1,7 +1,7 @@
 package com.example.cyclistance.core.utils.validation
 
-import com.example.cyclistance.core.utils.validation.FormatterUtils.formatToDistanceKm
-import com.example.cyclistance.core.utils.validation.FormatterUtils.getCalculatedETA
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.getCalculatedETA
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

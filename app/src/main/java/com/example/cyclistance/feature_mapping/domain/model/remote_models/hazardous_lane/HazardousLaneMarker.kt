@@ -14,5 +14,7 @@ data class HazardousLaneMarker(
     val latitude: Double? = null,
     val longitude: Double? = null,
     val label: String = "",
-    val datePosted: Date = Date()
+    val datePosted: Date = Date(),
+    val description: String = "",
+    val address: String = "",
 ):Parcelable

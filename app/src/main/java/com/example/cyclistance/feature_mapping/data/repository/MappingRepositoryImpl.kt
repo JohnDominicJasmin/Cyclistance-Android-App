@@ -123,7 +123,8 @@ class MappingRepositoryImpl(
 
             fireStore
                 .collection(KEY_HAZARDOUS_LANE_COLLECTION)
-                .add(
+                .document(hazardousLaneMarker.id)
+                .set(
                     mapOf(
                         KEY_MARKER_FIELD to hazardousLaneMarker,
                         KEY_TIMESTAMP_FIELD to System.currentTimeMillis()
@@ -169,12 +170,15 @@ class MappingRepositoryImpl(
             throw MappingExceptions.NetworkException()
         }
 
-        suspendCancellableCoroutine<Unit> { continuation ->
+        suspendCancellableCoroutine { continuation ->
 
             fireStore
                 .collection(KEY_HAZARDOUS_LANE_COLLECTION)
                 .document(id)
                 .delete()
+                .addOnSuccessListener {
+                    continuation.resume(Unit)
+                }
                 .addOnFailureListener {
                     continuation.resumeWithException(
                         MappingExceptions.HazardousLaneException(

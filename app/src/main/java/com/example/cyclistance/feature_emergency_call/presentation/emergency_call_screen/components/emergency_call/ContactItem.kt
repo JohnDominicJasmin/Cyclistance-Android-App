@@ -1,8 +1,6 @@
 package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,20 +9,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,6 +25,7 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.cyclistance.R
+import com.example.cyclistance.core.presentation.dialogs.common.DropDownMenu
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.DICE_BEAR_URL
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY_PHOTO
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO
@@ -108,49 +98,10 @@ fun ContactItem(
 
             DropDownMenu(
                 modifier = Modifier.wrapContentSize(),
-                onClickEdit = { onClickEdit() },
-                onClickDelete = { onClickDelete() }
+                onClickEdit = onClickEdit,
+                onClickDelete = onClickDelete
             )
         }
     }
 }
 
-@Composable
-private fun DropDownMenu(
-    modifier: Modifier = Modifier,
-    onClickEdit: () -> Unit,
-    onClickDelete: () -> Unit) {
-
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .wrapContentSize(Alignment.TopEnd)
-    ) {
-        IconButton(onClick = { expanded = !expanded }) {
-            Icon(
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = "More"
-            )
-        }
-
-        DropdownMenu(
-            modifier = Modifier
-                .background(MaterialTheme.colors.secondary)
-                .wrapContentSize(),
-            expanded = expanded,
-            onDismissRequest = { expanded = false }) {
-
-            DropdownMenuItem(
-                text = { Text("Edit") },
-                onClick = { onClickEdit(); expanded = false }
-            )
-
-            DropdownMenuItem(
-                text = { Text("Delete") },
-                onClick = { onClickDelete(); expanded = false }
-            )
-        }
-    }
-}
