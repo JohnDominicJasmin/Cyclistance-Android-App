@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event
 
 import androidx.compose.ui.text.input.TextFieldValue
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
 import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
@@ -50,14 +51,18 @@ sealed class MappingUiEvent{
     data class CancelRequestHelp(val id: String) : MappingUiEvent()
     data class ConfirmRequestHelp(val id: String) : MappingUiEvent()
     object DismissAlertDialog : MappingUiEvent()
+    object DismissDiscardChangesMarkerDialog: MappingUiEvent()
+    object DismissIncidentDescriptionBottomSheet: MappingUiEvent()
+    object DiscardMarkerChanges: MappingUiEvent()
+    object CancelEditIncidentDescription: MappingUiEvent()
+
     object OnAddEmergencyContact : MappingUiEvent()
 
     data class OnChangeIncidentDescription(val description: TextFieldValue) : MappingUiEvent()
     data class OnChangeIncidentLabel(val label: String) : MappingUiEvent()
 
-    object OnClickEditIncidentDescription : MappingUiEvent()
+    data class OnClickEditIncidentDescription(val marker: HazardousLaneMarker) : MappingUiEvent()
     object OnClickDeleteIncident : MappingUiEvent()
-    object OnClickOkayIncidentDescription : MappingUiEvent()
     object OnConfirmDeleteIncident: MappingUiEvent()
 
     data class OnClickMapMarker(val markerSnippet: String, val markerId: String): MappingUiEvent()

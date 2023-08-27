@@ -39,6 +39,7 @@ import com.example.cyclistance.core.utils.contexts.startLocationServiceIntentAct
 import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.EmergencyCallViewModel
 import com.example.cyclistance.feature_mapping.domain.model.Role
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
 import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.*
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
@@ -500,11 +501,22 @@ fun MappingScreen(
         }
     }
 
+    fun checkIfHasEditingMarker(noMarkerCurrentlyEditing: () -> Unit){
+        val isCurrentlyEditing = uiState.currentlyEditingHazardousMarker != null
+        if(isCurrentlyEditing){
+            uiState = uiState.copy(discardHazardousMarkerDialogVisible = true)
+            return
+        }
+        noMarkerCurrentlyEditing()
+    }
+
 
     val onMapMarkerClick = remember {
         { snippet: String, id: String ->
             if (snippet == MarkerSnippet.HazardousLaneSnippet.type) {
-                mappingViewModel.onEvent(event = MappingVmEvent.SelectHazardousLaneMarker(id))
+                checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
+                    mappingViewModel.onEvent(event = MappingVmEvent.SelectHazardousLaneMarker(id))
+                })
             } else {
                 mappingViewModel.onEvent(event = MappingVmEvent.SelectRescueMapIcon(id))
             }
@@ -513,18 +525,21 @@ fun MappingScreen(
 
     val onDismissHazardousLaneMarkerDialog = remember{{
         uiState = uiState.copy(
-            deleteHazardousMarkerVisible = false
+            deleteHazardousMarkerDialogVisible = false
         )
     }}
 
     val onMapClick = remember {
         {
+
             if (uiState.bottomSheetType == BottomSheetType.ReportIncident.type) {
                 collapseBottomSheet()
             }
 
             if(uiState.bottomSheetType == BottomSheetType.IncidentDescription.type){
-                collapseBottomSheet()
+                checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
+                    collapseBottomSheet()
+                })
             }
             onDismissRescueeBanner()
             onCollapseExpandableFAB()
@@ -534,13 +549,16 @@ fun MappingScreen(
 
     val onMapLongClick = remember {
         { latLng: LatLng ->
-            onDismissRescueeBanner()
-            onCollapseExpandableFAB()
-            uiState = uiState.copy(
-                lastLongPressedLocation = latLng,
-                bottomSheetType = BottomSheetType.ReportIncident.type).also {
-                expandBottomSheet()
-            }
+            checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
+                onDismissRescueeBanner()
+                onCollapseExpandableFAB()
+                uiState = uiState.copy(
+                    lastLongPressedLocation = latLng,
+                    bottomSheetType = BottomSheetType.ReportIncident.type).also {
+                    expandBottomSheet()
+                }
+            })
+
         }
     }
 
@@ -715,17 +733,18 @@ fun MappingScreen(
     }}
 
     val onOpenHazardousLaneBottomSheet = remember{{
-
-        uiState = if(uiState.bottomSheetType == BottomSheetType.HazardousLane.type){
-            collapseBottomSheet()
-            uiState.copy(bottomSheetType = null)
-        }else{
-            uiState.copy(
-                bottomSheetType = BottomSheetType.HazardousLane.type
-            ).also {
-                expandBottomSheet()
+        checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
+            uiState = if (uiState.bottomSheetType == BottomSheetType.HazardousLane.type) {
+                collapseBottomSheet()
+                uiState.copy(bottomSheetType = null)
+            } else {
+                uiState.copy(
+                    bottomSheetType = BottomSheetType.HazardousLane.type
+                ).also {
+                    expandBottomSheet()
+                }
             }
-        }
+        })
     }}
 
     val onSelectMapType = remember(key1 = state.userLocation){{ mapType: String ->
@@ -753,9 +772,13 @@ fun MappingScreen(
     val onClickDeleteIncident = remember{{
 
         uiState = uiState.copy(
-            deleteHazardousMarkerVisible = true
+            deleteHazardousMarkerDialogVisible = true
         )
 
+    }}
+
+    val onClickEditIncidentDescription = remember{{ marker: HazardousLaneMarker ->
+        uiState = uiState.copy(currentlyEditingHazardousMarker = marker)
     }}
 
     val onConfirmDeleteIncident = remember(uiState.selectedHazardousMarker){{
@@ -764,6 +787,23 @@ fun MappingScreen(
         ))
     }}
 
+    val onDismissDiscardChangesMarker = remember {{
+        uiState = uiState.copy(discardHazardousMarkerDialogVisible = false)
+    }}
+
+    val onDiscardMarkerChanges = remember{{
+        uiState = uiState.copy(currentlyEditingHazardousMarker = null)
+    }}
+
+    val onDismissIncidentDescriptionBottomSheet = remember{{
+        checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
+            collapseBottomSheet()
+        })
+    }}
+
+    val onCancelEditIncidentDescription = remember{{
+        checkIfHasEditingMarker(onDiscardMarkerChanges)
+    }}
 
 
 
@@ -785,7 +825,9 @@ fun MappingScreen(
 
 
     BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
-        collapseBottomSheet()
+        checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
+            collapseBottomSheet()
+        })
     }
 
 
@@ -1119,11 +1161,14 @@ fun MappingScreen(
                 is MappingUiEvent.OnChangeIncidentDescription -> onChangeIncidentDescription(event.description)
                 is MappingUiEvent.OnChangeIncidentLabel -> onChangeIncidentLabel(event.label)
                 is MappingUiEvent.OnClickDeleteIncident -> onClickDeleteIncident()
-                is MappingUiEvent.OnClickEditIncidentDescription -> TODO()
-                is MappingUiEvent.OnClickOkayIncidentDescription -> TODO()
+                is MappingUiEvent.OnClickEditIncidentDescription -> onClickEditIncidentDescription(event.marker)
                 is MappingUiEvent.OnClickMapMarker -> onMapMarkerClick(event.markerSnippet, event.markerId)
                 MappingUiEvent.DismissHazardousLaneMarkerDialog -> onDismissHazardousLaneMarkerDialog()
                 MappingUiEvent.OnConfirmDeleteIncident -> onConfirmDeleteIncident()
+                MappingUiEvent.DismissDiscardChangesMarkerDialog -> onDismissDiscardChangesMarker()
+                MappingUiEvent.DiscardMarkerChanges -> onDiscardMarkerChanges()
+                MappingUiEvent.DismissIncidentDescriptionBottomSheet -> onDismissIncidentDescriptionBottomSheet()
+                MappingUiEvent.CancelEditIncidentDescription -> onCancelEditIncidentDescription()
             }
         }
 
@@ -1132,4 +1177,4 @@ fun MappingScreen(
 
 }
 
-
+//on click cancel

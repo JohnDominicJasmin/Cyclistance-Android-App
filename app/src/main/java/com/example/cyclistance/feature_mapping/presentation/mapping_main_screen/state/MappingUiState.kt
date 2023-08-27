@@ -32,7 +32,8 @@ data class MappingUiState(
     val lastLongPressedLocation: LatLng? = null,
     val selectedIncidentLabel: String = "",
     val selectedHazardousMarker: HazardousLaneMarker? = HazardousLaneMarker(),
-    val deleteHazardousMarkerVisible: Boolean = false,
+    val deleteHazardousMarkerDialogVisible: Boolean = false,
+    val discardHazardousMarkerDialogVisible: Boolean = false,
     val currentlyEditingHazardousMarker: HazardousLaneMarker? = null,
 
 

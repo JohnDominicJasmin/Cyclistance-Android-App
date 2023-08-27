@@ -33,7 +33,8 @@ fun MappingBottomSheet(
     val bottomSheetType = uiState.bottomSheetType
     val sheetGesturesEnabled = remember(bottomSheetType) {
         bottomSheetType != BottomSheetType.SearchAssistance.type &&
-        bottomSheetType != BottomSheetType.OnGoingRescue.type
+        bottomSheetType != BottomSheetType.OnGoingRescue.type &&
+        bottomSheetType != BottomSheetType.IncidentDescription.type
     }
     MappingBottomSheet(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
@@ -125,13 +126,13 @@ fun MappingBottomSheet(
                 BottomSheetType.IncidentDescription.type -> {
                     BottomSheetIncidentDescription(
                         modifier = modifier,
-                        bottomSheetScaffoldState = bottomSheetScaffoldState,
+                        onDismissBottomSheet = {event(MappingUiEvent.DismissIncidentDescriptionBottomSheet)},
                         uiState = uiState,
                         state = state,
                         icon = uiState.selectedHazardousMarker!!.label.toHazardousLaneIconMarker(),
-                        onClickEdit = { event(MappingUiEvent.OnClickEditIncidentDescription) },
+                        onClickEdit = { event(MappingUiEvent.OnClickEditIncidentDescription(uiState.selectedHazardousMarker)) },
                         onClickDelete = { event(MappingUiEvent.OnClickDeleteIncident) },
-                        onClickOkay = { event(MappingUiEvent.OnClickOkayIncidentDescription) })
+                        onClickCancelButton = { event(MappingUiEvent.CancelEditIncidentDescription) })
 
                 }
 
