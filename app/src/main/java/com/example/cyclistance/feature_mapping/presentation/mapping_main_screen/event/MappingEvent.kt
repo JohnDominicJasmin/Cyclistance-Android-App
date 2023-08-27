@@ -41,6 +41,8 @@ sealed class MappingEvent{
     object IncidentDistanceTooFar: MappingEvent()
     data class ReportIncidentFailed(val reason: String): MappingEvent()
     data class SelectHazardousLaneMarker(val marker: HazardousLaneMarker): MappingEvent()
+    object UpdateIncidentSuccess: MappingEvent()
+    data class UpdateIncidentFailed(val reason: String): MappingEvent()
 
     object DeleteHazardousLaneMarkerSuccess: MappingEvent()
     data class DeleteHazardousLaneMarkerFailed(val reason: String): MappingEvent()

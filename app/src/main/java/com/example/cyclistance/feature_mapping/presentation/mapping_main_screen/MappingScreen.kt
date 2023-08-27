@@ -805,6 +805,13 @@ fun MappingScreen(
         checkIfHasEditingMarker(onDiscardMarkerChanges)
     }}
 
+    val onUpdateReportedIncident = remember(uiState.currentlyEditingHazardousMarker){{ description: String, label: String ->
+        mappingViewModel.onEvent(
+            event = MappingVmEvent.UpdateReportedIncident(
+                marker = uiState.currentlyEditingHazardousMarker!!.copy(description = description, label = label)
+            ))
+    }}
+
 
 
 
@@ -1007,6 +1014,19 @@ fun MappingScreen(
                     collapseBottomSheet()
                     Toast.makeText(context, "Marker Deleted", Toast.LENGTH_LONG).show()
                 }
+
+                is MappingEvent.UpdateIncidentFailed -> {
+                    Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()
+                }
+                MappingEvent.UpdateIncidentSuccess -> {
+                    uiState = uiState.copy(alertDialogState = AlertDialogState(
+                        title = "Incident Updated",
+                        description = "The incident has been updated successfully",
+                        icon = R.raw.success
+                    ))
+                    onDiscardMarkerChanges()
+                    collapseBottomSheet()
+                }
             }
         }
     }
@@ -1169,6 +1189,7 @@ fun MappingScreen(
                 MappingUiEvent.DiscardMarkerChanges -> onDiscardMarkerChanges()
                 MappingUiEvent.DismissIncidentDescriptionBottomSheet -> onDismissIncidentDescriptionBottomSheet()
                 MappingUiEvent.CancelEditIncidentDescription -> onCancelEditIncidentDescription()
+                is MappingUiEvent.UpdateIncidentDescription -> onUpdateReportedIncident(event.description, event.label)
             }
         }
 

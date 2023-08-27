@@ -36,6 +36,7 @@ interface MappingRepository {
         onRemovedHazardousMarker: (id: String) -> Unit)
 
     suspend fun addNewHazardousLane(hazardousLaneMarker: HazardousLaneMarker)
+    suspend fun updateHazardousLane(label: String, description: String, id: String)
     suspend fun deleteHazardousLane(id: String)
     fun removeHazardousLaneListener()
 

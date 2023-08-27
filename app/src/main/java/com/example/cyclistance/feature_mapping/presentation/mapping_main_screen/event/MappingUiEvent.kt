@@ -55,6 +55,7 @@ sealed class MappingUiEvent{
     object DismissIncidentDescriptionBottomSheet: MappingUiEvent()
     object DiscardMarkerChanges: MappingUiEvent()
     object CancelEditIncidentDescription: MappingUiEvent()
+    data class UpdateIncidentDescription(val label: String, val description: String): MappingUiEvent()
 
     object OnAddEmergencyContact : MappingUiEvent()
 

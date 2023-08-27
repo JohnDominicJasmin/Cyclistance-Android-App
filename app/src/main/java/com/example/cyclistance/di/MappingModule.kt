@@ -34,6 +34,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.user.*
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.DeleteHazardousLaneUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.NewHazardousLaneUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.RemoveHazardousListenerUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.UpdateHazardousLaneUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.TransactionLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
@@ -178,7 +179,8 @@ object MappingModule {
             newHazardousLaneUseCase = NewHazardousLaneUseCase(mappingRepository),
             deleteHazardousLaneUseCase = DeleteHazardousLaneUseCase(mappingRepository),
             mapTypeUseCase = MapTypeUseCase(mappingUiStoreRepository),
-            removeHazardousListenerUseCase = RemoveHazardousListenerUseCase(mappingRepository)
+            removeHazardousListenerUseCase = RemoveHazardousListenerUseCase(mappingRepository),
+            updateHazardousLaneUseCase = UpdateHazardousLaneUseCase(mappingRepository),
         )
 
     }

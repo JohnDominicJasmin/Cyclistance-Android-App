@@ -132,7 +132,9 @@ fun MappingBottomSheet(
                         icon = uiState.selectedHazardousMarker!!.label.toHazardousLaneIconMarker(),
                         onClickEdit = { event(MappingUiEvent.OnClickEditIncidentDescription(uiState.selectedHazardousMarker)) },
                         onClickDelete = { event(MappingUiEvent.OnClickDeleteIncident) },
-                        onClickCancelButton = { event(MappingUiEvent.CancelEditIncidentDescription) })
+                        onClickCancelButton = { event(MappingUiEvent.CancelEditIncidentDescription) },
+                        onClickConfirmButton = { description, label ->  event(MappingUiEvent.UpdateIncidentDescription(label = label, description = description)) }
+                        )
 
                 }
 

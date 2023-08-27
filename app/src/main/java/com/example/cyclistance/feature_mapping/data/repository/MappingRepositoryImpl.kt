@@ -113,6 +113,29 @@ class MappingRepositoryImpl(
         }
     }
 
+    override suspend fun updateHazardousLane(label: String, description: String, id: String) {
+
+        if (context.hasInternetConnection().not()) {
+            throw MappingExceptions.NetworkException()
+        }
+
+        suspendCancellableCoroutine { continuation ->
+            fireStore.collection(KEY_HAZARDOUS_LANE_COLLECTION).document(id)
+                .update(
+                    mapOf(
+                        "$KEY_MARKER_FIELD.description" to description,
+                        "$KEY_MARKER_FIELD.label" to label,
+                        KEY_TIMESTAMP_FIELD to System.currentTimeMillis()
+                    )).addOnSuccessListener {
+                    continuation.resume(Unit)
+                }.addOnFailureListener {
+                    continuation.resumeWithException(
+                        MappingExceptions.HazardousLaneException(
+                            message = it.message ?: "Unknown error occurred"))
+                }
+        }
+    }
+
     override suspend fun addNewHazardousLane(hazardousLaneMarker: HazardousLaneMarker) {
 
         if (context.hasInternetConnection().not()) {
