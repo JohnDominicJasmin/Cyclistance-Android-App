@@ -290,6 +290,13 @@ private fun IncidentDescriptionEditMode(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally) {
 
+        Text(
+            text = "Edit Hazardous Marker",
+            color = MaterialTheme.colors.onSurface,
+            style = MaterialTheme.typography.subtitle1,
+            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
+        )
+
         HorizontalPager(
             state = pagerState, pageSize = PageSize.Fill,
             modifier = Modifier
