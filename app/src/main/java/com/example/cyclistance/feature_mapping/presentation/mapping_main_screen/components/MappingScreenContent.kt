@@ -40,6 +40,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RequestHelpButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RespondToHelpButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.DeleteHazardousLaneMarkerDialog
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.DiscardHazardousLaneMarkerDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.ExpandableFABSection
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.FloatingButtonSection
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.request.MappingRequestAccepted
@@ -282,7 +283,7 @@ fun MappingScreenContent(
                         )
                     }
 
-                    if(uiState.deleteHazardousMarkerVisible){
+                    if(uiState.deleteHazardousMarkerDialogVisible){
                         DeleteHazardousLaneMarkerDialog(
                             onDismissRequest = { event(MappingUiEvent.DismissHazardousLaneMarkerDialog) },
                             modifier = Modifier,
@@ -338,6 +339,25 @@ fun MappingScreenContent(
                                 centerTo(parent)
                             },
                             onDismissRequest = { event(MappingUiEvent.DismissAlertDialog) })
+                    }
+
+                    if(uiState.discardHazardousMarkerDialogVisible){
+                        DiscardHazardousLaneMarkerDialog(
+                             modifier = Modifier.constrainAs(dialog){
+                                 end.linkTo(parent.end)
+                                 start.linkTo(parent.start)
+                                 bottom.linkTo(parent.bottom)
+                                 height = Dimension.wrapContent
+                                 centerTo(parent)
+                             },
+                            onDismissRequest = {
+                                event(MappingUiEvent.DismissDiscardChangesMarkerDialog)
+                            },
+                            onClickDiscard = {
+                                event(MappingUiEvent.DismissDiscardChangesMarkerDialog)
+                                event(MappingUiEvent.DiscardMarkerChanges)
+                            }
+                        )
                     }
 
                     AnimatedVisibility(
