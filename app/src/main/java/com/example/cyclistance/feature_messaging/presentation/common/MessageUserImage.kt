@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -27,9 +28,9 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun MessageUserImage(
     modifier: Modifier = Modifier,
     isOnline: Boolean?,
-    photoUrl: String) {
+    photoUrl: String?) {
 
-    Box(modifier = modifier) {
+    Box(modifier = Modifier.wrapContentSize()) {
 
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
@@ -40,10 +41,8 @@ fun MessageUserImage(
                 .memoryCachePolicy(CachePolicy.ENABLED)
                 .build(),
             contentDescription = "User Profile Image",
-            modifier = Modifier
-                .align(Alignment.Center)
-                .clip(CircleShape)
-                .size(48.dp),
+            modifier = modifier
+                .align(Alignment.Center),
             contentScale = ContentScale.Crop,
             placeholder = rememberAsyncImagePainter(model = R.drawable.ic_empty_profile_placeholder_large),
             error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
@@ -71,7 +70,10 @@ fun PreviewUserImage() {
             .fillMaxSize()
             .background(MaterialTheme.colors.background)) {
             MessageUserImage(
-                modifier = Modifier,
+                modifier = Modifier
+                    .wrapContentSize()
+                    .clip(CircleShape)
+                    .size(48.dp),
                 isOnline = false,
                 photoUrl = MappingConstants.IMAGE_PLACEHOLDER_URL)
         }

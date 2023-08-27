@@ -23,6 +23,9 @@ data class MessagingUserItemModel(
 
         }
     }
+
+    fun getName() = userDetails.name
+    fun getPhoto(): String = userDetails.photo
 }
 
 

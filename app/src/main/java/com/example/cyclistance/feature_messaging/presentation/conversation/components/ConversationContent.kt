@@ -1,20 +1,15 @@
 package com.example.cyclistance.feature_messaging.presentation.conversation.components
 
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -27,13 +22,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.R
 import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogNotificationPermission
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
 import com.example.cyclistance.core.utils.composable_utils.keyboardAsState
@@ -45,12 +37,11 @@ import com.example.cyclistance.feature_messaging.presentation.conversation.event
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationState
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationUiState
 import com.example.cyclistance.navigation.IsDarkTheme
-import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.launch
 import java.util.Date
 
-val USER_ID = "1"
+
 private val fakeConversationsModel = ConversationsModel(
     messages = listOf(
         ConversationItemModel(
@@ -268,8 +259,8 @@ fun ConversationContent(
                                 keyboardIsOpen = keyboardIsOpen,
                                 listState = listState,
                                 conversation = conversation,
-                                userUid = state.userUid,
                                 uiState = uiState,
+                                state = state,
                                 event = event)
 
                         }
@@ -308,42 +299,6 @@ fun ConversationContent(
     }
 }
 
-
-@Composable
-private fun PlaceholderEmptyConversation(modifier: Modifier = Modifier) {
-    val isDarkTheme = IsDarkTheme.current
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(
-            text = "No messages here yet...",
-            color = Black500,
-            style = MaterialTheme.typography.subtitle1,
-            modifier = Modifier.padding(all = 4.dp)
-        )
-
-        Icon(
-            painter = painterResource(id = if (isDarkTheme) R.drawable.ic_mailbox_dark else R.drawable.ic_mailbox_light),
-            contentDescription = "No Conversation Available",
-            tint = Color.Unspecified
-        )
-
-
-    }
-}
-
-@Preview
-@Composable
-fun PreviewPlaceholderEmptyConversation() {
-    CompositionLocalProvider(IsDarkTheme provides false) {
-        CyclistanceTheme(darkTheme = false) {
-            Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
-                PlaceholderEmptyConversation()
-            }
-        }
-    }
-}
 
 
 @Preview
