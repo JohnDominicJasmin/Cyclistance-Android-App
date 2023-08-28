@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane
+package com.example.cyclistance.feature_mapping.domain.use_case.hazardous_lane
 
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 

@@ -28,5 +28,6 @@ sealed class MappingVmEvent {
     data class SetMapType(val mapType: String): MappingVmEvent()
     data class SelectHazardousLaneMarker(val id: String): MappingVmEvent()
     data class DeleteHazardousLaneMarker(val id: String): MappingVmEvent()
+    data class ShouldShowHazardousStartingInfo(val shouldShow: Boolean): MappingVmEvent()
 
 }

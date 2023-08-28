@@ -21,6 +21,11 @@ import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.address.AddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.BikeTypeUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.bottom_sheet_type.BottomSheetTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.hazardous_lane.DeleteHazardousLaneUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.hazardous_lane.NewHazardousLaneUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.hazardous_lane.RemoveHazardousListenerUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.hazardous_lane.ShouldHazardousStartingInfoUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.hazardous_lane.UpdateHazardousLaneUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
@@ -31,10 +36,6 @@ import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transactio
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDirectionsUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.user.*
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.DeleteHazardousLaneUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.NewHazardousLaneUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.RemoveHazardousListenerUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.hazardous_lane.UpdateHazardousLaneUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.TransactionLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
@@ -181,6 +182,7 @@ object MappingModule {
             mapTypeUseCase = MapTypeUseCase(mappingUiStoreRepository),
             removeHazardousListenerUseCase = RemoveHazardousListenerUseCase(mappingRepository),
             updateHazardousLaneUseCase = UpdateHazardousLaneUseCase(mappingRepository),
+            shouldHazardousStartingInfoUseCase = ShouldHazardousStartingInfoUseCase(mappingUiStoreRepository),
         )
 
     }

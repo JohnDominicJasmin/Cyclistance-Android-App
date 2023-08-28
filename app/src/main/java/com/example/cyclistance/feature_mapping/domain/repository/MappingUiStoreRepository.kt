@@ -16,4 +16,7 @@ interface MappingUiStoreRepository {
     suspend fun setMapType(mapType: String)
     suspend fun getMapType(): Flow<String>
 
+    suspend fun showHazardousStartingInfo(shouldShow: Boolean)
+    suspend fun shouldShowHazardousStartingInfo(): Flow<Boolean>
+
 }

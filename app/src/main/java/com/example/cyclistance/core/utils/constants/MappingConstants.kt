@@ -1,5 +1,6 @@
 package com.example.cyclistance.core.utils.constants
 
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object MappingConstants {
@@ -29,6 +30,7 @@ object MappingConstants {
     val BIKE_TYPE_KEY = stringPreferencesKey("bike_type")
     val ADDRESS_KEY = stringPreferencesKey("address")
     val MAP_TYPE_KEY = stringPreferencesKey("map_type")
+    val SHOW_HAZARDOUS_STARTING_INFO_KEY = booleanPreferencesKey("show_hazardous_starting_info")
 
 
     const val LOCATION_NAME = "cyclistance-location"
