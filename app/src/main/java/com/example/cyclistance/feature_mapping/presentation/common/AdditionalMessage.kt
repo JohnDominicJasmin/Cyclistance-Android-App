@@ -73,7 +73,7 @@ fun AdditionalMessage(
                     modifier = Modifier
                         .fillMaxSize()
                         .shadow(
-                            elevation = if (isDarkTheme) 0.dp else 7.dp,
+                            elevation = if (isDarkTheme) 0.dp else 2.5.dp,
                             shape = RoundedCornerShape(12.dp),
                             clip = true)
                         .constrainAs(textField) {
