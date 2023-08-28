@@ -23,10 +23,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccessTimeFilled
@@ -81,13 +82,14 @@ fun BottomSheetIncidentDescription(
     onClickDelete: () -> Unit,
     onClickCancelButton: () -> Unit,
     onDismissBottomSheet: () -> Unit,
+    onClickGotItButton: () -> Unit,
     onClickConfirmButton: (description: String, label: String) -> Unit
 
     ) {
 
 
     val isDarkTheme = IsDarkTheme.current
-    val marker = uiState.selectedHazardousMarker!!
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -118,32 +120,107 @@ fun BottomSheetIncidentDescription(
 
             }
 
+            if (state.shouldShowHazardousStartingInfo) {
+
+                HazardousStartingInfo(
+                    onClickGotItButton = onClickGotItButton,
+                )
+                return@Card
+            }
 
             if (uiState.currentlyEditingHazardousMarker != null) {
 
-                val marker = uiState.currentlyEditingHazardousMarker
+                val editingMarker = uiState.currentlyEditingHazardousMarker
                 IncidentDescriptionEditMode(
                     modifier = Modifier,
-                    markerLabel = marker.label,
-                    markerDescription = marker.description,
+                    markerLabel = editingMarker.label,
+                    markerDescription = editingMarker.description,
                     onClickCancelButton = onClickCancelButton,
                     onClickConfirmButton = onClickConfirmButton
                 )
-            } else {
-                IncidentDescriptionSection(
-                    onDismissBottomSheet = onDismissBottomSheet,
-                    icon = icon,
-                    uiState = uiState,
-                    state = state,
-                    marker = marker,
-                    onClickEdit = onClickEdit,
-                    onClickDelete = onClickDelete
-                )
-
+                return@Card
             }
+
+            IncidentDescriptionSection(
+                onDismissBottomSheet = onDismissBottomSheet,
+                icon = icon,
+                uiState = uiState,
+                state = state,
+                marker = uiState.selectedHazardousMarker!!,
+                onClickEdit = onClickEdit,
+                onClickDelete = onClickDelete
+            )
+
         }
     }
 }
+
+@Composable
+private fun HazardousStartingInfo(
+
+    modifier : Modifier = Modifier,
+    onClickGotItButton: () -> Unit) {
+
+    val isDarkTheme = IsDarkTheme.current
+
+
+    Surface(modifier = modifier,) {
+
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(all = 8.dp)) {
+
+            Image(
+                painter = painterResource(id = if (isDarkTheme) R.drawable.ic_marker_info_dark else R.drawable.ic_marker_info_light),
+                contentDescription = "Image",
+                modifier = Modifier.padding(vertical = 12.dp))
+
+            Text(
+                text = "Hazardous Marker Visibility",
+                color = MaterialTheme.colors.onSurface,
+                style = MaterialTheme.typography.subtitle1,
+                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp))
+
+            Text(
+                text = "Your Hazardous Lane Marker\n" +
+                       "will only be visible for a week",
+                color = MaterialTheme.colors.onSurface,
+                style = MaterialTheme.typography.subtitle2,
+                modifier = Modifier.padding(vertical = 4.dp))
+
+            Button(
+                onClick = onClickGotItButton,
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(
+                    backgroundColor = MaterialTheme.colors.primary,
+                    contentColor = MaterialTheme.colors.onPrimary),
+                modifier = Modifier.padding(vertical = 12.dp)) {
+
+                Text(
+                    text = "Got it!",
+                    color = MaterialTheme.colors.onPrimary,
+                    style = MaterialTheme.typography.button,
+                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 12.dp))
+            }
+
+        }
+
+
+    }
+}
+
+
+@Preview
+@Composable
+fun PreviewHazardousStartingInfo() {
+    CyclistanceTheme(darkTheme = true) {
+        HazardousStartingInfo(
+            onClickGotItButton = {}
+        )
+    }
+}
+
 
 @Composable
 private fun IncidentDescriptionSection(
@@ -297,6 +374,14 @@ private fun IncidentDescriptionEditMode(
             modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
         )
 
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth(0.91f)
+                .padding(top = 12.dp, bottom = 4.dp),
+            thickness =  1.2.dp,
+            color = Black500,
+        )
+
         HorizontalPager(
             state = pagerState, pageSize = PageSize.Fill,
             modifier = Modifier
@@ -309,7 +394,7 @@ private fun IncidentDescriptionEditMode(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 8.dp)
+                    .padding(top = 8.dp, bottom = 4.dp)
                     .align(Alignment.CenterHorizontally),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(
@@ -471,12 +556,73 @@ private fun ReportItemDescription(
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @Preview(device = "id:Galaxy Nexus")
 @Composable
-fun PreviewBottomSheetIncidentDescription() {
+fun PreviewBottomSheetIncidentDescriptionDark() {
 
-    val isDarkTheme = true
+    val isDarkTheme = false
+    CompositionLocalProvider(IsDarkTheme provides isDarkTheme) {
+        CyclistanceTheme(darkTheme = isDarkTheme) {
+
+
+            Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
+                BottomSheetIncidentDescription(
+
+                    uiState = MappingUiState(
+                        currentlyEditingHazardousMarker = HazardousLaneMarker(label = "Crash", description = "Lorem ipsum dolor sit amet consectetur adipi"),
+                        selectedHazardousMarker = HazardousLaneMarker(
+                            id = "1",
+                            label = "Crash",
+                            latitude = 14.123,
+                            longitude = 121.123,
+                            idCreator = "1o3jjt90qin3f9n23",
+                            description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+                            address = "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+                        )),
+                    icon = R.drawable.ic_lane_closure_marker,
+                    state = MappingState(userId = "1o3jjt90qin3f39n23",shouldShowHazardousStartingInfo = true),
+                    onClickDelete = {},
+                    onClickEdit = {},
+                    onDismissBottomSheet = {},
+                    onClickCancelButton = {}, onClickGotItButton = {},
+                    onClickConfirmButton = { _, _ ->})
+            }
+        }
+    }
+}
+
+@Preview(device = "id:Galaxy Nexus")
+@Composable
+fun PreviewBottomSheetIncidentDescriptionLight() {
+
+    val isDarkTheme = false
     CompositionLocalProvider(IsDarkTheme provides isDarkTheme) {
         CyclistanceTheme(darkTheme = isDarkTheme) {
 
@@ -501,6 +647,7 @@ fun PreviewBottomSheetIncidentDescription() {
                     onClickEdit = {},
                     onDismissBottomSheet = {},
                     onClickCancelButton = {},
+                    onClickGotItButton = {},
                     onClickConfirmButton = { _, _ ->})
             }
         }
@@ -510,16 +657,19 @@ fun PreviewBottomSheetIncidentDescription() {
 @Preview
 @Composable
 fun PreviewIncidentDescriptionEditMode() {
-    CyclistanceTheme(darkTheme = true) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background),
-            contentAlignment = Alignment.BottomCenter) {
-            IncidentDescriptionEditMode(
-                onClickCancelButton = { /*TODO*/ },
-                onClickConfirmButton = { description, label ->  },
-                markerLabel = "Crash", modifier = Modifier, markerDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.")
+    val isDarkTheme = true
+
+    CompositionLocalProvider(IsDarkTheme provides isDarkTheme) {
+        CyclistanceTheme(darkTheme = isDarkTheme) {
+            Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
+                IncidentDescriptionEditMode(
+                    onClickCancelButton = { /*TODO*/ },
+                    onClickConfirmButton = { description, label -> },
+                    markerLabel = "Crash",
+                    modifier = Modifier,
+                    markerDescription = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.")
+            }
+
         }
     }
 }

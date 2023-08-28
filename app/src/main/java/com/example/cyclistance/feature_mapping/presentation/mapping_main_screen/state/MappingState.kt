@@ -29,7 +29,8 @@ data class MappingState(
     val speedometerState: SpeedometerState = SpeedometerState(),
     val nearbyCyclist: NearbyCyclist? = null,
     val mapType: String = MapType.Default.type,
-    val userId: String = ""
+    val userId: String = "",
+    val shouldShowHazardousStartingInfo: Boolean = false,
 ) : Parcelable{
 
 

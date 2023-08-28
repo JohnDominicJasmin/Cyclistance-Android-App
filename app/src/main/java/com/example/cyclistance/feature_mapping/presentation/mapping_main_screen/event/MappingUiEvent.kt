@@ -65,6 +65,7 @@ sealed class MappingUiEvent{
     data class OnClickEditIncidentDescription(val marker: HazardousLaneMarker) : MappingUiEvent()
     object OnClickDeleteIncident : MappingUiEvent()
     object OnConfirmDeleteIncident: MappingUiEvent()
+    object OnClickHazardousInfoGotIt: MappingUiEvent()
 
     data class OnClickMapMarker(val markerSnippet: String, val markerId: String): MappingUiEvent()
 

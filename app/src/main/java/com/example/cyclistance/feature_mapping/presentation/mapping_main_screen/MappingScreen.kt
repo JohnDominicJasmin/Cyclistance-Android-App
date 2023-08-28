@@ -812,6 +812,10 @@ fun MappingScreen(
             ))
     }}
 
+    val onClickHazardousInfoGotIt = remember{{
+        mappingViewModel.onEvent(event = MappingVmEvent.ShouldShowHazardousStartingInfo(false))
+    }}
+
 
 
 
@@ -1190,6 +1194,7 @@ fun MappingScreen(
                 MappingUiEvent.DismissIncidentDescriptionBottomSheet -> onDismissIncidentDescriptionBottomSheet()
                 MappingUiEvent.CancelEditIncidentDescription -> onCancelEditIncidentDescription()
                 is MappingUiEvent.UpdateIncidentDescription -> onUpdateReportedIncident(event.description, event.label)
+                MappingUiEvent.OnClickHazardousInfoGotIt -> onClickHazardousInfoGotIt()
             }
         }
 
