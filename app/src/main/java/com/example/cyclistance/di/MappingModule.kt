@@ -181,6 +181,7 @@ object MappingModule {
             mapTypeUseCase = MapTypeUseCase(mappingUiStoreRepository),
             removeHazardousListenerUseCase = RemoveHazardousListenerUseCase(mappingRepository),
             updateHazardousLaneUseCase = UpdateHazardousLaneUseCase(mappingRepository),
+            shouldHazardousStartingInfoUseCase = ShouldHazardousStartingInfoUseCase(mappingUiStoreRepository),
         )
 
     }

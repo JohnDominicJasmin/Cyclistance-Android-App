@@ -91,8 +91,24 @@ class MappingViewModel @Inject constructor(
         loadData()
         observeDataChanges()
         getMapType()
+        getShouldShowHazardousStartingInfo()
     }
 
+    private fun setShouldShowHazardousStartingInfo(shouldShow: Boolean) {
+        viewModelScope.launch {
+            mappingUseCase.shouldHazardousStartingInfoUseCase(shouldShow = shouldShow)
+        }
+    }
+
+    private fun getShouldShowHazardousStartingInfo() {
+        viewModelScope.launch {
+            mappingUseCase.shouldHazardousStartingInfoUseCase().catch {
+                it.handleException()
+            }.onEach { shouldShow ->
+                _state.update { it.copy(shouldShowHazardousStartingInfo = shouldShow) }
+            }.launchIn(this)
+        }
+    }
 
 
     private fun observeDataChanges() {
@@ -109,17 +125,17 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.mapTypeUseCase()
                 .distinctUntilChanged()
                 .catch {
-                Timber.v("Error getting map type: ${it.message}")
-            }.onEach { mapType ->
-                _state.update { it.copy(mapType = mapType) }
-            }.launchIn(viewModelScope)
+                    Timber.v("Error getting map type: ${it.message}")
+                }.onEach { mapType ->
+                    _state.update { it.copy(mapType = mapType) }
+                }.launchIn(viewModelScope)
 
         }
     }
 
     private fun subscribeToHazardousLaneUpdates() {
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
-            
+
             mappingUseCase.newHazardousLaneUseCase(
                 onAddedHazardousMarker = { marker ->
 
@@ -501,6 +517,9 @@ class MappingViewModel @Inject constructor(
             is MappingVmEvent.UpdateReportedIncident -> {
                 updateReportedIncident(marker = event.marker)
             }
+
+            is MappingVmEvent.ShouldShowHazardousStartingInfo -> setShouldShowHazardousStartingInfo(
+                event.shouldShow)
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
@@ -514,20 +533,24 @@ class MappingViewModel @Inject constructor(
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.UpdateIncidentSuccess)
             }.onFailure {
-                _eventFlow.emit(value = MappingEvent.UpdateIncidentFailed(it.message ?: "Failed to update incident"))
+                _eventFlow.emit(
+                    value = MappingEvent.UpdateIncidentFailed(
+                        it.message ?: "Failed to update incident"))
             }
         }
     }
 
 
-    private fun deleteHazardousLaneMarker(id: String){
+    private fun deleteHazardousLaneMarker(id: String) {
         viewModelScope.launch {
             runCatching {
                 mappingUseCase.deleteHazardousLaneUseCase(id)
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.DeleteHazardousLaneMarkerSuccess)
             }.onFailure {
-                _eventFlow.emit(value = MappingEvent.DeleteHazardousLaneMarkerFailed(it.message ?: "Failed to delete incident marker"))
+                _eventFlow.emit(
+                    value = MappingEvent.DeleteHazardousLaneMarkerFailed(
+                        it.message ?: "Failed to delete incident marker"))
             }
         }
     }
@@ -897,7 +920,7 @@ class MappingViewModel @Inject constructor(
         getTransactionLocationUpdatesJob?.cancel()
     }
 
-    private fun removeHazardousLaneListener(){
+    private fun removeHazardousLaneListener() {
         mappingUseCase.removeHazardousListenerUseCase()
     }
 
@@ -1116,10 +1139,9 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun getPhotoUrl() = settingUseCase.getPhotoUrlUseCase()
 
-    private fun clearTravelledPath(){
+    private fun clearTravelledPath() {
         travelledPath = mutableListOf()
     }
-
 
 
 }

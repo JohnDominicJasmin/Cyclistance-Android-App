@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping.data.repository
 import android.content.Context
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAP_TYPE_KEY
+import com.example.cyclistance.core.utils.constants.MappingConstants.SHOW_HAZARDOUS_STARTING_INFO_KEY
 import com.example.cyclistance.core.utils.contexts.dataStore
 import com.example.cyclistance.core.utils.data_store_ext.editData
 import com.example.cyclistance.core.utils.data_store_ext.getData
@@ -67,6 +68,18 @@ class MappingUiStoreRepositoryImpl(
     override suspend fun getMapType(): Flow<String> {
         return withContext(scope){
             dataStore.getData(key = MAP_TYPE_KEY, defaultValue = MapType.Default.type)
+        }
+    }
+
+    override suspend fun showHazardousStartingInfo(shouldShow: Boolean) {
+        withContext(scope) {
+            dataStore.editData(SHOW_HAZARDOUS_STARTING_INFO_KEY, shouldShow)
+        }
+    }
+
+    override suspend fun shouldShowHazardousStartingInfo(): Flow<Boolean> {
+        return withContext(scope) {
+            dataStore.getData(key = SHOW_HAZARDOUS_STARTING_INFO_KEY, defaultValue = true)
         }
     }
 }

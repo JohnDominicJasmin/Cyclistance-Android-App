@@ -66,5 +66,7 @@ data class MappingUseCase(
     val updateHazardousLaneUseCase: UpdateHazardousLaneUseCase,
     val deleteHazardousLaneUseCase: DeleteHazardousLaneUseCase,
 
+    val shouldHazardousStartingInfoUseCase: ShouldHazardousStartingInfoUseCase,
+
     val mapTypeUseCase: MapTypeUseCase,
     )
