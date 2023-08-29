@@ -52,6 +52,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 import java.io.IOException
+import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
@@ -125,6 +126,7 @@ class MappingRepositoryImpl(
                     mapOf(
                         "$KEY_MARKER_FIELD.description" to description,
                         "$KEY_MARKER_FIELD.label" to label,
+                        "$KEY_MARKER_FIELD.datePosted" to Date(),
                         KEY_TIMESTAMP_FIELD to System.currentTimeMillis()
                     )).addOnSuccessListener {
                     continuation.resume(Unit)
