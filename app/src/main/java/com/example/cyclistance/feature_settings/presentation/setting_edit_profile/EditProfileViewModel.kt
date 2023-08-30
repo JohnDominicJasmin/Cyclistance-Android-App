@@ -44,7 +44,6 @@ class EditProfileViewModel @Inject constructor(
     private fun loadProfile() {
         viewModelScope.launch(context = defaultDispatcher) {
             loadName()
-            loadPhoneNumber()
             loadPhoto()
         }
     }
@@ -56,7 +55,6 @@ class EditProfileViewModel @Inject constructor(
             is EditProfileVmEvent.Save -> {
                 updateUserProfile(
                     imageUri = event.imageUri,
-                    phoneNumber = event.phoneNumber,
                     name = event.name)
             }
 
@@ -97,33 +95,14 @@ class EditProfileViewModel @Inject constructor(
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
-    private suspend fun loadPhoneNumber() {
-        runCatching {
-            startLoading()
-            getPhoneNumber()
-        }.onSuccess { phoneNumber ->
-            finishLoading()
-            _eventFlow.emit(value = EditProfileEvent.GetPhoneNumberSuccess(phoneNumber))
-            _state.update { it.copy(phoneNumberSnapshot = phoneNumber) }
-        }.onFailure { exception ->
-            finishLoading()
-            _eventFlow.emit(value = EditProfileEvent.GetPhoneNumberFailed(reason = exception.message!!))
-        }
 
-        savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
-    }
-
-    private fun updateUserProfile(imageUri: String, phoneNumber: String, name: String) {
+    private fun updateUserProfile(imageUri: String, name: String) {
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 startLoading()
                 val uri = imageUri.takeIf { it.isNotEmpty() }
                 val photoUri: String? = uri?.let { settingUseCase.uploadImageUseCase(it) }
-                val phoneNumberChanges = phoneNumber != state.value.phoneNumberSnapshot
 
-                if (phoneNumberChanges) {
-                    settingUseCase.updatePhoneNumberUseCase(phoneNumber.trim())
-                }
                 settingUseCase.updateProfileUseCase(
                     photoUri = photoUri,
                     name = name.trim())
@@ -167,6 +146,5 @@ class EditProfileViewModel @Inject constructor(
 
     private suspend fun getName() = settingUseCase.getNameUseCase()
     private suspend fun getPhotoUrl() = settingUseCase.getPhotoUrlUseCase()
-    private suspend fun getPhoneNumber() = settingUseCase.getPhoneNumberUseCase()
 
 }

@@ -423,38 +423,9 @@ fun MappingScreen(
             (state.rescueTransaction?.cancellation)?.rescueCancelled == true
         }
 
-    val clientPhoneNumber = remember(state.rescuee, state.rescuer) {
-        val client = state.rescuee ?: state.rescuer
-        client?.contactNumber
-    }
-
-    val callClient = remember(clientPhoneNumber) {
-        {
-            clientPhoneNumber?.let(context::callPhoneNumber)
-        }
-    }
-    val phonePermissionState =
-        rememberPermissionState(permission = Manifest.permission.CALL_PHONE) { permissionGranted ->
-            if (permissionGranted) {
-                callClient()
-            }
-        }
-    val onClickChatButton = remember(clientPhoneNumber) {
+    val onClickChatButton = remember() {
         {
 
-
-        }
-    }
-
-    val onClickCallButton = remember(clientPhoneNumber) {
-        {
-            phonePermissionState.requestPermission(
-                onGranted = {
-                    callClient()
-                },
-                onExplain = {
-                    uiState = uiState.copy(phonePermissionDialogVisible = true)
-                })
         }
     }
 
@@ -591,11 +562,7 @@ fun MappingScreen(
         }
     }
 
-    val onDismissPhonePermissionDialog = remember {
-        {
-            uiState = uiState.copy(phonePermissionDialogVisible = false)
-        }
-    }
+
     val onClickCancelButton = remember {
         { id: String ->
             mappingViewModel.onEvent(MappingVmEvent.DeclineRescueRequest(id))
@@ -1144,7 +1111,6 @@ fun MappingScreen(
                 is MappingUiEvent.RequestHelp -> onClickRequestHelpButton()
                 is MappingUiEvent.RespondToHelp -> onClickRespondToHelpButton()
                 is MappingUiEvent.CancelSearchConfirmed -> onClickCancelSearchButton()
-                is MappingUiEvent.CallRescueTransaction -> onClickCallButton()
                 is MappingUiEvent.ChatRescueTransaction -> onClickChatButton()
                 is MappingUiEvent.CancelRescueTransaction -> onClickCancelRescueButton()
                 is MappingUiEvent.CancelledRescueConfirmed -> onClickOkCancelledRescue()
@@ -1162,7 +1128,6 @@ fun MappingScreen(
                 is MappingUiEvent.RescueArrivedConfirmed -> {}
                 is MappingUiEvent.DestinationReachedConfirmed -> {}
                 is MappingUiEvent.DismissLocationPermission -> onDismissLocationPermissionDialog()
-                is MappingUiEvent.DismissPhonePermission -> onDismissPhonePermissionDialog()
                 is MappingUiEvent.OnToggleExpandableFAB -> onToggleExpandedFAB()
                 is MappingUiEvent.ShowEmergencyCallDialog -> showEmergencyCallDialog()
                 is MappingUiEvent.DismissEmergencyCallDialog -> dismissEmergencyCallDialog()

@@ -5,7 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
-import com.example.cyclistance.core.utils.constants.AuthConstants
 import com.example.cyclistance.core.utils.constants.AuthConstants.IMAGE_LARGE_SIZE
 import com.example.cyclistance.core.utils.constants.AuthConstants.IMAGE_SMALL_SIZE
 import com.example.cyclistance.core.utils.constants.SettingConstants.DATA_STORE_THEME_KEY
@@ -50,17 +49,6 @@ class SettingRepositoryImpl(
     override fun isDarkTheme(): Flow<Boolean> {
         return dataStore.getData(key = DATA_STORE_THEME_KEY, defaultValue = false)
     }
-
-    override suspend fun updatePhoneNumber(phoneNumber: String) {
-        withContext(scope) {
-            dataStore.editData(AuthConstants.DATA_STORE_PHONE_NUMBER_KEY, phoneNumber)
-        }
-    }
-
-    override fun getPhoneNumber(): Flow<String> {
-        return dataStore.getData(key = AuthConstants.DATA_STORE_PHONE_NUMBER_KEY, defaultValue = "")
-    }
-
 
     override suspend fun updateProfile(photoUri: String?, name: String?): Boolean {
         val profileUpdates = userProfileChangeRequest {

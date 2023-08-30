@@ -21,7 +21,6 @@ data class MappingUiState(
     val routeDirection: RouteDirection? = null,
     val bottomSheetType: String? = null,
     val locationPermissionDialogVisible: Boolean = false,
-    val phonePermissionDialogVisible: Boolean = false,
     val isFabExpanded: Boolean = false,
     val alertDialogState: AlertDialogState = AlertDialogState(),
     val isRescueRequestDialogVisible: Boolean = false,

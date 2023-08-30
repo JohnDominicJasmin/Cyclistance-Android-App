@@ -1076,7 +1076,6 @@ class MappingViewModel @Inject constructor(
                         name = getName(),
                         address = fullAddress,
                         profilePictureUrl = getPhotoUrl(),
-                        contactNumber = getPhoneNumber(),
                         location = LocationModel(
                             latitude = location.latitude,
                             longitude = location.longitude
@@ -1133,9 +1132,6 @@ class MappingViewModel @Inject constructor(
     private fun getId(): String = authUseCase.getIdUseCase()
 
     private suspend fun getName(): String = settingUseCase.getNameUseCase()
-
-    private suspend fun getPhoneNumber(): String =
-        settingUseCase.getPhoneNumberUseCase()
 
     private suspend fun getPhotoUrl() = settingUseCase.getPhotoUrlUseCase()
 

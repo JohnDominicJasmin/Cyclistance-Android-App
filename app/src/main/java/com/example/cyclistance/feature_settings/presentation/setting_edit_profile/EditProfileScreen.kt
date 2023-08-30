@@ -234,8 +234,7 @@ fun EditProfileScreen(
             editProfileViewModel.onEvent(
                 event = EditProfileVmEvent.Save(
                     imageUri = uiState.selectedImageUri,
-                    name = name.text,
-                    phoneNumber = phoneNumber.text))
+                    name = name.text, ))
         })
     }
     val cancelEditProfile = remember {
@@ -249,8 +248,7 @@ fun EditProfileScreen(
             editProfileViewModel.onEvent(
                 event = EditProfileVmEvent.Save(
                     imageUri = uiState.selectedImageUri,
-                    name = name.text,
-                    phoneNumber = phoneNumber.text))
+                    name = name.text))
         }
     }
 
