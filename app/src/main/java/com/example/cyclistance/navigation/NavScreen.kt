@@ -33,12 +33,12 @@ import com.example.cyclistance.core.utils.composable_utils.ComposableLifecycle
 import com.example.cyclistance.feature_mapping.data.data_source.local.network_observer.NetworkConnectivityChecker
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.drawer.NavigationDrawerContent
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileViewModel
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileEvent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingViewModel
 import com.example.cyclistance.feature_settings.presentation.setting_screen.event.SettingEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.event.SettingVmEvent
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.EditProfileViewModel
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.event.EditProfileEvent
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.event.EditProfileVmEvent
 import com.example.cyclistance.navigation.components.NoInternetStatusBar
 import com.example.cyclistance.navigation.components.TopAppBar
 import com.example.cyclistance.navigation.event.NavEvent

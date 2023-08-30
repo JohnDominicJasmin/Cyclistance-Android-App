@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_user_profile.presentation.components
+package com.example.cyclistance.feature_user_profile.presentation.user_profile.components
 
 import android.graphics.Typeface
 import androidx.annotation.DrawableRes

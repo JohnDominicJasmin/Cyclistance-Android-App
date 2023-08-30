@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components
+package com.example.cyclistance.feature_user_profile.presentation.edit_profile.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,8 +18,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.core.presentation.text_fields.TextFieldCreator
 import com.example.cyclistance.core.presentation.text_fields.TextFieldItem
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileState
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileUiState
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.state.EditProfileState
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.state.EditProfileUiState
 import com.example.cyclistance.theme.CyclistanceTheme
 
 

@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
+package com.example.cyclistance.feature_user_profile.presentation.edit_profile
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.SettingConstants.EDIT_PROFILE_VM_STATE_KEY
 import com.example.cyclistance.feature_settings.domain.exceptions.SettingExceptions
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileEvent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileState
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.event.EditProfileEvent
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.event.EditProfileVmEvent
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.state.EditProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableSharedFlow

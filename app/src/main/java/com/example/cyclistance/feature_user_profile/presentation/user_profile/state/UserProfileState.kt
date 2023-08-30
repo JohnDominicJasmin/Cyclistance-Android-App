@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_user_profile.presentation.state
+package com.example.cyclistance.feature_user_profile.presentation.user_profile.state
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState
@@ -9,5 +9,5 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class UserProfileState(
-    val userProfileModel: UserProfileModel
+    val userProfileModel: UserProfileModel = UserProfileModel(),
 ):Parcelable

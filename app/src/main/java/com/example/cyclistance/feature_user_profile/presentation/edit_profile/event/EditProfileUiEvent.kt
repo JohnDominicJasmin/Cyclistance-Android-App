@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event
+package com.example.cyclistance.feature_user_profile.presentation.edit_profile.event
 
 import androidx.compose.ui.text.input.TextFieldValue
 

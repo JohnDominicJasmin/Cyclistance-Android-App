@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_user_profile.presentation.components
+package com.example.cyclistance.feature_user_profile.presentation.user_profile.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,7 +29,7 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_user_profile.presentation.state.UserProfileState
+import com.example.cyclistance.feature_user_profile.presentation.user_profile.state.UserProfileState
 import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle
 

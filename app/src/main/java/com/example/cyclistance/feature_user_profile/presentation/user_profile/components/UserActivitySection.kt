@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_user_profile.presentation.components
+package com.example.cyclistance.feature_user_profile.presentation.user_profile.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

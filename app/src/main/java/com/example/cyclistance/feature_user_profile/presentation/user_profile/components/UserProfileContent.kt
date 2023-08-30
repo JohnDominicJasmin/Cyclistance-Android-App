@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_user_profile.presentation.components
+package com.example.cyclistance.feature_user_profile.presentation.user_profile.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,7 +23,7 @@ import com.example.cyclistance.feature_user_profile.domain.model.ReasonAssistanc
 import com.example.cyclistance.feature_user_profile.domain.model.UserActivityModel
 import com.example.cyclistance.feature_user_profile.domain.model.UserProfileInfoModel
 import com.example.cyclistance.feature_user_profile.domain.model.UserProfileModel
-import com.example.cyclistance.feature_user_profile.presentation.state.UserProfileState
+import com.example.cyclistance.feature_user_profile.presentation.user_profile.state.UserProfileState
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme

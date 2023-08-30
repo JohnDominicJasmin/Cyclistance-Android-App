@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components
+package com.example.cyclistance.feature_user_profile.presentation.edit_profile.components
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,9 +35,9 @@ import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoIn
 import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogCameraPermission
 import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogFilesAndMediaPermission
 import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileUiEvent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileState
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileUiState
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.event.EditProfileUiEvent
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.state.EditProfileState
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.state.EditProfileUiState
 import com.example.cyclistance.theme.Blue600
 import com.example.cyclistance.theme.CyclistanceTheme
 

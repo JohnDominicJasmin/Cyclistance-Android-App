@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components
+package com.example.cyclistance.feature_user_profile.presentation.edit_profile.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

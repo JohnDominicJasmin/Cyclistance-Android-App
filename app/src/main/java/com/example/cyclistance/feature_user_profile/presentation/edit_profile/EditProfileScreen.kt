@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.presentation.setting_edit_profile
+package com.example.cyclistance.feature_user_profile.presentation.edit_profile
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -28,11 +28,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.core.utils.save_images.ImageUtils.toImageUri
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.EditProfileScreenContent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileEvent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileUiEvent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.event.EditProfileVmEvent
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.state.EditProfileUiState
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.components.EditProfileScreenContent
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.event.EditProfileEvent
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.event.EditProfileUiEvent
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.event.EditProfileVmEvent
+import com.example.cyclistance.feature_user_profile.presentation.edit_profile.state.EditProfileUiState
 import com.google.accompanist.permissions.*
 import kotlinx.coroutines.launch
 
