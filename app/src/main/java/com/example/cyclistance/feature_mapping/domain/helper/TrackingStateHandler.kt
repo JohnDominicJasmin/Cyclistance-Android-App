@@ -18,7 +18,6 @@ import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelecte
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
-import com.example.cyclistance.feature_settings.domain.exceptions.SettingExceptions
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -266,7 +265,7 @@ class TrackingStateHandler(
                 )
             }
 
-            is SettingExceptions.PhoneNumberException, is MappingExceptions.NameException -> {
+            is MappingExceptions.NameException -> {
                 eventFlow.emit(MappingEvent.InsufficientUserCredential)
             }
 

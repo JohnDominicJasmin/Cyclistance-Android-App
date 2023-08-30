@@ -1,9 +1,9 @@
 package com.example.cyclistance.feature_settings.domain.use_case
 
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
+import com.example.cyclistance.feature_user_profile.domain.repository.UserProfileRepository
 
-class GetNameUseCase(private val repository: SettingRepository) {
+class GetNameUseCase(private val repository: UserProfileRepository) {
 
      suspend operator fun invoke(): String {
 

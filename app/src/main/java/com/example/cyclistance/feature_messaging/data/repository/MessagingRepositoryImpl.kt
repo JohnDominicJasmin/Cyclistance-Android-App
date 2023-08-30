@@ -18,7 +18,7 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.REMOTE_MS
 import com.example.cyclistance.core.utils.constants.MessagingConstants.REMOTE_MSG_REGISTRATION_IDS
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SAVED_TOKEN
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_ARG
-import com.example.cyclistance.core.utils.constants.MessagingConstants.USER_COLLECTION
+import com.example.cyclistance.core.utils.constants.UtilConstants.USER_COLLECTION
 import com.example.cyclistance.core.utils.contexts.dataStore
 import com.example.cyclistance.core.utils.data_store_ext.editData
 import com.example.cyclistance.core.utils.data_store_ext.getData

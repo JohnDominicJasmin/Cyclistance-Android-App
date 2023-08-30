@@ -5,7 +5,6 @@ import com.example.cyclistance.core.utils.validation.InputValidate.isDigit
 import com.example.cyclistance.feature_emergency_call.domain.exceptions.EmergencyCallExceptions
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.domain.repository.EmergencyContactRepository
-import com.example.cyclistance.feature_settings.domain.exceptions.SettingExceptions
 import kotlinx.coroutines.flow.first
 
 class UpsertContactUseCase(
@@ -28,7 +27,7 @@ class UpsertContactUseCase(
 
 
         if (emergencyContact.phoneNumber.containsSpecialCharacters()) {
-            throw SettingExceptions.PhoneNumberException("Phone number must not contain special characters.")
+            throw EmergencyCallExceptions.PhoneNumberException("Phone number must not contain special characters.")
         }
 
 

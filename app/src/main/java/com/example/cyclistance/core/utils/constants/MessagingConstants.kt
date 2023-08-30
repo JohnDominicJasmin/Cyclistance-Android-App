@@ -24,7 +24,6 @@ object MessagingConstants {
 
     const val KEY_CONVERSATIONS_COLLECTION = "conversations"
     const val KEY_COLLECTION_CHATS = "chats"
-    const val USER_COLLECTION = "users"
     const val KEY_LAST_MESSAGE = "lastMessage"
     const val KEY_AVAILABILITY = "availability"
 

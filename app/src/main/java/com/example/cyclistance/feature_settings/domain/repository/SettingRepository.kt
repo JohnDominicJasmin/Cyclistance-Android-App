@@ -6,8 +6,5 @@ interface SettingRepository {
 
     suspend fun toggleTheme(value: Boolean)
     fun isDarkTheme(): Flow<Boolean>
-    suspend fun updateProfile(photoUri: String?, name: String?): Boolean
-    suspend fun uploadImage(v: String): String
-    suspend fun getName(): String?
-    suspend fun getPhotoUrl(): String?
+
 }

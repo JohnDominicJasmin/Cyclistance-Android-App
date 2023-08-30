@@ -1,7 +1,6 @@
-package com.example.cyclistance.feature_settings.domain.exceptions
+package com.example.cyclistance.feature_user_profile.domain.exceptions
 
-sealed class SettingExceptions{
-    class PhoneNumberException(message: String  = "Field cannot be blank"):RuntimeException(message)
+sealed class UserProfileExceptions{
     class NameException(message: String = "Field cannot be blank"):RuntimeException(message)
     class NetworkException(message: String) : RuntimeException(message)
     class InternalServerException(message: String) : RuntimeException(message)

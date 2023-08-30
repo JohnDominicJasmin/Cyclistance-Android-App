@@ -6,14 +6,9 @@ import androidx.annotation.Keep
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.feature_settings.data.repository.SettingRepositoryImpl
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
-import com.example.cyclistance.feature_settings.domain.use_case.GetNameUseCase
-import com.example.cyclistance.feature_settings.domain.use_case.GetPhotoUrlUseCase
 import com.example.cyclistance.feature_settings.domain.use_case.IsDarkThemeUseCase
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
 import com.example.cyclistance.feature_settings.domain.use_case.ToggleThemeUseCase
-import com.example.cyclistance.feature_settings.domain.use_case.UpdateProfileUseCase
-import com.example.cyclistance.feature_settings.domain.use_case.UploadImageUseCase
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
@@ -43,10 +38,8 @@ object SettingModule {
     @Provides
     @Singleton
     fun provideSettingRepository(
-        @ApplicationContext context: Context,
-        firebaseAuth: FirebaseAuth,
-        storage: FirebaseStorage): SettingRepository =
-        SettingRepositoryImpl(context = context, auth = firebaseAuth, storage = storage)
+        @ApplicationContext context: Context): SettingRepository =
+        SettingRepositoryImpl(context = context)
 
 
     @Provides
@@ -55,11 +48,6 @@ object SettingModule {
         return SettingUseCase(
             isDarkThemeUseCase = IsDarkThemeUseCase(settingRepository),
             toggleThemeUseCase = ToggleThemeUseCase(settingRepository),
-            updateProfileUseCase = UpdateProfileUseCase(settingRepository),
-            uploadImageUseCase = UploadImageUseCase(settingRepository),
-            getPhotoUrlUseCase = GetPhotoUrlUseCase(settingRepository),
-            getNameUseCase = GetNameUseCase(settingRepository)
-
         )
     }
 

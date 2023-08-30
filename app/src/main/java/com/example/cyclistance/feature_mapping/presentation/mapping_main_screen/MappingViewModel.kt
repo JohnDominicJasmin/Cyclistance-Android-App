@@ -33,6 +33,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
 import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
+import com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
 import com.google.maps.android.SphericalUtil
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -63,6 +64,7 @@ class MappingViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase,
     private val settingUseCase: SettingUseCase,
     private val mappingUseCase: MappingUseCase,
+    private val userProfileUseCase: UserProfileUseCase,
     private val defaultDispatcher: CoroutineDispatcher
 ) : ViewModel() {
 
@@ -1131,9 +1133,9 @@ class MappingViewModel @Inject constructor(
 
     private fun getId(): String = authUseCase.getIdUseCase()
 
-    private suspend fun getName(): String = settingUseCase.getNameUseCase()
+    private suspend fun getName(): String = userProfileUseCase.getNameUseCase()
 
-    private suspend fun getPhotoUrl() = settingUseCase.getPhotoUrlUseCase()
+    private suspend fun getPhotoUrl() = userProfileUseCase.getPhotoUrlUseCase()
 
     private fun clearTravelledPath() {
         travelledPath = mutableListOf()
