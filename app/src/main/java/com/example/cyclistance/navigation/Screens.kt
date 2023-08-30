@@ -62,7 +62,6 @@ sealed class Screens {
             const val ROUTE = "settings_navigation"
         }
 
-        object EditProfile : SettingsNavigation(screenRoute = "edit_profile_screen")
         object Setting : SettingsNavigation(screenRoute = "setting_screen")
     }
 
@@ -75,6 +74,15 @@ sealed class Screens {
         object RideHistory : RideHistoryNavigation(screenRoute = "ride_history_screen")
         object RideHistoryDetails :
             RideHistoryNavigation(screenRoute = "ride_history_details_screen")
+    }
+
+    open class UserProfileNavigation(val screenRoute: String = "") : Screens() {
+        companion object {
+            const val ROUTE = "user_profile_navigation"
+        }
+
+        object UserProfile : UserProfileNavigation(screenRoute = "user_profile_screen")
+        object EditProfile : UserProfileNavigation(screenRoute = "edit_profile_screen")
     }
 
 }

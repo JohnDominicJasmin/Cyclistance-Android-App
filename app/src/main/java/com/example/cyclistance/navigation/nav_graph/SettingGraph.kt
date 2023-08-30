@@ -5,7 +5,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.EditProfileScreen
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingScreen
 import com.example.cyclistance.navigation.Screens
 
@@ -17,12 +16,6 @@ fun NavGraphBuilder.settingGraph(
         startDestination = Screens.SettingsNavigation.Setting.screenRoute,
         route = Screens.SettingsNavigation.ROUTE) {
 
-
-        composable(Screens.SettingsNavigation.EditProfile.screenRoute) {
-            EditProfileScreen(
-                navController = navController,
-                paddingValues = paddingValues)
-        }
 
         composable(Screens.SettingsNavigation.Setting.screenRoute) {
             SettingScreen(

@@ -25,7 +25,7 @@ fun SettingScreen(
 
     var uiState by rememberSaveable{ mutableStateOf(SettingUiState())}
     val onClickEditProfile = remember{{
-        navController.navigate(Screens.SettingsNavigation.EditProfile.screenRoute)
+        navController.navigate(Screens.UserProfileNavigation.EditProfile.screenRoute)
     }}
 
     val onClickResetPassword = remember{{

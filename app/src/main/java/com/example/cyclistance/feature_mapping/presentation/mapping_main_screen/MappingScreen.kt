@@ -821,7 +821,7 @@ fun MappingScreen(
 
                 is MappingEvent.InsufficientUserCredential -> {
                     navController.navigateScreen(
-                        Screens.SettingsNavigation.EditProfile.screenRoute)
+                        Screens.UserProfileNavigation.EditProfile.screenRoute)
                 }
 
                 is MappingEvent.LocationNotAvailable -> {

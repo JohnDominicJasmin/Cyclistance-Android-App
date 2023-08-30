@@ -91,7 +91,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.SettingsNavigation.EditProfile.screenRoute -> {
+        Screens.UserProfileNavigation.EditProfile.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -201,7 +201,7 @@ fun PreviewTopAppBarDark() {
     CyclistanceTheme(true) {
         Surface(color = MaterialTheme.colors.background) {
             TopAppBar(
-                route = Screens.SettingsNavigation.EditProfile.screenRoute,
+                route = Screens.UserProfileNavigation.EditProfile.screenRoute,
                 uiState = NavUiState(isNavigating = false))
         }
     }
@@ -214,7 +214,7 @@ fun PreviewTopAppBarLight() {
     CyclistanceTheme(false) {
         Surface(color = MaterialTheme.colors.background) {
             TopAppBar(
-                route = Screens.SettingsNavigation.EditProfile.screenRoute,
+                route = Screens.UserProfileNavigation.EditProfile.screenRoute,
                 uiState = NavUiState(isNavigating = false))
         }
     }
