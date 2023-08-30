@@ -17,7 +17,7 @@ import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCas
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationVmEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationState
-import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
+import com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -35,7 +35,7 @@ import javax.inject.Inject
 class ConversationViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val messagingUseCase: MessagingUseCase,
-    private val settingUseCase: SettingUseCase
+    private val userProfileUseCase: UserProfileUseCase
 ) : ViewModel() {
 
 
@@ -71,7 +71,6 @@ class ConversationViewModel @Inject constructor(
         getConversionId(receiverId = receiverId)
         getUid()
         getName()
-        getPhoto()
         saveState()
     }
 
@@ -94,7 +93,7 @@ class ConversationViewModel @Inject constructor(
     private fun getName() {
         viewModelScope.launch {
             runCatching {
-                settingUseCase.getNameUseCase()
+                userProfileUseCase.getNameUseCase()
             }.onSuccess { name ->
                 _state.update { it.copy(userName = name) }
             }.onFailure {
@@ -103,17 +102,7 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    private fun getPhoto() {
-        viewModelScope.launch {
-            runCatching {
-                settingUseCase.getPhotoUrlUseCase()
-            }.onSuccess { photo ->
-                _state.update { it.copy(userPhoto = photo) }
-            }.onFailure {
-                Timber.v("Failed to get photo: ${it.message}")
-            }
-        }
-    }
+
 
     private fun setConversion(message: String) {
         if (state.value.conversionId == null) {

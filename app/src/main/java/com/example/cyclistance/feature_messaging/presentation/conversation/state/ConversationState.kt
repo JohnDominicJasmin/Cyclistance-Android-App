@@ -13,7 +13,6 @@ data class ConversationState(
     val userSenderMessage: MessagingUserItemModel? = null,
     val userUid: String = "",
     val userName: String = "",
-    val userPhoto: String = "",
     val conversionId: String? = null,
     val isLoading: Boolean = false,
 ) : Parcelable
