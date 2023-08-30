@@ -48,7 +48,6 @@ fun PreviewEditProfileDark() {
             uiState = EditProfileUiState(cameraPermissionDialogVisible = true),
             bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
             name = TextFieldValue(""),
-            phoneNumber = TextFieldValue(""),
             event = {}
         )
     }
@@ -67,7 +66,6 @@ fun PreviewEditProfileLight() {
             uiState = EditProfileUiState(cameraPermissionDialogVisible = true),
             bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
             name = TextFieldValue(""),
-            phoneNumber = TextFieldValue(""),
             event = {}
         )
     }
@@ -84,18 +82,15 @@ fun EditProfileScreenContent(
     uiState: EditProfileUiState,
     bottomSheetScaffoldState: ModalBottomSheetState,
     name: TextFieldValue,
-    phoneNumber: TextFieldValue,
     event: (EditProfileUiEvent) -> Unit = {}
 ) {
 
 
     val isUserInformationChanges by remember(
         name,
-        phoneNumber,
         uiState.selectedImageUri) {
         derivedStateOf {
             name.text != state.nameSnapshot ||
-            phoneNumber.text != state.phoneNumberSnapshot ||
             uiState.selectedImageUri.isNotEmpty()
         }
     }
@@ -170,11 +165,9 @@ fun EditProfileScreenContent(
                         },
                     state = state,
                     onValueChangeName = { event(EditProfileUiEvent.OnChangeName(it)) },
-                    onValueChangePhoneNumber = { event(EditProfileUiEvent.OnChangePhoneNumber(it)) },
                     keyboardActions = keyboardActions,
                     uiState = uiState,
                     name = name,
-                    phoneNumber = phoneNumber,
                 )
 
 

@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,11 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -44,9 +41,7 @@ fun TextFieldInputArea(
     state: EditProfileState,
     uiState: EditProfileUiState,
     name: TextFieldValue,
-    phoneNumber: TextFieldValue,
     onValueChangeName: (TextFieldValue) -> Unit,
-    onValueChangePhoneNumber: (TextFieldValue) -> Unit,
     keyboardActions: KeyboardActions
 ) {
 
@@ -69,30 +64,6 @@ fun TextFieldInputArea(
         }
 
 
-        TextFieldCreator(label = "Phone Number", errorMessage = uiState.phoneNumberErrorMessage, ) {
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-
-                Text(
-                    text = "+63 | ",
-                    color = Black500,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = MaterialTheme.typography.subtitle2.fontSize
-                )
-
-                TextFieldItem(
-                    enabled = !state.isLoading,
-                    value = phoneNumber,
-                    keyboardOptions = KeyboardOptions(
-                        capitalization = KeyboardCapitalization.None,
-                        autoCorrect = false,
-                        keyboardType = KeyboardType.Phone,
-                        imeAction = ImeAction.Done),
-                    keyboardActions = keyboardActions,
-                    onValueChange = onValueChangePhoneNumber)
-
-            }
-        }
 
     }
 }
@@ -173,11 +144,9 @@ fun EditProfileTextFieldPreview() {
             TextFieldInputArea(
                 modifier = Modifier, state = EditProfileState(),
                 onValueChangeName = { },
-                onValueChangePhoneNumber = {},
                 keyboardActions = KeyboardActions { },
                 uiState = EditProfileUiState(),
                 name = TextFieldValue(""),
-                phoneNumber = TextFieldValue("")
             )
         }
     }

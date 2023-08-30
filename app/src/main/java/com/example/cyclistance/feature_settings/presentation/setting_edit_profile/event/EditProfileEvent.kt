@@ -5,10 +5,8 @@ sealed class EditProfileEvent {
 
     data class GetPhotoUrlSuccess(val photoUrl: String) : EditProfileEvent()
     data class GetNameSuccess(val name: String) : EditProfileEvent()
-    data class GetPhoneNumberSuccess(val phoneNumber: String) : EditProfileEvent()
 
     data class GetNameFailed(val reason: String) : EditProfileEvent()
-    data class GetPhoneNumberFailed(val reason: String) : EditProfileEvent()
     object NoInternetConnection: EditProfileEvent()
 
     data class InternalServerError(val reason: String) : EditProfileEvent()

@@ -59,9 +59,7 @@ fun EditProfileScreen(
     var name by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
-    var phoneNumber by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue())
-    }
+
 
 
     val toggleBottomSheet = remember(bottomSheetScaffoldState, state.isLoading) {
@@ -157,16 +155,8 @@ fun EditProfileScreen(
                     name = TextFieldValue(text = event.name)
                 }
 
-                is EditProfileEvent.GetPhoneNumberSuccess -> {
-                    phoneNumber = TextFieldValue(text = event.phoneNumber)
-                }
-
                 is EditProfileEvent.GetNameFailed -> {
                     uiState = uiState.copy(nameErrorMessage = event.reason)
-                }
-
-                is EditProfileEvent.GetPhoneNumberFailed -> {
-                    uiState = uiState.copy(phoneNumberErrorMessage = event.reason)
                 }
 
                 is EditProfileEvent.NoInternetConnection -> {
@@ -223,12 +213,7 @@ fun EditProfileScreen(
             uiState = uiState.copy(nameErrorMessage = "")
         }
     }
-    val onValueChangePhoneNumber = remember {
-        { input: TextFieldValue ->
-            phoneNumber = input
-            uiState = uiState.copy(phoneNumberErrorMessage = "")
-        }
-    }
+
     val keyboardActions = remember {
         KeyboardActions(onDone = {
             editProfileViewModel.onEvent(
@@ -265,13 +250,11 @@ fun EditProfileScreen(
         state = state,
         keyboardActions = keyboardActions,
         name = name,
-        phoneNumber = phoneNumber,
         event = { event ->
             when (event) {
                 is EditProfileUiEvent.SelectImageFromGallery -> openGallery()
                 is EditProfileUiEvent.OpenCamera -> openCamera()
                 is EditProfileUiEvent.OnChangeName -> onValueChangeName(event.name)
-                is EditProfileUiEvent.OnChangePhoneNumber -> onValueChangePhoneNumber(event.phoneNumber)
                 is EditProfileUiEvent.CancelEditProfile -> cancelEditProfile()
                 is EditProfileUiEvent.ConfirmEditProfile -> confirmEditProfile()
                 is EditProfileUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()

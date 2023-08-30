@@ -113,9 +113,6 @@ class EditProfileViewModel @Inject constructor(
             }.onFailure { exception ->
                 finishLoading()
                 when (exception) {
-                    is SettingExceptions.PhoneNumberException -> {
-                        _eventFlow.emit(value = EditProfileEvent.GetPhoneNumberFailed(reason = exception.message!!))
-                    }
 
                     is SettingExceptions.NameException -> {
                         _eventFlow.emit(value = EditProfileEvent.GetNameFailed(reason = exception.message!!))

@@ -11,7 +11,6 @@ data class EditProfileUiState(
     val selectedImageUri: String = "",
     val photoUrl: String = "",
     val nameErrorMessage: String = "",
-    val phoneNumberErrorMessage: String = "",
     val noInternetVisible: Boolean = false,
     val cameraPermissionDialogVisible: Boolean = false,
     val filesAndMediaDialogVisible: Boolean = false,

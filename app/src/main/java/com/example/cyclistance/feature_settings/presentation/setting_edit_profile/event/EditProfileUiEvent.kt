@@ -6,7 +6,6 @@ sealed class EditProfileUiEvent {
     object SelectImageFromGallery : EditProfileUiEvent()
     object OpenCamera : EditProfileUiEvent()
     data class OnChangeName(val name: TextFieldValue) : EditProfileUiEvent()
-    data class OnChangePhoneNumber(val phoneNumber: TextFieldValue) : EditProfileUiEvent()
     object CancelEditProfile : EditProfileUiEvent()
     object ConfirmEditProfile : EditProfileUiEvent()
     object DismissNoInternetDialog : EditProfileUiEvent()
