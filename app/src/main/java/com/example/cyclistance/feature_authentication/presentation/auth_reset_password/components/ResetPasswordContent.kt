@@ -4,10 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -144,9 +142,6 @@ fun ResetPasswordContent(
 
                 }
 
-
-                Spacer(modifier = Modifier.weight(1f))
-
                 ButtonNavigation(
                     modifier = Modifier.fillMaxWidth(0.8f),
                     negativeButtonEnabled = !state.isLoading,
@@ -154,8 +149,6 @@ fun ResetPasswordContent(
                     positiveButtonText = "Update",
                     onClickNegativeButton = { event(ResetPasswordUiEvent.OnClickCancel) },
                     onClickPositiveButton = { event(ResetPasswordUiEvent.OnClickUpdate) })
-
-                Spacer(modifier = Modifier.height(45.dp))
 
             }
 

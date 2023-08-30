@@ -59,6 +59,15 @@ fun EditProfileScreen(
     var name by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
+    var cyclingGroup by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+    var city by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
+    var province by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+        mutableStateOf(TextFieldValue())
+    }
 
 
 
@@ -214,6 +223,21 @@ fun EditProfileScreen(
         }
     }
 
+    val onValueChangeCyclingGroup = remember{{ input: TextFieldValue ->
+        cyclingGroup = input
+        uiState = uiState.copy(cyclingGroupErrorMessage = "")
+    }}
+
+    val onValueChangeCity = remember{{ input: TextFieldValue ->
+        city = input
+        uiState = uiState.copy(cityErrorMessage = "")
+    }}
+
+    val onValueChangeProvince = remember{{ input: TextFieldValue ->
+        province = input
+        uiState = uiState.copy(provinceErrorMessage = "")
+    }}
+
     val keyboardActions = remember {
         KeyboardActions(onDone = {
             editProfileViewModel.onEvent(
@@ -250,6 +274,9 @@ fun EditProfileScreen(
         state = state,
         keyboardActions = keyboardActions,
         name = name,
+        cyclingGroup = cyclingGroup,
+        city = city,
+        province = province,
         event = { event ->
             when (event) {
                 is EditProfileUiEvent.SelectImageFromGallery -> openGallery()
@@ -265,6 +292,9 @@ fun EditProfileScreen(
 
                 is EditProfileUiEvent.DismissCameraDialog -> onDismissCameraPermissionDialog()
                 is EditProfileUiEvent.DismissFilesAndMediaDialog -> onDismissFilesAndMediaPermissionDialog()
+                is EditProfileUiEvent.OnChangeCity -> onValueChangeCity(event.city)
+                is EditProfileUiEvent.OnChangeCyclingGroup -> onValueChangeCyclingGroup(event.cyclingGroup)
+                is EditProfileUiEvent.OnChangeProvince -> onValueChangeProvince(event.province)
             }
         },
         uiState = uiState,

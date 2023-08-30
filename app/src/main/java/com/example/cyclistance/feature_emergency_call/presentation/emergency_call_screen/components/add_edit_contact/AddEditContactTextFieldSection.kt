@@ -11,11 +11,11 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.core.presentation.text_fields.TextFieldCreator
+import com.example.cyclistance.core.presentation.text_fields.TextFieldItem
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallUIState
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.TextFieldCreator
-import com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components.TextFieldItem
 
 @Composable
 fun AddEditContextTextFieldSection(

@@ -1,9 +1,15 @@
 package com.example.cyclistance.feature_settings.presentation.setting_edit_profile.components
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
@@ -48,6 +54,9 @@ fun PreviewEditProfileDark() {
             uiState = EditProfileUiState(cameraPermissionDialogVisible = true),
             bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
             name = TextFieldValue(""),
+            cyclingGroup = TextFieldValue(""),
+            city = TextFieldValue(""),
+            province = TextFieldValue(""),
             event = {}
         )
     }
@@ -63,9 +72,12 @@ fun PreviewEditProfileLight() {
             modifier = Modifier,
             photoUrl = "",
             state = EditProfileState(isLoading = false),
-            uiState = EditProfileUiState(cameraPermissionDialogVisible = true),
+            uiState = EditProfileUiState(cameraPermissionDialogVisible = false),
             bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
             name = TextFieldValue(""),
+            cyclingGroup = TextFieldValue(""),
+            city = TextFieldValue(""),
+            province = TextFieldValue(""),
             event = {}
         )
     }
@@ -82,6 +94,9 @@ fun EditProfileScreenContent(
     uiState: EditProfileUiState,
     bottomSheetScaffoldState: ModalBottomSheetState,
     name: TextFieldValue,
+    cyclingGroup: TextFieldValue,
+    city: TextFieldValue,
+    province: TextFieldValue,
     event: (EditProfileUiEvent) -> Unit = {}
 ) {
 
@@ -110,7 +125,12 @@ fun EditProfileScreenContent(
             bottomSheetScaffoldState = bottomSheetScaffoldState,
             isLoading = state.isLoading) {
 
-            ConstraintLayout(modifier = Modifier.fillMaxSize()) {
+            ConstraintLayout(modifier = Modifier
+            .fillMaxWidth()
+                .wrapContentHeight()
+                .navigationBarsPadding()
+                .imePadding()
+                .verticalScroll(rememberScrollState())) {
 
                 val (profilePictureArea, textFieldInputArea, buttonNavigationArea, changePhotoText, progressBar, noInternetDialog, permissionDialog) = createRefs()
 
@@ -120,7 +140,7 @@ fun EditProfileScreenContent(
                         .size(125.dp)
                         .constrainAs(profilePictureArea) {
 
-                            top.linkTo(parent.top, margin = 30.dp)
+                            top.linkTo(parent.top, margin = 20.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
 
@@ -150,24 +170,27 @@ fun EditProfileScreenContent(
                     })
 
 
-
-
-
                 TextFieldInputArea(
                     modifier = Modifier
                         .constrainAs(textFieldInputArea) {
                             top.linkTo(changePhotoText.bottom, margin = 30.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
-                            height = Dimension.percent(0.5f)
+                            height = Dimension.wrapContent
                             width = Dimension.percent(0.9f)
 
                         },
                     state = state,
                     onValueChangeName = { event(EditProfileUiEvent.OnChangeName(it)) },
+                    onValueChangeCyclingGroup = { event(EditProfileUiEvent.OnChangeCyclingGroup(it)) },
+                    onValueChangeCity = { event(EditProfileUiEvent.OnChangeCity(it)) },
+                    onValueChangeProvince = { event(EditProfileUiEvent.OnChangeProvince(it)) },
                     keyboardActions = keyboardActions,
                     uiState = uiState,
                     name = name,
+                    cyclingGroup = cyclingGroup,
+                    city = city,
+                    province = province
                 )
 
 
@@ -178,7 +201,7 @@ fun EditProfileScreenContent(
                             top.linkTo(textFieldInputArea.bottom, margin = 20.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
-                            bottom.linkTo(parent.bottom, margin = 50.dp)
+
                             height = Dimension.wrapContent
                             width = Dimension.percent(0.8f)
                         },
