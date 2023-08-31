@@ -13,6 +13,7 @@ import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_PHOTO
 import com.example.cyclistance.feature_user_profile.domain.exceptions.UserProfileExceptions
 import com.example.cyclistance.feature_user_profile.domain.model.UserProfileInfoModel
+import com.example.cyclistance.feature_user_profile.domain.model.UserProfileModel
 import com.example.cyclistance.feature_user_profile.domain.repository.UserProfileRepository
 import com.facebook.AccessToken
 import com.facebook.GraphRequest
@@ -26,6 +27,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -159,23 +161,35 @@ class UserProfileRepositoryImpl(
 
     }
 
-    override suspend fun upsertUserProfileInfo(userProfile: UserProfileInfoModel) {
+    override suspend fun updateUserProfileInfo(userProfile: UserProfileInfoModel) {
         val id = auth.currentUser?.uid
 
-        val userProfileInfoMap = hashMapOf(
-            KEY_NAME to userProfile.name,
-            KEY_PHOTO to userProfile.photoUrl,
-            KEY_ADDRESS to userProfile.address,
-            KEY_BIKE_GROUP to userProfile.bikeGroup,
-        )
-
-        suspendCancellableCoroutine<Unit> { continuation ->
+        suspendCancellableCoroutine { continuation ->
             fireStore.collection(UtilConstants.USER_COLLECTION).document(id!!)
-                .set(userProfileInfoMap).addOnSuccessListener {
-
+                .update(
+                    KEY_NAME, userProfile.name,
+                    KEY_PHOTO, userProfile.photoUrl,
+                    KEY_ADDRESS, userProfile.address,
+                    KEY_BIKE_GROUP, userProfile.bikeGroup,
+                ).addOnSuccessListener {
+                    continuation.resume(Unit)
                 }.addOnFailureListener {
-
+                    continuation.resumeWithException(UserProfileExceptions.UpdateProfileException(it.message!!))
                 }
+        }
+    }
+
+    override suspend fun getUserProfileInfo(id: String): UserProfileModel {
+        return withContext(scope) {
+            suspendCancellableCoroutine<UserProfileModel> { continuation ->
+                fireStore.collection(UtilConstants.USER_COLLECTION).document(id)
+                    .get().addOnSuccessListener { documentSnapshot ->
+
+//                        continuation.resume(userProfileModel)
+                    }.addOnFailureListener {
+                        Timber.e(it.message)
+                    }
+            }
         }
     }
 }
