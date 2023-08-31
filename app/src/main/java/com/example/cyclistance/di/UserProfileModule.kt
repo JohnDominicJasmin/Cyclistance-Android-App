@@ -6,9 +6,9 @@ import com.example.cyclistance.feature_user_profile.data.repository.UserProfileR
 import com.example.cyclistance.feature_user_profile.domain.repository.UserProfileRepository
 import com.example.cyclistance.feature_user_profile.domain.use_case.GetNameUseCase
 import com.example.cyclistance.feature_user_profile.domain.use_case.GetPhotoUrlUseCase
-import com.example.cyclistance.feature_user_profile.domain.use_case.UpdateProfileUseCase
+import com.example.cyclistance.feature_user_profile.domain.use_case.UpdateAuthProfileUseCase
+import com.example.cyclistance.feature_user_profile.domain.use_case.UpdateProfileInfoUseCase
 import com.example.cyclistance.feature_user_profile.domain.use_case.UploadImageUseCase
-import com.example.cyclistance.feature_user_profile.domain.use_case.UpsertUserProfileInfoUseCase
 import com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -47,7 +47,7 @@ object UserProfileModule {
     @Singleton
     fun provideUserProfileUseCase(userProfileRepository: UserProfileRepository): UserProfileUseCase {
         return UserProfileUseCase(
-            updateProfileUseCase = UpdateProfileUseCase(userProfileRepository),
+            updateAuthProfileUseCase = UpdateAuthProfileUseCase(userProfileRepository),
             uploadImageUseCase = UploadImageUseCase(userProfileRepository),
             getPhotoUrlUseCase = GetPhotoUrlUseCase(userProfileRepository),
             getNameUseCase = GetNameUseCase(userProfileRepository),

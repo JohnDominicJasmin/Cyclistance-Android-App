@@ -6,7 +6,7 @@ import com.example.cyclistance.core.utils.validation.InputValidate.numberOfChara
 import com.example.cyclistance.feature_user_profile.domain.exceptions.UserProfileExceptions
 import com.example.cyclistance.feature_user_profile.domain.repository.UserProfileRepository
 
-class UpdateProfileUseCase(private val repository: UserProfileRepository) {
+class UpdateAuthProfileUseCase(private val repository: UserProfileRepository) {
     suspend operator fun invoke(photoUri: String?, name: String){
         if(name.isEmpty()){
            throw UserProfileExceptions.NameException()
