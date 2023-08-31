@@ -55,8 +55,7 @@ fun PreviewEditProfileDark() {
             bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
             name = TextFieldValue(""),
             cyclingGroup = TextFieldValue(""),
-            city = TextFieldValue(""),
-            province = TextFieldValue(""),
+            address = TextFieldValue(""),
             event = {}
         )
     }
@@ -76,8 +75,7 @@ fun PreviewEditProfileLight() {
             bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden),
             name = TextFieldValue(""),
             cyclingGroup = TextFieldValue(""),
-            city = TextFieldValue(""),
-            province = TextFieldValue(""),
+            address = TextFieldValue(""),
             event = {}
         )
     }
@@ -95,20 +93,33 @@ fun EditProfileScreenContent(
     bottomSheetScaffoldState: ModalBottomSheetState,
     name: TextFieldValue,
     cyclingGroup: TextFieldValue,
-    city: TextFieldValue,
-    province: TextFieldValue,
+    address: TextFieldValue,
     event: (EditProfileUiEvent) -> Unit = {}
 ) {
 
 
-    val isUserInformationChanges by remember(
-        name,
-        uiState.selectedImageUri) {
+    val nameChanges by remember(name){
         derivedStateOf {
-            name.text != state.nameSnapshot ||
-            uiState.selectedImageUri.isNotEmpty()
+            name.text != state.nameSnapshot
         }
     }
+
+    val imageChanges by remember(uiState.selectedImageUri) {
+        derivedStateOf { uiState.selectedImageUri.isNotEmpty() }
+    }
+
+    val cyclingGroupChanges by remember(cyclingGroup){
+        derivedStateOf {
+            cyclingGroup.text != state.cyclingGroupSnapshot
+        }
+    }
+
+    val addressChanges by remember(address){
+        derivedStateOf { address.text != state.addressSnapshot }
+    }
+
+    val isUserInformationChanges = nameChanges || imageChanges || cyclingGroupChanges || addressChanges
+
 
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
@@ -126,7 +137,7 @@ fun EditProfileScreenContent(
             isLoading = state.isLoading) {
 
             ConstraintLayout(modifier = Modifier
-            .fillMaxWidth()
+                .fillMaxWidth()
                 .wrapContentHeight()
                 .navigationBarsPadding()
                 .imePadding()
@@ -183,14 +194,12 @@ fun EditProfileScreenContent(
                     state = state,
                     onValueChangeName = { event(EditProfileUiEvent.OnChangeName(it)) },
                     onValueChangeCyclingGroup = { event(EditProfileUiEvent.OnChangeCyclingGroup(it)) },
-                    onValueChangeCity = { event(EditProfileUiEvent.OnChangeCity(it)) },
-                    onValueChangeProvince = { event(EditProfileUiEvent.OnChangeProvince(it)) },
+                    onValueChangeCity = { event(EditProfileUiEvent.OnChangeAddress(it)) },
                     keyboardActions = keyboardActions,
                     uiState = uiState,
                     name = name,
                     cyclingGroup = cyclingGroup,
-                    city = city,
-                    province = province
+                    city = address,
                 )
 
 
