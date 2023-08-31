@@ -11,11 +11,11 @@ import com.example.cyclistance.MainActivity
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MessagingConstants
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSAGE
-import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_NAME
 import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_NOTIFICATION_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_URI
 import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_ARG
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_ARG
+import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import timber.log.Timber
