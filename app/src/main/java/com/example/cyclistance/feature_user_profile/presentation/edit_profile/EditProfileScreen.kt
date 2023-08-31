@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.core.utils.save_images.ImageUtils.toImageUri
+import com.example.cyclistance.feature_user_profile.domain.model.UserProfileInfoModel
 import com.example.cyclistance.feature_user_profile.presentation.edit_profile.components.EditProfileScreenContent
 import com.example.cyclistance.feature_user_profile.presentation.edit_profile.event.EditProfileEvent
 import com.example.cyclistance.feature_user_profile.presentation.edit_profile.event.EditProfileUiEvent
@@ -38,7 +39,8 @@ import kotlinx.coroutines.launch
 
 
 @SuppressLint("MissingPermission")
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalComposeUiApi::class,
+@OptIn(
+    ExperimentalPermissionsApi::class, ExperimentalComposeUiApi::class,
     ExperimentalMaterialApi::class)
 @Composable
 fun EditProfileScreen(
@@ -62,10 +64,7 @@ fun EditProfileScreen(
     var cyclingGroup by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
-    var city by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue())
-    }
-    var province by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+    var address by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
 
@@ -152,7 +151,7 @@ fun EditProfileScreen(
             when (event) {
 
                 is EditProfileEvent.UpdateUserProfileSuccess -> {
-                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Successfully Updated!", Toast.LENGTH_SHORT).show()
                     navController.popBackStack()
                 }
 
@@ -164,7 +163,7 @@ fun EditProfileScreen(
                     name = TextFieldValue(text = event.name)
                 }
 
-                is EditProfileEvent.GetNameFailed -> {
+                is EditProfileEvent.NameInputFailed -> {
                     uiState = uiState.copy(nameErrorMessage = event.reason)
                 }
 
@@ -223,15 +222,20 @@ fun EditProfileScreen(
         }
     }
 
-    val onValueChangeCyclingGroup = remember{{ input: TextFieldValue ->
-        cyclingGroup = input
-        uiState = uiState.copy(cyclingGroupErrorMessage = "")
-    }}
+    val onValueChangeCyclingGroup = remember {
+        { input: TextFieldValue ->
+            cyclingGroup = input
+            uiState = uiState.copy(cyclingGroupErrorMessage = "")
+        }
+    }
 
-    val onValueChangeCity = remember{{ input: TextFieldValue ->
-        city = input
-        uiState = uiState.copy(cityErrorMessage = "")
-    }}
+    val onValueChangeAddress = remember {
+        { input: TextFieldValue ->
+            address = input
+            uiState = uiState.copy(addressErrorMessage = "")
+        }
+    }
+
 
     val onValueChangeProvince = remember{{ input: TextFieldValue ->
         province = input
@@ -275,8 +279,7 @@ fun EditProfileScreen(
         keyboardActions = keyboardActions,
         name = name,
         cyclingGroup = cyclingGroup,
-        city = city,
-        province = province,
+        address = address,
         event = { event ->
             when (event) {
                 is EditProfileUiEvent.SelectImageFromGallery -> openGallery()
@@ -292,9 +295,8 @@ fun EditProfileScreen(
 
                 is EditProfileUiEvent.DismissCameraDialog -> onDismissCameraPermissionDialog()
                 is EditProfileUiEvent.DismissFilesAndMediaDialog -> onDismissFilesAndMediaPermissionDialog()
-                is EditProfileUiEvent.OnChangeCity -> onValueChangeCity(event.city)
+                is EditProfileUiEvent.OnChangeAddress -> onValueChangeAddress(event.address)
                 is EditProfileUiEvent.OnChangeCyclingGroup -> onValueChangeCyclingGroup(event.cyclingGroup)
-                is EditProfileUiEvent.OnChangeProvince -> onValueChangeProvince(event.province)
             }
         },
         uiState = uiState,

@@ -31,11 +31,9 @@ fun TextFieldInputArea(
     name: TextFieldValue,
     cyclingGroup: TextFieldValue,
     city: TextFieldValue,
-    province: TextFieldValue,
     onValueChangeName: (TextFieldValue) -> Unit,
     onValueChangeCyclingGroup: (TextFieldValue) -> Unit,
     onValueChangeCity: (TextFieldValue) -> Unit,
-    onValueChangeProvince: (TextFieldValue) -> Unit,
     keyboardActions: KeyboardActions
 ) {
 
@@ -58,7 +56,7 @@ fun TextFieldInputArea(
         }
 
 
-        TextFieldCreator(label = "Cycling group", errorMessage = uiState.nameErrorMessage) {
+        TextFieldCreator(label = "Cycling group", errorMessage = uiState.cyclingGroupErrorMessage, isOptional = true) {
             TextFieldItem(
                 enabled = !state.isLoading,
                 value = cyclingGroup,
@@ -71,7 +69,7 @@ fun TextFieldInputArea(
 
         }
 
-        TextFieldCreator(label = "City", errorMessage = uiState.nameErrorMessage) {
+        TextFieldCreator(label = "City", errorMessage = uiState.addressErrorMessage) {
             TextFieldItem(
                 enabled = !state.isLoading,
                 value = city,
@@ -79,26 +77,11 @@ fun TextFieldInputArea(
                     capitalization = KeyboardCapitalization.Words,
                     autoCorrect = false,
                     keyboardType = KeyboardType.Text,
-                    imeAction = ImeAction.Next),
-                onValueChange = onValueChangeCity)
-
-        }
-
-
-        TextFieldCreator(label = "Province", errorMessage = uiState.nameErrorMessage) {
-            TextFieldItem(
-                enabled = !state.isLoading,
-                value = province,
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Words,
-                    autoCorrect = false,
-                    keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Done),
-                onValueChange = onValueChangeProvince,
+                onValueChange = onValueChangeCity,
                 keyboardActions = keyboardActions)
 
         }
-
 
     }
 }
@@ -120,11 +103,9 @@ fun EditProfileTextFieldPreview() {
                 uiState = EditProfileUiState(),
                 name = TextFieldValue(""),
                 city = TextFieldValue(""),
-                province = TextFieldValue(""),
                 cyclingGroup = TextFieldValue(""),
                 onValueChangeCyclingGroup = { },
                 onValueChangeCity = { },
-                onValueChangeProvince = { },
 
             )
         }
