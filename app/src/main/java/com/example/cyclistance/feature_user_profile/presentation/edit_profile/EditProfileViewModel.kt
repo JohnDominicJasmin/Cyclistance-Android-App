@@ -54,9 +54,7 @@ class EditProfileViewModel @Inject constructor(
         when (event) {
 
             is EditProfileVmEvent.Save -> {
-                updateUserProfile(
-                    imageUri = event.imageUri,
-                    name = event.name)
+                updateUserProfile(event.userProfile)
             }
 
             is EditProfileVmEvent.LoadProfile -> {
