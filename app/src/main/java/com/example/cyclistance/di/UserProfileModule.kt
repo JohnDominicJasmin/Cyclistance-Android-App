@@ -6,6 +6,7 @@ import com.example.cyclistance.feature_user_profile.data.repository.UserProfileR
 import com.example.cyclistance.feature_user_profile.domain.repository.UserProfileRepository
 import com.example.cyclistance.feature_user_profile.domain.use_case.GetNameUseCase
 import com.example.cyclistance.feature_user_profile.domain.use_case.GetPhotoUrlUseCase
+import com.example.cyclistance.feature_user_profile.domain.use_case.GetUserProfileInfoUseCase
 import com.example.cyclistance.feature_user_profile.domain.use_case.UpdateAuthProfileUseCase
 import com.example.cyclistance.feature_user_profile.domain.use_case.UpdateProfileInfoUseCase
 import com.example.cyclistance.feature_user_profile.domain.use_case.UploadImageUseCase
@@ -51,7 +52,8 @@ object UserProfileModule {
             uploadImageUseCase = UploadImageUseCase(userProfileRepository),
             getPhotoUrlUseCase = GetPhotoUrlUseCase(userProfileRepository),
             getNameUseCase = GetNameUseCase(userProfileRepository),
-            updateProfileInfoUseCase = UpdateProfileInfoUseCase(userProfileRepository)
+            updateProfileInfoUseCase = UpdateProfileInfoUseCase(userProfileRepository),
+            getUserProfileInfoUseCase = GetUserProfileInfoUseCase(userProfileRepository)
         )
     }
 }
