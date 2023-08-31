@@ -51,7 +51,7 @@ object UserProfileModule {
             uploadImageUseCase = UploadImageUseCase(userProfileRepository),
             getPhotoUrlUseCase = GetPhotoUrlUseCase(userProfileRepository),
             getNameUseCase = GetNameUseCase(userProfileRepository),
-            upsertUserProfileInfoUseCase = UpsertUserProfileInfoUseCase(userProfileRepository)
+            updateProfileInfoUseCase = UpdateProfileInfoUseCase(userProfileRepository)
         )
     }
 }
