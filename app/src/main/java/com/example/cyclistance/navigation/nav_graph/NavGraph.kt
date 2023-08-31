@@ -81,6 +81,11 @@ fun NavGraph(
             paddingValues = paddingValues
         )
 
+        userProfileGraph(
+            navController = navController,
+            paddingValues = paddingValues
+        )
+
     }
 }
 

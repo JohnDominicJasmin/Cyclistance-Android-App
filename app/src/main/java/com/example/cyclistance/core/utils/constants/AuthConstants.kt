@@ -1,7 +1,5 @@
 package com.example.cyclistance.core.utils.constants
 
-import androidx.datastore.preferences.core.stringPreferencesKey
-
 object AuthConstants {
 
     const val PHONE_NUMBER_NUMBER_OF_CHARACTERS: Int = 10
@@ -22,7 +20,6 @@ object AuthConstants {
     const val GOOGLE_SIGN_IN_REQUEST_CODE: Int = 1
     const val FACEBOOK_CONNECTION_FAILURE = "CONNECTION_FAILURE: CONNECTION_FAILURE"
     const val USER_NOT_FOUND = "ERROR_USER_NOT_FOUND"
-    val DATA_STORE_PHONE_NUMBER_KEY = stringPreferencesKey("phone_number_key")
     const val MINIMUM_NUMBER_OF_CHARACTERS = 3
     const val IMAGE_SMALL_SIZE = "=s96-c"
     const val IMAGE_LARGE_SIZE = "=s400-c"

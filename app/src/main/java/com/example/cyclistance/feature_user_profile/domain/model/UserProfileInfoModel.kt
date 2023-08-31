@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 data class UserProfileInfoModel(
     val photoUrl: String,
     val name: String,
-    val averageRating: Double,
+    val averageRating: Double = 0.0,
     val address: String,
     val bikeGroup: String,
 ):Parcelable

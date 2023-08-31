@@ -29,7 +29,6 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
 import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
-import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogPhonePermission
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call.EmergencyCallDialog
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
@@ -318,15 +317,7 @@ fun MappingScreenContent(
                         )
                     }
 
-                    if (uiState.phonePermissionDialogVisible) {
-                        DialogPhonePermission(modifier = Modifier.constrainAs(dialog) {
-                            end.linkTo(parent.end)
-                            start.linkTo(parent.start)
-                            bottom.linkTo(parent.bottom)
-                            height = Dimension.wrapContent
-                            centerTo(parent)
-                        }, onDismiss = { event(MappingUiEvent.DismissPhonePermission) })
-                    }
+
                     
                     if(uiState.alertDialogState.visible()){
                         AlertDialog(

@@ -10,10 +10,6 @@ object MessagingConstants {
     const val CONVERSATION_VM_STATE_KEY = "conversation_vm_state_key"
     const val SEARCH_USER_VM_STATE_KEY = "search_user_vm_state_key"
     const val KEY_FCM_TOKEN = "fcmToken"
-    const val KEY_EMAIL = "email"
-    const val KEY_PHOTO = "photo"
-    const val KEY_NAME = "name"
-    const val KEY_UID = "uid"
 
     const val KEY_SENDER_ID = "senderId"
     const val KEY_RECEIVER_ID = "receiverId"
@@ -24,7 +20,6 @@ object MessagingConstants {
 
     const val KEY_CONVERSATIONS_COLLECTION = "conversations"
     const val KEY_COLLECTION_CHATS = "chats"
-    const val USER_COLLECTION = "users"
     const val KEY_LAST_MESSAGE = "lastMessage"
     const val KEY_AVAILABILITY = "availability"
 

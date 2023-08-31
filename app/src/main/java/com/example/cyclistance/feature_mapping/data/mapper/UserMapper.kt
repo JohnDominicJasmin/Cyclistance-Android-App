@@ -23,7 +23,6 @@ object UserMapper {
     fun UserItemDto.toUserItem(): UserItem {
         return UserItem(
             address = this.address,
-            contactNumber = this.contactNumber,
             id = this.id,
             location = this.location?.toLocationModel(),
             name = this.name,
@@ -44,7 +43,6 @@ object UserMapper {
     fun UserItem.toUserItemDto(): UserItemDto {
         return UserItemDto(
             address = this.address,
-            contactNumber = this.contactNumber,
             id = this.id,
             location = this.location?.toLocationDto(),
             name = this.name,

@@ -128,7 +128,7 @@ fun AddEditContactContent(
 
                         ButtonNavigation(
                             modifier = Modifier.constrainAs(button) {
-                                bottom.linkTo(parent.bottom, margin = 20.dp)
+                                top.linkTo(content.bottom, margin = 30.dp)
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
                                 height = Dimension.wrapContent
@@ -159,7 +159,7 @@ fun AddEditContactContent(
 
 
 @OptIn(ExperimentalMaterialApi::class)
-@Preview
+@Preview(device = "id:Galaxy Nexus")
 @Composable
 fun PreviewAddNewContactContentDarkEditMode() {
     CyclistanceTheme(darkTheme = true) {

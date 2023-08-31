@@ -9,8 +9,6 @@ import com.google.gson.annotations.SerializedName
 data class UserItemDto(
     @SerializedName("address")
     val address: String?,
-    @SerializedName("contact_number")
-    val contactNumber: String?,
     @SerializedName("id")
     val id: String?,
     @SerializedName("location")

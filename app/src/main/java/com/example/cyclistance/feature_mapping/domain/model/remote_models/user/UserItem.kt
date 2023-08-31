@@ -9,7 +9,6 @@ import kotlinx.parcelize.Parcelize
 @StableState
 data class UserItem(
     val address: String? = null,
-    val contactNumber: String? = null,
     val id: String? = null,
     val location: LocationModel? = null,
     val name: String? = null,

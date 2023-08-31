@@ -15,7 +15,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_deta
 val userItems = listOf(
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
-        contactNumber = "1234567890",
         id = "V45BYRCwjSzb9nljb6aZ2W82VKi5",
         location = LocationModel(latitude = 14.0874, longitude = 121.1517),
         name = "John Mark",
@@ -30,7 +29,6 @@ val userItems = listOf(
 
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
-        contactNumber = "92398512908",
         id = "2326236",
         location = LocationModel(latitude = 14.079426870239514, longitude = 121.15672703265659),
         name = "Jane Dominic",
@@ -48,7 +46,6 @@ val userItems = listOf(
 
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
-        contactNumber = "2845182739",
         id = "32362323",
         location = LocationModel(latitude = 14.090421127354372, longitude = 121.14870941179073),
         name = "John Terminator",
@@ -65,7 +62,6 @@ val userItems = listOf(
     ),
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
-        contactNumber = "2367238327",
         id = "423623",
         location = LocationModel(latitude = 14.08894440102451, longitude = 121.14033042983098),
         name = "Boomie",
@@ -83,7 +79,6 @@ val userItems = listOf(
 
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
-        contactNumber = "1234567890",
         id = "5",
         location = LocationModel(latitude = 14.044194, longitude = 121.747392),
         name = "John Doe",
@@ -101,7 +96,6 @@ val userItems = listOf(
 
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
-        contactNumber = "1234567890",
         id = "6",
         rescueRequest = RescueRequest(),
         location = LocationModel(latitude = 6.523497, longitude = 125.037057),
@@ -111,7 +105,6 @@ val userItems = listOf(
 
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
-        contactNumber = "1234567890",
         id = "7",
         rescueRequest = RescueRequest(),
         location = LocationModel(latitude = 6.531999, longitude = 125.043330),
@@ -121,7 +114,6 @@ val userItems = listOf(
 
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
-        contactNumber = "1234567890",
         id = "8",
         location = LocationModel(latitude = 6.887962, longitude = 125.224905),
         userAssistance = UserAssistanceModel(
@@ -138,7 +130,6 @@ val userItems = listOf(
 
     UserItem(
         address = "1234 Main Street, New York, NY 10001",
-        contactNumber = "1234567890",
         id = "9",
         location = LocationModel(latitude = 7.118415, longitude = 125.283468),
         name = "John Dominic",

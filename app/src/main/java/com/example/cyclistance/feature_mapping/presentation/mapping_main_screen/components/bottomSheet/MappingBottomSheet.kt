@@ -98,7 +98,7 @@ fun MappingBottomSheet(
 
                     BottomSheetOnGoingRescue(
                         modifier = modifier,
-                        onClickCallButton = { event(MappingUiEvent.CallRescueTransaction) },
+                        onClickCallButton = {  },
                         onClickChatButton = { event(MappingUiEvent.ChatRescueTransaction) },
                         onClickCancelButton = { event(MappingUiEvent.CancelRescueTransaction) },
                         role = state.user.transaction?.role ?: "",
