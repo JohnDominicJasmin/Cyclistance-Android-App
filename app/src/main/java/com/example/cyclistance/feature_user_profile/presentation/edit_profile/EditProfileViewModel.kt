@@ -118,6 +118,10 @@ class EditProfileViewModel @Inject constructor(
                         _eventFlow.emit(value = EditProfileEvent.GetNameFailed(reason = exception.message!!))
                     }
 
+                    is UserProfileExceptions.AddressException -> {
+                        _eventFlow.emit(value = EditProfileEvent.AddressInputFailed(reason = exception.message!!))
+                    }
+
                     is UserProfileExceptions.NetworkException -> {
                         _eventFlow.emit(value = EditProfileEvent.NoInternetConnection)
                     }

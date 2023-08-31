@@ -175,6 +175,14 @@ fun EditProfileScreen(
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
+                is EditProfileEvent.UpdateUserProfileFailed -> {
+                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
+                }
+
+                is EditProfileEvent.AddressInputFailed -> {
+                    uiState = uiState.copy(addressErrorMessage = event.reason)
+                }
+
             }
         }
 
