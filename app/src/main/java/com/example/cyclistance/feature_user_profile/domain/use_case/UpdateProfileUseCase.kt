@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_settings.domain.use_case
+package com.example.cyclistance.feature_user_profile.domain.use_case
 
 import com.example.cyclistance.core.utils.validation.InputValidate.containsNumeric
 import com.example.cyclistance.core.utils.validation.InputValidate.containsSpecialCharacters

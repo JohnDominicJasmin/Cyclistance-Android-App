@@ -88,27 +88,15 @@ class MappingRepositoryImpl(
 
         value.documentChanges.forEach { item ->
 
-            when (item.type) {
+            item.document.get(
+                KEY_MARKER_FIELD,
+                HazardousLaneMarker::class.java)?.let { marker ->
 
-                DocumentChange.Type.ADDED -> {
-                    onAddedHazardousMarker(
-                        item.document.get(
-                            KEY_MARKER_FIELD,
-                            HazardousLaneMarker::class.java)!!)
-                }
+                when (item.type) {
+                    DocumentChange.Type.ADDED -> onAddedHazardousMarker(marker)
+                    DocumentChange.Type.MODIFIED -> onModifiedHazardousMarker(marker)
+                    DocumentChange.Type.REMOVED -> onRemovedHazardousMarker(marker.id)
 
-                DocumentChange.Type.MODIFIED -> {
-                    onModifiedHazardousMarker(
-                        item.document.get(
-                            KEY_MARKER_FIELD,
-                            HazardousLaneMarker::class.java)!!)
-                }
-
-                DocumentChange.Type.REMOVED -> {
-                    val hazardousMarker = item.document.get(
-                        KEY_MARKER_FIELD,
-                        HazardousLaneMarker::class.java)!!
-                    onRemovedHazardousMarker(hazardousMarker.id)
                 }
             }
         }
