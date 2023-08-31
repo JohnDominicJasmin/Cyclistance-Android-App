@@ -88,6 +88,10 @@ class UserProfileRepositoryImpl(
 
 
     override suspend fun uploadImage(v: String): String {
+
+        if (!context.hasInternetConnection()) {
+            throw UserProfileExceptions.NetworkException(message = context.getString(R.string.no_internet_message))
+        }
         val id = auth.currentUser?.uid
         val reference = storage.reference.child("images/${id}")
         val uploadTask = reference.putFile(Uri.parse(v))
