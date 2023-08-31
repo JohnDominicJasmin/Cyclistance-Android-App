@@ -245,17 +245,21 @@ fun EditProfileScreen(
     }
 
 
-    val onValueChangeProvince = remember{{ input: TextFieldValue ->
-        province = input
-        uiState = uiState.copy(provinceErrorMessage = "")
+
+    val saveProfile = remember{{
+        editProfileViewModel.onEvent(
+            event = EditProfileVmEvent.Save(
+                userProfile = UserProfileInfoModel(
+                    photoUrl = uiState.selectedImageUri,
+                    name = name.text,
+                    bikeGroup = cyclingGroup.text,
+                    address = address.text,
+                )))
     }}
 
     val keyboardActions = remember {
         KeyboardActions(onDone = {
-            editProfileViewModel.onEvent(
-                event = EditProfileVmEvent.Save(
-                    imageUri = uiState.selectedImageUri,
-                    name = name.text, ))
+            saveProfile()
         })
     }
     val cancelEditProfile = remember {
@@ -264,12 +268,8 @@ fun EditProfileScreen(
             Unit
         }
     }
-    val confirmEditProfile = remember {
-        {
-            editProfileViewModel.onEvent(
-                event = EditProfileVmEvent.Save(
-                    imageUri = uiState.selectedImageUri,
-                    name = name.text))
+    val confirmEditProfile = remember {{
+            saveProfile()
         }
     }
 
