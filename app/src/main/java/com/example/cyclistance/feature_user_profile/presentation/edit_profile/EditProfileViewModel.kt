@@ -117,8 +117,12 @@ class EditProfileViewModel @Inject constructor(
                 finishLoading()
                 when (exception) {
 
+                    is UserProfileExceptions.UpdateProfileException -> {
+                        _eventFlow.emit(value = EditProfileEvent.UpdateUserProfileFailed(reason = exception.message!!))
+                    }
+
                     is UserProfileExceptions.NameException -> {
-                        _eventFlow.emit(value = EditProfileEvent.GetNameFailed(reason = exception.message!!))
+                        _eventFlow.emit(value = EditProfileEvent.NameInputFailed(reason = exception.message!!))
                     }
 
                     is UserProfileExceptions.AddressException -> {
