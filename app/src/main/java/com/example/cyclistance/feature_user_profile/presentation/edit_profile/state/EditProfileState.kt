@@ -8,5 +8,7 @@ import kotlinx.parcelize.Parcelize
 @StableState
 data class EditProfileState(
     val nameSnapshot: String = "",
+    val cyclingGroupSnapshot: String = "",
+    val addressSnapshot: String = "",
     val isLoading: Boolean = false,
     ):Parcelable
