@@ -9,7 +9,6 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_CONVE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_LAST_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSAGE
-import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_NAME
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_TIMESTAMP
@@ -18,6 +17,7 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.REMOTE_MS
 import com.example.cyclistance.core.utils.constants.MessagingConstants.REMOTE_MSG_REGISTRATION_IDS
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SAVED_TOKEN
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_ARG
+import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME
 import com.example.cyclistance.core.utils.constants.UtilConstants.USER_COLLECTION
 import com.example.cyclistance.core.utils.contexts.dataStore
 import com.example.cyclistance.core.utils.data_store_ext.editData
@@ -249,6 +249,11 @@ class MessagingRepositoryImpl(
         fireStore.collection(KEY_COLLECTION_CHATS)
             .document(conversionId)
             .update(KEY_LAST_MESSAGE, message, KEY_TIMESTAMP, Date())
+            .addOnSuccessListener {
+                Timber.v("Conversion updated successfully")
+            }.addOnFailureListener {
+                Timber.e("Conversion update failed ${it.message}")
+            }
     }
 
     override fun getUserUid(): String {
