@@ -8,10 +8,15 @@ import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInterne
 import com.example.cyclistance.core.utils.constants.AuthConstants
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_ADDRESS
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_BIKE_GROUP
+import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_USER_ACTIVITY
+import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_USER_REASON_ASSISTANCE
 import com.example.cyclistance.core.utils.constants.UtilConstants
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_PHOTO
+import com.example.cyclistance.feature_user_profile.data.mapper.UserProfileInfoMapper.toUserProfileInfo
 import com.example.cyclistance.feature_user_profile.domain.exceptions.UserProfileExceptions
+import com.example.cyclistance.feature_user_profile.domain.model.ReasonAssistanceModel
+import com.example.cyclistance.feature_user_profile.domain.model.UserActivityModel
 import com.example.cyclistance.feature_user_profile.domain.model.UserProfileInfoModel
 import com.example.cyclistance.feature_user_profile.domain.model.UserProfileModel
 import com.example.cyclistance.feature_user_profile.domain.repository.UserProfileRepository
@@ -27,7 +32,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
-import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -162,11 +166,44 @@ class UserProfileRepositoryImpl(
     }
 
     override suspend fun updateUserActivity(id: String, userActivity: UserActivityModel) {
-        TODO("Not yet implemented")
+
+        suspendCancellableCoroutine { continuation ->
+            fireStore.collection(UtilConstants.USER_COLLECTION).document(id)
+                .update(
+                    mapOf(KEY_USER_ACTIVITY to userActivity)
+                ).addOnSuccessListener {
+                    continuation.resume(Unit)
+                }.addOnFailureListener {
+                    continuation.resumeWithException(
+                        UserProfileExceptions.UpdateActivityException(
+                            it.message!!))
+                }
+        }
     }
 
-    override suspend fun updateUserProfileInfo(id:String, userProfile: UserProfileInfoModel) {
+    override suspend fun updateReasonAssistance(
+        id: String,
+        reasonAssistanceModel: ReasonAssistanceModel) {
 
+        suspendCancellableCoroutine { continuation ->
+            fireStore.collection(UtilConstants.USER_COLLECTION).document(id)
+                .update(
+                    mapOf(
+                        KEY_USER_REASON_ASSISTANCE to reasonAssistanceModel
+                    )
+                ).addOnSuccessListener {
+                    continuation.resume(Unit)
+                }.addOnFailureListener {
+                    continuation.resumeWithException(
+                        UserProfileExceptions.UpdateReasonAssistanceException(
+                            it.message!!))
+                }
+        }
+    }
+
+
+
+    override suspend fun updateUserProfileInfo(id: String, userProfile: UserProfileInfoModel) {
 
         suspendCancellableCoroutine { continuation ->
             fireStore.collection(UtilConstants.USER_COLLECTION).document(id)

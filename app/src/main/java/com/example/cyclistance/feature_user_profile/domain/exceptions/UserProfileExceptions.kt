@@ -7,4 +7,6 @@ sealed class UserProfileExceptions{
     class InternalServerException(message: String) : RuntimeException(message)
     class UpdateProfileException(message: String) : RuntimeException(message)
     class GetProfileException(message: String) : RuntimeException(message)
+    class UpdateActivityException(message: String) : RuntimeException(message)
+    class UpdateReasonAssistanceException(message: String) : RuntimeException(message)
 }
