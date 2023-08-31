@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.SettingConstants.EDIT_PROFILE_VM_STATE_KEY
 import com.example.cyclistance.feature_user_profile.domain.exceptions.UserProfileExceptions
+import com.example.cyclistance.feature_user_profile.domain.model.UserProfileInfoModel
 import com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
 import com.example.cyclistance.feature_user_profile.presentation.edit_profile.event.EditProfileEvent
 import com.example.cyclistance.feature_user_profile.presentation.edit_profile.event.EditProfileVmEvent
@@ -90,26 +91,30 @@ class EditProfileViewModel @Inject constructor(
             finishLoading()
         }.onFailure { exception ->
             finishLoading()
-            _eventFlow.emit(value = EditProfileEvent.GetNameFailed(exception.message!!))
+            _eventFlow.emit(value = EditProfileEvent.NameInputFailed(exception.message!!))
         }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
 
-    private fun updateUserProfile(imageUri: String, name: String) {
+    private fun updateUserProfile(useProfile: UserProfileInfoModel) {
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 startLoading()
-                val uri = imageUri.takeIf { it.isNotEmpty() }
+                val uri = useProfile.photoUrl.takeIf { it.isNotEmpty() }
                 val photoUri: String? = uri?.let { userProfileUseCase.uploadImageUseCase(it) }
 
-                userProfileUseCase.updateProfileUseCase(
+                userProfileUseCase.updateAuthProfileUseCase(
                     photoUri = photoUri,
-                    name = name.trim())
+                    name = useProfile.name.trim())
+
+                userProfileUseCase.updateProfileInfoUseCase(
+                    userProfile = useProfile.copy(photoUrl = photoUri ?: getPhotoUrl())
+                )
 
             }.onSuccess {
                 finishLoading()
-                _eventFlow.emit(EditProfileEvent.UpdateUserProfileSuccess(reason = "Successfully Updated!"))
+                _eventFlow.emit(EditProfileEvent.UpdateUserProfileSuccess)
             }.onFailure { exception ->
                 finishLoading()
                 when (exception) {
