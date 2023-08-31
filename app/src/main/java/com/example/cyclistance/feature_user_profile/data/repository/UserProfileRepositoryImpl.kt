@@ -183,17 +183,24 @@ class UserProfileRepositoryImpl(
         }
     }
 
-    override suspend fun getUserProfileInfo(id: String): UserProfileModel {
+
+    override suspend fun getUserProfile(id: String): UserProfileModel {
+
+
         return withContext(scope) {
-            suspendCancellableCoroutine<UserProfileModel> { continuation ->
+            suspendCancellableCoroutine { continuation ->
                 fireStore.collection(UtilConstants.USER_COLLECTION).document(id)
                     .get().addOnSuccessListener { documentSnapshot ->
+                        continuation.resume(documentSnapshot.toUserProfileInfo())
 
-//                        continuation.resume(userProfileModel)
+
                     }.addOnFailureListener {
-                        Timber.e(it.message)
+                        continuation.resumeWithException(
+                            UserProfileExceptions.GetProfileException(
+                                it.message!!))
                     }
             }
         }
     }
+
 }

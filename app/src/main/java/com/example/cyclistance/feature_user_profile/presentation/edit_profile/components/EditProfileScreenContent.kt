@@ -199,7 +199,7 @@ fun EditProfileScreenContent(
                     uiState = uiState,
                     name = name,
                     cyclingGroup = cyclingGroup,
-                    city = address,
+                    address = address,
                 )
 
 

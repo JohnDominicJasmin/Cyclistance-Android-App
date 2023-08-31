@@ -13,6 +13,7 @@ import com.example.cyclistance.feature_user_profile.presentation.edit_profile.ev
 import com.example.cyclistance.feature_user_profile.presentation.edit_profile.state.EditProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -45,52 +46,61 @@ class EditProfileViewModel @Inject constructor(
     }
 
     private fun loadProfile() {
-        viewModelScope.launch(context = defaultDispatcher) {
+        viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {
+            startLoading()
             loadName()
             loadPhoto()
+
+            finishLoading()
         }
     }
 
     fun onEvent(event: EditProfileVmEvent) {
 
         when (event) {
-
-            is EditProfileVmEvent.Save -> {
-                updateUserProfile(event.userProfile)
-            }
-
-            is EditProfileVmEvent.LoadProfile -> {
-                loadProfile()
-            }
+            is EditProfileVmEvent.Save -> updateUserProfile(event.userProfile)
+            is EditProfileVmEvent.LoadProfile -> loadProfile()
+            EditProfileVmEvent.LoadProfileInfo -> loadUserProfileInfo()
         }
 
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
+    private fun loadUserProfileInfo() {
+        viewModelScope.launch(context = defaultDispatcher) {
+            runCatching {
+                userProfileUseCase.getUserProfileInfoUseCase(id = getId())
+            }.onSuccess {
+                _eventFlow.emit(
+                    value = EditProfileEvent.GetBikeGroupSuccess(
+                        cyclingGroup = it.getBikeGroup() ?: ""))
+                _eventFlow.emit(
+                    value = EditProfileEvent.GetAddressSuccess(
+                        address = it.getAddress() ?: ""))
+            }.onFailure {
+                Timber.v("Error ${it.message}")
+            }
+        }
+    }
+
     private suspend fun loadPhoto() {
         runCatching {
-            startLoading()
             getPhotoUrl()
         }.onSuccess { photoUrl ->
             _eventFlow.emit(value = EditProfileEvent.GetPhotoUrlSuccess(photoUrl))
-            finishLoading()
         }.onFailure {
             Timber.e(it.message)
-            finishLoading()
         }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
     private suspend fun loadName() {
         runCatching {
-            startLoading()
             getName()
         }.onSuccess { name ->
             _eventFlow.emit(value = EditProfileEvent.GetNameSuccess(name))
             _state.update { it.copy(nameSnapshot = name) }
-            finishLoading()
         }.onFailure { exception ->
-            finishLoading()
             _eventFlow.emit(value = EditProfileEvent.NameInputFailed(exception.message!!))
         }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
