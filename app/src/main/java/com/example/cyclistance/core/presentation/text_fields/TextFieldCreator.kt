@@ -1,10 +1,13 @@
 package com.example.cyclistance.core.presentation.text_fields
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
@@ -29,16 +34,37 @@ fun TextFieldCreator(
     modifier: Modifier = Modifier,
     errorMessage: String = "",
     label: String,
+    isOptional: Boolean = false,
     content: @Composable () -> Unit) {
     val hasError by remember(errorMessage) { derivedStateOf { errorMessage.isNotEmpty() } }
 
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(6.dp)) {
 
-        Text(
-            text = label,
-            style = MaterialTheme.typography.caption,
-            color = Black500,
-            modifier = Modifier.padding(bottom = 5.dp))
+        Row(
+            modifier = Modifier.padding(bottom = 5.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center) {
+
+            Text(
+                text = label,
+                style = MaterialTheme.typography.caption,
+                color = Black500,
+                modifier = Modifier)
+
+            if (isOptional) {
+                Text(
+                    text = "optional",
+                    modifier = Modifier
+                        .padding(all = 1.5.dp).padding(start = 4.dp)
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(MaterialTheme.colors.secondaryVariant)
+                        .padding(all = 1.dp),
+                    style = MaterialTheme.typography.overline,
+                    color = MaterialTheme.colors.onSecondary
+                )
+            }
+
+        }
 
         content()
 
