@@ -9,7 +9,8 @@ interface UserProfileRepository {
     suspend fun getName(): String?
     suspend fun getPhotoUrl(): String?
 
-    suspend fun updateUserProfileInfo(userProfile: UserProfileInfoModel)
+    suspend fun updateUserActivity(id: String, userActivity: UserActivityModel)
+    suspend fun updateUserProfileInfo(id: String, userProfile: UserProfileInfoModel)
 
     suspend fun getUserProfileInfo(id:String): UserProfileModel
 }

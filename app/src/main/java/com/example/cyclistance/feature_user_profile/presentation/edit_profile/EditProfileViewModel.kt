@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.SettingConstants.EDIT_PROFILE_VM_STATE_KEY
+import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_user_profile.domain.exceptions.UserProfileExceptions
 import com.example.cyclistance.feature_user_profile.domain.model.UserProfileInfoModel
 import com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
@@ -26,7 +27,8 @@ import javax.inject.Inject
 class EditProfileViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val defaultDispatcher: CoroutineDispatcher,
-    private val userProfileUseCase: UserProfileUseCase
+    private val userProfileUseCase: UserProfileUseCase,
+    private val authUseCase: AuthenticationUseCase
 ) : ViewModel() {
 
     private val _state =
@@ -107,6 +109,7 @@ class EditProfileViewModel @Inject constructor(
                     name = useProfile.name.trim())
 
                 userProfileUseCase.updateProfileInfoUseCase(
+                    id = getId(),
                     userProfile = useProfile.copy(photoUrl = photoUri ?: getPhotoUrl())
                 )
 
@@ -152,6 +155,7 @@ class EditProfileViewModel @Inject constructor(
     }
 
 
+    private fun getId() = authUseCase.getIdUseCase()
     private suspend fun getName() = userProfileUseCase.getNameUseCase()
     private suspend fun getPhotoUrl() = userProfileUseCase.getPhotoUrlUseCase()
 

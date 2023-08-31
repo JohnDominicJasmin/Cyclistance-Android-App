@@ -161,11 +161,15 @@ class UserProfileRepositoryImpl(
 
     }
 
-    override suspend fun updateUserProfileInfo(userProfile: UserProfileInfoModel) {
-        val id = auth.currentUser?.uid
+    override suspend fun updateUserActivity(id: String, userActivity: UserActivityModel) {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun updateUserProfileInfo(id:String, userProfile: UserProfileInfoModel) {
+
 
         suspendCancellableCoroutine { continuation ->
-            fireStore.collection(UtilConstants.USER_COLLECTION).document(id!!)
+            fireStore.collection(UtilConstants.USER_COLLECTION).document(id)
                 .update(
                     KEY_NAME, userProfile.name,
                     KEY_PHOTO, userProfile.photoUrl,
