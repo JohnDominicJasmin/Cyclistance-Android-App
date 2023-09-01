@@ -94,6 +94,15 @@ class EditProfileViewModel @Inject constructor(
         }
     }
 
+    private fun loadUserId(){
+        runCatching {
+            getId()
+        }.onSuccess { id ->
+            _state.update { it.copy(userId = id) }
+        }.onFailure {
+            Timber.e("Load user id ${it.message}")
+        }
+    }
     private suspend fun loadPhoto() {
         runCatching {
             getPhotoUrl()

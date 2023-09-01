@@ -11,4 +11,5 @@ data class EditProfileState(
     val cyclingGroupSnapshot: String = "",
     val addressSnapshot: String = "",
     val isLoading: Boolean = false,
+    val userId: String = ""
     ):Parcelable
