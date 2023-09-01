@@ -90,8 +90,8 @@ fun UserProfileContent(modifier: Modifier = Modifier, state: UserProfileState) {
                         .padding(horizontal = 16.dp)
                         .fillMaxWidth(),
 
-                    verticalArrangement = Arrangement.Top,
-                    horizontalArrangement = Arrangement.Start) {
+                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start)) {
 
                     repeat(6) { index ->
                         AssistanceCountItem(
@@ -134,6 +134,29 @@ private fun getAssistanceCount(userProfile: UserProfileModel, index: Int): Int? 
     }
 }
 
+val fakeUserProfile = UserProfileModel(
+    userProfileInfo = UserProfileInfoModel(
+        photoUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
+        name = "John Doe",
+        averageRating = 4.0,
+        address = "Manila, Philippines",
+        bikeGroup = "Manila Bike Club"
+    ),
+    userActivity = UserActivityModel(
+        requestAssistanceFrequency = 100,
+        rescueFrequency = 100,
+        overallDistanceOfRescue = 235,
+        averageSpeed = 25
+    ),
+
+    reasonAssistance = ReasonAssistanceModel(
+        injuryCount = 100,
+        frameSnapCount = 234,
+        flatTireCount = 14,
+        brokenChainCount = 12,
+        incidentCount = 6,
+        faultyBrakesCount = 1))
+
 
 @Preview(name = "Dark Theme", device = "id:pixel")
 @Composable
@@ -143,29 +166,7 @@ fun PreviewUserProfileContent1() {
             UserProfileContent(
                 state = UserProfileState(
 
-                    userProfileModel = UserProfileModel(
-                        userProfileInfo = UserProfileInfoModel(
-                            photoUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
-                            name = "John Doe",
-                            averageRating = 4.0,
-                            address = "Manila, Philippines",
-                            bikeGroup = "Manila Bike Club"
-                        ),
-                        userActivity = UserActivityModel(
-                            requestAssistanceFrequency = 100,
-                            rescueFrequency = 100,
-                            overallDistanceOfRescue = 235,
-                            averageSpeed = 25
-                        ),
-
-                        reasonAssistance = ReasonAssistanceModel(
-                            injuryCount = 100,
-                            frameSnapCount = 234,
-                            flatTireCount = 14,
-                            brokenChainCount = 12,
-                            incidentCount = 6,
-                            faultyBrakesCount = 1))
-
+                    userProfileModel = fakeUserProfile
                 )
             )
         }
@@ -180,29 +181,7 @@ fun PreviewUserProfileContent2() {
             UserProfileContent(
                 state = UserProfileState(
 
-                    userProfileModel = UserProfileModel(
-                        userProfileInfo = UserProfileInfoModel(
-                            photoUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
-                            name = "John Doe",
-                            averageRating = 0.0,
-                            address = "Manila, Philippines",
-                            bikeGroup = "Manila Bike Club"
-                        ),
-                        userActivity = UserActivityModel(
-                            requestAssistanceFrequency = 100,
-                            rescueFrequency = 100,
-                            overallDistanceOfRescue = 235,
-                            averageSpeed = 25
-                        ),
-
-                        reasonAssistance = ReasonAssistanceModel(
-                            injuryCount = 100,
-                            frameSnapCount = 234,
-                            flatTireCount = 14,
-                            brokenChainCount = 12,
-                            incidentCount = 6,
-                            faultyBrakesCount = 1))
-
+                    userProfileModel = fakeUserProfile
                 )
             )
         }
