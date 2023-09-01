@@ -570,36 +570,32 @@ class MappingViewModel @Inject constructor(
         incidentDescription: String) {
 
         viewModelScope.launch {
-            val userLocation = state.value.getCurrentLocation()
+                val userLocation = state.value.getCurrentLocation()
 
-            if (userLocation == null) {
-                _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
-                return@launch
-            }
+                if (userLocation == null) {
+                    _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
+                    return@launch
+                }
 
-            val distance = mappingUseCase.getCalculatedDistanceUseCase(
-                startingLocation = userLocation,
-                destinationLocation = LocationModel(
-                    latitude = latLng.latitude,
-                    longitude = latLng.longitude
+                val distance = mappingUseCase.getCalculatedDistanceUseCase(
+                    startingLocation = userLocation,
+                    destinationLocation = LocationModel(
+                        latitude = latLng.latitude,
+                        longitude = latLng.longitude
+                    )
                 )
-            )
 
-            val fullAddress = mappingUseCase.getFullAddressUseCase(
-                latitude = latLng.latitude,
-                longitude = latLng.longitude
-            )
+                if (distance > DEFAULT_RADIUS) {
+                    _eventFlow.emit(MappingEvent.IncidentDistanceTooFar)
+                    return@launch
+                }
 
-            if (distance > DEFAULT_RADIUS) {
-                _eventFlow.emit(MappingEvent.IncidentDistanceTooFar)
-                return@launch
-            }
+                reportIncident(
+                    label = label,
+                    latLng = latLng,
+                    incidentDescription = incidentDescription)
 
-            reportIncident(
-                label = label,
-                latLng = latLng,
-                incidentDescription = incidentDescription,
-                address = fullAddress!!)
+
         }
 
     }
@@ -619,8 +615,7 @@ class MappingViewModel @Inject constructor(
     private suspend fun reportIncident(
         label: String,
         latLng: LatLng,
-        incidentDescription: String,
-        address: String) {
+        incidentDescription: String) {
 
 
         coroutineScope {
@@ -633,7 +628,7 @@ class MappingViewModel @Inject constructor(
                         longitude = latLng.longitude,
                         label = label,
                         description = incidentDescription,
-                        address = address
+
                     ))
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.ReportIncidentSuccess)
