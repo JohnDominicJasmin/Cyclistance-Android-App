@@ -3,7 +3,7 @@ package com.example.cyclistance.feature_user_profile.presentation.edit_profile
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.SettingConstants.EDIT_PROFILE_VM_STATE_KEY
+import com.example.cyclistance.core.utils.constants.UserProfileConstants.EDIT_PROFILE_VM_STATE_KEY
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_user_profile.domain.exceptions.UserProfileExceptions
 import com.example.cyclistance.feature_user_profile.domain.model.UserProfileInfoModel
