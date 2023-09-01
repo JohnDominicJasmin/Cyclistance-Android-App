@@ -51,6 +51,7 @@ class EditProfileViewModel @Inject constructor(
             loadName()
             loadPhoto()
 
+            loadUserId()
             finishLoading()
         }
     }
