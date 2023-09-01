@@ -46,7 +46,6 @@ class EditProfileViewModel @Inject constructor(
             startLoading()
             loadName()
             loadPhoto()
-
             loadUserId()
             finishLoading()
         }
@@ -58,7 +57,6 @@ class EditProfileViewModel @Inject constructor(
             is EditProfileVmEvent.Save -> updateUserProfile(event.userProfile)
             is EditProfileVmEvent.LoadProfile -> loadProfile()
             is EditProfileVmEvent.LoadUserProfileInfo -> loadUserProfileInfo()
-
         }
 
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value

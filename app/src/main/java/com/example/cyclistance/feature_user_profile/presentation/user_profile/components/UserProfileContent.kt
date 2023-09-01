@@ -179,7 +179,9 @@ fun PreviewUserProfileContent1() {
             UserProfileContent(
                 state = UserProfileState(
 
-                    userProfileModel = fakeUserProfile
+                    userProfileModel = fakeUserProfile,
+                    userId = "123",
+                    profileSelectedId = "123"
                 ),
                 onClickEditProfile = {}
             )
@@ -194,7 +196,8 @@ fun PreviewUserProfileContent2() {
         CyclistanceTheme(darkTheme = false) {
             UserProfileContent(
                 state = UserProfileState(
-
+                    userId = "123",
+                    profileSelectedId = "1234",
                     userProfileModel = fakeUserProfile
                 ),
                 onClickEditProfile = {}

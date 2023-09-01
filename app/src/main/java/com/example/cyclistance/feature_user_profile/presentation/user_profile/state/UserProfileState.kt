@@ -11,4 +11,6 @@ import kotlinx.parcelize.Parcelize
 data class UserProfileState(
     val isLoading: Boolean = false,
     val userProfileModel: UserProfileModel = UserProfileModel(),
+    val userId: String = "",
+    val profileSelectedId: String = ""
 ):Parcelable
