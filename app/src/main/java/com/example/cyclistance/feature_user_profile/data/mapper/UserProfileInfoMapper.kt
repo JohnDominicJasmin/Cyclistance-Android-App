@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_user_profile.data.mapper
 
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_ADDRESS
+import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_AVERAGE_RATING
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_BIKE_GROUP
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_USER_ACTIVITY
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_USER_REASON_ASSISTANCE
@@ -33,6 +34,7 @@ object UserProfileInfoMapper {
             userProfileInfo = UserProfileInfoModel(
                 photoUrl = getString(UtilConstants.KEY_PHOTO) ?: "",
                 address = getString(KEY_ADDRESS) ?: "",
+                averageRating = getDouble(KEY_AVERAGE_RATING) ?: 0.0,
                 name = getString(KEY_NAME) ?: "",
                 bikeGroup = getString(KEY_BIKE_GROUP) ?: ""
             ),
