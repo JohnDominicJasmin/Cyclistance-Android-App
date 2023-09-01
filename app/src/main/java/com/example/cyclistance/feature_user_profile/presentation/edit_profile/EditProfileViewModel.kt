@@ -41,10 +41,6 @@ class EditProfileViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
 
-    init {
-        loadProfile()
-    }
-
     private fun loadProfile() {
         viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {
             startLoading()
