@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_user_profile.presentation.user_profile.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -36,72 +38,80 @@ fun UserProfileContent(modifier: Modifier = Modifier, state: UserProfileState) {
         modifier = modifier
             .fillMaxSize(), color = MaterialTheme.colors.background) {
 
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp)) {
-
-
-            UserProfileSection(
-                modifier = Modifier
-                    .wrapContentHeight(Alignment.Top)
-                    .padding(all = 16.dp),
-                state = state
-            )
-
-            Divider(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 12.dp), color = Black500)
-
-
-            UserActivitySection(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .align(Alignment.Start)
-                    .padding(vertical = 12.dp),
-                userProfile = state.userProfileModel
-            )
-
-
-            Divider(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(top = 32.dp), color = Black500)
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
             Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalAlignment = Alignment.Start) {
+                    .padding(vertical = 16.dp)
+                    .align(Alignment.TopCenter)) {
 
-                Text(
-                    text = "User Activity",
-                    color = MaterialTheme.colors.onBackground,
-                    style = MaterialTheme.typography.subtitle1,
-                    modifier = Modifier.padding(horizontal = 16.dp)
+
+                UserProfileSection(
+                    modifier = Modifier
+                        .wrapContentHeight(Alignment.Top)
+                        .padding(all = 16.dp),
+                    state = state,
+                    onClickEditProfile = onClickEditProfile
+                )
+
+                Divider(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(top = 12.dp), color = Black500)
+
+
+                UserActivitySection(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Start)
+                        .padding(vertical = 12.dp),
+                    userProfile = state.userProfileModel
                 )
 
 
-                FlowRow(
+                Divider(
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
+                        .padding(top = 32.dp), color = Black500)
 
-                    verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start)) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    horizontalAlignment = Alignment.Start) {
 
-                    repeat(6) { index ->
-                        AssistanceCountItem(
-                            iconId = getAssistanceIcon(index = index)!!,
-                            count = getAssistanceCount(
-                                index = index,
-                                userProfile = state.userProfileModel)!!)
+                    Text(
+                        text = "User Activity",
+                        color = MaterialTheme.colors.onBackground,
+                        style = MaterialTheme.typography.subtitle1,
+                        modifier = Modifier.padding(horizontal = 16.dp)
+                    )
+
+
+                    FlowRow(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .fillMaxWidth(),
+
+                        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start)) {
+
+                        repeat(6) { index ->
+                            AssistanceCountItem(
+                                iconId = getAssistanceIcon(index = index)!!,
+                                count = getAssistanceCount(
+                                    index = index,
+                                    userProfile = state.userProfileModel)!!)
+                        }
                     }
                 }
+            }
 
+            if(state.isLoading){
+                CircularProgressIndicator(color = MaterialTheme.colors.onBackground)
             }
 
         }
@@ -167,7 +177,8 @@ fun PreviewUserProfileContent1() {
                 state = UserProfileState(
 
                     userProfileModel = fakeUserProfile
-                )
+                ),
+                onClickEditProfile = {}
             )
         }
     }
@@ -182,7 +193,8 @@ fun PreviewUserProfileContent2() {
                 state = UserProfileState(
 
                     userProfileModel = fakeUserProfile
-                )
+                ),
+                onClickEditProfile = {}
             )
         }
     }
