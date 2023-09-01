@@ -34,7 +34,10 @@ import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle
 
 @Composable
-fun UserProfileSection(modifier: Modifier = Modifier, state: UserProfileState) {
+fun UserProfileSection(
+    modifier: Modifier = Modifier,
+    state: UserProfileState,
+    onClickEditProfile: () -> Unit) {
 
 
     Row(
@@ -137,7 +140,7 @@ fun UserProfileSection(modifier: Modifier = Modifier, state: UserProfileState) {
                 tint = MaterialTheme.colors.onBackground,
                 modifier = Modifier
                     .clip(CircleShape)
-                    .clickable { }
+                    .clickable { onClickEditProfile() }
                     .padding(all = 8.dp))
 
             Icon(

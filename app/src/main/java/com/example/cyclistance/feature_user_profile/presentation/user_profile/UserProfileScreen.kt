@@ -11,6 +11,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_user_profile.presentation.user_profile.components.UserProfileContent
 import com.example.cyclistance.feature_user_profile.presentation.user_profile.event.UserProfileVmEvent
+import com.example.cyclistance.navigation.Screens
 
 @Composable
 fun UserProfileScreen(
@@ -26,6 +27,12 @@ fun UserProfileScreen(
         viewModel.onEvent(event = UserProfileVmEvent.LoadProfile(userId = userId))
     }
 
+    UserProfileContent(
+        state = state,
+        modifier = Modifier.padding(paddingValues),
+        onClickEditProfile = {
+            navController.navigate(Screens.UserProfileNavigation.EditProfile.screenRoute)
+        }
+    )
 
-    UserProfileContent(state = state, modifier = Modifier.padding(paddingValues))
 }

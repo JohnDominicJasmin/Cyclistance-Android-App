@@ -32,7 +32,10 @@ import com.example.cyclistance.theme.CyclistanceTheme
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun UserProfileContent(modifier: Modifier = Modifier, state: UserProfileState) {
+fun UserProfileContent(
+    modifier: Modifier = Modifier,
+    state: UserProfileState,
+    onClickEditProfile: () -> Unit) {
 
     Surface(
         modifier = modifier
