@@ -57,7 +57,8 @@ class EditProfileViewModel @Inject constructor(
         when (event) {
             is EditProfileVmEvent.Save -> updateUserProfile(event.userProfile)
             is EditProfileVmEvent.LoadProfile -> loadProfile()
-            EditProfileVmEvent.LoadProfileInfo -> loadUserProfileInfo()
+            is EditProfileVmEvent.LoadUserProfileInfo -> loadUserProfileInfo()
+
         }
 
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value

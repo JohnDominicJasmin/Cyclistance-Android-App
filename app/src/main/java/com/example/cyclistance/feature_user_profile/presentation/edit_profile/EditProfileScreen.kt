@@ -143,7 +143,7 @@ fun EditProfileScreen(
 
     LaunchedEffect(key1 = true){
         editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadProfile)
-        editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadProfileInfo)
+        editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadUserProfileInfo)
     }
 
     LaunchedEffect(true) {
