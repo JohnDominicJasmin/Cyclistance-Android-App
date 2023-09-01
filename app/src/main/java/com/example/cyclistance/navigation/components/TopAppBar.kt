@@ -189,6 +189,15 @@ fun TopAppBar(
                 })
         }
 
+        Screens.UserProfileNavigation.UserProfile.screenRoute + "/{${USER_ID}}" -> {
+            TopAppBarCreator(
+                icon = Icons.Default.Close,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "User Profile")
+                })
+        }
+
 
     }
 
