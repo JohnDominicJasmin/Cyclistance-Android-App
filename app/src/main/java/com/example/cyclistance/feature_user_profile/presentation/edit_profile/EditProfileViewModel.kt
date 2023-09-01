@@ -70,13 +70,24 @@ class EditProfileViewModel @Inject constructor(
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 userProfileUseCase.getUserProfileInfoUseCase(id = getId())
-            }.onSuccess {
+            }.onSuccess { profile ->
+
+                val cyclingGroup = profile.getBikeGroup() ?: ""
+                val address = profile.getAddress() ?: ""
+
                 _eventFlow.emit(
                     value = EditProfileEvent.GetBikeGroupSuccess(
-                        cyclingGroup = it.getBikeGroup() ?: ""))
+                        cyclingGroup = cyclingGroup))
+
                 _eventFlow.emit(
                     value = EditProfileEvent.GetAddressSuccess(
-                        address = it.getAddress() ?: ""))
+                        address = address))
+
+                _state.update {
+                    it.copy(
+                        cyclingGroupSnapshot = cyclingGroup,
+                        addressSnapshot = address)
+                }
             }.onFailure {
                 Timber.v("Error ${it.message}")
             }
