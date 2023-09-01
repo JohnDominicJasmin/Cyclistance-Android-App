@@ -30,7 +30,7 @@ fun TextFieldInputArea(
     uiState: EditProfileUiState,
     name: TextFieldValue,
     cyclingGroup: TextFieldValue,
-    city: TextFieldValue,
+    address: TextFieldValue,
     onValueChangeName: (TextFieldValue) -> Unit,
     onValueChangeCyclingGroup: (TextFieldValue) -> Unit,
     onValueChangeCity: (TextFieldValue) -> Unit,
@@ -69,10 +69,10 @@ fun TextFieldInputArea(
 
         }
 
-        TextFieldCreator(label = "City", errorMessage = uiState.addressErrorMessage) {
+        TextFieldCreator(label = "Address", errorMessage = uiState.addressErrorMessage) {
             TextFieldItem(
                 enabled = !state.isLoading,
-                value = city,
+                value = address,
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Words,
                     autoCorrect = false,
@@ -102,7 +102,7 @@ fun EditProfileTextFieldPreview() {
                 keyboardActions = KeyboardActions { },
                 uiState = EditProfileUiState(),
                 name = TextFieldValue(""),
-                city = TextFieldValue(""),
+                address = TextFieldValue(""),
                 cyclingGroup = TextFieldValue(""),
                 onValueChangeCyclingGroup = { },
                 onValueChangeCity = { },

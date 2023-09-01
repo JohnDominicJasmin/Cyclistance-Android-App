@@ -74,6 +74,7 @@ fun NavScreen(
         rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
     val settingState by settingViewModel.state.collectAsStateWithLifecycle()
+    val editProfileState by editProfileViewModel.state.collectAsStateWithLifecycle()
     val navState by navViewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -250,6 +251,11 @@ fun NavScreen(
         }
     }
 
+    val openUserProfile = remember(editProfileState.userId){{
+        closeDrawer()
+        navController.navigateScreen(Screens.UserProfileNavigation.UserProfile.screenRoute + "/${editProfileState.userId}")
+    }}
+
 
 
 
@@ -290,6 +296,7 @@ fun NavScreen(
                             onClickSignOut = onClickSignOut,
                             onClickEmergencyCall = onClickEmergencyCall,
                             onClickRideHistory = onClickRideHistory,
+                            onClickUserProfile = openUserProfile,
                             uiState = navUiState
                         )
                     },

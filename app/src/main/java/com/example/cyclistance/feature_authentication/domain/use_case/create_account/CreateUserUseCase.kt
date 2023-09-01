@@ -6,6 +6,11 @@ import com.example.cyclistance.feature_authentication.domain.repository.AuthRepo
 class CreateUserUseCase(private val repository: AuthRepository) {
 
     suspend operator fun invoke(user: UserDetails) {
-        repository.createUser(user = user)
+        val userDetails = if(user.name.isEmpty()){
+            user.copy(name = user.email.substringBefore("@"))
+        }else{
+            user
+        }
+        repository.createUser(user = userDetails)
     }
 }

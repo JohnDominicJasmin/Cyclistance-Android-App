@@ -5,7 +5,10 @@ data class UserProfileUseCase(
     val uploadImageUseCase: UploadImageUseCase,
     val getPhotoUrlUseCase: GetPhotoUrlUseCase,
     val getNameUseCase: GetNameUseCase,
-    val updateProfileInfoUseCase: UpdateProfileInfoUseCase
+    val updateProfileInfoUseCase: UpdateProfileInfoUseCase,
+    val getUserProfileInfoUseCase: GetUserProfileInfoUseCase,
+    val updateReasonAssistanceUseCase: UpdateReasonAssistanceUseCase,
+    val updateUserActivityUseCase: UpdateUserActivityUseCase
 
 )
 

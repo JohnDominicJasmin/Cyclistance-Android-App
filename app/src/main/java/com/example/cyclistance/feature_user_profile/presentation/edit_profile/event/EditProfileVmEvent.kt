@@ -6,6 +6,8 @@ sealed class EditProfileVmEvent {
 
     data class Save(val userProfile: UserProfileInfoModel): EditProfileVmEvent()
     object LoadProfile: EditProfileVmEvent()
+    object LoadUserProfileInfo: EditProfileVmEvent()
+
 
 
 

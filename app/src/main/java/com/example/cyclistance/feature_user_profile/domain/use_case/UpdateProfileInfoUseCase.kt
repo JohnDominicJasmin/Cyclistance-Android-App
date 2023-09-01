@@ -5,12 +5,12 @@ import com.example.cyclistance.feature_user_profile.domain.model.UserProfileInfo
 import com.example.cyclistance.feature_user_profile.domain.repository.UserProfileRepository
 
 class UpdateProfileInfoUseCase(private val repository: UserProfileRepository) {
-    suspend operator fun invoke(userProfile: UserProfileInfoModel) {
+    suspend operator fun invoke(id: String, userProfile: UserProfileInfoModel) {
 
-        if(userProfile.address.isEmpty()){
+        if (userProfile.address.isEmpty()) {
             throw UserProfileExceptions.AddressException()
         }
 
-        repository.updateUserProfileInfo(userProfile)
+        repository.updateUserProfileInfo(id = id, userProfile = userProfile)
     }
 }

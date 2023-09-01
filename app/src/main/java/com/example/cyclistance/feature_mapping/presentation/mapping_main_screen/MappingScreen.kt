@@ -69,6 +69,8 @@ import com.mapbox.mapboxsdk.location.modes.CameraMode
 import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -809,6 +811,20 @@ fun MappingScreen(
     }
 
 
+    LaunchedEffect(key1 = true){
+        mappingViewModel.eventFlow.distinctUntilChanged().collectLatest {
+            when(it){
+                is MappingEvent.NoInternetConnection -> {
+                    uiState = uiState.copy(
+                        isNoInternetVisible = true
+                    )
+                }
+
+                else -> {}
+            }
+        }
+    }
+
     LaunchedEffect(key1 = true) {
 
         mappingViewModel.eventFlow.collect { event ->
@@ -848,11 +864,7 @@ fun MappingScreen(
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
-                is MappingEvent.NoInternetConnection -> {
-                    uiState = uiState.copy(
-                        isNoInternetVisible = true
-                    )
-                }
+
 
                 is MappingEvent.NewSelectedRescuee -> {
                     uiState = uiState.copy(
@@ -998,6 +1010,8 @@ fun MappingScreen(
                     onDiscardMarkerChanges()
                     collapseBottomSheet()
                 }
+
+                else -> {}
             }
         }
     }

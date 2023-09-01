@@ -6,6 +6,8 @@ sealed class EditProfileEvent {
 
     data class GetPhotoUrlSuccess(val photoUrl: String) : EditProfileEvent()
     data class GetNameSuccess(val name: String) : EditProfileEvent()
+    data class GetBikeGroupSuccess(val cyclingGroup: String) : EditProfileEvent()
+    data class GetAddressSuccess(val address: String) : EditProfileEvent()
 
     data class NameInputFailed(val reason: String) : EditProfileEvent()
     data class AddressInputFailed(val reason: String) : EditProfileEvent()

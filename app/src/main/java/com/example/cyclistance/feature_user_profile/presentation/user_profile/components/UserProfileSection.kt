@@ -1,5 +1,8 @@
 package com.example.cyclistance.feature_user_profile.presentation.user_profile.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -34,7 +37,10 @@ import com.gowtham.ratingbar.RatingBar
 import com.gowtham.ratingbar.RatingBarStyle
 
 @Composable
-fun UserProfileSection(modifier: Modifier = Modifier, state: UserProfileState) {
+fun UserProfileSection(
+    modifier: Modifier = Modifier,
+    state: UserProfileState,
+    onClickEditProfile: () -> Unit) {
 
 
     Row(
@@ -79,7 +85,7 @@ fun UserProfileSection(modifier: Modifier = Modifier, state: UserProfileState) {
                 modifier = Modifier
                     .padding(start = 3.5.dp)
                     .padding(vertical = 4.dp),
-                value = state.userProfileModel.getAverageRating()!!.toFloat(),
+                value = state.userProfileModel.getAverageRating().toFloat(),
                 style = RatingBarStyle.Stroke(
                     activeColor = MaterialTheme.colors.primary,
                 ),
@@ -90,57 +96,83 @@ fun UserProfileSection(modifier: Modifier = Modifier, state: UserProfileState) {
 
             )
 
+            val address = state.userProfileModel.getAddress()
+            val bikeGroup = state.userProfileModel.getBikeGroup()
 
-            Row(
-                modifier = Modifier,
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Icon(
-                    imageVector = Icons.Outlined.LocationOn,
-                    contentDescription = "User Address",
-                    tint = MaterialTheme.colors.onBackground)
-                Text(
-                    text = state.userProfileModel.getAddress()!!,
-                    color = MaterialTheme.colors.onBackground,
-                    style = MaterialTheme.typography.body2)
+            if (address?.isNotEmpty() == true) {
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Icon(
+                        imageVector = Icons.Outlined.LocationOn,
+                        contentDescription = "User Address",
+                        tint = MaterialTheme.colors.onBackground)
+                    Text(
+                        text = address,
+                        color = MaterialTheme.colors.onBackground,
+                        style = MaterialTheme.typography.body2)
+                }
+            }
+
+            if (bikeGroup?.isNotEmpty() == true) {
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Icon(
+                        imageVector = Icons.Outlined.DirectionsBike,
+                        contentDescription = "User Bike Group",
+                        tint = MaterialTheme.colors.onBackground)
+                    Text(
+                        text = bikeGroup,
+                        color = MaterialTheme.colors.onBackground,
+                        style = MaterialTheme.typography.body2)
+                }
             }
 
 
-            Row(
-                modifier = Modifier,
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Icon(
-                    imageVector = Icons.Outlined.DirectionsBike,
-                    contentDescription = "User Bike Group",
-                    tint = MaterialTheme.colors.onBackground)
-                Text(
-                    text = state.userProfileModel.getBikeGroup()!!,
-                    color = MaterialTheme.colors.onBackground,
-                    style = MaterialTheme.typography.body2)
-            }
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
         Column(modifier = Modifier.wrapContentSize(align = Alignment.TopEnd)) {
-            Icon(
-                imageVector = Icons.Filled.Edit,
-                contentDescription = "Edit Profile",
-                tint = MaterialTheme.colors.onBackground,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .clickable { }
-                    .padding(all = 8.dp))
 
-            Icon(
-                imageVector = Icons.Outlined.Message,
-                contentDescription = "Edit Profile",
-                tint = MaterialTheme.colors.primary,
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .clickable { }
-                    .padding(all = 8.dp))
+            val isYourProfile = state.userId == state.profileSelectedId
+
+            AnimatedVisibility(
+                visible = isYourProfile,
+                modifier = Modifier.wrapContentSize(align = Alignment.TopCenter),
+                enter = fadeIn(),
+                exit = fadeOut()) {
+
+                Icon(
+                    imageVector = Icons.Filled.Edit,
+                    contentDescription = "Edit Profile",
+                    tint = MaterialTheme.colors.onBackground,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable { onClickEditProfile() }
+                        .padding(all = 8.dp))
+            }
+
+
+            AnimatedVisibility(
+                visible = !isYourProfile,
+                modifier = Modifier.wrapContentSize(align = Alignment.BottomCenter),
+                enter = fadeIn(),
+                exit = fadeOut()) {
+
+                Icon(
+                    imageVector = Icons.Outlined.Message,
+                    contentDescription = "Edit Profile",
+                    tint = MaterialTheme.colors.primary,
+                    modifier = Modifier
+                        .clip(CircleShape)
+                        .clickable { }
+                        .padding(all = 8.dp))
+
+            }
         }
 
 

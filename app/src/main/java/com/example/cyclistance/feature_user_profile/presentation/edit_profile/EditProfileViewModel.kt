@@ -3,7 +3,8 @@ package com.example.cyclistance.feature_user_profile.presentation.edit_profile
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.SettingConstants.EDIT_PROFILE_VM_STATE_KEY
+import com.example.cyclistance.core.utils.constants.UserProfileConstants.EDIT_PROFILE_VM_STATE_KEY
+import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_user_profile.domain.exceptions.UserProfileExceptions
 import com.example.cyclistance.feature_user_profile.domain.model.UserProfileInfoModel
 import com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
@@ -12,6 +13,7 @@ import com.example.cyclistance.feature_user_profile.presentation.edit_profile.ev
 import com.example.cyclistance.feature_user_profile.presentation.edit_profile.state.EditProfileState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -26,7 +28,8 @@ import javax.inject.Inject
 class EditProfileViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val defaultDispatcher: CoroutineDispatcher,
-    private val userProfileUseCase: UserProfileUseCase
+    private val userProfileUseCase: UserProfileUseCase,
+    private val authUseCase: AuthenticationUseCase
 ) : ViewModel() {
 
     private val _state =
@@ -38,57 +41,82 @@ class EditProfileViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
 
-    init {
-        loadProfile()
-    }
-
     private fun loadProfile() {
-        viewModelScope.launch(context = defaultDispatcher) {
+        viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {
+            startLoading()
             loadName()
             loadPhoto()
+            loadUserId()
+            finishLoading()
         }
     }
 
     fun onEvent(event: EditProfileVmEvent) {
 
         when (event) {
-
-            is EditProfileVmEvent.Save -> {
-                updateUserProfile(event.userProfile)
-            }
-
-            is EditProfileVmEvent.LoadProfile -> {
-                loadProfile()
-            }
+            is EditProfileVmEvent.Save -> updateUserProfile(event.userProfile)
+            is EditProfileVmEvent.LoadProfile -> loadProfile()
+            is EditProfileVmEvent.LoadUserProfileInfo -> loadUserProfileInfo()
         }
 
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
+    private fun loadUserProfileInfo() {
+        viewModelScope.launch(context = defaultDispatcher) {
+            runCatching {
+                userProfileUseCase.getUserProfileInfoUseCase(id = getId())
+            }.onSuccess { profile ->
+
+                val cyclingGroup = profile.getBikeGroup() ?: ""
+                val address = profile.getAddress() ?: ""
+
+                _eventFlow.emit(
+                    value = EditProfileEvent.GetBikeGroupSuccess(
+                        cyclingGroup = cyclingGroup))
+
+                _eventFlow.emit(
+                    value = EditProfileEvent.GetAddressSuccess(
+                        address = address))
+
+                _state.update {
+                    it.copy(
+                        cyclingGroupSnapshot = cyclingGroup,
+                        addressSnapshot = address)
+                }
+            }.onFailure {
+                Timber.v("Error ${it.message}")
+            }
+        }
+    }
+
+    private fun loadUserId(){
+        runCatching {
+            getId()
+        }.onSuccess { id ->
+            _state.update { it.copy(userId = id) }
+        }.onFailure {
+            Timber.e("Load user id ${it.message}")
+        }
+    }
     private suspend fun loadPhoto() {
         runCatching {
-            startLoading()
             getPhotoUrl()
         }.onSuccess { photoUrl ->
             _eventFlow.emit(value = EditProfileEvent.GetPhotoUrlSuccess(photoUrl))
-            finishLoading()
         }.onFailure {
             Timber.e(it.message)
-            finishLoading()
         }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
 
     private suspend fun loadName() {
         runCatching {
-            startLoading()
             getName()
         }.onSuccess { name ->
             _eventFlow.emit(value = EditProfileEvent.GetNameSuccess(name))
             _state.update { it.copy(nameSnapshot = name) }
-            finishLoading()
         }.onFailure { exception ->
-            finishLoading()
             _eventFlow.emit(value = EditProfileEvent.NameInputFailed(exception.message!!))
         }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
@@ -107,6 +135,7 @@ class EditProfileViewModel @Inject constructor(
                     name = useProfile.name.trim())
 
                 userProfileUseCase.updateProfileInfoUseCase(
+                    id = getId(),
                     userProfile = useProfile.copy(photoUrl = photoUri ?: getPhotoUrl())
                 )
 
@@ -152,6 +181,7 @@ class EditProfileViewModel @Inject constructor(
     }
 
 
+    private fun getId() = authUseCase.getIdUseCase()
     private suspend fun getName() = userProfileUseCase.getNameUseCase()
     private suspend fun getPhotoUrl() = userProfileUseCase.getPhotoUrlUseCase()
 

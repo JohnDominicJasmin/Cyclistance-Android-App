@@ -32,7 +32,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
-import com.example.cyclistance.feature_settings.domain.use_case.SettingUseCase
 import com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
 import com.google.maps.android.SphericalUtil
 import com.mapbox.geojson.Point
@@ -62,7 +61,6 @@ import com.google.android.gms.maps.model.LatLng as GoogleLatLng
 class MappingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase,
-    private val settingUseCase: SettingUseCase,
     private val mappingUseCase: MappingUseCase,
     private val userProfileUseCase: UserProfileUseCase,
     private val defaultDispatcher: CoroutineDispatcher
@@ -572,36 +570,32 @@ class MappingViewModel @Inject constructor(
         incidentDescription: String) {
 
         viewModelScope.launch {
-            val userLocation = state.value.getCurrentLocation()
+                val userLocation = state.value.getCurrentLocation()
 
-            if (userLocation == null) {
-                _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
-                return@launch
-            }
+                if (userLocation == null) {
+                    _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
+                    return@launch
+                }
 
-            val distance = mappingUseCase.getCalculatedDistanceUseCase(
-                startingLocation = userLocation,
-                destinationLocation = LocationModel(
-                    latitude = latLng.latitude,
-                    longitude = latLng.longitude
+                val distance = mappingUseCase.getCalculatedDistanceUseCase(
+                    startingLocation = userLocation,
+                    destinationLocation = LocationModel(
+                        latitude = latLng.latitude,
+                        longitude = latLng.longitude
+                    )
                 )
-            )
 
-            val fullAddress = mappingUseCase.getFullAddressUseCase(
-                latitude = latLng.latitude,
-                longitude = latLng.longitude
-            )
+                if (distance > DEFAULT_RADIUS) {
+                    _eventFlow.emit(MappingEvent.IncidentDistanceTooFar)
+                    return@launch
+                }
 
-            if (distance > DEFAULT_RADIUS) {
-                _eventFlow.emit(MappingEvent.IncidentDistanceTooFar)
-                return@launch
-            }
+                reportIncident(
+                    label = label,
+                    latLng = latLng,
+                    incidentDescription = incidentDescription)
 
-            reportIncident(
-                label = label,
-                latLng = latLng,
-                incidentDescription = incidentDescription,
-                address = fullAddress!!)
+
         }
 
     }
@@ -621,8 +615,7 @@ class MappingViewModel @Inject constructor(
     private suspend fun reportIncident(
         label: String,
         latLng: LatLng,
-        incidentDescription: String,
-        address: String) {
+        incidentDescription: String) {
 
 
         coroutineScope {
@@ -635,7 +628,7 @@ class MappingViewModel @Inject constructor(
                         longitude = latLng.longitude,
                         label = label,
                         description = incidentDescription,
-                        address = address
+
                     ))
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.ReportIncidentSuccess)

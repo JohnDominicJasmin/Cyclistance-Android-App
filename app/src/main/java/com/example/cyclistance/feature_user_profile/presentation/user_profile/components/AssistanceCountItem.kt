@@ -16,6 +16,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -23,17 +24,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
+import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun AssistanceCountItem(modifier: Modifier = Modifier, @DrawableRes iconId: Int, count: Int) {
 
+    val isDarkTheme = IsDarkTheme.current
+
     Surface(
         modifier = modifier
-            .padding(all = 4.dp)
             .wrapContentHeight(align = Alignment.CenterVertically),
         color = MaterialTheme.colors.secondary,
-        shape = RoundedCornerShape(12.dp)) {
+        shape = RoundedCornerShape(12.dp), elevation = if(isDarkTheme) 0.dp else 2.dp) {
 
         Row(
             modifier = Modifier.padding(end = 16.dp),
@@ -45,7 +48,8 @@ fun AssistanceCountItem(modifier: Modifier = Modifier, @DrawableRes iconId: Int,
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 4.dp)
                     .background(MaterialTheme.colors.secondaryVariant, shape = CircleShape)
-                    .clip(CircleShape).size(40.dp)) {
+                    .clip(CircleShape)
+                    .size(40.dp)) {
 
                 Icon(
                     modifier = Modifier
@@ -68,12 +72,34 @@ fun AssistanceCountItem(modifier: Modifier = Modifier, @DrawableRes iconId: Int,
 
 }
 
-@Preview
+@Preview(name = "Dark Theme")
 @Composable
-fun PreviewAssistanceCountItem() {
-    CyclistanceTheme(darkTheme = true) {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            AssistanceCountItem(iconId = R.drawable.ic_broken_chain, count = 5000)
+fun PreviewAssistanceCountItem1() {
+    CompositionLocalProvider(IsDarkTheme provides true) {
+        CyclistanceTheme(darkTheme = true) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.background),
+                contentAlignment = Alignment.Center) {
+                AssistanceCountItem(iconId = R.drawable.ic_broken_chain, count = 5000)
+            }
+        }
+    }
+}
+
+@Preview(name = "Dark Theme")
+@Composable
+fun PreviewAssistanceCountItem2() {
+    CompositionLocalProvider(IsDarkTheme provides false) {
+        CyclistanceTheme(darkTheme = false) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.background),
+                contentAlignment = Alignment.Center) {
+                AssistanceCountItem(iconId = R.drawable.ic_broken_chain, count = 5000)
+            }
         }
     }
 }

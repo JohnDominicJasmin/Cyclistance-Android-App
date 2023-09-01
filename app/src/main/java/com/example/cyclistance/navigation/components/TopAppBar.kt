@@ -34,6 +34,7 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_I
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
+import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_ID
 import com.example.cyclistance.feature_messaging.presentation.common.MessageUserImage
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.state.NavUiState
@@ -186,6 +187,15 @@ fun TopAppBar(
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Rescue Details")
+                })
+        }
+
+        Screens.UserProfileNavigation.UserProfile.screenRoute + "/{${USER_ID}}" -> {
+            TopAppBarCreator(
+                icon = Icons.Default.Close,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "User Profile")
                 })
         }
 

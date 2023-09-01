@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,7 @@ fun NavigationDrawerContent(
     onClickRideHistory: () -> Unit = {},
     onClickChat: () -> Unit = {},
     onClickSignOut: () -> Unit = {},
+    onClickUserProfile: () -> Unit = {},
     uiState: NavUiState = NavUiState()
 ) {
 
@@ -81,7 +83,8 @@ fun NavigationDrawerContent(
                         .border(
                             width = 3.6.dp,
                             color = MaterialTheme.colors.primary,
-                            shape = CircleShape),
+                            shape = CircleShape)
+                        .clickable { onClickUserProfile() },
                     contentScale = ContentScale.Crop,
                     placeholder = rememberAsyncImagePainter(model = R.drawable.ic_empty_profile_placeholder_large),
                     error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),

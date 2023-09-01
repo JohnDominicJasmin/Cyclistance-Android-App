@@ -235,7 +235,7 @@ class MappingRepositoryImpl(
             }
 
         } catch (e: IOException) {
-            Timber.e("GET ADDRESS: ${e.message}")
+             throw MappingExceptions.NetworkException()
         }
     }
 

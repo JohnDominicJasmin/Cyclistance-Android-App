@@ -143,6 +143,7 @@ fun EditProfileScreen(
 
     LaunchedEffect(key1 = true){
         editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadProfile)
+        editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadUserProfileInfo)
     }
 
     LaunchedEffect(true) {
@@ -183,6 +184,12 @@ fun EditProfileScreen(
                     uiState = uiState.copy(addressErrorMessage = event.reason)
                 }
 
+                is EditProfileEvent.GetAddressSuccess -> {
+                    address = TextFieldValue(text = event.address)
+                }
+                is EditProfileEvent.GetBikeGroupSuccess -> {
+                    cyclingGroup = TextFieldValue(text = event.cyclingGroup)
+                }
             }
         }
 
