@@ -45,7 +45,7 @@ fun ActivityItemSection(
 
         Card(
             shape = RoundedCornerShape(topStart = 12.dp, bottomEnd = 12.dp, topEnd = 12.dp),
-            modifier = Modifier.requiredHeight(120.dp),
+            modifier = Modifier.requiredHeight(160.dp),
             elevation = if(isDarkTheme) 0.dp else 4.dp,
             backgroundColor = MaterialTheme.colors.surface
             ) {
