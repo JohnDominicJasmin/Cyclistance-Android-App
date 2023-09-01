@@ -79,7 +79,7 @@ fun UserProfileSection(modifier: Modifier = Modifier, state: UserProfileState) {
                 modifier = Modifier
                     .padding(start = 3.5.dp)
                     .padding(vertical = 4.dp),
-                value = state.userProfileModel.getAverageRating()!!.toFloat(),
+                value = state.userProfileModel.getAverageRating().toFloat(),
                 style = RatingBarStyle.Stroke(
                     activeColor = MaterialTheme.colors.primary,
                 ),
@@ -90,35 +90,42 @@ fun UserProfileSection(modifier: Modifier = Modifier, state: UserProfileState) {
 
             )
 
+            val address = state.userProfileModel.getAddress()
+            val bikeGroup = state.userProfileModel.getBikeGroup()
 
-            Row(
-                modifier = Modifier,
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Icon(
-                    imageVector = Icons.Outlined.LocationOn,
-                    contentDescription = "User Address",
-                    tint = MaterialTheme.colors.onBackground)
-                Text(
-                    text = state.userProfileModel.getAddress()!!,
-                    color = MaterialTheme.colors.onBackground,
-                    style = MaterialTheme.typography.body2)
+            if (address?.isNotEmpty() == true) {
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Icon(
+                        imageVector = Icons.Outlined.LocationOn,
+                        contentDescription = "User Address",
+                        tint = MaterialTheme.colors.onBackground)
+                    Text(
+                        text = address,
+                        color = MaterialTheme.colors.onBackground,
+                        style = MaterialTheme.typography.body2)
+                }
+            }
+
+            if (bikeGroup?.isNotEmpty() == true) {
+                Row(
+                    modifier = Modifier,
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Icon(
+                        imageVector = Icons.Outlined.DirectionsBike,
+                        contentDescription = "User Bike Group",
+                        tint = MaterialTheme.colors.onBackground)
+                    Text(
+                        text = bikeGroup,
+                        color = MaterialTheme.colors.onBackground,
+                        style = MaterialTheme.typography.body2)
+                }
             }
 
 
-            Row(
-                modifier = Modifier,
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Icon(
-                    imageVector = Icons.Outlined.DirectionsBike,
-                    contentDescription = "User Bike Group",
-                    tint = MaterialTheme.colors.onBackground)
-                Text(
-                    text = state.userProfileModel.getBikeGroup()!!,
-                    color = MaterialTheme.colors.onBackground,
-                    style = MaterialTheme.typography.body2)
-            }
         }
 
         Spacer(modifier = Modifier.weight(1f))
