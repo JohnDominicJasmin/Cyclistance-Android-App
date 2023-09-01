@@ -74,6 +74,7 @@ fun NavScreen(
         rememberScaffoldState(drawerState = rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutineScope = rememberCoroutineScope()
     val settingState by settingViewModel.state.collectAsStateWithLifecycle()
+    val editProfileState by editProfileViewModel.state.collectAsStateWithLifecycle()
     val navState by navViewModel.state.collectAsStateWithLifecycle()
     val lifecycleOwner = LocalLifecycleOwner.current
 

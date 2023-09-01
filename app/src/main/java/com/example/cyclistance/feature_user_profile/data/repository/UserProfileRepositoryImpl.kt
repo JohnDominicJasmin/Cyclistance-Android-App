@@ -233,8 +233,6 @@ class UserProfileRepositoryImpl(
                 fireStore.collection(UtilConstants.USER_COLLECTION).document(id)
                     .get().addOnSuccessListener { documentSnapshot ->
                         continuation.resume(documentSnapshot.toUserProfileInfo())
-
-
                     }.addOnFailureListener {
                         continuation.resumeWithException(
                             UserProfileExceptions.GetProfileException(

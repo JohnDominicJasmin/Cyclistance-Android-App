@@ -9,5 +9,6 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class UserProfileState(
+    val isLoading: Boolean = false,
     val userProfileModel: UserProfileModel = UserProfileModel(),
 ):Parcelable
