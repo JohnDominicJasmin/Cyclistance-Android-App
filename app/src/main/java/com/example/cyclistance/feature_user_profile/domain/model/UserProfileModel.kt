@@ -10,21 +10,21 @@ data class UserProfileModel(
     val userProfileInfo: UserProfileInfoModel? = null,
     val userActivity: UserActivityModel? = null,
     val reasonAssistance: ReasonAssistanceModel? = null
-):Parcelable{
-    fun getPhoto() = userProfileInfo?.photoUrl
-    fun getName() = userProfileInfo?.name
-    fun getAverageRating() = userProfileInfo?.averageRating
-    fun getAddress() = userProfileInfo?.address
-    fun getBikeGroup() = userProfileInfo?.bikeGroup
-    fun getRequestAssistanceFrequency() = userActivity?.requestAssistanceFrequency
-    fun getRescueFrequency() = userActivity?.rescueFrequency
-    fun getOverallDistanceOfRescue() = userActivity?.overallDistanceOfRescue
-    fun getAverageSpeed() = userActivity?.averageSpeed
-    fun getInjuryCount() = reasonAssistance?.injuryCount
-    fun getFrameSnapCount() = reasonAssistance?.frameSnapCount
-    fun getFlatTireCount() = reasonAssistance?.flatTireCount
-    fun getBrokenChainCount() = reasonAssistance?.brokenChainCount
-    fun getIncidentCount() = reasonAssistance?.incidentCount
-    fun getFaultyBrakesCount() = reasonAssistance?.faultyBrakesCount
+) : Parcelable {
+    fun getPhoto(): String = userProfileInfo?.photoUrl ?: ""
+    fun getName(): String = userProfileInfo?.name ?: ""
+    fun getAverageRating(): Double = userProfileInfo?.averageRating ?: 0.0
+    fun getAddress(): String? = userProfileInfo?.address ?: ""
+    fun getBikeGroup(): String? = userProfileInfo?.bikeGroup ?: ""
+    fun getRequestAssistanceFrequency(): Int = userActivity?.requestAssistanceFrequency ?: 0
+    fun getRescueFrequency(): Int = userActivity?.rescueFrequency ?: 0
+    fun getOverallDistanceOfRescue(): Int = userActivity?.overallDistanceOfRescue ?: 0
+    fun getAverageSpeed(): Int = userActivity?.averageSpeed ?: 0
+    fun getInjuryCount(): Int = reasonAssistance?.injuryCount ?: 0
+    fun getFrameSnapCount(): Int = reasonAssistance?.frameSnapCount ?: 0
+    fun getFlatTireCount(): Int = reasonAssistance?.flatTireCount ?: 0
+    fun getBrokenChainCount(): Int = reasonAssistance?.brokenChainCount ?: 0
+    fun getIncidentCount(): Int = reasonAssistance?.incidentCount ?: 0
+    fun getFaultyBrakesCount(): Int = reasonAssistance?.faultyBrakesCount ?: 0
 
 }
