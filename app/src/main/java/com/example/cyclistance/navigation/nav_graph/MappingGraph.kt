@@ -41,8 +41,9 @@ fun NavGraphBuilder.mappingGraph(
             )
         }
 
+
         composable(
-            route = "${Screens.MappingNavigation.Cancellation.screenRoute}/{$CANCELLATION_TYPE}/{$TRANSACTION_ID}/{$CLIENT_ID}",
+            route = Screens.MappingNavigation.Cancellation.screenRoute,
             arguments = listOf(
                 navArgument(CANCELLATION_TYPE) {
                     defaultValue = SELECTION_RESCUEE_TYPE
@@ -60,7 +61,7 @@ fun NavGraphBuilder.mappingGraph(
         }
 
 
-        composable(route = Screens.MappingNavigation.ConfirmDetails.screenRoute + "?${LATITUDE}={${LATITUDE}}&${LONGITUDE}={${LONGITUDE}}",
+        composable(route = Screens.MappingNavigation.ConfirmDetails.screenRoute,
             arguments = listOf(
                 navArgument(LATITUDE) {
                     type = NavType.FloatType; defaultValue = -1f

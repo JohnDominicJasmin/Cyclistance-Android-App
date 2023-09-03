@@ -28,13 +28,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG
-import com.example.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
-import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_ID
-import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
-import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
-import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
-import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_ID
 import com.example.cyclistance.feature_messaging.presentation.common.MessageUserImage
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.state.NavUiState
@@ -63,7 +56,7 @@ fun TopAppBar(
             }
         }
 
-        "${Screens.MappingNavigation.Cancellation.screenRoute}/{${CANCELLATION_TYPE}}/{${TRANSACTION_ID}}/{${CLIENT_ID}}" -> {
+        Screens.MappingNavigation.Cancellation.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -72,7 +65,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.MappingNavigation.ConfirmDetails.screenRoute + "?${LATITUDE}={${LATITUDE}}&${LONGITUDE}={${LONGITUDE}}" -> {
+        Screens.MappingNavigation.ConfirmDetails.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -110,7 +103,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.EmergencyCallNavigation.EmergencyCall.screenRoute + "?${SHOULD_OPEN_CONTACT_DIALOG}={${SHOULD_OPEN_CONTACT_DIALOG}}" -> {
+        Screens.EmergencyCallNavigation.EmergencyCall.screenRoute -> {
 
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
@@ -120,7 +113,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.MessagingNavigation.Chat.screenRoute -> {
+        Screens.MessagingNavigation.Chats.screenRoute -> {
 
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
@@ -190,7 +183,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.UserProfileNavigation.UserProfile.screenRoute + "/{${USER_ID}}" -> {
+        Screens.UserProfileNavigation.UserProfile.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.Close,
                 onClickIcon = onClickArrowBackIcon,

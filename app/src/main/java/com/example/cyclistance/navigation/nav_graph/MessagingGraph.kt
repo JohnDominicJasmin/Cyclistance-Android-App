@@ -24,12 +24,12 @@ fun NavGraphBuilder.messagingGraph(
     newConversationDetails: (MessagingUserItemModel) -> Unit) {
 
     navigation(
-        startDestination = Screens.MessagingNavigation.Chat.screenRoute,
+        startDestination = Screens.MessagingNavigation.Chats.screenRoute,
         route = Screens.MessagingNavigation.ROUTE
     ) {
 
 
-        composable(Screens.MessagingNavigation.Chat.screenRoute) {
+        composable(Screens.MessagingNavigation.Chats.screenRoute) {
             ChatsScreen(
                 navController = navController,
                 paddingValues = paddingValues,

@@ -1,7 +1,14 @@
 package com.example.cyclistance.navigation
 
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG
 import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_ARG
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_ARG
+import com.example.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_ID
+import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
+import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
+import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_ID
 
 sealed class Screens {
 
@@ -23,7 +30,11 @@ sealed class Screens {
             const val ROUTE = "emergency_call_navigation"
         }
 
-        object EmergencyCall : EmergencyCallNavigation(screenRoute = "emergency_call_screen")
+        object EmergencyCall :
+            EmergencyCallNavigation(screenRoute = "emergency_call_screen?$SHOULD_OPEN_CONTACT_DIALOG={$SHOULD_OPEN_CONTACT_DIALOG}") {
+            fun passArgument(shouldOpenContactDialog: Boolean) =
+                "emergency_call_screen?$SHOULD_OPEN_CONTACT_DIALOG=$shouldOpenContactDialog"
+        }
     }
 
     open class MessagingNavigation(val screenRoute: String = "") : Screens() {
@@ -31,10 +42,12 @@ sealed class Screens {
             const val ROUTE = "messaging_navigation"
         }
 
-        object Chat : MessagingNavigation(screenRoute = "chat_screen")
+        object Chats : MessagingNavigation(screenRoute = "chat_screen")
         object SearchUser : MessagingNavigation(screenRoute = "search_user_screen")
-        object Conversation : MessagingNavigation(screenRoute = "conversation_screen/{$RECEIVER_MESSAGE_ARG}/{$SENDER_MESSAGE_ARG}") {
-            fun passArgument(receiverMessageUser: String, senderMessageUser: String) = "conversation_screen/$receiverMessageUser/$senderMessageUser"
+        object Conversation :
+            MessagingNavigation(screenRoute = "conversation_screen/{$RECEIVER_MESSAGE_ARG}/{$SENDER_MESSAGE_ARG}") {
+            fun passArgument(receiverMessageUser: String, senderMessageUser: String) =
+                "conversation_screen/$receiverMessageUser/$senderMessageUser"
         }
     }
 
@@ -52,8 +65,16 @@ sealed class Screens {
         }
 
         object Mapping : MappingNavigation(screenRoute = "mapping_screen")
-        object Cancellation : MappingNavigation(screenRoute = "cancellation_screen")
-        object ConfirmDetails : MappingNavigation(screenRoute = "confirm_details_screen")
+        object Cancellation :
+            MappingNavigation(screenRoute = "cancellation_screen" + "/{${CANCELLATION_TYPE}}/{${TRANSACTION_ID}}/{${CLIENT_ID}}") {
+            fun passArgument(cancellationType: String, transactionId: String, clientId: String) =
+                "cancellation_screen/$cancellationType/$transactionId/$clientId"
+
+        }
+        object ConfirmDetails : MappingNavigation(screenRoute = "confirm_details_screen"+"?${LATITUDE}={${LATITUDE}}&${LONGITUDE}={${LONGITUDE}}"){
+            fun passArgument(latitude: Float, longitude: Float) =
+                "confirm_details_screen"+"?$LATITUDE=${latitude}&$LONGITUDE=${longitude}"
+        }
     }
 
     open class SettingsNavigation(val screenRoute: String = "") : Screens() {
@@ -81,7 +102,12 @@ sealed class Screens {
             const val ROUTE = "user_profile_navigation"
         }
 
-        object UserProfile : UserProfileNavigation(screenRoute = "user_profile_screen")
+        object UserProfile :
+            UserProfileNavigation(screenRoute = "user_profile_screen" + "/{${USER_ID}}") {
+            fun passArgument(userId: String) = "user_profile_screen/$userId"
+
+        }
+
         object EditProfile : UserProfileNavigation(screenRoute = "edit_profile_screen")
     }
 
