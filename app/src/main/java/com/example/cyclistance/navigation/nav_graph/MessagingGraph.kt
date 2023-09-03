@@ -7,8 +7,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_URI
-import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_ARG
-import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_ARG
+import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_OBJ
+import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_OBJ
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.ChatsScreen
 import com.example.cyclistance.feature_messaging.presentation.conversation.ConversationScreen
@@ -48,14 +48,14 @@ fun NavGraphBuilder.messagingGraph(
             deepLinks = listOf(
                 navDeepLink {
                     uriPattern =
-                        "$MESSAGING_URI/$RECEIVER_MESSAGE_ARG={$RECEIVER_MESSAGE_ARG}&$SENDER_MESSAGE_ARG={$SENDER_MESSAGE_ARG}"
+                        "$MESSAGING_URI/$RECEIVER_MESSAGE_OBJ={$RECEIVER_MESSAGE_OBJ}&$SENDER_MESSAGE_OBJ={$SENDER_MESSAGE_OBJ}"
                 }
             )
         ) {
 
             val arguments = it.arguments!!
-            val userReceiverObject = arguments.getString(RECEIVER_MESSAGE_ARG)
-            val userSenderObject = arguments.getString(SENDER_MESSAGE_ARG)
+            val userReceiverObject = arguments.getString(RECEIVER_MESSAGE_OBJ)
+            val userSenderObject = arguments.getString(SENDER_MESSAGE_OBJ)
             val userReceiverMessage = Gson().fromJson(userReceiverObject, MessagingUserItemModel::class.java)
             val userSenderMessage = Gson().fromJson(userSenderObject, MessagingUserItemModel::class.java)
 

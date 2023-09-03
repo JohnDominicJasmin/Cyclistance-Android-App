@@ -1,8 +1,8 @@
 package com.example.cyclistance.navigation
 
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG
-import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_ARG
-import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_ARG
+import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_OBJ
+import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_OBJ
 import com.example.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_ID
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
@@ -45,7 +45,7 @@ sealed class Screens {
         object Chats : MessagingNavigation(screenRoute = "chat_screen")
         object SearchUser : MessagingNavigation(screenRoute = "search_user_screen")
         object Conversation :
-            MessagingNavigation(screenRoute = "conversation_screen/{$RECEIVER_MESSAGE_ARG}/{$SENDER_MESSAGE_ARG}") {
+            MessagingNavigation(screenRoute = "conversation_screen/{$RECEIVER_MESSAGE_OBJ}/{$SENDER_MESSAGE_OBJ}") {
             fun passArgument(receiverMessageUser: String, senderMessageUser: String) =
                 "conversation_screen/$receiverMessageUser/$senderMessageUser"
         }
@@ -103,7 +103,7 @@ sealed class Screens {
         }
 
         object UserProfile :
-            UserProfileNavigation(screenRoute = "user_profile_screen" + "/{${USER_ID}}") {
+            UserProfileNavigation(screenRoute = "user_profile_screen/{$USER_ID}") {
             fun passArgument(userId: String) = "user_profile_screen/$userId"
 
         }
