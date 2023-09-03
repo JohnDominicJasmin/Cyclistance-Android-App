@@ -832,16 +832,20 @@ class MappingViewModel @Inject constructor(
 
     private fun NearbyCyclist.getUser() {
 
-        val user = findUser(id = getId())
-        _state.update { it.copy(user = user) }
-        val respondents = user.getUserRescueRespondents(this)
-        _state.update {
-            it.copy(
-                newRescueRequest = NewRescueRequestsModel(
-                    request = respondents
-                )
-            )
+        runCatching {
+            getId()
+        }.onSuccess { id ->
+            val user = findUser(id = id)
+            val respondents = user.getUserRescueRespondents(this)
+            _state.update {
+                it.copy(
+                    newRescueRequest = NewRescueRequestsModel(request = respondents),
+                    user = user)
+            }
+        }.onFailure {
+            Timber.e("Failed to get user: ${it.message}")
         }
+
     }
 
     private fun UserItem.getUserRescueRespondents(nearbyCyclist: NearbyCyclist): List<RescueRequestItemModel> {
