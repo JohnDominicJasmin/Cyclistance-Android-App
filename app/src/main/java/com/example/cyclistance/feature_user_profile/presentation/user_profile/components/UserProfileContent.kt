@@ -1,10 +1,7 @@
 package com.example.cyclistance.feature_user_profile.presentation.user_profile.components
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,7 +9,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -20,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.R
 import com.example.cyclistance.feature_user_profile.domain.model.ReasonAssistanceModel
 import com.example.cyclistance.feature_user_profile.domain.model.UserActivityModel
 import com.example.cyclistance.feature_user_profile.domain.model.UserProfileInfoModel
@@ -31,7 +26,6 @@ import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun UserProfileContent(
     modifier: Modifier = Modifier,
@@ -61,7 +55,10 @@ fun UserProfileContent(
                         event(UserProfileUiEvent.OnClickEditProfile)
                     },
                     onClickMessageProfile = {
-                        event(UserProfileUiEvent.OnClickMessageProfile)
+                        event(
+                            UserProfileUiEvent.OnClickMessageProfile(
+                                userId = state.profileSelectedId
+                            ))
                     }
 
                 )
@@ -86,38 +83,11 @@ fun UserProfileContent(
                         .padding(horizontal = 16.dp)
                         .padding(top = 32.dp), color = Black500)
 
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                    horizontalAlignment = Alignment.Start) {
 
-                    Text(
-                        text = "User Activity",
-                        color = MaterialTheme.colors.onBackground,
-                        style = MaterialTheme.typography.subtitle1,
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
+                UserProfileReasonAssistance(
+                    state = state
+                )
 
-
-                    FlowRow(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp)
-                            .fillMaxWidth(),
-
-                        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start)) {
-
-                        repeat(6) { index ->
-                            AssistanceCountItem(
-                                iconId = getAssistanceIcon(index = index)!!,
-                                count = getAssistanceCount(
-                                    index = index,
-                                    userProfile = state.userProfileModel)!!)
-                        }
-                    }
-                }
             }
 
             if (state.isLoading) {
@@ -128,31 +98,6 @@ fun UserProfileContent(
     }
 }
 
-
-private fun getAssistanceIcon(index: Int): Int? {
-
-    return when (index) {
-        0 -> R.drawable.ic_injury
-        1 -> R.drawable.ic_broken_frame
-        2 -> R.drawable.ic_flat_tire
-        3 -> R.drawable.ic_broken_chain
-        4 -> R.drawable.ic_accident
-        5 -> R.drawable.ic_faulty_brakes
-        else -> 0
-    }
-}
-
-private fun getAssistanceCount(userProfile: UserProfileModel, index: Int): Int? {
-    return when (index) {
-        0 -> userProfile.getInjuryCount()
-        1 -> userProfile.getFrameSnapCount()
-        2 -> userProfile.getFlatTireCount()
-        3 -> userProfile.getBrokenChainCount()
-        4 -> userProfile.getIncidentCount()
-        5 -> userProfile.getFaultyBrakesCount()
-        else -> 0
-    }
-}
 
 val fakeUserProfile = UserProfileModel(
     userProfileInfo = UserProfileInfoModel(

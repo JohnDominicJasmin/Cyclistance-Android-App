@@ -2,6 +2,6 @@ package com.example.cyclistance.feature_user_profile.presentation.user_profile.e
 
 sealed class UserProfileUiEvent{
     object OnClickEditProfile: UserProfileUiEvent()
-    object OnClickMessageProfile: UserProfileUiEvent()
+    data class OnClickMessageProfile(val userId: String): UserProfileUiEvent()
 
 }

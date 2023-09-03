@@ -3,5 +3,5 @@ package com.example.cyclistance.feature_user_profile.presentation.user_profile.e
 sealed class UserProfileVmEvent{
 
     data class LoadProfile(val userId: String): UserProfileVmEvent()
-
+    data class LoadConversationSelected(val userId: String): UserProfileVmEvent()
 }
