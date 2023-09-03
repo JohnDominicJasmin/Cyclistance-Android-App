@@ -13,8 +13,8 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_NOTIFICATION_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_URI
-import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_ARG
-import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_ARG
+import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_OBJ
+import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_OBJ
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -38,8 +38,8 @@ class MessagingService @Inject constructor(
 
         //need to swap the sender and receiver
         val data = message.data
-        val userReceiverMessage = data[RECEIVER_MESSAGE_ARG]!!
-        val userSenderMessage = data[SENDER_MESSAGE_ARG]!!
+        val userReceiverMessage = data[RECEIVER_MESSAGE_OBJ]!!
+        val userSenderMessage = data[SENDER_MESSAGE_OBJ]!!
         val name = data[KEY_NAME]!!
         val message = data[KEY_MESSAGE] ?: ""
 
@@ -55,7 +55,7 @@ class MessagingService @Inject constructor(
             setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
         }
 
-        val uri = "$MESSAGING_URI/$RECEIVER_MESSAGE_ARG=$userSenderMessage&$SENDER_MESSAGE_ARG=$userReceiverMessage".toUri()
+        val uri = "$MESSAGING_URI/$RECEIVER_MESSAGE_OBJ=$userSenderMessage&$SENDER_MESSAGE_OBJ=$userReceiverMessage".toUri()
         val clickIntent = Intent(
             Intent.ACTION_VIEW,
             uri,

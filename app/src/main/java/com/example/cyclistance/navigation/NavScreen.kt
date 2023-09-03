@@ -253,7 +253,7 @@ fun NavScreen(
 
     val openUserProfile = remember(editProfileState.userId){{
         closeDrawer()
-        navController.navigateScreen(Screens.UserProfileNavigation.UserProfile.screenRoute + "/${editProfileState.userId}")
+        navController.navigateScreen(Screens.UserProfileNavigation.UserProfile.passArgument(userId = editProfileState.userId))
     }}
 
 

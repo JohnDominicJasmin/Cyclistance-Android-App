@@ -18,11 +18,11 @@ fun NavGraphBuilder.userProfileGraph(
 ) {
 
     navigation(
-        startDestination = Screens.UserProfileNavigation.UserProfile.screenRoute + "/{$USER_ID}",
+        startDestination = Screens.UserProfileNavigation.UserProfile.screenRoute,
         route = Screens.UserProfileNavigation.ROUTE) {
 
 
-        composable(Screens.UserProfileNavigation.UserProfile.screenRoute + "/{$USER_ID}", arguments = listOf(
+        composable(Screens.UserProfileNavigation.UserProfile.screenRoute, arguments = listOf(
             navArgument(
                 name = USER_ID
             ){

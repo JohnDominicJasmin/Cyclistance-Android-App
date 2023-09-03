@@ -22,7 +22,6 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
@@ -31,8 +30,6 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER
 import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_SOURCE_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUEE_TYPE
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUER_TYPE
-import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
-import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.contexts.callPhoneNumber
 import com.example.cyclistance.core.utils.contexts.shareLocation
 import com.example.cyclistance.core.utils.contexts.startLocationServiceIntentAction
@@ -400,7 +397,10 @@ fun MappingScreen(
             val selectionType = if (isRescuee) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
             val clientId = state.rescuer?.id ?: state.rescuee?.id
 
-            navController.navigateScreen(route = "${Screens.MappingNavigation.Cancellation.screenRoute}/$selectionType/$transactionId/$clientId")
+            navController.navigateScreen(route = Screens.MappingNavigation.Cancellation.passArgument(
+                cancellationType = selectionType,
+                transactionId = transactionId!!,
+                clientId = clientId!!))
 
         }
     }
@@ -683,7 +683,7 @@ fun MappingScreen(
 
     val onAddEmergencyContact = remember {
         {
-            navController.navigateScreen(Screens.EmergencyCallNavigation.EmergencyCall.screenRoute + "?$SHOULD_OPEN_CONTACT_DIALOG=${true}")
+            navController.navigateScreen(Screens.EmergencyCallNavigation.EmergencyCall.passArgument(shouldOpenContactDialog = true))
         }
     }
 
@@ -831,8 +831,12 @@ fun MappingScreen(
             when (event) {
 
                 is MappingEvent.RequestHelpSuccess -> {
+                    val location = state.userLocation!!
                     navController.navigateScreen(
-                        Screens.MappingNavigation.ConfirmDetails.screenRoute + "?$LATITUDE=${state.userLocation?.latitude}&$LONGITUDE=${state.userLocation?.longitude}")
+                        Screens.MappingNavigation.ConfirmDetails.passArgument(
+                            latitude = location.latitude!!.toFloat(),
+                            longitude = location.longitude!!.toFloat()
+                        ))
                 }
 
                 is MappingEvent.InsufficientUserCredential -> {

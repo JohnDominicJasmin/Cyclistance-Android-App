@@ -1,13 +1,9 @@
 package com.example.cyclistance.feature_user_profile.presentation.user_profile.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
@@ -27,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
@@ -40,7 +37,9 @@ import com.gowtham.ratingbar.RatingBarStyle
 fun UserProfileSection(
     modifier: Modifier = Modifier,
     state: UserProfileState,
-    onClickEditProfile: () -> Unit) {
+    onClickEditProfile: () -> Unit,
+    onClickMessageProfile: () -> Unit,
+) {
 
 
     Row(
@@ -67,17 +66,21 @@ fun UserProfileSection(
 
 
         Column(
-            modifier = Modifier.padding(start = 8.dp),
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .weight(0.9f),
             verticalArrangement = Arrangement.spacedBy(
                 2.dp,
                 alignment = Alignment.CenterVertically),
             horizontalAlignment = Alignment.Start) {
 
             Text(
-                text = state.userProfileModel.getName() ?: "",
+                text = state.userProfileModel.getName(),
                 color = MaterialTheme.colors.onBackground,
                 style = MaterialTheme.typography.subtitle1,
-                modifier = Modifier.padding(start = 3.5.dp)
+                modifier = Modifier.padding(start = 3.5.dp),
+                overflow = TextOverflow.Ellipsis,
+                maxLines = 2
 
             )
 
@@ -102,8 +105,8 @@ fun UserProfileSection(
             if (address?.isNotEmpty() == true) {
                 Row(
                     modifier = Modifier,
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterHorizontally)) {
                     Icon(
                         imageVector = Icons.Outlined.LocationOn,
                         contentDescription = "User Address",
@@ -111,15 +114,18 @@ fun UserProfileSection(
                     Text(
                         text = address,
                         color = MaterialTheme.colors.onBackground,
-                        style = MaterialTheme.typography.body2)
+                        style = MaterialTheme.typography.body2,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2
+                    )
                 }
             }
 
             if (bikeGroup?.isNotEmpty() == true) {
                 Row(
-                    modifier = Modifier,
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    modifier = Modifier.padding(top = 4.dp),
+                    verticalAlignment = Alignment.Top,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterHorizontally)) {
                     Icon(
                         imageVector = Icons.Outlined.DirectionsBike,
                         contentDescription = "User Bike Group",
@@ -127,25 +133,24 @@ fun UserProfileSection(
                     Text(
                         text = bikeGroup,
                         color = MaterialTheme.colors.onBackground,
-                        style = MaterialTheme.typography.body2)
+                        style = MaterialTheme.typography.body2,
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2
+                        )
                 }
             }
 
 
         }
 
-        Spacer(modifier = Modifier.weight(1f))
 
-        Column(modifier = Modifier.wrapContentSize(align = Alignment.TopEnd)) {
+
+        Column(modifier = Modifier
+            .wrapContentSize(align = Alignment.TopEnd)
+            .weight(0.2f)) {
 
             val isYourProfile = state.userId == state.profileSelectedId
-
-            AnimatedVisibility(
-                visible = isYourProfile,
-                modifier = Modifier.wrapContentSize(align = Alignment.TopCenter),
-                enter = fadeIn(),
-                exit = fadeOut()) {
-
+            if (isYourProfile) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = "Edit Profile",
@@ -153,24 +158,20 @@ fun UserProfileSection(
                     modifier = Modifier
                         .clip(CircleShape)
                         .clickable { onClickEditProfile() }
-                        .padding(all = 8.dp))
+                        .padding(all = 8.dp)
+                        .wrapContentSize(align = Alignment.TopCenter))
             }
 
-
-            AnimatedVisibility(
-                visible = !isYourProfile,
-                modifier = Modifier.wrapContentSize(align = Alignment.BottomCenter),
-                enter = fadeIn(),
-                exit = fadeOut()) {
-
+            if (!isYourProfile) {
                 Icon(
                     imageVector = Icons.Outlined.Message,
-                    contentDescription = "Edit Profile",
+                    contentDescription = "Message Profile",
                     tint = MaterialTheme.colors.primary,
                     modifier = Modifier
                         .clip(CircleShape)
-                        .clickable { }
-                        .padding(all = 8.dp))
+                        .clickable { onClickMessageProfile() }
+                        .padding(all = 8.dp)
+                        .wrapContentSize(align = Alignment.BottomCenter))
 
             }
         }
