@@ -25,6 +25,7 @@ import com.example.cyclistance.feature_user_profile.domain.model.ReasonAssistanc
 import com.example.cyclistance.feature_user_profile.domain.model.UserActivityModel
 import com.example.cyclistance.feature_user_profile.domain.model.UserProfileInfoModel
 import com.example.cyclistance.feature_user_profile.domain.model.UserProfileModel
+import com.example.cyclistance.feature_user_profile.presentation.user_profile.event.UserProfileUiEvent
 import com.example.cyclistance.feature_user_profile.presentation.user_profile.state.UserProfileState
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.Black500
@@ -35,7 +36,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun UserProfileContent(
     modifier: Modifier = Modifier,
     state: UserProfileState,
-    onClickEditProfile: () -> Unit) {
+    event: (UserProfileUiEvent) -> Unit) {
 
     Surface(
         modifier = modifier
@@ -56,7 +57,13 @@ fun UserProfileContent(
                         .wrapContentHeight(Alignment.Top)
                         .padding(all = 16.dp),
                     state = state,
-                    onClickEditProfile = onClickEditProfile
+                    onClickEditProfile = {
+                        event(UserProfileUiEvent.OnClickEditProfile)
+                    },
+                    onClickMessageProfile = {
+                        event(UserProfileUiEvent.OnClickMessageProfile)
+                    }
+
                 )
 
                 Divider(
@@ -113,7 +120,7 @@ fun UserProfileContent(
                 }
             }
 
-            if(state.isLoading){
+            if (state.isLoading) {
                 CircularProgressIndicator(color = MaterialTheme.colors.onBackground)
             }
 
@@ -150,10 +157,10 @@ private fun getAssistanceCount(userProfile: UserProfileModel, index: Int): Int? 
 val fakeUserProfile = UserProfileModel(
     userProfileInfo = UserProfileInfoModel(
         photoUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
-        name = "John Doe",
+        name = "John Doe, John Doe John Doe John Doe John DoeJohn Doe John DoeJohn DoeJohn DoeJohn Doe",
         averageRating = 4.0,
-        address = "Manila, Philippines",
-        bikeGroup = "Manila Bike Club"
+        address = "Manila, Philippines, Manila, Philippines, Manila, Philippines, Manila, Philippines, Manila, Philippines",
+        bikeGroup = "Manila Bike Club, Manila Bike Club ,Manila Bike Club "
     ),
     userActivity = UserActivityModel(
         requestAssistanceFrequency = 100,
@@ -183,7 +190,7 @@ fun PreviewUserProfileContent1() {
                     userId = "123",
                     profileSelectedId = "123"
                 ),
-                onClickEditProfile = {}
+                event = {}
             )
         }
     }
@@ -200,7 +207,7 @@ fun PreviewUserProfileContent2() {
                     profileSelectedId = "1234",
                     userProfileModel = fakeUserProfile
                 ),
-                onClickEditProfile = {}
+                event = {}
             )
         }
     }

@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_user_profile.presentation.user_profile.components.UserProfileContent
+import com.example.cyclistance.feature_user_profile.presentation.user_profile.event.UserProfileUiEvent
 import com.example.cyclistance.feature_user_profile.presentation.user_profile.event.UserProfileVmEvent
 import com.example.cyclistance.navigation.Screens
 
@@ -27,11 +29,18 @@ fun UserProfileScreen(
         viewModel.onEvent(event = UserProfileVmEvent.LoadProfile(userId = userId))
     }
 
+    val navigateToEditProfile = remember{{
+        navController.navigate(Screens.UserProfileNavigation.EditProfile.screenRoute)
+    }}
+
     UserProfileContent(
         state = state,
         modifier = Modifier.padding(paddingValues),
-        onClickEditProfile = {
-            navController.navigate(Screens.UserProfileNavigation.EditProfile.screenRoute)
+        event = { event ->
+            when(event){
+                UserProfileUiEvent.OnClickEditProfile -> navigateToEditProfile()
+                UserProfileUiEvent.OnClickMessageProfile -> TODO()
+            }
         }
     )
 
