@@ -91,9 +91,8 @@ fun NavigationDrawerContent(
                     fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large)
                 )
 
-
                 Text(
-                    text = uiState.drawerDisplayName.takeIf { it.isNotEmpty() } ?: "",
+                    text = uiState.drawerDisplayName ?: "",
                     color = MaterialTheme.colors.onSecondary,
                     style = MaterialTheme.typography.h6,
                     modifier = Modifier.padding(top = 7.dp, bottom = 10.dp))

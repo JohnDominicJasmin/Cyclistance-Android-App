@@ -1,8 +1,5 @@
 package com.example.cyclistance.feature_user_profile.presentation.user_profile.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -120,7 +117,7 @@ fun UserProfileSection(
                         style = MaterialTheme.typography.body2,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 2
-                        )
+                    )
                 }
             }
 
@@ -153,13 +150,7 @@ fun UserProfileSection(
             .weight(0.2f)) {
 
             val isYourProfile = state.userId == state.profileSelectedId
-
-            AnimatedVisibility(
-                visible = isYourProfile,
-                modifier = Modifier.wrapContentSize(align = Alignment.TopCenter),
-                enter = fadeIn(),
-                exit = fadeOut()) {
-
+            if (isYourProfile) {
                 Icon(
                     imageVector = Icons.Filled.Edit,
                     contentDescription = "Edit Profile",
@@ -167,16 +158,11 @@ fun UserProfileSection(
                     modifier = Modifier
                         .clip(CircleShape)
                         .clickable { onClickEditProfile() }
-                        .padding(all = 8.dp))
+                        .padding(all = 8.dp)
+                        .wrapContentSize(align = Alignment.TopCenter))
             }
 
-
-            AnimatedVisibility(
-                visible = !isYourProfile,
-                modifier = Modifier.wrapContentSize(align = Alignment.BottomCenter),
-                enter = fadeIn(),
-                exit = fadeOut()) {
-
+            if (!isYourProfile) {
                 Icon(
                     imageVector = Icons.Outlined.Message,
                     contentDescription = "Message Profile",
@@ -184,7 +170,8 @@ fun UserProfileSection(
                     modifier = Modifier
                         .clip(CircleShape)
                         .clickable { onClickMessageProfile() }
-                        .padding(all = 8.dp))
+                        .padding(all = 8.dp)
+                        .wrapContentSize(align = Alignment.BottomCenter))
 
             }
         }
