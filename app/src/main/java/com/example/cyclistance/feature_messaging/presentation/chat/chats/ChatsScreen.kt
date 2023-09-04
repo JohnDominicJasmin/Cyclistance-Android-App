@@ -28,7 +28,7 @@ fun ChatsScreen(
     val chatState = viewModel.chatsState.distinctBy { it.second.conversionId }
 
 
-    val onSelectConversation = remember {
+    val onSelectConversation = remember(state.messageUserInfo) {
         { selectedUser: MessagingUserItemModel ->
 
             val user = state.messageUserInfo
