@@ -9,7 +9,7 @@ object MappingConstants {
     const val MIN_ZOOM_LEVEL_MAPS = 3.00
 
     const val MAP_ZOOM = 6.00
-    const val DEFAULT_MAP_ZOOM_LEVEL = 4.00
+    const val DEFAULT_MAP_ZOOM_LEVEL = 4.50
     const val DEFAULT_LATITUDE = 12.879700000000023
     const val DEFAULT_LONGITUDE = 121.774
     const val TRACKING_MAP_ZOOM_LEVEL = 16.0
