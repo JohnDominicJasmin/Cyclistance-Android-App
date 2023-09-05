@@ -42,12 +42,13 @@ class SignInViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase,
     private val messagingUseCase: MessagingUseCase,
     private val defaultDispatcher: CoroutineDispatcher
-    ) : ViewModel(), ActivityResultCallbackI {
+) : ViewModel(), ActivityResultCallbackI {
 
     private var job: Job? = null
     private var callbackManager = CallbackManager.Factory.create()
 
-    private val _state: MutableStateFlow<SignInState> = MutableStateFlow(savedStateHandle[SIGN_IN_VM_STATE_KEY] ?: SignInState())
+    private val _state: MutableStateFlow<SignInState> =
+        MutableStateFlow(savedStateHandle[SIGN_IN_VM_STATE_KEY] ?: SignInState())
     val state = _state.asStateFlow()
 
     private val _eventFlow: MutableSharedFlow<SignInEvent> = MutableSharedFlow()
@@ -71,7 +72,9 @@ class SignInViewModel @Inject constructor(
                 _state.update { it.copy(isLoading = true) }
                 event.activity?.let {
                     LoginManager.getInstance()
-                        .logInWithReadPermissions(it, listOf("email", "public_profile", "user_friends"))
+                        .logInWithReadPermissions(
+                            it,
+                            listOf("email", "public_profile", "user_friends"))
                 }
             }
 
@@ -84,7 +87,7 @@ class SignInViewModel @Inject constructor(
             }
 
             is SignInVmEvent.AgreedToPrivacyPolicy -> {
-                _state.update { it.copy(userAgreedToPrivacyPolicy= true) }
+                _state.update { it.copy(userAgreedToPrivacyPolicy = true) }
             }
 
         }
@@ -164,31 +167,35 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private suspend fun handleException(exception: Throwable){
+    private suspend fun handleException(exception: Throwable) {
         when (exception) {
             is AuthExceptions.EmailException -> {
-                _eventFlow.emit(value = SignInEvent.InvalidEmail(exception.message ?: "Email is Invalid."))
+                _eventFlow.emit(
+                    value = SignInEvent.InvalidEmail(
+                        exception.message ?: "Email is Invalid."))
             }
+
             is AuthExceptions.NewPasswordException -> {
-                _eventFlow.emit(value = SignInEvent.InvalidPassword(exception.message ?: "Password is Invalid."))
+                _eventFlow.emit(
+                    value = SignInEvent.InvalidPassword(
+                        exception.message ?: "Password is Invalid."))
             }
 
             is AuthExceptions.TooManyRequestsException -> {
-                viewModelScope.launch {
-                    _eventFlow.emit(value = SignInEvent.AccountBlockedTemporarily)
-                }
+                _eventFlow.emit(value = SignInEvent.AccountBlockedTemporarily)
             }
 
             is AuthExceptions.NetworkException -> {
-                viewModelScope.launch {
-                    _eventFlow.emit(value = SignInEvent.NoInternetConnection)
-                }
+                _eventFlow.emit(value = SignInEvent.NoInternetConnection)
             }
+
             is AuthExceptions.ConflictFBTokenException -> {
-                viewModelScope.launch {
-                    removeFacebookUserAccountPreviousToken()
-                    _eventFlow.emit(value = SignInEvent.ConflictFbToken)
-                }
+                removeFacebookUserAccountPreviousToken()
+                _eventFlow.emit(value = SignInEvent.ConflictFbToken)
+            }
+
+            is AuthExceptions.AccountDisabledException -> {
+                _eventFlow.emit(value = SignInEvent.AccountDisabled(exception.message ?: ""))
             }
 
             else -> {
@@ -205,7 +212,7 @@ class SignInViewModel @Inject constructor(
             object : FacebookCallback<LoginResult> {
                 override fun onSuccess(result: LoginResult) {
                     _state.update { it.copy(isLoading = true) }
-                    signInWithCredential(authCredential = SignInCredential.Facebook(providerToken =  result.accessToken.token))
+                    signInWithCredential(authCredential = SignInCredential.Facebook(providerToken = result.accessToken.token))
                     savedStateHandle[SIGN_IN_VM_STATE_KEY] = state.value
                 }
 

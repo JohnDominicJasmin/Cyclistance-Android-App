@@ -159,6 +159,14 @@ fun SignInScreen(
                     )
                 }
 
+                is SignInEvent.AccountDisabled -> {
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Account Disabled",
+                            description = signInEvent.reason,
+                            icon = R.raw.error)
+                    )
+                }
             }
         }
     }
