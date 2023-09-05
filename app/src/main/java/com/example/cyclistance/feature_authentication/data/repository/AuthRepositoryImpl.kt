@@ -5,6 +5,7 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.AuthConstants.FACEBOOK_CONNECTION_FAILURE
+import com.example.cyclistance.core.utils.constants.AuthConstants.USER_ACCOUNT_DISABLED
 import com.example.cyclistance.core.utils.constants.AuthConstants.USER_NOT_FOUND
 import com.example.cyclistance.core.utils.constants.UtilConstants.USER_COLLECTION
 import com.example.cyclistance.feature_authentication.data.mapper.AuthResultMapper.toAuthenticationResult
@@ -205,6 +206,13 @@ class AuthRepositoryImpl(
                     AuthExceptions.EmailException(
                         message = appContext.getString(
                             R.string.couldntFindAccount)))
+                return
+            }
+
+            if (exception.errorCode == USER_ACCOUNT_DISABLED){
+                resumeWithException(
+                    AuthExceptions.AccountDisabledException(
+                        message = exception.message ?: "Account is disabled please contact support."))
                 return
             }
         }
