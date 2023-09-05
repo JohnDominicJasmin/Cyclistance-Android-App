@@ -961,9 +961,12 @@ fun MappingScreen(
                 }
 
                 is MappingEvent.NewBottomSheetType -> {
-                    uiState = uiState.copy(bottomSheetType = event.bottomSheetType).also {
-                        expandBottomSheet()
-                    }
+                    uiState = uiState.copy(
+                        bottomSheetType = event.bottomSheetType,
+                        searchingAssistance = event.bottomSheetType == BottomSheetType.SearchAssistance.type)
+                        .also {
+                            expandBottomSheet()
+                        }
                 }
 
                 is MappingEvent.ReportIncidentFailed -> {
