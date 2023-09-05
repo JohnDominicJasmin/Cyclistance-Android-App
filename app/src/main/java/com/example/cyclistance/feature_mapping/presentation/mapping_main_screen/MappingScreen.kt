@@ -197,8 +197,7 @@ fun MappingScreen(
             { zoomLevel: Double, latLng: LatLng, cameraAnimationDuration: Int ->
 
                 val mapboxLoaded =
-                    (mapboxMap?.locationComponent != null) && (mapboxMap?.style?.isFullyLoaded
-                                                               ?: false)
+                    (mapboxMap?.locationComponent != null) && (mapboxMap?.style?.isFullyLoaded ?: false)
                 if (userLocationAvailable && mapboxLoaded) {
                     showUserLocation()
                     mapboxMap?.animateCameraPosition(
@@ -805,7 +804,7 @@ fun MappingScreen(
     }
 
 
-    LaunchedEffect(key1 = userLocationAvailable, key2= mapboxMap){
+    LaunchedEffect(key1 = userLocationAvailable, mapboxMap){
         if (userLocationAvailable) {
             val camera = cameraState
             locateUser(camera.zoom, camera.position, FAST_CAMERA_ANIMATION_DURATION)

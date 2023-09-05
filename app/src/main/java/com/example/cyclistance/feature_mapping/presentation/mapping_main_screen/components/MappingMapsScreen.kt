@@ -145,15 +145,17 @@ fun MappingMapsScreen(
                 )
                 markerLocation.distanceTo(userLocation) < MappingConstants.DEFAULT_RADIUS
             }.forEach { marker ->
+                mapboxMap ?: return@forEach
+                val latitude = marker.latitude ?: return@forEach
+                val longitude = marker.longitude ?: return@forEach
                 val iconImage =
                     marker.label.getHazardousLaneImage(
                         context = context,
                         isMarkerYours = marker.idCreator == state.userId)
                         ?.toBitmap(width = 120, height = 120)
-                val latitude = marker.latitude ?: return@forEach
-                val longitude = marker.longitude ?: return@forEach
+
                 iconImage?.let { bitmap ->
-                    mapboxMap ?: return@let
+
                     val icon = IconFactory.getInstance(context).fromBitmap(bitmap)
                     val markerOptions = MarkerOptions().apply {
                         setIcon(icon)
@@ -187,7 +189,7 @@ fun MappingMapsScreen(
 
 
 
-    LaunchedEffect(key1 = state.mapType, key2 = shouldDismissIcons){
+    LaunchedEffect(key1 = state.mapType, key2 = shouldDismissIcons, key3 = mapboxMap){
         if (state.mapType == MapType.HazardousLane.type) {
             dismissNearbyUserMarkers()
             return@LaunchedEffect
@@ -200,7 +202,7 @@ fun MappingMapsScreen(
 
     }
 
-    LaunchedEffect(key1 = nearbyCyclist, key2 = state.mapType) {
+    LaunchedEffect(key1 = nearbyCyclist, key2 = state.mapType, key3 = mapboxMap) {
 
         if (state.mapType == MapType.HazardousLane.type) {
             return@LaunchedEffect
@@ -213,9 +215,14 @@ fun MappingMapsScreen(
         showNearbyCyclistsIcon()
     }
 
+
+
+
+
     LaunchedEffect(
         key1 = shouldDismissIcons,
-        key2 = state.mapType) {
+        key2 = state.mapType,
+        key3 = mapboxMap) {
 
         if (shouldDismissIcons) {
             dismissHazardousMarkers()
@@ -230,7 +237,7 @@ fun MappingMapsScreen(
 
 
 
-    LaunchedEffect(key1 = hazardousLaneMarkers.size, key2 = state.userLocation, key3 = state.mapType) {
+    LaunchedEffect(key1 = hazardousLaneMarkers.size, key2 = mapboxMap, key3 = state.mapType) {
 
         val isLocationAvailable = state.userLocation?.latitude != null && state.userLocation.longitude != null
 
