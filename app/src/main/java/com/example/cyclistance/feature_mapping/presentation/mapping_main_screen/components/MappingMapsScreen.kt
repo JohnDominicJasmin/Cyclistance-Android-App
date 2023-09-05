@@ -212,6 +212,10 @@ fun MappingMapsScreen(
             return@LaunchedEffect
         }
 
+        if(uiState.searchingAssistance){
+            return@LaunchedEffect
+        }
+
         showNearbyCyclistsIcon()
     }
 
@@ -250,6 +254,10 @@ fun MappingMapsScreen(
         }
 
         if (state.mapType == MapType.Default.type) {
+            return@LaunchedEffect
+        }
+
+        if(uiState.searchingAssistance){
             return@LaunchedEffect
         }
 
