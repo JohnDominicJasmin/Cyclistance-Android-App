@@ -109,7 +109,11 @@ fun SignUpScreenContent(
             SignUpTextFieldsArea(
                 state = signUpState,
                 keyboardActionOnDone = {
-                    event(SignUpUiEvent.KeyboardActionDone)
+                    if (signUpState.userAgreedToPrivacyPolicy) {
+                        event(SignUpUiEvent.KeyboardActionDone)
+                    } else {
+                        event(SignUpUiEvent.SetPrivacyPolicyVisibility(true))
+                    }
                 },
                 onValueChangeEmail = {
                     event(SignUpUiEvent.OnChangeEmail(it))
