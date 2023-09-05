@@ -35,6 +35,9 @@ fun CancellationReasonScreen(
     cancellationType: String = MappingConstants.SELECTION_RESCUEE_TYPE,
     paddingValues: PaddingValues) {
 
+    var message by rememberSaveable(stateSaver = TextFieldValue.Saver){
+        mutableStateOf(TextFieldValue())
+    }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     var uiState by rememberSaveable{ mutableStateOf(CancellationReasonUiState()) }
@@ -78,7 +81,7 @@ fun CancellationReasonScreen(
 
     val onChangeValueMessage = remember {
         { messageInput: TextFieldValue ->
-            uiState = uiState.copy(message = messageInput)
+            message = messageInput
         }
     }
     val onClickConfirmButton = remember {
@@ -86,7 +89,7 @@ fun CancellationReasonScreen(
             viewModel.onEvent(
                 event = CancellationReasonVmEvent.ConfirmCancellationReason(
                     reason = uiState.selectedReason,
-                    message = uiState.message.text,
+                    message = message.text,
                 ))
         }
     }
@@ -106,6 +109,7 @@ fun CancellationReasonScreen(
             .fillMaxSize()
             .padding(paddingValues),
         cancellationType = cancellationType,
+        message = message,
         state = state,
         uiState = uiState,
         event = { event ->

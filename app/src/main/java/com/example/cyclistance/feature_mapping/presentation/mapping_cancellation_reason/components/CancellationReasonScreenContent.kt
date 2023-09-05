@@ -8,6 +8,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -24,6 +25,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun CancellationReasonScreenContent(
     modifier: Modifier = Modifier,
+    message: TextFieldValue,
     cancellationType: String = MappingConstants.SELECTION_RESCUEE_TYPE,
     state: CancellationReasonState = CancellationReasonState(),
     uiState: CancellationReasonUiState,
@@ -64,7 +66,7 @@ fun CancellationReasonScreenContent(
                         width = Dimension.percent(0.9f)
 
                     },
-                message = uiState.message,
+                message = message,
                 onChangeValueMessage = {
                     event(CancellationReasonUiEvent.OnChangeMessage(it))
                 },
@@ -127,7 +129,8 @@ fun CancellationReasonPreviewDark() {
         CancellationReasonScreenContent(
             modifier = Modifier.fillMaxSize(),
             state = CancellationReasonState(),
-            uiState = CancellationReasonUiState()
+            uiState = CancellationReasonUiState(),
+            message = TextFieldValue(""),
         )
     }
 }
@@ -140,7 +143,8 @@ fun CancellationReasonPreviewLight() {
         CancellationReasonScreenContent(
             modifier = Modifier.fillMaxSize(),
             state = CancellationReasonState(),
-            uiState = CancellationReasonUiState()
+            uiState = CancellationReasonUiState(),
+            message = TextFieldValue(""),
         )
     }
 }
