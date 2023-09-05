@@ -126,7 +126,7 @@ fun MappingScreenContent(
                 incidentDescription = incidentDescription,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
+                    .padding(horizontal = 12.dp).align(Alignment.BottomCenter),
                 markerPostedCount = markerPostedCount) {
 
 

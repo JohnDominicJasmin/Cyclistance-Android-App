@@ -17,6 +17,7 @@ import com.example.cyclistance.theme.Black500
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun MappingBottomSheet(
+    modifier: Modifier = Modifier,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     sheetPeekHeight: Dp = 0.dp,
     sheetGesturesEnabled: Boolean = true,
@@ -30,7 +31,7 @@ fun MappingBottomSheet(
         sheetPeekHeight = sheetPeekHeight,
         sheetGesturesEnabled = sheetGesturesEnabled,
         content = content,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         sheetBackgroundColor = Color.Transparent,
         sheetElevation = 0.dp,
     )
