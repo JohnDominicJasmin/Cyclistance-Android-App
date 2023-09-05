@@ -17,8 +17,10 @@ import androidx.core.content.ContextCompat
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LOCATION_CIRCLE_PULSE_RADIUS
+import com.example.cyclistance.core.utils.constants.MappingConstants.ICON_LAYER_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAX_ZOOM_LEVEL_MAPS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MIN_ZOOM_LEVEL_MAPS
+import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_LAYER_ID
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -38,6 +40,8 @@ internal object MappingUtils {
 
         return remember{
             LocationComponentOptions.builder(context)
+                .layerAbove(ROUTE_LAYER_ID)
+                .layerAbove(ICON_LAYER_ID)
                 .pulseFadeEnabled(true)
                 .pulseInterpolator(DecelerateInterpolator())
                 .pulseColor(ContextCompat.getColor(context, R.color.ThemeColor))

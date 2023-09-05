@@ -81,7 +81,7 @@ object MappingConstants {
 
     /*Map*/
 
-    const val DEFAULT_LOCATION_CIRCLE_PULSE_DURATION_MS = 1500f
+    const val DEFAULT_LOCATION_CIRCLE_PULSE_DURATION_MS = 2000f
     const val DEFAULT_LOCATION_CIRCLE_PULSE_RADIUS = 50f
 
     const val NUMBER_OF_STARS = 5
