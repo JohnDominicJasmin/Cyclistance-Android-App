@@ -210,16 +210,10 @@ fun MappingScreen(
         }
 
 
-    val onInitializeMapboxMap = remember(userLocationAvailable) {
+    val onInitializeMapboxMap = remember {
         { mbm: MapboxMap ->
             if (mapboxMap == null) {
                 mapboxMap = mbm
-            }
-
-            if (userLocationAvailable) {
-                val camera = cameraState
-                locateUser(camera.zoom, camera.position, FAST_CAMERA_ANIMATION_DURATION)
-
             }
         }
     }
@@ -811,6 +805,12 @@ fun MappingScreen(
     }
 
 
+    LaunchedEffect(key1 = userLocationAvailable, key2= mapboxMap){
+        if (userLocationAvailable) {
+            val camera = cameraState
+            locateUser(camera.zoom, camera.position, FAST_CAMERA_ANIMATION_DURATION)
+        }
+    }
     LaunchedEffect(key1 = true){
         mappingViewModel.eventFlow.distinctUntilChanged().collectLatest {
             when(it){
