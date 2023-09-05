@@ -53,12 +53,12 @@ fun ExpandableFABSection(
     val density = LocalDensity.current.density
     val offsetRescueRequestY = animateFloatAsState(
         targetValue = -365f * density / 2.75f,
-        animationSpec = animationSpec
+        animationSpec = animationSpec, label = ""
     )
 
     val offsetBikeTrackerY = animateFloatAsState(
         targetValue = -290f * density / 2.7f,
-        animationSpec = animationSpec
+        animationSpec = animationSpec, label = ""
     )
 
     val offsetFamilyTrackerY = animateFloatAsState(

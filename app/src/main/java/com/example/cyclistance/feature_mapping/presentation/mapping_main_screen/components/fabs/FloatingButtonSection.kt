@@ -31,9 +31,11 @@ fun FloatingButtonSection(
     val shouldShowFab =
         !isNavigating && !uiState.isFabExpanded && uiState.mapSelectedRescuee == null
 
+    val shouldShowMapLayerButton = shouldShowFab && !uiState.searchingAssistance
+
     Box(modifier = modifier) {
 
-        MappingUtils.FabAnimated(shouldShowFab) {
+        MappingUtils.FabAnimated(shouldShowMapLayerButton) {
             MapLayerButton(
                 modifier = Modifier.size(43.dp),
                 onClick = onClickLayerButton
