@@ -1,0 +1,19 @@
+<changelist name="Migrate_gradle_to_gradle_kts_and_kapt_to_ksp" date="1694027792538" recycled="false">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Migrate_gradle_to_gradle_kts_and_kapt_to_ksp/shelved.patch" />
+  <option name="DESCRIPTION" value="Migrate gradle to gradle.kts and kapt to ksp" />
+  <binary>
+    <option name="BEFORE_PATH" value=".idea/.name" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Cyclistance_Emulator_Suite_Data/firestore_export/all_namespaces/all_kinds/all_namespaces_all_kinds.export_metadata" />
+    <option name="AFTER_PATH" value="Cyclistance_Emulator_Suite_Data/firestore_export/all_namespaces/all_kinds/all_namespaces_all_kinds.export_metadata" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Migrate_gradle_to_gradle_kts_and_kapt_to_ksp/all_namespaces_all_kinds.export_metadata" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="Cyclistance_Emulator_Suite_Data/firestore_export/all_namespaces/all_kinds/output-0" />
+    <option name="AFTER_PATH" value="Cyclistance_Emulator_Suite_Data/firestore_export/all_namespaces/all_kinds/output-0" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Migrate_gradle_to_gradle_kts_and_kapt_to_ksp/output-0" />
+  </binary>
+</changelist>
