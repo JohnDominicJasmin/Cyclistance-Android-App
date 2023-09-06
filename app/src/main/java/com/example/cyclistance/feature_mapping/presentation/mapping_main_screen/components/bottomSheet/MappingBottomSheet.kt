@@ -1,14 +1,22 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
+import com.example.cyclistance.core.utils.composable_utils.noRippleClickable
 import com.example.cyclistance.core.utils.formatter.IconFormatter.toHazardousLaneIconMarker
 import com.example.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.ExpandableFABSection
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
@@ -24,6 +32,7 @@ fun MappingBottomSheet(
     incidentDescription: TextFieldValue,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     markerPostedCount: Int,
+    respondentCount: Int,
     event: (MappingUiEvent) -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
@@ -86,19 +95,37 @@ fun MappingBottomSheet(
 
                 BottomSheetType.SearchAssistance.type -> {
 
-                    BottomSheetSearchingAssistance(
-                        modifier = modifier,
-                        onClickCancelSearchButton = {
-                            event(MappingUiEvent.CancelSearchConfirmed)
-                        },
-                        bottomSheetScaffoldState = bottomSheetScaffoldState)
+                    Column(
+                        modifier = modifier.fillMaxSize().noRippleClickable { event(MappingUiEvent.OnToggleExpandableFAB) },
+                        verticalArrangement = Arrangement.spacedBy(6.dp, alignment = Alignment.Bottom),
+                        horizontalAlignment = Alignment.End) {
+
+                        ExpandableFABSection(
+                            onClickEmergencyCall = { event(MappingUiEvent.ShowEmergencyCallDialog) },
+                            onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
+                            onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
+                            onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
+                            onClickBikeTracker = { event(MappingUiEvent.ShowSinoTrackWebView) },
+                            isFabExpanded = uiState.isFabExpanded,
+                            badgeCount = respondentCount,
+                            modifier = Modifier
+                                .wrapContentSize()
+                        )
+
+                        BottomSheetSearchingAssistance(
+                            modifier = Modifier,
+                            onClickCancelSearchButton = {
+                                event(MappingUiEvent.CancelSearchConfirmed)
+                            },
+                            bottomSheetScaffoldState = bottomSheetScaffoldState)
+                    }
                 }
 
                 BottomSheetType.OnGoingRescue.type -> {
 
                     BottomSheetOnGoingRescue(
                         modifier = modifier,
-                        onClickCallButton = {  },
+                        onClickCallButton = { },
                         onClickChatButton = { event(MappingUiEvent.ChatRescueTransaction) },
                         onClickCancelButton = { event(MappingUiEvent.CancelRescueTransaction) },
                         role = state.user.transaction?.role ?: "",
@@ -126,16 +153,21 @@ fun MappingBottomSheet(
                 BottomSheetType.IncidentDescription.type -> {
                     BottomSheetIncidentDescription(
                         modifier = modifier,
-                        onDismissBottomSheet = {event(MappingUiEvent.DismissIncidentDescriptionBottomSheet)},
+                        onDismissBottomSheet = { event(MappingUiEvent.DismissIncidentDescriptionBottomSheet) },
                         uiState = uiState,
                         state = state,
                         icon = uiState.selectedHazardousMarker!!.label.toHazardousLaneIconMarker(),
                         onClickEdit = { event(MappingUiEvent.OnClickEditIncidentDescription(uiState.selectedHazardousMarker)) },
                         onClickDelete = { event(MappingUiEvent.OnClickDeleteIncident) },
                         onClickCancelButton = { event(MappingUiEvent.CancelEditIncidentDescription) },
-                        onClickConfirmButton = { description, label ->  event(MappingUiEvent.UpdateIncidentDescription(label = label, description = description)) },
+                        onClickConfirmButton = { description, label ->
+                            event(
+                                MappingUiEvent.UpdateIncidentDescription(
+                                    label = label,
+                                    description = description))
+                        },
                         onClickGotItButton = { event(MappingUiEvent.OnClickHazardousInfoGotIt) },
-                        )
+                    )
 
                 }
 

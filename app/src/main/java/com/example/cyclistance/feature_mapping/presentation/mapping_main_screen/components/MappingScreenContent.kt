@@ -127,7 +127,8 @@ fun MappingScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp).align(Alignment.BottomCenter),
-                markerPostedCount = markerPostedCount) {
+                markerPostedCount = markerPostedCount,
+                respondentCount = respondentCount) {
 
 
                 ConstraintLayout(modifier = Modifier.fillMaxSize()) {
