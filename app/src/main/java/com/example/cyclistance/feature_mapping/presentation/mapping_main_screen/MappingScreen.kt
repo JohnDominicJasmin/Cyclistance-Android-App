@@ -408,9 +408,9 @@ fun MappingScreen(
 
     val hasTransaction = remember(key1 = state.rescueTransaction, key2 = state.user.transaction) {
         val transaction = state.rescueTransaction
-        val rescueTransactionId = state.rescueTransaction?.id ?: ""
-        val userTransactionId = state.user.transaction?.transactionId ?: ""
-        transaction != null && rescueTransactionId.isNotEmpty() && userTransactionId.isNotEmpty()
+        val rescueTransactionId = transaction?.id ?: ""
+        val userTransactionId = state.user.getTransactionId() ?: ""
+        rescueTransactionId.isNotEmpty() && userTransactionId.isNotEmpty()
     }
 
     val isRescueCancelled =
@@ -824,6 +824,25 @@ fun MappingScreen(
         }
     }
 
+
+    LaunchedEffect(key1 = hasTransaction){
+        uiState = uiState.copy(
+            hasTransaction = hasTransaction
+        )
+    }
+
+    LaunchedEffect(key1 = isRescueCancelled){
+        uiState = uiState.copy(
+            isRescueCancelled = isRescueCancelled
+        )
+    }
+
+    LaunchedEffect(key1 = isNavigating){
+        uiState = uiState.copy(
+            isNavigating = isNavigating
+        )
+    }
+
     LaunchedEffect(key1 = true) {
 
         mappingViewModel.eventFlow.collect { event ->
@@ -1118,10 +1137,10 @@ fun MappingScreen(
         state = state,
         locationPermissionState = foregroundLocationPermissionsState,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
-        hasTransaction = hasTransaction,
-        isRescueCancelled = isRescueCancelled,
+
+
+
         hazardousLaneMarkers = hazardousMarkers,
-        isNavigating = isNavigating,
         mapboxMap = mapboxMap,
         uiState = uiState,
         emergencyState = emergencyState,

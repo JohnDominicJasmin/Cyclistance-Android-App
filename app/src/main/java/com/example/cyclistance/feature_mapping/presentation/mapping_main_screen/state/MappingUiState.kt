@@ -34,6 +34,9 @@ data class MappingUiState(
     val deleteHazardousMarkerDialogVisible: Boolean = false,
     val discardHazardousMarkerDialogVisible: Boolean = false,
     val currentlyEditingHazardousMarker: HazardousLaneMarker? = null,
+    val hasTransaction: Boolean = false,
+    val isRescueCancelled: Boolean = false,
+    val isNavigating: Boolean = false,
 
 
 

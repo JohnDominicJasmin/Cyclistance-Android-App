@@ -64,9 +64,7 @@ fun MappingScreenContent(
     state: MappingState,
     emergencyState: EmergencyCallState,
     mapboxMap: MapboxMap?,
-    hasTransaction: Boolean = false,
-    isRescueCancelled: Boolean = false,
-    isNavigating: Boolean,
+
     uiState: MappingUiState,
     incidentDescription: TextFieldValue,
     hazardousLaneMarkers: List<HazardousLaneMarker>,
@@ -144,11 +142,8 @@ fun MappingScreenContent(
                             start.linkTo(parent.start)
                             bottom.linkTo(parent.bottom)
                         },
-                        hasTransaction = hasTransaction,
-                        isRescueCancelled = isRescueCancelled,
                         mapboxMap = mapboxMap,
                         routeDirection = uiState.routeDirection,
-                        isNavigating = isNavigating,
                         event = event,
                         uiState = uiState,
                         hazardousLaneMarkers = hazardousLaneMarkers
@@ -190,7 +185,7 @@ fun MappingScreenContent(
                         onClickRecenterButton = { event(MappingUiEvent.RecenterRoute) },
                         onClickOpenNavigationButton = { event(MappingUiEvent.OpenNavigation) },
                         onClickLayerButton = { event(MappingUiEvent.OpenHazardousLaneBottomSheet) },
-                        isNavigating = isNavigating,
+                        isNavigating = uiState.isNavigating,
                         uiState = uiState
                     )
 
@@ -218,7 +213,7 @@ fun MappingScreenContent(
 
 
                     val buttonVisible =
-                        isNavigating.not() && uiState.isFabExpanded.not() && bottomSheetScaffoldState.bottomSheetState.isCollapsed
+                        uiState.isNavigating.not() && uiState.isFabExpanded.not() && bottomSheetScaffoldState.bottomSheetState.isCollapsed
                     val requestHelpVisible = uiState.requestHelpButtonVisible && buttonVisible
                     val respondToHelpVisible =
                         uiState.requestHelpButtonVisible.not() && buttonVisible
@@ -353,7 +348,7 @@ fun MappingScreenContent(
                     }
 
                     AnimatedVisibility(
-                        visible = isRescueCancelled && uiState.rescueRequestAccepted.not(),
+                        visible = uiState.isRescueCancelled && uiState.rescueRequestAccepted.not(),
                         enter = fadeIn(),
                         exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
 
@@ -371,7 +366,7 @@ fun MappingScreenContent(
                     }
 
                     AnimatedVisibility(
-                        visible = uiState.rescueRequestAccepted && isRescueCancelled.not(),
+                        visible = uiState.rescueRequestAccepted && uiState.isRescueCancelled.not(),
                         enter = fadeIn(),
                         exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
                         MappingRequestAccepted(
