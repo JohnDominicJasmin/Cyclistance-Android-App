@@ -193,7 +193,8 @@ class TrackingStateHandler(
 
     fun getTransactionId(rescuer: UserItem): String {
         val user = state.value.user
-        return user.id?.take(3) + rescuer.id?.take(3) + System.currentTimeMillis().toString()
+        val idCombination =  user.id?.take(3) + rescuer.id?.take(3)
+        return idCombination + System.currentTimeMillis().toString()
             .takeLast(6)
     }
 
