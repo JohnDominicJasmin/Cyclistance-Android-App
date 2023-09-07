@@ -153,7 +153,7 @@ fun MappingScreenContent(
 
 
                     AnimatedVisibility(
-                        visible = uiState.mapSelectedRescuee != null,
+                        visible = uiState.mapSelectedRescuee != null && bottomSheetScaffoldState.bottomSheetState.isExpanded,
                         enter = expandVertically(expandFrom = Alignment.Top) { 20 },
                         exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
                             fullHeight / 2
