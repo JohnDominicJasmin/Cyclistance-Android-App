@@ -106,7 +106,7 @@ fun MappingScreen(
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberBottomSheetState(
             initialValue = BottomSheetValue.Collapsed,
-            confirmStateChange = {false})
+            confirmStateChange = { false })
     )
 
     val collapseBottomSheet = remember {
@@ -298,19 +298,27 @@ fun MappingScreen(
     }
 
 
-    val onClickLocateUserButton = remember {
-        {
+    val onLocateUser = remember(uiState.routeDirection, mapboxMap) {
+        { cameraMode: Int ->
+
             foregroundLocationPermissionsState.requestPermission(
                 onGranted = {
                     if (!context.hasGPSConnection()) {
                         context.checkLocationSetting(
                             onDisabled = settingResultRequest::launch)
                     }
+
+                    mapboxMap?.locationComponent?.cameraMode = cameraMode
+
                     state.userLocation?.let {
                         it.latitude ?: return@let
                         it.longitude ?: return@let
                         val point = LatLng(it.latitude, it.longitude)
-                        locateUser(LOCATE_USER_ZOOM_LEVEL, point, DEFAULT_CAMERA_ANIMATION_DURATION)
+                        locateUser(
+                            LOCATE_USER_ZOOM_LEVEL,
+                            point,
+                            DEFAULT_CAMERA_ANIMATION_DURATION)
+
                     }
 
                 }, onExplain = {
@@ -319,11 +327,16 @@ fun MappingScreen(
         }
     }
 
+    val onLocateUserButton = remember(uiState.routeDirection){{
+        val cameraMode = if(uiState.routeDirection == null) CameraMode.NONE else CameraMode.TRACKING
+        onLocateUser(cameraMode)
+    }}
+
     val openNavigationApp = remember(state.rescueTransaction?.route) {
         {
             val rescueTransaction = state.rescueTransaction
-            rescueTransaction?.let{
-                val latitude =  it.getDestinationLatitude() ?: return@let
+            rescueTransaction?.let {
+                val latitude = it.getDestinationLatitude() ?: return@let
                 val longitude = it.getDestinationLongitude() ?: return@let
                 context.openNavigationApp(latitude = latitude, longitude = longitude)
             }
@@ -331,17 +344,7 @@ fun MappingScreen(
         }
     }
 
-    val onClickRouteOverViewButton = remember(mapboxMap) {
-        {
-            mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING
-        }
-    }
 
-    val onClickRecenterButton = remember(mapboxMap) {
-        {
-            mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING_GPS
-        }
-    }
 
     val onClickOpenNavigationButton = remember {
         {
@@ -1181,9 +1184,9 @@ fun MappingScreen(
                 is MappingUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
                 is MappingUiEvent.OnMapClick -> onMapClick()
                 is MappingUiEvent.DismissBanner -> onDismissRescueeBanner()
-                is MappingUiEvent.LocateUser -> onClickLocateUserButton()
-                is MappingUiEvent.RouteOverview -> onClickRouteOverViewButton()
-                is MappingUiEvent.RecenterRoute -> onClickRecenterButton()
+                is MappingUiEvent.LocateUser -> onLocateUserButton()
+                is MappingUiEvent.RouteOverview -> onLocateUser(CameraMode.TRACKING)
+                is MappingUiEvent.RecenterRoute -> onLocateUser(CameraMode.TRACKING_GPS)
                 is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
                 is MappingUiEvent.RescueArrivedConfirmed -> {}
