@@ -192,24 +192,22 @@ fun MappingScreenContent(
 
 
 
-                    AnimatedVisibility(
-                        visible = bottomSheetScaffoldState.bottomSheetState.isCollapsed,
-                        enter = fadeIn(),
-                        exit = fadeOut(), modifier = Modifier.constrainAs(expandableFabSection) {
-                            end.linkTo(parent.end, margin = 8.dp)
-                            bottom.linkTo(parent.bottom, margin = 15.dp)
-                        }) {
 
-                        ExpandableFABSection(
-                            onClickEmergencyCall = { event(MappingUiEvent.ShowEmergencyCallDialog) },
-                            onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
-                            onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
-                            onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
-                            onClickBikeTracker = { event(MappingUiEvent.ShowSinoTrackWebView) },
-                            isFabExpanded = uiState.isFabExpanded,
-                            badgeCount = respondentCount
-                        )
-                    }
+                    ExpandableFABSection(
+                        onClickEmergencyCall = { event(MappingUiEvent.ShowEmergencyCallDialog) },
+                        onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
+                        onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
+                        onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
+                        onClickBikeTracker = { event(MappingUiEvent.ShowSinoTrackWebView) },
+                        isFabExpanded = uiState.isFabExpanded,
+                        badgeCount = respondentCount,
+                        modifier = Modifier.constrainAs(expandableFabSection) {
+                            end.linkTo(parent.end, margin = 8.dp)
+                            if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) bottom.linkTo(
+                                parent.bottom,
+                                margin = 15.dp) else top.linkTo(fabSection.bottom, margin = 8.dp)
+                        }
+                    )
 
 
                     val buttonVisible =
