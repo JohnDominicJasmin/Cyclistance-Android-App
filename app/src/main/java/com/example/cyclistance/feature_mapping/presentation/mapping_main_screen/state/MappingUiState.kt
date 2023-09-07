@@ -37,6 +37,7 @@ data class MappingUiState(
     val hasTransaction: Boolean = false,
     val isRescueCancelled: Boolean = false,
     val isNavigating: Boolean = false,
+    val generateRouteFailed: Boolean = false,
 
 
 

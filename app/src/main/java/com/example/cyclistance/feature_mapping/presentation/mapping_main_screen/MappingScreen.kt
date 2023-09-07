@@ -774,8 +774,26 @@ fun MappingScreen(
             ))
     }}
 
-    val onClickHazardousInfoGotIt = remember{{
-        mappingViewModel.onEvent(event = MappingVmEvent.ShouldShowHazardousStartingInfo(false))
+    val onClickHazardousInfoGotIt = remember {
+        {
+            mappingViewModel.onEvent(event = MappingVmEvent.ShouldShowHazardousStartingInfo(false))
+        }
+    }
+
+    val getRouteDirections = remember(state.rescueTransaction){{
+        val rescueTransaction = state.rescueTransaction
+
+        val startingLongitude = rescueTransaction?.getStartingLongitude()!!
+        val startingLatitude = rescueTransaction.getStartingLatitude()!!
+        val destinationLongitude = rescueTransaction.getDestinationLongitude()!!
+        val destinationLatitude = rescueTransaction.getDestinationLatitude()!!
+
+        mappingViewModel.onEvent(
+            event = MappingVmEvent.GetRouteDirections(
+                origin = Point.fromLngLat(startingLongitude, startingLatitude),
+                destination = Point.fromLngLat(
+                    destinationLongitude,
+                    destinationLatitude)))
     }}
 
 
@@ -895,9 +913,10 @@ fun MappingScreen(
                     )
                 }
 
-                is MappingEvent.NewRouteDirection -> {
+                is MappingEvent.GenerateRouteNavigationSuccess -> {
                     uiState = uiState.copy(
-                        routeDirection = event.routeDirection
+                        routeDirection = event.routeDirection,
+                        generateRouteFailed = false
                     )
                 }
 
@@ -1050,12 +1069,11 @@ fun MappingScreen(
         }
         showRouteDirection()
     }
+
     LaunchedEffect(
         key1 = state.rescueTransaction?.route,
         key2 = hasTransaction,
         key3 = isRescueCancelled) {
-
-        val rescueTransaction = state.rescueTransaction
 
 
         if (hasTransaction.not() || isRescueCancelled) {
@@ -1063,21 +1081,10 @@ fun MappingScreen(
             return@LaunchedEffect
         }
 
-
-        val startingLongitude = rescueTransaction?.getStartingLongitude() ?: return@LaunchedEffect
-        val startingLatitude = rescueTransaction.getStartingLatitude() ?: return@LaunchedEffect
-        val destinationLongitude = rescueTransaction.getDestinationLongitude() ?: return@LaunchedEffect
-        val destinationLatitude = rescueTransaction.getDestinationLatitude() ?: return@LaunchedEffect
-
-        mappingViewModel.onEvent(
-            event = MappingVmEvent.GetRouteDirections(
-                origin = Point.fromLngLat(startingLongitude, startingLatitude),
-                destination = Point.fromLngLat(
-                    destinationLongitude,
-                    destinationLatitude)))
-
-
+        getRouteDirections()
     }
+
+
     LaunchedEffect(key1 = hasInternetConnection) {
         val nearbyCyclistLoaded = state.nearbyCyclist?.users?.isNotEmpty() ?: false
         val userLoaded = state.user.id != null
@@ -1090,8 +1097,23 @@ fun MappingScreen(
         if (dataHaveBeenLoaded.not()) {
             mappingViewModel.onEvent(MappingVmEvent.LoadData)
         }
+
         mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
     }
+
+
+    LaunchedEffect(key1 = hasInternetConnection, key2 = uiState.generateRouteFailed){
+        if (hasInternetConnection.not()) {
+            return@LaunchedEffect
+        }
+        if(!uiState.generateRouteFailed){
+            return@LaunchedEffect
+        }
+
+        getRouteDirections()
+    }
+
+
     LaunchedEffect(key1 = isNavigating, key2 = userLocationAvailable, key3 = pulsingEnabled) {
         showUserLocation()
     }

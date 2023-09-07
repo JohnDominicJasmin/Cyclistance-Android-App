@@ -24,7 +24,6 @@ fun MappingBottomSheet(
     incidentDescription: TextFieldValue,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     markerPostedCount: Int,
-    respondentCount: Int,
     event: (MappingUiEvent) -> Unit = {},
     content: @Composable (PaddingValues) -> Unit,
 ) {
@@ -88,7 +87,7 @@ fun MappingBottomSheet(
                 BottomSheetType.SearchAssistance.type -> {
 
                         BottomSheetSearchingAssistance(
-                            modifier = Modifier,
+                            modifier = modifier,
                             onClickCancelSearchButton = {
                                 event(MappingUiEvent.CancelSearchConfirmed)
                             },
