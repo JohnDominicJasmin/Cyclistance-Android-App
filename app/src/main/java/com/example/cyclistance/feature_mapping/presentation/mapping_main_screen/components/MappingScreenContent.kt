@@ -64,9 +64,7 @@ fun MappingScreenContent(
     state: MappingState,
     emergencyState: EmergencyCallState,
     mapboxMap: MapboxMap?,
-    hasTransaction: Boolean = false,
-    isRescueCancelled: Boolean = false,
-    isNavigating: Boolean,
+
     uiState: MappingUiState,
     incidentDescription: TextFieldValue,
     hazardousLaneMarkers: List<HazardousLaneMarker>,
@@ -143,11 +141,8 @@ fun MappingScreenContent(
                             start.linkTo(parent.start)
                             bottom.linkTo(parent.bottom)
                         },
-                        hasTransaction = hasTransaction,
-                        isRescueCancelled = isRescueCancelled,
                         mapboxMap = mapboxMap,
                         routeDirection = uiState.routeDirection,
-                        isNavigating = isNavigating,
                         event = event,
                         uiState = uiState,
                         hazardousLaneMarkers = hazardousLaneMarkers
@@ -157,7 +152,7 @@ fun MappingScreenContent(
 
 
                     AnimatedVisibility(
-                        visible = uiState.mapSelectedRescuee != null,
+                        visible = uiState.mapSelectedRescuee != null && bottomSheetScaffoldState.bottomSheetState.isCollapsed,
                         enter = expandVertically(expandFrom = Alignment.Top) { 20 },
                         exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
                             fullHeight / 2
@@ -189,35 +184,28 @@ fun MappingScreenContent(
                         onClickRecenterButton = { event(MappingUiEvent.RecenterRoute) },
                         onClickOpenNavigationButton = { event(MappingUiEvent.OpenNavigation) },
                         onClickLayerButton = { event(MappingUiEvent.OpenHazardousLaneBottomSheet) },
-                        isNavigating = isNavigating,
                         uiState = uiState
                     )
 
-
-
-
-                    AnimatedVisibility(
-                        visible = bottomSheetScaffoldState.bottomSheetState.isCollapsed,
-                        enter = fadeIn(),
-                        exit = fadeOut(), modifier = Modifier.constrainAs(expandableFabSection) {
+                    ExpandableFABSection(
+                        onClickEmergencyCall = { event(MappingUiEvent.ShowEmergencyCallDialog) },
+                        onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
+                        onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
+                        onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
+                        onClickBikeTracker = { event(MappingUiEvent.ShowSinoTrackWebView) },
+                        isFabExpanded = uiState.isFabExpanded,
+                        badgeCount = respondentCount,
+                        modifier = Modifier.constrainAs(expandableFabSection) {
                             end.linkTo(parent.end, margin = 8.dp)
-                            bottom.linkTo(parent.bottom, margin = 15.dp)
-                        }) {
-
-                        ExpandableFABSection(
-                            onClickEmergencyCall = { event(MappingUiEvent.ShowEmergencyCallDialog) },
-                            onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
-                            onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
-                            onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
-                            onClickBikeTracker = { event(MappingUiEvent.ShowSinoTrackWebView) },
-                            isFabExpanded = uiState.isFabExpanded,
-                            badgeCount = respondentCount
-                        )
-                    }
+                            if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) bottom.linkTo(
+                                parent.bottom,
+                                margin = 15.dp) else top.linkTo(fabSection.bottom, margin = 8.dp)
+                        }
+                    )
 
 
                     val buttonVisible =
-                        isNavigating.not() && uiState.isFabExpanded.not() && bottomSheetScaffoldState.bottomSheetState.isCollapsed
+                        uiState.isNavigating.not() && uiState.isFabExpanded.not() && bottomSheetScaffoldState.bottomSheetState.isCollapsed
                     val requestHelpVisible = uiState.requestHelpButtonVisible && buttonVisible
                     val respondToHelpVisible =
                         uiState.requestHelpButtonVisible.not() && buttonVisible
@@ -352,7 +340,7 @@ fun MappingScreenContent(
                     }
 
                     AnimatedVisibility(
-                        visible = isRescueCancelled && uiState.rescueRequestAccepted.not(),
+                        visible = uiState.isRescueCancelled && uiState.rescueRequestAccepted.not(),
                         enter = fadeIn(),
                         exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
 
@@ -370,7 +358,7 @@ fun MappingScreenContent(
                     }
 
                     AnimatedVisibility(
-                        visible = uiState.rescueRequestAccepted && isRescueCancelled.not(),
+                        visible = uiState.rescueRequestAccepted && uiState.isRescueCancelled.not(),
                         enter = fadeIn(),
                         exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
                         MappingRequestAccepted(

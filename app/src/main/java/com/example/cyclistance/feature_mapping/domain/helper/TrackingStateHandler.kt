@@ -193,7 +193,8 @@ class TrackingStateHandler(
 
     fun getTransactionId(rescuer: UserItem): String {
         val user = state.value.user
-        return user.id?.take(3) + rescuer.id?.take(3) + System.currentTimeMillis().toString()
+        val idCombination =  user.id?.take(3) + rescuer.id?.take(3)
+        return idCombination + System.currentTimeMillis().toString()
             .takeLast(6)
     }
 
@@ -236,6 +237,14 @@ class TrackingStateHandler(
 
     suspend fun handleException(exception: Throwable) {
         when (exception) {
+
+            is MappingExceptions.NavigationRouteException -> {
+                eventFlow.emit(
+                    MappingEvent.GenerateRouteNavigationFailed(
+                        reason = exception.message ?: "Failed to Generate Navigation Route"
+                    )
+                )
+            }
 
             is MappingExceptions.NetworkException -> {
                 eventFlow.emit(value = MappingEvent.NoInternetConnection)

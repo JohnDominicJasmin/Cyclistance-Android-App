@@ -25,7 +25,6 @@ sealed class MappingEvent{
 
 
 
-    data class NewRouteDirection(val routeDirection: RouteDirection): MappingEvent()
     object RemoveAssignedTransactionSuccess: MappingEvent()
     object RescueRequestAccepted: MappingEvent()
     object CancelHelpRequestSuccess: MappingEvent()
@@ -46,5 +45,8 @@ sealed class MappingEvent{
 
     object DeleteHazardousLaneMarkerSuccess: MappingEvent()
     data class DeleteHazardousLaneMarkerFailed(val reason: String): MappingEvent()
+
+    data class GenerateRouteNavigationSuccess(val routeDirection: RouteDirection): MappingEvent()
+    data class GenerateRouteNavigationFailed(val reason: String = "Failed to generate route navigation"): MappingEvent()
 
 }

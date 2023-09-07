@@ -66,10 +66,8 @@ fun MappingMapsScreen(
     state: MappingState,
     uiState: MappingUiState,
     mapboxMap: MapboxMap?,
-    hasTransaction: Boolean,
-    isNavigating: Boolean,
+
     routeDirection: RouteDirection?,
-    isRescueCancelled: Boolean,
     hazardousLaneMarkers: List<HazardousLaneMarker>,
     event: (MappingUiEvent) -> Unit
 //    requestNavigationCameraToOverview: () -> Unit, //todo use this one
@@ -172,13 +170,13 @@ fun MappingMapsScreen(
     }
 
 
-    val hasActiveTransaction = remember(hasTransaction, isRescueCancelled) {
-        hasTransaction || isRescueCancelled
+    val hasActiveTransaction = remember(uiState.hasTransaction, uiState.isRescueCancelled) {
+        uiState.hasTransaction || uiState.isRescueCancelled
     }
 
-    val isUserNavigating = remember(key1 = isNavigating, key2 = routeDirection?.geometry) {
+    val isUserNavigating = remember(key1 = uiState.isNavigating, key2 = routeDirection?.geometry) {
         val geometry = routeDirection?.geometry
-        isNavigating || geometry?.isNotEmpty() == true
+        uiState.isNavigating || geometry?.isNotEmpty() == true
     }
 
     val shouldDismissIcons =
@@ -212,6 +210,10 @@ fun MappingMapsScreen(
             return@LaunchedEffect
         }
 
+        if(uiState.searchingAssistance){
+            return@LaunchedEffect
+        }
+
         showNearbyCyclistsIcon()
     }
 
@@ -236,26 +238,36 @@ fun MappingMapsScreen(
     }
 
 
-
-    LaunchedEffect(key1 = hazardousLaneMarkers.size, key2 = mapboxMap, key3 = state.mapType) {
-
+   fun observeHazardousMarker() {
         val isLocationAvailable = state.userLocation?.latitude != null && state.userLocation.longitude != null
 
         if (!isLocationAvailable) {
-            return@LaunchedEffect
+            return
         }
 
         if (shouldDismissIcons) {
-            return@LaunchedEffect
+            return
         }
 
         if (state.mapType == MapType.Default.type) {
-            return@LaunchedEffect
+            return
+        }
+
+        if(uiState.searchingAssistance){
+            return
         }
 
         showHazardousLaneIcon()
     }
 
+    LaunchedEffect(key1 = hazardousLaneMarkers.size, key2 = mapboxMap, key3 = state.mapType) {
+        observeHazardousMarker()
+    }
+
+
+    LaunchedEffect(key1 = mapboxMap, key2 = state.userLocation){
+        observeHazardousMarker()
+    }
 
     LaunchedEffect(key1 = mapboxMap, uiState.isFabExpanded) {
 
@@ -295,7 +307,7 @@ fun MappingMapsScreen(
             }
         }
 
-    val hasTransactionLocationChanges = remember(clientLocation) {
+    val transactionLocationChanges = remember(clientLocation) {
         clientLocation != null
     }
 
@@ -314,7 +326,7 @@ fun MappingMapsScreen(
     val showTransactionLocationIcon = remember(mapboxMap, state.user) {
         { location: LocationModel ->
             dismissTransactionLocationIcon()
-            val role = state.user.transaction?.role
+            val role = state.user.getRole()
             val mapIcon = if (role == Role.RESCUEE.name.lowercase()) {
                 R.drawable.ic_map_rescuer
             } else {
@@ -340,10 +352,10 @@ fun MappingMapsScreen(
 
     LaunchedEffect(
         key1 = hasActiveTransaction,
-        key2 = hasTransactionLocationChanges,
+        key2 = transactionLocationChanges,
         key3 = clientLocation) {
 
-        if (hasTransactionLocationChanges.not() || hasActiveTransaction.not()) {
+        if (transactionLocationChanges.not() || hasActiveTransaction.not()) {
             dismissTransactionLocationIcon()
             return@LaunchedEffect
         }
@@ -385,7 +397,7 @@ private fun Map(
                 return@AndroidView
             }
             CoroutineScope(Dispatchers.Main).launch {
-                Timber.v("Successfully recomposed in Map")
+
 
 
                 val initSource = { loadedMapStyle: Style ->
@@ -417,13 +429,14 @@ private fun Map(
                             setProperties(
                                 lineCap(Property.LINE_CAP_ROUND),
                                 lineJoin(Property.LINE_JOIN_ROUND),
-                                lineWidth(5f),
+                                lineWidth(7f),
                                 lineColor(Color.parseColor("#006eff"))
                             )
                         }, ICON_LAYER_ID)
 
 
                 }
+
                 mapView.getMapAsync {
                     it.setStyle(if (isDarkTheme) Style.DARK else Style.LIGHT) { loadedStyle ->
 

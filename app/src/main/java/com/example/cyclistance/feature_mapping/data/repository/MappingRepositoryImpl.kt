@@ -52,6 +52,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 import java.io.IOException
+import java.net.UnknownHostException
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
@@ -205,11 +206,21 @@ class MappingRepositoryImpl(
         return withContext(scope) {
             suspendCoroutine { continuation ->
                 geocoder.getAddress(latitude = latitude, longitude = longitude) { address ->
-                    if (address != null) {
-                        continuation.resume(address.getFullAddress())
+                    if (address == null) {
+                        continuation.resumeWithException(MappingExceptions.AddressException("Searching for GPS"))
                         return@getAddress
                     }
-                    continuation.resumeWithException(MappingExceptions.AddressException("Searching for GPS"))
+
+                    val fullAddress = address.getFullAddress()
+
+                    if(fullAddress.isEmpty()){
+                        continuation.resumeWithException(MappingExceptions.AddressException("Searching for GPS"))
+                        return@getAddress
+                    }
+
+                    continuation.resume(fullAddress)
+
+
                 }
             }
         }
@@ -406,7 +417,12 @@ class MappingRepositoryImpl(
                     }
 
                     override fun onFailure(call: Call<OptimizationResponse>, throwable: Throwable) {
-                        Timber.e("Error: %s", throwable.message)
+
+                        if(throwable is UnknownHostException){
+                            continuation.resumeWithException(MappingExceptions.NavigationRouteException())
+                            return
+                        }
+
                         continuation.resumeWithException(throwable)
                     }
                 })

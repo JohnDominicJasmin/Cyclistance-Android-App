@@ -106,7 +106,7 @@ fun MappingScreen(
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberBottomSheetState(
             initialValue = BottomSheetValue.Collapsed,
-            confirmStateChange = {false})
+            confirmStateChange = { false })
     )
 
     val collapseBottomSheet = remember {
@@ -298,19 +298,27 @@ fun MappingScreen(
     }
 
 
-    val onClickLocateUserButton = remember {
-        {
+    val onLocateUser = remember(uiState.routeDirection, mapboxMap) {
+        { cameraMode: Int ->
+
             foregroundLocationPermissionsState.requestPermission(
                 onGranted = {
                     if (!context.hasGPSConnection()) {
                         context.checkLocationSetting(
                             onDisabled = settingResultRequest::launch)
                     }
+
+                    mapboxMap?.locationComponent?.cameraMode = cameraMode
+
                     state.userLocation?.let {
                         it.latitude ?: return@let
                         it.longitude ?: return@let
                         val point = LatLng(it.latitude, it.longitude)
-                        locateUser(LOCATE_USER_ZOOM_LEVEL, point, DEFAULT_CAMERA_ANIMATION_DURATION)
+                        locateUser(
+                            LOCATE_USER_ZOOM_LEVEL,
+                            point,
+                            DEFAULT_CAMERA_ANIMATION_DURATION)
+
                     }
 
                 }, onExplain = {
@@ -319,11 +327,16 @@ fun MappingScreen(
         }
     }
 
+    val onLocateUserButton = remember(uiState.routeDirection){{
+        val cameraMode = if(uiState.routeDirection == null) CameraMode.NONE else CameraMode.TRACKING
+        onLocateUser(cameraMode)
+    }}
+
     val openNavigationApp = remember(state.rescueTransaction?.route) {
         {
             val rescueTransaction = state.rescueTransaction
-            rescueTransaction?.let{
-                val latitude =  it.getDestinationLatitude() ?: return@let
+            rescueTransaction?.let {
+                val latitude = it.getDestinationLatitude() ?: return@let
                 val longitude = it.getDestinationLongitude() ?: return@let
                 context.openNavigationApp(latitude = latitude, longitude = longitude)
             }
@@ -331,17 +344,7 @@ fun MappingScreen(
         }
     }
 
-    val onClickRouteOverViewButton = remember(mapboxMap) {
-        {
-            mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING
-        }
-    }
 
-    val onClickRecenterButton = remember(mapboxMap) {
-        {
-            mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING_GPS
-        }
-    }
 
     val onClickOpenNavigationButton = remember {
         {
@@ -408,9 +411,9 @@ fun MappingScreen(
 
     val hasTransaction = remember(key1 = state.rescueTransaction, key2 = state.user.transaction) {
         val transaction = state.rescueTransaction
-        val rescueTransactionId = state.rescueTransaction?.id ?: ""
-        val userTransactionId = state.user.transaction?.transactionId ?: ""
-        transaction != null && rescueTransactionId.isNotEmpty() && userTransactionId.isNotEmpty()
+        val rescueTransactionId = transaction?.id ?: ""
+        val userTransactionId = state.user.getTransactionId() ?: ""
+        rescueTransactionId.isNotEmpty() && userTransactionId.isNotEmpty()
     }
 
     val isRescueCancelled =
@@ -774,8 +777,26 @@ fun MappingScreen(
             ))
     }}
 
-    val onClickHazardousInfoGotIt = remember{{
-        mappingViewModel.onEvent(event = MappingVmEvent.ShouldShowHazardousStartingInfo(false))
+    val onClickHazardousInfoGotIt = remember {
+        {
+            mappingViewModel.onEvent(event = MappingVmEvent.ShouldShowHazardousStartingInfo(false))
+        }
+    }
+
+    val getRouteDirections = remember(state.rescueTransaction){{
+        val rescueTransaction = state.rescueTransaction
+
+        val startingLongitude = rescueTransaction?.getStartingLongitude()!!
+        val startingLatitude = rescueTransaction.getStartingLatitude()!!
+        val destinationLongitude = rescueTransaction.getDestinationLongitude()!!
+        val destinationLatitude = rescueTransaction.getDestinationLatitude()!!
+
+        mappingViewModel.onEvent(
+            event = MappingVmEvent.GetRouteDirections(
+                origin = Point.fromLngLat(startingLongitude, startingLatitude),
+                destination = Point.fromLngLat(
+                    destinationLongitude,
+                    destinationLatitude)))
     }}
 
 
@@ -822,6 +843,25 @@ fun MappingScreen(
                 else -> {}
             }
         }
+    }
+
+
+    LaunchedEffect(key1 = hasTransaction){
+        uiState = uiState.copy(
+            hasTransaction = hasTransaction
+        )
+    }
+
+    LaunchedEffect(key1 = isRescueCancelled){
+        uiState = uiState.copy(
+            isRescueCancelled = isRescueCancelled
+        )
+    }
+
+    LaunchedEffect(key1 = isNavigating){
+        uiState = uiState.copy(
+            isNavigating = isNavigating
+        )
     }
 
     LaunchedEffect(key1 = true) {
@@ -876,9 +916,10 @@ fun MappingScreen(
                     )
                 }
 
-                is MappingEvent.NewRouteDirection -> {
+                is MappingEvent.GenerateRouteNavigationSuccess -> {
                     uiState = uiState.copy(
-                        routeDirection = event.routeDirection
+                        routeDirection = event.routeDirection,
+                        generateRouteFailed = false
                     )
                 }
 
@@ -961,9 +1002,12 @@ fun MappingScreen(
                 }
 
                 is MappingEvent.NewBottomSheetType -> {
-                    uiState = uiState.copy(bottomSheetType = event.bottomSheetType).also {
-                        expandBottomSheet()
-                    }
+                    uiState = uiState.copy(
+                        bottomSheetType = event.bottomSheetType,
+                        searchingAssistance = event.bottomSheetType == BottomSheetType.SearchAssistance.type)
+                        .also {
+                            expandBottomSheet()
+                        }
                 }
 
                 is MappingEvent.ReportIncidentFailed -> {
@@ -976,11 +1020,11 @@ fun MappingScreen(
 
                 is MappingEvent.IncidentDistanceTooFar -> {
                     uiState = uiState.copy(
-                    alertDialogState = AlertDialogState(
-                        title = "Exceeds Reachable Distance",
-                        description = "The incident is taking place quite a distance away from your current location, making it challenging to directly engage or intervene.",
-                        icon = R.raw.error
-                    ))
+                        alertDialogState = AlertDialogState(
+                            title = "Exceeds Reachable Distance",
+                            description = "The incident is taking place quite a distance away from your current location, making it challenging to directly engage or intervene.",
+                            icon = R.raw.error
+                        ))
                 }
 
                 is MappingEvent.SelectHazardousLaneMarker -> {
@@ -1014,6 +1058,16 @@ fun MappingScreen(
                     collapseBottomSheet()
                 }
 
+                is MappingEvent.GenerateRouteNavigationFailed -> {
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Failed to Generate Route",
+                            description = "Failed to generate route to the destination due to a connection error.",
+                        ),
+                        generateRouteFailed = true
+                    )
+                }
+
                 else -> {}
             }
         }
@@ -1028,12 +1082,11 @@ fun MappingScreen(
         }
         showRouteDirection()
     }
+
     LaunchedEffect(
         key1 = state.rescueTransaction?.route,
         key2 = hasTransaction,
         key3 = isRescueCancelled) {
-
-        val rescueTransaction = state.rescueTransaction
 
 
         if (hasTransaction.not() || isRescueCancelled) {
@@ -1041,21 +1094,10 @@ fun MappingScreen(
             return@LaunchedEffect
         }
 
-
-        val startingLongitude = rescueTransaction?.getStartingLongitude() ?: return@LaunchedEffect
-        val startingLatitude = rescueTransaction.getStartingLatitude() ?: return@LaunchedEffect
-        val destinationLongitude = rescueTransaction.getDestinationLongitude() ?: return@LaunchedEffect
-        val destinationLatitude = rescueTransaction.getDestinationLatitude() ?: return@LaunchedEffect
-
-        mappingViewModel.onEvent(
-            event = MappingVmEvent.GetRouteDirections(
-                origin = Point.fromLngLat(startingLongitude, startingLatitude),
-                destination = Point.fromLngLat(
-                    destinationLongitude,
-                    destinationLatitude)))
-
-
+        getRouteDirections()
     }
+
+
     LaunchedEffect(key1 = hasInternetConnection) {
         val nearbyCyclistLoaded = state.nearbyCyclist?.users?.isNotEmpty() ?: false
         val userLoaded = state.user.id != null
@@ -1068,8 +1110,23 @@ fun MappingScreen(
         if (dataHaveBeenLoaded.not()) {
             mappingViewModel.onEvent(MappingVmEvent.LoadData)
         }
+
         mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
     }
+
+
+    LaunchedEffect(key1 = hasInternetConnection, key2 = uiState.generateRouteFailed){
+        if (hasInternetConnection.not()) {
+            return@LaunchedEffect
+        }
+        if(!uiState.generateRouteFailed){
+            return@LaunchedEffect
+        }
+
+        getRouteDirections()
+    }
+
+
     LaunchedEffect(key1 = isNavigating, key2 = userLocationAvailable, key3 = pulsingEnabled) {
         showUserLocation()
     }
@@ -1115,10 +1172,10 @@ fun MappingScreen(
         state = state,
         locationPermissionState = foregroundLocationPermissionsState,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
-        hasTransaction = hasTransaction,
-        isRescueCancelled = isRescueCancelled,
+
+
+
         hazardousLaneMarkers = hazardousMarkers,
-        isNavigating = isNavigating,
         mapboxMap = mapboxMap,
         uiState = uiState,
         emergencyState = emergencyState,
@@ -1137,9 +1194,9 @@ fun MappingScreen(
                 is MappingUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
                 is MappingUiEvent.OnMapClick -> onMapClick()
                 is MappingUiEvent.DismissBanner -> onDismissRescueeBanner()
-                is MappingUiEvent.LocateUser -> onClickLocateUserButton()
-                is MappingUiEvent.RouteOverview -> onClickRouteOverViewButton()
-                is MappingUiEvent.RecenterRoute -> onClickRecenterButton()
+                is MappingUiEvent.LocateUser -> onLocateUserButton()
+                is MappingUiEvent.RouteOverview -> onLocateUser(CameraMode.TRACKING)
+                is MappingUiEvent.RecenterRoute -> onLocateUser(CameraMode.TRACKING_GPS)
                 is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
                 is MappingUiEvent.RescueArrivedConfirmed -> {}

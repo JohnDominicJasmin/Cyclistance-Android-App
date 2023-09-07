@@ -36,6 +36,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun ExpandableFABSection(
+    modifier: Modifier = Modifier,
     onClickRescueRequest: () -> Unit = {},
     onClickFamilyTracker: () -> Unit = {},
     onClickEmergencyCall: () -> Unit = {},
@@ -43,7 +44,6 @@ fun ExpandableFABSection(
     isFabExpanded: Boolean,
     onClickFab: () -> Unit = {},
     badgeCount: Int,
-    modifier: Modifier = Modifier
 ) {
     val animationSpec: AnimationSpec<Float> = spring(
         stiffness = Spring.StiffnessLow,
@@ -53,26 +53,26 @@ fun ExpandableFABSection(
     val density = LocalDensity.current.density
     val offsetRescueRequestY = animateFloatAsState(
         targetValue = -365f * density / 2.75f,
-        animationSpec = animationSpec
+        animationSpec = animationSpec, label = ""
     )
 
     val offsetBikeTrackerY = animateFloatAsState(
         targetValue = -290f * density / 2.7f,
-        animationSpec = animationSpec
+        animationSpec = animationSpec, label = ""
     )
 
     val offsetFamilyTrackerY = animateFloatAsState(
         targetValue = -155f * density / 2.75f,
-        animationSpec = animationSpec
+        animationSpec = animationSpec, label = ""
     )
 
     val offsetEmergencyCallY = animateFloatAsState(
         targetValue = 0f * density / 2.75f,
-        animationSpec = animationSpec
+        animationSpec = animationSpec, label = ""
     )
     val rotationAngle = animateFloatAsState(
         targetValue = if (isFabExpanded) 45f else 0f,
-        animationSpec = animationSpec
+        animationSpec = animationSpec, label = ""
     )
 
     val hasRespondents by remember(badgeCount) {

@@ -76,12 +76,12 @@ object MappingConstants {
 
     const val NEAREST_METERS = 10.00
     const val DEFAULT_RADIUS = 7000.00
-    const val API_CALL_RETRY_COUNT: Long = 3
+    const val API_CALL_RETRY_COUNT: Long = 7
 
 
     /*Map*/
 
-    const val DEFAULT_LOCATION_CIRCLE_PULSE_DURATION_MS = 1500f
+    const val DEFAULT_LOCATION_CIRCLE_PULSE_DURATION_MS = 2000f
     const val DEFAULT_LOCATION_CIRCLE_PULSE_RADIUS = 50f
 
     const val NUMBER_OF_STARS = 5

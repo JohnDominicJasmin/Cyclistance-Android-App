@@ -20,7 +20,6 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun FloatingButtonSection(
     modifier: Modifier = Modifier,
     locationPermissionGranted: Boolean = true,
-    isNavigating: Boolean,
     uiState: MappingUiState,
     onClickLocateUserButton: () -> Unit,
     onClickRouteOverviewButton: () -> Unit,
@@ -29,11 +28,13 @@ fun FloatingButtonSection(
     onClickLayerButton: () -> Unit) {
 
     val shouldShowFab =
-        !isNavigating && !uiState.isFabExpanded && uiState.mapSelectedRescuee == null
+        !uiState.isNavigating && !uiState.isFabExpanded && uiState.mapSelectedRescuee == null
+    val shouldShowMapLayerButton = shouldShowFab && !uiState.searchingAssistance
+    val shouldShowNavigatingButton = uiState.isNavigating && !uiState.isFabExpanded
 
     Box(modifier = modifier) {
 
-        MappingUtils.FabAnimated(shouldShowFab) {
+        MappingUtils.FabAnimated(shouldShowMapLayerButton) {
             MapLayerButton(
                 modifier = Modifier.size(43.dp),
                 onClick = onClickLayerButton
@@ -47,21 +48,21 @@ fun FloatingButtonSection(
             verticalArrangement = Arrangement.spacedBy(6.dp, alignment = Alignment.Bottom)) {
 
 
-            MappingUtils.FabAnimated(isNavigating) {
+            MappingUtils.FabAnimated(visible = shouldShowNavigatingButton) {
                 RouteOverViewButton(
                     modifier = Modifier.size(53.dp),
                     onClick = onClickRouteOverviewButton
                 )
             }
 
-            MappingUtils.FabAnimated(isNavigating) {
+            MappingUtils.FabAnimated(visible = shouldShowNavigatingButton) {
                 RecenterButton(
                     modifier = Modifier.size(53.dp),
                     onClick = onClickRecenterButton)
             }
 
             Box {
-                MappingUtils.FabAnimated(visible = isNavigating) {
+                MappingUtils.FabAnimated(visible = shouldShowNavigatingButton) {
 
                     OpenNavigationButton(
                         modifier = Modifier.size(53.dp),
@@ -81,11 +82,14 @@ fun FloatingButtonSection(
         }
     }
 }
+
 @Preview
 @Composable
 fun PreviewFloatingButtons() {
     CyclistanceTheme(true) {
-        FloatingButtonSection(isNavigating = true, uiState = MappingUiState(),
+        FloatingButtonSection(uiState = MappingUiState(
+            isNavigating = true,
+        ),
             onClickLocateUserButton = {},
             onClickRouteOverviewButton = {},
             onClickRecenterButton = {},

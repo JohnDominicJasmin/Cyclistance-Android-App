@@ -366,9 +366,8 @@ class MappingViewModel @Inject constructor(
             runCatching {
                 mappingUseCase.getRouteDirectionsUseCase(origin = origin, destination = destination)
             }.onSuccess { routeDirection ->
-                _eventFlow.emit(value = MappingEvent.NewRouteDirection(routeDirection))
+                _eventFlow.emit(value = MappingEvent.GenerateRouteNavigationSuccess(routeDirection))
             }.onFailure {
-                Timber.v("Failure: ${it.message}")
                 it.handleException()
             }
         }
@@ -1069,6 +1068,7 @@ class MappingViewModel @Inject constructor(
 
             runCatching {
                 isLoading(true)
+                fullAddress?.let { mappingUseCase.addressUseCase(it) }
                 mappingUseCase.createUserUseCase(
                     user = UserItem(
                         id = getId(),
@@ -1082,7 +1082,7 @@ class MappingViewModel @Inject constructor(
                         rescueRequest = RescueRequest(), userAssistance = UserAssistanceModel()
                     )
                 )
-                fullAddress?.let { mappingUseCase::addressUseCase }
+
 
             }.onSuccess {
                 isLoading(false)

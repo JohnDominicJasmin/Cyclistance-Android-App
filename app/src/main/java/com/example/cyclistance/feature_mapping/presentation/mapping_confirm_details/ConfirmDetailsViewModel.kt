@@ -42,7 +42,9 @@ class ConfirmDetailsViewModel @Inject constructor(
         MutableStateFlow(savedStateHandle[CONFIRM_DETAILS_VM_STATE_KEY] ?: ConfirmDetailsState())
     val state = _state.asStateFlow()
 
-    private val _eventFlow: MutableSharedFlow<ConfirmDetailsEvent> = MutableSharedFlow()
+    private val _eventFlow: MutableSharedFlow<ConfirmDetailsEvent> = MutableSharedFlow(
+        replay = 5, extraBufferCapacity = 5
+    )
     val eventFlow = _eventFlow.asSharedFlow()
 
 

@@ -86,19 +86,19 @@ fun MappingBottomSheet(
 
                 BottomSheetType.SearchAssistance.type -> {
 
-                    BottomSheetSearchingAssistance(
-                        modifier = modifier,
-                        onClickCancelSearchButton = {
-                            event(MappingUiEvent.CancelSearchConfirmed)
-                        },
-                        bottomSheetScaffoldState = bottomSheetScaffoldState)
-                }
+                        BottomSheetSearchingAssistance(
+                            modifier = modifier,
+                            onClickCancelSearchButton = {
+                                event(MappingUiEvent.CancelSearchConfirmed)
+                            },
+                            bottomSheetScaffoldState = bottomSheetScaffoldState)
+                    }
 
                 BottomSheetType.OnGoingRescue.type -> {
 
                     BottomSheetOnGoingRescue(
                         modifier = modifier,
-                        onClickCallButton = {  },
+                        onClickCallButton = { },
                         onClickChatButton = { event(MappingUiEvent.ChatRescueTransaction) },
                         onClickCancelButton = { event(MappingUiEvent.CancelRescueTransaction) },
                         role = state.user.transaction?.role ?: "",
@@ -126,16 +126,21 @@ fun MappingBottomSheet(
                 BottomSheetType.IncidentDescription.type -> {
                     BottomSheetIncidentDescription(
                         modifier = modifier,
-                        onDismissBottomSheet = {event(MappingUiEvent.DismissIncidentDescriptionBottomSheet)},
+                        onDismissBottomSheet = { event(MappingUiEvent.DismissIncidentDescriptionBottomSheet) },
                         uiState = uiState,
                         state = state,
                         icon = uiState.selectedHazardousMarker!!.label.toHazardousLaneIconMarker(),
                         onClickEdit = { event(MappingUiEvent.OnClickEditIncidentDescription(uiState.selectedHazardousMarker)) },
                         onClickDelete = { event(MappingUiEvent.OnClickDeleteIncident) },
                         onClickCancelButton = { event(MappingUiEvent.CancelEditIncidentDescription) },
-                        onClickConfirmButton = { description, label ->  event(MappingUiEvent.UpdateIncidentDescription(label = label, description = description)) },
+                        onClickConfirmButton = { description, label ->
+                            event(
+                                MappingUiEvent.UpdateIncidentDescription(
+                                    label = label,
+                                    description = description))
+                        },
                         onClickGotItButton = { event(MappingUiEvent.OnClickHazardousInfoGotIt) },
-                        )
+                    )
 
                 }
 
