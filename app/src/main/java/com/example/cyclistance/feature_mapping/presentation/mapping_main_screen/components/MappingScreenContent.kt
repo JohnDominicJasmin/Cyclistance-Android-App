@@ -125,8 +125,7 @@ fun MappingScreenContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp).align(Alignment.BottomCenter),
-                markerPostedCount = markerPostedCount,
-                respondentCount = respondentCount) {
+                markerPostedCount = markerPostedCount) {
 
 
                 ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -153,7 +152,7 @@ fun MappingScreenContent(
 
 
                     AnimatedVisibility(
-                        visible = uiState.mapSelectedRescuee != null && bottomSheetScaffoldState.bottomSheetState.isExpanded,
+                        visible = uiState.mapSelectedRescuee != null && bottomSheetScaffoldState.bottomSheetState.isCollapsed,
                         enter = expandVertically(expandFrom = Alignment.Top) { 20 },
                         exit = shrinkVertically(animationSpec = tween()) { fullHeight ->
                             fullHeight / 2
@@ -185,13 +184,8 @@ fun MappingScreenContent(
                         onClickRecenterButton = { event(MappingUiEvent.RecenterRoute) },
                         onClickOpenNavigationButton = { event(MappingUiEvent.OpenNavigation) },
                         onClickLayerButton = { event(MappingUiEvent.OpenHazardousLaneBottomSheet) },
-                        isNavigating = uiState.isNavigating,
                         uiState = uiState
                     )
-
-
-
-
 
                     ExpandableFABSection(
                         onClickEmergencyCall = { event(MappingUiEvent.ShowEmergencyCallDialog) },
