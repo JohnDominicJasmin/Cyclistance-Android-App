@@ -205,11 +205,21 @@ class MappingRepositoryImpl(
         return withContext(scope) {
             suspendCoroutine { continuation ->
                 geocoder.getAddress(latitude = latitude, longitude = longitude) { address ->
-                    if (address != null) {
-                        continuation.resume(address.getFullAddress())
+                    if (address == null) {
+                        continuation.resumeWithException(MappingExceptions.AddressException("Searching for GPS"))
                         return@getAddress
                     }
-                    continuation.resumeWithException(MappingExceptions.AddressException("Searching for GPS"))
+
+                    val fullAddress = address.getFullAddress()
+
+                    if(fullAddress.isEmpty()){
+                        continuation.resumeWithException(MappingExceptions.AddressException("Searching for GPS"))
+                        return@getAddress
+                    }
+
+                    continuation.resume(fullAddress)
+
+
                 }
             }
         }
