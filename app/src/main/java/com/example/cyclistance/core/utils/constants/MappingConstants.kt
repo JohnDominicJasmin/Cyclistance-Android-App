@@ -76,7 +76,7 @@ object MappingConstants {
 
     const val NEAREST_METERS = 10.00
     const val DEFAULT_RADIUS = 7000.00
-    const val API_CALL_RETRY_COUNT: Long = 3
+    const val API_CALL_RETRY_COUNT: Long = 7
 
 
     /*Map*/
