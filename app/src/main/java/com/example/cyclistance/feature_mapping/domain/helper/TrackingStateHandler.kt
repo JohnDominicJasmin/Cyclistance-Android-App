@@ -238,6 +238,14 @@ class TrackingStateHandler(
     suspend fun handleException(exception: Throwable) {
         when (exception) {
 
+            is MappingExceptions.NavigationRouteException -> {
+                eventFlow.emit(
+                    MappingEvent.GenerateRouteNavigationFailed(
+                        reason = exception.message ?: "Failed to Generate Navigation Route"
+                    )
+                )
+            }
+
             is MappingExceptions.NetworkException -> {
                 eventFlow.emit(value = MappingEvent.NoInternetConnection)
             }

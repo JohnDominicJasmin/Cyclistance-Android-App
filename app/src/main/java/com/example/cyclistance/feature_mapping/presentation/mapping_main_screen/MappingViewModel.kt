@@ -366,9 +366,8 @@ class MappingViewModel @Inject constructor(
             runCatching {
                 mappingUseCase.getRouteDirectionsUseCase(origin = origin, destination = destination)
             }.onSuccess { routeDirection ->
-                _eventFlow.emit(value = MappingEvent.NewRouteDirection(routeDirection))
+                _eventFlow.emit(value = MappingEvent.GenerateRouteNavigationSuccess(routeDirection))
             }.onFailure {
-                Timber.v("Failure: ${it.message}")
                 it.handleException()
             }
         }

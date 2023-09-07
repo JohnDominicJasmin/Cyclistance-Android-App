@@ -52,6 +52,7 @@ import retrofit2.HttpException
 import retrofit2.Response
 import timber.log.Timber
 import java.io.IOException
+import java.net.UnknownHostException
 import java.util.Date
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
@@ -416,7 +417,12 @@ class MappingRepositoryImpl(
                     }
 
                     override fun onFailure(call: Call<OptimizationResponse>, throwable: Throwable) {
-                        Timber.e("Error: %s", throwable.message)
+
+                        if(throwable is UnknownHostException){
+                            continuation.resumeWithException(MappingExceptions.NavigationRouteException())
+                            return
+                        }
+
                         continuation.resumeWithException(throwable)
                     }
                 })

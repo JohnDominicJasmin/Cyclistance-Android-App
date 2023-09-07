@@ -1020,11 +1020,11 @@ fun MappingScreen(
 
                 is MappingEvent.IncidentDistanceTooFar -> {
                     uiState = uiState.copy(
-                    alertDialogState = AlertDialogState(
-                        title = "Exceeds Reachable Distance",
-                        description = "The incident is taking place quite a distance away from your current location, making it challenging to directly engage or intervene.",
-                        icon = R.raw.error
-                    ))
+                        alertDialogState = AlertDialogState(
+                            title = "Exceeds Reachable Distance",
+                            description = "The incident is taking place quite a distance away from your current location, making it challenging to directly engage or intervene.",
+                            icon = R.raw.error
+                        ))
                 }
 
                 is MappingEvent.SelectHazardousLaneMarker -> {
@@ -1056,6 +1056,16 @@ fun MappingScreen(
                     ))
                     onDiscardMarkerChanges()
                     collapseBottomSheet()
+                }
+
+                is MappingEvent.GenerateRouteNavigationFailed -> {
+                    uiState = uiState.copy(
+                        alertDialogState = AlertDialogState(
+                            title = "Failed to Generate Route",
+                            description = "Failed to generate route to the destination due to a connection error.",
+                        ),
+                        generateRouteFailed = true
+                    )
                 }
 
                 else -> {}
