@@ -34,11 +34,8 @@ data class MappingState(
 ) : Parcelable{
 
 
-    fun getTravelledDistance() = speedometerState.travelledDistance
+    fun getTransactionId() = user.getTransactionId()
     fun getTopSpeed() = speedometerState.topSpeed
-    fun getCurrentSpeedKph() = speedometerState.currentSpeedKph
-    fun isLocationAvailable(): Boolean {
-        return userLocation != null && user.location != null
-    }
+
     fun getCurrentLocation() = user.location ?: userLocation
 }
