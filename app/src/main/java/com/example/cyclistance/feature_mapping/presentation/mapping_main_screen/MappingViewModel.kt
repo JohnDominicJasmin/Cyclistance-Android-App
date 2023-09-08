@@ -177,15 +177,13 @@ class MappingViewModel @Inject constructor(
             createMockUpUsers()
             getNearbyCyclist()
             loadRescueTransaction()
-            updateClient()
+            trackingHandler.updateClient()
         }
 
     }
 
 
-    private suspend fun updateClient() {
-        trackingHandler.updateClient()
-    }
+
 
 
     private suspend fun getNearbyCyclist() {
@@ -930,11 +928,12 @@ class MappingViewModel @Inject constructor(
 
                 }.onEach { rescueTransactions ->
                     rescueTransactions.updateCurrentRescueTransaction()
-                    rescueTransactions.updateRescueClient()
+
                     trackingHandler.checkRescueRequestAccepted(
                         rescueTransaction = rescueTransactions,
                         id = getId()
                     )
+                    trackingHandler.updateClient()
                 }.launchIn(this@launch).invokeOnCompletion {
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
                 }
@@ -950,14 +949,6 @@ class MappingViewModel @Inject constructor(
         _state.update { it.copy(rescueTransaction = rescueTransaction) }
     }
 
-    private suspend fun RescueTransaction.updateRescueClient() {
-        coroutineScope {
-            val rescueTransaction = trackingHandler.getUserRescueTransaction(this@updateRescueClient)
-            _state.update { it.copy(rescueTransaction = rescueTransaction) }
-            updateClient()
-
-        }
-    }
 
     private fun unSubscribeToRescueTransactionUpdates() {
         getRescueTransactionUpdatesJob?.cancel()

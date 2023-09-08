@@ -299,7 +299,7 @@ fun MappingScreen(
 
 
     val onLocateUser = remember(uiState.routeDirection, mapboxMap) {
-        { cameraMode: Int ->
+        {
 
             foregroundLocationPermissionsState.requestPermission(
                 onGranted = {
@@ -308,7 +308,6 @@ fun MappingScreen(
                             onDisabled = settingResultRequest::launch)
                     }
 
-                    mapboxMap?.locationComponent?.cameraMode = cameraMode
 
                     state.userLocation?.let {
                         it.latitude ?: return@let
@@ -327,9 +326,19 @@ fun MappingScreen(
         }
     }
 
+    val routeOverView = remember{{
+        mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING
+    }}
+
     val onLocateUserButton = remember(uiState.routeDirection){{
-        val cameraMode = if(uiState.routeDirection == null) CameraMode.NONE else CameraMode.TRACKING
-        onLocateUser(cameraMode)
+        if(uiState.routeDirection != null) {
+            routeOverView()
+        }
+        onLocateUser()
+    }}
+
+    val recenterRoute = remember{{
+        mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING_GPS
     }}
 
     val openNavigationApp = remember(state.rescueTransaction?.route) {
@@ -1207,8 +1216,8 @@ fun MappingScreen(
                 is MappingUiEvent.OnMapClick -> onMapClick()
                 is MappingUiEvent.DismissBanner -> onDismissRescueeBanner()
                 is MappingUiEvent.LocateUser -> onLocateUserButton()
-                is MappingUiEvent.RouteOverview -> onLocateUser(CameraMode.TRACKING)
-                is MappingUiEvent.RecenterRoute -> onLocateUser(CameraMode.TRACKING_GPS)
+                is MappingUiEvent.RouteOverview -> routeOverView()
+                is MappingUiEvent.RecenterRoute -> recenterRoute()
                 is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
                 is MappingUiEvent.RescueArrivedConfirmed -> {}
