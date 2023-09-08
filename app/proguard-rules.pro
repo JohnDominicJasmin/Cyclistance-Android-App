@@ -21,8 +21,10 @@
 #-renamesourcefileattribute SourceFile
 
 
+-keep class com.example.cyclistance.feature_mapping.data.data_source.network.dto.hazardous_lane.* { *; }
 -keep class com.example.cyclistance.feature_mapping.data.data_source.network.dto.rescue_transaction.* { *; }
 -keep class com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.* { *; }
+-keep class com.example.cyclistance.di.* { *; }
 
 -dontnote okhttp3.**, okio.**, retrofit2.**
 -dontwarn retrofit2.**

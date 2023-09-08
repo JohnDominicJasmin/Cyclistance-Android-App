@@ -1,11 +1,14 @@
 package com.example.cyclistance.feature_authentication.domain.model
 
-import com.google.errorprone.annotations.Keep
+import android.os.Parcelable
+import com.example.cyclistance.core.utils.annotations.StableState
+import kotlinx.parcelize.Parcelize
 
-@Keep
+@StableState
+@Parcelize
 data class AuthModel(
-    val email:String = "",
-    val password:String = "",
-    val confirmPassword:String = "",
+    val email: String = "",
+    val password: String = "",
+    val confirmPassword: String = "",
 
-    )
+    ) : Parcelable
