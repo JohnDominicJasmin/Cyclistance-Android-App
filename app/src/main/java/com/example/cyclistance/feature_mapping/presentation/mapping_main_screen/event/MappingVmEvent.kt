@@ -8,7 +8,7 @@ import com.mapbox.mapboxsdk.geometry.LatLng
 
 sealed class MappingVmEvent {
 
-    object RequestHelp : MappingVmEvent()
+    data object RequestHelp : MappingVmEvent()
     data class RespondToHelp(val selectedRescuee: MapSelectedRescuee) : MappingVmEvent()
     data class SelectRescueMapIcon(val id: String): MappingVmEvent()
     /**
@@ -16,12 +16,12 @@ sealed class MappingVmEvent {
      * RescuerArrived,DestinationReached, SearchAssistance, OnGoingRescue
      * Usage: DestinationReached.type
      * */
-    object CancelRequestHelp: MappingVmEvent()
+    data object CancelRequestHelp: MappingVmEvent()
     data class DeclineRescueRequest(val id: String): MappingVmEvent()
     data class AcceptRescueRequest(val id: String): MappingVmEvent()
-    object LoadData: MappingVmEvent()
-    object SubscribeToDataChanges: MappingVmEvent()
-    object CancelRescueTransaction: MappingVmEvent()
+    data object LoadData: MappingVmEvent()
+    data object SubscribeToDataChanges: MappingVmEvent()
+    data object CancelRescueTransaction: MappingVmEvent()
     data class GetRouteDirections(val origin: Point, val destination: Point): MappingVmEvent()
     data class ReportIncident(val label: String, val latLng: LatLng, val description: String): MappingVmEvent()
     data class UpdateReportedIncident(val marker: HazardousLaneMarker): MappingVmEvent()
