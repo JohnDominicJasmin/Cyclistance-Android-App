@@ -1107,15 +1107,22 @@ class MappingViewModel @Inject constructor(
             Timber.e("FAILED TO CREATE MOCK USERS: ${it.message}")
         }
     }
+    private fun removeBottomSheet(){
+        viewModelScope.launch(SupervisorJob()) {
+            mappingUseCase.bottomSheetTypeUseCase(bottomSheet = "")
+        }
+    }
 
 
     override fun onCleared() {
         super.onCleared()
+        removeBottomSheet()
         unSubscribeToLocationUpdates()
         unSubscribeToNearbyUsersChanges()
         unSubscribeToRescueTransactionUpdates()
         unSubscribeToTransactionLocationUpdates()
         removeHazardousLaneListener()
+
 
     }
 
