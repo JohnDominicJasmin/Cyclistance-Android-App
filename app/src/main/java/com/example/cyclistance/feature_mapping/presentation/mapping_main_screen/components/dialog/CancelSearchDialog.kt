@@ -7,30 +7,32 @@ import com.example.cyclistance.core.presentation.dialogs.yes_no_dialog.YesNoDial
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun DiscardHazardousLaneMarkerDialog(
+fun CancelSearchDialog(
     modifier: Modifier = Modifier,
     onDismissRequest: () -> Unit,
-    onClickDiscard: () -> Unit) {
+    onClickOkay: () -> Unit
+) {
 
     YesNoDialog(
-        modifier = modifier,
         onDismissRequest = onDismissRequest,
-        title = "Unsaved Changes",
-        message = "Are you sure you want to discard \nthe changes you made?",
+        modifier = modifier,
+        title = "Are you sure you want to cancel \nthe search?",
+        positiveButtonText = "Yes",
+        negativeButtonText = "No",
         onClickNegativeButton = onDismissRequest,
-        onClickPositiveButton = onClickDiscard,
-        negativeButtonText = "Cancel",
-        positiveButtonText = "Discard"
-    )
+        onClickPositiveButton = {
+            onClickOkay()
+            onDismissRequest()
+        },
+        )
 }
-
 
 @Preview
 @Composable
-fun PreviewDiscardHazardousLaneMarkerDialog() {
-    CyclistanceTheme(darkTheme = true) {
-        DiscardHazardousLaneMarkerDialog(
-            onDismissRequest = { /*TODO*/ },
-            onClickDiscard = { /*TODO*/ })
+fun PreviewCancelSearchDialog() {
+    CyclistanceTheme{
+        CancelSearchDialog(onDismissRequest = { /*TODO*/ }) {
+
+        }
     }
 }
