@@ -162,11 +162,11 @@ class MappingViewModel @Inject constructor(
 
     private fun subscribeToBottomSheetTypeUpdates() {
         viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
-            mappingUseCase.bottomSheetTypeUseCase()?.catch {
+            mappingUseCase.bottomSheetTypeUseCase().catch {
                 it.handleException()
-            }?.onEach {
+            }.onEach {
                 _eventFlow.emit(value = MappingEvent.NewBottomSheetType(it))
-            }?.launchIn(this)
+            }.launchIn(this)
         }
     }
 
@@ -177,17 +177,11 @@ class MappingViewModel @Inject constructor(
             createMockUpUsers()
             getNearbyCyclist()
             loadRescueTransaction()
-            loadClient()
+            updateClient()
         }
 
     }
 
-
-    private suspend fun loadClient() {
-        coroutineScope {
-            trackingHandler.updateClient()
-        }
-    }
 
     private suspend fun updateClient() {
         trackingHandler.updateClient()
@@ -934,12 +928,11 @@ class MappingViewModel @Inject constructor(
                 mappingUseCase.getRescueTransactionUpdatesUseCase().catch {
                     Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
 
-                }.onEach {
-                    Timber.v("NEW WEBSOCKET UPDATES: subscribeToRescueTransactionUpdates:: ${it.transactions.size}")
-                    it.updateRescueTransaction()
-                    it.updateRescueClient()
+                }.onEach { rescueTransactions ->
+                    rescueTransactions.updateCurrentRescueTransaction()
+                    rescueTransactions.updateRescueClient()
                     trackingHandler.checkRescueRequestAccepted(
-                        rescueTransaction = it,
+                        rescueTransaction = rescueTransactions,
                         id = getId()
                     )
                 }.launchIn(this@launch).invokeOnCompletion {
@@ -952,15 +945,14 @@ class MappingViewModel @Inject constructor(
 
 
 
-    private fun RescueTransaction.updateRescueTransaction() {
+    private fun RescueTransaction.updateCurrentRescueTransaction() {
         val rescueTransaction = trackingHandler.getUserRescueTransaction(this)
         _state.update { it.copy(rescueTransaction = rescueTransaction) }
     }
 
     private suspend fun RescueTransaction.updateRescueClient() {
         coroutineScope {
-            val rescueTransaction =
-                trackingHandler.getUserRescueTransaction(this@updateRescueClient)
+            val rescueTransaction = trackingHandler.getUserRescueTransaction(this@updateRescueClient)
             _state.update { it.copy(rescueTransaction = rescueTransaction) }
             updateClient()
 
