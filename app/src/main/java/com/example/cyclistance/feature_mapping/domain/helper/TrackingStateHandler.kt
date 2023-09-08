@@ -52,7 +52,7 @@ class TrackingStateHandler(
 
     fun getUserRescueTransaction(rescueTransaction: RescueTransaction): RescueTransactionItem? {
 
-        val transactionId = state.value.user.transaction?.transactionId
+        val transactionId = state.value.getTransactionId()
         return transactionId?.let { rescueTransaction.findTransaction(it) }
 
     }

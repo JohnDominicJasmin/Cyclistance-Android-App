@@ -1,7 +1,6 @@
-package com.example.cyclistance.di
+package com.example.cyclistance.di.introslider
 
 import android.content.Context
-import androidx.annotation.Keep
 import com.example.cyclistance.feature_on_boarding.data.repository.IntroSliderRepositoryImpl
 import com.example.cyclistance.feature_on_boarding.domain.repository.IntroSliderRepository
 import com.example.cyclistance.feature_on_boarding.domain.use_case.IntroSliderUseCase
@@ -10,24 +9,24 @@ import com.example.cyclistance.feature_on_boarding.domain.use_case.read_intro_sl
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.scopes.ViewModelScoped
 
-@Keep
+
 @Module
-@InstallIn(SingletonComponent::class)
-object IntroSliderModule {
+@InstallIn(ViewModelComponent::class)
+object IntroSliderViewModelModule {
 
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideIntroSliderRepository(@ApplicationContext context: Context): IntroSliderRepository {
         return IntroSliderRepositoryImpl(context = context)
     }
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideIntroSliderUseCase(repository: IntroSliderRepository):IntroSliderUseCase
         = IntroSliderUseCase(
         completedIntroSliderUseCase = CompletedIntroSliderUseCase(repository),

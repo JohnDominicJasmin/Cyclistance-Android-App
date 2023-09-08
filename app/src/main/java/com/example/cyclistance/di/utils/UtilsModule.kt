@@ -1,6 +1,5 @@
-package com.example.cyclistance.di
+package com.example.cyclistance.di.utils
 
-import androidx.annotation.Keep
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,7 +8,7 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import javax.inject.Singleton
 
-@Keep
+
 @Module
 @InstallIn(SingletonComponent::class)
 object UtilsModule {

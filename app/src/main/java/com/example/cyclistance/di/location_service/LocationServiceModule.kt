@@ -1,7 +1,6 @@
-package com.example.cyclistance.di
+package com.example.cyclistance.di.location_service
 
 import android.content.Context
-import androidx.annotation.Keep
 import androidx.core.app.NotificationCompat
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
@@ -16,7 +15,7 @@ import dagger.hilt.android.components.ServiceComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ServiceScoped
 
-@Keep
+
 @Module
 @InstallIn(ServiceComponent::class)
 

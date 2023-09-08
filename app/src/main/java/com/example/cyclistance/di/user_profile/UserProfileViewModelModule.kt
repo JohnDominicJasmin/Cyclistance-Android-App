@@ -1,7 +1,6 @@
-package com.example.cyclistance.di
+package com.example.cyclistance.di.user_profile
 
 import android.content.Context
-import androidx.annotation.Keep
 import com.example.cyclistance.feature_user_profile.data.repository.UserProfileRepositoryImpl
 import com.example.cyclistance.feature_user_profile.domain.repository.UserProfileRepository
 import com.example.cyclistance.feature_user_profile.domain.use_case.GetNameUseCase
@@ -19,18 +18,18 @@ import com.google.firebase.storage.FirebaseStorage
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.scopes.ViewModelScoped
 
 
-@Keep
+
 @Module
-@InstallIn(SingletonComponent::class)
-object UserProfileModule {
+@InstallIn(ViewModelComponent::class)
+object UserProfileViewModelModule {
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideUserProfileRepository(
         @ApplicationContext context: Context,
         firebaseAuth: FirebaseAuth,
@@ -47,7 +46,7 @@ object UserProfileModule {
 
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideUserProfileUseCase(userProfileRepository: UserProfileRepository): UserProfileUseCase {
         return UserProfileUseCase(
             updateAuthProfileUseCase = UpdateAuthProfileUseCase(userProfileRepository),

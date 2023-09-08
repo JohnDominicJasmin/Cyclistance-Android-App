@@ -6,9 +6,9 @@ import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelecte
 
 
 sealed class MappingEvent{
-    object RequestHelpSuccess: MappingEvent()
-    object InsufficientUserCredential: MappingEvent()
-    object AcceptRescueRequestSuccess: MappingEvent()
+    data object RequestHelpSuccess: MappingEvent()
+    data object InsufficientUserCredential: MappingEvent()
+    data object AcceptRescueRequestSuccess: MappingEvent()
     //
     data class LocationNotAvailable(val reason:String = "Tracking your Location"): MappingEvent()
     data class RescuerLocationNotAvailable(val reason:String = "Can't reach Rescuer"): MappingEvent()
@@ -17,7 +17,7 @@ sealed class MappingEvent{
 
     data class RespondToHelpSuccess(val reason:String = "Rescue request sent"): MappingEvent()
     data class AddressFailed(val reason: String? = "Rescue transaction not found"): MappingEvent()
-    object NoInternetConnection: MappingEvent()
+    data object NoInternetConnection: MappingEvent()
 
 
     data class NewSelectedRescuee(val selectedRescuee: MapSelectedRescuee): MappingEvent()
@@ -25,25 +25,25 @@ sealed class MappingEvent{
 
 
 
-    object RemoveAssignedTransactionSuccess: MappingEvent()
-    object RescueRequestAccepted: MappingEvent()
-    object CancelHelpRequestSuccess: MappingEvent()
+    data object RemoveAssignedTransactionSuccess: MappingEvent()
+    data object RescueRequestAccepted: MappingEvent()
+    data object CancelHelpRequestSuccess: MappingEvent()
 
-    object RescueHasTransaction: MappingEvent()
-    object UserHasCurrentTransaction: MappingEvent()
+    data object RescueHasTransaction: MappingEvent()
+    data object UserHasCurrentTransaction: MappingEvent()
 
-    object DestinationReached: MappingEvent()
-    object FailedToCalculateDistance: MappingEvent()
+    data object DestinationReached: MappingEvent()
+    data object FailedToCalculateDistance: MappingEvent()
     data class RemoveRespondentFailed(val reason: String = "Failed to remove respondent"): MappingEvent()
 
-    object ReportIncidentSuccess: MappingEvent()
-    object IncidentDistanceTooFar: MappingEvent()
+    data object ReportIncidentSuccess: MappingEvent()
+    data object IncidentDistanceTooFar: MappingEvent()
     data class ReportIncidentFailed(val reason: String): MappingEvent()
     data class SelectHazardousLaneMarker(val marker: HazardousLaneMarker): MappingEvent()
-    object UpdateIncidentSuccess: MappingEvent()
+    data object UpdateIncidentSuccess: MappingEvent()
     data class UpdateIncidentFailed(val reason: String): MappingEvent()
 
-    object DeleteHazardousLaneMarkerSuccess: MappingEvent()
+    data object DeleteHazardousLaneMarkerSuccess: MappingEvent()
     data class DeleteHazardousLaneMarkerFailed(val reason: String): MappingEvent()
 
     data class GenerateRouteNavigationSuccess(val routeDirection: RouteDirection): MappingEvent()

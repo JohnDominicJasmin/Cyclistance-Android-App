@@ -1,8 +1,7 @@
-package com.example.cyclistance.di
+package com.example.cyclistance.di.settings
 
 import android.content.Context
 import android.provider.MediaStore.MediaColumns.*
-import androidx.annotation.Keep
 import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.feature_settings.data.repository.SettingRepositoryImpl
 import com.example.cyclistance.feature_settings.domain.repository.SettingRepository
@@ -18,10 +17,9 @@ import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 
-@Keep
 @Module
 @InstallIn(SingletonComponent::class)
-object SettingModule {
+object SettingSingletonModule {
 
 
     @Provides

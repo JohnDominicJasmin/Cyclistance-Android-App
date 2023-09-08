@@ -107,7 +107,7 @@ fun RescueRequestScreenContent(
                                             .wrapContentHeight(), cardState = respondent,
                                         onClickCancelButton = {
                                             event(
-                                                MappingUiEvent.CancelRequestHelp(
+                                                MappingUiEvent.DeclineRequestHelp(
                                                     respondent.id ?: ""))
                                         },
                                         onClickConfirmButton = {

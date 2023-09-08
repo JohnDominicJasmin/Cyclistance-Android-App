@@ -11,7 +11,7 @@ import com.example.cyclistance.feature_mapping.domain.repository.MappingUiStoreR
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MapType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
@@ -21,7 +21,7 @@ class MappingUiStoreRepositoryImpl(
 
     private var dataStore = context.dataStore
     private val scope: CoroutineContext = Dispatchers.IO
-    private var bikeTypeFlow: Flow<String>? = null
+    private var bikeTypeFlow: MutableStateFlow<String> = MutableStateFlow("")
 
     override suspend fun getBikeType(): Flow<String> {
 
@@ -44,7 +44,7 @@ class MappingUiStoreRepositoryImpl(
         }
     }
 
-    override suspend fun getBottomSheetType(): Flow<String>? {
+    override suspend fun getBottomSheetType(): Flow<String> {
         return withContext(scope) {
             bikeTypeFlow
         }
@@ -53,9 +53,7 @@ class MappingUiStoreRepositoryImpl(
 
     override suspend fun setBottomSheetType(bottomSheetType: String) {
         withContext(scope) {
-            bikeTypeFlow = flow{
-                emit(bottomSheetType)
-            }
+            bikeTypeFlow.emit(bottomSheetType)
         }
     }
 

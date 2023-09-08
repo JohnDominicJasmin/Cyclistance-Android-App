@@ -38,6 +38,7 @@ data class MappingUiState(
     val isRescueCancelled: Boolean = false,
     val isNavigating: Boolean = false,
     val generateRouteFailed: Boolean = false,
+    val cancelSearchDialogVisible: Boolean = false
 
 
 
