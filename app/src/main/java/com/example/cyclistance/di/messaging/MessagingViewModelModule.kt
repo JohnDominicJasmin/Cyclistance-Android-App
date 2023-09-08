@@ -1,8 +1,6 @@
-package com.example.cyclistance.di
+package com.example.cyclistance.di.messaging
 
 import android.content.Context
-import androidx.annotation.Keep
-import com.example.cyclistance.R
 import com.example.cyclistance.feature_messaging.data.MessagingApi
 import com.example.cyclistance.feature_messaging.data.repository.MessagingRepositoryImpl
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
@@ -29,30 +27,17 @@ import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import retrofit2.Retrofit
-import retrofit2.converter.scalars.ScalarsConverterFactory
-import javax.inject.Singleton
+import dagger.hilt.android.scopes.ViewModelScoped
 
 
-@Keep
 @Module
-@InstallIn(SingletonComponent::class)
-object MessagingModule {
-
-
-    @Provides
-    @Singleton
-    fun providesFirebaseMessaging(): FirebaseMessaging {
-        return FirebaseMessaging.getInstance().apply {
-            isAutoInitEnabled = true
-        }
-    }
-
+@InstallIn(ViewModelComponent::class)
+object MessagingViewModelModule {
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun providesMessagingRepository(
         @ApplicationContext context: Context,
         firebaseFiresStore: FirebaseFirestore,
@@ -70,7 +55,7 @@ object MessagingModule {
     }
 
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun providesMessagingUseCase(repository: MessagingRepository): MessagingUseCase {
         return MessagingUseCase(
             refreshTokenUseCase = RefreshTokenUseCase(repository = repository),
@@ -91,18 +76,4 @@ object MessagingModule {
             getMessagingUserUseCase = GetMessagingUser(repository = repository)
         )
     }
-
-    @Provides
-    @Singleton
-    fun provideMessagingApi(@ApplicationContext context: Context): MessagingApi{
-        return lazy {
-            Retrofit.Builder()
-                .baseUrl(context.getString(R.string.FcmBaseUrl))
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .build()
-                .create(MessagingApi::class.java)
-        }.value
-    }
-
-
 }

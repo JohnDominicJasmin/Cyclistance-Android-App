@@ -1,65 +1,39 @@
-package com.example.cyclistance.di
+package com.example.cyclistance.di.authentication
 
 import android.content.Context
-import androidx.annotation.Keep
-import com.example.cyclistance.BuildConfig
 import com.example.cyclistance.feature_authentication.data.repository.AuthRepositoryImpl
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.create_account.*
-import com.example.cyclistance.feature_authentication.domain.use_case.read_account.*
+import com.example.cyclistance.feature_authentication.domain.use_case.create_account.CreateUserUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.create_account.CreateWithEmailAndPasswordUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.create_account.SignInWithCredentialUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.create_account.SignInWithEmailAndPasswordUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.read_account.GetEmailUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.read_account.GetIdUseCase
 import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.*
+import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.ChangePasswordUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.HasAccountSignedInUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.IsEmailVerifiedUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.IsSignedInWithProviderUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.ReloadEmailUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.SendEmailVerificationUseCase
+import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.SendPasswordResetEmailUseCase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreSettings
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import dagger.hilt.android.scopes.ViewModelScoped
 
-@Keep
+
 @Module
-@InstallIn(SingletonComponent::class)
-object AuthenticationModule {
-
-    //emulator host = 10.0.2.2
-
+@InstallIn(ViewModelComponent::class)
+object AuthViewModelModule {
 
     @Provides
-    @Singleton
-    fun provideFirebaseAuth(): FirebaseAuth {
-        return FirebaseAuth.getInstance().apply {
-            if (BuildConfig.DEBUG) {
-                useEmulator("192.168.18.21", 9099)
-            }
-        }
-    }
-
-
-    @Provides
-    @Singleton
-    fun provideFirebaseFireStore(): FirebaseFirestore {
-
-        val settings = FirebaseFirestoreSettings.Builder()
-            .setPersistenceEnabled(true)
-            .setCacheSizeBytes(FirebaseFirestoreSettings.CACHE_SIZE_UNLIMITED)
-            .build()
-        return Firebase.firestore.apply {
-            if (BuildConfig.DEBUG) {
-                useEmulator("192.168.18.21", 9299)
-            }
-            firestoreSettings = settings
-        }
-    }
-
-
-    @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideAuthRepository(
         @ApplicationContext context: Context,
         firebaseAuth: FirebaseAuth,
@@ -72,9 +46,8 @@ object AuthenticationModule {
             fireStore = fireStore)
     }
 
-
     @Provides
-    @Singleton
+    @ViewModelScoped
     fun provideAuthenticationUseCase(repository: AuthRepository): AuthenticationUseCase =
         AuthenticationUseCase(
             reloadEmailUseCase = ReloadEmailUseCase(repository = repository),
@@ -92,6 +65,5 @@ object AuthenticationModule {
             sendPasswordResetEmailUseCase = SendPasswordResetEmailUseCase(repository = repository),
             changePasswordUseCase = ChangePasswordUseCase(repository = repository),
         )
-
 
 }
