@@ -7,7 +7,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,19 +17,16 @@ import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.common.AnimatedImage
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
-import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomSheetSearchingAssistance(
     modifier: Modifier = Modifier,
-    bottomSheetScaffoldState: BottomSheetScaffoldState,
     onClickCancelSearchButton: () -> Unit,
 
 ) {
 
-    val scope = rememberCoroutineScope()
     val isDarkTheme = IsDarkTheme.current
 
 
@@ -85,9 +81,7 @@ fun BottomSheetSearchingAssistance(
                     },
                 onClick = {
                     onClickCancelSearchButton()
-                    scope.launch {
-                        bottomSheetScaffoldState.bottomSheetState.collapse()
-                    }
+
                 },
                 text = "Cancel"
             )
@@ -101,15 +95,12 @@ fun BottomSheetSearchingAssistance(
 @Composable
 fun SearchingAssistancePreview() {
     val isDarkTheme = true
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberBottomSheetState(
-            initialValue = BottomSheetValue.Expanded))
 
     CompositionLocalProvider(IsDarkTheme provides isDarkTheme) {
         CyclistanceTheme(isDarkTheme) {
             BottomSheetSearchingAssistance(
                 onClickCancelSearchButton = {},
-                bottomSheetScaffoldState = bottomSheetScaffoldState)
+                )
         }
     }
 }

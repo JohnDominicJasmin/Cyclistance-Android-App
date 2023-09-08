@@ -89,9 +89,9 @@ fun MappingBottomSheet(
                         BottomSheetSearchingAssistance(
                             modifier = modifier,
                             onClickCancelSearchButton = {
-                                event(MappingUiEvent.CancelSearchConfirmed)
+                                event(MappingUiEvent.CancelSearching)
                             },
-                            bottomSheetScaffoldState = bottomSheetScaffoldState)
+                            )
                     }
 
                 BottomSheetType.OnGoingRescue.type -> {

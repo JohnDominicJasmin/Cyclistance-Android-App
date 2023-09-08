@@ -352,7 +352,7 @@ fun MappingScreen(
         }
     }
 
-    val onClickCancelSearchButton = remember {
+    val cancelSearchingAssistance = remember {
         {
             coroutineScope.launch {
                 collapseBottomSheet()
@@ -385,7 +385,7 @@ fun MappingScreen(
         }
     }
 
-    val onClickCancelRescueButton = remember(state.rescuer, state.rescueTransaction) {
+    val cancelOnGoingRescue = remember(state.rescuer, state.rescueTransaction) {
         {
             val role = state.user.transaction?.role
             val isRescuee = role == Role.RESCUEE.name.lowercase()
@@ -801,6 +801,12 @@ fun MappingScreen(
 
 
 
+    val cancelSearchDialogVisibility = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(cancelSearchDialogVisible = visibility)
+    }}
+
+
+
 
 
 
@@ -820,6 +826,12 @@ fun MappingScreen(
 
     BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
         checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
+
+            if(uiState.searchingAssistance){
+                cancelSearchDialogVisibility(true)
+               return@checkIfHasEditingMarker
+            }
+
             collapseBottomSheet()
         })
     }
@@ -1184,9 +1196,9 @@ fun MappingScreen(
             when (event) {
                 is MappingUiEvent.RequestHelp -> onClickRequestHelpButton()
                 is MappingUiEvent.RespondToHelp -> onClickRespondToHelpButton()
-                is MappingUiEvent.CancelSearchConfirmed -> onClickCancelSearchButton()
+                is MappingUiEvent.CancelSearching -> cancelSearchDialogVisibility(true)
                 is MappingUiEvent.ChatRescueTransaction -> onClickChatButton()
-                is MappingUiEvent.CancelRescueTransaction -> onClickCancelRescueButton()
+                is MappingUiEvent.CancelRescueTransaction -> cancelOnGoingRescue()
                 is MappingUiEvent.CancelledRescueConfirmed -> onClickOkCancelledRescue()
                 is MappingUiEvent.OnInitializeMap -> onInitializeMapboxMap(event.mapboxMap)
                 is MappingUiEvent.RescueRequestAccepted -> onClickOkAcceptedRescue()
@@ -1208,7 +1220,7 @@ fun MappingScreen(
                 is MappingUiEvent.OpenFamilyTracker -> shareLocation()
                 is MappingUiEvent.ShowRescueRequestDialog -> onShowRescueRequestDialog()
                 is MappingUiEvent.DismissRescueRequestDialog -> onDismissRescueRequestDialog()
-                is MappingUiEvent.CancelRequestHelp -> onClickCancelButton(event.id)
+                is MappingUiEvent.DeclineRequestHelp -> onClickCancelButton(event.id)
                 is MappingUiEvent.ConfirmRequestHelp -> onClickConfirmButton(event.id)
                 is MappingUiEvent.DismissAlertDialog -> onDismissAlertDialog()
                 is MappingUiEvent.OnCollapseExpandableFAB -> onCollapseExpandableFAB()
@@ -1224,20 +1236,28 @@ fun MappingScreen(
                 is MappingUiEvent.OnChangeIncidentDescription -> onChangeIncidentDescription(event.description)
                 is MappingUiEvent.OnChangeIncidentLabel -> onChangeIncidentLabel(event.label)
                 is MappingUiEvent.OnClickDeleteIncident -> onClickDeleteIncident()
-                is MappingUiEvent.OnClickEditIncidentDescription -> onClickEditIncidentDescription(event.marker)
-                is MappingUiEvent.OnClickMapMarker -> onMapMarkerClick(event.markerSnippet, event.markerId)
+                is MappingUiEvent.OnClickEditIncidentDescription -> onClickEditIncidentDescription(
+                    event.marker)
+
+                is MappingUiEvent.OnClickMapMarker -> onMapMarkerClick(
+                    event.markerSnippet,
+                    event.markerId)
+
                 MappingUiEvent.DismissHazardousLaneMarkerDialog -> onDismissHazardousLaneMarkerDialog()
                 MappingUiEvent.OnConfirmDeleteIncident -> onConfirmDeleteIncident()
                 MappingUiEvent.DismissDiscardChangesMarkerDialog -> onDismissDiscardChangesMarker()
                 MappingUiEvent.DiscardMarkerChanges -> onDiscardMarkerChanges()
                 MappingUiEvent.DismissIncidentDescriptionBottomSheet -> onDismissIncidentDescriptionBottomSheet()
                 MappingUiEvent.CancelEditIncidentDescription -> onCancelEditIncidentDescription()
-                is MappingUiEvent.UpdateIncidentDescription -> onUpdateReportedIncident(event.description, event.label)
+                is MappingUiEvent.UpdateIncidentDescription -> onUpdateReportedIncident(
+                    event.description,
+                    event.label)
+
                 MappingUiEvent.OnClickHazardousInfoGotIt -> onClickHazardousInfoGotIt()
+                MappingUiEvent.DismissCancelSearchDialog -> cancelSearchDialogVisibility(false)
+                MappingUiEvent.SearchCancelled -> cancelSearchingAssistance()
             }
         }
-
-
     )
 
 }

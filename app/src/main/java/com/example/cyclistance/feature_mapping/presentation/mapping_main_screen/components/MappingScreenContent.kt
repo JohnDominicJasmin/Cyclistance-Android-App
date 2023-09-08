@@ -38,6 +38,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RequestHelpButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RespondToHelpButton
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.CancelSearchDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.DeleteHazardousLaneMarkerDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.DiscardHazardousLaneMarkerDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.fabs.ExpandableFABSection
@@ -124,7 +125,8 @@ fun MappingScreenContent(
                 incidentDescription = incidentDescription,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp).align(Alignment.BottomCenter),
+                    .padding(horizontal = 12.dp)
+                    .align(Alignment.BottomCenter),
                 markerPostedCount = markerPostedCount) {
 
 
@@ -244,6 +246,14 @@ fun MappingScreenContent(
                             })
                     }
 
+
+                    if(uiState.cancelSearchDialogVisible){
+                        CancelSearchDialog(onDismissRequest = {
+                            event(MappingUiEvent.DismissCancelSearchDialog)
+                        }, onClickOkay = {
+                            event(MappingUiEvent.SearchCancelled)
+                        })
+                    }
 
                     if (uiState.isEmergencyCallDialogVisible) {
                         EmergencyCallDialog(
