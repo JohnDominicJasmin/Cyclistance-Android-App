@@ -1103,7 +1103,7 @@ fun MappingScreen(
     }
 
     LaunchedEffect(
-        key1 = state.rescueTransaction?.route,
+        key1 = state.rescueTransaction,
         key2 = hasTransaction,
         key3 = isRescueCancelled) {
 
@@ -1134,7 +1134,11 @@ fun MappingScreen(
     }
 
 
-    LaunchedEffect(key1 = hasInternetConnection, key2 = uiState.generateRouteFailed){
+    LaunchedEffect(
+        key1 = hasInternetConnection,
+        key2 = uiState.generateRouteFailed,
+        key3 = state.rescueTransaction) {
+
         if (hasInternetConnection.not()) {
             return@LaunchedEffect
         }
