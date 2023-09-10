@@ -118,18 +118,30 @@ fun BottomSheetHazardousLane(
                         mapTypeDescription = MapType.HazardousLane.type,
                         onClick = {onClickMapType(MapType.HazardousLane.type)})
 
+
+                    MapTypeItem(
+                        modifier = Modifier,
+                        isSelected = selectedMapType == MapType.Traffic.type,
+                        imageId = if (isDarkTheme) R.drawable.ic_traffic_dark else R.drawable.ic_traffic_light,
+                        mapTypeDescription = MapType.Traffic.type,
+                        onClick = {onClickMapType(MapType.Traffic.type)})
+
                     MapTypeItem(
                         modifier = Modifier,
                         isSelected = selectedMapType == MapType.Default.type,
                         imageId = if (isDarkTheme) R.drawable.ic_map_type_default_dark else R.drawable.ic_map_type_default_light,
                         mapTypeDescription = MapType.Default.type,
                         onClick = {onClickMapType(MapType.Default.type)})
+
                 }
             }
 
         }
     }
 }
+
+
+
 
 @Composable
 private fun MapTypeItem(
