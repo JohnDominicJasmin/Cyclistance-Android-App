@@ -176,15 +176,27 @@ class MappingViewModel @Inject constructor(
             // TODO: Remove when the backend is ready
             createMockUpUsers()
             getNearbyCyclist()
-            loadRescueTransaction()
             trackingHandler.updateClient()
         }
 
     }
 
 
+    private suspend fun loadRescueTransaction(transactionId: String) {
+        coroutineScope {
+            if (transactionId.isEmpty()) {
+                return@coroutineScope
+            }
 
-
+            mappingUseCase.getRescueTransactionByIdUseCase(transactionId).catch {
+                it.handleException()
+            }.onEach { rescueTransaction ->
+                _state.update { it.copy(rescueTransaction = rescueTransaction) }
+            }.launchIn(this).invokeOnCompletion {
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+            }
+        }
+    }
 
     private suspend fun getNearbyCyclist() {
         val userLocation = state.value.getCurrentLocation()
@@ -204,7 +216,7 @@ class MappingViewModel @Inject constructor(
             ).distinctUntilChanged().catch {
                 it.handleException()
             }.onEach {
-                it.getUser()
+                it.filterUser()
                 it.updateNearbyCyclists()
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }.launchIn(this)
@@ -214,24 +226,6 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private suspend fun loadRescueTransaction() {
-        coroutineScope {
-            val transactionId = state.value.user.getTransactionId()
-            if (transactionId.isNullOrEmpty()) {
-                return@coroutineScope
-            }
-
-            mappingUseCase.getRescueTransactionByIdUseCase(transactionId).catch {
-                it.handleException()
-            }.onEach { rescueTransaction ->
-                _state.update { it.copy(rescueTransaction = rescueTransaction) }
-            }.launchIn(this).invokeOnCompletion {
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-            }
-
-        }
-
-    }
 
 
 
@@ -821,7 +815,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun NearbyCyclist.getUser() {
+    private suspend fun NearbyCyclist.filterUser() {
 
         runCatching {
             getId()
@@ -829,10 +823,10 @@ class MappingViewModel @Inject constructor(
             val user = findUser(id = id)
             val respondents = user.getUserRescueRespondents(this)
             _state.update {
-                it.copy(
-                    newRescueRequest = NewRescueRequestsModel(request = respondents),
+                it.copy(newRescueRequest = NewRescueRequestsModel(request = respondents),
                     user = user)
             }
+            user.getTransactionId()?.let { loadRescueTransaction(transactionId = it) }
         }.onFailure {
             Timber.e("Failed to get user: ${it.message}")
         }
@@ -945,7 +939,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun RescueTransaction.updateCurrentRescueTransaction() {
-        val rescueTransaction = trackingHandler.getUserRescueTransaction(this)
+        val rescueTransaction = trackingHandler.filterUserRescueTransaction(this)
         _state.update { it.copy(rescueTransaction = rescueTransaction) }
     }
 
@@ -1000,8 +994,7 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.nearbyCyclistsUseCase().catch {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
             }.onEach {
-                Timber.v("NEW WEBSOCKET UPDATES: subscribeToNearbyUsersChanges:: ${it.users}")
-                it.getUser()
+                it.filterUser()
                 it.updateNearbyCyclists()
                 trackingHandler.updateClient()
             }.launchIn(this).invokeOnCompletion {
