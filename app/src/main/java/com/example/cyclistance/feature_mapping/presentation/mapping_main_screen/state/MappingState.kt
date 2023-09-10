@@ -34,7 +34,7 @@ data class MappingState(
 ) : Parcelable{
 
 
-    fun getTransactionId() = user.getTransactionId()
+    fun getTransactionId() = user.getTransactionId() ?: rescueTransaction?.id ?: ""
     fun getTopSpeed() = speedometerState.topSpeed
 
     fun getCurrentLocation() = user.location ?: userLocation

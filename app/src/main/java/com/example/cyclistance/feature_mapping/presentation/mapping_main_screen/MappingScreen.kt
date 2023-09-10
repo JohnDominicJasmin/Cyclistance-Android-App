@@ -299,7 +299,7 @@ fun MappingScreen(
 
 
     val onLocateUser = remember(uiState.routeDirection, mapboxMap) {
-        { cameraMode: Int ->
+        {
 
             foregroundLocationPermissionsState.requestPermission(
                 onGranted = {
@@ -308,7 +308,6 @@ fun MappingScreen(
                             onDisabled = settingResultRequest::launch)
                     }
 
-                    mapboxMap?.locationComponent?.cameraMode = cameraMode
 
                     state.userLocation?.let {
                         it.latitude ?: return@let
@@ -327,9 +326,19 @@ fun MappingScreen(
         }
     }
 
+    val routeOverView = remember{{
+        mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING
+    }}
+
     val onLocateUserButton = remember(uiState.routeDirection){{
-        val cameraMode = if(uiState.routeDirection == null) CameraMode.NONE else CameraMode.TRACKING
-        onLocateUser(cameraMode)
+        if(uiState.routeDirection != null) {
+            routeOverView()
+        }
+        onLocateUser()
+    }}
+
+    val recenterRoute = remember{{
+        mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING_GPS
     }}
 
     val openNavigationApp = remember(state.rescueTransaction?.route) {
@@ -357,7 +366,7 @@ fun MappingScreen(
             coroutineScope.launch {
                 collapseBottomSheet()
             }.invokeOnCompletion {
-                mappingViewModel.onEvent(event = MappingVmEvent.CancelRequestHelp)
+                mappingViewModel.onEvent(event = MappingVmEvent.CancelSearchingAssistance)
                 uiState = uiState.copy(searchingAssistance = false)
             }
             Unit
@@ -410,10 +419,7 @@ fun MappingScreen(
     }
 
     val hasTransaction = remember(key1 = state.rescueTransaction, key2 = state.user.transaction) {
-        val transaction = state.rescueTransaction
-        val rescueTransactionId = transaction?.id ?: ""
-        val userTransactionId = state.user.getTransactionId() ?: ""
-        rescueTransactionId.isNotEmpty() && userTransactionId.isNotEmpty()
+        state.getTransactionId().isNotEmpty()
     }
 
     val isRescueCancelled =
@@ -783,13 +789,13 @@ fun MappingScreen(
         }
     }
 
-    val getRouteDirections = remember(state.rescueTransaction){{
-        val rescueTransaction = state.rescueTransaction
+    fun getRouteDirections(){
+        val rescueTransaction = state.rescueTransaction ?: return
 
-        val startingLongitude = rescueTransaction?.getStartingLongitude()!!
-        val startingLatitude = rescueTransaction.getStartingLatitude()!!
-        val destinationLongitude = rescueTransaction.getDestinationLongitude()!!
-        val destinationLatitude = rescueTransaction.getDestinationLatitude()!!
+        val startingLongitude = rescueTransaction.getStartingLongitude() ?: return
+        val startingLatitude = rescueTransaction.getStartingLatitude()?: return
+        val destinationLongitude = rescueTransaction.getDestinationLongitude()?: return
+        val destinationLatitude = rescueTransaction.getDestinationLatitude()?: return
 
         mappingViewModel.onEvent(
             event = MappingVmEvent.GetRouteDirections(
@@ -797,12 +803,16 @@ fun MappingScreen(
                 destination = Point.fromLngLat(
                     destinationLongitude,
                     destinationLatitude)))
-    }}
+    }
 
 
 
     val cancelSearchDialogVisibility = remember{{ visibility: Boolean ->
         uiState = uiState.copy(cancelSearchDialogVisible = visibility)
+    }}
+
+    val cancelOnGoingRescueDialogVisibility = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(cancelOnGoingRescueDialogVisible = visibility)
     }}
 
 
@@ -827,8 +837,13 @@ fun MappingScreen(
     BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
         checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
 
+            if(hasTransaction){
+               cancelOnGoingRescueDialogVisibility(true)
+               return@checkIfHasEditingMarker
+            }
+
             if(uiState.searchingAssistance){
-                cancelSearchDialogVisibility(true)
+               cancelSearchDialogVisibility(true)
                return@checkIfHasEditingMarker
             }
 
@@ -964,7 +979,8 @@ fun MappingScreen(
                 is MappingEvent.AcceptRescueRequestSuccess -> {
                     uiState = uiState.copy(
                         requestHelpButtonVisible = false,
-                        bottomSheetType = BottomSheetType.OnGoingRescue.type
+                        bottomSheetType = BottomSheetType.OnGoingRescue.type,
+                        isRescueRequestDialogVisible = false
                     ).also {
                         expandBottomSheet()
                         onDismissRescueRequestDialog()
@@ -1096,7 +1112,7 @@ fun MappingScreen(
     }
 
     LaunchedEffect(
-        key1 = state.rescueTransaction?.route,
+        key1 = state.rescueTransaction,
         key2 = hasTransaction,
         key3 = isRescueCancelled) {
 
@@ -1127,7 +1143,11 @@ fun MappingScreen(
     }
 
 
-    LaunchedEffect(key1 = hasInternetConnection, key2 = uiState.generateRouteFailed){
+    LaunchedEffect(
+        key1 = hasInternetConnection,
+        key2 = uiState.generateRouteFailed,
+        key3 = state.rescueTransaction) {
+
         if (hasInternetConnection.not()) {
             return@LaunchedEffect
         }
@@ -1198,7 +1218,7 @@ fun MappingScreen(
                 is MappingUiEvent.RespondToHelp -> onClickRespondToHelpButton()
                 is MappingUiEvent.CancelSearching -> cancelSearchDialogVisibility(true)
                 is MappingUiEvent.ChatRescueTransaction -> onClickChatButton()
-                is MappingUiEvent.CancelRescueTransaction -> cancelOnGoingRescue()
+                is MappingUiEvent.CancelRescueTransaction -> cancelOnGoingRescueDialogVisibility(true)
                 is MappingUiEvent.CancelledRescueConfirmed -> onClickOkCancelledRescue()
                 is MappingUiEvent.OnInitializeMap -> onInitializeMapboxMap(event.mapboxMap)
                 is MappingUiEvent.RescueRequestAccepted -> onClickOkAcceptedRescue()
@@ -1207,8 +1227,8 @@ fun MappingScreen(
                 is MappingUiEvent.OnMapClick -> onMapClick()
                 is MappingUiEvent.DismissBanner -> onDismissRescueeBanner()
                 is MappingUiEvent.LocateUser -> onLocateUserButton()
-                is MappingUiEvent.RouteOverview -> onLocateUser(CameraMode.TRACKING)
-                is MappingUiEvent.RecenterRoute -> onLocateUser(CameraMode.TRACKING_GPS)
+                is MappingUiEvent.RouteOverview -> routeOverView()
+                is MappingUiEvent.RecenterRoute -> recenterRoute()
                 is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
                 is MappingUiEvent.RescueArrivedConfirmed -> {}
@@ -1256,6 +1276,8 @@ fun MappingScreen(
                 MappingUiEvent.OnClickHazardousInfoGotIt -> onClickHazardousInfoGotIt()
                 MappingUiEvent.DismissCancelSearchDialog -> cancelSearchDialogVisibility(false)
                 MappingUiEvent.SearchCancelled -> cancelSearchingAssistance()
+                MappingUiEvent.CancelOnGoingRescue -> cancelOnGoingRescue()
+                MappingUiEvent.DismissCancelOnGoingRescueDialog -> cancelOnGoingRescueDialogVisibility(false)
             }
         }
     )

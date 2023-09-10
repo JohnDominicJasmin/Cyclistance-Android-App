@@ -50,10 +50,10 @@ class TrackingStateHandler(
         }
     }
 
-    fun getUserRescueTransaction(rescueTransaction: RescueTransaction): RescueTransactionItem? {
+    fun filterUserRescueTransaction(rescueTransaction: RescueTransaction): RescueTransactionItem? {
 
         val transactionId = state.value.getTransactionId()
-        return transactionId?.let { rescueTransaction.findTransaction(it) }
+        return transactionId.let { rescueTransaction.findTransaction(it) }
 
     }
 
@@ -210,7 +210,7 @@ class TrackingStateHandler(
 
 
 
-        getUserRescueTransaction(rescueTransaction = rescueTransaction)
+        filterUserRescueTransaction(rescueTransaction = rescueTransaction)
             ?.let { transaction ->
 
                 if (transaction.isRescueCancelled()) {

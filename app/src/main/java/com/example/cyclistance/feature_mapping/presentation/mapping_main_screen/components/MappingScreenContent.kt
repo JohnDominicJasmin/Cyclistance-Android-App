@@ -38,6 +38,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RequestHelpButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RespondToHelpButton
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.CancelOnGoingRescueDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.CancelSearchDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.DeleteHazardousLaneMarkerDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.DiscardHazardousLaneMarkerDialog
@@ -252,8 +253,31 @@ fun MappingScreenContent(
                             event(MappingUiEvent.DismissCancelSearchDialog)
                         }, onClickOkay = {
                             event(MappingUiEvent.SearchCancelled)
+                        }, modifier = Modifier.constrainAs(dialog){
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            width = Dimension.matchParent
+                            height = Dimension.wrapContent
+                            this.centerTo(parent)
                         })
                     }
+
+                    if(uiState.cancelOnGoingRescueDialogVisible){
+                        CancelOnGoingRescueDialog(
+                            onDismissRequest = { event(MappingUiEvent.DismissCancelOnGoingRescueDialog) },
+                            onClickOkay = { event(MappingUiEvent.CancelOnGoingRescue) },
+                            modifier = Modifier.constrainAs(dialog){
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                width = Dimension.matchParent
+                                height = Dimension.wrapContent
+                                this.centerTo(parent)
+                            })
+                    }
+
+
 
                     if (uiState.isEmergencyCallDialogVisible) {
                         EmergencyCallDialog(
@@ -263,6 +287,7 @@ fun MappingScreenContent(
                                 bottom.linkTo(parent.bottom)
                                 width = Dimension.matchParent
                                 height = Dimension.wrapContent
+                                this.centerTo(parent)
                             },
                             onDismiss = { event(MappingUiEvent.DismissEmergencyCallDialog) },
                             emergencyCallModel = emergencyState.emergencyCallModel,
@@ -299,6 +324,7 @@ fun MappingScreenContent(
                                 bottom.linkTo(parent.bottom)
                                 width = Dimension.matchParent
                                 height = Dimension.wrapContent
+                                this.centerTo(parent)
                             })
                     }
 

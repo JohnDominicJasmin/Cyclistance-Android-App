@@ -362,7 +362,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun cancelRequestHelp_requestHelpButtonIsShown_And_rescueRequestAcceptedIsNull(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingVmEvent.CancelRequestHelp)
+        mappingViewModel.onEvent(event = MappingVmEvent.CancelSearchingAssistance)
 
         delay(1000)
         Assert.assertTrue(state.value.requestHelpButtonVisible)
@@ -372,7 +372,7 @@ class MappingViewModelStateVerifier(private val mappingViewModel: MappingViewMod
     }
 
     suspend fun cancelRequestHelp_hasInternetState_isFalse(): MappingViewModelStateVerifier {
-        mappingViewModel.onEvent(event = MappingVmEvent.CancelRequestHelp)
+        mappingViewModel.onEvent(event = MappingVmEvent.CancelSearchingAssistance)
         delay(1000)
         Assert.assertFalse(state.value.hasInternet)
         return this

@@ -50,6 +50,8 @@ sealed class MappingUiEvent {
     data object OnClickHazardousInfoGotIt : MappingUiEvent()
     data object DismissCancelSearchDialog : MappingUiEvent()
     data object RescueRequestAccepted: MappingUiEvent()
+    data object DismissCancelOnGoingRescueDialog : MappingUiEvent()
+    data object CancelOnGoingRescue : MappingUiEvent()
 
     // Events with Parameters
     data class OnInitializeMap(val mapboxMap: MapboxMap) : MappingUiEvent()
