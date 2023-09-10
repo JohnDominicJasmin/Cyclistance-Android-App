@@ -35,7 +35,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object MappingSingletonModule {
+object MappingDataSourceModule {
 
 
     @Provides
@@ -120,6 +120,9 @@ object MappingSingletonModule {
                 .build()
         }.value
     }
+
+
+
 
 
 }

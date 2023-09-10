@@ -32,8 +32,7 @@ object MappingConstants {
     val MAP_TYPE_KEY = stringPreferencesKey("map_type")
     val SHOW_HAZARDOUS_STARTING_INFO_KEY = booleanPreferencesKey("show_hazardous_starting_info")
 
-    const val LOCATION_NAME = "cyclistance-location"
-    const val LOCATION_SERVICE_CHANNEL_ID = "cyclistance-location-channel-id"
+
     const val ACTION_START = "start"
     const val ACTION_STOP = "stop"
 
@@ -107,6 +106,20 @@ object MappingConstants {
     const val KEY_ID_LABEL = "label"
     const val KEY_ID_LONGITUDE = "longitude"
     const val KEY_ID_LATITUDE = "latitude"
+
+
+
+    //location notification
+
+
+
+
+    //rescue notification
+    const val RESCUE_NOTIFICATION_ID = 102
+    const val RESCUE_NOTIFICATION_CHANNEL_ID = "rescue_notification_channel_id"
+    const val RESCUE_NOTIFICATION_CHANNEL_NAME = "Rescue Confirmation"
+    const val RESCUE_NOTIFICATION_CHANNEL_DESCRIPTION = "Rescue Confirmation Notification"
+
 
 
     const val MAXIMUM_HAZARDOUS_MARKER = 3

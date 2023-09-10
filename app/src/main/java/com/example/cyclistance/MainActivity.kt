@@ -9,10 +9,6 @@ import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.runtime.CompositionLocalProvider
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CHANNEL_DESCRIPTION
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CHANNEL_IMPORTANCE
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CHANNEL_NAME
-import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_NOTIFICATION_CHANNEL
 import com.example.cyclistance.feature_authentication.domain.util.ActivityResultCallbackManager
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
 import com.example.cyclistance.navigation.NavScreen
@@ -21,12 +17,20 @@ import com.facebook.appevents.AppEventsLogger
 import com.mapbox.mapboxsdk.Mapbox
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import javax.inject.Named
 
 
 @AndroidEntryPoint
-class MainActivity @Inject constructor(
+class MainActivity : ComponentActivity() {
 
-) : ComponentActivity() {
+    @Inject
+    @Named("messagingNotificationChannel") lateinit var notificationChannel: NotificationChannel
+
+    @Inject
+    @Named("rescueNotificationChannel") lateinit var rescueNotificationChannel: NotificationChannel
+
+    @Inject lateinit var notificationManager: NotificationManager
+
 
     private var callbackManager = ActivityResultCallbackManager()
 
@@ -39,7 +43,7 @@ class MainActivity @Inject constructor(
         setTheme(R.style.Theme_Cyclistance)
         sdkInitialize(applicationContext);
         AppEventsLogger.activateApp(application);
-        addMessagingNotificationChannel()
+        addNotificationChannel()
 
         setContent {
             CompositionLocalProvider(LocalActivityResultCallbackManager provides callbackManager) {
@@ -49,18 +53,18 @@ class MainActivity @Inject constructor(
     }
 
 
-    private fun addMessagingNotificationChannel(){
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(
-                MESSAGING_NOTIFICATION_CHANNEL,
-                CHANNEL_NAME,
-                CHANNEL_IMPORTANCE).apply {
-                description = CHANNEL_DESCRIPTION
-            }
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(notificationChannel)
+    private fun addNotificationChannel(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            notificationManager.createNotificationChannels(
+                   listOf(
+                      notificationChannel,
+                      rescueNotificationChannel,
+                 )
+            )
+
         }
     }
+
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(
