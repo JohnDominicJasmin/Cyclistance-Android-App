@@ -419,10 +419,7 @@ fun MappingScreen(
     }
 
     val hasTransaction = remember(key1 = state.rescueTransaction, key2 = state.user.transaction) {
-        val transaction = state.rescueTransaction
-        val rescueTransactionId = transaction?.id ?: ""
-        val userTransactionId = state.user.getTransactionId() ?: ""
-        rescueTransactionId.isNotEmpty() && userTransactionId.isNotEmpty()
+        state.getTransactionId().isNotEmpty()
     }
 
     val isRescueCancelled =
