@@ -2,13 +2,8 @@ package com.example.cyclistance.di.mapping
 
 import android.content.Context
 import android.location.Geocoder
-import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
-import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.RescueTransactionClient
-import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.TransactionLiveLocationClient
-import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.UserClient
 import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
-import com.example.cyclistance.feature_mapping.data.repository.MappingSocketRepositoryImpl
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping.domain.repository.MappingSocketRepository
 import com.example.cyclistance.feature_mapping.domain.repository.MappingUiStoreRepository
@@ -50,7 +45,6 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
-import io.socket.client.IO
 
 
 @Module
@@ -77,23 +71,6 @@ object MappingViewModelModule {
         )
     }
 
-    @Provides
-    @ViewModelScoped
-    fun provideMappingSocketRepository(@ApplicationContext context: Context): MappingSocketRepository {
-        val socket = IO.socket(context.getString(R.string.CyclistanceApiBaseUrl))
-        val nearbyCyclistClient = UserClient(socket)
-        val rescueTransactionClient = RescueTransactionClient(socket)
-        val liveLocation = TransactionLiveLocationClient(socket)
-
-        return MappingSocketRepositoryImpl(
-            context = context,
-            nearbyCyclistClient = nearbyCyclistClient,
-            rescueTransactionClient = rescueTransactionClient,
-            liveLocation = liveLocation,
-
-
-            )
-    }
 
 
 

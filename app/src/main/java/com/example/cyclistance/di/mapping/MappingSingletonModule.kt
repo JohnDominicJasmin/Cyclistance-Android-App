@@ -6,7 +6,12 @@ import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInterne
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_PRAGMA
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.RescueTransactionClient
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.TransactionLiveLocationClient
+import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.UserClient
+import com.example.cyclistance.feature_mapping.data.repository.MappingSocketRepositoryImpl
 import com.example.cyclistance.feature_mapping.data.repository.MappingUiStoreRepositoryImpl
+import com.example.cyclistance.feature_mapping.domain.repository.MappingSocketRepository
 import com.example.cyclistance.feature_mapping.domain.repository.MappingUiStoreRepository
 import com.google.gson.GsonBuilder
 import com.mapbox.api.optimization.v1.MapboxOptimization
@@ -15,6 +20,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import io.socket.client.IO
 import okhttp3.Cache
 import okhttp3.CacheControl
 import okhttp3.Interceptor
@@ -57,6 +63,24 @@ object MappingSingletonModule {
             MapboxOptimization.builder()
                 .accessToken(context.getString(R.string.MapsDownloadToken))
         }.value
+    }
+
+    @Provides
+    @Singleton
+    fun provideMappingSocketRepository(@ApplicationContext context: Context): MappingSocketRepository {
+        val socket = IO.socket(context.getString(R.string.CyclistanceApiBaseUrl))
+        val nearbyCyclistClient = UserClient(socket)
+        val rescueTransactionClient = RescueTransactionClient(socket)
+        val liveLocation = TransactionLiveLocationClient(socket)
+
+        return MappingSocketRepositoryImpl(
+            context = context,
+            nearbyCyclistClient = nearbyCyclistClient,
+            rescueTransactionClient = rescueTransactionClient,
+            liveLocation = liveLocation,
+
+
+            )
     }
 
 
