@@ -811,6 +811,10 @@ fun MappingScreen(
         uiState = uiState.copy(cancelSearchDialogVisible = visibility)
     }}
 
+    val cancelOnGoingRescueDialogVisibility = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(cancelOnGoingRescueDialogVisible = visibility)
+    }}
+
 
 
 
@@ -833,8 +837,13 @@ fun MappingScreen(
     BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
         checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
 
+            if(hasTransaction){
+               cancelOnGoingRescueDialogVisibility(true)
+               return@checkIfHasEditingMarker
+            }
+
             if(uiState.searchingAssistance){
-                cancelSearchDialogVisibility(true)
+               cancelSearchDialogVisibility(true)
                return@checkIfHasEditingMarker
             }
 
@@ -1209,7 +1218,7 @@ fun MappingScreen(
                 is MappingUiEvent.RespondToHelp -> onClickRespondToHelpButton()
                 is MappingUiEvent.CancelSearching -> cancelSearchDialogVisibility(true)
                 is MappingUiEvent.ChatRescueTransaction -> onClickChatButton()
-                is MappingUiEvent.CancelRescueTransaction -> cancelOnGoingRescue()
+                is MappingUiEvent.CancelRescueTransaction -> cancelOnGoingRescueDialogVisibility(true)
                 is MappingUiEvent.CancelledRescueConfirmed -> onClickOkCancelledRescue()
                 is MappingUiEvent.OnInitializeMap -> onInitializeMapboxMap(event.mapboxMap)
                 is MappingUiEvent.RescueRequestAccepted -> onClickOkAcceptedRescue()
@@ -1267,6 +1276,8 @@ fun MappingScreen(
                 MappingUiEvent.OnClickHazardousInfoGotIt -> onClickHazardousInfoGotIt()
                 MappingUiEvent.DismissCancelSearchDialog -> cancelSearchDialogVisibility(false)
                 MappingUiEvent.SearchCancelled -> cancelSearchingAssistance()
+                MappingUiEvent.CancelOnGoingRescue -> cancelOnGoingRescue()
+                MappingUiEvent.DismissCancelOnGoingRescueDialog -> cancelOnGoingRescueDialogVisibility(false)
             }
         }
     )
