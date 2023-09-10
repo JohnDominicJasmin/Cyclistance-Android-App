@@ -1,10 +1,8 @@
 package com.example.cyclistance.service
 
-import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_START
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_STOP
@@ -30,7 +28,6 @@ class LocationService(
 
     @Inject lateinit var locationClient: LocationClient
     @Inject @Named("trackingNotification") lateinit var notification: NotificationCompat.Builder
-    @Inject @Named("trackingNotificationChannel") lateinit var trackingNotificationChannel: NotificationChannel
 
     @Inject lateinit var notificationManager: NotificationManager
 
@@ -41,14 +38,6 @@ class LocationService(
         val address: MutableStateFlow<LocationModel> = MutableStateFlow(LocationModel())
     }
 
-    override fun onCreate() {
-        super.onCreate()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.createNotificationChannel(
-                trackingNotificationChannel
-            )
-        }
-    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         when (intent?.action) {

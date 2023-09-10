@@ -1,12 +1,16 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
+import android.annotation.SuppressLint
 import androidx.compose.runtime.mutableStateListOf
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_RADIUS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
+import com.example.cyclistance.core.utils.constants.MappingConstants.RESCUE_NOTIFICATION_ID
 import com.example.cyclistance.core.utils.formatter.FormatterUtils
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.isLocationAvailable
@@ -55,7 +59,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
+import javax.inject.Named
 import com.google.android.gms.maps.model.LatLng as GoogleLatLng
+
 
 @HiltViewModel
 class MappingViewModel @Inject constructor(
@@ -63,7 +69,9 @@ class MappingViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase,
     private val mappingUseCase: MappingUseCase,
     private val userProfileUseCase: UserProfileUseCase,
-    private val defaultDispatcher: CoroutineDispatcher
+    private val defaultDispatcher: CoroutineDispatcher,
+    @Named("rescueNotification") private val notificationBuilder: NotificationCompat.Builder,
+    private val notificationManagerCompat: NotificationManagerCompat
 ) : ViewModel() {
 
 
@@ -92,6 +100,16 @@ class MappingViewModel @Inject constructor(
         observeDataChanges()
         getMapType()
         getShouldShowHazardousStartingInfo()
+    }
+    @SuppressLint("MissingPermission")
+    private fun showNotification(){
+        val notificationStyle = NotificationCompat.BigTextStyle().bigText("Bla bla bla")
+        val notificationCompat = notificationBuilder.apply {
+            setContentTitle("Cyclistance")
+            setContentText("Bla bla bla")
+            setStyle(notificationStyle)
+        }
+        notificationManagerCompat.notify(RESCUE_NOTIFICATION_ID, notificationCompat.build())
     }
 
     private fun setShouldShowHazardousStartingInfo(shouldShow: Boolean) {
@@ -224,9 +242,6 @@ class MappingViewModel @Inject constructor(
         }
 
     }
-
-
-
 
 
     private fun acceptRescueRequest(id: String) {
@@ -555,30 +570,30 @@ class MappingViewModel @Inject constructor(
         incidentDescription: String) {
 
         viewModelScope.launch {
-                val userLocation = state.value.getCurrentLocation()
+            val userLocation = state.value.getCurrentLocation()
 
-                if (userLocation == null) {
-                    _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
-                    return@launch
-                }
+            if (userLocation == null) {
+                _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
+                return@launch
+            }
 
-                val distance = mappingUseCase.getCalculatedDistanceUseCase(
-                    startingLocation = userLocation,
-                    destinationLocation = LocationModel(
-                        latitude = latLng.latitude,
-                        longitude = latLng.longitude
-                    )
+            val distance = mappingUseCase.getCalculatedDistanceUseCase(
+                startingLocation = userLocation,
+                destinationLocation = LocationModel(
+                    latitude = latLng.latitude,
+                    longitude = latLng.longitude
                 )
+            )
 
-                if (distance > DEFAULT_RADIUS) {
-                    _eventFlow.emit(MappingEvent.IncidentDistanceTooFar)
-                    return@launch
-                }
+            if (distance > DEFAULT_RADIUS) {
+                _eventFlow.emit(MappingEvent.IncidentDistanceTooFar)
+                return@launch
+            }
 
-                reportIncident(
-                    label = label,
-                    latLng = latLng,
-                    incidentDescription = incidentDescription)
+            reportIncident(
+                label = label,
+                latLng = latLng,
+                incidentDescription = incidentDescription)
 
 
         }
@@ -614,7 +629,7 @@ class MappingViewModel @Inject constructor(
                         label = label,
                         description = incidentDescription,
 
-                    ))
+                        ))
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.ReportIncidentSuccess)
             }.onFailure {
@@ -823,7 +838,8 @@ class MappingViewModel @Inject constructor(
             val user = findUser(id = id)
             val respondents = user.getUserRescueRespondents(this)
             _state.update {
-                it.copy(newRescueRequest = NewRescueRequestsModel(request = respondents),
+                it.copy(
+                    newRescueRequest = NewRescueRequestsModel(request = respondents),
                     user = user)
             }
             user.getTransactionId()?.let { loadRescueTransaction(transactionId = it) }
@@ -909,7 +925,6 @@ class MappingViewModel @Inject constructor(
     }
 
 
-
     private fun subscribeToRescueTransactionUpdates() {
         if (getRescueTransactionUpdatesJob?.isActive == true) {
             return
@@ -934,8 +949,6 @@ class MappingViewModel @Inject constructor(
 
             }
     }
-
-
 
 
     private fun RescueTransaction.updateCurrentRescueTransaction() {
@@ -1091,7 +1104,8 @@ class MappingViewModel @Inject constructor(
             Timber.e("FAILED TO CREATE MOCK USERS: ${it.message}")
         }
     }
-    private fun removeBottomSheet(){
+
+    private fun removeBottomSheet() {
         viewModelScope.launch(SupervisorJob()) {
             mappingUseCase.bottomSheetTypeUseCase(bottomSheet = "")
         }

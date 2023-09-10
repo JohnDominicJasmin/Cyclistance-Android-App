@@ -1,14 +1,8 @@
 package com.example.cyclistance.di.location_service
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.constants.LocationServiceConstants.LOCATION_CHANNEL_DESCRIPTION
-import com.example.cyclistance.core.utils.constants.LocationServiceConstants.LOCATION_NOTIFICATION_NAME
 import com.example.cyclistance.core.utils.constants.LocationServiceConstants.LOCATION_SERVICE_CHANNEL_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.feature_mapping.data.data_source.local.location.DefaultLocationClient
@@ -74,18 +68,4 @@ object LocationServiceModule {
     }
 
 
-    @Provides
-    @ServiceScoped
-    @Named("trackingNotificationChannel")
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun provideNotificationChannel(): NotificationChannel {
-        return lazy {
-            NotificationChannel(
-                LOCATION_SERVICE_CHANNEL_ID,
-                LOCATION_NOTIFICATION_NAME,
-                NotificationManager.IMPORTANCE_LOW).apply {
-                description = LOCATION_CHANNEL_DESCRIPTION
-            }
-        }.value
-    }
 }

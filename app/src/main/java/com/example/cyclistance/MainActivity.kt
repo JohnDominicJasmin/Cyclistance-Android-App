@@ -8,7 +8,15 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.runtime.CompositionLocalProvider
+import com.example.cyclistance.core.utils.constants.LocationServiceConstants.LOCATION_CHANNEL_DESCRIPTION
+import com.example.cyclistance.core.utils.constants.LocationServiceConstants.LOCATION_NOTIFICATION_NAME
+import com.example.cyclistance.core.utils.constants.LocationServiceConstants.LOCATION_SERVICE_CHANNEL_ID
+import com.example.cyclistance.core.utils.constants.MappingConstants.RESCUE_NOTIFICATION_CHANNEL_DESCRIPTION
+import com.example.cyclistance.core.utils.constants.MappingConstants.RESCUE_NOTIFICATION_CHANNEL_ID
+import com.example.cyclistance.core.utils.constants.MappingConstants.RESCUE_NOTIFICATION_CHANNEL_NAME
+import com.example.cyclistance.core.utils.constants.MessagingConstants
 import com.example.cyclistance.feature_authentication.domain.util.ActivityResultCallbackManager
 import com.example.cyclistance.feature_authentication.domain.util.LocalActivityResultCallbackManager
 import com.example.cyclistance.navigation.NavScreen
@@ -17,17 +25,16 @@ import com.facebook.appevents.AppEventsLogger
 import com.mapbox.mapboxsdk.Mapbox
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
-import javax.inject.Named
 
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    @Inject
-    @Named("messagingNotificationChannel") lateinit var notificationChannel: NotificationChannel
+    /*@Inject
+    @Named("messagingNotificationChannel") lateinit var notificationChannel: NotificationChannel*/
 
-    @Inject
-    @Named("rescueNotificationChannel") lateinit var rescueNotificationChannel: NotificationChannel
+   /* @Inject
+    @Named("rescueNotificationChannel") lateinit var rescueNotificationChannel: NotificationChannel*/
 
     @Inject lateinit var notificationManager: NotificationManager
 
@@ -52,14 +59,45 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getTrackingNotificationChannel() = NotificationChannel(
+        LOCATION_SERVICE_CHANNEL_ID,
+        LOCATION_NOTIFICATION_NAME,
+        NotificationManager.IMPORTANCE_LOW).apply {
+        description = LOCATION_CHANNEL_DESCRIPTION
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getMessagingNotificationChannel() = NotificationChannel(
+        MessagingConstants.CHANNEL_ID,
+        MessagingConstants.CHANNEL_NAME,
+        NotificationManager.IMPORTANCE_HIGH).apply {
+        description = MessagingConstants.CHANNEL_DESCRIPTION
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getRescueNotificationChannel()=
+         NotificationChannel(
+            RESCUE_NOTIFICATION_CHANNEL_ID,
+            RESCUE_NOTIFICATION_CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_HIGH).apply {
+            description = RESCUE_NOTIFICATION_CHANNEL_DESCRIPTION
+        }
+
+
 
     private fun addNotificationChannel(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             notificationManager.createNotificationChannels(
-                   listOf(
-                      notificationChannel,
-                      rescueNotificationChannel,
-                 )
+                listOf(
+                    getTrackingNotificationChannel(),
+                    getMessagingNotificationChannel(),
+                    getRescueNotificationChannel()
+
+                )
+
+
             )
 
         }
