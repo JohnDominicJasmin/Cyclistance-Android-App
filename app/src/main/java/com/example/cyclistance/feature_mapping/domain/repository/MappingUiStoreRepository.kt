@@ -19,4 +19,6 @@ interface MappingUiStoreRepository {
     suspend fun showHazardousStartingInfo(shouldShow: Boolean)
     suspend fun shouldShowHazardousStartingInfo(): Flow<Boolean>
 
+
+
 }

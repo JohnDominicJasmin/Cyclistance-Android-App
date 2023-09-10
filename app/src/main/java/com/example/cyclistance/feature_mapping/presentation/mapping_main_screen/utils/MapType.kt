@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils
 
 sealed class MapType(val type: String){
-    object Default: MapType(type = "Default")
-    object HazardousLane: MapType(type = "Hazardous Lane")
+    data object Default: MapType(type = "Default")
+    data object HazardousLane: MapType(type = "Hazardous Lane")
+    data object Traffic: MapType(type = "Traffic")
 }
