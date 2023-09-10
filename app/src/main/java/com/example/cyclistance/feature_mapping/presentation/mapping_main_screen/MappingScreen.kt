@@ -973,7 +973,8 @@ fun MappingScreen(
                 is MappingEvent.AcceptRescueRequestSuccess -> {
                     uiState = uiState.copy(
                         requestHelpButtonVisible = false,
-                        bottomSheetType = BottomSheetType.OnGoingRescue.type
+                        bottomSheetType = BottomSheetType.OnGoingRescue.type,
+                        isRescueRequestDialogVisible = false
                     ).also {
                         expandBottomSheet()
                         onDismissRescueRequestDialog()
