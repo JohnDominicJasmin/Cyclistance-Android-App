@@ -475,7 +475,7 @@ class MappingViewModel @Inject constructor(
                 acceptRescueRequest(event.id)
             }
 
-            is MappingVmEvent.CancelRequestHelp -> {
+            is MappingVmEvent.CancelSearchingAssistance -> {
                 cancelHelpRequest()
                 clearTravelledPath()
             }

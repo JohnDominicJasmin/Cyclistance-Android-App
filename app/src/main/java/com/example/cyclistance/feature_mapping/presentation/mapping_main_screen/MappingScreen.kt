@@ -366,7 +366,7 @@ fun MappingScreen(
             coroutineScope.launch {
                 collapseBottomSheet()
             }.invokeOnCompletion {
-                mappingViewModel.onEvent(event = MappingVmEvent.CancelRequestHelp)
+                mappingViewModel.onEvent(event = MappingVmEvent.CancelSearchingAssistance)
                 uiState = uiState.copy(searchingAssistance = false)
             }
             Unit

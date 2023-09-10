@@ -16,7 +16,7 @@ sealed class MappingVmEvent {
      * RescuerArrived,DestinationReached, SearchAssistance, OnGoingRescue
      * Usage: DestinationReached.type
      * */
-    data object CancelRequestHelp: MappingVmEvent()
+    data object CancelSearchingAssistance: MappingVmEvent()
     data class DeclineRescueRequest(val id: String): MappingVmEvent()
     data class AcceptRescueRequest(val id: String): MappingVmEvent()
     data object LoadData: MappingVmEvent()
