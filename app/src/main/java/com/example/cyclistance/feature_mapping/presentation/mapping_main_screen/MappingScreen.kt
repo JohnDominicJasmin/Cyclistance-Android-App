@@ -789,13 +789,13 @@ fun MappingScreen(
         }
     }
 
-    val getRouteDirections = remember(state.rescueTransaction){{
-        val rescueTransaction = state.rescueTransaction
+    fun getRouteDirections(){
+        val rescueTransaction = state.rescueTransaction ?: return
 
-        val startingLongitude = rescueTransaction?.getStartingLongitude()!!
-        val startingLatitude = rescueTransaction.getStartingLatitude()!!
-        val destinationLongitude = rescueTransaction.getDestinationLongitude()!!
-        val destinationLatitude = rescueTransaction.getDestinationLatitude()!!
+        val startingLongitude = rescueTransaction.getStartingLongitude() ?: return
+        val startingLatitude = rescueTransaction.getStartingLatitude()?: return
+        val destinationLongitude = rescueTransaction.getDestinationLongitude()?: return
+        val destinationLatitude = rescueTransaction.getDestinationLatitude()?: return
 
         mappingViewModel.onEvent(
             event = MappingVmEvent.GetRouteDirections(
@@ -803,7 +803,7 @@ fun MappingScreen(
                 destination = Point.fromLngLat(
                     destinationLongitude,
                     destinationLatitude)))
-    }}
+    }
 
 
 
