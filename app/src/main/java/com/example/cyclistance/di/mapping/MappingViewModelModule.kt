@@ -2,6 +2,8 @@ package com.example.cyclistance.di.mapping
 
 import android.content.Context
 import android.location.Geocoder
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.example.cyclistance.feature_mapping.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
@@ -20,6 +22,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalcu
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.map_type.MapTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.notification.ShowNotificationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.AcceptRescueRequestUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
@@ -45,6 +48,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
+import javax.inject.Named
 
 
 @Module
@@ -80,7 +84,10 @@ object MappingViewModelModule {
     fun provideMappingUseCase(
         mappingRepository: MappingRepository,
         mappingUiStoreRepository: MappingUiStoreRepository,
-        mappingSocketRepository: MappingSocketRepository): MappingUseCase {
+        mappingSocketRepository: MappingSocketRepository,
+        notificationManagerCompat: NotificationManagerCompat,
+        @Named("rescueNotification")  notificationBuilder: NotificationCompat.Builder
+        ): MappingUseCase {
         return MappingUseCase(
 
             getUsersUseCase = GetUsersUseCase(mappingRepository),
@@ -120,6 +127,10 @@ object MappingViewModelModule {
             updateHazardousLaneUseCase = UpdateHazardousLaneUseCase(mappingRepository),
             shouldHazardousStartingInfoUseCase = ShouldHazardousStartingInfoUseCase(
                 mappingUiStoreRepository),
+            showNotificationUseCase = ShowNotificationUseCase(
+                notificationManagerCompat = notificationManagerCompat,
+                notificationBuilder = notificationBuilder
+            )
         )
 
     }
