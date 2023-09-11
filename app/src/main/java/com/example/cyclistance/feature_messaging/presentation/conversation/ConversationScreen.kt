@@ -111,12 +111,11 @@ fun ConversationScreen(
 
     val notificationLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-        onResult = { isGranted ->
-            if (isGranted){
-                sendMessage()
-            }
+        onResult = {
+            sendMessage()
         }
     )
+
 
 
     val notificationPermissionState = rememberPermissionState(
@@ -128,11 +127,9 @@ fun ConversationScreen(
 
     }
 
-
-    val notificationPermissionDialogVisibility = remember{{ visible: Boolean ->
-        uiState = uiState.copy(notificationPermissionVisible = visible)
+    val notificationPermissionDialogVisibility = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(notificationPermissionVisible = visibility)
     }}
-
 
 
 
@@ -142,7 +139,7 @@ fun ConversationScreen(
             notificationPermissionState.requestPermission(onGranted = {
                 notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }, onExplain = {
-                showPermissionDialog()
+                notificationPermissionDialogVisibility(true)
             }, onDenied = {
                 sendMessage()
             })
@@ -192,7 +189,7 @@ fun ConversationScreen(
                 is ConversationUiEvent.SelectChatItem -> onClickChatItem(event.index)
                 is ConversationUiEvent.ToggleMessageArea -> onToggleExpand()
                 is ConversationUiEvent.OnChangeValueMessage -> onChangeValueMessage(event.message)
-                is ConversationUiEvent.DismissNotificationPermissionDialog -> dismissPermissionDialog()
+                is ConversationUiEvent.DismissNotificationPermissionDialog -> notificationPermissionDialogVisibility(false)
             }
         }
     )
