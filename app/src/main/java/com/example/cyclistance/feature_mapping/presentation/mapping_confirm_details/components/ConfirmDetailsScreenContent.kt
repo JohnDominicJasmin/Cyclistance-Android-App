@@ -58,7 +58,9 @@ fun PreviewConfirmDetailsScreenLight() {
         ConfirmDetailsContent(
             modifier = Modifier,
             state = ConfirmDetailsState(),
-            uiState = ConfirmDetailsUiState(backgroundLocationPermissionDialogVisible = true),
+            uiState = ConfirmDetailsUiState(
+                backgroundLocationPermissionDialogVisible = true,
+                isNoInternetVisible = true),
             bikeType = TextFieldValue(""),
             message = TextFieldValue(""),
             address = TextFieldValue(""),
@@ -95,7 +97,7 @@ fun ConfirmDetailsContent(
                     .fillMaxSize()
                     .background(MaterialTheme.colors.background)) {
 
-                val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText, noInternetScreen, circularProgressBar, permissionDialog) = createRefs()
+                val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText, circularProgressBar, dialog) = createRefs()
 
                 AddressTextField(
                     modifier = Modifier
@@ -222,23 +224,12 @@ fun ConfirmDetailsContent(
                             }
                     )
                 }
-                if (uiState.isNoInternetVisible) {
-                    NoInternetDialog(
-                        onDismiss = { event(ConfirmDetailsUiEvent.DismissNoInternetDialog) },
-                        modifier = Modifier.constrainAs(noInternetScreen) {
-                            bottom.linkTo(parent.bottom)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                            width = Dimension.matchParent
-                            height = Dimension.wrapContent
-                        })
 
-                }
 
 
                 if (uiState.backgroundLocationPermissionDialogVisible) {
                     DialogBackgroundLocationPermission(
-                        modifier = Modifier.constrainAs(permissionDialog) {
+                        modifier = Modifier.constrainAs(dialog) {
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
                             bottom.linkTo(parent.bottom)
@@ -249,9 +240,22 @@ fun ConfirmDetailsContent(
                         })
                 }
 
+                if (uiState.isNoInternetVisible) {
+                    NoInternetDialog(
+                        onDismiss = { event(ConfirmDetailsUiEvent.DismissNoInternetDialog) },
+                        modifier = Modifier.constrainAs(dialog) {
+                            bottom.linkTo(parent.bottom)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                            width = Dimension.matchParent
+                            height = Dimension.wrapContent
+                        })
+
+                }
+
                 if (uiState.foregroundLocationPermissionDialogVisible) {
                     DialogForegroundLocationPermission(
-                        modifier = Modifier.constrainAs(permissionDialog) {
+                        modifier = Modifier.constrainAs(dialog) {
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
                             bottom.linkTo(parent.bottom)
