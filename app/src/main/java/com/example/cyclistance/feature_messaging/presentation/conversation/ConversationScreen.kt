@@ -142,8 +142,9 @@ fun ConversationScreen(
             notificationPermissionState.requestPermission(onGranted = {
                 notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }, onExplain = {
-
-                notificationPermissionDialogVisibility(true)
+                showPermissionDialog()
+            }, onDenied = {
+                sendMessage()
             })
         } else {
             sendMessage()
@@ -191,7 +192,7 @@ fun ConversationScreen(
                 is ConversationUiEvent.SelectChatItem -> onClickChatItem(event.index)
                 is ConversationUiEvent.ToggleMessageArea -> onToggleExpand()
                 is ConversationUiEvent.OnChangeValueMessage -> onChangeValueMessage(event.message)
-                is ConversationUiEvent.DismissNotificationPermissionDialog -> notificationPermissionDialogVisibility(false)
+                is ConversationUiEvent.DismissNotificationPermissionDialog -> dismissPermissionDialog()
             }
         }
     )

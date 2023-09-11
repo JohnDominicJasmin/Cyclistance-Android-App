@@ -27,12 +27,13 @@ object MessagingConstants {
     const val REMOTE_MSG_REGISTRATION_IDS = "registration_ids"
 
 
+
     //notifications
     const val NOTIFICATION_ID = 101
     const val CHANNEL_ID = "messaging_channel_id"
     const val CHANNEL_DESCRIPTION = "Messaging Notifications"
-    const val CHANNEL_NAME = "Messaging Notifications"
-
+    const val NOTIFICATION_REQUEST_CODE = 200
+    const val CHANNEL_NAME = "Messaging Notification"
 
 
     const val MESSAGING_URI = "cyclistance://messaging/conversation/"
