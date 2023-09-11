@@ -32,7 +32,7 @@ object MessagingConstants {
     const val MESSAGING_NOTIFICATION_CHANNEL = "messaging_notification_channel"
 
     const val NOTIFICATION_REQUEST_CODE = 200
-    const val CHANNEL_NAME = "Messaging"
+    const val CHANNEL_NAME = "Messaging Notification"
     const val CHANNEL_DESCRIPTION = "Messaging Notifications"
     @RequiresApi(Build.VERSION_CODES.N)
     const val CHANNEL_IMPORTANCE = NotificationManager.IMPORTANCE_HIGH

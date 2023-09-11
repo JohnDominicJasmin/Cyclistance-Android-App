@@ -5,7 +5,8 @@ import com.google.accompanist.permissions.*
 @OptIn(ExperimentalPermissionsApi::class)
 inline fun MultiplePermissionsState.requestPermission(
     onGranted: () -> Unit,
-    onExplain: () -> Unit) {
+    onExplain: () -> Unit,
+    onDenied: () -> Unit) {
 
 
     when{
@@ -16,7 +17,7 @@ inline fun MultiplePermissionsState.requestPermission(
 
         !allPermissionsGranted -> {
             if(!shouldShowRationale){
-                onExplain()
+                onDenied()
             }else {
                 launchMultiplePermissionRequest()
             }
@@ -25,6 +26,8 @@ inline fun MultiplePermissionsState.requestPermission(
         shouldShowRationale -> {
             onExplain()
         }
+
+        else -> onDenied()
     }
 
 
@@ -34,7 +37,8 @@ inline fun MultiplePermissionsState.requestPermission(
 @OptIn(ExperimentalPermissionsApi::class)
 inline fun PermissionState.requestPermission(
     onGranted: () -> Unit,
-    onExplain: () -> Unit) {
+    onExplain: () -> Unit,
+    onDenied: () -> Unit) {
 
 
     when{
@@ -43,7 +47,7 @@ inline fun PermissionState.requestPermission(
         }
         !status.isGranted -> {
            if(!status.shouldShowRationale){
-               onExplain()
+               onDenied()
            }else{
                launchPermissionRequest()
            }
@@ -51,6 +55,7 @@ inline fun PermissionState.requestPermission(
         status.shouldShowRationale -> {
             onExplain()
         }
+        else -> onDenied()
 
     }
 

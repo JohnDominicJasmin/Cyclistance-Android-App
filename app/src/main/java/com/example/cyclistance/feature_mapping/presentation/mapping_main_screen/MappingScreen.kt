@@ -255,6 +255,8 @@ fun MappingScreen(
                     requestHelp()
                 }, onExplain = {
                     uiState = uiState.copy(locationPermissionDialogVisible = true)
+                }, onDenied = {
+                    uiState = uiState.copy(locationPermissionDialogVisible = true)
                 })
 
         }
@@ -321,6 +323,8 @@ fun MappingScreen(
                     }
 
                 }, onExplain = {
+                    uiState = uiState.copy(locationPermissionDialogVisible = true)
+                }, onDenied = {
                     uiState = uiState.copy(locationPermissionDialogVisible = true)
                 })
         }

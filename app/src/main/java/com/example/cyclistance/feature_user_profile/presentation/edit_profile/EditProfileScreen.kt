@@ -214,6 +214,8 @@ fun EditProfileScreen(
                     openGalleryResultLauncher.launch("image/*")
                 }, onExplain = {
                     uiState = uiState.copy(filesAndMediaDialogVisible = true)
+                }, onDenied = {
+                    uiState = uiState.copy(filesAndMediaDialogVisible = true)
                 })
 
         }
@@ -225,6 +227,8 @@ fun EditProfileScreen(
                 onGranted = {
                     openCameraResultLauncher.launch()
                 }, onExplain = {
+                    uiState = uiState.copy(cameraPermissionDialogVisible = true)
+                }, onDenied = {
                     uiState = uiState.copy(cameraPermissionDialogVisible = true)
                 })
         }
