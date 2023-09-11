@@ -284,7 +284,7 @@ fun MappingMapsScreen(
 
         mapboxMap?.addOnCameraMoveListener {
             if (uiState.isFabExpanded) {
-                event(MappingUiEvent.OnCollapseExpandableFAB)
+                event(MappingUiEvent.ExpandableFab(false))
             }
         }
 

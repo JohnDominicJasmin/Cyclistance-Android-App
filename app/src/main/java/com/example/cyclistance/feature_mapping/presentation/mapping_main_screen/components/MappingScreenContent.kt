@@ -191,11 +191,15 @@ fun MappingScreenContent(
                     )
 
                     ExpandableFABSection(
-                        onClickEmergencyCall = { event(MappingUiEvent.ShowEmergencyCallDialog) },
+                        onClickEmergencyCall = { event(MappingUiEvent.EmergencyCallDialog(visibility = true)) },
                         onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
-                        onClickRescueRequest = { event(MappingUiEvent.ShowRescueRequestDialog) },
-                        onClickFab = { event(MappingUiEvent.OnToggleExpandableFAB) },
-                        onClickBikeTracker = { event(MappingUiEvent.ShowSinoTrackWebView) },
+                        onClickRescueRequest = { event(MappingUiEvent.RescueRequestDialog(visibility = true)) },
+                        onClickFab = { event(MappingUiEvent.ExpandableFab(expanded = !uiState.isFabExpanded)) },
+                        onClickBikeTracker = {
+                            event(
+                                MappingUiEvent.SinoTrackWebViewVisibility(
+                                    visibility = true))
+                        },
                         isFabExpanded = uiState.isFabExpanded,
                         badgeCount = respondentCount,
                         modifier = Modifier.constrainAs(expandableFabSection) {
@@ -248,12 +252,12 @@ fun MappingScreenContent(
                     }
 
 
-                    if(uiState.cancelSearchDialogVisible){
+                    if (uiState.cancelSearchDialogVisible) {
                         CancelSearchDialog(onDismissRequest = {
-                            event(MappingUiEvent.DismissCancelSearchDialog)
+                            event(MappingUiEvent.CancelSearchDialog(visibility = false))
                         }, onClickOkay = {
                             event(MappingUiEvent.SearchCancelled)
-                        }, modifier = Modifier.constrainAs(dialog){
+                        }, modifier = Modifier.constrainAs(dialog) {
                             end.linkTo(parent.end)
                             start.linkTo(parent.start)
                             bottom.linkTo(parent.bottom)
@@ -263,11 +267,13 @@ fun MappingScreenContent(
                         })
                     }
 
-                    if(uiState.cancelOnGoingRescueDialogVisible){
+                    if (uiState.cancelOnGoingRescueDialogVisible) {
                         CancelOnGoingRescueDialog(
-                            onDismissRequest = { event(MappingUiEvent.DismissCancelOnGoingRescueDialog) },
+                            onDismissRequest = {
+                                event(MappingUiEvent.CancelOnGoingRescueDialog(visibility = false))
+                            },
                             onClickOkay = { event(MappingUiEvent.CancelOnGoingRescue) },
-                            modifier = Modifier.constrainAs(dialog){
+                            modifier = Modifier.constrainAs(dialog) {
                                 end.linkTo(parent.end)
                                 start.linkTo(parent.start)
                                 bottom.linkTo(parent.bottom)
@@ -289,7 +295,7 @@ fun MappingScreenContent(
                                 height = Dimension.wrapContent
                                 this.centerTo(parent)
                             },
-                            onDismiss = { event(MappingUiEvent.DismissEmergencyCallDialog) },
+                            onDismiss = { event(MappingUiEvent.EmergencyCallDialog(visibility = false)) },
                             emergencyCallModel = emergencyState.emergencyCallModel,
                             onClick = {
                                 event(
@@ -299,25 +305,28 @@ fun MappingScreenContent(
                                 )
                             }, onAddContact = {
                                 event(MappingUiEvent.OnAddEmergencyContact)
-                                event(MappingUiEvent.DismissEmergencyCallDialog)
+                                event(MappingUiEvent.EmergencyCallDialog(visibility = false))
                             }
 
                         )
                     }
 
-                    if(uiState.deleteHazardousMarkerDialogVisible){
+                    if (uiState.deleteHazardousMarkerDialogVisible) {
                         DeleteHazardousLaneMarkerDialog(
-                            onDismissRequest = { event(MappingUiEvent.DismissHazardousLaneMarkerDialog) },
+                            onDismissRequest = {
+                                event(MappingUiEvent.HazardousLaneMarkerDialog(
+                                    visibility = false))
+                            },
                             modifier = Modifier,
                             onClickConfirmButton = {
                                 event(MappingUiEvent.OnConfirmDeleteIncident)
-                                event(MappingUiEvent.DismissHazardousLaneMarkerDialog)
+                                event(MappingUiEvent.HazardousLaneMarkerDialog(visibility = false))
                             })
                     }
 
                     if (uiState.isNoInternetVisible) {
                         NoInternetDialog(
-                            onDismiss = { event(MappingUiEvent.DismissNoInternetDialog) },
+                            onDismiss = { event(MappingUiEvent.NoInternetDialog(visibility = false)) },
                             modifier = Modifier.constrainAs(dialog) {
                                 end.linkTo(parent.end)
                                 start.linkTo(parent.start)
@@ -337,7 +346,8 @@ fun MappingScreenContent(
                                 bottom.linkTo(parent.bottom)
                                 height = Dimension.wrapContent
                                 centerTo(parent)
-                            }, onDismiss = { event(MappingUiEvent.DismissLocationPermission) }
+                            },
+                            onDismiss = { event(MappingUiEvent.LocationPermission(visibility = false)) }
                         )
                     }
 
@@ -353,23 +363,23 @@ fun MappingScreenContent(
                                 height = Dimension.wrapContent
                                 centerTo(parent)
                             },
-                            onDismissRequest = { event(MappingUiEvent.DismissAlertDialog) })
+                            onDismissRequest = { event(MappingUiEvent.AlertDialog(alertDialogState = AlertDialogState())) })
                     }
 
-                    if(uiState.discardHazardousMarkerDialogVisible){
+                    if (uiState.discardHazardousMarkerDialogVisible) {
                         DiscardHazardousLaneMarkerDialog(
-                             modifier = Modifier.constrainAs(dialog){
-                                 end.linkTo(parent.end)
-                                 start.linkTo(parent.start)
-                                 bottom.linkTo(parent.bottom)
-                                 height = Dimension.wrapContent
-                                 centerTo(parent)
-                             },
+                            modifier = Modifier.constrainAs(dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            },
                             onDismissRequest = {
-                                event(MappingUiEvent.DismissDiscardChangesMarkerDialog)
+                                event(MappingUiEvent.DiscardChangesMarkerDialog(visibility = false))
                             },
                             onClickDiscard = {
-                                event(MappingUiEvent.DismissDiscardChangesMarkerDialog)
+                                event(MappingUiEvent.DiscardChangesMarkerDialog(visibility = false))
                                 event(MappingUiEvent.DiscardMarkerChanges)
                             }
                         )
@@ -408,7 +418,11 @@ fun MappingScreenContent(
 
 
             if (uiState.isSinoTrackWebViewVisible) {
-                SinoTrackWebView(onDismiss = { event(MappingUiEvent.DismissSinoTrackWebView) })
+                SinoTrackWebView(onDismiss = {
+                    event(
+                        MappingUiEvent.SinoTrackWebViewVisibility(
+                            visibility = false))
+                })
             }
 
         }

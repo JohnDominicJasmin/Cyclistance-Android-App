@@ -119,7 +119,6 @@ fun ConversationScreen(
     )
 
 
-
     val notificationPermissionState = rememberPermissionState(
         permission = Manifest.permission.POST_NOTIFICATIONS
     ){ permissionGranted ->
@@ -130,13 +129,10 @@ fun ConversationScreen(
     }
 
 
-    val showPermissionDialog = remember{{
-        uiState = uiState.copy(notificationPermissionVisible = true)
+    val notificationPermissionDialogVisibility = remember{{ visible: Boolean ->
+        uiState = uiState.copy(notificationPermissionVisible = visible)
     }}
 
-    val dismissPermissionDialog = remember{{
-        uiState = uiState.copy(notificationPermissionVisible = false)
-    }}
 
 
 
@@ -146,7 +142,8 @@ fun ConversationScreen(
             notificationPermissionState.requestPermission(onGranted = {
                 notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             }, onExplain = {
-                showPermissionDialog()
+
+                notificationPermissionDialogVisibility(true)
             })
         } else {
             sendMessage()
@@ -194,7 +191,7 @@ fun ConversationScreen(
                 is ConversationUiEvent.SelectChatItem -> onClickChatItem(event.index)
                 is ConversationUiEvent.ToggleMessageArea -> onToggleExpand()
                 is ConversationUiEvent.OnChangeValueMessage -> onChangeValueMessage(event.message)
-                is ConversationUiEvent.DismissNotificationPermissionDialog -> dismissPermissionDialog()
+                is ConversationUiEvent.DismissNotificationPermissionDialog -> notificationPermissionDialogVisibility(false)
             }
         }
     )
