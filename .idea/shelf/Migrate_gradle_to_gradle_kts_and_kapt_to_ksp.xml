@@ -1,4 +1,4 @@
-<changelist name="Migrate_gradle_to_gradle_kts_and_kapt_to_ksp" date="1694027792538" recycled="false">
+<changelist name="Migrate_gradle_to_gradle_kts_and_kapt_to_ksp" date="1694451839544" recycled="false" deleted="true">
   <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Migrate_gradle_to_gradle_kts_and_kapt_to_ksp/shelved.patch" />
   <option name="DESCRIPTION" value="Migrate gradle to gradle.kts and kapt to ksp" />
   <binary>
