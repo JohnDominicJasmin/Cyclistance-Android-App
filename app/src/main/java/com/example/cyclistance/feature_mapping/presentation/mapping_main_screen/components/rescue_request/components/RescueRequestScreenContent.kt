@@ -52,7 +52,7 @@ fun RescueRequestScreenContent(
     Scaffold(modifier = modifier, topBar = {
         TopAppBarCreator(
             icon = Icons.Default.Close,
-            onClickIcon = { event(MappingUiEvent.DismissRescueRequestDialog) },
+            onClickIcon = { event(MappingUiEvent.RescueRequestDialog(visibility = false)) },
             topAppBarTitle = {
                 TitleTopAppBar(title = "Rescue Request")
             })
@@ -71,7 +71,7 @@ fun RescueRequestScreenContent(
                 if (uiState.alertDialogState.visible()) {
                     AlertDialog(
                         alertDialog = uiState.alertDialogState,
-                        onDismissRequest = { event(MappingUiEvent.DismissAlertDialog) })
+                        onDismissRequest = { event(MappingUiEvent.AlertDialog()) })
                 }
 
 
@@ -133,7 +133,7 @@ fun RescueRequestScreenContent(
                 }
 
                 if (uiState.isNoInternetVisible) {
-                    NoInternetDialog(onDismiss = { event(MappingUiEvent.DismissNoInternetDialog) })
+                    NoInternetDialog(onDismiss = { event(MappingUiEvent.NoInternetDialog(visibility = false)) })
                 }
 
             }

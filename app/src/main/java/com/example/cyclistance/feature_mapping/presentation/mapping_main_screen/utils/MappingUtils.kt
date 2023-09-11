@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.view.animation.DecelerateInterpolator
 import androidx.compose.animation.AnimatedVisibility
@@ -14,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.toBitmap
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LOCATION_CIRCLE_PULSE_RADIUS
@@ -24,6 +26,12 @@ import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.location.LocationComponentOptions
 import com.mapbox.mapboxsdk.maps.MapboxMap
+import com.mapbox.mapboxsdk.maps.Style
+import com.mapbox.mapboxsdk.style.layers.LineLayer
+import com.mapbox.mapboxsdk.style.layers.Property
+import com.mapbox.mapboxsdk.style.layers.PropertyFactory
+import com.mapbox.mapboxsdk.style.layers.SymbolLayer
+import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 
 
 internal object MappingUtils {
@@ -105,5 +113,40 @@ internal object MappingUtils {
     }
 
 
+
+    fun Style.initSource() {
+        addSource(GeoJsonSource(MappingConstants.ICON_SOURCE_ID))
+        addSource(GeoJsonSource(MappingConstants.ROUTE_SOURCE_ID))
+    }
+
+    fun Style.initLayers(context: Context) {
+
+        val drawableIcon =
+            ContextCompat.getDrawable(context, R.drawable.ic_map_rescuer)
+        val bitmapIcon = drawableIcon?.toBitmap(width = 100, height = 100)
+        bitmapIcon?.let { addImage(MappingConstants.TRANSACTION_ICON_ID, it) }
+
+        addLayer(
+            SymbolLayer(MappingConstants.ICON_LAYER_ID, MappingConstants.ICON_SOURCE_ID).apply {
+                setProperties(
+                    PropertyFactory.iconImage(MappingConstants.TRANSACTION_ICON_ID),
+                    PropertyFactory.iconAllowOverlap(true),
+                    PropertyFactory.iconIgnorePlacement(true)
+                )
+            }
+        )
+
+
+        addLayerBelow(
+            LineLayer(MappingConstants.ROUTE_LAYER_ID, MappingConstants.ROUTE_SOURCE_ID).apply {
+                setProperties(
+                    PropertyFactory.lineCap(Property.LINE_CAP_ROUND),
+                    PropertyFactory.lineJoin(Property.LINE_JOIN_ROUND),
+                    PropertyFactory.lineWidth(7f),
+                    PropertyFactory.lineColor(Color.parseColor("#006eff"))
+                )
+            }, MappingConstants.ICON_LAYER_ID)
+
+    }
 
 }

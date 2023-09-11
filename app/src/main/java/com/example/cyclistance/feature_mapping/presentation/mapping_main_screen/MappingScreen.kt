@@ -263,18 +263,21 @@ fun MappingScreen(
     }
 
 
-    val showRouteDirection = remember(uiState.routeDirection, mapboxMap) {
+    val showRouteDirection = remember(uiState.routeDirection?.geometry, mapboxMap) {
         {
 
             uiState.routeDirection?.geometry?.let { geometry ->
 
                 mapboxMap?.getStyle { style ->
-                    if (style.isFullyLoaded.not() || geometry.isEmpty()) {
+                    if (style.isFullyLoaded.not()) {
+                        return@getStyle
+                    }
+                    if(geometry.isEmpty()){
                         return@getStyle
                     }
 
                     val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
-                    routeLineSource?.setGeoJson(
+                    routeLineSource!!.setGeoJson(
                         FeatureCollection.fromFeature(
                             Feature.fromGeometry(
                                 LineString.fromPolyline(geometry, PRECISION_6))))
@@ -330,8 +333,17 @@ fun MappingScreen(
         }
     }
 
+    val changeCameraMode = remember{{ mode: Int ->
+        mapboxMap?.locationComponent?.apply {
+            if (isLocationComponentActivated) {
+                cameraMode = mode
+            }
+        }
+    }}
+
     val routeOverView = remember{{
-        mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING
+        changeCameraMode(CameraMode.TRACKING)
+
     }}
 
     val onLocateUserButton = remember(uiState.routeDirection){{
@@ -342,7 +354,7 @@ fun MappingScreen(
     }}
 
     val recenterRoute = remember{{
-        mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING_GPS
+        changeCameraMode(CameraMode.TRACKING_GPS)
     }}
 
     val openNavigationApp = remember(state.rescueTransaction?.route) {
@@ -414,13 +426,11 @@ fun MappingScreen(
         }
     }
 
-    val onDismissNoInternetDialog = remember {
-        {
-            uiState = uiState.copy(
-                isNoInternetVisible = false
-            )
-        }
-    }
+    val noInternetDialogVisibility = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(
+            isNoInternetVisible = visibility
+        )
+    }}
 
     val hasTransaction = remember(key1 = state.rescueTransaction, key2 = state.user.transaction) {
         state.getTransactionId().isNotEmpty()
@@ -463,22 +473,12 @@ fun MappingScreen(
     }
 
 
-    val onCollapseExpandableFAB = remember {
-        {
-            uiState = uiState.copy(
-                isFabExpanded = false
-            )
-        }
-    }
+    val expandableFab = remember{{ expanded: Boolean ->
+        uiState = uiState.copy(
+            isFabExpanded = expanded
+        )
+    }}
 
-
-    val onToggleExpandedFAB = remember {
-        {
-            uiState = uiState.copy(
-                isFabExpanded = !uiState.isFabExpanded
-            )
-        }
-    }
 
     fun checkIfHasEditingMarker(noMarkerCurrentlyEditing: () -> Unit){
         val isCurrentlyEditing = uiState.currentlyEditingHazardousMarker != null
@@ -502,11 +502,12 @@ fun MappingScreen(
         }
     }
 
-    val onDismissHazardousLaneMarkerDialog = remember{{
+    val hazardousLaneMarkerDialogVisibility = remember{{ visibility: Boolean ->
         uiState = uiState.copy(
-            deleteHazardousMarkerDialogVisible = false
+            deleteHazardousMarkerDialogVisible = visibility
         )
     }}
+
 
     val onMapClick = remember {
         {
@@ -521,7 +522,8 @@ fun MappingScreen(
                 })
             }
             onDismissRescueeBanner()
-            onCollapseExpandableFAB()
+            expandableFab(false)
+
 
         }
     }
@@ -530,7 +532,7 @@ fun MappingScreen(
         { latLng: LatLng ->
             checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
                 onDismissRescueeBanner()
-                onCollapseExpandableFAB()
+                expandableFab(false)
                 uiState = uiState.copy(
                     lastLongPressedLocation = latLng,
                     bottomSheetType = BottomSheetType.ReportIncident.type).also {
@@ -564,12 +566,9 @@ fun MappingScreen(
         }
     }
 
-    val onDismissLocationPermissionDialog = remember {
-        {
-            uiState = uiState.copy(locationPermissionDialogVisible = false)
-        }
-    }
-
+    val locationPermissionDialogVisibility = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(locationPermissionDialogVisible = visibility)
+    }}
 
     val onClickCancelButton = remember {
         { id: String ->
@@ -598,69 +597,37 @@ fun MappingScreen(
         }
     }
 
-    val showEmergencyCallDialog = remember {
-        {
-            uiState = uiState.copy(
-                isEmergencyCallDialogVisible = true
-            )
-        }
-    }
+    val emergencyCallDialogVisibility = remember{{ visible: Boolean ->
+        uiState = uiState.copy(
+            isEmergencyCallDialogVisible = visible
+        )
+    }}
 
-    val dismissEmergencyCallDialog = remember {
-        {
-            uiState = uiState.copy(
-                isEmergencyCallDialogVisible = false
-            )
-        }
-    }
+    val changeAlertDialogState = remember{{ alertDialogState: AlertDialogState ->
+        uiState = uiState.copy(
+            alertDialogState = alertDialogState
+        )
+    }}
 
-    val onDismissAlertDialog = remember {
-        {
-            uiState = uiState.copy(
-                alertDialogState = AlertDialogState()
-            )
-        }
-    }
+    val rescueRequestDialogVisibility = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(
+            isRescueRequestDialogVisible = visibility
+        )
+    }}
 
-    val onShowRescueRequestDialog = remember {
-        {
-            uiState = uiState.copy(
-                isRescueRequestDialogVisible = true
-            )
-        }
-    }
+    val sinoTrackWebViewVisibility = remember{{visible: Boolean ->
+        uiState = uiState.copy(
+            isSinoTrackWebViewVisible = visible
+        )
+    }}
 
-    val onDismissRescueRequestDialog = remember {
-        {
-            uiState = uiState.copy(
-                isRescueRequestDialogVisible = false
-            )
-        }
-    }
+    val rescueResultsDialogVisibility = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(
+            isRescueResultsDialogVisible = visibility
+        )
+    }}
 
-    val onDismissSinoTrackWebView = remember {
-        {
-            uiState = uiState.copy(
-                isSinoTrackWebViewVisible = false
-            )
-        }
-    }
 
-    val onShowSinoTrackWebView = remember {
-        {
-            uiState = uiState.copy(
-                isSinoTrackWebViewVisible = true
-            )
-        }
-    }
-
-    val onDismissRescueResultsDialog = remember {
-        {
-            uiState = uiState.copy(
-                isRescueResultsDialogVisible = false
-            )
-        }
-    }
 
     val callPhoneNumber = remember {
         { phoneNumber: String ->
@@ -762,9 +729,13 @@ fun MappingScreen(
         ))
     }}
 
-    val onDismissDiscardChangesMarker = remember {{
-        uiState = uiState.copy(discardHazardousMarkerDialogVisible = false)
+    val discardChangesMarkerDialogVisibility = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(
+            discardHazardousMarkerDialogVisible = visibility
+        )
     }}
+
+
 
     val onDiscardMarkerChanges = remember{{
         uiState = uiState.copy(currentlyEditingHazardousMarker = null)
@@ -819,6 +790,9 @@ fun MappingScreen(
         uiState = uiState.copy(cancelOnGoingRescueDialogVisible = visibility)
     }}
 
+    val notificationPermissionDialogVisibility = remember{{ visible: Boolean ->
+        uiState = uiState.copy(notificationPermissionVisible = visible)
+    }}
 
 
 
@@ -866,9 +840,7 @@ fun MappingScreen(
         mappingViewModel.eventFlow.distinctUntilChanged().collectLatest {
             when(it){
                 is MappingEvent.NoInternetConnection -> {
-                    uiState = uiState.copy(
-                        isNoInternetVisible = true
-                    )
+                   noInternetDialogVisibility(true)
                 }
 
                 else -> {}
@@ -987,7 +959,9 @@ fun MappingScreen(
                         isRescueRequestDialogVisible = false
                     ).also {
                         expandBottomSheet()
-                        onDismissRescueRequestDialog()
+                        rescueRequestDialogVisibility(false)
+                        rescueResultsDialogVisibility(false)
+
                     }
                 }
 
@@ -1014,18 +988,16 @@ fun MappingScreen(
                 }
 
                 is MappingEvent.RescueHasTransaction -> {
-                    uiState = uiState.copy(
-                        alertDialogState = AlertDialogState(
-                            title = "Cannot Request",
-                            description = "Unfortunately the Rescuer is currently in a Rescue.",
-                            icon = R.raw.error
-                        )
-                    )
+                    changeAlertDialogState(AlertDialogState(
+                        title = "Cannot Request",
+                        description = "Unfortunately the Rescuer is currently in a Rescue.",
+                        icon = R.raw.error
+                    ))
                 }
 
                 is MappingEvent.UserHasCurrentTransaction -> {
-                    uiState = uiState.copy(
-                        alertDialogState = AlertDialogState(
+                    changeAlertDialogState(
+                        AlertDialogState(
                             title = "Cannot Request",
                             description = "You can only have one transaction at a time",
                             icon = R.raw.error
@@ -1051,12 +1023,13 @@ fun MappingScreen(
                 }
 
                 is MappingEvent.IncidentDistanceTooFar -> {
-                    uiState = uiState.copy(
-                        alertDialogState = AlertDialogState(
+                    changeAlertDialogState(
+                        AlertDialogState(
                             title = "Exceeds Reachable Distance",
                             description = "The incident is taking place quite a distance away from your current location, making it challenging to directly engage or intervene.",
                             icon = R.raw.error
-                        ))
+                        )
+                    )
                 }
 
                 is MappingEvent.SelectHazardousLaneMarker -> {
@@ -1081,21 +1054,23 @@ fun MappingScreen(
                     Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()
                 }
                 MappingEvent.UpdateIncidentSuccess -> {
-                    uiState = uiState.copy(alertDialogState = AlertDialogState(
-                        title = "Incident Updated",
-                        description = "The incident has been updated successfully",
-                        icon = R.raw.success
-                    ))
+                    changeAlertDialogState(
+                        AlertDialogState(
+                            title = "Incident Updated",
+                            description = "The incident has been updated successfully",
+                            icon = R.raw.success
+                        )
+                    )
                     onDiscardMarkerChanges()
                     collapseBottomSheet()
                 }
 
                 is MappingEvent.GenerateRouteNavigationFailed -> {
+                    changeAlertDialogState(AlertDialogState(
+                        title = "Failed to Generate Route",
+                        description = "Failed to generate route to the destination due to a connection error.",
+                    ))
                     uiState = uiState.copy(
-                        alertDialogState = AlertDialogState(
-                            title = "Failed to Generate Route",
-                            description = "Failed to generate route to the destination due to a connection error.",
-                        ),
                         generateRouteFailed = true
                     )
                 }
@@ -1116,7 +1091,7 @@ fun MappingScreen(
     }
 
     LaunchedEffect(
-        key1 = state.rescueTransaction,
+        key1 = state.rescueTransaction?.route,
         key2 = hasTransaction,
         key3 = isRescueCancelled) {
 
@@ -1150,7 +1125,7 @@ fun MappingScreen(
     LaunchedEffect(
         key1 = hasInternetConnection,
         key2 = uiState.generateRouteFailed,
-        key3 = state.rescueTransaction) {
+        key3 = state.rescueTransaction?.route) {
 
         if (hasInternetConnection.not()) {
             return@LaunchedEffect
@@ -1227,7 +1202,7 @@ fun MappingScreen(
                 is MappingUiEvent.OnInitializeMap -> onInitializeMapboxMap(event.mapboxMap)
                 is MappingUiEvent.RescueRequestAccepted -> onClickOkAcceptedRescue()
                 is MappingUiEvent.OnChangeCameraState -> onChangeCameraPosition(event.cameraState)
-                is MappingUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()
+                is MappingUiEvent.NoInternetDialog -> noInternetDialogVisibility(event.visibility)
                 is MappingUiEvent.OnMapClick -> onMapClick()
                 is MappingUiEvent.DismissBanner -> onDismissRescueeBanner()
                 is MappingUiEvent.LocateUser -> onLocateUserButton()
@@ -1237,22 +1212,19 @@ fun MappingScreen(
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
                 is MappingUiEvent.RescueArrivedConfirmed -> {}
                 is MappingUiEvent.DestinationReachedConfirmed -> {}
-                is MappingUiEvent.DismissLocationPermission -> onDismissLocationPermissionDialog()
-                is MappingUiEvent.OnToggleExpandableFAB -> onToggleExpandedFAB()
-                is MappingUiEvent.ShowEmergencyCallDialog -> showEmergencyCallDialog()
-                is MappingUiEvent.DismissEmergencyCallDialog -> dismissEmergencyCallDialog()
+                is MappingUiEvent.LocationPermission ->  locationPermissionDialogVisibility(event.visibility)
+                is MappingUiEvent.ExpandableFab -> expandableFab(event.expanded)
+                is MappingUiEvent.EmergencyCallDialog -> emergencyCallDialogVisibility(event.visibility)
                 is MappingUiEvent.OpenFamilyTracker -> shareLocation()
-                is MappingUiEvent.ShowRescueRequestDialog -> onShowRescueRequestDialog()
-                is MappingUiEvent.DismissRescueRequestDialog -> onDismissRescueRequestDialog()
+                is MappingUiEvent.RescueRequestDialog -> rescueRequestDialogVisibility(event.visibility)
                 is MappingUiEvent.DeclineRequestHelp -> onClickCancelButton(event.id)
                 is MappingUiEvent.ConfirmRequestHelp -> onClickConfirmButton(event.id)
-                is MappingUiEvent.DismissAlertDialog -> onDismissAlertDialog()
-                is MappingUiEvent.OnCollapseExpandableFAB -> onCollapseExpandableFAB()
+                is MappingUiEvent.AlertDialog -> changeAlertDialogState(event.alertDialogState)
+
                 is MappingUiEvent.OnMapLongClick -> onMapLongClick(event.latLng)
                 is MappingUiEvent.OnReportIncident -> onClickReportIncident(event.labelIncident)
-                is MappingUiEvent.DismissSinoTrackWebView -> onDismissSinoTrackWebView()
-                is MappingUiEvent.ShowSinoTrackWebView -> onShowSinoTrackWebView()
-                is MappingUiEvent.DismissRescueResultsDialog -> onDismissRescueResultsDialog()
+                is MappingUiEvent.SinoTrackWebViewVisibility -> sinoTrackWebViewVisibility(event.visibility)
+                is MappingUiEvent.RescueResultsDialog -> rescueResultsDialogVisibility(event.visibility)
                 is MappingUiEvent.OnEmergencyCall -> onEmergencyCall(event.phoneNumber)
                 is MappingUiEvent.OnAddEmergencyContact -> onAddEmergencyContact()
                 is MappingUiEvent.OpenHazardousLaneBottomSheet -> onOpenHazardousLaneBottomSheet()
@@ -1260,28 +1232,21 @@ fun MappingScreen(
                 is MappingUiEvent.OnChangeIncidentDescription -> onChangeIncidentDescription(event.description)
                 is MappingUiEvent.OnChangeIncidentLabel -> onChangeIncidentLabel(event.label)
                 is MappingUiEvent.OnClickDeleteIncident -> onClickDeleteIncident()
-                is MappingUiEvent.OnClickEditIncidentDescription -> onClickEditIncidentDescription(
-                    event.marker)
-
-                is MappingUiEvent.OnClickMapMarker -> onMapMarkerClick(
-                    event.markerSnippet,
-                    event.markerId)
-
-                MappingUiEvent.DismissHazardousLaneMarkerDialog -> onDismissHazardousLaneMarkerDialog()
+                is MappingUiEvent.OnClickEditIncidentDescription -> onClickEditIncidentDescription(event.marker)
+                is MappingUiEvent.OnClickMapMarker -> onMapMarkerClick(event.markerSnippet, event.markerId)
+                is MappingUiEvent.HazardousLaneMarkerDialog -> hazardousLaneMarkerDialogVisibility(event.visibility)
                 MappingUiEvent.OnConfirmDeleteIncident -> onConfirmDeleteIncident()
-                MappingUiEvent.DismissDiscardChangesMarkerDialog -> onDismissDiscardChangesMarker()
+                is MappingUiEvent.DiscardChangesMarkerDialog -> discardChangesMarkerDialogVisibility(event.visibility)
                 MappingUiEvent.DiscardMarkerChanges -> onDiscardMarkerChanges()
                 MappingUiEvent.DismissIncidentDescriptionBottomSheet -> onDismissIncidentDescriptionBottomSheet()
                 MappingUiEvent.CancelEditIncidentDescription -> onCancelEditIncidentDescription()
-                is MappingUiEvent.UpdateIncidentDescription -> onUpdateReportedIncident(
-                    event.description,
-                    event.label)
-
+                is MappingUiEvent.UpdateIncidentDescription -> onUpdateReportedIncident(event.description, event.label)
                 MappingUiEvent.OnClickHazardousInfoGotIt -> onClickHazardousInfoGotIt()
-                MappingUiEvent.DismissCancelSearchDialog -> cancelSearchDialogVisibility(false)
+                is MappingUiEvent.CancelSearchDialog -> cancelSearchDialogVisibility(event.visibility)
                 MappingUiEvent.SearchCancelled -> cancelSearchingAssistance()
                 MappingUiEvent.CancelOnGoingRescue -> cancelOnGoingRescue()
-                MappingUiEvent.DismissCancelOnGoingRescueDialog -> cancelOnGoingRescueDialogVisibility(false)
+                is MappingUiEvent.CancelOnGoingRescueDialog -> cancelOnGoingRescueDialogVisibility(event.visibility)
+                is MappingUiEvent.NotificationPermissionDialog ->  notificationPermissionDialogVisibility(event.visibility)
             }
         }
     )

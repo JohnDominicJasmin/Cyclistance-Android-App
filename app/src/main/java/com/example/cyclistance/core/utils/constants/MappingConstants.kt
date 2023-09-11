@@ -109,6 +109,20 @@ object MappingConstants {
     const val KEY_ID_LATITUDE = "latitude"
 
 
+
+    //location notification
+
+
+
+
+    //rescue notification
+    const val RESCUE_NOTIFICATION_ID = 102
+    const val RESCUE_NOTIFICATION_CHANNEL_ID = "rescue_notification_channel_id"
+    const val RESCUE_NOTIFICATION_CHANNEL_NAME = "Rescue Confirmation"
+    const val RESCUE_NOTIFICATION_CHANNEL_DESCRIPTION = "Rescue Confirmation Notification"
+
+
+
     const val MAXIMUM_HAZARDOUS_MARKER = 3
 
 }

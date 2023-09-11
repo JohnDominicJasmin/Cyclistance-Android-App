@@ -1,8 +1,5 @@
 package com.example.cyclistance.core.utils.constants
 
-import android.app.NotificationManager
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.datastore.preferences.core.stringPreferencesKey
 
 object MessagingConstants {
@@ -28,14 +25,15 @@ object MessagingConstants {
     const val REMOTE_MSG_CONTENT_FORMAT = "application/json"
     const val REMOTE_MSG_DATA = "data"
     const val REMOTE_MSG_REGISTRATION_IDS = "registration_ids"
-    const val MESSAGING_NOTIFICATION_ID = 101
-    const val MESSAGING_NOTIFICATION_CHANNEL = "messaging_notification_channel"
 
+
+
+    //notifications
+    const val NOTIFICATION_ID = 101
+    const val CHANNEL_ID = "messaging_channel_id"
+    const val CHANNEL_DESCRIPTION = "Messaging Notifications"
     const val NOTIFICATION_REQUEST_CODE = 200
     const val CHANNEL_NAME = "Messaging Notification"
-    const val CHANNEL_DESCRIPTION = "Messaging Notifications"
-    @RequiresApi(Build.VERSION_CODES.N)
-    const val CHANNEL_IMPORTANCE = NotificationManager.IMPORTANCE_HIGH
 
 
     const val MESSAGING_URI = "cyclistance://messaging/conversation/"

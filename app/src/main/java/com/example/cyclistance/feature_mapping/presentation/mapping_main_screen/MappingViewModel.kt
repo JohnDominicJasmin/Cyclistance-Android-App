@@ -57,13 +57,14 @@ import timber.log.Timber
 import javax.inject.Inject
 import com.google.android.gms.maps.model.LatLng as GoogleLatLng
 
+
 @HiltViewModel
 class MappingViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val authUseCase: AuthenticationUseCase,
     private val mappingUseCase: MappingUseCase,
     private val userProfileUseCase: UserProfileUseCase,
-    private val defaultDispatcher: CoroutineDispatcher
+    private val defaultDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
 
@@ -73,6 +74,7 @@ class MappingViewModel @Inject constructor(
     private var getRescueTransactionUpdatesJob: Job? = null
     private var getTransactionLocationUpdatesJob: Job? = null
     private var trackingHandler: TrackingStateHandler
+//    private var notifyUserHandler: NotifyUserHandler
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(
         savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState(userId = getId())
@@ -224,9 +226,6 @@ class MappingViewModel @Inject constructor(
         }
 
     }
-
-
-
 
 
     private fun acceptRescueRequest(id: String) {
@@ -555,30 +554,30 @@ class MappingViewModel @Inject constructor(
         incidentDescription: String) {
 
         viewModelScope.launch {
-                val userLocation = state.value.getCurrentLocation()
+            val userLocation = state.value.getCurrentLocation()
 
-                if (userLocation == null) {
-                    _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
-                    return@launch
-                }
+            if (userLocation == null) {
+                _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
+                return@launch
+            }
 
-                val distance = mappingUseCase.getCalculatedDistanceUseCase(
-                    startingLocation = userLocation,
-                    destinationLocation = LocationModel(
-                        latitude = latLng.latitude,
-                        longitude = latLng.longitude
-                    )
+            val distance = mappingUseCase.getCalculatedDistanceUseCase(
+                startingLocation = userLocation,
+                destinationLocation = LocationModel(
+                    latitude = latLng.latitude,
+                    longitude = latLng.longitude
                 )
+            )
 
-                if (distance > DEFAULT_RADIUS) {
-                    _eventFlow.emit(MappingEvent.IncidentDistanceTooFar)
-                    return@launch
-                }
+            if (distance > DEFAULT_RADIUS) {
+                _eventFlow.emit(MappingEvent.IncidentDistanceTooFar)
+                return@launch
+            }
 
-                reportIncident(
-                    label = label,
-                    latLng = latLng,
-                    incidentDescription = incidentDescription)
+            reportIncident(
+                label = label,
+                latLng = latLng,
+                incidentDescription = incidentDescription)
 
 
         }
@@ -614,7 +613,7 @@ class MappingViewModel @Inject constructor(
                         label = label,
                         description = incidentDescription,
 
-                    ))
+                        ))
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.ReportIncidentSuccess)
             }.onFailure {
@@ -820,15 +819,36 @@ class MappingViewModel @Inject constructor(
         runCatching {
             getId()
         }.onSuccess { id ->
-            val user = findUser(id = id)
-            val respondents = user.getUserRescueRespondents(this)
-            _state.update {
-                it.copy(newRescueRequest = NewRescueRequestsModel(request = respondents),
-                    user = user)
+            findUser(id = id)?.let { user ->
+                val respondents = user.getUserRescueRespondents(this)
+                _state.update {
+                    it.copy(
+                        newRescueRequest = NewRescueRequestsModel(request = respondents),
+                        user = user)
+                }
+                user.getTransactionId()?.let { loadRescueTransaction(transactionId = it) }
+                handleUserNotification(user)
             }
-            user.getTransactionId()?.let { loadRescueTransaction(transactionId = it) }
+
         }.onFailure {
             Timber.e("Failed to get user: ${it.message}")
+        }
+
+    }
+
+    private fun NearbyCyclist.handleUserNotification(user: UserItem){
+        val rescueRequest = user.getUserRescueRespondents(this).lastOrNull()
+        rescueRequest?.id?.let { requestId ->
+            if(state.value.lastRequestNotifiedId == requestId){
+                return
+            }
+    /*        notifyUserHandler.showNotification(
+                title = "New Rescue Request",
+                message = "You have a rescue request from ${rescueRequest.name}"
+            )*/
+
+            _state.update { it.copy(lastRequestNotifiedId = requestId) }
+
         }
 
     }
@@ -837,7 +857,7 @@ class MappingViewModel @Inject constructor(
         val rescueRespondentsSnapShot: MutableList<RescueRequestItemModel> = mutableListOf()
 
         rescueRequest?.respondents?.forEach { respondent ->
-            val userRespondent = nearbyCyclist.findUser(id = respondent.clientId)
+            val userRespondent = nearbyCyclist.findUser(id = respondent.clientId) ?: UserItem()
             val distance =
                 calculateDistance(startLocation = location, endLocation = userRespondent.location)
 
@@ -909,7 +929,6 @@ class MappingViewModel @Inject constructor(
     }
 
 
-
     private fun subscribeToRescueTransactionUpdates() {
         if (getRescueTransactionUpdatesJob?.isActive == true) {
             return
@@ -927,6 +946,7 @@ class MappingViewModel @Inject constructor(
                         rescueTransaction = rescueTransactions,
                         id = getId()
                     )
+//                    showNotification()
                     trackingHandler.updateClient()
                 }.launchIn(this@launch).invokeOnCompletion {
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
@@ -934,8 +954,6 @@ class MappingViewModel @Inject constructor(
 
             }
     }
-
-
 
 
     private fun RescueTransaction.updateCurrentRescueTransaction() {
@@ -1091,7 +1109,8 @@ class MappingViewModel @Inject constructor(
             Timber.e("FAILED TO CREATE MOCK USERS: ${it.message}")
         }
     }
-    private fun removeBottomSheet(){
+
+    private fun removeBottomSheet() {
         viewModelScope.launch(SupervisorJob()) {
             mappingUseCase.bottomSheetTypeUseCase(bottomSheet = "")
         }

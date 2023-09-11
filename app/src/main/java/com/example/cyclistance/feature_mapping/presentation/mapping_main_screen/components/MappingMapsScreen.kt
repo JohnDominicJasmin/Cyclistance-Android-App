@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -17,11 +16,8 @@ import androidx.lifecycle.*
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
-import com.example.cyclistance.core.utils.constants.MappingConstants.ICON_LAYER_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.ICON_SOURCE_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL
-import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_LAYER_ID
-import com.example.cyclistance.core.utils.constants.MappingConstants.ROUTE_SOURCE_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.TRANSACTION_ICON_ID
 import com.example.cyclistance.core.utils.formatter.IconFormatter.getHazardousLaneImage
 import com.example.cyclistance.core.utils.formatter.IconFormatter.getNearbyCyclistImage
@@ -34,6 +30,8 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.*
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.animateCameraPosition
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.initLayers
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.initSource
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.setDefaultSettings
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.mapbox.geojson.Feature
@@ -47,10 +45,7 @@ import com.mapbox.mapboxsdk.maps.MapView
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.maps.Style
 import com.mapbox.mapboxsdk.style.expressions.Expression.*
-import com.mapbox.mapboxsdk.style.layers.LineLayer
-import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory.*
-import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -66,7 +61,6 @@ fun MappingMapsScreen(
     state: MappingState,
     uiState: MappingUiState,
     mapboxMap: MapboxMap?,
-
     routeDirection: RouteDirection?,
     hazardousLaneMarkers: List<HazardousLaneMarker>,
     event: (MappingUiEvent) -> Unit
@@ -184,11 +178,13 @@ fun MappingMapsScreen(
             isUserNavigating || hasActiveTransaction
 
         }
-    val dismissibleNearbyUserMapTypes = remember{listOf(MapType.HazardousLane.type, MapType.Traffic.type)}
-    val dismissibleHazardousMapTypes = remember{listOf(MapType.Default.type, MapType.Traffic.type)}
+    val dismissibleNearbyUserMapTypes =
+        remember { listOf(MapType.HazardousLane.type, MapType.Traffic.type) }
+    val dismissibleHazardousMapTypes =
+        remember { listOf(MapType.Default.type, MapType.Traffic.type) }
 
 
-    LaunchedEffect(key1 = state.mapType, key2 = shouldDismissIcons, key3 = mapboxMap){
+    LaunchedEffect(key1 = state.mapType, key2 = shouldDismissIcons, key3 = mapboxMap) {
 
         if (state.mapType in dismissibleNearbyUserMapTypes) {
             dismissNearbyUserMarkers()
@@ -265,7 +261,7 @@ fun MappingMapsScreen(
     }
 
 
-    LaunchedEffect(key1 = mapboxMap, key2 = state.userLocation){
+    LaunchedEffect(key1 = mapboxMap, key2 = state.userLocation) {
         observeHazardousMarker()
     }
 
@@ -288,7 +284,7 @@ fun MappingMapsScreen(
 
         mapboxMap?.addOnCameraMoveListener {
             if (uiState.isFabExpanded) {
-                event(MappingUiEvent.OnCollapseExpandableFAB)
+                event(MappingUiEvent.ExpandableFab(false))
             }
         }
 
@@ -370,7 +366,13 @@ fun MappingMapsScreen(
         val lightThemeMap =
             if (state.mapType == MapType.Traffic.type) Style.TRAFFIC_DAY else Style.LIGHT
 
-        mapboxMap?.setStyle(if (isDarkTheme) darkThemeMap else lightThemeMap)
+        mapboxMap?.setStyle(if (isDarkTheme) darkThemeMap else lightThemeMap){ loadedStyle ->
+
+            if (loadedStyle.isFullyLoaded) {
+                loadedStyle.initSource()
+                loadedStyle.initLayers(context)
+            }
+        }
     }
     Map(
         modifier = modifier,
@@ -378,6 +380,7 @@ fun MappingMapsScreen(
         event = event)
 
 }
+
 
 
 @Composable
@@ -402,62 +405,27 @@ private fun Map(
     ) {
 
 
-        AndroidView(factory = { mapView }) {
+        AndroidView(factory = { mapView }) { view ->
             if (isInitialized) {
                 return@AndroidView
             }
             CoroutineScope(Dispatchers.Main).launch {
 
-
-
-                val initSource = { loadedMapStyle: Style ->
-                    loadedMapStyle.addSource(GeoJsonSource(ICON_SOURCE_ID))
-                    loadedMapStyle.addSource(GeoJsonSource(ROUTE_SOURCE_ID))
-                }
-
-                val initLayers = { loadedMapStyle: Style ->
-
-
-                    val drawableIcon =
-                        ContextCompat.getDrawable(it.context, R.drawable.ic_map_rescuer)
-                    val bitmapIcon = drawableIcon?.toBitmap(width = 100, height = 100)
-                    bitmapIcon?.let { loadedMapStyle.addImage(TRANSACTION_ICON_ID, it) }
-
-                    loadedMapStyle.addLayer(
-                        SymbolLayer(ICON_LAYER_ID, ICON_SOURCE_ID).apply {
-                            setProperties(
-                                iconImage(TRANSACTION_ICON_ID),
-                                iconAllowOverlap(true),
-                                iconIgnorePlacement(true)
-                            )
-                        }
-                    )
-
-
-                    loadedMapStyle.addLayerBelow(
-                        LineLayer(ROUTE_LAYER_ID, ROUTE_SOURCE_ID).apply {
-                            setProperties(
-                                lineCap(Property.LINE_CAP_ROUND),
-                                lineJoin(Property.LINE_JOIN_ROUND),
-                                lineWidth(7f),
-                                lineColor(Color.parseColor("#006eff"))
-                            )
-                        }, ICON_LAYER_ID)
-
-
-                }
-                val darkThemeMap = if(mapType == MapType.Traffic.type) Style.TRAFFIC_NIGHT else Style.DARK
-                val lightThemeMap = if(mapType == MapType.Traffic.type) Style.TRAFFIC_DAY else Style.LIGHT
-                mapView.getMapAsync {
-                    it.setStyle(if (isDarkTheme) darkThemeMap else lightThemeMap) { loadedStyle ->
+                val darkThemeMap =
+                    if (mapType == MapType.Traffic.type) Style.TRAFFIC_NIGHT else Style.DARK
+                val lightThemeMap =
+                    if (mapType == MapType.Traffic.type) Style.TRAFFIC_DAY else Style.LIGHT
+                mapView.getMapAsync { mapbox ->
+                    mapbox.setStyle(if (isDarkTheme) darkThemeMap else lightThemeMap) { loadedStyle ->
 
                         if (loadedStyle.isFullyLoaded) {
-                            event(MappingUiEvent.OnInitializeMap(it))
-                            initSource(loadedStyle)
-                            initLayers(loadedStyle)
+                            event(MappingUiEvent.OnInitializeMap(mapbox))
+                            loadedStyle.initSource()
+                            loadedStyle.initLayers(view.context)
+
                         }
                     }
-                    it.setDefaultSettings()
+                    mapbox.setDefaultSettings()
                 }
                 isInitialized = true
 

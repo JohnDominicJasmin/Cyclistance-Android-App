@@ -177,7 +177,7 @@ fun RescueResultsScreenContent(
                         .fillMaxWidth(0.8f),
                     negativeButtonText = "No",
                     positiveButtonText = "Yes",
-                    onClickNegativeButton = { event(MappingUiEvent.DismissRescueResultsDialog) },
+                    onClickNegativeButton = { event(MappingUiEvent.RescueResultsDialog(visibility = false)) },
                     onClickPositiveButton = stepUp)
 
             }
@@ -216,7 +216,7 @@ fun RescueResultsScreenContent(
 
 
                 Button(
-                    onClick = {event(MappingUiEvent.DismissRescueResultsDialog)}, shape = RoundedCornerShape(8.dp),
+                    onClick = {event(MappingUiEvent.RescueResultsDialog(visibility = false))}, shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = MaterialTheme.colors.primary,
                         contentColor = MaterialTheme.colors.onPrimary
