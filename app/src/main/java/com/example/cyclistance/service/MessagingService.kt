@@ -1,9 +1,12 @@
 package com.example.cyclistance.service
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.app.TaskStackBuilder
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
@@ -64,12 +67,19 @@ class MessagingService @Inject constructor(
             setContentText(receivedMessage)
             setStyle(notificationStyle)
         }
-
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                return
+            }
+        }
 
         notificationManagerCompat.notify(NOTIFICATION_ID, notificationCompat.build())
 
 
     }
+
+
+
 }
 
 
