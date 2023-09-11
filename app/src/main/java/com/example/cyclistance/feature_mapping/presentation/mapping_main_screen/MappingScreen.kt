@@ -261,18 +261,21 @@ fun MappingScreen(
     }
 
 
-    val showRouteDirection = remember(uiState.routeDirection, mapboxMap) {
+    val showRouteDirection = remember(uiState.routeDirection?.geometry, mapboxMap) {
         {
 
             uiState.routeDirection?.geometry?.let { geometry ->
 
                 mapboxMap?.getStyle { style ->
-                    if (style.isFullyLoaded.not() || geometry.isEmpty()) {
+                    if (style.isFullyLoaded.not()) {
+                        return@getStyle
+                    }
+                    if(geometry.isEmpty()){
                         return@getStyle
                     }
 
                     val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
-                    routeLineSource?.setGeoJson(
+                    routeLineSource!!.setGeoJson(
                         FeatureCollection.fromFeature(
                             Feature.fromGeometry(
                                 LineString.fromPolyline(geometry, PRECISION_6))))
@@ -1121,7 +1124,7 @@ fun MappingScreen(
     }
 
     LaunchedEffect(
-        key1 = state.rescueTransaction,
+        key1 = state.rescueTransaction?.route,
         key2 = hasTransaction,
         key3 = isRescueCancelled) {
 
@@ -1155,7 +1158,7 @@ fun MappingScreen(
     LaunchedEffect(
         key1 = hasInternetConnection,
         key2 = uiState.generateRouteFailed,
-        key3 = state.rescueTransaction) {
+        key3 = state.rescueTransaction?.route) {
 
         if (hasInternetConnection.not()) {
             return@LaunchedEffect
