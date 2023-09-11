@@ -326,8 +326,17 @@ fun MappingScreen(
         }
     }
 
+    val changeCameraMode = remember{{ mode: Int ->
+        mapboxMap?.locationComponent?.apply {
+            if (isLocationComponentActivated) {
+                cameraMode = mode
+            }
+        }
+    }}
+
     val routeOverView = remember{{
-        mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING
+        changeCameraMode(CameraMode.TRACKING)
+
     }}
 
     val onLocateUserButton = remember(uiState.routeDirection){{
@@ -338,7 +347,7 @@ fun MappingScreen(
     }}
 
     val recenterRoute = remember{{
-        mapboxMap?.locationComponent?.cameraMode = CameraMode.TRACKING_GPS
+        changeCameraMode(CameraMode.TRACKING_GPS)
     }}
 
     val openNavigationApp = remember(state.rescueTransaction?.route) {
