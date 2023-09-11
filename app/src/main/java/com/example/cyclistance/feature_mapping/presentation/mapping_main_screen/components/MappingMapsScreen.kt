@@ -253,6 +253,10 @@ fun MappingMapsScreen(
             return
         }
 
+        if(uiState.searchingAssistance){
+            return@LaunchedEffect
+        }
+
         showHazardousLaneIcon()
     }
 
