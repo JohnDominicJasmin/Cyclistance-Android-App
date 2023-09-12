@@ -23,6 +23,8 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection
+import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_START_FOREGROUND
+import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_STOP_FOREGROUND
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
@@ -973,6 +975,8 @@ fun MappingScreen(
                         routeDirection = event.routeDirection,
                         generateRouteFailed = false
                     )
+                    context.startLocationServiceIntentAction(intentAction = ACTION_START_FOREGROUND)
+
                 }
 
                 is MappingEvent.RemoveAssignedTransactionSuccess -> {
@@ -1134,6 +1138,7 @@ fun MappingScreen(
 
         if (route.geometry.isEmpty()) {
             removeRouteDirection()
+            context.startLocationServiceIntentAction(intentAction = ACTION_STOP_FOREGROUND)
             return@LaunchedEffect
         }
         showRouteDirection()

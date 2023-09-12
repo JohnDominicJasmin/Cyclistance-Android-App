@@ -4,8 +4,11 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import com.example.cyclistance.core.utils.constants.LocationServiceConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_START
+import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_START_FOREGROUND
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_STOP
+import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_STOP_FOREGROUND
 import com.example.cyclistance.feature_mapping.domain.location.LocationClient
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -50,6 +53,12 @@ class LocationService(
             ACTION_STOP -> {
                 stopService()
                 isServiceRunning = false
+            }
+            ACTION_START_FOREGROUND -> {
+                startForeground(LocationServiceConstants.LOCATION_NOTIFICATION_ID, notification.build())
+            }
+            ACTION_STOP_FOREGROUND -> {
+                stopForeground(true)
             }
         }
         return super.onStartCommand(intent, flags, startId)
