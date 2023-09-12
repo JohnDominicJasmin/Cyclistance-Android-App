@@ -28,6 +28,7 @@ object MappingNotificationModule {
             NotificationCompat.Builder(context, RESCUE_NOTIFICATION_CHANNEL_ID)
                 .setOngoing(false)
                 .setSmallIcon(R.drawable.ic_app_icon_cyclistance)
+                .setVibrate(longArrayOf(200,200,200))
                 .setAutoCancel(true)
                 .setShowWhen(true)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

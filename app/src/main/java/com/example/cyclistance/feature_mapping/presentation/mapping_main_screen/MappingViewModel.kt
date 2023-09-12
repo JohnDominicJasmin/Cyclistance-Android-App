@@ -504,6 +504,13 @@ class MappingViewModel @Inject constructor(
 
             is MappingVmEvent.ShouldShowHazardousStartingInfo -> setShouldShowHazardousStartingInfo(
                 event.shouldShow)
+
+            is MappingVmEvent.NotifyUser -> {
+                mappingUseCase.showNotificationUseCase(
+                    title = event.title,
+                    message = event.message
+                )
+            }
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
@@ -827,7 +834,7 @@ class MappingViewModel @Inject constructor(
                         user = user)
                 }
                 user.getTransactionId()?.let { loadRescueTransaction(transactionId = it) }
-                handleUserNotification(user)
+//                handleUserNotification(user)
             }
 
         }.onFailure {
@@ -836,22 +843,23 @@ class MappingViewModel @Inject constructor(
 
     }
 
-    private fun NearbyCyclist.handleUserNotification(user: UserItem){
+/*    private fun NearbyCyclist.handleUserNotification(user: UserItem){
         val rescueRequest = user.getUserRescueRespondents(this).lastOrNull()
         rescueRequest?.id?.let { requestId ->
             if(state.value.lastRequestNotifiedId == requestId){
                 return
             }
-    /*        notifyUserHandler.showNotification(
+
+    *//*        notifyUserHandler.showNotification(
                 title = "New Rescue Request",
                 message = "You have a rescue request from ${rescueRequest.name}"
-            )*/
+            )*//*
 
             _state.update { it.copy(lastRequestNotifiedId = requestId) }
 
         }
 
-    }
+    }*/
 
     private fun UserItem.getUserRescueRespondents(nearbyCyclist: NearbyCyclist): List<RescueRequestItemModel> {
         val rescueRespondentsSnapShot: MutableList<RescueRequestItemModel> = mutableListOf()

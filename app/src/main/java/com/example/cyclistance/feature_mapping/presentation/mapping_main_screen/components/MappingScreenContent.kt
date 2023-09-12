@@ -16,6 +16,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -86,6 +87,11 @@ fun MappingScreenContent(
         derivedStateOf {
             hazardousLaneMarkers.count { it.idCreator == state.userId }
         }
+    }
+
+    LaunchedEffect(key1 = respondentCount){
+        val request = state.newRescueRequest?.request?.lastOrNull() ?: return@LaunchedEffect
+        event(MappingUiEvent.NotifyUser(title = "New Rescue Request", message = "Request from ${request.name}, distance is ${request.distance}"))
     }
 
 

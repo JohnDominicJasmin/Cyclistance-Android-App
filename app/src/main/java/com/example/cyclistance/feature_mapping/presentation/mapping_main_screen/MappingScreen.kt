@@ -836,7 +836,14 @@ fun MappingScreen(
         uiState = uiState.copy(cancelOnGoingRescueDialogVisible = visibility)
     }}
 
-
+    fun notifyUser(title: String, message: String){
+        if(notificationPermissionState.status.isGranted){
+            mappingViewModel.onEvent(event = MappingVmEvent.NotifyUser(
+                title = title,
+                message = message
+            ))
+        }
+    }
 
 
 
@@ -1225,9 +1232,6 @@ fun MappingScreen(
         state = state,
         locationPermissionState = foregroundLocationPermissionsState,
         bottomSheetScaffoldState = bottomSheetScaffoldState,
-
-
-
         hazardousLaneMarkers = hazardousMarkers,
         mapboxMap = mapboxMap,
         uiState = uiState,
@@ -1289,6 +1293,7 @@ fun MappingScreen(
                 MappingUiEvent.CancelOnGoingRescue -> cancelOnGoingRescue()
                 is MappingUiEvent.CancelOnGoingRescueDialog -> cancelOnGoingRescueDialogVisibility(event.visibility)
                 is MappingUiEvent.NotificationPermissionDialog ->  notificationPermissionDialogVisibility(event.visibility)
+                is MappingUiEvent.NotifyUser -> notifyUser(title = event.title, message = event.message)
             }
         }
     )
