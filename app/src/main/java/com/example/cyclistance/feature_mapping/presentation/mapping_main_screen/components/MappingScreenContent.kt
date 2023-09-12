@@ -16,6 +16,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -26,9 +27,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
 import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
+import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogNotificationPermission
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call.EmergencyCallDialog
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
@@ -84,6 +87,11 @@ fun MappingScreenContent(
         derivedStateOf {
             hazardousLaneMarkers.count { it.idCreator == state.userId }
         }
+    }
+
+    LaunchedEffect(key1 = respondentCount){
+        val request = state.newRescueRequest?.request?.lastOrNull() ?: return@LaunchedEffect
+        event(MappingUiEvent.NotifyUser(title = "New Rescue Request", message = "Request from ${request.name}, distance is ${request.distance}"))
     }
 
 
@@ -352,7 +360,26 @@ fun MappingScreenContent(
                     }
 
 
-                    
+                    if (uiState.notificationPermissionVisible) {
+                        DialogNotificationPermission(
+                            modifier = Modifier.constrainAs(
+                                dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            },
+                            onDismiss = {
+                                event(
+                                    MappingUiEvent.NotificationPermissionDialog(
+                                        visibility = false))
+                            }
+                        )
+                    }
+
+
+
                     if(uiState.alertDialogState.visible()){
                         AlertDialog(
                             alertDialog = uiState.alertDialogState,

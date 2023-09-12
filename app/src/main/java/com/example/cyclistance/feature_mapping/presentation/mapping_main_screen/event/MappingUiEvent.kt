@@ -40,13 +40,11 @@ sealed class MappingUiEvent {
     data object OpenHazardousLaneBottomSheet : MappingUiEvent()
     data object DismissIncidentDescriptionBottomSheet : MappingUiEvent()
     data object RescueRequestAccepted : MappingUiEvent()
-
-
-
-
     data object CancelOnGoingRescue : MappingUiEvent()
 
     // Events with Parameters
+
+    data class NotifyUser(val title: String, val message: String) : MappingUiEvent()
     data class SinoTrackWebViewVisibility(val visibility: Boolean) : MappingUiEvent()
     data class HazardousLaneMarkerDialog(val visibility: Boolean) : MappingUiEvent()
     data class DiscardChangesMarkerDialog(val visibility: Boolean) : MappingUiEvent()

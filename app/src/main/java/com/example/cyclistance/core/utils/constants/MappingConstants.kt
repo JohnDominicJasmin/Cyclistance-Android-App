@@ -36,6 +36,8 @@ object MappingConstants {
     const val LOCATION_SERVICE_CHANNEL_ID = "cyclistance-location-channel-id"
     const val ACTION_START = "start"
     const val ACTION_STOP = "stop"
+    const val ACTION_START_FOREGROUND = "startForeground"
+    const val ACTION_STOP_FOREGROUND = "stopForeground"
 
     const val CONFIRM_DETAILS_VM_STATE_KEY = "confirm_details_vm_state_key"
     const val MAPPING_VM_STATE_KEY = "mapping_vm_state_key"
