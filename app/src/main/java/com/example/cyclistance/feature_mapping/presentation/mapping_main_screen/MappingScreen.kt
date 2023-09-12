@@ -162,16 +162,7 @@ fun MappingScreen(
     val foregroundLocationPermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION)){ elements ->
-
-        if(elements.all { it.value }){
-            context.startLocationServiceIntentAction()
-            requestHelp()
-        }
-
-
-    }
-
+            Manifest.permission.ACCESS_COARSE_LOCATION))
 
 
     val userLocationAvailable by remember(
@@ -278,11 +269,25 @@ fun MappingScreen(
         uiState = uiState.copy(notificationPermissionVisible = visible)
     }}
 
-
+    val respondToHelp = remember {
+        {
+            uiState.mapSelectedRescuee?.let {
+                mappingViewModel.onEvent(
+                    event = MappingVmEvent.RespondToHelp(
+                        selectedRescuee = it
+                    ))
+            }
+            Unit
+        }
+    }
     val notificationLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = {
-          onRequestHelp()
+            if (uiState.mapSelectedRescuee == null) {
+                onRequestHelp()
+            } else {
+                respondToHelp()
+            }
         }
     )
     val notificationPermissionState = rememberPermissionState(
@@ -307,7 +312,6 @@ fun MappingScreen(
             onRequestHelp()
         }
     }}
-
 
 
 
@@ -591,17 +595,23 @@ fun MappingScreen(
         }
     }
 
-    val onClickRespondToHelpButton = remember {
-        {
-            uiState.mapSelectedRescuee?.let {
-                mappingViewModel.onEvent(
-                    event = MappingVmEvent.RespondToHelp(
-                        selectedRescuee = it
-                    ))
-            }
-            Unit
+
+
+    val startRespondingToHelp = remember{{
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationPermissionState.requestPermission(onGranted = {
+                notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }, onExplain = {
+                notificationPermissionDialogVisibility(true)
+            }, onDenied = {
+                respondToHelp()
+            })
+        } else {
+            respondToHelp()
         }
-    }
+    }}
+
+
     val onClickOkAcceptedRescue = remember {
         {
             onChangeNavigatingState(true)
@@ -1245,7 +1255,7 @@ fun MappingScreen(
         event = { event ->
             when (event) {
                 is MappingUiEvent.RequestHelp -> startRequestingHelp()
-                is MappingUiEvent.RespondToHelp -> onClickRespondToHelpButton()
+                is MappingUiEvent.RespondToHelp -> startRespondingToHelp()
                 is MappingUiEvent.CancelSearching -> cancelSearchDialogVisibility(true)
                 is MappingUiEvent.ChatRescueTransaction -> onClickChatButton()
                 is MappingUiEvent.CancelRescueTransaction -> cancelOnGoingRescueDialogVisibility(true)

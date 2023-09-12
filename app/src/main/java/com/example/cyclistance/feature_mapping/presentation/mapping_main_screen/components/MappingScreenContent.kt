@@ -93,6 +93,11 @@ fun MappingScreenContent(
         val request = state.newRescueRequest?.request?.lastOrNull() ?: return@LaunchedEffect
         event(MappingUiEvent.NotifyUser(title = "New Rescue Request", message = "Request from ${request.name}, distance is ${request.distance}"))
     }
+    LaunchedEffect(key1 = uiState.rescueRequestAccepted, key2 = uiState.isRescueCancelled.not()){
+        if(uiState.rescueRequestAccepted && uiState.isRescueCancelled.not()){
+            event(MappingUiEvent.NotifyUser(title = "Request Accepted", message = "${state.rescuee?.name} accepted your request"))
+        }
+    }
 
 
     Surface(
