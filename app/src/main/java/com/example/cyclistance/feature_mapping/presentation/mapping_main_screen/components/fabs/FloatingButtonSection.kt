@@ -32,7 +32,6 @@ fun FloatingButtonSection(
     val shouldShowMapLayerButton = shouldShowFab && !uiState.searchingAssistance
     val shouldShowNavigatingButton = uiState.isNavigating && !uiState.isFabExpanded
 
-    val shouldShowMapLayerButton = shouldShowFab && !uiState.searchingAssistance
 
     Box(modifier = modifier) {
 

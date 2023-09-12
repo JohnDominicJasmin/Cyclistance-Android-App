@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
+import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -129,11 +130,46 @@ fun MappingScreen(
         }
     }
 
+    val settingResultRequest = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartIntentSenderForResult()
+    ) { activityResult ->
+        if (activityResult.resultCode == RESULT_OK) {
+            context.startLocationServiceIntentAction()
+            Timber.d("GPS Setting Request Accepted")
+            return@rememberLauncherForActivityResult
+        }
+        Timber.d("GPS Setting Request Denied")
+    }
+
+    fun requestHelp() {
+        if (!context.hasGPSConnection()) {
+            context.checkLocationSetting(
+                onDisabled = settingResultRequest::launch,
+                onEnabled = {
+                    mappingViewModel.onEvent(
+                        event = MappingVmEvent.RequestHelp)
+
+                })
+        } else {
+            mappingViewModel.onEvent(
+                event = MappingVmEvent.RequestHelp)
+
+        }
+    }
 
     val foregroundLocationPermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
             Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.ACCESS_COARSE_LOCATION))
+            Manifest.permission.ACCESS_COARSE_LOCATION)){ elements ->
+
+        if(elements.all { it.value }){
+            context.startLocationServiceIntentAction()
+            requestHelp()
+        }
+
+
+    }
+
 
 
     val userLocationAvailable by remember(
@@ -218,36 +254,10 @@ fun MappingScreen(
     }
 
 
-    val settingResultRequest = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartIntentSenderForResult()
-    ) { activityResult ->
-        if (activityResult.resultCode == RESULT_OK) {
-            context.startLocationServiceIntentAction()
-            Timber.d("GPS Setting Request Accepted")
-            return@rememberLauncherForActivityResult
-        }
-        Timber.d("GPS Setting Request Denied")
-    }
 
-    val requestHelp = remember {
-        {
-            if (!context.hasGPSConnection()) {
-                context.checkLocationSetting(
-                    onDisabled = settingResultRequest::launch,
-                    onEnabled = {
-                        mappingViewModel.onEvent(
-                            event = MappingVmEvent.RequestHelp)
 
-                    })
-            } else {
-                mappingViewModel.onEvent(
-                    event = MappingVmEvent.RequestHelp)
 
-            }
-        }
-    }
-
-    val onClickRequestHelpButton = remember {
+    val onRequestHelp = remember {
         {
             foregroundLocationPermissionsState.requestPermission(
                 onGranted = {
@@ -258,9 +268,45 @@ fun MappingScreen(
                 }, onDenied = {
                     uiState = uiState.copy(locationPermissionDialogVisible = true)
                 })
-
         }
     }
+
+
+    val notificationPermissionDialogVisibility = remember{{ visible: Boolean ->
+        uiState = uiState.copy(notificationPermissionVisible = visible)
+    }}
+
+
+    val notificationLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = {
+          onRequestHelp()
+        }
+    )
+    val notificationPermissionState = rememberPermissionState(
+        permission = Manifest.permission.POST_NOTIFICATIONS
+    ) { permissionGranted ->
+        if (permissionGranted) {
+            notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+
+    }
+
+    val startRequestingHelp = remember{{
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationPermissionState.requestPermission(onGranted = {
+                notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }, onExplain = {
+                notificationPermissionDialogVisibility(true)
+            }, onDenied = {
+                onRequestHelp()
+            })
+        } else {
+            onRequestHelp()
+        }
+    }}
+
+
 
 
     val showRouteDirection = remember(uiState.routeDirection?.geometry, mapboxMap) {
@@ -790,10 +836,6 @@ fun MappingScreen(
         uiState = uiState.copy(cancelOnGoingRescueDialogVisible = visibility)
     }}
 
-    val notificationPermissionDialogVisibility = remember{{ visible: Boolean ->
-        uiState = uiState.copy(notificationPermissionVisible = visible)
-    }}
-
 
 
 
@@ -1193,7 +1235,7 @@ fun MappingScreen(
         incidentDescription = incidentDescription,
         event = { event ->
             when (event) {
-                is MappingUiEvent.RequestHelp -> onClickRequestHelpButton()
+                is MappingUiEvent.RequestHelp -> startRequestingHelp()
                 is MappingUiEvent.RespondToHelp -> onClickRespondToHelpButton()
                 is MappingUiEvent.CancelSearching -> cancelSearchDialogVisibility(true)
                 is MappingUiEvent.ChatRescueTransaction -> onClickChatButton()

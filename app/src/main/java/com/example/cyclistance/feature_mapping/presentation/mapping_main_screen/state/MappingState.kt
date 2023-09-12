@@ -31,6 +31,7 @@ data class MappingState(
     val mapType: String = MapType.Default.type,
     val userId: String = "",
     val shouldShowHazardousStartingInfo: Boolean = false,
+    val lastRequestNotifiedId: String = "",
 ) : Parcelable{
 
 

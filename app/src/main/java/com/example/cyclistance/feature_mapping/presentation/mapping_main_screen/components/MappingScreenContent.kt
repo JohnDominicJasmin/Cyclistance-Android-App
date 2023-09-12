@@ -26,9 +26,11 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
 import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
+import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogNotificationPermission
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call.EmergencyCallDialog
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
@@ -352,7 +354,26 @@ fun MappingScreenContent(
                     }
 
 
-                    
+                    if (uiState.notificationPermissionVisible) {
+                        DialogNotificationPermission(
+                            modifier = Modifier.constrainAs(
+                                dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            },
+                            onDismiss = {
+                                event(
+                                    MappingUiEvent.NotificationPermissionDialog(
+                                        visibility = false))
+                            }
+                        )
+                    }
+
+
+
                     if(uiState.alertDialogState.visible()){
                         AlertDialog(
                             alertDialog = uiState.alertDialogState,
