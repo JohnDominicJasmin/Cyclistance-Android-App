@@ -1,12 +1,12 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils
 
 sealed class BottomSheetType(val type: String) {
-    object RescuerArrived : BottomSheetType(type = "rescuer_arrived")
-    object DestinationReached : BottomSheetType(type = "destination_reached")
-    object ReportIncident : BottomSheetType(type = "report_incident")
-    object SearchAssistance : BottomSheetType(type = "search_assistance")
-    object OnGoingRescue : BottomSheetType(type = "on_going_rescue")
-    object HazardousLane : BottomSheetType(type = "hazardous_lane")
-    object IncidentDescription : BottomSheetType(type = "incident_description")
+    data object RescuerArrived : BottomSheetType(type = "rescuer_arrived")
+    data object DestinationReached : BottomSheetType(type = "destination_reached")
+    data object ReportIncident : BottomSheetType(type = "report_incident")
+    data object SearchAssistance : BottomSheetType(type = "search_assistance")
+    data object OnGoingRescue : BottomSheetType(type = "on_going_rescue")
+    data object MapType : BottomSheetType(type = "map_type")
+    data object IncidentDescription : BottomSheetType(type = "incident_description")
 
 }

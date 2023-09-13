@@ -549,6 +549,7 @@ fun MappingScreen(
                     mappingViewModel.onEvent(event = MappingVmEvent.SelectHazardousLaneMarker(id))
                 })
             } else {
+                collapseBottomSheet()
                 mappingViewModel.onEvent(event = MappingVmEvent.SelectRescueMapIcon(id))
             }
         }
@@ -732,17 +733,30 @@ fun MappingScreen(
         }
     }}
 
-    val onOpenHazardousLaneBottomSheet = remember{{
+
+    val openMapTypeBottomSheet = remember{{
+        uiState = uiState.copy(
+            bottomSheetType = BottomSheetType.MapType.type
+        ).also {
+            expandBottomSheet()
+        }
+    }}
+
+    val closeMapTypeBottomSheet = remember{{
+        uiState = uiState.copy(
+            bottomSheetType = null
+        ).also {
+            collapseBottomSheet()
+        }
+    }}
+
+
+    val mapTypeBottomSheetVisibility = remember{{ visibility: Boolean ->
         checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
-            uiState = if (uiState.bottomSheetType == BottomSheetType.HazardousLane.type) {
-                collapseBottomSheet()
-                uiState.copy(bottomSheetType = null)
-            } else {
-                uiState.copy(
-                    bottomSheetType = BottomSheetType.HazardousLane.type
-                ).also {
-                    expandBottomSheet()
-                }
+            if(visibility){
+                openMapTypeBottomSheet()
+            }else{
+                closeMapTypeBottomSheet()
             }
         })
     }}
@@ -1288,7 +1302,7 @@ fun MappingScreen(
                 is MappingUiEvent.RescueResultsDialog -> rescueResultsDialogVisibility(event.visibility)
                 is MappingUiEvent.OnEmergencyCall -> onEmergencyCall(event.phoneNumber)
                 is MappingUiEvent.OnAddEmergencyContact -> onAddEmergencyContact()
-                is MappingUiEvent.OpenHazardousLaneBottomSheet -> onOpenHazardousLaneBottomSheet()
+                is MappingUiEvent.MapTypeBottomSheet -> mapTypeBottomSheetVisibility(event.visibility)
                 is MappingUiEvent.OnSelectMapType -> onSelectMapType(event.mapType)
                 is MappingUiEvent.OnChangeIncidentDescription -> onChangeIncidentDescription(event.description)
                 is MappingUiEvent.OnChangeIncidentLabel -> onChangeIncidentLabel(event.label)

@@ -37,10 +37,10 @@ sealed class MappingUiEvent {
     data object OnClickDeleteIncident : MappingUiEvent()
     data object OnConfirmDeleteIncident : MappingUiEvent()
     data object OnClickHazardousInfoGotIt : MappingUiEvent()
-    data object OpenHazardousLaneBottomSheet : MappingUiEvent()
     data object DismissIncidentDescriptionBottomSheet : MappingUiEvent()
     data object RescueRequestAccepted : MappingUiEvent()
     data object CancelOnGoingRescue : MappingUiEvent()
+    data class  MapTypeBottomSheet(val visibility: Boolean) : MappingUiEvent()
 
     // Events with Parameters
 

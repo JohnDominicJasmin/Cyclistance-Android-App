@@ -86,13 +86,13 @@ fun MappingBottomSheet(
 
                 BottomSheetType.SearchAssistance.type -> {
 
-                        BottomSheetSearchingAssistance(
-                            modifier = modifier,
-                            onClickCancelSearchButton = {
-                                event(MappingUiEvent.CancelSearching)
-                            },
-                            )
-                    }
+                    BottomSheetSearchingAssistance(
+                        modifier = modifier,
+                        onClickCancelSearchButton = {
+                            event(MappingUiEvent.CancelSearching)
+                        },
+                    )
+                }
 
                 BottomSheetType.OnGoingRescue.type -> {
 
@@ -113,9 +113,9 @@ fun MappingBottomSheet(
 
                 }
 
-                BottomSheetType.HazardousLane.type -> {
+                BottomSheetType.MapType.type -> {
 
-                    BottomSheetHazardousLane(
+                    MapTypeBottomSheet(
                         bottomSheetScaffoldState = bottomSheetScaffoldState,
                         modifier = modifier,
                         selectedMapType = state.mapType,
