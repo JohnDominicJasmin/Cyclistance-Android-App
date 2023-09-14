@@ -31,7 +31,7 @@ object LocationServiceModule {
                 .setPriority(Priority.PRIORITY_HIGH_ACCURACY)
                 .setInterval(MappingConstants.LOCATION_UPDATES_INTERVAL)
                 .setFastestInterval(MappingConstants.FASTEST_LOCATION_UPDATES_INTERVAL)
-                .setSmallestDisplacement(1.5f)
+//                .setSmallestDisplacement(1.5f)
         }.value
     }
 
@@ -58,7 +58,7 @@ object LocationServiceModule {
         return lazy {
             NotificationCompat.Builder(context, LOCATION_SERVICE_CHANNEL_ID)
                 .setOngoing(true)
-                .setSmallIcon(R.drawable.ic_app_icon_cyclistance)
+                .setSmallIcon(R.drawable.ic_app_notification_icon)
                 .setContentTitle("Cyclistance")
                 .setContentText("Tracking your ride")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
