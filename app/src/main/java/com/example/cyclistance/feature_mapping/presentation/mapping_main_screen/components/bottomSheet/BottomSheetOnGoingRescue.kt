@@ -110,7 +110,7 @@ fun BottomSheetOnGoingRescue(
                         .constrainAs(time) {
                             top.linkTo(
                                 if (isRescuer) speedometer.bottom else parent.top,
-                                margin = 5.dp)
+                                margin = 12.dp)
                             end.linkTo(etaIcon.start)
                         }
                 )
@@ -124,7 +124,7 @@ fun BottomSheetOnGoingRescue(
                         .constrainAs(etaIcon) {
                             top.linkTo(
                                 if (isRescuer) speedometer.bottom else parent.top,
-                                margin = 7.dp)
+                                margin = 12.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
 
@@ -141,7 +141,7 @@ fun BottomSheetOnGoingRescue(
                         .constrainAs(distance) {
                             top.linkTo(
                                 if (isRescuer) speedometer.bottom else parent.top,
-                                margin = 5.dp,
+                                margin = 12.dp,
                             )
                             start.linkTo(etaIcon.end)
                         }
