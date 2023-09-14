@@ -669,7 +669,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun subscribeToTransactionLocationUpdates() {
-        if (getRescueTransactionUpdatesJob?.isActive == true) {
+        if (getTransactionLocationUpdatesJob?.isActive == true) {
             return
         }
         getTransactionLocationUpdatesJob =
@@ -722,7 +722,14 @@ class MappingViewModel @Inject constructor(
                 longitude = this.longitude
             ), endLocation = userLocation
         )
-        _state.update { it.copy(rescuerETA = eta) }
+
+        val distance = mappingUseCase.getCalculatedDistanceUseCase(
+            startingLocation = LocationModel(
+                latitude = this.latitude,
+                longitude = this.longitude
+            ),
+            destinationLocation = userLocation)
+        _state.update { it.copy(rescueETA = eta, rescueDistance = distance.formatToDistanceKm()) }
     }
 
     private fun getETABetweenTwoPoints(
@@ -780,10 +787,16 @@ class MappingViewModel @Inject constructor(
                 endLocation = userLocation
             )
         }
+
+        val distance = rescuer.location?.let { mappingUseCase.getCalculatedDistanceUseCase(
+            startingLocation = it,
+            destinationLocation = userLocation)
+        }
         _state.update {
             it.copy(
                 rescueTransaction = rescueTransaction,
-                rescuerETA = estimatedTimeArrival ?: "",
+                rescueETA = estimatedTimeArrival ?: "",
+                rescueDistance = distance?.formatToDistanceKm() ?: "",
                 rescuer = rescuer
             )
         }
@@ -834,7 +847,6 @@ class MappingViewModel @Inject constructor(
                         user = user)
                 }
                 user.getTransactionId()?.let { loadRescueTransaction(transactionId = it) }
-//                handleUserNotification(user)
             }
 
         }.onFailure {
@@ -843,23 +855,7 @@ class MappingViewModel @Inject constructor(
 
     }
 
-/*    private fun NearbyCyclist.handleUserNotification(user: UserItem){
-        val rescueRequest = user.getUserRescueRespondents(this).lastOrNull()
-        rescueRequest?.id?.let { requestId ->
-            if(state.value.lastRequestNotifiedId == requestId){
-                return
-            }
 
-    *//*        notifyUserHandler.showNotification(
-                title = "New Rescue Request",
-                message = "You have a rescue request from ${rescueRequest.name}"
-            )*//*
-
-            _state.update { it.copy(lastRequestNotifiedId = requestId) }
-
-        }
-
-    }*/
 
     private fun UserItem.getUserRescueRespondents(nearbyCyclist: NearbyCyclist): List<RescueRequestItemModel> {
         val rescueRespondentsSnapShot: MutableList<RescueRequestItemModel> = mutableListOf()
@@ -922,6 +918,8 @@ class MappingViewModel @Inject constructor(
                 rescueTransactionItem = rescueTransaction
             )
 
+        }.onSuccess {
+            Timber.v("Broadcasting location to transaction success")
         }.onFailure {
             Timber.v("Broadcasting location to transaction failed: ${it.message}")
         }
@@ -954,7 +952,7 @@ class MappingViewModel @Inject constructor(
                         rescueTransaction = rescueTransactions,
                         id = getId()
                     )
-//                    showNotification()
+
                     trackingHandler.updateClient()
                 }.launchIn(this@launch).invokeOnCompletion {
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value

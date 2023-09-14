@@ -103,8 +103,8 @@ fun MappingBottomSheet(
                         onClickCancelButton = { event(MappingUiEvent.CancelRescueTransaction) },
                         role = state.user.transaction?.role ?: "",
                         onGoingRescueModel = OnGoingRescueModel(
-                            estimatedTime = state.rescuerETA,
-                            estimatedDistance = state.rescuerDistance,
+                            estimatedTime = state.rescueETA,
+                            estimatedDistance = state.rescueDistance,
                             currentSpeed = String.format(
                                 "%.2f",
                                 state.speedometerState.currentSpeedKph),
