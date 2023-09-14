@@ -1,0 +1,73 @@
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/ConversationScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_messaging.presentation.conversation\n\nimport android.Manifest\nimport android.os.Build\nimport androidx.activity.compose.BackHandler\nimport androidx.activity.compose.rememberLauncherForActivityResult\nimport androidx.activity.result.contract.ActivityResultContracts\nimport androidx.compose.foundation.layout.PaddingValues\nimport androidx.compose.foundation.layout.fillMaxSize\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.LaunchedEffect\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.saveable.rememberSaveable\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.text.input.TextFieldValue\nimport androidx.hilt.navigation.compose.hiltViewModel\nimport androidx.lifecycle.compose.collectAsStateWithLifecycle\nimport androidx.navigation.NavController\nimport com.example.cyclistance.core.utils.permissions.requestPermission\nimport com.example.cyclistance.feature_messaging.domain.model.SendMessageModel\nimport com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel\nimport com.example.cyclistance.feature_messaging.presentation.conversation.components.ConversationContent\nimport com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationUiEvent\nimport com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationVmEvent\nimport com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationUiState\nimport com.google.accompanist.permissions.ExperimentalPermissionsApi\nimport com.google.accompanist.permissions.rememberPermissionState\n\n@OptIn(ExperimentalPermissionsApi::class)\n@Composable\nfun ConversationScreen(\n    viewModel: ConversationViewModel = hiltViewModel(),\n    navController: NavController,\n    paddingValues: PaddingValues,\n    userReceiverMessage: MessagingUserItemModel,\n    userSenderMessage: MessagingUserItemModel,\n    newConversationDetails: (MessagingUserItemModel) -> Unit\n) {\n\n\n    val conversationState = viewModel.conversationState\n    val state by viewModel.state.collectAsStateWithLifecycle()\n    var uiState by rememberSaveable { mutableStateOf(ConversationUiState()) }\n    var message by rememberSaveable(stateSaver = TextFieldValue.Saver) {\n        mutableStateOf(TextFieldValue())\n    }\n\n    val onToggleExpand = remember {\n        {\n            uiState = uiState.copy(\n                messageAreaExpanded = !uiState.messageAreaExpanded\n            )\n        }\n    }\n    val onChangeValueMessage = remember<(TextFieldValue) -> Unit> {\n        {\n            message = it\n        }\n    }\n\n    val onClickChatItem = remember {\n        { index: Int ->\n            uiState = uiState.copy(\n                chatItemSelectedIndex = if (uiState.chatItemSelectedIndex == index) {\n                    -1\n                } else {\n                    index\n                })\n        }\n    }\n\n    val resetSelectedIndex = remember {\n        {\n            uiState = uiState.copy(\n                chatItemSelectedIndex = -1\n            )\n        }\n    }\n\n    val closeConversationMessage = remember {\n        {\n            navController.popBackStack()\n        }\n    }\n\n\n    val sendMessage = remember {\n        {\n\n            val receiverId = state.userReceiverMessage!!.userDetails.uid\n            viewModel.onEvent(\n                event = ConversationVmEvent.SendMessage(\n                    sendMessageModel = SendMessageModel(\n                        receiverId = receiverId,\n                        message = message.text\n                    )\n                )).also {\n                message = TextFieldValue()\n            }\n\n        }\n    }\n\n\n\n\n\n    val notificationLauncher = rememberLauncherForActivityResult(\n        contract = ActivityResultContracts.RequestPermission(),\n        onResult = { isGranted ->\n            if (isGranted){\n                sendMessage()\n            }\n        }\n    )\n\n\n\n    val notificationPermissionState = rememberPermissionState(\n        permission = Manifest.permission.POST_NOTIFICATIONS\n    ){ permissionGranted ->\n        if(permissionGranted){\n            notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)\n        }\n\n    }\n\n\n    val showPermissionDialog = remember{{\n        uiState = uiState.copy(notificationPermissionVisible = true)\n    }}\n\n    val dismissPermissionDialog = remember{{\n        uiState = uiState.copy(notificationPermissionVisible = false)\n    }}\n\n\n\n    val onSendMessage = remember{{\n\n        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {\n            notificationPermissionState.requestPermission(onGranted = {\n                notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)\n            }, onExplain = {\n                showPermissionDialog()\n            }, onDenied = {\n                sendMessage()\n            })\n        } else {\n            sendMessage()\n        }\n    }}\n\n\n\n\n\n    LaunchedEffect(key1 = userReceiverMessage){\n\n        viewModel.onEvent(\n            event = ConversationVmEvent.OnInitialized(\n                userReceiverMessage = userReceiverMessage,\n                userSenderMessage = userSenderMessage))\n\n        newConversationDetails(userReceiverMessage)\n    }\n\n    BackHandler(enabled = true, onBack = {\n        if (uiState.messageAreaExpanded) {\n            onToggleExpand()\n        } else {\n            navController.popBackStack()\n        }\n    })\n\n\n\n\n    ConversationContent(\n        conversation = conversationState,\n        modifier = Modifier\n            .fillMaxSize()\n            .padding(paddingValues = paddingValues),\n        uiState = uiState,\n        state = state,\n        message = message,\n        event = { event ->\n            when (event) {\n                is ConversationUiEvent.CloseConversationScreen -> closeConversationMessage()\n                is ConversationUiEvent.OnSendMessage -> onSendMessage()\n                is ConversationUiEvent.ResetSelectedIndex -> resetSelectedIndex()\n                is ConversationUiEvent.SelectChatItem -> onClickChatItem(event.index)\n                is ConversationUiEvent.ToggleMessageArea -> onToggleExpand()\n                is ConversationUiEvent.OnChangeValueMessage -> onChangeValueMessage(event.message)\n                is ConversationUiEvent.DismissNotificationPermissionDialog -> dismissPermissionDialog()\n            }\n        }\n    )\n}\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/ConversationScreen.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/ConversationScreen.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/ConversationScreen.kt	(revision b9f799909288ddd4939f297bbf2837768fd3a937)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/ConversationScreen.kt	(date 1694451905346)
+@@ -111,10 +111,8 @@
+ 
+     val notificationLauncher = rememberLauncherForActivityResult(
+         contract = ActivityResultContracts.RequestPermission(),
+-        onResult = { isGranted ->
+-            if (isGranted){
+-                sendMessage()
+-            }
++        onResult = {
++            sendMessage()
+         }
+     )
+ 
+@@ -129,13 +127,8 @@
+ 
+     }
+ 
+-
+-    val showPermissionDialog = remember{{
+-        uiState = uiState.copy(notificationPermissionVisible = true)
+-    }}
+-
+-    val dismissPermissionDialog = remember{{
+-        uiState = uiState.copy(notificationPermissionVisible = false)
++    val notificationPermissionDialogVisibility = remember{{ visibility: Boolean ->
++        uiState = uiState.copy(notificationPermissionVisible = visibility)
+     }}
+ 
+ 
+@@ -146,7 +139,7 @@
+             notificationPermissionState.requestPermission(onGranted = {
+                 notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+             }, onExplain = {
+-                showPermissionDialog()
++                notificationPermissionDialogVisibility(true)
+             }, onDenied = {
+                 sendMessage()
+             })
+@@ -196,7 +189,7 @@
+                 is ConversationUiEvent.SelectChatItem -> onClickChatItem(event.index)
+                 is ConversationUiEvent.ToggleMessageArea -> onToggleExpand()
+                 is ConversationUiEvent.OnChangeValueMessage -> onChangeValueMessage(event.message)
+-                is ConversationUiEvent.DismissNotificationPermissionDialog -> dismissPermissionDialog()
++                is ConversationUiEvent.DismissNotificationPermissionDialog -> notificationPermissionDialogVisibility(false)
+             }
+         }
+     )
+Index: .idea/shelf/Migrate_gradle_to_gradle_kts_and_kapt_to_ksp.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><changelist name=\"Migrate_gradle_to_gradle_kts_and_kapt_to_ksp\" date=\"1694027792538\" recycled=\"false\">\n  <option name=\"PATH\" value=\"$PROJECT_DIR$/.idea/shelf/Migrate_gradle_to_gradle_kts_and_kapt_to_ksp/shelved.patch\" />\n  <option name=\"DESCRIPTION\" value=\"Migrate gradle to gradle.kts and kapt to ksp\" />\n  <binary>\n    <option name=\"BEFORE_PATH\" value=\".idea/.name\" />\n    <option name=\"AFTER_PATH\" />\n    <option name=\"SHELVED_PATH\" />\n  </binary>\n  <binary>\n    <option name=\"BEFORE_PATH\" value=\"Cyclistance_Emulator_Suite_Data/firestore_export/all_namespaces/all_kinds/all_namespaces_all_kinds.export_metadata\" />\n    <option name=\"AFTER_PATH\" value=\"Cyclistance_Emulator_Suite_Data/firestore_export/all_namespaces/all_kinds/all_namespaces_all_kinds.export_metadata\" />\n    <option name=\"SHELVED_PATH\" value=\"$PROJECT_DIR$/.idea/shelf/Migrate_gradle_to_gradle_kts_and_kapt_to_ksp/all_namespaces_all_kinds.export_metadata\" />\n  </binary>\n  <binary>\n    <option name=\"BEFORE_PATH\" value=\"Cyclistance_Emulator_Suite_Data/firestore_export/all_namespaces/all_kinds/output-0\" />\n    <option name=\"AFTER_PATH\" value=\"Cyclistance_Emulator_Suite_Data/firestore_export/all_namespaces/all_kinds/output-0\" />\n    <option name=\"SHELVED_PATH\" value=\"$PROJECT_DIR$/.idea/shelf/Migrate_gradle_to_gradle_kts_and_kapt_to_ksp/output-0\" />\n  </binary>\n</changelist>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/shelf/Migrate_gradle_to_gradle_kts_and_kapt_to_ksp.xml b/.idea/shelf/Migrate_gradle_to_gradle_kts_and_kapt_to_ksp.xml
+--- a/.idea/shelf/Migrate_gradle_to_gradle_kts_and_kapt_to_ksp.xml	(revision b9f799909288ddd4939f297bbf2837768fd3a937)
++++ b/.idea/shelf/Migrate_gradle_to_gradle_kts_and_kapt_to_ksp.xml	(date 1694451905756)
+@@ -1,4 +1,4 @@
+-<changelist name="Migrate_gradle_to_gradle_kts_and_kapt_to_ksp" date="1694027792538" recycled="false">
++<changelist name="Migrate_gradle_to_gradle_kts_and_kapt_to_ksp" date="1694451839544" recycled="false" deleted="true">
+   <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Migrate_gradle_to_gradle_kts_and_kapt_to_ksp/shelved.patch" />
+   <option name="DESCRIPTION" value="Migrate gradle to gradle.kts and kapt to ksp" />
+   <binary>

@@ -1,0 +1,133 @@
+Index: Cyclistance_Emulator_Suite_Data/auth_export/accounts.json
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>{\"kind\":\"identitytoolkit#DownloadAccountResponse\",\"users\":[{\"localId\":\"2IkBZaUoNgyAe9GQHMN0kFdHFvLH\",\"lastLoginAt\":\"1694412829816\",\"emailVerified\":true,\"email\":\"xiaomi@gmail.com\",\"salt\":\"fakeSaltuINJj4mSaK9RbNk9d9Wk\",\"passwordHash\":\"fakeHash:salt=fakeSaltuINJj4mSaK9RbNk9d9Wk:password=12341234\",\"passwordUpdatedAt\":1694412829816,\"validSince\":\"1694412829\",\"createdAt\":\"1694412829816\",\"providerUserInfo\":[{\"providerId\":\"password\",\"email\":\"xiaomi@gmail.com\",\"federatedId\":\"xiaomi@gmail.com\",\"rawId\":\"xiaomi@gmail.com\"}],\"lastRefreshAt\":\"2023-09-11T06:13:49.820Z\"},{\"localId\":\"YdTQawwCjtiuly3gxgMEExa15B0N\",\"lastLoginAt\":\"1694437669118\",\"emailVerified\":true,\"email\":\"emulator22@gmail.com\",\"salt\":\"fakeSaltAvw1Ef6E9m8vQfXRLIQg\",\"passwordHash\":\"fakeHash:salt=fakeSaltAvw1Ef6E9m8vQfXRLIQg:password=12341234\",\"passwordUpdatedAt\":1694437669120,\"validSince\":\"1694437669\",\"createdAt\":\"1694437669118\",\"providerUserInfo\":[{\"providerId\":\"password\",\"email\":\"emulator22@gmail.com\",\"federatedId\":\"emulator22@gmail.com\",\"rawId\":\"emulator22@gmail.com\"}],\"lastRefreshAt\":\"2023-09-11T13:07:49.136Z\"},{\"localId\":\"n9cKRynztcw33K8rd5cGQASlqw3d\",\"lastLoginAt\":\"1694412850193\",\"emailVerified\":true,\"email\":\"emulator@gmail.com\",\"salt\":\"fakeSaltId1yVrny3k6ySWvqL7jZ\",\"passwordHash\":\"fakeHash:salt=fakeSaltId1yVrny3k6ySWvqL7jZ:password=12341234\",\"passwordUpdatedAt\":1694412850193,\"validSince\":\"1694412850\",\"createdAt\":\"1694412850193\",\"providerUserInfo\":[{\"providerId\":\"password\",\"email\":\"emulator@gmail.com\",\"federatedId\":\"emulator@gmail.com\",\"rawId\":\"emulator@gmail.com\"}],\"lastRefreshAt\":\"2023-09-11T08:04:10.265Z\"}]}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/Cyclistance_Emulator_Suite_Data/auth_export/accounts.json b/Cyclistance_Emulator_Suite_Data/auth_export/accounts.json
+--- a/Cyclistance_Emulator_Suite_Data/auth_export/accounts.json	(revision cb26ada7ef5d7a3fa3d9aef82607570ea9007b3a)
++++ b/Cyclistance_Emulator_Suite_Data/auth_export/accounts.json	(date 1694542997817)
+@@ -1,1 +1,1 @@
+-{"kind":"identitytoolkit#DownloadAccountResponse","users":[{"localId":"2IkBZaUoNgyAe9GQHMN0kFdHFvLH","lastLoginAt":"1694412829816","emailVerified":true,"email":"xiaomi@gmail.com","salt":"fakeSaltuINJj4mSaK9RbNk9d9Wk","passwordHash":"fakeHash:salt=fakeSaltuINJj4mSaK9RbNk9d9Wk:password=12341234","passwordUpdatedAt":1694412829816,"validSince":"1694412829","createdAt":"1694412829816","providerUserInfo":[{"providerId":"password","email":"xiaomi@gmail.com","federatedId":"xiaomi@gmail.com","rawId":"xiaomi@gmail.com"}],"lastRefreshAt":"2023-09-11T06:13:49.820Z"},{"localId":"YdTQawwCjtiuly3gxgMEExa15B0N","lastLoginAt":"1694437669118","emailVerified":true,"email":"emulator22@gmail.com","salt":"fakeSaltAvw1Ef6E9m8vQfXRLIQg","passwordHash":"fakeHash:salt=fakeSaltAvw1Ef6E9m8vQfXRLIQg:password=12341234","passwordUpdatedAt":1694437669120,"validSince":"1694437669","createdAt":"1694437669118","providerUserInfo":[{"providerId":"password","email":"emulator22@gmail.com","federatedId":"emulator22@gmail.com","rawId":"emulator22@gmail.com"}],"lastRefreshAt":"2023-09-11T13:07:49.136Z"},{"localId":"n9cKRynztcw33K8rd5cGQASlqw3d","lastLoginAt":"1694412850193","emailVerified":true,"email":"emulator@gmail.com","salt":"fakeSaltId1yVrny3k6ySWvqL7jZ","passwordHash":"fakeHash:salt=fakeSaltId1yVrny3k6ySWvqL7jZ:password=12341234","passwordUpdatedAt":1694412850193,"validSince":"1694412850","createdAt":"1694412850193","providerUserInfo":[{"providerId":"password","email":"emulator@gmail.com","federatedId":"emulator@gmail.com","rawId":"emulator@gmail.com"}],"lastRefreshAt":"2023-09-11T08:04:10.265Z"}]}
+\ No newline at end of file
++{"kind":"identitytoolkit#DownloadAccountResponse","users":[{"localId":"2IkBZaUoNgyAe9GQHMN0kFdHFvLH","createdAt":"1694412829816","lastLoginAt":"1694412829816","passwordHash":"fakeHash:salt=fakeSaltuINJj4mSaK9RbNk9d9Wk:password=12341234","salt":"fakeSaltuINJj4mSaK9RbNk9d9Wk","passwordUpdatedAt":1694530998729,"providerUserInfo":[{"providerId":"password","email":"xiaomi@gmail.com","federatedId":"xiaomi@gmail.com","rawId":"xiaomi@gmail.com"}],"validSince":"1694530998","email":"xiaomi@gmail.com","emailVerified":true,"disabled":false,"lastRefreshAt":"2023-09-12T16:12:19.993Z"},{"localId":"YdTQawwCjtiuly3gxgMEExa15B0N","createdAt":"1694437669118","lastLoginAt":"1694437669118","passwordHash":"fakeHash:salt=fakeSaltAvw1Ef6E9m8vQfXRLIQg:password=12341234","salt":"fakeSaltAvw1Ef6E9m8vQfXRLIQg","passwordUpdatedAt":1694530998730,"providerUserInfo":[{"providerId":"password","email":"emulator22@gmail.com","federatedId":"emulator22@gmail.com","rawId":"emulator22@gmail.com"}],"validSince":"1694530998","email":"emulator22@gmail.com","emailVerified":true,"disabled":false},{"localId":"n9cKRynztcw33K8rd5cGQASlqw3d","createdAt":"1694412850193","lastLoginAt":"1694412850193","passwordHash":"fakeHash:salt=fakeSaltId1yVrny3k6ySWvqL7jZ:password=12341234","salt":"fakeSaltId1yVrny3k6ySWvqL7jZ","passwordUpdatedAt":1694530998730,"providerUserInfo":[{"providerId":"password","email":"emulator@gmail.com","federatedId":"emulator@gmail.com","rawId":"emulator@gmail.com"}],"validSince":"1694530998","email":"emulator@gmail.com","emailVerified":true,"disabled":false}]}
+\ No newline at end of file
+Index: firestore-debug.log
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>Sep 12, 2023 11:03:11 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://0.0.0.0:33157\nAPI endpoint: http://0.0.0.0:9299\nIf you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\n\n   export FIRESTORE_EMULATOR_HOST=0.0.0.0:9299\n\nDev App Server is now running.\n\nSep 12, 2023 11:03:56 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:06:57 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:14:07 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:16:15 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:17:51 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:19:46 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:29:05 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:30:10 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:31:13 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:34:34 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:35:36 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:38:36 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:41:21 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:41:25 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:42:33 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 12, 2023 11:45:23 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:15:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:29:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:29:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:31:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:32:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:32:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:33:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:34:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:35:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:36:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:39:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:40:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:41:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:44:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:52:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:58:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 12:58:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nSep 13, 2023 1:00:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/firestore-debug.log b/firestore-debug.log
+--- a/firestore-debug.log	(revision cb26ada7ef5d7a3fa3d9aef82607570ea9007b3a)
++++ b/firestore-debug.log	(date 1694609513660)
+@@ -1,5 +1,5 @@
+-Sep 12, 2023 11:03:11 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
+-INFO: Started WebSocket server on ws://0.0.0.0:33157
++Sep 13, 2023 8:51:53 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
++INFO: Started WebSocket server on ws://0.0.0.0:40837
+ API endpoint: http://0.0.0.0:9299
+ If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
+ 
+@@ -7,71 +7,3 @@
+ 
+ Dev App Server is now running.
+ 
+-Sep 12, 2023 11:03:56 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:06:57 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:14:07 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:16:15 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:17:51 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:19:46 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:29:05 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:30:10 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:31:13 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:34:34 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:35:36 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:38:36 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:41:21 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:41:25 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:42:33 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 12, 2023 11:45:23 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:15:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:29:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:29:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:31:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:32:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:32:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:33:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:34:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:35:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:36:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:39:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:40:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:41:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:44:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:52:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:58:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 12:58:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Sep 13, 2023 1:00:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetDropDown\">\n    <targetSelectedWithDropDown>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetSelectedWithDropDown>\n    <timeTargetWasSelectedWithDropDown value=\"2023-09-12T16:26:42.571524047Z\" />\n    <multipleDevicesSelectedInDropDown value=\"true\" />\n    <runningDeviceTargetsSelectedWithDialog>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"SERIAL_NUMBER\" />\n            <value value=\"194a89050404\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </runningDeviceTargetsSelectedWithDialog>\n    <targetsSelectedWithDialog>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetsSelectedWithDialog>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(revision cb26ada7ef5d7a3fa3d9aef82607570ea9007b3a)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1694543059720)
+@@ -14,17 +14,6 @@
+     </targetSelectedWithDropDown>
+     <timeTargetWasSelectedWithDropDown value="2023-09-12T16:26:42.571524047Z" />
+     <multipleDevicesSelectedInDropDown value="true" />
+-    <runningDeviceTargetsSelectedWithDialog>
+-      <Target>
+-        <type value="RUNNING_DEVICE_TARGET" />
+-        <deviceKey>
+-          <Key>
+-            <type value="SERIAL_NUMBER" />
+-            <value value="194a89050404" />
+-          </Key>
+-        </deviceKey>
+-      </Target>
+-    </runningDeviceTargetsSelectedWithDialog>
+     <targetsSelectedWithDialog>
+       <Target>
+         <type value="QUICK_BOOT_TARGET" />
