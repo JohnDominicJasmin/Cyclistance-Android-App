@@ -26,7 +26,7 @@ fun ReportAccountDialog(onDismiss: () -> Unit) {
     var uiState by rememberSaveable {
         mutableStateOf(ReportAccountUiState())
     }
-    val selectedOptions = remember { mutableStateListOf<String>() }
+    val selectedOptions = rememberSaveable { mutableStateListOf<String>() }
     var message by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }

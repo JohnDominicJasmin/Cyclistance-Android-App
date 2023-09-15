@@ -10,6 +10,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PedalBike
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.TextStyle
@@ -55,7 +56,7 @@ fun DropDownBikeList(
     onClickItem: (String) -> Unit) {
 
     val hasError = errorMessage.isNotEmpty()
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
 
     Column(modifier = modifier) {
