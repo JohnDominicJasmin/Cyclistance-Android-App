@@ -30,17 +30,17 @@ fun MappingBottomSheet(
 
 
     val scope = rememberCoroutineScope()
-    val bottomSheetType = uiState.bottomSheetType
-    val sheetGesturesEnabled = remember(bottomSheetType) {
-        bottomSheetType != BottomSheetType.SearchAssistance.type &&
-        bottomSheetType != BottomSheetType.OnGoingRescue.type &&
-        bottomSheetType != BottomSheetType.IncidentDescription.type
+
+    val sheetGesturesEnabled = remember(uiState.bottomSheetType) {
+        uiState.bottomSheetType != BottomSheetType.SearchAssistance.type &&
+        uiState.bottomSheetType != BottomSheetType.OnGoingRescue.type &&
+        uiState.bottomSheetType != BottomSheetType.IncidentDescription.type
     }
     MappingBottomSheet(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         sheetGesturesEnabled = sheetGesturesEnabled,
         sheetContent = {
-            when (bottomSheetType) {
+            when (uiState.bottomSheetType) {
 
                 BottomSheetType.RescuerArrived.type -> {
 
@@ -98,7 +98,7 @@ fun MappingBottomSheet(
 
                     BottomSheetOnGoingRescue(
                         modifier = modifier,
-                        onClickCallButton = { },
+                        onClickCallButton = { event(MappingUiEvent.EmergencyCallDialog(visibility = true)) },
                         onClickChatButton = { event(MappingUiEvent.ChatRescueTransaction) },
                         onClickCancelButton = { event(MappingUiEvent.CancelRescueTransaction) },
                         role = state.user.transaction?.role ?: "",
