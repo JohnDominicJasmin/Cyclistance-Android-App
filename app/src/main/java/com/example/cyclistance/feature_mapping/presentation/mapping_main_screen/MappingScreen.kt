@@ -52,6 +52,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.changeToNormalPuckIcon
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.openNavigationApp
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MarkerSnippet
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel.Companion.toJsonString
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -493,9 +494,24 @@ fun MappingScreen(
             (state.rescueTransaction?.cancellation)?.rescueCancelled == true
         }
 
-    val onClickChatButton = remember() {
+    fun getConversationSelectedId():String{
+        val transaction = state.rescueTransaction
+        val rescueeId = transaction?.rescueeId
+        val rescuerId = transaction?.rescuerId
+        val userId = state.userId
+        val isUserRescuee = userId == rescueeId
+        val id = if(isUserRescuee) rescuerId else rescueeId
+        id ?: Toast.makeText(context, "No user id", Toast.LENGTH_SHORT).show()
+
+        return id!!
+    }
+
+    val onClickChatButton = remember(state.rescueTransaction, state.user.getRole()) {
         {
 
+            mappingViewModel.onEvent(event = MappingVmEvent.LoadConversationSelected(
+                id = getConversationSelectedId()
+            ))
         }
     }
 
@@ -1150,6 +1166,15 @@ fun MappingScreen(
                     uiState = uiState.copy(
                         generateRouteFailed = true
                     )
+                }
+                is MappingEvent.LoadConversationSuccess -> {
+                    navController.navigateScreen(
+                        route = Screens.MessagingNavigation.Conversation.passArgument(
+                            receiverMessageUser = event.userReceiverMessage.toJsonString(),
+                            senderMessageUser = event.userSenderMessage.toJsonString()
+                        )
+                    )
+
                 }
 
                 else -> {}

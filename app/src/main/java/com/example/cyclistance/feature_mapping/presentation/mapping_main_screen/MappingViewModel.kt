@@ -32,6 +32,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
+import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
 import com.google.maps.android.SphericalUtil
 import com.mapbox.geojson.Point
@@ -40,6 +41,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -65,6 +67,7 @@ class MappingViewModel @Inject constructor(
     private val mappingUseCase: MappingUseCase,
     private val userProfileUseCase: UserProfileUseCase,
     private val defaultDispatcher: CoroutineDispatcher,
+    private val messagingUseCase: MessagingUseCase
 ) : ViewModel() {
 
 
@@ -74,7 +77,6 @@ class MappingViewModel @Inject constructor(
     private var getRescueTransactionUpdatesJob: Job? = null
     private var getTransactionLocationUpdatesJob: Job? = null
     private var trackingHandler: TrackingStateHandler
-//    private var notifyUserHandler: NotifyUserHandler
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(
         savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState(userId = getId())
@@ -167,6 +169,9 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.bottomSheetTypeUseCase().catch {
                 it.handleException()
             }.onEach {
+                if(it.isEmpty()){
+                    return@onEach
+                }
                 _eventFlow.emit(value = MappingEvent.NewBottomSheetType(it))
             }.launchIn(this)
         }
@@ -511,8 +516,50 @@ class MappingViewModel @Inject constructor(
                     message = event.message
                 )
             }
+
+            is MappingVmEvent.LoadConversationSelected -> loadConversationSelected(receiverId = event.id)
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+    }
+
+
+    private fun loadConversationSelected(receiverId: String) {
+        viewModelScope.launch {
+            runCatching {
+
+                val sender = async {
+                    if (state.value.userSenderMessage == null) {
+                        messagingUseCase.getMessagingUserUseCase(uid = getId())
+                    } else {
+                        state.value.userSenderMessage
+                    }
+                }.await()
+
+                val receiver = async {
+                    if(state.value.userReceiverMessage?.userDetails?.uid != receiverId){
+                        messagingUseCase.getMessagingUserUseCase(uid = receiverId)
+                    }else{
+                        state.value.userReceiverMessage
+                    }
+                }.await()
+
+                _state.update {
+                    it.copy(
+                        userSenderMessage = sender,
+                        userReceiverMessage = receiver
+                    )
+                }
+                _eventFlow.emit(value = MappingEvent.LoadConversationSuccess(
+                    userSenderMessage = sender!!,
+                    userReceiverMessage = receiver!!
+                ))
+
+            }.onSuccess {
+                Timber.v("Messaging User Success")
+            }.onFailure {
+                Timber.e("Messaging User Error: ${it.localizedMessage}")
+            }
+        }
     }
 
     private fun updateReportedIncident(marker: HazardousLaneMarker) {

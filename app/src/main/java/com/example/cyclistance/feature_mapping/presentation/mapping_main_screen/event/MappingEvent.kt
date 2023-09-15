@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 
 
 sealed class MappingEvent{
@@ -49,4 +50,7 @@ sealed class MappingEvent{
     data class GenerateRouteNavigationSuccess(val routeDirection: RouteDirection): MappingEvent()
     data class GenerateRouteNavigationFailed(val reason: String = "Failed to generate route navigation"): MappingEvent()
 
+    data class LoadConversationSuccess(
+        val userSenderMessage: MessagingUserItemModel,
+        val userReceiverMessage: MessagingUserItemModel) : MappingEvent()
 }
