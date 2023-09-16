@@ -1,16 +1,25 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.sino_track
 
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import com.example.cyclistance.core.presentation.dialogs.webview_dialog.DialogWebView
 
 @Composable
-fun SinoTrackWebView(modifier: Modifier = Modifier, onDismiss: () -> Unit) {
+fun SinoTrackScreen(
+    paddingValues: PaddingValues,
+    navController: NavController) {
+
     val mUrl = "https://www.sinotrack.com/"
 
     DialogWebView(
-        modifier = modifier,
+        modifier = Modifier.padding(paddingValues),
         mUrl = mUrl,
-        onDismiss = onDismiss
+        onDismiss = {
+            navController.popBackStack()
+        }
     )
+
 }

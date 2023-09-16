@@ -33,18 +33,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_results.event.RescueResultUiEvent
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun RescueResultsScreenContent(
     modifier: Modifier = Modifier,
-    mappingState: MappingState = MappingState(),
-    uiState: MappingUiState = MappingUiState(),
-    event: (MappingUiEvent) -> Unit
+    event: (RescueResultUiEvent) -> Unit
+
 ) {
     var step by rememberSaveable { mutableIntStateOf(1) }
     var rating by rememberSaveable { mutableFloatStateOf(0.0f) }
@@ -56,13 +53,17 @@ fun RescueResultsScreenContent(
     }
 
 
-    val stepUp = remember(step){{
-        step += 1
-    }}
+    val stepUp = remember(step) {
+        {
+            step += 1
+        }
+    }
 
-    val stepDown = remember(step){{
-        step -= 1
-    }}
+    val stepDown = remember(step) {
+        {
+            step -= 1
+        }
+    }
     val fadeInAnimationSpec: FiniteAnimationSpec<Float> =
         tween(durationMillis = 1200, delayMillis = 250, easing = FastOutSlowInEasing)
 
@@ -177,7 +178,7 @@ fun RescueResultsScreenContent(
                         .fillMaxWidth(0.8f),
                     negativeButtonText = "No",
                     positiveButtonText = "Yes",
-                    onClickNegativeButton = { event(MappingUiEvent.RescueResultsDialog(visibility = false)) },
+                    onClickNegativeButton = { event(RescueResultUiEvent.CloseRescueResults) },
                     onClickPositiveButton = stepUp)
 
             }
@@ -216,7 +217,8 @@ fun RescueResultsScreenContent(
 
 
                 Button(
-                    onClick = {event(MappingUiEvent.RescueResultsDialog(visibility = false))}, shape = RoundedCornerShape(8.dp),
+                    onClick = { event(RescueResultUiEvent.CloseRescueResults) },
+                    shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = MaterialTheme.colors.primary,
                         contentColor = MaterialTheme.colors.onPrimary
