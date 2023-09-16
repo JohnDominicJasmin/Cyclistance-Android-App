@@ -40,7 +40,7 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_details.components.PointToPointDisplay
+import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_details.components.PointToPointDisplay
 import com.example.cyclistance.feature_ride_history.domain.model.ui.RideHistoryItemModel
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.Black500

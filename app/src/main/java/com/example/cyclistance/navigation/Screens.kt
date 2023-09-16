@@ -66,6 +66,7 @@ sealed class Screens {
 
         object SinoTrack: MappingNavigation(screenRoute = "sino_track_screen")
         object RescueResults: MappingNavigation(screenRoute = "rescue_results_screen")
+        object RescueDetails: MappingNavigation(screenRoute = "rescue_details_screen")
         object Mapping : MappingNavigation(screenRoute = "mapping_screen")
         object Cancellation :
             MappingNavigation(screenRoute = "cancellation_screen" + "/{${CANCELLATION_TYPE}}/{${TRANSACTION_ID}}/{${CLIENT_ID}}") {

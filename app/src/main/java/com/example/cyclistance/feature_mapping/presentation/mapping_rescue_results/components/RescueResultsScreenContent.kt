@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_results.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_rescue_results.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -33,7 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_results.event.RescueResultUiEvent
+import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_results.event.RescueResultUiEvent
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
 

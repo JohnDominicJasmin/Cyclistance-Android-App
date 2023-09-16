@@ -23,10 +23,10 @@ import com.example.cyclistance.core.presentation.dialogs.common.AnimatedRawResIc
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescriptionToIcon
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue_details.RescueDetailsModel
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_details.components.RatingCard
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_details.components.RescueDescription
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_details.components.RescueLocationDetails
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_details.components.RescueStats
+import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_details.components.RatingCard
+import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_details.components.RescueDescription
+import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_details.components.RescueLocationDetails
+import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_details.components.RescueStats
 import com.example.cyclistance.feature_ride_history.domain.model.ui.RideHistoryDetailsModel
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
