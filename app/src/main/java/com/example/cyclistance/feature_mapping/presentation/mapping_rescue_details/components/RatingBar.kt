@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_details.components
+package com.example.cyclistance.feature_mapping.presentation.mapping_rescue_details.components
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.Icon

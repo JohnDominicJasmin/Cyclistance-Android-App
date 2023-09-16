@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.sino_track
+package com.example.cyclistance.feature_mapping.presentation.mapping_sinotrack
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
