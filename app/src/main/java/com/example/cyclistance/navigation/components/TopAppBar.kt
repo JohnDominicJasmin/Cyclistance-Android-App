@@ -192,12 +192,12 @@ fun TopAppBar(
                 })
         }
 
-        Screens.ReportAccountNavigation.ReportAccount.screenRoute -> {
+       Screens.MappingNavigation.RescueDetails.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.Close,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
-                    TitleTopAppBar(title = "Report Account")
+                    TitleTopAppBar(title = "Rescue Request")
                 })
 
         }
