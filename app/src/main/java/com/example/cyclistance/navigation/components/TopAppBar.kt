@@ -192,7 +192,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.MappingNavigation.RescueDetails.screenRoute -> {
+       Screens.MappingNavigation.RescueDetails.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.Close,
                 onClickIcon = onClickArrowBackIcon,

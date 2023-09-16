@@ -25,6 +25,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
@@ -105,11 +107,13 @@ fun ReportAccountFeedback(
         Text(
             text = "The reported account will be validated. The penalty will be implied once the action has been confirmed.",
             color = Black500,
-            style = MaterialTheme.typography.body1.copy(textAlign = TextAlign.Center),
+            style = MaterialTheme.typography.body1.copy(
+                textAlign = TextAlign.Justify,
+                letterSpacing = TextUnit(0.6f, type = TextUnitType.Sp)),
             modifier = Modifier
                 .fillMaxWidth(0.8f)
                 .padding(vertical = 16.dp),
-            )
+        )
 
         Button(onClick = onClickOkayButton, shape = RoundedCornerShape(8.dp)) {
             Text(
@@ -123,10 +127,25 @@ fun ReportAccountFeedback(
     }
 }
 
-@Preview
+@Preview(name = "Dark Theme")
 @Composable
 private fun PreviewReportAccountFeedback() {
     CyclistanceTheme(darkTheme = true) {
+        Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                ReportAccountFeedback(
+                    photo = "",
+                    name = "John Doe John DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn DoeJohn Doe",
+                    onClickOkayButton = {})
+            }
+        }
+    }
+}
+
+@Preview(name = "Light theme")
+@Composable
+private fun PreviewReportAccountFeedback1() {
+    CyclistanceTheme(darkTheme = false) {
         Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
             Box(modifier = Modifier.fillMaxSize()) {
                 ReportAccountFeedback(

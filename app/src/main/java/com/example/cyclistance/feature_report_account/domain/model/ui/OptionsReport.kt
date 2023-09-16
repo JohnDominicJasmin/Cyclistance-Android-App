@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 @StableState
-data class AccountReport(
+data class OptionsReport(
     val selectedOptions: List<String> = emptyList()
 ): Parcelable
 

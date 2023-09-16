@@ -86,6 +86,11 @@ fun NavGraph(
             paddingValues = paddingValues
         )
 
+        onReportAccountGraph(
+            navController = navController,
+            paddingValues = paddingValues
+        )
+
     }
 }
 
