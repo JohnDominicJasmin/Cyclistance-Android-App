@@ -50,8 +50,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.request.MappingRequestAccepted
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.request.MappingRequestCancelled
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_request.RescueRequestDialog
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_results.RescueResultsDialog
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.sino_track.SinoTrackWebView
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
@@ -118,19 +116,6 @@ fun MappingScreenContent(
                     event = event
                 )
             }
-
-
-            if(uiState.isRescueResultsDialogVisible){
-
-                RescueResultsDialog(
-                    modifier = Modifier.fillMaxSize(),
-                    mappingState = state,
-                    uiState = uiState,
-                    event = event
-                )
-
-            }
-
 
             MappingBottomSheet(
                 state = state,
@@ -213,11 +198,7 @@ fun MappingScreenContent(
                         onClickFamilyTracker = { event(MappingUiEvent.OpenFamilyTracker) },
                         onClickRescueRequest = { event(MappingUiEvent.RescueRequestDialog(visibility = true)) },
                         onClickFab = { event(MappingUiEvent.ExpandableFab(expanded = !uiState.isFabExpanded)) },
-                        onClickBikeTracker = {
-                            event(
-                                MappingUiEvent.SinoTrackWebViewVisibility(
-                                    visibility = true))
-                        },
+                        onClickBikeTracker = { event(MappingUiEvent.OpenSinoTrack) },
                         isFabExpanded = uiState.isFabExpanded,
                         badgeCount = respondentCount,
                         modifier = Modifier.constrainAs(expandableFabSection) {
@@ -454,13 +435,7 @@ fun MappingScreenContent(
             }
 
 
-            if (uiState.isSinoTrackWebViewVisible) {
-                SinoTrackWebView(onDismiss = {
-                    event(
-                        MappingUiEvent.SinoTrackWebViewVisibility(
-                            visibility = false))
-                })
-            }
+
 
         }
     }

@@ -26,7 +26,8 @@ sealed class MappingUiEvent {
     data object RouteOverview : MappingUiEvent()
     data object RecenterRoute : MappingUiEvent()
     data object OpenNavigation : MappingUiEvent()
-
+    data object OpenSinoTrack : MappingUiEvent()
+    data object OpenRescueResults : MappingUiEvent()
     data object OnRequestNavigationCameraToOverview : MappingUiEvent()
 
     data object OpenFamilyTracker : MappingUiEvent()
@@ -45,7 +46,6 @@ sealed class MappingUiEvent {
     // Events with Parameters
 
     data class NotifyUser(val title: String, val message: String) : MappingUiEvent()
-    data class SinoTrackWebViewVisibility(val visibility: Boolean) : MappingUiEvent()
     data class HazardousLaneMarkerDialog(val visibility: Boolean) : MappingUiEvent()
     data class DiscardChangesMarkerDialog(val visibility: Boolean) : MappingUiEvent()
     data class CancelSearchDialog(val visibility: Boolean) : MappingUiEvent()
@@ -56,7 +56,6 @@ sealed class MappingUiEvent {
     data class EmergencyCallDialog(val visibility: Boolean) : MappingUiEvent()
     data class RescueRequestDialog(val visibility: Boolean) : MappingUiEvent()
     data class AlertDialog(val alertDialogState: AlertDialogState = AlertDialogState()): MappingUiEvent()
-    data class RescueResultsDialog(val visibility: Boolean) : MappingUiEvent()
     data class NotificationPermissionDialog(val visibility: Boolean) : MappingUiEvent()
     data class OnInitializeMap(val mapboxMap: MapboxMap) : MappingUiEvent()
     data class OnMapLongClick(val latLng: LatLng) : MappingUiEvent()

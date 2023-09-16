@@ -16,6 +16,9 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACT
 import com.example.cyclistance.feature_mapping.presentation.mapping_cancellation_reason.CancellationReasonScreen
 import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.ConfirmDetailsScreen
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.MappingScreen
+import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_details.RescueDetailsScreen
+import com.example.cyclistance.feature_mapping.presentation.mapping_rescue_results.RescueResultsScreen
+import com.example.cyclistance.feature_mapping.presentation.mapping_sinotrack.SinoTrackScreen
 import com.example.cyclistance.navigation.Screens
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 
@@ -75,6 +78,24 @@ fun NavGraphBuilder.mappingGraph(
                 navController = navController,
                 paddingValues = paddingValues)
 
+        }
+
+        composable(route = Screens.MappingNavigation.SinoTrack.screenRoute){
+            SinoTrackScreen(
+                paddingValues = paddingValues,
+                navController = navController
+            )
+        }
+
+        composable(route = Screens.MappingNavigation.RescueResults.screenRoute){
+            RescueResultsScreen(
+                paddingValues = paddingValues,
+                navController = navController
+            )
+        }
+
+        composable(route = Screens.MappingNavigation.RescueDetails.screenRoute){
+            RescueDetailsScreen(paddingValues = paddingValues, navController = navController)
         }
 
     }

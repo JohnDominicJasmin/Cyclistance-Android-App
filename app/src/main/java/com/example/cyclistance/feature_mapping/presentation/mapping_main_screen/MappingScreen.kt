@@ -690,16 +690,12 @@ fun MappingScreen(
         )
     }}
 
-    val sinoTrackWebViewVisibility = remember{{visible: Boolean ->
-        uiState = uiState.copy(
-            isSinoTrackWebViewVisible = visible
-        )
+    val openSinoTrack = remember{{
+        navController.navigateScreen(Screens.MappingNavigation.SinoTrack.screenRoute)
     }}
 
-    val rescueResultsDialogVisibility = remember{{ visibility: Boolean ->
-        uiState = uiState.copy(
-            isRescueResultsDialogVisible = visibility
-        )
+    val openRescueResults = remember{{
+        navController.navigateScreen(Screens.MappingNavigation.RescueResults.screenRoute)
     }}
 
 
@@ -1053,7 +1049,6 @@ fun MappingScreen(
                     ).also {
                         expandBottomSheet()
                         rescueRequestDialogVisibility(false)
-                        rescueResultsDialogVisibility(false)
 
                     }
                 }
@@ -1323,8 +1318,6 @@ fun MappingScreen(
 
                 is MappingUiEvent.OnMapLongClick -> onMapLongClick(event.latLng)
                 is MappingUiEvent.OnReportIncident -> onClickReportIncident(event.labelIncident)
-                is MappingUiEvent.SinoTrackWebViewVisibility -> sinoTrackWebViewVisibility(event.visibility)
-                is MappingUiEvent.RescueResultsDialog -> rescueResultsDialogVisibility(event.visibility)
                 is MappingUiEvent.OnEmergencyCall -> onEmergencyCall(event.phoneNumber)
                 is MappingUiEvent.OnAddEmergencyContact -> onAddEmergencyContact()
                 is MappingUiEvent.MapTypeBottomSheet -> mapTypeBottomSheetVisibility(event.visibility)
@@ -1348,6 +1341,8 @@ fun MappingScreen(
                 is MappingUiEvent.CancelOnGoingRescueDialog -> cancelOnGoingRescueDialogVisibility(event.visibility)
                 is MappingUiEvent.NotificationPermissionDialog ->  notificationPermissionDialogVisibility(event.visibility)
                 is MappingUiEvent.NotifyUser -> notifyUser(title = event.title, message = event.message)
+                MappingUiEvent.OpenSinoTrack -> openSinoTrack()
+                MappingUiEvent.OpenRescueResults -> openRescueResults()
             }
         }
     )
