@@ -49,9 +49,7 @@ fun NavGraphBuilder.messagingGraph(
                 navDeepLink {
                     uriPattern =
                         "$MESSAGING_URI/$RECEIVER_MESSAGE_OBJ={$RECEIVER_MESSAGE_OBJ}&$SENDER_MESSAGE_OBJ={$SENDER_MESSAGE_OBJ}"
-                }
-            )
-        ) {
+                })) {
 
             val arguments = it.arguments!!
             val userReceiverObject = arguments.getString(RECEIVER_MESSAGE_OBJ)

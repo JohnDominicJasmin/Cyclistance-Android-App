@@ -192,6 +192,16 @@ fun TopAppBar(
                 })
         }
 
+        Screens.ReportAccountNavigation.ReportAccount.screenRoute -> {
+            TopAppBarCreator(
+                icon = Icons.Default.Close,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Report Account")
+                })
+
+        }
+
 
     }
 

@@ -9,6 +9,8 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_ID
+import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_NAME
+import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_PHOTO
 
 sealed class Screens {
 
@@ -112,6 +114,16 @@ sealed class Screens {
         }
 
         object EditProfile : UserProfileNavigation(screenRoute = "edit_profile_screen")
+    }
+
+    open class ReportAccountNavigation(val screenRoute: String = ""): Screens(){
+        companion object{
+            const val ROUTE = "report_account_navigation"
+        }
+
+        object ReportAccount: ReportAccountNavigation(screenRoute = "report_account_screen/{$USER_ID}/{$USER_NAME}/{$USER_PHOTO}"){
+            fun passArgument(userId: String, name: String, photo: String) = "report_account_screen/$userId/$name/$photo"
+        }
     }
 
 }

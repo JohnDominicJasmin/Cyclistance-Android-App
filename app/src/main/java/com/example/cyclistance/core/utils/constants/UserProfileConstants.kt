@@ -10,5 +10,7 @@ object UserProfileConstants {
     const val EDIT_PROFILE_VM_STATE_KEY = "edit_profile_vm_state_key"
     const val USER_PROFILE_VM_STATE_KEY = "user_profile_vm_state_key"
     const val USER_ID = "user_id"
+    const val USER_NAME = "user_name"
+    const val USER_PHOTO = "user_photo"
 
 }
