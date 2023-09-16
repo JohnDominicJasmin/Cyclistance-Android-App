@@ -110,7 +110,7 @@ fun BottomSheetOnGoingRescue(
                         .constrainAs(time) {
                             top.linkTo(
                                 if (isRescuer) speedometer.bottom else parent.top,
-                                margin = 5.dp)
+                                margin = 12.dp)
                             end.linkTo(etaIcon.start)
                         }
                 )
@@ -124,10 +124,10 @@ fun BottomSheetOnGoingRescue(
                         .constrainAs(etaIcon) {
                             top.linkTo(
                                 if (isRescuer) speedometer.bottom else parent.top,
-                                margin = 7.dp)
+                                margin = 12.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
-
+                            this.centerHorizontallyTo(parent)
                         }
                 )
 
@@ -141,7 +141,7 @@ fun BottomSheetOnGoingRescue(
                         .constrainAs(distance) {
                             top.linkTo(
                                 if (isRescuer) speedometer.bottom else parent.top,
-                                margin = 5.dp,
+                                margin = 12.dp,
                             )
                             start.linkTo(etaIcon.end)
                         }
@@ -288,16 +288,18 @@ private fun RoundButtonSection(
             .background(Color.Transparent)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceEvenly) {
+        horizontalArrangement = Arrangement.Center) {
 
         RoundedButtonItem(
+            modifier = Modifier.weight(1f),
             backgroundColor = MaterialTheme.colors.secondary,
             contentColor = MaterialTheme.colors.onSecondary,
             imageId = R.drawable.ic_call,
-            buttonSubtitle = "Call", onClick = onClickCallButton)
+            buttonSubtitle = "Emergency Call", onClick = onClickCallButton)
 
 
         RoundedButtonItem(
+            modifier = Modifier.weight(1f),
             backgroundColor = MaterialTheme.colors.secondary,
             contentColor = MaterialTheme.colors.onSecondary,
             imageId = R.drawable.ic_chat,
@@ -305,6 +307,7 @@ private fun RoundButtonSection(
 
 
         RoundedButtonItem(
+            modifier = Modifier.weight(1f),
             backgroundColor = Red900,
             contentColor = Color.White,
             imageId = R.drawable.ic_cancel_1,
@@ -316,14 +319,16 @@ private fun RoundButtonSection(
 
 @Composable
 private fun RoundedButtonItem(
+    modifier: Modifier = Modifier,
     backgroundColor: Color,
     contentColor: Color,
     imageId: Int,
     buttonSubtitle: String,
     onClick: () -> Unit) {
+
     Column(
-        modifier = Modifier
-            .wrapContentSize(),
+        modifier = modifier
+            .wrapContentSize().padding(vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(
             space = 7.dp,
             alignment = Alignment.CenterVertically),

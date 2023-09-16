@@ -55,6 +55,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -199,7 +200,11 @@ fun MappingScreenContent(
                         onClickRouteOverviewButton = { event(MappingUiEvent.RouteOverview) },
                         onClickRecenterButton = { event(MappingUiEvent.RecenterRoute) },
                         onClickOpenNavigationButton = { event(MappingUiEvent.OpenNavigation) },
-                        onClickLayerButton = { event(MappingUiEvent.OpenHazardousLaneBottomSheet) },
+                        onClickLayerButton = {
+                            val mapTypeBottomSheetVisibility =
+                                bottomSheetScaffoldState.bottomSheetState.isExpanded && uiState.bottomSheetType == BottomSheetType.MapType.type
+                            event(MappingUiEvent.MapTypeBottomSheet(visibility = !mapTypeBottomSheetVisibility))
+                        },
                         uiState = uiState
                     )
 

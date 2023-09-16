@@ -46,7 +46,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun BottomSheetHazardousLane(
+fun MapTypeBottomSheet(
     modifier: Modifier = Modifier,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
     selectedMapType: String,
@@ -211,7 +211,7 @@ fun PreviewBottomSheetHazardousLane() {
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colors.background)) {
-                BottomSheetHazardousLane(
+                MapTypeBottomSheet(
                     modifier = Modifier.align(Alignment.BottomCenter),
                     bottomSheetScaffoldState = bottomSheetScaffoldState,
                     selectedMapType = MapType.Default.type,

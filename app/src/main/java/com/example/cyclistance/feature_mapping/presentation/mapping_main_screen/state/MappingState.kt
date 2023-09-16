@@ -8,6 +8,7 @@ import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.N
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MapType
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -23,8 +24,8 @@ data class MappingState(
     val profileUploaded: Boolean = false,
     val respondedToHelp: Boolean = false,
     val transactionLocation: LocationModel? = null,
-    val rescuerETA: String = "",
-    val rescuerDistance: String = "",
+    val rescueETA: String = "",
+    val rescueDistance: String = "",
     val newRescueRequest: NewRescueRequestsModel? = null,
     val speedometerState: SpeedometerState = SpeedometerState(),
     val nearbyCyclist: NearbyCyclist? = null,
@@ -32,6 +33,8 @@ data class MappingState(
     val userId: String = "",
     val shouldShowHazardousStartingInfo: Boolean = false,
     val lastRequestNotifiedId: String = "",
+    val userReceiverMessage: MessagingUserItemModel? = null,
+    val userSenderMessage: MessagingUserItemModel? = null,
 ) : Parcelable{
 
 

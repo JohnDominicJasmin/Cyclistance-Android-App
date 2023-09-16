@@ -32,6 +32,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
+import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
 import com.google.maps.android.SphericalUtil
 import com.mapbox.geojson.Point
@@ -40,6 +41,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -65,6 +67,7 @@ class MappingViewModel @Inject constructor(
     private val mappingUseCase: MappingUseCase,
     private val userProfileUseCase: UserProfileUseCase,
     private val defaultDispatcher: CoroutineDispatcher,
+    private val messagingUseCase: MessagingUseCase
 ) : ViewModel() {
 
 
@@ -74,7 +77,6 @@ class MappingViewModel @Inject constructor(
     private var getRescueTransactionUpdatesJob: Job? = null
     private var getTransactionLocationUpdatesJob: Job? = null
     private var trackingHandler: TrackingStateHandler
-//    private var notifyUserHandler: NotifyUserHandler
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(
         savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState(userId = getId())
@@ -167,6 +169,9 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.bottomSheetTypeUseCase().catch {
                 it.handleException()
             }.onEach {
+                if(it.isEmpty()){
+                    return@onEach
+                }
                 _eventFlow.emit(value = MappingEvent.NewBottomSheetType(it))
             }.launchIn(this)
         }
@@ -511,8 +516,50 @@ class MappingViewModel @Inject constructor(
                     message = event.message
                 )
             }
+
+            is MappingVmEvent.LoadConversationSelected -> loadConversationSelected(receiverId = event.id)
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+    }
+
+
+    private fun loadConversationSelected(receiverId: String) {
+        viewModelScope.launch {
+            runCatching {
+
+                val sender = async {
+                    if (state.value.userSenderMessage == null) {
+                        messagingUseCase.getMessagingUserUseCase(uid = getId())
+                    } else {
+                        state.value.userSenderMessage
+                    }
+                }.await()
+
+                val receiver = async {
+                    if(state.value.userReceiverMessage?.userDetails?.uid != receiverId){
+                        messagingUseCase.getMessagingUserUseCase(uid = receiverId)
+                    }else{
+                        state.value.userReceiverMessage
+                    }
+                }.await()
+
+                _state.update {
+                    it.copy(
+                        userSenderMessage = sender,
+                        userReceiverMessage = receiver
+                    )
+                }
+                _eventFlow.emit(value = MappingEvent.LoadConversationSuccess(
+                    userSenderMessage = sender!!,
+                    userReceiverMessage = receiver!!
+                ))
+
+            }.onSuccess {
+                Timber.v("Messaging User Success")
+            }.onFailure {
+                Timber.e("Messaging User Error: ${it.localizedMessage}")
+            }
+        }
     }
 
     private fun updateReportedIncident(marker: HazardousLaneMarker) {
@@ -669,7 +716,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun subscribeToTransactionLocationUpdates() {
-        if (getRescueTransactionUpdatesJob?.isActive == true) {
+        if (getTransactionLocationUpdatesJob?.isActive == true) {
             return
         }
         getTransactionLocationUpdatesJob =
@@ -722,7 +769,14 @@ class MappingViewModel @Inject constructor(
                 longitude = this.longitude
             ), endLocation = userLocation
         )
-        _state.update { it.copy(rescuerETA = eta) }
+
+        val distance = mappingUseCase.getCalculatedDistanceUseCase(
+            startingLocation = LocationModel(
+                latitude = this.latitude,
+                longitude = this.longitude
+            ),
+            destinationLocation = userLocation)
+        _state.update { it.copy(rescueETA = eta, rescueDistance = distance.formatToDistanceKm()) }
     }
 
     private fun getETABetweenTwoPoints(
@@ -780,10 +834,16 @@ class MappingViewModel @Inject constructor(
                 endLocation = userLocation
             )
         }
+
+        val distance = rescuer.location?.let { mappingUseCase.getCalculatedDistanceUseCase(
+            startingLocation = it,
+            destinationLocation = userLocation)
+        }
         _state.update {
             it.copy(
                 rescueTransaction = rescueTransaction,
-                rescuerETA = estimatedTimeArrival ?: "",
+                rescueETA = estimatedTimeArrival ?: "",
+                rescueDistance = distance?.formatToDistanceKm() ?: "",
                 rescuer = rescuer
             )
         }
@@ -834,7 +894,6 @@ class MappingViewModel @Inject constructor(
                         user = user)
                 }
                 user.getTransactionId()?.let { loadRescueTransaction(transactionId = it) }
-//                handleUserNotification(user)
             }
 
         }.onFailure {
@@ -843,23 +902,7 @@ class MappingViewModel @Inject constructor(
 
     }
 
-/*    private fun NearbyCyclist.handleUserNotification(user: UserItem){
-        val rescueRequest = user.getUserRescueRespondents(this).lastOrNull()
-        rescueRequest?.id?.let { requestId ->
-            if(state.value.lastRequestNotifiedId == requestId){
-                return
-            }
 
-    *//*        notifyUserHandler.showNotification(
-                title = "New Rescue Request",
-                message = "You have a rescue request from ${rescueRequest.name}"
-            )*//*
-
-            _state.update { it.copy(lastRequestNotifiedId = requestId) }
-
-        }
-
-    }*/
 
     private fun UserItem.getUserRescueRespondents(nearbyCyclist: NearbyCyclist): List<RescueRequestItemModel> {
         val rescueRespondentsSnapShot: MutableList<RescueRequestItemModel> = mutableListOf()
@@ -922,6 +965,8 @@ class MappingViewModel @Inject constructor(
                 rescueTransactionItem = rescueTransaction
             )
 
+        }.onSuccess {
+            Timber.v("Broadcasting location to transaction success")
         }.onFailure {
             Timber.v("Broadcasting location to transaction failed: ${it.message}")
         }
@@ -954,7 +999,7 @@ class MappingViewModel @Inject constructor(
                         rescueTransaction = rescueTransactions,
                         id = getId()
                     )
-//                    showNotification()
+
                     trackingHandler.updateClient()
                 }.launchIn(this@launch).invokeOnCompletion {
                     savedStateHandle[MAPPING_VM_STATE_KEY] = state.value

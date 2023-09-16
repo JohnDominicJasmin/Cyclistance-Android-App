@@ -53,7 +53,7 @@ object MessagingSingletonModule {
             NotificationCompat.Builder(
                 context,
                 MessagingConstants.CHANNEL_ID).apply {
-                setSmallIcon(R.drawable.ic_app_icon_cyclistance)
+                setSmallIcon(R.drawable.ic_app_notification_icon)
                 priority = NotificationCompat.PRIORITY_HIGH
                 setAutoCancel(true)
                 setShowWhen(true)

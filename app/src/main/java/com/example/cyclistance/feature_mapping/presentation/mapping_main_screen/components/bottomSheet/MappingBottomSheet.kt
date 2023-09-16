@@ -30,17 +30,17 @@ fun MappingBottomSheet(
 
 
     val scope = rememberCoroutineScope()
-    val bottomSheetType = uiState.bottomSheetType
-    val sheetGesturesEnabled = remember(bottomSheetType) {
-        bottomSheetType != BottomSheetType.SearchAssistance.type &&
-        bottomSheetType != BottomSheetType.OnGoingRescue.type &&
-        bottomSheetType != BottomSheetType.IncidentDescription.type
+
+    val sheetGesturesEnabled = remember(uiState.bottomSheetType) {
+        uiState.bottomSheetType != BottomSheetType.SearchAssistance.type &&
+        uiState.bottomSheetType != BottomSheetType.OnGoingRescue.type &&
+        uiState.bottomSheetType != BottomSheetType.IncidentDescription.type
     }
     MappingBottomSheet(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         sheetGesturesEnabled = sheetGesturesEnabled,
         sheetContent = {
-            when (bottomSheetType) {
+            when (uiState.bottomSheetType) {
 
                 BottomSheetType.RescuerArrived.type -> {
 
@@ -86,25 +86,25 @@ fun MappingBottomSheet(
 
                 BottomSheetType.SearchAssistance.type -> {
 
-                        BottomSheetSearchingAssistance(
-                            modifier = modifier,
-                            onClickCancelSearchButton = {
-                                event(MappingUiEvent.CancelSearching)
-                            },
-                            )
-                    }
+                    BottomSheetSearchingAssistance(
+                        modifier = modifier,
+                        onClickCancelSearchButton = {
+                            event(MappingUiEvent.CancelSearching)
+                        },
+                    )
+                }
 
                 BottomSheetType.OnGoingRescue.type -> {
 
                     BottomSheetOnGoingRescue(
                         modifier = modifier,
-                        onClickCallButton = { },
+                        onClickCallButton = { event(MappingUiEvent.EmergencyCallDialog(visibility = true)) },
                         onClickChatButton = { event(MappingUiEvent.ChatRescueTransaction) },
                         onClickCancelButton = { event(MappingUiEvent.CancelRescueTransaction) },
                         role = state.user.transaction?.role ?: "",
                         onGoingRescueModel = OnGoingRescueModel(
-                            estimatedTime = state.rescuerETA,
-                            estimatedDistance = state.rescuerDistance,
+                            estimatedTime = state.rescueETA,
+                            estimatedDistance = state.rescueDistance,
                             currentSpeed = String.format(
                                 "%.2f",
                                 state.speedometerState.currentSpeedKph),
@@ -113,9 +113,9 @@ fun MappingBottomSheet(
 
                 }
 
-                BottomSheetType.HazardousLane.type -> {
+                BottomSheetType.MapType.type -> {
 
-                    BottomSheetHazardousLane(
+                    MapTypeBottomSheet(
                         bottomSheetScaffoldState = bottomSheetScaffoldState,
                         modifier = modifier,
                         selectedMapType = state.mapType,

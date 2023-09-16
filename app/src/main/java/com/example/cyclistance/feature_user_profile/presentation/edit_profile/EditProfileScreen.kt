@@ -55,7 +55,7 @@ fun EditProfileScreen(
     val context = LocalContext.current
 
     var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
-    var uiState by remember { mutableStateOf(EditProfileUiState()) }
+    var uiState by rememberSaveable { mutableStateOf(EditProfileUiState()) }
     val scope = rememberCoroutineScope()
     val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
     var name by rememberSaveable(stateSaver = TextFieldValue.Saver) {
