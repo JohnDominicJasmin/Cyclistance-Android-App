@@ -99,3 +99,11 @@ Sep 17, 2023 10:02:25 PM io.gapi.emulators.netty.HttpVersionRoutingHandler chann
 INFO: Detected HTTP/2 connection.
 Sep 17, 2023 10:03:55 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
+Sep 17, 2023 10:09:47 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Sep 17, 2023 10:12:42 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Sep 17, 2023 10:16:50 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
+Sep 17, 2023 10:24:50 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.

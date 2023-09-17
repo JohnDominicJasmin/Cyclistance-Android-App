@@ -13,7 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -21,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
@@ -48,21 +48,19 @@ fun RescueRequestScreenContent(
     val respondents = remember(mappingState.newRescueRequest?.request?.size) {
         mappingState.newRescueRequest?.request ?: emptyList()
     }
+    Column(modifier = modifier) {
 
-    Scaffold(modifier = modifier, topBar = {
         TopAppBarCreator(
+            modifier = Modifier.shadow(elevation = 12.dp, ),
             icon = Icons.Default.Close,
             onClickIcon = { event(MappingUiEvent.RescueRequestDialog(visibility = false)) },
             topAppBarTitle = {
                 TitleTopAppBar(title = "Rescue Request")
-            })
-
-    }) { paddingValues ->
+            }, elevation = 10.dp)
 
 
         Surface(
             modifier = Modifier
-                .padding(paddingValues)
                 .fillMaxSize(),
             color = MaterialTheme.colors.background) {
 
@@ -114,6 +112,11 @@ fun RescueRequestScreenContent(
                                             event(
                                                 MappingUiEvent.ConfirmRequestHelp(
                                                     respondent.id ?: ""))
+                                        },
+                                        viewProfile = {
+                                            event(MappingUiEvent.ViewProfile(
+                                                id = respondent.id!!)
+                                            )
                                         }
                                     )
                                 }

@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.rescue_request.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -49,7 +50,8 @@ fun RequestItem(
     modifier: Modifier,
     cardState: RescueRequestItemModel,
     onClickCancelButton: () -> Unit = {},
-    onClickConfirmButton: () -> Unit = {}) {
+    onClickConfirmButton: () -> Unit = {},
+    viewProfile: () -> Unit = {}) {
 
     Card(
         modifier = modifier,
@@ -76,7 +78,9 @@ fun RequestItem(
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
                         .size(60.dp)
-                        .clip(CircleShape))
+                        .clip(CircleShape)
+                        .clickable(onClick = viewProfile))
+
 
 
 

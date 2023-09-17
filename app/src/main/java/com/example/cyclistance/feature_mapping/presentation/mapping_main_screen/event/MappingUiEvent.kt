@@ -64,6 +64,7 @@ sealed class MappingUiEvent {
     data class OnSelectMapType(val mapType: String) : MappingUiEvent()
     data class DeclineRequestHelp(val id: String) : MappingUiEvent()
     data class ConfirmRequestHelp(val id: String) : MappingUiEvent()
+    data class ViewProfile(val id: String) : MappingUiEvent()
     data class UpdateIncidentDescription(val label: String, val description: String) :
         MappingUiEvent()
 
