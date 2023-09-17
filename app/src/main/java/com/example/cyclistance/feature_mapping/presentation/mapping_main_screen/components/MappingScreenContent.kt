@@ -19,7 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
@@ -80,6 +83,8 @@ fun MappingScreenContent(
         derivedStateOf { (state.newRescueRequest?.request)?.size ?: 0 }
     }
 
+    var lastNotifiedRequestId by rememberSaveable{ mutableStateOf("") }
+    var lastNotifiedAcceptedId by rememberSaveable { mutableStateOf("") }
 
     val configuration = LocalConfiguration.current
     val markerPostedCount by remember(hazardousLaneMarkers.size){
@@ -90,12 +95,24 @@ fun MappingScreenContent(
 
     LaunchedEffect(key1 = respondentCount){
         val request = state.newRescueRequest?.request?.lastOrNull() ?: return@LaunchedEffect
-        event(MappingUiEvent.NotifyUser(title = "New Rescue Request", message = "Request from ${request.name}, distance is ${request.distance}"))
-    }
-    LaunchedEffect(key1 = uiState.rescueRequestAccepted, key2 = uiState.isRescueCancelled.not()){
-        if(uiState.rescueRequestAccepted && uiState.isRescueCancelled.not()){
-            event(MappingUiEvent.NotifyUser(title = "Request Accepted", message = "${state.rescuee?.name} accepted your request"))
+        if(lastNotifiedRequestId == request.id) {
+            return@LaunchedEffect
         }
+
+        event(MappingUiEvent.NotifyUser(title = "New Rescue Request", message = "Request from ${request.name}, distance is ${request.distance}"))
+        lastNotifiedRequestId = request.id ?: ""
+    }
+
+    LaunchedEffect(key1 = uiState.rescueRequestAccepted, key2 = uiState.isRescueCancelled.not()){
+        if(!uiState.rescueRequestAccepted && uiState.isRescueCancelled){
+            return@LaunchedEffect
+        }
+
+        if(lastNotifiedAcceptedId == state.rescuee?.id){
+            return@LaunchedEffect
+        }
+        event(MappingUiEvent.NotifyUser(title = "Request Accepted", message = "${state.rescuee?.name} accepted your request"))
+        lastNotifiedAcceptedId = state.rescuee?.id ?: ""
     }
 
 

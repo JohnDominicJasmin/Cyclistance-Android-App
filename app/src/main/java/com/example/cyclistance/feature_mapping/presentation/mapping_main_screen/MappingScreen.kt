@@ -883,6 +883,9 @@ fun MappingScreen(
         }
     }
 
+    val viewProfile = remember{{ id: String ->
+        navController.navigateScreen(Screens.UserProfileNavigation.UserProfile.passArgument(userId = id))
+    }}
 
 
 
@@ -1343,6 +1346,7 @@ fun MappingScreen(
                 is MappingUiEvent.NotifyUser -> notifyUser(title = event.title, message = event.message)
                 MappingUiEvent.OpenSinoTrack -> openSinoTrack()
                 MappingUiEvent.OpenRescueResults -> openRescueResults()
+                is MappingUiEvent.ViewProfile -> viewProfile(event.id)
             }
         }
     )
