@@ -115,5 +115,6 @@ fun NavController.navigateScreen(
 
         }
         restoreState = true
+        launchSingleTop = true
     }
 }
