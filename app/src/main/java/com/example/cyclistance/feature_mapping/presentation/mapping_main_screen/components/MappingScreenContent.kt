@@ -104,15 +104,19 @@ fun MappingScreenContent(
     }
 
     LaunchedEffect(key1 = uiState.rescueRequestAccepted, key2 = uiState.isRescueCancelled.not()){
-        if(!uiState.rescueRequestAccepted && uiState.isRescueCancelled){
-            return@LaunchedEffect
-        }
 
-        if(lastNotifiedAcceptedId == state.rescuee?.id){
+
+        val rescueeId = state.rescuee?.id
+        if(lastNotifiedAcceptedId == rescueeId){
             return@LaunchedEffect
         }
-        event(MappingUiEvent.NotifyUser(title = "Request Accepted", message = "${state.rescuee?.name} accepted your request"))
-        lastNotifiedAcceptedId = state.rescuee?.id ?: ""
+        if (uiState.rescueRequestAccepted && uiState.isRescueCancelled.not()) {
+
+            event(MappingUiEvent.NotifyUser(
+                    title = "Request Accepted",
+                    message = "${state.rescuee?.name} accepted your request"))
+            lastNotifiedAcceptedId = rescueeId ?: ""
+        }
     }
 
 
