@@ -42,6 +42,7 @@ import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazard
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.banner.MappingExpandableBanner
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.CancelRespondButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RequestHelpButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RespondToHelpButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.CancelOnGoingRescueDialog
@@ -234,8 +235,9 @@ fun MappingScreenContent(
                     val buttonVisible =
                         uiState.isNavigating.not() && uiState.isFabExpanded.not() && bottomSheetScaffoldState.bottomSheetState.isCollapsed
                     val requestHelpVisible = uiState.requestHelpButtonVisible && buttonVisible
-                    val respondToHelpVisible =
-                        uiState.requestHelpButtonVisible.not() && buttonVisible
+                    val respondToHelpVisible = uiState.requestHelpButtonVisible.not() && buttonVisible
+
+                    val requestPending = state.user.isRescueRequestPending(uiState.mapSelectedRescuee?.userId) == true
 
                     RequestHelpButton(
                         modifier = Modifier.constrainAs(requestHelpButton) {
@@ -256,8 +258,21 @@ fun MappingScreenContent(
                         },
                         onClickRespondButton = { event(MappingUiEvent.RespondToHelp) },
                         state = state,
-                        visible = respondToHelpVisible
+                        visible = respondToHelpVisible && !requestPending
                     )
+
+
+                    CancelRespondButton(
+                        cancelRespond = { /*TODO*/ },
+                        modifier = Modifier.constrainAs(respondToHelpButton) {
+                            bottom.linkTo(parent.bottom, margin = 15.dp)
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                        },
+                        state = state,
+                        visible = respondToHelpVisible && requestPending)
+
+
 
                     if (state.isLoading) {
                         CircularProgressIndicator(
