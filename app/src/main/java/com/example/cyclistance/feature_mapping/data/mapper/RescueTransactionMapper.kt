@@ -50,12 +50,12 @@ object RescueTransactionMapper {
 
     private fun RouteDto.toRouteModel():RouteModel{
         return RouteModel(
-            startingLocation = this.startingLocation.toLocationModel(),
-            destinationLocation = this.destinationLocation.toLocationModel(),
+            startingLocation = this.startingLocation.toLocation(),
+            destinationLocation = this.destinationLocation.toLocation(),
         )
     }
 
-     fun LocationDto.toLocationModel(): LocationModel{
+     fun LocationDto.toLocation(): LocationModel{
         return LocationModel(
             latitude = this.latitude,
             longitude = this.longitude
