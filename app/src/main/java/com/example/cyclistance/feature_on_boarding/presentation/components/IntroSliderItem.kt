@@ -48,7 +48,7 @@ fun IntroSliderItem(
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,) {
 
-                    Spacer(modifier = Modifier.weight(0.2f))
+                    Spacer(modifier = Modifier.weight(0.05f))
 
                     Image(
                         painter = painterResource(id = introSliderItems[page].image),
@@ -57,7 +57,7 @@ fun IntroSliderItem(
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier
                             .padding(horizontal = 4.dp, vertical = 12.dp)
-                            .weight(1.35f, fill = true),
+                            .weight(1f, fill = true),
                     )
 
 
