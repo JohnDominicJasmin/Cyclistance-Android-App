@@ -16,6 +16,7 @@ data class UserItem(
     val rescueRequest: RescueRequest? = null,
     val transaction: TransactionModel? = null,
     val userAssistance: UserAssistanceModel? = null,
+    val rescuePending: RescuePending? = null
 ): Parcelable{
 
 
@@ -29,6 +30,7 @@ data class UserItem(
     fun getMessage() = userAssistance?.confirmationDetail?.message
     fun getBikeType() = userAssistance?.confirmationDetail?.bikeType
     fun getDescription() = userAssistance?.confirmationDetail?.description
+    fun isRescueRequestPending(id: String?) = rescuePending?.respondents?.any { it.clientId == id }
 
 
     companion object {

@@ -22,6 +22,7 @@ import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RescuePending
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RescueRequest
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserAssistanceModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
@@ -181,7 +182,7 @@ class MappingViewModel @Inject constructor(
         if (loadDataJob?.isActive == true) return
         loadDataJob = viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             // TODO: Remove when the backend is ready
-            createMockUpUsers()
+//            createMockUpUsers()
             getNearbyCyclist()
             trackingHandler.updateClient()
         }
@@ -518,10 +519,26 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingVmEvent.LoadConversationSelected -> loadConversationSelected(receiverId = event.id)
+            is MappingVmEvent.CancelRespondHelp -> cancelRespondToHelp(respondentId = event.id)
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
+    private fun cancelRespondToHelp(respondentId: String){
+        viewModelScope.launch {
+            runCatching {
+                isLoading(true)
+                mappingUseCase.cancelHelpRespondUseCase(userId = getId(), respondentId = respondentId)
+            }.onSuccess {
+                _eventFlow.emit(value = MappingEvent.CancelRespondSuccess)
+                broadcastToNearbyCyclists()
+            }.onFailure {
+                it.handleException()
+            }.also {
+                isLoading(false)
+            }
+        }
+    }
 
     private fun loadConversationSelected(receiverId: String) {
         viewModelScope.launch {
@@ -1036,7 +1053,6 @@ class MappingViewModel @Inject constructor(
                 broadcastRescueTransactionToRespondent(location)
                 updateSpeedometer(location)
                 getNearbyCyclist()
-                broadcastToNearbyCyclists()
             }.launchIn(this@launch).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }
@@ -1126,7 +1142,9 @@ class MappingViewModel @Inject constructor(
                             latitude = location.latitude,
                             longitude = location.longitude
                         ),
-                        rescueRequest = RescueRequest(), userAssistance = UserAssistanceModel()
+                        rescueRequest = RescueRequest(),
+                        userAssistance = UserAssistanceModel(),
+                        rescuePending = RescuePending()
                     )
                 )
 

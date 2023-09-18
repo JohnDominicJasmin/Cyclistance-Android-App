@@ -10,6 +10,7 @@ sealed class MappingVmEvent {
 
     data object RequestHelp : MappingVmEvent()
     data class RespondToHelp(val selectedRescuee: MapSelectedRescuee) : MappingVmEvent()
+    data class CancelRespondHelp(val id: String) : MappingVmEvent()
     data class SelectRescueMapIcon(val id: String): MappingVmEvent()
     /**
      * Available BottomSheetType:

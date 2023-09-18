@@ -1,17 +1,19 @@
 package com.example.cyclistance.feature_mapping.data.mapper
 
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.ConfirmationDetailDto
+import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.RescuePendingDto
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.RescueRequestDto
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.RespondentDto
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.TransactionDto
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserAssistanceDto
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserItemDto
+import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toLocation
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toLocationDto
-import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toLocationModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue.RescueRequestItemModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.ConfirmationDetailModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RescuePending
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RescueRequest
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RespondentModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.TransactionModel
@@ -24,21 +26,35 @@ object UserMapper {
         return UserItem(
             address = this.address,
             id = this.id,
-            location = this.location?.toLocationModel(),
+            location = this.location?.toLocation(),
             name = this.name,
             profilePictureUrl = this.profilePictureUrl,
-            userAssistance = this.userAssistance?.toUserAssistanceModel(),
-            rescueRequest = this.rescueRequest?.toRescueRequestModel(),
-            transaction = this.transaction?.toTransactionModel()
+            userAssistance = this.userAssistance?.toUserAssistance(),
+            rescueRequest = this.rescueRequest?.toRescueRequest(),
+            transaction = this.transaction?.toTransaction(),
+            rescuePending = this.rescuePendingDto?.toRescuePending()
             )
     }
 
 
-    private fun RescueRequestDto.toRescueRequestModel(): RescueRequest {
-        return RescueRequest(
-            respondents = this.respondents.map { it.toRespondentModel() },
+
+    fun UserDto.toUser(): NearbyCyclist {
+        return NearbyCyclist(
+            users = this.map { it.toUserItem() }
         )
     }
+
+    fun UserItem.toRescueRequest(distance: String = "---", eta: String = "---"): RescueRequestItemModel {
+        return RescueRequestItemModel(
+            id = this.id,
+            name = this.name,
+            profileImageUrl = this.profilePictureUrl,
+            distance = distance,
+            estimatedTimeTravel = eta,
+            address = this.address
+        )
+    }
+
 
     fun UserItem.toUserItemDto(): UserItemDto {
         return UserItemDto(
@@ -49,12 +65,32 @@ object UserMapper {
             profilePictureUrl = this.profilePictureUrl,
             userAssistance = this.userAssistance?.toUserAssistanceDto(),
             rescueRequest = this.rescueRequest?.toRescueRequestDto(),
-            transaction = this.transaction?.toTransactionDto()
+            transaction = this.transaction?.toTransactionDto(),
+            rescuePendingDto = this.rescuePending?.toRescuePendingDto()
+
         )
     }
 
 
-    private fun TransactionDto.toTransactionModel():TransactionModel{
+    private fun RescuePending.toRescuePendingDto(): RescuePendingDto {
+        return RescuePendingDto(
+            respondents = this.respondents.map { it.toRespondentDto() }
+        )
+    }
+
+    private fun RescuePendingDto.toRescuePending(): RescuePending {
+        return RescuePending(
+            respondents = this.respondents.map { it.toRespondentModel() }
+        )
+    }
+
+    private fun RescueRequestDto.toRescueRequest(): RescueRequest {
+        return RescueRequest(
+            respondents = this.respondents.map { it.toRespondentModel() },
+        )
+    }
+
+    private fun TransactionDto.toTransaction():TransactionModel{
         return TransactionModel(
             role = this.role,
             transactionId = this.transactionId
@@ -102,7 +138,7 @@ object UserMapper {
         )
     }
 
-    private fun UserAssistanceDto.toUserAssistanceModel(): UserAssistanceModel{
+    private fun UserAssistanceDto.toUserAssistance(): UserAssistanceModel{
         return UserAssistanceModel(
             confirmationDetail = this.confirmationDetail.toConfirmationModel(),
             needHelp = this.needHelp,
@@ -119,22 +155,8 @@ object UserMapper {
 
 
 
-    fun UserDto.toUser(): NearbyCyclist {
-        return NearbyCyclist(
-            users = this.map { it.toUserItem() }
-        )
-    }
 
-    fun UserItem.toRescueRequest(distance: String = "---", eta: String = "---"): RescueRequestItemModel {
-        return RescueRequestItemModel(
-            id = this.id,
-            name = this.name,
-            profileImageUrl = this.profilePictureUrl,
-            distance = distance,
-            estimatedTimeTravel = eta,
-            address = this.address
-        )
-    }
+
 
 
 

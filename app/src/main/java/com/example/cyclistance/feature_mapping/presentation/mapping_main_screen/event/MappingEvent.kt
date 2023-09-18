@@ -53,4 +53,6 @@ sealed class MappingEvent{
     data class LoadConversationSuccess(
         val userSenderMessage: MessagingUserItemModel,
         val userReceiverMessage: MessagingUserItemModel) : MappingEvent()
+
+    data object CancelRespondSuccess: MappingEvent()
 }

@@ -17,6 +17,8 @@ data class UserItemDto(
     val profilePictureUrl: String?,
     @SerializedName("rescue_request")
     val rescueRequest: RescueRequestDto?,
+    @SerializedName("rescue_pending")
+    val rescuePendingDto: RescuePendingDto?,
     @SerializedName("transaction")
     val transaction: TransactionDto?,
     @SerializedName("user_assistance")
