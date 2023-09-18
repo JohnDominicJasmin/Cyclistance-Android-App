@@ -22,6 +22,7 @@ import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
+import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RescuePending
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RescueRequest
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserAssistanceModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
@@ -1126,7 +1127,9 @@ class MappingViewModel @Inject constructor(
                             latitude = location.latitude,
                             longitude = location.longitude
                         ),
-                        rescueRequest = RescueRequest(), userAssistance = UserAssistanceModel()
+                        rescueRequest = RescueRequest(),
+                        userAssistance = UserAssistanceModel(),
+                        rescuePending = RescuePending()
                     )
                 )
 
