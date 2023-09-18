@@ -263,7 +263,7 @@ fun MappingScreenContent(
 
 
                     CancelRespondButton(
-                        cancelRespond = { /*TODO*/ },
+                        cancelRespond = { event(MappingUiEvent.CancelRespondHelp) },
                         modifier = Modifier.constrainAs(respondToHelpButton) {
                             bottom.linkTo(parent.bottom, margin = 15.dp)
                             end.linkTo(parent.end)

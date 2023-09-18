@@ -363,6 +363,13 @@ class MappingRepositoryImpl(
         }
     }
 
+    override suspend fun cancelHelpRespond(userId: String, respondentId: String) {
+        withContext(scope){
+            handleException {
+                api.cancelHelpRespond(userId, respondentId)
+            }
+        }
+    }
 
     override suspend fun deleteRescueRespondent(userId: String, respondentId: String) {
         withContext(scope) {

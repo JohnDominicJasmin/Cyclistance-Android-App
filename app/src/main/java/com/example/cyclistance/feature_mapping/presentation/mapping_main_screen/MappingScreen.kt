@@ -887,6 +887,12 @@ fun MappingScreen(
         navController.navigateScreen(Screens.UserProfileNavigation.UserProfile.passArgument(userId = id))
     }}
 
+    val cancelRespondToHelp = remember(uiState.mapSelectedRescuee){{
+        uiState.mapSelectedRescuee?.userId?.let{ id ->
+            mappingViewModel.onEvent(event = MappingVmEvent.CancelRespondHelp(id = id))
+        }
+    }}
+
 
 
 
@@ -937,26 +943,21 @@ fun MappingScreen(
             }
         }
     }
-
-
     LaunchedEffect(key1 = hasTransaction){
         uiState = uiState.copy(
             hasTransaction = hasTransaction
         )
     }
-
     LaunchedEffect(key1 = isRescueCancelled){
         uiState = uiState.copy(
             isRescueCancelled = isRescueCancelled
         )
     }
-
     LaunchedEffect(key1 = isNavigating){
         uiState = uiState.copy(
             isNavigating = isNavigating
         )
     }
-
     LaunchedEffect(key1 = true) {
 
         mappingViewModel.eventFlow.collect { event ->
@@ -1175,6 +1176,9 @@ fun MappingScreen(
 
                 }
 
+                MappingEvent.CancelRespondSuccess -> {
+                    Toast.makeText(context, "Respond Cancelled", Toast.LENGTH_SHORT).show()
+                }
                 else -> {}
             }
         }
@@ -1318,7 +1322,6 @@ fun MappingScreen(
                 is MappingUiEvent.DeclineRequestHelp -> onClickCancelButton(event.id)
                 is MappingUiEvent.ConfirmRequestHelp -> onClickConfirmButton(event.id)
                 is MappingUiEvent.AlertDialog -> changeAlertDialogState(event.alertDialogState)
-
                 is MappingUiEvent.OnMapLongClick -> onMapLongClick(event.latLng)
                 is MappingUiEvent.OnReportIncident -> onClickReportIncident(event.labelIncident)
                 is MappingUiEvent.OnEmergencyCall -> onEmergencyCall(event.phoneNumber)
@@ -1347,6 +1350,7 @@ fun MappingScreen(
                 MappingUiEvent.OpenSinoTrack -> openSinoTrack()
                 MappingUiEvent.OpenRescueResults -> openRescueResults()
                 is MappingUiEvent.ViewProfile -> viewProfile(event.id)
+                MappingUiEvent.CancelRespondHelp -> cancelRespondToHelp()
             }
         }
     )

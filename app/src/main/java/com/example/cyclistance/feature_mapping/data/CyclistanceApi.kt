@@ -36,7 +36,8 @@ interface CyclistanceApi {
     @DELETE("/api/v1/delete-all-respondents/{user_id}")
     suspend fun deleteAllRespondents(@Path("user_id") userId: String)
 
-
+    @POST("/api/v1/cancel-help-respond/{user_id}/{respondent_id}")
+    suspend fun cancelHelpRespond(@Path("user_id") userId: String, @Path("respondent_id") respondentId: String)
 
 
     @GET("/api/v1/get-rescue-transaction-by-id/{rescue_transaction_id}")

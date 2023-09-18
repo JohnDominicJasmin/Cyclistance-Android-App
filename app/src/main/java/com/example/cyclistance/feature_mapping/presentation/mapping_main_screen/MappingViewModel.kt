@@ -182,7 +182,7 @@ class MappingViewModel @Inject constructor(
         if (loadDataJob?.isActive == true) return
         loadDataJob = viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             // TODO: Remove when the backend is ready
-            createMockUpUsers()
+//            createMockUpUsers()
             getNearbyCyclist()
             trackingHandler.updateClient()
         }
@@ -519,10 +519,26 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingVmEvent.LoadConversationSelected -> loadConversationSelected(receiverId = event.id)
+            is MappingVmEvent.CancelRespondHelp -> cancelRespondToHelp(respondentId = event.id)
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
+    private fun cancelRespondToHelp(respondentId: String){
+        viewModelScope.launch {
+            runCatching {
+                isLoading(true)
+                mappingUseCase.cancelHelpRespondUseCase(userId = getId(), respondentId = respondentId)
+            }.onSuccess {
+                _eventFlow.emit(value = MappingEvent.CancelRespondSuccess)
+                broadcastToNearbyCyclists()
+            }.onFailure {
+                it.handleException()
+            }.also {
+                isLoading(false)
+            }
+        }
+    }
 
     private fun loadConversationSelected(receiverId: String) {
         viewModelScope.launch {
