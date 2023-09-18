@@ -1037,7 +1037,6 @@ class MappingViewModel @Inject constructor(
                 broadcastRescueTransactionToRespondent(location)
                 updateSpeedometer(location)
                 getNearbyCyclist()
-                broadcastToNearbyCyclists()
             }.launchIn(this@launch).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }
