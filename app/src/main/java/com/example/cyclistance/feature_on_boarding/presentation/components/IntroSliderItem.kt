@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.cyclistance.theme.Black440
+import com.example.cyclistance.theme.CyclistanceTheme
 import com.google.accompanist.pager.*
 
 
@@ -48,7 +49,7 @@ fun IntroSliderItem(
                 Column(horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,) {
 
-                    Spacer(modifier = Modifier.weight(0.2f))
+                    Spacer(modifier = Modifier.weight(0.05f))
 
                     Image(
                         painter = painterResource(id = introSliderItems[page].image),
@@ -57,7 +58,7 @@ fun IntroSliderItem(
                         contentScale = ContentScale.FillBounds,
                         modifier = Modifier
                             .padding(horizontal = 4.dp, vertical = 12.dp)
-                            .weight(1.35f, fill = true),
+                            .weight(1f, fill = true),
                     )
 
 
@@ -93,9 +94,6 @@ fun IntroSliderItem(
                     .padding(16.dp))
         }
     }
-
-
-
 }
 
 @OptIn(ExperimentalPagerApi::class)
@@ -117,7 +115,9 @@ private fun PagerIndicator(pagerState: PagerState,modifier: Modifier) {
 @Preview(device = "id:Galaxy Nexus")
 @Composable
 fun IntroSliderItemPreview() {
-    IntroSliderItem(PagerState(currentPage = 0))
+    CyclistanceTheme(darkTheme = true) {
+        IntroSliderItem(PagerState(currentPage = 0))
+    }
 }
 
 
