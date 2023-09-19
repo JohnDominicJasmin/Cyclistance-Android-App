@@ -144,25 +144,25 @@ fun RideHistoryDetailsContent(
 }
 
 val fakeRideHistoryDetailsModel = RideDetails(
-    rescuerId = "1",// parameter
-    rescuerName = "John Doe", // parameter
-    rescuerPhotoUrl = "aksodnas", // parameter
-    rescueeId = "2", // your id
-    rescueeName = "Jane Doe", // your name
-    rescueePhotoUrl = "asiinaisd", // your photourl
+    rescuerId = "1",
+    rescuerName = "John Doe",
+    rescuerPhotoUrl = "aksodnas",
+    rescueeId = "2",
+    rescueeName = "Jane Doe",
+    rescueePhotoUrl = "asiinaisd",
     rideSummary = RideSummary(
-        rating = 4.5,// to be computed
-        ratingText = "Very good", // to be computed
-        date = "12/12/2020", // Date()
-        textDescription = MappingConstants.INCIDENT_TEXT, // flow
-        bikeType = "Mountain Bike", // flow
-        startingTime = "12:00", // flow
-        endTime = "13:00", // flow
-        startingAddress = "Via Roma 1, Milano", // flow and  geocode
-        destinationAddress = "Via Roma 2, Milano", // flow and geocode
-        duration = "1h 30m", //flow
-        distance = "10 km", // flow
-        maxSpeed = "30 km/h", // flow
+        rating = 4.5,
+        ratingText = "Very good",
+        date = "12/12/2020",
+        textDescription = MappingConstants.INCIDENT_TEXT,
+        bikeType = "Mountain Bike",
+        startingTime = "12:00",
+        endTime = "13:00",
+        startingAddress = "Via Roma 1, Milano",
+        destinationAddress = "Via Roma 2, Milano",
+        duration = "1h 30m",
+        distance = "10 km",
+        maxSpeed = "30 km/h",
     )
 
 )

@@ -2,13 +2,12 @@ package com.example.cyclistance.feature_rescue_record.presentation.rescue_result
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
 import kotlinx.parcelize.Parcelize
 
 @StableState
 @Parcelize
 data class RescueResultState(
     val isLoading: Boolean = false,
-    val rescuerName: String = "",
-    val rescuerId: String = "",
-    val rescuerPhoto: String = "",
+    val rideDetails: RideDetails = RideDetails(),
 ):Parcelable

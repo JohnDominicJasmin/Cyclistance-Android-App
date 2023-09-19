@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material3.Surface
@@ -29,7 +30,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
+import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.BikeType
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.event.RescueResultUiEvent
+import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.state.RescueResultState
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.state.RescueResultUiState
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -38,6 +43,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun RescueResultsScreenContent(
     modifier: Modifier = Modifier,
     uiState: RescueResultUiState,
+    state: RescueResultState,
     event: (RescueResultUiEvent) -> Unit
 
 ) {
@@ -59,7 +65,7 @@ fun RescueResultsScreenContent(
         contentColor = MaterialTheme.colors.onBackground,
     ) {
 
-        Box {
+        Box(modifier = Modifier.fillMaxSize()) {
 
             Column(
                 modifier = Modifier
@@ -93,18 +99,19 @@ fun RescueResultsScreenContent(
                         .padding(vertical = 16.dp),
                     visible = uiState.step == 1,
                     enter = fadeIn(),
-                    exit = fadeOut()
-                ) {
+                    exit = fadeOut()) {
 
                     RescueReportAccountSection(
-                        photoUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-                        name = "John Doe",
-                        onClickReportAccount = {
-                            //todo
-                        }, modifier = Modifier
+                        modifier = Modifier
                             .padding(horizontal = 12.dp)
-                            .animateContentSize()
-                    )
+                            .animateContentSize(),
+                        photoUrl = state.rideDetails.rescuerPhotoUrl,
+                        name = state.rideDetails.rescuerName,
+                        onClickReportAccount = {
+                            event(RescueResultUiEvent.ReportAccount(state.rideDetails.rescuerId))
+                        }, viewProfile = {
+                            event(RescueResultUiEvent.ViewProfile(id = state.rideDetails.rescuerId))
+                        })
 
                 }
 
@@ -116,8 +123,8 @@ fun RescueResultsScreenContent(
                     exit = fadeOut(),
                     modifier = Modifier
                         .animateContentSize()
-                        .padding(vertical = 8.dp)
-                ) {
+                        .padding(vertical = 8.dp)) {
+
                     RescueGoodToHearSection()
                 }
 
@@ -128,8 +135,8 @@ fun RescueResultsScreenContent(
                     exit = fadeOut(),
                     modifier = Modifier
                         .animateContentSize()
-                        .padding(vertical = 8.dp)
-                ) {
+                        .padding(vertical = 8.dp)) {
+
                     RateRescuer(onValueChange = { event(RescueResultUiEvent.ChangeRating(it)) }, rating = uiState.rating)
                 }
 
@@ -140,11 +147,10 @@ fun RescueResultsScreenContent(
                     exit = fadeOut(),
                     modifier = Modifier
                         .animateContentSize()
-                        .padding(vertical = 8.dp)
-                ) {
+                        .padding(vertical = 8.dp)) {
+
                     RescueThankYouSection()
                 }
-
             }
 
 
@@ -156,8 +162,7 @@ fun RescueResultsScreenContent(
                 modifier = Modifier
                     .animateContentSize()
                     .padding(bottom = 30.dp)
-                    .align(alignment = Alignment.BottomCenter)
-            ) {
+                    .align(alignment = Alignment.BottomCenter)) {
 
                 ButtonNavigation(
                     modifier = Modifier
@@ -176,8 +181,7 @@ fun RescueResultsScreenContent(
                 modifier = Modifier
                     .animateContentSize()
                     .padding(bottom = 30.dp)
-                    .align(alignment = Alignment.BottomCenter)
-            ) {
+                    .align(alignment = Alignment.BottomCenter)) {
 
                 ButtonNavigation(
                     modifier = Modifier
@@ -222,6 +226,10 @@ fun RescueResultsScreenContent(
                 }
 
             }
+
+            if(state.isLoading){
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
         }
 
     }
@@ -234,10 +242,13 @@ fun PreviewRescueResultsScreenContentDark() {
 
     CompositionLocalProvider(IsDarkTheme provides true) {
         CyclistanceTheme(darkTheme = true) {
-            RescueResultsScreenContent(event = {}, uiState = RescueResultUiState())
+            RescueResultsScreenContent(event = {}, uiState = RescueResultUiState(rating = 3.8f), state = RescueResultState(
+                isLoading = true,
+                rideDetails = fakeRideDetails))
         }
     }
 }
+
 
 @Preview(device = "id:Galaxy Nexus")
 @Composable
@@ -245,8 +256,34 @@ fun PreviewRescueResultsScreenContentLight() {
 
     CompositionLocalProvider(IsDarkTheme provides false) {
         CyclistanceTheme(darkTheme = false) {
-            RescueResultsScreenContent(event = {}, uiState = RescueResultUiState())
+            RescueResultsScreenContent(event = {}, uiState = RescueResultUiState(rating = 2.0f), state = RescueResultState(
+                isLoading = true,
+                rideDetails = fakeRideDetails))
         }
     }
 }
+
+val fakeRideDetails = RideDetails(
+    rescuerId = "10",
+    rescuerName = "John Doee",
+    rescueePhotoUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
+    rescuerPhotoUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
+    rescueeId = "312983120",
+    rescueeName = "Jane Doe",
+    rideSummary = RideSummary(
+        rating = 4.4,
+        ratingText = "Good",
+        textDescription = "Good ride",
+        bikeType = BikeType.MountainBike.type,
+        date = "12/12/2020",
+        startingAddress = "123 Main St",
+        destinationAddress = "456 Main St",
+        duration = "1h 30m",
+        distance = "10km",
+        maxSpeed = "30km/h",
+        startingTime = "12:00",
+        endTime = "13:30"
+    )
+)
+
 
