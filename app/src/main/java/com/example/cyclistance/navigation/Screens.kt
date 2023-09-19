@@ -11,6 +11,8 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACT
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_ID
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_NAME
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_PHOTO
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 sealed class Screens {
 
@@ -67,8 +69,6 @@ sealed class Screens {
         }
 
         object SinoTrack: MappingNavigation(screenRoute = "sino_track_screen")
-        object RescueResults: MappingNavigation(screenRoute = "rescue_results_screen")
-        object RescueDetails: MappingNavigation(screenRoute = "rescue_details_screen")
         object Mapping : MappingNavigation(screenRoute = "mapping_screen")
         object Cancellation :
             MappingNavigation(screenRoute = "cancellation_screen" + "/{${CANCELLATION_TYPE}}/{${TRANSACTION_ID}}/{${CLIENT_ID}}") {
@@ -122,8 +122,21 @@ sealed class Screens {
         }
 
         object ReportAccount: ReportAccountNavigation(screenRoute = "report_account_screen/{$USER_ID}/{$USER_NAME}/{$USER_PHOTO}"){
-            fun passArgument(userId: String, name: String, photo: String) = "report_account_screen/$userId/$name/$photo"
+            fun passArgument(userId: String, name: String, userPhoto: String): String {
+                val photo = URLEncoder.encode(userPhoto, StandardCharsets.UTF_8.toString())
+                return "report_account_screen/$userId/$name/$photo"
+            }
         }
+    }
+
+
+    open class RescueRecordNavigation(val screenRoute: String = ""): Screens(){
+        companion object{
+            const val RouteDirection = "rescue_record_navigation"
+        }
+
+        object RescueResults: RescueRecordNavigation(screenRoute = "rescue_results_screen")
+        object RescueDetails: RescueRecordNavigation(screenRoute = "rescue_details_screen")
     }
 
 }

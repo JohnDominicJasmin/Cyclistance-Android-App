@@ -4,7 +4,6 @@ import com.example.cyclistance.core.utils.constants.ReportAccountConstants.REPOR
 import com.example.cyclistance.feature_report_account.domain.exceptions.ReportAccountExceptions
 import com.example.cyclistance.feature_report_account.domain.model.ReportAccountDetails
 import com.example.cyclistance.feature_report_account.domain.repository.ReportAccountRepository
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
@@ -12,7 +11,6 @@ import kotlin.coroutines.resumeWithException
 
 class ReportAccountRepositoryImpl(
     private val firestore: FirebaseFirestore,
-    private val auth: FirebaseAuth,
 ) : ReportAccountRepository{
 
     override suspend fun reportAccount(reportAccountDetails: ReportAccountDetails) {
@@ -25,7 +23,7 @@ class ReportAccountRepositoryImpl(
                     continuation.resume(Unit)
                 }.addOnFailureListener {
                     continuation.resumeWithException(
-                        ReportAccountExceptions.ReportAccountException(
+                        ReportAccountExceptions.InsertReportException(
                             it.message.toString()))
                 }
         }

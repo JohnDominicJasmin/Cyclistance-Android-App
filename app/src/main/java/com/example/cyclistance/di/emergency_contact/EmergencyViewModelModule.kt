@@ -1,8 +1,5 @@
 package com.example.cyclistance.di.emergency_contact
 
-import android.content.Context
-import com.example.cyclistance.feature_emergency_call.data.data_source.local.EmergencyContactDatabase
-import com.example.cyclistance.feature_emergency_call.data.repository.EmergencyContactRepositoryImpl
 import com.example.cyclistance.feature_emergency_call.domain.repository.EmergencyContactRepository
 import com.example.cyclistance.feature_emergency_call.domain.use_case.EmergencyContactUseCase
 import com.example.cyclistance.feature_emergency_call.domain.use_case.contact_purposely_deleted.AddDefaultContactUseCase
@@ -15,7 +12,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 
 
@@ -24,13 +20,6 @@ import dagger.hilt.android.scopes.ViewModelScoped
 object EmergencyViewModelModule {
 
 
-    @Provides
-    @ViewModelScoped
-    fun providesEmergencyContactRepository(
-        @ApplicationContext context: Context,
-        db: EmergencyContactDatabase): EmergencyContactRepository {
-        return EmergencyContactRepositoryImpl(db.dao, context = context)
-    }
 
 
     @Provides

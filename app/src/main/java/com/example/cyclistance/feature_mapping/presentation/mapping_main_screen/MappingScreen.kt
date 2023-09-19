@@ -314,6 +314,18 @@ fun MappingScreen(
         }
     }}
 
+    val openRescueResult = remember(state.rescuer){{
+        val rescuer = state.rescuer
+
+        navController.navigateScreen(route = Screens.RescueRecordNavigation.RescueResults.screenRoute)
+        mappingViewModel.onEvent(event = MappingVmEvent.RescuerArrived)
+        /*navController.navigateScreen(route = Screens.MappingNavigation.RescueResults.passArgument(
+            rescuerId = rescuer?.id ?: "",
+            rescuerName = rescuer?.name ?: "",
+            rescuerPhoto = rescuer?.profilePictureUrl?: "",
+        ))*/
+    }}
+
 
 
     val showRouteDirection = remember(uiState.routeDirection?.geometry, mapboxMap) {
@@ -695,7 +707,7 @@ fun MappingScreen(
     }}
 
     val openRescueResults = remember{{
-        navController.navigateScreen(Screens.MappingNavigation.RescueResults.screenRoute)
+//        navController.navigateScreen(Screens.RescueRecordNavigation.RescueResults.screenRoute)
     }}
 
 
@@ -1295,7 +1307,7 @@ fun MappingScreen(
         incidentDescription = incidentDescription,
         event = { event ->
             when (event) {
-                is MappingUiEvent.RequestHelp -> startRequestingHelp()
+                is MappingUiEvent.RequestHelp -> openRescueResult()
                 is MappingUiEvent.RespondToHelp -> startRespondingToHelp()
                 is MappingUiEvent.CancelSearching -> cancelSearchDialogVisibility(true)
                 is MappingUiEvent.ChatRescueTransaction -> onClickChatButton()
@@ -1312,8 +1324,8 @@ fun MappingScreen(
                 is MappingUiEvent.RecenterRoute -> recenterRoute()
                 is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
-                is MappingUiEvent.RescueArrivedConfirmed -> {}
-                is MappingUiEvent.DestinationReachedConfirmed -> {}
+                is MappingUiEvent.RescueArrivedConfirmed -> {/*Todo*/}
+                is MappingUiEvent.DestinationReachedConfirmed -> {/*Todo*/}
                 is MappingUiEvent.LocationPermission ->  locationPermissionDialogVisibility(event.visibility)
                 is MappingUiEvent.ExpandableFab -> expandableFab(event.expanded)
                 is MappingUiEvent.EmergencyCallDialog -> emergencyCallDialogVisibility(event.visibility)

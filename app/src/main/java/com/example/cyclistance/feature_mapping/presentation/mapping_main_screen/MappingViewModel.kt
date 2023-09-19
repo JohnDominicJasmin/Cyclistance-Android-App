@@ -34,6 +34,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
+import com.example.cyclistance.feature_rescue_record.domain.use_case.RescueRecordUseCase
 import com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
 import com.google.maps.android.SphericalUtil
 import com.mapbox.geojson.Point
@@ -68,7 +69,8 @@ class MappingViewModel @Inject constructor(
     private val mappingUseCase: MappingUseCase,
     private val userProfileUseCase: UserProfileUseCase,
     private val defaultDispatcher: CoroutineDispatcher,
-    private val messagingUseCase: MessagingUseCase
+    private val messagingUseCase: MessagingUseCase,
+    private val rescueRecordUseCase: RescueRecordUseCase
 ) : ViewModel() {
 
 
@@ -520,8 +522,16 @@ class MappingViewModel @Inject constructor(
 
             is MappingVmEvent.LoadConversationSelected -> loadConversationSelected(receiverId = event.id)
             is MappingVmEvent.CancelRespondHelp -> cancelRespondToHelp(respondentId = event.id)
+            MappingVmEvent.RescuerArrived -> rescuerArrived()
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
+    }
+
+
+    private fun rescuerArrived(){
+        viewModelScope.launch {
+            rescueRecordUseCase.rescueDetailsUseCase(details = trackingHandler.getRideDetails())
+        }
     }
 
     private fun cancelRespondToHelp(respondentId: String){
