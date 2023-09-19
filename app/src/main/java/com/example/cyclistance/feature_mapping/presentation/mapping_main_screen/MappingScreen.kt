@@ -318,6 +318,7 @@ fun MappingScreen(
         val rescuer = state.rescuer
 
         navController.navigateScreen(route = Screens.RescueRecordNavigation.RescueResults.screenRoute)
+        mappingViewModel.onEvent(event = MappingVmEvent.RescuerArrived)
         /*navController.navigateScreen(route = Screens.MappingNavigation.RescueResults.passArgument(
             rescuerId = rescuer?.id ?: "",
             rescuerName = rescuer?.name ?: "",
@@ -1323,8 +1324,8 @@ fun MappingScreen(
                 is MappingUiEvent.RecenterRoute -> recenterRoute()
                 is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
-                is MappingUiEvent.RescueArrivedConfirmed -> {}
-                is MappingUiEvent.DestinationReachedConfirmed -> {}
+                is MappingUiEvent.RescueArrivedConfirmed -> {/*Todo*/}
+                is MappingUiEvent.DestinationReachedConfirmed -> {/*Todo*/}
                 is MappingUiEvent.LocationPermission ->  locationPermissionDialogVisibility(event.visibility)
                 is MappingUiEvent.ExpandableFab -> expandableFab(event.expanded)
                 is MappingUiEvent.EmergencyCallDialog -> emergencyCallDialogVisibility(event.visibility)

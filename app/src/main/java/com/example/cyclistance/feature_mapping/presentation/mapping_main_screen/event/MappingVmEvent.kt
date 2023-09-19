@@ -12,11 +12,6 @@ sealed class MappingVmEvent {
     data class RespondToHelp(val selectedRescuee: MapSelectedRescuee) : MappingVmEvent()
     data class CancelRespondHelp(val id: String) : MappingVmEvent()
     data class SelectRescueMapIcon(val id: String): MappingVmEvent()
-    /**
-     * Available BottomSheetType:
-     * RescuerArrived,DestinationReached, SearchAssistance, OnGoingRescue
-     * Usage: DestinationReached.type
-     * */
     data object CancelSearchingAssistance: MappingVmEvent()
     data class DeclineRescueRequest(val id: String): MappingVmEvent()
     data class AcceptRescueRequest(val id: String): MappingVmEvent()
@@ -32,5 +27,5 @@ sealed class MappingVmEvent {
     data class ShouldShowHazardousStartingInfo(val shouldShow: Boolean): MappingVmEvent()
     data class NotifyUser(val title: String, val message: String): MappingVmEvent()
     data class LoadConversationSelected(val id: String): MappingVmEvent()
-
+    data object RescuerArrived: MappingVmEvent()
 }
