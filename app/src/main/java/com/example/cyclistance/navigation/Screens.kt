@@ -135,12 +135,7 @@ sealed class Screens {
             const val RouteDirection = "rescue_record_navigation"
         }
 
-        object RescueResults: RescueRecordNavigation(screenRoute = "rescue_results_screen/{$USER_ID}/{$USER_NAME}/{$USER_PHOTO}"){
-            fun passArgument(rescuerId: String, rescuerName: String, rescuerPhoto: String): String{
-                val photo = URLEncoder.encode(rescuerPhoto, StandardCharsets.UTF_8.toString())
-                return "rescue_results_screen/$rescuerId/$rescuerName/$photo"
-            }
-        }
+        object RescueResults: RescueRecordNavigation(screenRoute = "rescue_results_screen")
         object RescueDetails: RescueRecordNavigation(screenRoute = "rescue_details_screen")
     }
 

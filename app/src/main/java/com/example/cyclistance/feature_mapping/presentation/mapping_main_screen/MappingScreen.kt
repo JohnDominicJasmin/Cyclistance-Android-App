@@ -314,6 +314,17 @@ fun MappingScreen(
         }
     }}
 
+    val openRescueResult = remember(state.rescuer){{
+        val rescuer = state.rescuer
+
+        navController.navigateScreen(route = Screens.RescueRecordNavigation.RescueResults.screenRoute)
+        /*navController.navigateScreen(route = Screens.MappingNavigation.RescueResults.passArgument(
+            rescuerId = rescuer?.id ?: "",
+            rescuerName = rescuer?.name ?: "",
+            rescuerPhoto = rescuer?.profilePictureUrl?: "",
+        ))*/
+    }}
+
 
 
     val showRouteDirection = remember(uiState.routeDirection?.geometry, mapboxMap) {
@@ -695,7 +706,7 @@ fun MappingScreen(
     }}
 
     val openRescueResults = remember{{
-        navController.navigateScreen(Screens.MappingNavigation.RescueResults.screenRoute)
+//        navController.navigateScreen(Screens.RescueRecordNavigation.RescueResults.screenRoute)
     }}
 
 
@@ -1295,7 +1306,7 @@ fun MappingScreen(
         incidentDescription = incidentDescription,
         event = { event ->
             when (event) {
-                is MappingUiEvent.RequestHelp -> startRequestingHelp()
+                is MappingUiEvent.RequestHelp -> openRescueResult()
                 is MappingUiEvent.RespondToHelp -> startRespondingToHelp()
                 is MappingUiEvent.CancelSearching -> cancelSearchDialogVisibility(true)
                 is MappingUiEvent.ChatRescueTransaction -> onClickChatButton()
