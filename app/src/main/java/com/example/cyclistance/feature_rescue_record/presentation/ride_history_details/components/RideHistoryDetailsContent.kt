@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_rescue_outcome.presentation.ride_history_details.components
+package com.example.cyclistance.feature_rescue_record.presentation.ride_history_details.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -22,12 +22,12 @@ import com.example.cyclistance.R
 import com.example.cyclistance.core.presentation.dialogs.common.AnimatedRawResIcon
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescriptionToIcon
-import com.example.cyclistance.feature_mapping.domain.model.ui.rescue_details.RescueDetailsModel
-import com.example.cyclistance.feature_rescue_outcome.domain.model.ui.RideHistoryDetailsModel
-import com.example.cyclistance.feature_rescue_outcome.presentation.rescue_details.components.RatingCard
-import com.example.cyclistance.feature_rescue_outcome.presentation.rescue_details.components.RescueDescription
-import com.example.cyclistance.feature_rescue_outcome.presentation.rescue_details.components.RescueLocationDetails
-import com.example.cyclistance.feature_rescue_outcome.presentation.rescue_details.components.RescueStats
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
+import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.components.RatingCard
+import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.components.RescueDescription
+import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.components.RescueLocationDetails
+import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.components.RescueStats
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
