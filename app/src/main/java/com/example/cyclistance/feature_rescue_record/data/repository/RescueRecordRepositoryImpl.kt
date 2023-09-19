@@ -19,7 +19,7 @@ class RescueRecordRepositoryImpl(
 
 ): RescueRecordRepository {
     private val scope: CoroutineContext = Dispatchers.IO
-    private var rideDetailsFlow: MutableStateFlow<String> = MutableStateFlow("")
+    private var rideDetailsFlow: MutableStateFlow<RideDetails> = MutableStateFlow(RideDetails())
 
     override suspend fun addRescueRecord(rideDetails: RideDetails) {
         suspendCancellableCoroutine { continuation ->
@@ -38,13 +38,13 @@ class RescueRecordRepositoryImpl(
         }
     }
 
-    override suspend fun getRescueDetails(): Flow<String> {
+    override suspend fun getRescueDetails(): Flow<RideDetails> {
        return withContext(scope){
            rideDetailsFlow
        }
     }
 
-    override suspend fun addRescueDetails(details: String) {
+    override suspend fun addRescueDetails(details: RideDetails) {
         withContext(scope){
             rideDetailsFlow.emit(details)
         }
