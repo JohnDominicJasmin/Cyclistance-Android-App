@@ -29,7 +29,7 @@ class ReportAccountViewModel @Inject constructor(
     private val authUseCase: AuthenticationUseCase
 ): ViewModel() {
 
-    private val _state = MutableStateFlow(ReportAccountState(
+    private val _state = MutableStateFlow(savedStateHandle[REPORT_ACCOUNT_VM_STATE_KEY] ?: ReportAccountState(
         reportedName = savedStateHandle[USER_NAME]!!,
         reportedPhoto = savedStateHandle[USER_PHOTO]!!,
         reportedId = savedStateHandle[USER_ID]!!,
