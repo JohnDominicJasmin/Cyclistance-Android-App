@@ -1,6 +1,7 @@
 package com.example.cyclistance.di.mapping
 
 import android.content.Context
+import android.location.Geocoder
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants.HEADER_CACHE_CONTROL
@@ -9,10 +10,13 @@ import com.example.cyclistance.feature_mapping.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.RescueTransactionClient
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.TransactionLiveLocationClient
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.UserClient
+import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping.data.repository.MappingSocketRepositoryImpl
 import com.example.cyclistance.feature_mapping.data.repository.MappingUiStoreRepositoryImpl
+import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping.domain.repository.MappingSocketRepository
 import com.example.cyclistance.feature_mapping.domain.repository.MappingUiStoreRepository
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.gson.GsonBuilder
 import com.mapbox.api.optimization.v1.MapboxOptimization
 import dagger.Module
@@ -53,6 +57,25 @@ object MappingDataSourceModule {
                 .create(CyclistanceApi::class.java)
         }.value
 
+    }
+    @Provides
+    @Singleton
+    fun provideMappingRepository(
+        @ApplicationContext context: Context,
+        api: CyclistanceApi,
+        fireStore: FirebaseFirestore,
+        mapboxDirections: MapboxOptimization.Builder): MappingRepository {
+
+
+        val geocoder = Geocoder(context)
+
+        return MappingRepositoryImpl(
+            api = api,
+            context = context,
+            mapboxDirections = mapboxDirections,
+            geocoder = geocoder,
+            fireStore = fireStore
+        )
     }
 
 

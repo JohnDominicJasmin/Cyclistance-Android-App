@@ -5,6 +5,10 @@ import androidx.core.app.NotificationCompat
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MessagingConstants
 import com.example.cyclistance.feature_messaging.data.MessagingApi
+import com.example.cyclistance.feature_messaging.data.repository.MessagingRepositoryImpl
+import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Module
 import dagger.Provides
@@ -20,8 +24,26 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-object MessagingSingletonModule {
+object MessagingDataSourceModule {
 
+
+    @Provides
+    @Singleton
+    fun providesMessagingRepository(
+        @ApplicationContext context: Context,
+        firebaseFiresStore: FirebaseFirestore,
+        firebaseMessaging: FirebaseMessaging,
+        firebaseAuth: FirebaseAuth,
+        api: MessagingApi): MessagingRepository {
+
+        return MessagingRepositoryImpl(
+            fireStore = firebaseFiresStore,
+            firebaseMessaging = firebaseMessaging,
+            auth = firebaseAuth,
+            appContext = context,
+            api = api
+        )
+    }
 
     @Provides
     @Singleton

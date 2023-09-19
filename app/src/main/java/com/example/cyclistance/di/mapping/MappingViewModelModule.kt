@@ -1,11 +1,7 @@
 package com.example.cyclistance.di.mapping
 
-import android.content.Context
-import android.location.Geocoder
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import com.example.cyclistance.feature_mapping.data.CyclistanceApi
-import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping.domain.repository.MappingSocketRepository
 import com.example.cyclistance.feature_mapping.domain.repository.MappingUiStoreRepository
@@ -41,13 +37,10 @@ import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_l
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.NearbyCyclistsUseCase
-import com.google.firebase.firestore.FirebaseFirestore
-import com.mapbox.api.optimization.v1.MapboxOptimization
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Named
 
@@ -55,29 +48,6 @@ import javax.inject.Named
 @Module
 @InstallIn(ViewModelComponent::class)
 object MappingViewModelModule {
-
-    @Provides
-    @ViewModelScoped
-    fun provideMappingRepository(
-        @ApplicationContext context: Context,
-        api: CyclistanceApi,
-        fireStore: FirebaseFirestore,
-        mapboxDirections: MapboxOptimization.Builder): MappingRepository {
-
-
-        val geocoder = Geocoder(context)
-
-        return MappingRepositoryImpl(
-            api = api,
-            context = context,
-            mapboxDirections = mapboxDirections,
-            geocoder = geocoder,
-            fireStore = fireStore
-        )
-    }
-
-
-
 
 
     @Provides
@@ -87,8 +57,8 @@ object MappingViewModelModule {
         mappingUiStoreRepository: MappingUiStoreRepository,
         mappingSocketRepository: MappingSocketRepository,
         notificationManagerCompat: NotificationManagerCompat,
-        @Named("rescueNotification")  notificationBuilder: NotificationCompat.Builder
-        ): MappingUseCase {
+        @Named("rescueNotification") notificationBuilder: NotificationCompat.Builder
+    ): MappingUseCase {
         return MappingUseCase(
 
             getUsersUseCase = GetUsersUseCase(mappingRepository),
