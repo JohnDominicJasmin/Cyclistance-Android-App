@@ -15,6 +15,8 @@ import androidx.navigation.NavController
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.components.RescueResultsScreenContent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.event.RescueResultUiEvent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.state.RescueResultUiState
+import com.example.cyclistance.navigation.Screens
+import com.example.cyclistance.navigation.nav_graph.navigateScreen
 
 @Composable
 fun RescueResultsScreen(
@@ -43,15 +45,24 @@ fun RescueResultsScreen(
         )
     }}
 
-    RescueResultsScreenContent(modifier = Modifier.padding(paddingValues), event = { event ->
-        when (event) {
-            RescueResultUiEvent.CloseRescueResults -> navController.popBackStack()
-            is RescueResultUiEvent.ChangeRating -> changeRating(event.rating)
-            RescueResultUiEvent.StepDown -> stepDown()
-            RescueResultUiEvent.StepUp -> stepUp()
-        }
+    val viewProfile = remember{{ userId : String ->
+        navController.navigateScreen(route = Screens.UserProfileNavigation.UserProfile.passArgument(userId = userId))
+    }}
 
-    }, uiState = uiState)
+    RescueResultsScreenContent(
+        uiState = uiState,
+        state = state,
+        modifier = Modifier.padding(paddingValues),
+        event = { event ->
+            when (event) {
+                RescueResultUiEvent.CloseRescueResults -> navController.popBackStack()
+                is RescueResultUiEvent.ChangeRating -> changeRating(event.rating)
+                RescueResultUiEvent.StepDown -> stepDown()
+                RescueResultUiEvent.StepUp -> stepUp()
+                is RescueResultUiEvent.ReportAccount -> {}
+                is RescueResultUiEvent.ViewProfile -> viewProfile(event.id)
+            }
+        })
 
 
 }

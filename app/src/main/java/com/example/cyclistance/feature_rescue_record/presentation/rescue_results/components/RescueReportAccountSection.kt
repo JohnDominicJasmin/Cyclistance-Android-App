@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_rescue_record.presentation.rescue_result
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -43,7 +44,8 @@ fun RescueReportAccountSection(
     modifier: Modifier = Modifier,
     photoUrl: String,
     name: String,
-    onClickReportAccount: () -> Unit) {
+    onClickReportAccount: () -> Unit,
+    viewProfile:() -> Unit){
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp, alignment = Alignment.CenterVertically),
@@ -79,6 +81,7 @@ fun RescueReportAccountSection(
                     modifier = Modifier
                         .padding(end = 8.dp)
                         .clip(CircleShape)
+                        .clickable { viewProfile() }
                         .size(50.dp),
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
@@ -127,7 +130,7 @@ fun PreviewRescueReportAccountSectionDark() {
 
             RescueReportAccountSection(
                 photoUrl = "https://www.diethelmtravel.com/wp-content/uploads/2016/04/bill-gates-wealthiest-person.jpg",
-                name = "John Doe", onClickReportAccount = {})
+                name = "John Doe", onClickReportAccount = {}, viewProfile = {})
         }
     }
 }
