@@ -34,7 +34,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun RideHistoryDetailsContent(
     modifier: Modifier = Modifier,
-    rideHistoryDetailsModel: RideHistoryDetailsModel = RideHistoryDetailsModel()) {
+    rideHistoryDetailsModel: RideDetails = RideDetails()) {
 
     Surface(
         modifier = modifier
@@ -143,14 +143,14 @@ fun RideHistoryDetailsContent(
 
 }
 
-val fakeRideHistoryDetailsModel = RideHistoryDetailsModel(
+val fakeRideHistoryDetailsModel = RideDetails(
     rescuerId = "1",// parameter
     rescuerName = "John Doe", // parameter
     rescuerPhotoUrl = "aksodnas", // parameter
     rescueeId = "2", // your id
     rescueeName = "Jane Doe", // your name
     rescueePhotoUrl = "asiinaisd", // your photourl
-    rescueDetailsModel = RescueDetailsModel(
+    rideSummary = RideSummary(
         rating = 4.5,// to be computed
         ratingText = "Very good", // to be computed
         date = "12/12/2020", // Date()

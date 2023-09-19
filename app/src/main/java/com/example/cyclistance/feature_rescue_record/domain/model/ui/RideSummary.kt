@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.domain.model.ui.rescue_details
+package com.example.cyclistance.feature_rescue_record.domain.model.ui
 
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState
@@ -6,7 +6,7 @@ import kotlinx.parcelize.Parcelize
 
 @StableState
 @Parcelize
-data class RescueDetailsModel(
+data class RideSummary(
     val rating: Double = 0.0,
     val ratingText: String = "",
     val textDescription: String = "",
