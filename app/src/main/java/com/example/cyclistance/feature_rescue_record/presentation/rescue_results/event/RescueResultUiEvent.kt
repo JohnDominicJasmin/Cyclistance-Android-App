@@ -5,4 +5,7 @@ sealed class RescueResultUiEvent{
     data object StepUp: RescueResultUiEvent()
     data object StepDown: RescueResultUiEvent()
     data class ChangeRating(val rating: Float): RescueResultUiEvent()
+    data class ReportAccount(val id: String): RescueResultUiEvent()
+    data class ViewProfile(val id: String) : RescueResultUiEvent()
+
 }
