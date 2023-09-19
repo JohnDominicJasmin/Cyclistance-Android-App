@@ -90,6 +90,10 @@ fun NavGraph(
             navController = navController,
             paddingValues = paddingValues
         )
+        rescueRecordGraph(
+            navController = navController,
+            paddingValues = paddingValues
+        )
 
     }
 }
