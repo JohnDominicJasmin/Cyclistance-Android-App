@@ -82,26 +82,26 @@ fun RideHistoryDetailsContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
-                    rating = rideHistoryDetailsModel.rescueDetailsModel.rating,
-                    ratingText = rideHistoryDetailsModel.rescueDetailsModel.ratingText,
+                    rating = rideHistoryDetailsModel.getRating(),
+                    ratingText = rideHistoryDetailsModel.getRatingText(),
                 )
 
                 RescueDescription(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
-                    iconDescription = rideHistoryDetailsModel.rescueDetailsModel.textDescription.rescueDescriptionToIcon(),
-                    textDescription = rideHistoryDetailsModel.rescueDetailsModel.textDescription,
-                    bikeType = rideHistoryDetailsModel.rescueDetailsModel.bikeType
+                    iconDescription = rideHistoryDetailsModel.getTextDescription().rescueDescriptionToIcon(),
+                    textDescription = rideHistoryDetailsModel.getTextDescription(),
+                    bikeType = rideHistoryDetailsModel.getBikeType()
                 )
 
                 RescueLocationDetails(
                     modifier = Modifier.padding(vertical = 12.dp),
-                    date = rideHistoryDetailsModel.rescueDetailsModel.date,
-                    startingTime = rideHistoryDetailsModel.rescueDetailsModel.startingTime,
-                    endTime = rideHistoryDetailsModel.rescueDetailsModel.endTime,
-                    startingAddress = rideHistoryDetailsModel.rescueDetailsModel.startingAddress,
-                    destinationAddress = rideHistoryDetailsModel.rescueDetailsModel.destinationAddress
+                    date = rideHistoryDetailsModel.getDate(),
+                    startingTime = rideHistoryDetailsModel.getStartingTime(),
+                    endTime = rideHistoryDetailsModel.getEndTime(),
+                    startingAddress = rideHistoryDetailsModel.getStartingAddress(),
+                    destinationAddress = rideHistoryDetailsModel.getDestinationAddress()
                 )
 
 
@@ -118,9 +118,9 @@ fun RideHistoryDetailsContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp),
-                    duration = rideHistoryDetailsModel.rescueDetailsModel.duration,
-                    distance = rideHistoryDetailsModel.rescueDetailsModel.distance,
-                    maxSpeed = rideHistoryDetailsModel.rescueDetailsModel.maxSpeed,
+                    duration = rideHistoryDetailsModel.getDuration(),
+                    distance = rideHistoryDetailsModel.getDistance(),
+                    maxSpeed = rideHistoryDetailsModel.getMaxSpeed(),
                 )
 
                 Button(
