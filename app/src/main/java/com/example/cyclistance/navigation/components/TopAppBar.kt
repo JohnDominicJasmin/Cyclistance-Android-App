@@ -202,6 +202,16 @@ fun TopAppBar(
 
         }
 
+        Screens.RescueRecordNavigation.RescueResults.screenRoute -> {
+            TopAppBarCreator(
+                icon = Icons.Default.Close,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Rescue Result")
+                })
+
+        }
+
 
     }
 
