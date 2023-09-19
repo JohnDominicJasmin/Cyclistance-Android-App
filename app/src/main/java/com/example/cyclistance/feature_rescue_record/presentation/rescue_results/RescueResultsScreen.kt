@@ -3,11 +3,18 @@ package com.example.cyclistance.feature_rescue_record.presentation.rescue_result
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.components.RescueResultsScreenContent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.event.RescueResultUiEvent
+import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.state.RescueResultUiState
 
 @Composable
 fun RescueResultsScreen(
@@ -17,13 +24,34 @@ fun RescueResultsScreen(
 
 ) {
 
+    var uiState by rememberSaveable{ mutableStateOf(RescueResultUiState()) }
+    val state by viewModel.state.collectAsStateWithLifecycle()
+
+    val changeRating = remember{{ rate: Float ->
+        uiState = uiState.copy(rating = rate)
+    }}
+
+    val stepUp = remember{{
+        uiState = uiState.copy(
+            step = uiState.step + 1
+        )
+    }}
+
+    val stepDown = remember{{
+        uiState = uiState.copy(
+            step = uiState.step - 1
+        )
+    }}
 
     RescueResultsScreenContent(modifier = Modifier.padding(paddingValues), event = { event ->
         when (event) {
             RescueResultUiEvent.CloseRescueResults -> navController.popBackStack()
+            is RescueResultUiEvent.ChangeRating -> changeRating(event.rating)
+            RescueResultUiEvent.StepDown -> stepDown()
+            RescueResultUiEvent.StepUp -> stepUp()
         }
 
-    })
+    }, uiState = uiState)
 
 
 }
