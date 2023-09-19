@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_rescue_record.presentation.rescue_result
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RESCUE_RESULT_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_ID
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_NAME
@@ -15,6 +16,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
+import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -24,6 +27,13 @@ class RescueResultViewModel @Inject constructor(
 
 ): ViewModel() {
 
+    init {
+        viewModelScope.launch {
+            rescueRecordUseCase.rescueDetailsUseCase().collect{
+                Timber.v("Rescue details: $it")
+            }
+        }
+    }
     private val _state = MutableStateFlow(
         savedStateHandle[RESCUE_RESULT_VM_STATE_KEY] ?: RescueResultState(
             rescuerName = USER_NAME,

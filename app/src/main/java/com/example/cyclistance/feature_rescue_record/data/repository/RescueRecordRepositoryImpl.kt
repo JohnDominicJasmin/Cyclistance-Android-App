@@ -5,7 +5,12 @@ import com.example.cyclistance.feature_rescue_record.domain.exceptions.RescueRec
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
 import com.example.cyclistance.feature_rescue_record.domain.repository.RescueRecordRepository
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -13,6 +18,8 @@ class RescueRecordRepositoryImpl(
     private val firestore: FirebaseFirestore,
 
 ): RescueRecordRepository {
+    private val scope: CoroutineContext = Dispatchers.IO
+    private var rideDetailsFlow: MutableStateFlow<String> = MutableStateFlow("")
 
     override suspend fun addRescueRecord(rideDetails: RideDetails) {
         suspendCancellableCoroutine { continuation ->
@@ -28,6 +35,18 @@ class RescueRecordRepositoryImpl(
                         )
                     )
                 }
+        }
+    }
+
+    override suspend fun getRescueDetails(): Flow<String> {
+       return withContext(scope){
+           rideDetailsFlow
+       }
+    }
+
+    override suspend fun addRescueDetails(details: String) {
+        withContext(scope){
+            rideDetailsFlow.emit(details)
         }
     }
 }
