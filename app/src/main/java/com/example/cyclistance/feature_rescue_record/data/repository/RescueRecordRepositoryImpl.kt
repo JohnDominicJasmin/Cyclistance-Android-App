@@ -25,7 +25,8 @@ class RescueRecordRepositoryImpl(
         suspendCancellableCoroutine { continuation ->
             firestore
                 .collection(RESCUE_RECORD_COLLECTION)
-                .add(rideDetails)
+                .document(rideDetails.rideId)
+                .set(rideDetails)
                 .addOnSuccessListener {
                     continuation.resume(Unit)
                 }.addOnFailureListener {
