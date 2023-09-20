@@ -14,13 +14,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RescueResultViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
-    rescueRecordUseCase: RescueRecordUseCase
+    private val savedStateHandle: SavedStateHandle,
+    private val rescueRecordUseCase: RescueRecordUseCase
 
 ): ViewModel() {
 
