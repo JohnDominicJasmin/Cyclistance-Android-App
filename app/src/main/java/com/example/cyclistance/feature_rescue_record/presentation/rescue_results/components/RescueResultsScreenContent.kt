@@ -211,7 +211,7 @@ fun RescueResultsScreenContent(
 
 
                 Button(
-                    onClick = { event(RescueResultUiEvent.CloseRescueResults) },
+                    onClick = { event(RescueResultUiEvent.ShowRescueDetails)},
                     shape = RoundedCornerShape(8.dp),
                     colors = ButtonDefaults.buttonColors(
                         backgroundColor = MaterialTheme.colors.primary,
@@ -277,7 +277,7 @@ val fakeRideDetails = RideDetails(
     rideSummary = RideSummary(
         rating = 4.4,
         ratingText = "Good",
-        textDescription = "Good ride",
+        iconDescription = "Good ride",
         bikeType = BikeType.MountainBike.type,
         date = "12/12/2020",
         startingAddress = "123 Main St",

@@ -5,8 +5,8 @@ import com.example.cyclistance.feature_user_profile.domain.model.UserProfileInfo
 sealed class EditProfileVmEvent {
 
     data class Save(val userProfile: UserProfileInfoModel): EditProfileVmEvent()
-    object LoadProfile: EditProfileVmEvent()
-    object LoadUserProfileInfo: EditProfileVmEvent()
+    data object LoadProfile: EditProfileVmEvent()
+    data object LoadUserProfileInfo: EditProfileVmEvent()
 
 
 

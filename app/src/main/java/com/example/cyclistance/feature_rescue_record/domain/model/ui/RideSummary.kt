@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 data class RideSummary(
     val rating: Double = 0.0,
     val ratingText: String = "",
-    val textDescription: String = "",
+    val iconDescription: String = "",
     val bikeType: String = "",
     val date: String = "",
     val startingTime: String = "",

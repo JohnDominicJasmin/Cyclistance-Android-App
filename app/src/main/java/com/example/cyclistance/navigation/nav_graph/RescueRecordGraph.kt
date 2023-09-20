@@ -6,7 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.cyclistance.core.utils.constants.RescueRecordConstants.TRANSACTION_ID
+import androidx.navigation.navigation
+import com.example.cyclistance.core.utils.constants.RescueRecordConstants
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.RescueDetailsScreen
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.RescueResultsScreen
 import com.example.cyclistance.navigation.Screens
@@ -15,23 +16,31 @@ fun NavGraphBuilder.rescueRecordGraph(
     navController: NavHostController,
     paddingValues: PaddingValues,
 ) {
-    composable(route = Screens.RescueRecordNavigation.RescueResults.screenRoute){
-        RescueResultsScreen(
-            paddingValues = paddingValues,
-            navController = navController
-        )
-    }
 
-    composable(route = Screens.RescueRecordNavigation.RescueDetails.screenRoute, arguments=
+
+    navigation(
+        startDestination = Screens.RescueRecordNavigation.RescueResults.screenRoute,
+        route = Screens.RescueRecordNavigation.ROUTE) {
+
+        composable(route = Screens.RescueRecordNavigation.RescueResults.screenRoute) {
+            RescueResultsScreen(
+                paddingValues = paddingValues,
+                navController = navController
+            )
+        }
+
+        composable(route = Screens.RescueRecordNavigation.RescueDetails.screenRoute, arguments =
         listOf(
-            navArgument(
-                name = TRANSACTION_ID
-            ){
+            navArgument(name = RescueRecordConstants.TRANSACTION_ID) {
                 this.type = NavType.StringType
+            })) {
+            it.arguments?.getString(RescueRecordConstants.TRANSACTION_ID)?.let { transactionId ->
+                RescueDetailsScreen(
+                    paddingValues = paddingValues,
+                    navController = navController,
+                    transactionId = transactionId)
             }
-
-
-    )){
-        RescueDetailsScreen(paddingValues = paddingValues, navController = navController)
+        }
     }
+
 }

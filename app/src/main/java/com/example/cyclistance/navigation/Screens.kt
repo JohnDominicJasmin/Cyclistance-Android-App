@@ -8,6 +8,7 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_I
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
+import com.example.cyclistance.core.utils.constants.RescueRecordConstants
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_ID
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_NAME
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_PHOTO
@@ -132,11 +133,13 @@ sealed class Screens {
 
     open class RescueRecordNavigation(val screenRoute: String = ""): Screens(){
         companion object{
-            const val RouteDirection = "rescue_record_navigation"
+            const val ROUTE = "rescue_record_navigation"
         }
 
         object RescueResults: RescueRecordNavigation(screenRoute = "rescue_results_screen")
-        object RescueDetails: RescueRecordNavigation(screenRoute = "rescue_details_screen")
+
+        object RescueDetails: RescueRecordNavigation(screenRoute = "rescue_details_screen/{${RescueRecordConstants.TRANSACTION_ID}}"){
+            fun passArgument(transactionId: String) = "rescue_details_screen/$transactionId"}
     }
 
 }

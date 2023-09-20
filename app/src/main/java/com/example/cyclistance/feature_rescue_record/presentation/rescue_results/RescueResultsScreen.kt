@@ -22,6 +22,7 @@ import com.example.cyclistance.feature_rescue_record.presentation.rescue_results
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.state.RescueResultUiState
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
+import com.example.cyclistance.navigation.nav_graph.navigateScreenInclusively
 
 @Composable
 fun RescueResultsScreen(
@@ -51,6 +52,8 @@ fun RescueResultsScreen(
         )
     }}
 
+    val rideDetails = state.rideDetails
+
     val viewProfile = remember{{ userId : String ->
         navController.navigateScreen(route = Screens.UserProfileNavigation.UserProfile.passArgument(userId = userId))
     }}
@@ -69,6 +72,11 @@ fun RescueResultsScreen(
             rating = uiState.rating
         ))
     }}
+
+    val showRescueDetails = remember(rideDetails.rideId) {{
+        navController.navigateScreenInclusively(destination = Screens.RescueRecordNavigation.RescueDetails.passArgument(transactionId = state.rideDetails.rideId), popUpToDestination = Screens.RescueRecordNavigation.ROUTE)
+    }}
+
 
     LaunchedEffect(key1 = true){
         viewModel.eventFlow.collect{ event ->
@@ -94,6 +102,7 @@ fun RescueResultsScreen(
                 is RescueResultUiEvent.ReportAccount -> reportAccount(event.id, event.name, event.photo)
                 is RescueResultUiEvent.ViewProfile -> viewProfile(event.id)
                 is RescueResultUiEvent.RateRescuer -> rateRescuer()
+                RescueResultUiEvent.ShowRescueDetails -> showRescueDetails()
             }
         })
 
