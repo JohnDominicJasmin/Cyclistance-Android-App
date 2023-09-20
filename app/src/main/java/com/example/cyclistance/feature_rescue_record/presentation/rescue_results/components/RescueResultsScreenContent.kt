@@ -190,7 +190,7 @@ fun RescueResultsScreenContent(
                     negativeButtonText = "Cancel",
                     positiveButtonText = "Rate",
                     onClickNegativeButton = { event(RescueResultUiEvent.StepDown )},
-                    onClickPositiveButton = { event(RescueResultUiEvent.StepUp) })
+                    onClickPositiveButton = { event(RescueResultUiEvent.RateRescuer) })
 
             }
 

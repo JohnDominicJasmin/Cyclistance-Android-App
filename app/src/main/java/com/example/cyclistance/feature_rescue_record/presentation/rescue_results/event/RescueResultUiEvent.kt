@@ -7,5 +7,6 @@ sealed class RescueResultUiEvent{
     data class ChangeRating(val rating: Float): RescueResultUiEvent()
     data class ReportAccount(val id: String): RescueResultUiEvent()
     data class ViewProfile(val id: String) : RescueResultUiEvent()
+    data object RateRescuer: RescueResultUiEvent()
 
 }

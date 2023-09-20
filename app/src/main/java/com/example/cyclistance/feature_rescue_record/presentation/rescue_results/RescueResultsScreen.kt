@@ -61,6 +61,7 @@ fun RescueResultsScreen(
                 RescueResultUiEvent.StepUp -> stepUp()
                 is RescueResultUiEvent.ReportAccount -> {}
                 is RescueResultUiEvent.ViewProfile -> viewProfile(event.id)
+                is RescueResultUiEvent.RateRescuer -> rateRescuer()
             }
         })
 
