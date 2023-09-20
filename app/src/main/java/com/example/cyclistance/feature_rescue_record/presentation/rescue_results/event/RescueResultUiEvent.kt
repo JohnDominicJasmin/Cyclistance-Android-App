@@ -8,5 +8,6 @@ sealed class RescueResultUiEvent{
     data class ReportAccount(val id: String, val name: String, val photo: String): RescueResultUiEvent()
     data class ViewProfile(val id: String) : RescueResultUiEvent()
     data object RateRescuer: RescueResultUiEvent()
+    data object ShowRescueDetails : RescueResultUiEvent()
 
 }
