@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface RescueRecordRepository {
     suspend fun addRescueRecord(rideDetails: RideDetails)
+    suspend fun getRescueRecord(transactionId: String): RideDetails
     suspend fun getRescueDetails(): Flow<RideDetails>
     suspend fun addRescueDetails(details: RideDetails)
 
