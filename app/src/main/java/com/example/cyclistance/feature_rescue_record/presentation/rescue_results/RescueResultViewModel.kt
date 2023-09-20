@@ -14,13 +14,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class RescueResultViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
-    rescueRecordUseCase: RescueRecordUseCase
+    private val savedStateHandle: SavedStateHandle,
+    private val rescueRecordUseCase: RescueRecordUseCase
 
 ): ViewModel() {
 
@@ -29,7 +30,7 @@ class RescueResultViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<RescueResultEvent>()
-    val event = _eventFlow.asSharedFlow()
+    val eventFlow = _eventFlow.asSharedFlow()
 
 
 
@@ -42,8 +43,46 @@ class RescueResultViewModel @Inject constructor(
     }
 
     fun onEvent(event: RescueResultVmEvent){
-
+        when(event){
+            is RescueResultVmEvent.RateRescuer -> rateRescuer(event.rating)
+        }
+        savedStateHandle[RESCUE_RESULT_VM_STATE_KEY] = state.value
     }
 
+    private fun rateRescuer(rating: Float) {
+        viewModelScope.launch {
+            runCatching {
+                val validRating = rating.coerceIn(1f, 5f)
+
+                val rideDetails = _state.updateAndGet {
+                    it.copy(
+                        rideDetails = it.rideDetails.copy(
+                            rideSummary = it.rideDetails.rideSummary.copy(
+                                rating = validRating.toDouble(),
+                                textDescription = ratingToDescription(validRating)
+                            )
+                        )
+                    )
+                }.rideDetails
+
+                rescueRecordUseCase.addRescueRecordUseCase(rideDetails = rideDetails)
+            }.onSuccess {
+                _eventFlow.emit(value = RescueResultEvent.RatingSuccess)
+            }.onFailure {
+                _eventFlow.emit(value = RescueResultEvent.RatingFailed(message = it.message!!))
+            }
+
+        }
+    }
+    private fun ratingToDescription(rating: Float): String {
+        return when (rating) {
+            in 0.0f..1.0f -> "Poor"
+            in 1.1f..2.0f -> "Bad"
+            in 2.1f..3.0f -> "Fair"
+            in 3.1f..4.0f -> "Good"
+            in 4.1f..5.0f -> "Excellent"
+            else -> "Good"
+        }
+    }
 
 }

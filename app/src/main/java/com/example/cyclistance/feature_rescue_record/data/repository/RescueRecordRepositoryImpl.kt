@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -25,7 +26,8 @@ class RescueRecordRepositoryImpl(
         suspendCancellableCoroutine { continuation ->
             firestore
                 .collection(RESCUE_RECORD_COLLECTION)
-                .add(rideDetails)
+                .document(rideDetails.rideId)
+                .set(rideDetails)
                 .addOnSuccessListener {
                     continuation.resume(Unit)
                 }.addOnFailureListener {
@@ -35,6 +37,25 @@ class RescueRecordRepositoryImpl(
                         )
                     )
                 }
+        }
+    }
+
+
+    override suspend fun getRescueRecord(transactionId: String): RideDetails {
+        return withContext(scope) {
+            suspendCancellableCoroutine { continuation ->
+                firestore
+                    .collection(RESCUE_RECORD_COLLECTION)
+                    .document(transactionId)
+                    .get()
+                    .addOnSuccessListener {
+                        val rideDetails = it.toObject(RideDetails::class.java)!!
+                        continuation.resume(rideDetails)
+                        Timber.v("RideDetails: $rideDetails")
+                    }.addOnFailureListener {
+//                        throw RescueRecordExceptions.GetRescueRecordException(it.message.toString())
+                    }
+            }
         }
     }
 

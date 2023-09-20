@@ -108,7 +108,11 @@ fun RescueResultsScreenContent(
                         photoUrl = state.rideDetails.rescuerPhotoUrl,
                         name = state.rideDetails.rescuerName,
                         onClickReportAccount = {
-                            event(RescueResultUiEvent.ReportAccount(state.rideDetails.rescuerId))
+                            event(RescueResultUiEvent.ReportAccount(
+                                id = state.rideDetails.rescuerId,
+                                name = state.rideDetails.rescuerName,
+                                photo = state.rideDetails.rescuerPhotoUrl
+                            ))
                         }, viewProfile = {
                             event(RescueResultUiEvent.ViewProfile(id = state.rideDetails.rescuerId))
                         })
@@ -190,7 +194,7 @@ fun RescueResultsScreenContent(
                     negativeButtonText = "Cancel",
                     positiveButtonText = "Rate",
                     onClickNegativeButton = { event(RescueResultUiEvent.StepDown )},
-                    onClickPositiveButton = { event(RescueResultUiEvent.StepUp) })
+                    onClickPositiveButton = { event(RescueResultUiEvent.RateRescuer) })
 
             }
 

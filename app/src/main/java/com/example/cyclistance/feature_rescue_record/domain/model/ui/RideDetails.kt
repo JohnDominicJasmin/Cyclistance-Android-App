@@ -7,6 +7,7 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class RideDetails(
+    val rideId: String = "",
     val rescuerId: String = "",
     val rescuerName: String = "",
     val rescuerPhotoUrl: String = "",
