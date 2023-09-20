@@ -29,7 +29,7 @@ class RescueResultViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<RescueResultEvent>()
-    val event = _eventFlow.asSharedFlow()
+    val eventFlow = _eventFlow.asSharedFlow()
 
 
 
