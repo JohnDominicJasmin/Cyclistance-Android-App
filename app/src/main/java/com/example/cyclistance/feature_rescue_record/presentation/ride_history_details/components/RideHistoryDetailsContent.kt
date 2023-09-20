@@ -36,6 +36,7 @@ fun RideHistoryDetailsContent(
     modifier: Modifier = Modifier,
     rideHistoryDetailsModel: RideDetails = RideDetails()) {
 
+    val rideSummary = rideHistoryDetailsModel.rideSummary
     Surface(
         modifier = modifier
             .fillMaxSize(),
@@ -82,26 +83,26 @@ fun RideHistoryDetailsContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
-                    rating = rideHistoryDetailsModel.getRating(),
-                    ratingText = rideHistoryDetailsModel.getRatingText(),
+                    rating = rideSummary.rating,
+                    ratingText = rideSummary.ratingText
                 )
 
                 RescueDescription(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
-                    iconDescription = rideHistoryDetailsModel.getTextDescription().rescueDescriptionToIcon(),
-                    textDescription = rideHistoryDetailsModel.getTextDescription(),
-                    bikeType = rideHistoryDetailsModel.getBikeType()
+                    iconDescription = rideSummary.iconDescription.rescueDescriptionToIcon(),
+                    textDescription = rideSummary.iconDescription,
+                    bikeType = rideSummary.bikeType
                 )
 
                 RescueLocationDetails(
                     modifier = Modifier.padding(vertical = 12.dp),
-                    date = rideHistoryDetailsModel.getDate(),
-                    startingTime = rideHistoryDetailsModel.getStartingTime(),
-                    endTime = rideHistoryDetailsModel.getEndTime(),
-                    startingAddress = rideHistoryDetailsModel.getStartingAddress(),
-                    destinationAddress = rideHistoryDetailsModel.getDestinationAddress()
+                    date = rideSummary.date,
+                    startingTime = rideSummary.startingTime,
+                    endTime = rideSummary.endTime,
+                    startingAddress = rideSummary.startingAddress,
+                    destinationAddress = rideSummary.destinationAddress
                 )
 
 
@@ -118,9 +119,9 @@ fun RideHistoryDetailsContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 16.dp),
-                    duration = rideHistoryDetailsModel.getDuration(),
-                    distance = rideHistoryDetailsModel.getDistance(),
-                    maxSpeed = rideHistoryDetailsModel.getMaxSpeed(),
+                    duration = rideSummary.duration,
+                    distance = rideSummary.distance,
+                    maxSpeed = rideSummary.maxSpeed,
                 )
 
                 Button(
@@ -154,7 +155,7 @@ val fakeRideHistoryDetailsModel = RideDetails(
         rating = 4.5,
         ratingText = "Very good",
         date = "12/12/2020",
-        textDescription = MappingConstants.INCIDENT_TEXT,
+        iconDescription = MappingConstants.INCIDENT_TEXT,
         bikeType = "Mountain Bike",
         startingTime = "12:00",
         endTime = "13:00",
