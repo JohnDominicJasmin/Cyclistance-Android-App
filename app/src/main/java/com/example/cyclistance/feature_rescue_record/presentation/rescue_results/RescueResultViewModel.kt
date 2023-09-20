@@ -63,9 +63,7 @@ class RescueResultViewModel @Inject constructor(
                         rideDetails = it.rideDetails.copy(
                             rideSummary = it.rideDetails.rideSummary.copy(
                                 rating = validRating.toDouble(),
-                                textDescription = ratingToDescription(validRating)
-                            )
-                        )
+                                ratingText = ratingToDescription(validRating)))
                     )
                 }.rideDetails
 
