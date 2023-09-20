@@ -35,6 +35,10 @@ class RescueResultViewModel @Inject constructor(
 
 
     init {
+        loadRideDetails()
+    }
+
+    private fun loadRideDetails(){
         viewModelScope.launch {
             rescueRecordUseCase.rescueDetailsUseCase().collect{ rideDetails ->
                 _state.update { it.copy(rideDetails = rideDetails) }
