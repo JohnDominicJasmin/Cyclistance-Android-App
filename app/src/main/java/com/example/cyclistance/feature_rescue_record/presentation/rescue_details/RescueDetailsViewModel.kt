@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,7 +27,7 @@ class RescueDetailsViewModel @Inject constructor(
     val state = _state.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<RescueDetailsEvent>()
-    val event = _eventFlow.asSharedFlow()
+    val eventFlow = _eventFlow.asSharedFlow()
 
 
     fun onEvent(event: RescueDetailsVmEvent) {
@@ -44,14 +43,19 @@ class RescueDetailsViewModel @Inject constructor(
     private fun loadRescueDetails(transactionId: String){
         viewModelScope.launch {
             runCatching {
+                isLoading(true)
                 rescueRecordUseCase.getRescueRecordUseCase(transactionId = transactionId)
             }.onSuccess { rideDetails ->
-                _state.update { it.copy(
-                    rideSummary = rideDetails.rideSummary,
-                )}
+                _eventFlow.emit(value = RescueDetailsEvent.GetRescueRecordSuccess(rideDetails.rideSummary))
             }.onFailure {
-                Timber.e(it, "RescueDetailsViewModel: ")
+                _eventFlow.emit(value = RescueDetailsEvent.GetRescueRecordFailed(it.message.toString()))
+            }.also {
+                isLoading(false)
             }
         }
+    }
+
+    private fun isLoading(loading: Boolean){
+        _state.update { it.copy(isLoading = loading) }
     }
 }
