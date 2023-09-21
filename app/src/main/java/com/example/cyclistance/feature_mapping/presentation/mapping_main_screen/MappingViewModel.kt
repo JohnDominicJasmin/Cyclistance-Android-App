@@ -184,7 +184,7 @@ class MappingViewModel @Inject constructor(
         if (loadDataJob?.isActive == true) return
         loadDataJob = viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             // TODO: Remove when the backend is ready
-//            createMockUpUsers()
+            createMockUpUsers()
             getNearbyCyclist()
             trackingHandler.updateClient()
         }
@@ -1062,7 +1062,7 @@ class MappingViewModel @Inject constructor(
                 trackingHandler.updateLocation(location)
                 broadcastRescueTransactionToRespondent(location)
                 updateSpeedometer(location)
-                getNearbyCyclist()
+
             }.launchIn(this@launch).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }
