@@ -5,5 +5,7 @@ import com.google.gson.annotations.SerializedName
 
 data class RespondentDto(
     @SerializedName("client_id")
-    val clientId: String = ""
+    val clientId: String = "",
+    @SerializedName("timestamp")
+    val timeStamp: Long = 0L,
 )

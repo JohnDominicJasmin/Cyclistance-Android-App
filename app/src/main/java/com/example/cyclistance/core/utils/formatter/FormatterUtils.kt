@@ -45,14 +45,14 @@ object FormatterUtils {
 
         val now = currentDate().time
         if (time > now || time <= 0) {
-            return "in the future"
+            return "few seconds ago"
         }
 
         val diff = now - time
         return when {
             diff < MINUTE_MILLIS -> "just now"
             diff < 2 * MINUTE_MILLIS -> "1m ago"
-            diff < 60 * MINUTE_MILLIS -> "${diff / MINUTE_MILLIS}m"
+            diff < 60 * MINUTE_MILLIS -> "${diff / MINUTE_MILLIS}m ago"
             diff < 2 * HOUR_MILLIS -> "1h ago"
             diff < 24 * HOUR_MILLIS -> "${diff / HOUR_MILLIS}h ago"
             diff < 48 * HOUR_MILLIS -> "1d ago"

@@ -7,5 +7,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @StableState
 data class RespondentModel(
-    val clientId: String = ""
+    val clientId: String = "",
+    val timeStamp: Long = 0L,
 ):Parcelable

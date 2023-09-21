@@ -39,9 +39,11 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToTimeAgo
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue.RescueRequestItemModel
 import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
 import com.example.cyclistance.theme.Black450
+import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
@@ -59,10 +61,18 @@ fun RequestItem(
         shape = RoundedCornerShape(15.dp),
         backgroundColor = MaterialTheme.colors.surface) {
         Column(
-            modifier = Modifier.padding(top = 12.dp, bottom = 5.dp)) {
+            modifier = Modifier.padding(top = 12.dp, bottom = 5.dp), horizontalAlignment = Alignment.End) {
+
+
+            Text(
+                modifier = Modifier.padding(horizontal = 15.dp),
+                text = formatToTimeAgo(cardState.timestamp),
+                color = Black500,
+                style = MaterialTheme.typography.caption
+            )
 
             Row(
-                modifier = Modifier.padding(start = 15.dp),
+                modifier = Modifier.padding(horizontal = 15.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(15.dp)) {
 
@@ -108,7 +118,7 @@ fun RequestItem(
                 Spacer(modifier = Modifier.weight(weight = 0.3f))
 
                 Text(textAlign = TextAlign.End,
-                    modifier = Modifier.padding(end = 15.dp),
+                    modifier = Modifier,
                     text = buildAnnotatedString {
                         withStyle(
                             style = SpanStyle(
@@ -142,7 +152,7 @@ fun RequestItem(
 
 
             Row(
-                modifier = Modifier.padding(start = 15.dp, top = 12.dp),
+                modifier = Modifier.padding(top = 12.dp).padding(horizontal = 15.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)) {
 
@@ -186,7 +196,7 @@ fun RequestItemPreviewDark() {
                         name = "John Doe",
                         distance = "1.2 km",
                         estimatedTimeTravel = "5 min",
-                        address = "1234, Street Name, City Name, Country Name"),
+                        address = "1234, Street Name, City Name, Country Name", timestamp = 1695288153722),
                 )
             }
         }

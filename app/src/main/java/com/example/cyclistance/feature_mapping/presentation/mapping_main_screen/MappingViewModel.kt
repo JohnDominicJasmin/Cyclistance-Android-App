@@ -944,7 +944,8 @@ class MappingViewModel @Inject constructor(
                 rescueRespondentsSnapShot.add(
                     element = userRespondent.toRescueRequest(
                         distance = it.formatToDistanceKm(),
-                        eta = formattedETA
+                        eta = formattedETA,
+                        timestamp = respondent.timeStamp
                     )
                 )
             }
