@@ -93,16 +93,6 @@ sealed class Screens {
     }
 
 
-    open class RideHistoryNavigation(val screenRoute: String = "") : Screens() {
-        companion object {
-            const val ROUTE = "ride_history_navigation"
-        }
-
-        object RideHistory : RideHistoryNavigation(screenRoute = "ride_history_screen")
-        object RideHistoryDetails :
-            RideHistoryNavigation(screenRoute = "ride_history_details_screen")
-    }
-
     open class UserProfileNavigation(val screenRoute: String = "") : Screens() {
         companion object {
             const val ROUTE = "user_profile_navigation"
@@ -140,6 +130,14 @@ sealed class Screens {
 
         object RescueDetails: RescueRecordNavigation(screenRoute = "rescue_details_screen/{${RescueRecordConstants.TRANSACTION_ID}}"){
             fun passArgument(transactionId: String) = "rescue_details_screen/$transactionId"}
+
+        object RideHistory : RescueRecordNavigation(screenRoute = "ride_history_screen")
+        object RideHistoryDetails :
+            RescueRecordNavigation(screenRoute = "ride_history_details_screen")
+
     }
+
+
+
 
 }

@@ -76,10 +76,6 @@ fun NavGraph(
             onToggleTheme = { event(NavUiEvent.OnToggleTheme) }
         )
 
-        rideHistoryGraph(
-            navController = navController,
-            paddingValues = paddingValues
-        )
 
         userProfileGraph(
             navController = navController,
