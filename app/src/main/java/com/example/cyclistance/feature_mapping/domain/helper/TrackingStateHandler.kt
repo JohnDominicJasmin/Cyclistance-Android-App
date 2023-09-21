@@ -102,17 +102,16 @@ class TrackingStateHandler(
         /*val rescuer = state.value.rescuer!!
         val rescuee = state.value.rescuee!!*/
         return RideDetails(
-            rideId = "012-308592",// transactionId
+            rideId = "09qiwnf09qwnd",// transactionId
             rescuerId = "mbmckVyzZYezIE8KzjYcj4NTcrGn",
             rescuerName = "Juan",
             rescuerPhotoUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
-            rescueeId = "012-308592",
+            rescueeId = "poamfafosmafsmoafspo",
             rescueeName = "Pedro",
             rescueePhotoUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
             rideSummary = RideSummary(
                 iconDescription = MappingConstants.INJURY_TEXT,
                 bikeType = BikeType.RoadBike.type,
-                date = Date().toReadableDateTime(pattern = "dd/MM/yyyy"),
                 startingTime = Date().toReadableDateTime(pattern = "hh:mm a"),
                 endTime = Date().toReadableDateTime(pattern = "hh:mm a"),
                 startingAddress = "Starting Address",

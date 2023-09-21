@@ -207,7 +207,7 @@ fun NavScreen(
     val onClickRideHistory = remember {
         {
             closeDrawer()
-            navController.navigateScreen(Screens.RideHistoryNavigation.ROUTE)
+            navController.navigateScreen(Screens.RescueRecordNavigation.RideHistory.screenRoute)
         }
     }
 

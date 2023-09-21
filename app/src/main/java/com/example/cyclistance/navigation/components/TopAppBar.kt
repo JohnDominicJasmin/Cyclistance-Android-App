@@ -165,7 +165,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.RideHistoryNavigation.RideHistory.screenRoute -> {
+        Screens.RescueRecordNavigation.RideHistory.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
@@ -174,7 +174,7 @@ fun TopAppBar(
                 })
         }
 
-        Screens.RideHistoryNavigation.RideHistoryDetails.screenRoute -> {
+        Screens.RescueRecordNavigation.RideHistoryDetails.screenRoute -> {
             TopAppBarCreator(
                 icon = Icons.Default.Close,
                 onClickIcon = onClickArrowBackIcon,

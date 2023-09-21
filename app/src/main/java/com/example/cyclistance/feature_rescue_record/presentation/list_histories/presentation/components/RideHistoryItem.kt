@@ -51,13 +51,13 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun RideHistoryItem(
     modifier: Modifier = Modifier,
     rideHistoryItem: RideHistoryItem,
-    onClick: (id: String) -> Unit) {
+    onClick: () -> Unit) {
     Surface(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
         color = MaterialTheme.colors.surface,
         contentColor = MaterialTheme.colors.onSurface,
-        onClick = { onClick(rideHistoryItem.id) }, elevation = 4.dp) {
+        onClick = onClick, elevation = 4.dp) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

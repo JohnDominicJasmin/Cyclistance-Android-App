@@ -2,12 +2,14 @@ package com.example.cyclistance.feature_rescue_record.presentation.rescue_detail
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
@@ -23,6 +25,7 @@ import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescript
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.event.RescueDetailsUiEvent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.state.RescueDetailsState
+import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.state.RescueDetailsUiState
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -30,98 +33,103 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun RescueDetailsScreenContent(
     modifier: Modifier = Modifier,
     state: RescueDetailsState,
+    uiState: RescueDetailsUiState,
     event: (RescueDetailsUiEvent) -> Unit
 ) {
 
 
-    val rideSummary = state.rideSummary
+    val rideSummary = uiState.rideSummary
 
     Surface(
         modifier = modifier
             .fillMaxSize(),
         color = MaterialTheme.colors.background) {
-        LazyColumn(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center){
+            LazyColumn(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally) {
 
-            if (rideSummary != null) {
-                item {
-                    Image(
-                        painter = painterResource(id = R.drawable.ic_rescue_details_like),
-                        contentDescription = "Like Image",
-                        modifier = Modifier.padding(top = 20.dp, bottom = 10.dp))
+                if (rideSummary != null) {
+                    item {
+                        Image(
+                            painter = painterResource(id = R.drawable.ic_rescue_details_like),
+                            contentDescription = "Like Image",
+                            modifier = Modifier.padding(top = 20.dp, bottom = 10.dp))
 
-                    Text(
-                        text = "Thank you for your assistance!",
-                        color = MaterialTheme.colors.onBackground,
-                        style = MaterialTheme.typography.subtitle2.copy(fontSize = MaterialTheme.typography.subtitle1.fontSize),
-                        modifier = Modifier.padding(all = 8.dp)
-                    )
-
-
-                    RatingCard(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp),
-                        rating = rideSummary.rating,
-                        ratingText = rideSummary.ratingText,
-                    )
-
-                    RescueDescription(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 12.dp),
-                        iconDescription = rideSummary.iconDescription.rescueDescriptionToIcon(),
-                        textDescription = rideSummary.iconDescription,
-                        bikeType = rideSummary.bikeType
-                    )
-
-                    RescueLocationDetails(
-                        modifier = Modifier.padding(vertical = 12.dp),
-                        date = rideSummary.date,
-                        startingTime = rideSummary.startingTime,
-                        endTime = rideSummary.endTime,
-                        startingAddress = rideSummary.startingAddress,
-                        destinationAddress = rideSummary.destinationAddress
-                    )
-
-
-
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 12.dp),
-                        color = Black500,
-                        thickness = 1.5.dp
-                    )
-
-                    RescueStats(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp),
-                        duration = rideSummary.duration,
-                        distance = rideSummary.distance,
-                        maxSpeed = rideSummary.maxSpeed
-                    )
-
-                    Button(
-                        onClick = {
-                            event(RescueDetailsUiEvent.CloseRescueDetails)
-                        },
-                        modifier = Modifier.padding(top = 22.dp, bottom = 16.dp),
-                        shape = RoundedCornerShape(12.dp)) {
                         Text(
-                            text = "Okay",
-                            modifier = Modifier.padding(vertical = 2.dp, horizontal = 22.dp))
+                            text = "Thank you for your assistance!",
+                            color = MaterialTheme.colors.onBackground,
+                            style = MaterialTheme.typography.subtitle2.copy(fontSize = MaterialTheme.typography.subtitle1.fontSize),
+                            modifier = Modifier.padding(all = 8.dp)
+                        )
+
+
+                        RatingCard(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 12.dp),
+                            rating = rideSummary.rating,
+                            ratingText = rideSummary.ratingText,
+                        )
+
+                        RescueDescription(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 12.dp),
+                            iconDescription = rideSummary.iconDescription.rescueDescriptionToIcon(),
+                            textDescription = rideSummary.iconDescription,
+                            bikeType = rideSummary.bikeType
+                        )
+
+                        RescueLocationDetails(
+                            modifier = Modifier.padding(vertical = 12.dp),
+                            date = rideSummary.date,
+                            startingTime = rideSummary.startingTime,
+                            endTime = rideSummary.endTime,
+                            startingAddress = rideSummary.startingAddress,
+                            destinationAddress = rideSummary.destinationAddress
+                        )
+
+
+
+                        Divider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 12.dp),
+                            color = Black500,
+                            thickness = 1.5.dp
+                        )
+
+                        RescueStats(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp),
+                            duration = rideSummary.duration,
+                            distance = rideSummary.distance,
+                            maxSpeed = rideSummary.maxSpeed
+                        )
+
+                        Button(
+                            onClick = {
+                                event(RescueDetailsUiEvent.CloseRescueDetails)
+                            },
+                            modifier = Modifier.padding(top = 22.dp, bottom = 16.dp),
+                            shape = RoundedCornerShape(12.dp)) {
+                            Text(
+                                text = "Okay",
+                                modifier = Modifier.padding(vertical = 2.dp, horizontal = 22.dp))
+                        }
+
                     }
 
                 }
 
             }
-
+            if(state.isLoading){
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
         }
-
     }
 }
 
@@ -146,8 +154,9 @@ val fakeRideSummary = RideSummary(
 fun PreviewRescueDetailsDark() {
     CyclistanceTheme(darkTheme = true) {
         RescueDetailsScreenContent(
-            state = RescueDetailsState(
-                rideSummary = fakeRideSummary), event = {})
+            state = RescueDetailsState(isLoading = true),
+            uiState = RescueDetailsUiState(rideSummary = fakeRideSummary),
+            event = {})
     }
 }
 
@@ -156,7 +165,8 @@ fun PreviewRescueDetailsDark() {
 fun PreviewRescueDetailsLight() {
     CyclistanceTheme(darkTheme = false) {
         RescueDetailsScreenContent(
-            state = RescueDetailsState(rideSummary = fakeRideSummary),
+            state = RescueDetailsState(isLoading = true),
+            uiState = RescueDetailsUiState(rideSummary = fakeRideSummary),
             event = {})
     }
 }
