@@ -1307,7 +1307,7 @@ fun MappingScreen(
         incidentDescription = incidentDescription,
         event = { event ->
             when (event) {
-                is MappingUiEvent.RequestHelp -> openRescueResult()
+                is MappingUiEvent.RequestHelp -> startRequestingHelp()
                 is MappingUiEvent.RespondToHelp -> startRespondingToHelp()
                 is MappingUiEvent.CancelSearching -> cancelSearchDialogVisibility(true)
                 is MappingUiEvent.ChatRescueTransaction -> onClickChatButton()
