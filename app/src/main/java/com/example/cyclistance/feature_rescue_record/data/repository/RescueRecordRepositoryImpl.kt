@@ -4,6 +4,7 @@ import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RESCUE
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RESCUER_ID_KEY
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RESCUE_RECORD_COLLECTION
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RIDE_DATE_KEY
+import com.example.cyclistance.feature_rescue_record.data.mapper.RideHistoryMapper.toRideHistoryItem
 import com.example.cyclistance.feature_rescue_record.domain.exceptions.RescueRecordExceptions
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideHistory
@@ -17,7 +18,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -26,7 +26,7 @@ class RescueRecordRepositoryImpl(
     private val firestore: FirebaseFirestore,
     private val auth: FirebaseAuth
 
-): RescueRecordRepository {
+) : RescueRecordRepository {
     private val scope: CoroutineContext = Dispatchers.IO
     private var rideDetailsFlow: MutableStateFlow<RideDetails> = MutableStateFlow(RideDetails())
 
@@ -50,18 +50,22 @@ class RescueRecordRepositoryImpl(
 
     override suspend fun getRideHistory(): RideHistory {
 
-        val uid = auth.uid
+        val uid = "mbmckVyzZYezIE8KzjYcj4NTcrGn"
         return suspendCancellableCoroutine { continuation ->
             firestore
                 .collection(RESCUE_RECORD_COLLECTION)
-                .where(Filter.or(
-                    Filter.equalTo(RESCUER_ID_KEY, uid),
-                    Filter.equalTo(RESCUEE_ID_KEY, uid)
-                )).orderBy(RIDE_DATE_KEY, Query.Direction.DESCENDING)
+                .where(
+                    Filter.or(
+                        Filter.equalTo(RESCUER_ID_KEY, uid),
+                        Filter.equalTo(RESCUEE_ID_KEY, uid)
+                    )).orderBy(RIDE_DATE_KEY, Query.Direction.DESCENDING)
                 .get().addOnSuccessListener { result ->
-                    Timber.v("Ride history fetched successfully $result")
+                    val rideHistoryItems = result.documents.map { it.toRideHistoryItem(uid = uid) }
+                    continuation.resume(RideHistory(items = rideHistoryItems))
                 }.addOnFailureListener {
-                    Timber.e("Ride history fetch failed $it")
+                    continuation.resumeWithException(
+                        RescueRecordExceptions.GetRideHistoryException(
+                            message = it.message.toString()))
                 }
 
         }
@@ -78,20 +82,22 @@ class RescueRecordRepositoryImpl(
                         val rideDetails = it.toObject(RideDetails::class.java)!!
                         continuation.resume(rideDetails)
                     }.addOnFailureListener {
-                        continuation.resumeWithException(RescueRecordExceptions.GetRescueRecordException(it.message.toString()))
+                        continuation.resumeWithException(
+                            RescueRecordExceptions.GetRescueRecordException(
+                                it.message.toString()))
                     }
             }
         }
     }
 
     override suspend fun getRescueDetails(): Flow<RideDetails> {
-       return withContext(scope){
-           rideDetailsFlow
-       }
+        return withContext(scope) {
+            rideDetailsFlow
+        }
     }
 
     override suspend fun addRescueDetails(details: RideDetails) {
-        withContext(scope){
+        withContext(scope) {
             rideDetailsFlow.emit(details)
         }
     }
