@@ -14,5 +14,6 @@ data class RescueRequestItemModel(
     val estimatedTimeTravel: String? = null,
     val distance:String? = null,
     val address:String? = null,
+    val timestamp: Long = 0L,
 
     ):Parcelable

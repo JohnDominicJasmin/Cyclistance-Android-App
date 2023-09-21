@@ -44,14 +44,15 @@ object UserMapper {
         )
     }
 
-    fun UserItem.toRescueRequest(distance: String = "---", eta: String = "---"): RescueRequestItemModel {
+    fun UserItem.toRescueRequest(distance: String = "---", eta: String = "---", timestamp: Long): RescueRequestItemModel {
         return RescueRequestItemModel(
             id = this.id,
             name = this.name,
             profileImageUrl = this.profilePictureUrl,
             distance = distance,
             estimatedTimeTravel = eta,
-            address = this.address
+            address = this.address,
+            timestamp = timestamp
         )
     }
 
@@ -112,7 +113,8 @@ object UserMapper {
 
     private fun RespondentDto.toRespondentModel():RespondentModel{
         return RespondentModel(
-            clientId = this.clientId
+            clientId = this.clientId,
+            timeStamp = this.timeStamp
         )
     }
 
