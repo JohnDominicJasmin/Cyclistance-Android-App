@@ -54,16 +54,19 @@ fun RideHistoryContent(
                     rideHistory = uiState.rideHistory,
                     event = event,
                 )
+            }
 
-            } else {
+            if(state.isLoading){
+                CircularProgressIndicator()
+            }
+
+            if(!state.isLoading && !hasRideHistory){
                 RideHistoryPlaceHolder(
                     modifier = Modifier
                         .wrapContentHeight()
                         .fillMaxWidth()
                 )
-            }
-            if(state.isLoading){
-                CircularProgressIndicator()
+
             }
 
 

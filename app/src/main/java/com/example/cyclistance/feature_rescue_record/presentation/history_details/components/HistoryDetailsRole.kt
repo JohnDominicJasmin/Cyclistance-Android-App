@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_rescue_record.presentation.ride_history_details.components
+package com.example.cyclistance.feature_rescue_record.presentation.history_details.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,7 +23,7 @@ import com.example.cyclistance.R
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun RideHistoryDetailsRole(
+fun HistoryDetailsRole(
     modifier: Modifier = Modifier,
     role: String,
     photoUrl: String,
@@ -70,7 +70,7 @@ fun RideHistoryDetailsRole(
 @Composable
 fun PreviewRideHistoryDetailsRole() {
     CyclistanceTheme(darkTheme = true) {
-        RideHistoryDetailsRole(
+        HistoryDetailsRole(
             role = "Rescuer",
             photoUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
             name = "Juan Dela Cruz")
