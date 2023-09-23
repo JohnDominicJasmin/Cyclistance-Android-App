@@ -129,11 +129,14 @@ sealed class Screens {
         object RescueResults: RescueRecordNavigation(screenRoute = "rescue_results_screen")
 
         object RescueDetails: RescueRecordNavigation(screenRoute = "rescue_details_screen/{${RescueRecordConstants.TRANSACTION_ID}}"){
-            fun passArgument(transactionId: String) = "rescue_details_screen/$transactionId"}
+            fun passArgument(transactionId: String) = "rescue_details_screen/$transactionId"
+        }
 
         object RideHistory : RescueRecordNavigation(screenRoute = "ride_history_screen")
         object RideHistoryDetails :
-            RescueRecordNavigation(screenRoute = "ride_history_details_screen")
+            RescueRecordNavigation(screenRoute = "ride_history_details_screen/{${RescueRecordConstants.TRANSACTION_ID}}"){
+                fun passArgument(transactionId: String) = "ride_history_details_screen/$transactionId"
+            }
 
     }
 

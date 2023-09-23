@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_rescue_record.presentation.ride_history_details.components
+package com.example.cyclistance.feature_rescue_record.presentation.history_details.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -12,6 +12,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -24,6 +25,8 @@ import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescriptionToIcon
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
+import com.example.cyclistance.feature_rescue_record.presentation.history_details.state.HistoryDetailsState
+import com.example.cyclistance.feature_rescue_record.presentation.history_details.state.HistoryDetailsUiState
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.components.RatingCard
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.components.RescueDescription
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.components.RescueLocationDetails
@@ -32,11 +35,16 @@ import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun RideHistoryDetailsContent(
+fun HistoryDetailsContent(
     modifier: Modifier = Modifier,
-    rideHistoryDetailsModel: RideDetails = RideDetails()) {
+    uiState: HistoryDetailsUiState = HistoryDetailsUiState(),
+    state: HistoryDetailsState = HistoryDetailsState(),
+) {
 
-    val rideSummary = rideHistoryDetailsModel.rideSummary
+    val rideDetails = uiState.rideDetails
+    val rideSummary = rideDetails?.rideSummary
+    val isRideLoaded = rideDetails != null
+    val shouldShowPlaceholder = !isRideLoaded && !state.isLoading
     Surface(
         modifier = modifier
             .fillMaxSize(),
@@ -44,22 +52,33 @@ fun RideHistoryDetailsContent(
 
         LazyColumn(
             modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = Arrangement.Top,
+            verticalArrangement = if (shouldShowPlaceholder) Arrangement.Center else Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally) {
 
             item {
+
+                if (state.isLoading) {
+                    CircularProgressIndicator()
+                }
+
+                if (shouldShowPlaceholder) {
+                    HistoryDetailsPlaceholder()
+                    return@item
+                }
+
+
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween) {
 
-                    RideHistoryDetailsRole(
+                    HistoryDetailsRole(
                         modifier = Modifier
                             .weight(3f)
                             .padding(vertical = 10.dp),
                         role = "Rescuer",
-                        photoUrl = rideHistoryDetailsModel.rescuerPhotoUrl,
-                        name = rideHistoryDetailsModel.rescuerName,
+                        photoUrl = rideDetails!!.rescuerPhotoUrl,
+                        name = rideDetails.rescuerName,
                     )
 
                     AnimatedRawResIcon(
@@ -69,13 +88,13 @@ fun RideHistoryDetailsContent(
                         resId = R.raw.handshake
                     )
 
-                    RideHistoryDetailsRole(
+                    HistoryDetailsRole(
                         modifier = Modifier
                             .weight(3f)
                             .padding(vertical = 10.dp),
                         role = "Rescuee",
-                        photoUrl = rideHistoryDetailsModel.rescueePhotoUrl,
-                        name = rideHistoryDetailsModel.rescueeName,
+                        photoUrl = rideDetails.rescueePhotoUrl,
+                        name = rideDetails.rescueeName,
                     )
                 }
 
@@ -83,7 +102,7 @@ fun RideHistoryDetailsContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 12.dp),
-                    rating = rideSummary.rating,
+                    rating = rideSummary!!.rating,
                     ratingText = rideSummary.ratingText
                 )
 
@@ -135,7 +154,6 @@ fun RideHistoryDetailsContent(
 
 
             }
-
         }
 
 
@@ -173,8 +191,11 @@ val fakeRideHistoryDetailsModel = RideDetails(
 @Composable
 fun PreviewRideHistoryDetailsContentDark() {
     CyclistanceTheme(darkTheme = true) {
-        RideHistoryDetailsContent(
-            rideHistoryDetailsModel = fakeRideHistoryDetailsModel
+        HistoryDetailsContent(
+            uiState = HistoryDetailsUiState(
+                rideDetails = null
+            ),
+
         )
     }
 }

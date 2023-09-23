@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -47,13 +48,15 @@ fun RideHistoryScreen(
         }
     }
 
+    val showRideDetails = remember{{ rideId: String ->
+        navController.navigate(Screens.RescueRecordNavigation.RideHistoryDetails.passArgument(transactionId = rideId))
+    }}
+
     RideHistoryContent(
         modifier = Modifier.padding(paddingValues),
         event = { event ->
             when (event) {
-                is RideHistoryUiEvent.ShowRideDetails -> {
-                    navController.navigate(Screens.RescueRecordNavigation.RideHistoryDetails.screenRoute)
-                }
+                is RideHistoryUiEvent.ShowRideDetails -> showRideDetails(event.rideId)
             }
         },
         uiState = uiState,

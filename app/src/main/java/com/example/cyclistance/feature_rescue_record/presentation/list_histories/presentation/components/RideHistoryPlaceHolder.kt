@@ -38,7 +38,7 @@ fun RideHistoryPlaceHolder(modifier: Modifier = Modifier) {
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(vertical = 12.dp, horizontal = 4.dp)
-                .fillMaxWidth(0.7f),
+                .fillMaxWidth(0.9f),
             style = MaterialTheme.typography.body1
         )
 
