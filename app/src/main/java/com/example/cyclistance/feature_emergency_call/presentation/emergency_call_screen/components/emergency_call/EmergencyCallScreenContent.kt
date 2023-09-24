@@ -9,8 +9,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +27,8 @@ import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
+import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogCameraPermission
+import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogFilesAndMediaPermission
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyCallModel
@@ -35,9 +40,11 @@ import com.example.cyclistance.feature_emergency_call.presentation.emergency_cal
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun EmergencyCallScreenContent(
     modifier: Modifier = Modifier,
+    bottomSheetScaffoldState: ModalBottomSheetState,
     keyboardActions: KeyboardActions = KeyboardActions { },
     uiState: EmergencyCallUIState,
     state: EmergencyCallState,
@@ -76,6 +83,7 @@ fun EmergencyCallScreenContent(
 
             if (shouldShowAddEditContactDialog) {
                 AddEditContactContent(
+                    bottomSheetScaffoldState = bottomSheetScaffoldState,
                     keyboardActions = keyboardActions,
                     event = event,
                     state = state,
@@ -85,6 +93,17 @@ fun EmergencyCallScreenContent(
                 )
             }
 
+            if (uiState.cameraPermissionDialogVisible) {
+                DialogCameraPermission(onDismiss = {
+                    event(EmergencyCallUiEvent.DismissCameraDialog)
+                })
+            }
+
+            if (uiState.filesAndMediaDialogVisible) {
+                DialogFilesAndMediaPermission(onDismiss = {
+                    event(EmergencyCallUiEvent.DismissFilesAndMediaDialog)
+                })
+            }
 
 
             LazyColumn(
@@ -97,24 +116,18 @@ fun EmergencyCallScreenContent(
                         onClick = { event(EmergencyCallUiEvent.OnClickAddContact) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(all = 16.dp))
+                            .padding(horizontal = 16.dp, vertical = 4.dp))
                 }
                 items(items = state.emergencyCallModel.contacts, key = { it.id }) { item ->
                     if (contactsAvailable) {
                         ContactItem(
-                            onClick = { event(EmergencyCallUiEvent.OnClickContact(item.phoneNumber)) },
                             emergencyContact = item,
+                            event = event,
+                            uiState = uiState,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(vertical = 1.dp),
-                            onClickEdit = {
-                                event(
-                                    EmergencyCallUiEvent.OnClickEditContact(
-                                        item))
-                            },
-                            onClickDelete = {
-                                event(EmergencyCallUiEvent.OnClickDeleteContact(item))
-                            })
+                                .padding(vertical = 1.dp))
+
                     }
                 }
 
@@ -187,9 +200,9 @@ private val fakeContacts = EmergencyCallModel(
         ))
 
 @OptIn(ExperimentalMaterialApi::class)
-@Preview
+@Preview(name = "Currently editing dark theme")
 @Composable
-fun PreviewEmergencyCallScreenContentDark() {
+fun PreviewEmergencyCallScreenContent1() {
 
 
     val uiState by rememberSaveable {
@@ -207,14 +220,16 @@ fun PreviewEmergencyCallScreenContentDark() {
             state = EmergencyCallState(
                 emergencyCallModel = EmergencyCallModel()
             ),
+            bottomSheetScaffoldState = rememberModalBottomSheetState(
+                ModalBottomSheetValue.Expanded),
             event = {}, name = TextFieldValue(""), phoneNumber = TextFieldValue(""))
     }
 }
 
 @OptIn(ExperimentalMaterialApi::class)
-@Preview
+@Preview(name = "Currently editing light theme")
 @Composable
-fun PreviewEmergencyCallScreenContentLight() {
+fun PreviewEmergencyCallScreenContent2() {
 
     val uiState by rememberSaveable {
         mutableStateOf(EmergencyCallUIState())
@@ -228,10 +243,12 @@ fun PreviewEmergencyCallScreenContentLight() {
                     name = "John Doe",
                     photo = PHILIPPINE_RED_CROSS_PHOTO,
                     phoneNumber = "123456789"
-                )),
+                ),cameraPermissionDialogVisible = true),
             state = EmergencyCallState(
-                emergencyCallModel = fakeContacts
+                emergencyCallModel = fakeContacts,
             ),
+            bottomSheetScaffoldState = rememberModalBottomSheetState(
+                ModalBottomSheetValue.Expanded),
             event = {},
             name = TextFieldValue(""),
             phoneNumber = TextFieldValue(""))
@@ -239,3 +256,23 @@ fun PreviewEmergencyCallScreenContentLight() {
 }
 
 
+@OptIn(ExperimentalMaterialApi::class)
+@Preview(name = "Not editing dark theme")
+@Composable
+fun PreviewEmergencyCallScreenContent3() {
+
+
+    val uiState by rememberSaveable {
+        mutableStateOf(EmergencyCallUIState())
+    }
+    CyclistanceTheme(darkTheme = true) {
+        EmergencyCallScreenContent(
+            uiState = uiState.copy(),
+            state = EmergencyCallState(
+                emergencyCallModel = EmergencyCallModel()
+            ),
+            bottomSheetScaffoldState = rememberModalBottomSheetState(
+                ModalBottomSheetValue.Expanded),
+            event = {}, name = TextFieldValue(""), phoneNumber = TextFieldValue(""))
+    }
+}

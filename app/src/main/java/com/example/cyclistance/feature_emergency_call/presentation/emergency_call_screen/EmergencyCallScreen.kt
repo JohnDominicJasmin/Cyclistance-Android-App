@@ -1,28 +1,43 @@
 package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen
 
 import android.Manifest
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
+import android.os.Build
+import android.provider.MediaStore
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.MAX_CONTACTS
 import com.example.cyclistance.core.utils.contexts.callPhoneNumber
+import com.example.cyclistance.core.utils.permissions.requestPermission
+import com.example.cyclistance.core.utils.save_images.ImageUtils
+import com.example.cyclistance.core.utils.save_images.ImageUtils.toImageUri
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call.EmergencyCallScreenContent
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallEvent
@@ -31,8 +46,10 @@ import com.example.cyclistance.feature_emergency_call.presentation.emergency_cal
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallUIState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 @OptIn(
     ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class,
@@ -44,8 +61,10 @@ fun EmergencyCallScreen(
     paddingValues: PaddingValues,
     shouldOpenAddNewContact: Boolean) {
 
+    val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
     val state by viewModel.state.collectAsStateWithLifecycle()
+    var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
     var name by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
@@ -153,6 +172,121 @@ fun EmergencyCallScreen(
     }
 
 
+    val scope = rememberCoroutineScope()
+    val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
+    val toggleBottomSheet = remember(bottomSheetScaffoldState, state.isLoading) {
+        {
+            scope.launch {
+
+                if (!state.isLoading) {
+                    with(bottomSheetScaffoldState) {
+                        if (isVisible) {
+                            hide()
+                        } else {
+                            show()
+                        }
+                    }
+                }
+            }
+        }
+    }
+    val openGalleryResultLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let { selectedUri ->
+                imageBitmap =
+                    when {
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> {
+                            MediaStore.Images.Media.getBitmap(
+                                context.contentResolver,
+                                selectedUri)
+                        }
+
+                        else -> {
+                            val source =
+                                ImageDecoder.createSource(
+                                    context.contentResolver,
+                                    selectedUri)
+                            ImageDecoder.decodeBitmap(source)
+                        }
+                    }
+            }
+            val imageUri = if(imageBitmap == null) uri.toString() else ImageUtils.encodeImage(
+                imageBitmap!!)
+
+            uiState = uiState.copy(selectedImageUri = imageUri)
+
+        }
+
+    val openCameraResultLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
+            val uri = bitmap?.toImageUri().toString()
+            imageBitmap = bitmap
+            val imageUri = if(imageBitmap == null) uri else ImageUtils.encodeImage(
+                imageBitmap!!)
+
+            uiState = uiState.copy(selectedImageUri = imageUri)
+
+        }
+
+    val filesAndMediaPermissionState =
+        rememberMultiplePermissionsState(
+            permissions = listOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) { permissionGranted ->
+            if (permissionGranted.values.all { it }) {
+                openGalleryResultLauncher.launch("image/*")
+            }
+        }
+
+
+    val openCameraPermissionState =
+        rememberPermissionState(permission = Manifest.permission.CAMERA) { permissionGranted ->
+
+            if (permissionGranted) {
+                openCameraResultLauncher.launch()
+            }
+        }
+
+    val openGallery = remember {
+        {
+            filesAndMediaPermissionState.requestPermission(
+                onGranted = {
+                    openGalleryResultLauncher.launch("image/*")
+                }, onExplain = {
+                    uiState = uiState.copy(filesAndMediaDialogVisible = true)
+                }, onDenied = {
+                    uiState = uiState.copy(filesAndMediaDialogVisible = true)
+                })
+
+        }
+    }
+
+    val openCamera = remember {
+        {
+            openCameraPermissionState.requestPermission(
+                onGranted = {
+                    openCameraResultLauncher.launch()
+                }, onExplain = {
+                    uiState = uiState.copy(cameraPermissionDialogVisible = true)
+                }, onDenied = {
+                    uiState = uiState.copy(cameraPermissionDialogVisible = true)
+                })
+        }
+    }
+
+
+    val onDismissFilesAndMediaPermissionDialog = remember {
+        {
+            uiState = uiState.copy(filesAndMediaDialogVisible = false)
+        }
+    }
+
+    val onDismissCameraPermissionDialog = remember {
+        {
+            uiState = uiState.copy(cameraPermissionDialogVisible = false)
+        }
+    }
+
 
 
     val onValueChangeName = remember {
@@ -256,6 +390,7 @@ fun EmergencyCallScreen(
         uiState = uiState,
         modifier = Modifier.padding(paddingValues),
         state = state,
+        bottomSheetScaffoldState = bottomSheetScaffoldState,
         keyboardActions = keyboardActions,
         name = name,
         phoneNumber = phoneNumber,
@@ -273,7 +408,14 @@ fun EmergencyCallScreen(
                 is EmergencyCallUiEvent.OnChangeName -> onValueChangeName(event.name)
                 is EmergencyCallUiEvent.OnChangePhoneNumber -> onValueChangePhoneNumber(event.phoneNumber)
                 is EmergencyCallUiEvent.SaveEditContact -> saveAddEditContact()
-
+                is EmergencyCallUiEvent.ToggleBottomSheet -> {
+                    toggleBottomSheet()
+                    keyboardController?.hide()
+                }
+                EmergencyCallUiEvent.DismissCameraDialog -> onDismissCameraPermissionDialog()
+                EmergencyCallUiEvent.DismissFilesAndMediaDialog -> onDismissFilesAndMediaPermissionDialog()
+                EmergencyCallUiEvent.OpenCamera -> openCamera()
+                EmergencyCallUiEvent.SelectImageFromGallery -> openGallery()
             }
         })
 }

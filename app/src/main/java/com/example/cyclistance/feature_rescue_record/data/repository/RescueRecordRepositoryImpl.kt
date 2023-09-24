@@ -50,7 +50,7 @@ class RescueRecordRepositoryImpl(
 
     override suspend fun getRideHistory(): RideHistory {
 
-        val uid = "mbmckVyzZYezIE8KzjYcj4NTcrGn"
+        val uid = auth.uid!!
         return suspendCancellableCoroutine { continuation ->
             firestore
                 .collection(RESCUE_RECORD_COLLECTION)

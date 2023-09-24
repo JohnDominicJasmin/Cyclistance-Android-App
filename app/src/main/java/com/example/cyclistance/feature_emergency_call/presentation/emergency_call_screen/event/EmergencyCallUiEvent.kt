@@ -4,7 +4,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 
 sealed class EmergencyCallUiEvent {
-    object OnClickAddContact : EmergencyCallUiEvent()
+    data object OnClickAddContact : EmergencyCallUiEvent()
     data class OnClickContact(val phoneNumber: String) : EmergencyCallUiEvent()
     data class OnClickEditContact(val emergencyContact: EmergencyContactModel) :
         EmergencyCallUiEvent()
@@ -13,14 +13,20 @@ sealed class EmergencyCallUiEvent {
         EmergencyCallUiEvent()
 
     data class DeleteContact(val emergencyContact: EmergencyContactModel) : EmergencyCallUiEvent()
-    object DismissDeleteContactDialog : EmergencyCallUiEvent()
-    object DismissMaximumContactDialog : EmergencyCallUiEvent()
+    data object DismissDeleteContactDialog : EmergencyCallUiEvent()
+    data object DismissMaximumContactDialog : EmergencyCallUiEvent()
 
     data class OnChangeName(val name: TextFieldValue) : EmergencyCallUiEvent()
     data class OnChangePhoneNumber(val phoneNumber: TextFieldValue) : EmergencyCallUiEvent()
-    object CancelEditContact : EmergencyCallUiEvent()
-    object SaveEditContact : EmergencyCallUiEvent()
-    object DismissEditContactScreen : EmergencyCallUiEvent()
+    data object CancelEditContact : EmergencyCallUiEvent()
+    data object SaveEditContact : EmergencyCallUiEvent()
+    data object ToggleBottomSheet : EmergencyCallUiEvent()
+    data object DismissEditContactScreen : EmergencyCallUiEvent()
+
+    data object SelectImageFromGallery: EmergencyCallUiEvent()
+    data object OpenCamera : EmergencyCallUiEvent()
+    data object DismissCameraDialog : EmergencyCallUiEvent()
+    data object DismissFilesAndMediaDialog : EmergencyCallUiEvent()
 
 
 }
