@@ -28,6 +28,7 @@ fun ConversationChatItems(
     modifier: Modifier = Modifier,
     keyboardIsOpen: Boolean,
     listState: LazyListState,
+    isInternetAvailable: Boolean,
     conversation: List<ConversationItemModel>,
     state: ConversationState,
     uiState: ConversationUiState,
@@ -63,8 +64,6 @@ fun ConversationChatItems(
             }
 
             ChatItem(
-                conversation = message,
-                isSender = isSender,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp, horizontal = 6.dp),
@@ -76,7 +75,10 @@ fun ConversationChatItems(
                     event(
                         ConversationUiEvent.SelectChatItem(
                             index = it))
-                }
+                },
+                conversation = message,
+                isSender = isSender,
+                isInternetAvailable = isInternetAvailable
             )
         }
 

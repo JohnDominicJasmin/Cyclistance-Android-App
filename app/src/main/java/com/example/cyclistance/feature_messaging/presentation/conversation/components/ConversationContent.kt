@@ -42,6 +42,144 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 
+
+
+
+@Composable
+fun ConversationContent(
+    conversation: List<ConversationItemModel>,
+    modifier: Modifier = Modifier,
+    message: TextFieldValue,
+    isInternetAvailable: Boolean,
+    uiState: ConversationUiState,
+    state: ConversationState,
+    event: (ConversationUiEvent) -> Unit) {
+
+    val conversationAvailable = remember(conversation.size) {
+        conversation.isNotEmpty()
+    }
+    val listState = rememberLazyListState()
+    val focusManager = LocalFocusManager.current
+    val keyboardState by keyboardAsState()
+    val scope = rememberCoroutineScope()
+
+
+    val stateFirstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
+    var farthestVisibleItemIndex by rememberSaveable { mutableIntStateOf(0) }
+    val isScrollingUp by remember { derivedStateOf { farthestVisibleItemIndex > stateFirstVisibleItemIndex + 4 } }
+
+    LaunchedEffect(key1 = listState.isScrollInProgress) {
+        if (stateFirstVisibleItemIndex > farthestVisibleItemIndex) {
+            farthestVisibleItemIndex = stateFirstVisibleItemIndex
+        }
+    }
+
+    val keyboardIsOpen by remember(keyboardState) {
+        derivedStateOf { keyboardState == Keyboard.Opened }
+    }
+
+    LaunchedEffect(key1 = keyboardState) {
+        if (keyboardState == Keyboard.Opened) {
+            return@LaunchedEffect
+        }
+        if (!uiState.messageAreaExpanded) {
+            return@LaunchedEffect
+        }
+        event(ConversationUiEvent.ToggleMessageArea)
+
+    }
+
+
+
+    Surface(
+        modifier = modifier
+            .fillMaxSize()
+            .noRippleClickable {
+                event(ConversationUiEvent.ResetSelectedIndex)
+                if (uiState.messageAreaExpanded) {
+                    event(ConversationUiEvent.ToggleMessageArea)
+                }
+                focusManager.clearFocus()
+            },
+        color = MaterialTheme.colors.background) {
+
+
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+
+            if(uiState.notificationPermissionVisible){
+                DialogNotificationPermission(
+                    modifier = Modifier.align(Alignment.Center),
+                    onDismiss = {event(ConversationUiEvent.DismissNotificationPermissionDialog)}
+                )
+            }
+
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = if (conversationAvailable) Alignment.BottomCenter else Alignment.Center) {
+
+
+                Column(
+                    modifier = Modifier.fillMaxSize()) {
+
+
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .weight(1f),
+                        contentAlignment = Alignment.Center) {
+
+                        if (state.isLoading) {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        }
+
+                        if (conversationAvailable) {
+                            ConversationChatItems(
+                                modifier = Modifier
+                                    .fillMaxSize(),
+                                keyboardIsOpen = keyboardIsOpen,
+                                listState = listState,
+                                conversation = conversation,
+                                uiState = uiState,
+                                state = state,
+                                isInternetAvailable = isInternetAvailable,
+                                event = event)
+
+                        }
+
+                        if (!conversationAvailable && !state.isLoading) {
+                            PlaceholderEmptyConversation(
+                                modifier = Modifier
+                                    .fillMaxSize())
+                        }
+                    }
+
+
+
+                    MessagingTextArea(
+                        message = message,
+                        onValueChange = { event(ConversationUiEvent.OnChangeValueMessage(it)) },
+                        modifier = Modifier.wrapContentHeight(),
+                        onClickSend = { event(ConversationUiEvent.OnSendMessage) },
+                        onToggleExpand = { event(ConversationUiEvent.ToggleMessageArea) },
+                        isExpanded = uiState.messageAreaExpanded)
+
+                }
+
+                ScrollToBottomButton(
+                    modifier = Modifier.absoluteOffset(y = (-85).dp),
+                    isVisible = isScrollingUp,
+                    onClick = {
+                        scope.launch {
+                            listState.animateScrollToItem(index = conversation.indices.last)
+                        }
+                    })
+            }
+        }
+
+
+    }
+}
+
 private val fakeConversationsModel = ConversationsModel(
     messages = listOf(
         ConversationItemModel(
@@ -165,142 +303,6 @@ private val fakeConversationsModel = ConversationsModel(
     )
 )
 
-
-@Composable
-fun ConversationContent(
-    conversation: List<ConversationItemModel>,
-    modifier: Modifier = Modifier,
-    message: TextFieldValue,
-    uiState: ConversationUiState,
-    state: ConversationState,
-    event: (ConversationUiEvent) -> Unit) {
-
-    val conversationAvailable = remember(conversation.size) {
-        conversation.isNotEmpty()
-    }
-    val listState = rememberLazyListState()
-    val focusManager = LocalFocusManager.current
-    val keyboardState by keyboardAsState()
-    val scope = rememberCoroutineScope()
-
-
-    val stateFirstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
-    var farthestVisibleItemIndex by rememberSaveable { mutableIntStateOf(0) }
-    val isScrollingUp by remember { derivedStateOf { farthestVisibleItemIndex > stateFirstVisibleItemIndex + 4 } }
-
-    LaunchedEffect(key1 = listState.isScrollInProgress) {
-        if (stateFirstVisibleItemIndex > farthestVisibleItemIndex) {
-            farthestVisibleItemIndex = stateFirstVisibleItemIndex
-        }
-    }
-
-    val keyboardIsOpen by remember(keyboardState) {
-        derivedStateOf { keyboardState == Keyboard.Opened }
-    }
-
-    LaunchedEffect(key1 = keyboardState) {
-        if (keyboardState == Keyboard.Opened) {
-            return@LaunchedEffect
-        }
-        if (!uiState.messageAreaExpanded) {
-            return@LaunchedEffect
-        }
-        event(ConversationUiEvent.ToggleMessageArea)
-
-    }
-
-
-
-    Surface(
-        modifier = modifier
-            .fillMaxSize()
-            .noRippleClickable {
-                event(ConversationUiEvent.ResetSelectedIndex)
-                if (uiState.messageAreaExpanded) {
-                    event(ConversationUiEvent.ToggleMessageArea)
-                }
-                focusManager.clearFocus()
-            },
-        color = MaterialTheme.colors.background) {
-
-
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-
-            if(uiState.notificationPermissionVisible){
-                DialogNotificationPermission(
-                    modifier = Modifier.align(Alignment.Center),
-                    onDismiss = {event(ConversationUiEvent.DismissNotificationPermissionDialog)}
-                )
-            }
-
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = if (conversationAvailable) Alignment.BottomCenter else Alignment.Center) {
-
-
-                Column(
-                    modifier = Modifier.fillMaxSize()) {
-
-
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .weight(1f),
-                        contentAlignment = Alignment.Center) {
-
-                        if (state.isLoading) {
-                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                        }
-
-                        if (conversationAvailable) {
-                            ConversationChatItems(
-                                modifier = Modifier
-                                    .fillMaxSize(),
-                                keyboardIsOpen = keyboardIsOpen,
-                                listState = listState,
-                                conversation = conversation,
-                                uiState = uiState,
-                                state = state,
-                                event = event)
-
-                        }
-
-                        if (!conversationAvailable && !state.isLoading) {
-                            PlaceholderEmptyConversation(
-                                modifier = Modifier
-                                    .fillMaxSize())
-                        }
-                    }
-
-
-
-                    MessagingTextArea(
-                        message = message,
-                        onValueChange = { event(ConversationUiEvent.OnChangeValueMessage(it)) },
-                        modifier = Modifier.wrapContentHeight(),
-                        onClickSend = { event(ConversationUiEvent.OnSendMessage) },
-                        onToggleExpand = { event(ConversationUiEvent.ToggleMessageArea) },
-                        isExpanded = uiState.messageAreaExpanded)
-
-                }
-
-                ScrollToBottomButton(
-                    modifier = Modifier.absoluteOffset(y = (-85).dp),
-                    isVisible = isScrollingUp,
-                    onClick = {
-                        scope.launch {
-                            listState.animateScrollToItem(index = conversation.indices.last)
-                        }
-                    })
-            }
-        }
-
-
-    }
-}
-
-
-
 @Preview
 @Composable
 fun PreviewMessagingConversationContentDark() {
@@ -312,7 +314,7 @@ fun PreviewMessagingConversationContentDark() {
                 ),
                 conversation = fakeConversationsModel.messages,
                 event = {}, state = ConversationState(
-                ), message = TextFieldValue("Hello"))
+                ), message = TextFieldValue("Hello"), isInternetAvailable = false)
         }
     }
 }
@@ -330,7 +332,7 @@ fun PreviewMessagingConversationContentLight() {
                 ),
                 event = {}, state = ConversationState(
 
-                ), message = TextFieldValue("Hello"))
+                ), message = TextFieldValue("Hello"), isInternetAvailable = true)
         }
     }
 }

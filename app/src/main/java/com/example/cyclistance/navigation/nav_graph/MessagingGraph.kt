@@ -62,7 +62,8 @@ fun NavGraphBuilder.messagingGraph(
                 paddingValues = paddingValues,
                 userReceiverMessage = userReceiverMessage,
                 userSenderMessage = userSenderMessage,
-                newConversationDetails = newConversationDetails
+                newConversationDetails = newConversationDetails,
+                isInternetAvailable = isInternetAvailable
             )
         }
 

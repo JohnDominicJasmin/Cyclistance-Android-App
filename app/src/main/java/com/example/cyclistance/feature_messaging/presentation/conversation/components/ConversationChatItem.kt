@@ -41,6 +41,7 @@ import java.util.Date
 @Composable
 fun ChatItem(
     modifier: Modifier = Modifier,
+    isInternetAvailable: Boolean,
     conversation: ConversationItemModel,
     isSender: Boolean,
     state: ConversationState,
@@ -78,6 +79,7 @@ fun ChatItem(
 
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = contentAlignment) {
 
+        val userAvailable = state.userReceiverMessage?.isUserAvailable
 
         Row(
             verticalAlignment = Alignment.Bottom,
@@ -88,9 +90,8 @@ fun ChatItem(
                     modifier = Modifier
                         .padding(bottom = 4.dp)
                         .clip(CircleShape)
-                        .size(36.dp)
-                    ,
-                    isOnline = state.userReceiverMessage?.isUserAvailable,
+                        .size(36.dp),
+                    isOnline = if (!isInternetAvailable) null else userAvailable,
                     photoUrl = state.userReceiverMessage?.getPhoto(),
                 )
             }
@@ -163,6 +164,7 @@ fun PreviewChatItemSenderDark() {
         ChatItem(
             isSender = true,
             state = ConversationState(),
+            isInternetAvailable = true,
             conversation = ConversationItemModel(
                 senderId = "1",
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
@@ -183,6 +185,7 @@ fun PreviewChatItemSenderLight() {
         ChatItem(
             isSender = true,
             state = ConversationState(),
+            isInternetAvailable = true,
             conversation = ConversationItemModel(
                 senderId = "1",
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
@@ -203,6 +206,7 @@ fun PreviewChatItemRecipientDark() {
         ChatItem(
             isSender = false,
             state = ConversationState(),
+            isInternetAvailable = true,
             conversation = ConversationItemModel(
                 senderId = "1",
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
@@ -222,6 +226,7 @@ fun PreviewChatItemRecipientLight() {
         ChatItem(
             isSender = false,
             state = ConversationState(),
+            isInternetAvailable = true,
             conversation = ConversationItemModel(
                 senderId = "1",
                 message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +

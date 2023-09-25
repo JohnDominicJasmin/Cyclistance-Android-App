@@ -24,11 +24,13 @@ import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.conversation.components.ConversationContent
+import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationUiEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationVmEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationUiState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -38,7 +40,8 @@ fun ConversationScreen(
     paddingValues: PaddingValues,
     userReceiverMessage: MessagingUserItemModel,
     userSenderMessage: MessagingUserItemModel,
-    newConversationDetails: (MessagingUserItemModel) -> Unit
+    newConversationDetails: (MessagingUserItemModel) -> Unit,
+    isInternetAvailable: Boolean
 ) {
 
 
@@ -162,6 +165,15 @@ fun ConversationScreen(
         newConversationDetails(userReceiverMessage)
     }
 
+
+    LaunchedEffect(key1 = true){
+        viewModel.event.collectLatest { event ->
+            when(event){
+                ConversationEvent.MessageNotSent -> {}
+                ConversationEvent.MessageSent -> {}
+            }
+        }
+    }
     BackHandler(enabled = true, onBack = {
         if (uiState.messageAreaExpanded) {
             onToggleExpand()
@@ -178,6 +190,7 @@ fun ConversationScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(paddingValues = paddingValues),
+        isInternetAvailable = isInternetAvailable,
         uiState = uiState,
         state = state,
         message = message,
