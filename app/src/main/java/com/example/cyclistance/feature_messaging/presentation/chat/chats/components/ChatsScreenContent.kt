@@ -100,65 +100,7 @@ internal fun ChatScreenContent(
     }
 }
 
-/*
-val fakeMessages = ChatsModel(
-    listOf(
-        ChatItemModel(
-            conversionPhoto = "https://www.liquidsandsolids.com/wp-content/uploads/2022/09/talking-to-a-dead-person.jpg",
-            conversionName = "John Doe",
-            isUserAvailable = true,
-            lastMessage = "Hey there! How are you?",
-            timeStamp = Date(),
-            messageId = "1",
-            conversionId = "1gaosidnuio2b",
 
-
-        ),
-        ChatItemModel(
-            conversionPhoto = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
-            conversionName = "Jane Doe",
-            lastMessage = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                          "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
-                          "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
-                          "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timeStamp = Date(),
-            messageId = "2",
-            conversionId = "ksnksksk29u4091u2"
-        ),
-        ChatItemModel(
-            conversionPhoto = "https://www.diethelmtravel.com/wp-content/uploads/2016/04/bill-gates-wealthiest-person.jpg",
-            conversionName = "Jennifer",
-            lastMessage = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                          "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
-                          "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
-                          "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timeStamp = Date(),
-            messageId = "3",
-            conversionId = "asgknasoidn29h"
-        ),
-        ChatItemModel(
-            conversionPhoto = "https://www.harleytherapy.co.uk/counselling/wp-content/uploads/16297800391_5c6e812832.jpg",
-            conversionName = "John Doe",
-            lastMessage = "Hello",
-            timeStamp = Date(),
-
-            messageId = "4",
-            conversionId = "asidbnaoiusdb982bh"
-        ),
-        ChatItemModel(
-            conversionPhoto = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcREz8aDOvFn1m2fCQ020dcrr-RCxey0NyF_XG6JOG1HzYoQRdBwB8U3fQJKEwG7t6Yr72Q",
-            conversionName = "John Doe",
-            lastMessage = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                          "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
-                          "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
-                          "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timeStamp = Date(),
-            messageId = "5",
-            conversionId = "q0iweht08"
-        ),
-
-        )
-)*/
 
 @Preview
 @Composable
