@@ -198,7 +198,6 @@ class MessagingRepositoryImpl(
             val token = getMessagingToken()
             val savedToken = dataStore.getData(key = SAVED_TOKEN, defaultValue = "").firstOrNull()
 
-            checkInternetConnection()
             if (token == savedToken) {
                 return@withContext
             }

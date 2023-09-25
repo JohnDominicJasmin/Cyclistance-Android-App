@@ -46,7 +46,11 @@ class EmergencyCallViewModel @Inject constructor(
 
 
     init {
+        getContacts()
+    }
 
+
+    private fun getContacts(){
 
         emergencyCallUseCase.getContactsUseCase().catch {
             Timber.v("Error: ${it.message}")
@@ -66,7 +70,6 @@ class EmergencyCallViewModel @Inject constructor(
         }.launchIn(viewModelScope)
 
     }
-
     fun onEvent(event: EmergencyCallVmEvent) {
         when (event) {
             is EmergencyCallVmEvent.DeleteContact -> deleteContact(event.emergencyContactModel)

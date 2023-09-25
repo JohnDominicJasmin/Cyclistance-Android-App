@@ -7,6 +7,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +42,7 @@ fun TopAppBar(
     onClickArrowBackIcon: () -> Unit = {},
     onClickMenuIcon: () -> Unit = {},
     onClickSearchMessagingUser: () -> Unit = {},
+    viewProfile: (id: String) -> Unit = {},
     uiState: NavUiState,
     route: String?) {
 
@@ -151,7 +153,10 @@ fun TopAppBar(
                         MessageUserImage(
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .size(48.dp),
+                                .size(48.dp)
+                                .clickable {
+                                    viewProfile(uiState.conversationId)
+                                },
                             isOnline = if(!uiState.internetAvailable) null else uiState.conversationAvailability,
                             photoUrl = uiState.conversationPhotoUrl)
 
