@@ -71,7 +71,6 @@ import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -945,7 +944,7 @@ fun MappingScreen(
         }
     }
     LaunchedEffect(key1 = true){
-        mappingViewModel.eventFlow.distinctUntilChanged().collectLatest {
+        mappingViewModel.eventFlow.collectLatest {
             when(it){
                 is MappingEvent.NoInternetConnection -> {
                    noInternetDialogVisibility(true)
