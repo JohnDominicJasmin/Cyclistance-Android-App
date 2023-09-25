@@ -31,20 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
-import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY_NUMBER
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY_PHOTO
@@ -53,6 +45,7 @@ import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILI
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyCallModel
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.add_edit_contact.AddEditContactImage
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
@@ -243,15 +236,6 @@ private fun DialogEmergencyItem(
     emergencyContact: EmergencyContactModel,
     onClick: (EmergencyContactModel) -> Unit) {
 
-    val imageModel = remember(emergencyContact.name, emergencyContact.photo) {
-        if (emergencyContact.photo != NATIONAL_EMERGENCY_PHOTO &&
-            emergencyContact.photo != PHILIPPINE_RED_CROSS_PHOTO) {
-
-            "${EmergencyCallConstants.DICE_BEAR_URL}${emergencyContact.name}"
-        } else {
-            emergencyContact.photo
-        }
-    }
 
 
     Column(
@@ -264,23 +248,13 @@ private fun DialogEmergencyItem(
             onClick = { onClick(emergencyContact) },
             shape = CircleShape,
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(imageModel)
-                    .crossfade(true)
-                    .networkCachePolicy(CachePolicy.ENABLED)
-                    .diskCachePolicy(CachePolicy.ENABLED)
-                    .memoryCachePolicy(CachePolicy.ENABLED)
-                    .build(),
-                alignment = Alignment.Center,
-                contentDescription = "User Profile Image",
+
+            AddEditContactImage(
                 modifier = Modifier
                     .clip(CircleShape)
                     .size(54.dp),
-                contentScale = ContentScale.Crop,
-                placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
-                error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
-                fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
+                photoUrl = emergencyContact.photo,
+            )
         }
         Text(
             text = emergencyContact.name,

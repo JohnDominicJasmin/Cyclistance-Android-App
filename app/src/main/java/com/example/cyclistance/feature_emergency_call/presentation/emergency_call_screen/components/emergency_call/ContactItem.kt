@@ -49,8 +49,7 @@ fun ContactItem(
             AddEditContactImage(
                 modifier = Modifier
                     .size(54.dp)
-                    .clip(CircleShape)
-                    ,
+                    .clip(CircleShape),
                 photoUrl = emergencyContact.photo,
 
             )

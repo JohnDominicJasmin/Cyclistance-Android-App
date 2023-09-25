@@ -41,7 +41,6 @@ data class UserItem(
         )
 
         fun cancelUserHelpRequest(id: String): UserItem {
-            //todo: create breakpoint
             return UserItem(
                 id = id,
                 userAssistance = UserAssistanceModel(
@@ -52,7 +51,6 @@ data class UserItem(
         }
 
         fun removeUserTransaction(id: String): UserItem{
-            //todo: create breakpoint
             return UserItem(
                 id = id,
                 transaction = TransactionModel(),
