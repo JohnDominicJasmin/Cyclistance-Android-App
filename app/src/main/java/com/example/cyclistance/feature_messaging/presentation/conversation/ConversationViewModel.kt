@@ -226,7 +226,7 @@ class ConversationViewModel @Inject constructor(
                 messagingUseCase.addMessageListenerUseCase(
                     receiverId = receiverId,
                     onNewMessage = { conversation ->
-                        _conversationState.addAll(conversation.messages)
+                        _conversationState.updateMessages(conversation.messages)
                         isLoading(false)
                     })
             }.onSuccess {
@@ -237,6 +237,16 @@ class ConversationViewModel @Inject constructor(
             }
         }
     }
+
+    private fun MutableList<ConversationItemModel>.updateMessages(apiMessage: List<ConversationItemModel>){
+        val notEqualIndex = zip(apiMessage).indexOfLast { (n1, n2) -> n1.isSent != n2.isSent }
+        if(notEqualIndex == -1){
+            addAll(apiMessage)
+            return
+        }
+        set(notEqualIndex, element = apiMessage[notEqualIndex])
+    }
+
 
 
     override fun onCleared() {

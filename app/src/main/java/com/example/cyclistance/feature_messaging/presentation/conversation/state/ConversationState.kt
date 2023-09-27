@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_messaging.presentation.conversation.stat
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
+import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
 import kotlinx.parcelize.Parcelize
 
 
@@ -15,4 +16,5 @@ data class ConversationState(
     val userName: String = "",
     val conversionId: String? = null,
     val isLoading: Boolean = false,
+    val conversationsModel: ConversationsModel? = null,
 ) : Parcelable

@@ -72,7 +72,7 @@ class MessagingRepositoryImpl(
     private val appContext: Context,
     private val api: MessagingApi,
 
-    ) : MessagingRepository {
+) : MessagingRepository {
     private var messageListener: ListenerRegistration? = null
     private var chatListener: ListenerRegistration? = null
     private var messageUserListener: ListenerRegistration? = null
@@ -106,7 +106,10 @@ class MessagingRepositoryImpl(
                     Filter.equalTo(KEY_RECEIVER_ID, userId),
                     Filter.equalTo(KEY_SENDER_ID, userId)))
             .orderBy(KEY_TIMESTAMP, Query.Direction.DESCENDING)
-            .addSnapshotListener(chatListener(onAddedChat = onAddedChat, onModifiedChat = onModifiedChat))
+            .addSnapshotListener(
+                chatListener(
+                    onAddedChat = onAddedChat,
+                    onModifiedChat = onModifiedChat))
 
     }
 
@@ -259,7 +262,6 @@ class MessagingRepositoryImpl(
     }
 
     override suspend fun sendMessage(sendMessageModel: SendMessageModel) {
-        checkInternetConnection()
 
         val uid = getUid()
         val message = mapOf(
@@ -276,7 +278,9 @@ class MessagingRepositoryImpl(
                 .addOnSuccessListener {
                     continuation.resume(Unit)
                 }.addOnFailureListener {
-                    continuation.resumeWithException(MessagingExceptions.SendMessagingFailure(message = it.message!!))
+                    continuation.resumeWithException(
+                        MessagingExceptions.SendMessagingFailure(
+                            message = it.message!!))
                 }.addOnCanceledListener {
                     Timber.e("Message sending cancelled by user")
                 }
@@ -287,7 +291,7 @@ class MessagingRepositoryImpl(
     override suspend fun deleteToken() {
         checkInternetConnection()
         dataStore.editData(key = SAVED_TOKEN, value = "")
-        suspendCancellableCoroutine<Unit> { continuation ->
+        suspendCancellableCoroutine { continuation ->
             fireStore.collection(
                 USER_COLLECTION
             ).document(getUid()).update(KEY_FCM_TOKEN, FieldValue.delete()).addOnSuccessListener {
@@ -309,7 +313,7 @@ class MessagingRepositoryImpl(
         }
 
         val body = JSONObject().apply {
-            put(REMOTE_MSG_DATA,data)
+            put(REMOTE_MSG_DATA, data)
             put(REMOTE_MSG_REGISTRATION_IDS, tokens)
         }
 
@@ -317,7 +321,7 @@ class MessagingRepositoryImpl(
         api.sendMessage(
             headers = RemoteHeader.getRemoteMsgHeader(appContext),
             message = body.toString()
-        ).enqueue(object: Callback<String> {
+        ).enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 Timber.v("Notification sent successfully ${response.isSuccessful} | ${response.raw()}")
             }
@@ -328,8 +332,6 @@ class MessagingRepositoryImpl(
 
         })
     }
-
-
 
 
     private suspend fun getMessagingToken(): String {
@@ -388,9 +390,12 @@ class MessagingRepositoryImpl(
             }
 
             val messages: List<ConversationItemModel> =
-                value.documentChanges.filter { it.type == DocumentChange.Type.ADDED }
+                value.documents
                     .map {
-                        it.document.toConversationItem()
+                        val isDeviceOffline =
+                            with(it.metadata) { isFromCache.and(hasPendingWrites()) }
+                        val conversationItem = it.toConversationItem()
+                        conversationItem.copy(isSent = !isDeviceOffline)
                     }
 
             onNewMessage(
@@ -438,8 +443,6 @@ class MessagingRepositoryImpl(
 
         }
     }
-
-
 
 
 }

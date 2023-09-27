@@ -15,5 +15,6 @@ data class ConversationItemModel(
     val message: String,
     val timestamp: Date? = null,
     val messageDuration: MessageDuration? = null,
+    val isSent : Boolean = false
 ) : Parcelable
 
