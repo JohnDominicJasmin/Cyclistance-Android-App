@@ -177,11 +177,11 @@ class ConversationViewModel @Inject constructor(
     private fun sendMessage(model: SendMessageModel) {
         viewModelScope.launch(SupervisorJob()) {
             runCatching {
+                setConversion(model.message)
                 messagingUseCase.sendMessageUseCase(model)
                 sendMessageNotification(model.message)
             }.onSuccess {
                 _event.emit(ConversationEvent.MessageSent)
-                setConversion(model.message)
             }.onFailure {
                 _event.emit(ConversationEvent.MessageNotSent)
             }
@@ -241,6 +241,7 @@ class ConversationViewModel @Inject constructor(
     private fun MutableList<ConversationItemModel>.updateMessages(apiMessage: List<ConversationItemModel>){
         val notEqualIndex = zip(apiMessage).indexOfLast { (n1, n2) -> n1.isSent != n2.isSent }
         if(notEqualIndex == -1){
+            clear()
             addAll(apiMessage)
             return
         }
