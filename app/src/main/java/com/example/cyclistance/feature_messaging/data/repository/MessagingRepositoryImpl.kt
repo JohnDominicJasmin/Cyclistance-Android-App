@@ -268,7 +268,7 @@ class MessagingRepositoryImpl(
         val message = mapOf(
             KEY_SENDER_ID to uid,
             KEY_RECEIVER_ID to sendMessageModel.receiverId,
-            KEY_MESSAGE to sendMessageModel.message,
+            KEY_MESSAGE to sendMessageModel.message.trimEnd(),
             KEY_TIMESTAMP to Date()
         )
 
