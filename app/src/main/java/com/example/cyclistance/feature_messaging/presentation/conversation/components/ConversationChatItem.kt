@@ -6,6 +6,8 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -30,7 +31,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
+import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.presentation.common.MessageUserImage
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationState
@@ -51,23 +54,18 @@ fun ChatItem(
     contentAlignment: Alignment = Alignment.Center,
 ) {
 
-
     val timeStampAvailable by remember {
         derivedStateOf {
             conversation.messageDuration == null
         }
     }
 
-    val isMessageSent by remember {
-        derivedStateOf {
-            conversation.timestamp != null
-        }
+    val shouldShowSentIndicator = remember(conversation.isSent, isSender) {
+        conversation.isSent.and(!isSender)
     }
 
-    val shouldShowSentIndicator by remember {
-        derivedStateOf {
-            isMessageSent.and(!isSender)
-        }
+    val shouldShowNotSentIndicator = remember(conversation.isSent, isSender) {
+        conversation.isSent.not().and(!isSender)
     }
 
     val isSelected = remember(selectedIndex, currentIndex) { selectedIndex == currentIndex }
@@ -82,13 +80,14 @@ fun ChatItem(
         val userAvailable = state.userReceiverMessage?.isUserAvailable
 
         Row(
+            modifier = Modifier,
             verticalAlignment = Alignment.Bottom,
             horizontalArrangement = Arrangement.Center) {
 
-            if(isSender) {
+            if (isSender) {
                 MessageUserImage(
                     modifier = Modifier
-                        .padding(bottom = 4.dp)
+                        .padding(bottom = 4.dp, end = 4.dp)
                         .clip(CircleShape)
                         .size(36.dp),
                     isOnline = if (!isInternetAvailable) null else userAvailable,
@@ -120,34 +119,44 @@ fun ChatItem(
 
 
 
-                Card(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .wrapContentSize(),
-                    shape = RoundedCornerShape(12.dp),
-                    contentColor = if (isSelected) contentColor.copy(alpha = 0.75f) else contentColor,
-                    backgroundColor = if (isSelected) backgroundColor else backgroundColor.copy(
-                        alpha = 0.8f),
-                    elevation = if (isSelected) 2.dp else 0.dp,
-                    onClick = { currentIndex?.let { onSelectChatMessage(it) } }) {
+                Column(
+                    modifier = Modifier,
+                    horizontalAlignment = Alignment.End,
+                    verticalArrangement = Arrangement.Center) {
 
-                    Text(
-                        text = conversation.message,
+
+                    Box(
                         modifier = Modifier
-                            .padding(all = 12.dp),
-                        style = MaterialTheme.typography.body1.copy(
-                            textAlign = TextAlign.Start))
-                }
+                            .wrapContentSize()
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable {
+                                currentIndex?.let { onSelectChatMessage(it) }
+                            }
+                            .then(
+                                if (isSelected) Modifier.background(backgroundColor) else Modifier.background(
+                                    backgroundColor.copy(alpha = 0.8f)))){
 
+                        Text(
+                            text = conversation.message,
+                            modifier = Modifier
+                                .padding(all = 12.dp),
+                            style = MaterialTheme.typography.body1.copy(
+                                color = contentColor,
+                                textAlign = TextAlign.Start),
+                        )
+                    }
 
-                AnimatedVisibility(
-                    visible = shouldShowSentIndicator.and(isSelected),
-                    modifier = Modifier.padding(horizontal = 8.dp)) {
+                    AnimatedVisibility(
+                        visible = shouldShowSentIndicator.and(isSelected),
+                        modifier = Modifier.padding(horizontal = 0.dp)) {
+                        SentIndicator()
+                    }
 
-                    Text(
-                        text = "Sent",
-                        color = MaterialTheme.colors.onBackground.copy(alpha = 0.7f),
-                        style = MaterialTheme.typography.caption)
+                    AnimatedVisibility(
+                        visible = shouldShowNotSentIndicator,
+                        modifier = Modifier.padding(horizontal = 0.dp)) {
+                        NotSentIndicator()
+                    }
                 }
 
 
@@ -163,7 +172,9 @@ fun PreviewChatItemSenderDark() {
     CyclistanceTheme(darkTheme = true) {
         ChatItem(
             isSender = true,
-            state = ConversationState(),
+            state = ConversationState(
+                userReceiverMessage = MessagingUserItemModel(userDetails = UserDetails())
+            ),
             isInternetAvailable = true,
             conversation = ConversationItemModel(
                 senderId = "1",
@@ -203,18 +214,23 @@ fun PreviewChatItemSenderLight() {
 fun PreviewChatItemRecipientDark() {
 
     CyclistanceTheme(darkTheme = true) {
-        ChatItem(
-            isSender = false,
-            state = ConversationState(),
-            isInternetAvailable = true,
-            conversation = ConversationItemModel(
-                senderId = "1",
-                message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                          "molestiae quas vel sint commodi repudiandae consequuntur",
-                receiverId = "2",
-                timestamp = Date(),
-                messageId = "1",
-            ))
+        Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            ChatItem(
+                currentIndex = 1, selectedIndex = 1,
+                isSender = false,
+                state = ConversationState(
+
+                ),
+                isInternetAvailable = true,
+                conversation = ConversationItemModel(
+                    senderId = "1",
+                    message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
+                              "molestiae quas vel sint commodi repudiandae consequuntur",
+                    receiverId = "2",
+                    timestamp = Date(),
+                    messageId = "1",
+                ))
+        }
     }
 }
 
@@ -223,18 +239,21 @@ fun PreviewChatItemRecipientDark() {
 fun PreviewChatItemRecipientLight() {
 
     CyclistanceTheme(darkTheme = false) {
-        ChatItem(
-            isSender = false,
-            state = ConversationState(),
-            isInternetAvailable = true,
-            conversation = ConversationItemModel(
-                senderId = "1",
-                message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                          "molestiae quas vel sint commodi repudiandae consequuntur",
-                receiverId = "2",
-                timestamp = Date(),
-                messageId = "1",
-            ))
+        Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+            ChatItem(
+                isSender = false,
+                currentIndex = 1, selectedIndex = 1,
+                state = ConversationState(),
+                isInternetAvailable = true,
+                conversation = ConversationItemModel(
+                    senderId = "1",
+                    message = "iniONINOiOOInoinOINoInOinI",
+                    receiverId = "2",
+                    timestamp = Date(),
+                    messageId = "1",
+                    isSent = true
+                ))
+        }
     }
 }
 

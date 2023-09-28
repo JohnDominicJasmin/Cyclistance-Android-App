@@ -19,16 +19,16 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_ME
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Named
 
-class MessagingService @Inject constructor(
-    @Named("messagingNotification") private val notificationBuilder: NotificationCompat.Builder,
-    private val notificationManagerCompat: NotificationManagerCompat
-) : FirebaseMessagingService() {
+@AndroidEntryPoint
+class MessagingService : FirebaseMessagingService() {
 
-
+    @Inject lateinit var notificationManager: NotificationManagerCompat
+    @Inject @Named("messagingNotification") lateinit var notificationBuilder: NotificationCompat.Builder
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
@@ -73,7 +73,7 @@ class MessagingService @Inject constructor(
             }
         }
 
-        notificationManagerCompat.notify(NOTIFICATION_ID, notificationCompat.build())
+        notificationManager.notify(NOTIFICATION_ID, notificationCompat.build())
 
 
     }

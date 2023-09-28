@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.list.ListUtils
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_LAST_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
@@ -177,11 +178,11 @@ class ConversationViewModel @Inject constructor(
     private fun sendMessage(model: SendMessageModel) {
         viewModelScope.launch(SupervisorJob()) {
             runCatching {
+                setConversion(model.message)
                 messagingUseCase.sendMessageUseCase(model)
                 sendMessageNotification(model.message)
             }.onSuccess {
                 _event.emit(ConversationEvent.MessageSent)
-                setConversion(model.message)
             }.onFailure {
                 _event.emit(ConversationEvent.MessageNotSent)
             }
@@ -226,7 +227,7 @@ class ConversationViewModel @Inject constructor(
                 messagingUseCase.addMessageListenerUseCase(
                     receiverId = receiverId,
                     onNewMessage = { conversation ->
-                        _conversationState.addAll(conversation.messages)
+                        _conversationState.updateMessages(conversation.messages)
                         isLoading(false)
                     })
             }.onSuccess {
@@ -237,6 +238,22 @@ class ConversationViewModel @Inject constructor(
             }
         }
     }
+
+    private fun MutableList<ConversationItemModel>.updateMessages(apiMessage: List<ConversationItemModel>){
+        val notEqualIndex = zip(apiMessage).indexOfLast { (n1, n2) -> n1.isSent != n2.isSent }
+
+        if(ListUtils.isEqual(first = this, second = apiMessage)){
+            return
+        }
+
+        if(notEqualIndex == -1){
+            clear()
+            addAll(apiMessage)
+            return
+        }
+        set(notEqualIndex, element = apiMessage[notEqualIndex])
+    }
+
 
 
     override fun onCleared() {

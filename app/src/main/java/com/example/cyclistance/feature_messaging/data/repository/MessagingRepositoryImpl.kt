@@ -39,6 +39,7 @@ import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.Co
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -72,7 +73,7 @@ class MessagingRepositoryImpl(
     private val appContext: Context,
     private val api: MessagingApi,
 
-    ) : MessagingRepository {
+) : MessagingRepository {
     private var messageListener: ListenerRegistration? = null
     private var chatListener: ListenerRegistration? = null
     private var messageUserListener: ListenerRegistration? = null
@@ -106,7 +107,10 @@ class MessagingRepositoryImpl(
                     Filter.equalTo(KEY_RECEIVER_ID, userId),
                     Filter.equalTo(KEY_SENDER_ID, userId)))
             .orderBy(KEY_TIMESTAMP, Query.Direction.DESCENDING)
-            .addSnapshotListener(chatListener(onAddedChat = onAddedChat, onModifiedChat = onModifiedChat))
+            .addSnapshotListener(MetadataChanges.INCLUDE,
+                chatListener(
+                    onAddedChat = onAddedChat,
+                    onModifiedChat = onModifiedChat))
 
     }
 
@@ -259,7 +263,6 @@ class MessagingRepositoryImpl(
     }
 
     override suspend fun sendMessage(sendMessageModel: SendMessageModel) {
-        checkInternetConnection()
 
         val uid = getUid()
         val message = mapOf(
@@ -276,7 +279,9 @@ class MessagingRepositoryImpl(
                 .addOnSuccessListener {
                     continuation.resume(Unit)
                 }.addOnFailureListener {
-                    continuation.resumeWithException(MessagingExceptions.SendMessagingFailure(message = it.message!!))
+                    continuation.resumeWithException(
+                        MessagingExceptions.SendMessagingFailure(
+                            message = it.message!!))
                 }.addOnCanceledListener {
                     Timber.e("Message sending cancelled by user")
                 }
@@ -287,7 +292,7 @@ class MessagingRepositoryImpl(
     override suspend fun deleteToken() {
         checkInternetConnection()
         dataStore.editData(key = SAVED_TOKEN, value = "")
-        suspendCancellableCoroutine<Unit> { continuation ->
+        suspendCancellableCoroutine { continuation ->
             fireStore.collection(
                 USER_COLLECTION
             ).document(getUid()).update(KEY_FCM_TOKEN, FieldValue.delete()).addOnSuccessListener {
@@ -309,7 +314,7 @@ class MessagingRepositoryImpl(
         }
 
         val body = JSONObject().apply {
-            put(REMOTE_MSG_DATA,data)
+            put(REMOTE_MSG_DATA, data)
             put(REMOTE_MSG_REGISTRATION_IDS, tokens)
         }
 
@@ -317,7 +322,7 @@ class MessagingRepositoryImpl(
         api.sendMessage(
             headers = RemoteHeader.getRemoteMsgHeader(appContext),
             message = body.toString()
-        ).enqueue(object: Callback<String> {
+        ).enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
                 Timber.v("Notification sent successfully ${response.isSuccessful} | ${response.raw()}")
             }
@@ -328,8 +333,6 @@ class MessagingRepositoryImpl(
 
         })
     }
-
-
 
 
     private suspend fun getMessagingToken(): String {
@@ -388,9 +391,10 @@ class MessagingRepositoryImpl(
             }
 
             val messages: List<ConversationItemModel> =
-                value.documentChanges.filter { it.type == DocumentChange.Type.ADDED }
+                value.documents
                     .map {
-                        it.document.toConversationItem()
+                        val conversationItem = it.toConversationItem()
+                        conversationItem.copy(isSent = !it.isDeviceOffline())
                     }
 
             onNewMessage(
@@ -398,6 +402,10 @@ class MessagingRepositoryImpl(
                     messages = messages
                 ))
         }
+    }
+
+    private fun DocumentSnapshot.isDeviceOffline(): Boolean{
+        return with(this.metadata) { isFromCache.and(hasPendingWrites()) }
     }
 
     private inline fun chatListener(
@@ -423,12 +431,7 @@ class MessagingRepositoryImpl(
 
                     DocumentChange.Type.ADDED -> {
                         val chat = item.document.toConversionChatItem(uid = uid)
-                        onAddedChat(chat)
-                    }
-
-                    DocumentChange.Type.MODIFIED -> {
-                        val chat = item.document.toConversionChatItem(uid = uid)
-                        onModifiedChat(chat)
+                        onAddedChat(chat.copy(isSent = !item.document.isDeviceOffline()))
                     }
 
                     else -> {}
@@ -436,10 +439,15 @@ class MessagingRepositoryImpl(
             }
 
 
+
+            value.documents.forEach { item ->
+                val chat = item.toConversionChatItem(uid = uid)
+                onModifiedChat(chat.copy(isSent = !item.isDeviceOffline()))
+            }
+
+
         }
     }
-
-
 
 
 }

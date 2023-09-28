@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -19,12 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.R
 import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
@@ -84,12 +87,30 @@ fun ChatItem(
                     color = MaterialTheme.colors.onBackground, maxLines = 1,
                 )
 
-                Text(
-                    text = chatItem.lastMessage,
-                    overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colors.onBackground,
-                    maxLines = 1,
-                )
+
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(2.dp)) {
+
+                   if(chatItem.isSent){
+                       Icon(
+                           painter = painterResource(id = R.drawable.ic_sent),
+                           contentDescription = "Sent Icon",
+                           modifier = Modifier.size(18.dp))
+                   }else{
+                          Icon(
+                            painter = painterResource(id = R.drawable.ic_not_sent),
+                            contentDescription = "Unsent Icon",
+                            modifier = Modifier.size(18.dp),
+                              tint = MaterialTheme.colors.error)
+                   }
+
+                    Text(
+                        text = chatItem.lastMessage,
+                        overflow = TextOverflow.Ellipsis,
+                        color = MaterialTheme.colors.onBackground,
+                        maxLines = 1,
+                    )
+                }
 
             }
 
