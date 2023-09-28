@@ -87,7 +87,7 @@ fun ChatItem(
             if (isSender) {
                 MessageUserImage(
                     modifier = Modifier
-                        .padding(bottom = 4.dp)
+                        .padding(bottom = 4.dp, end = 4.dp)
                         .clip(CircleShape)
                         .size(36.dp),
                     isOnline = if (!isInternetAvailable) null else userAvailable,
