@@ -5,24 +5,24 @@ import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemM
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 
 class MessagingUserHandler(
-    private val messagingUserItem: MessagingUserItemModel = MessagingUserItemModel(),
-    private val chatItem: ChatItemModel,
+    private val currentChatUser: MessagingUserItemModel = MessagingUserItemModel(),
+    private val chatInfo: ChatItemModel,
     val chats: MutableList<Pair<MessagingUserItemModel, ChatItemModel>>
 ) {
 
     fun handleNewAddedChat() {
         chats.add(
-            Pair(first = messagingUserItem,
-                second = chatItem))
+            Pair(first = currentChatUser,
+                second = chatInfo))
 
     }
 
     fun handleModifiedChat() {
-        val modifiedIndex = chats.indexOfFirst { chatItem.senderId == it.second.senderId && chatItem.receiverId == it.second.receiverId }
+        val modifiedIndex = chats.indexOfFirst { chatInfo.senderId == it.second.senderId && chatInfo.receiverId == it.second.receiverId }
         val hasFound = modifiedIndex != -1
         if (hasFound) {
 
-            chats.set(modifiedIndex, element = Pair(first = messagingUserItem, second = chatItem))
+            chats.set(modifiedIndex, element = Pair(first = currentChatUser, second = chatInfo))
             chats.swap(modifiedIndex, 0)
         }
     }
