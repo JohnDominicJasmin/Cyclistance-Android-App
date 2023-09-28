@@ -39,6 +39,7 @@ import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.Co
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
@@ -106,7 +107,7 @@ class MessagingRepositoryImpl(
                     Filter.equalTo(KEY_RECEIVER_ID, userId),
                     Filter.equalTo(KEY_SENDER_ID, userId)))
             .orderBy(KEY_TIMESTAMP, Query.Direction.DESCENDING)
-            .addSnapshotListener(
+            .addSnapshotListener(MetadataChanges.INCLUDE,
                 chatListener(
                     onAddedChat = onAddedChat,
                     onModifiedChat = onModifiedChat))
@@ -392,10 +393,8 @@ class MessagingRepositoryImpl(
             val messages: List<ConversationItemModel> =
                 value.documents
                     .map {
-                        val isDeviceOffline =
-                            with(it.metadata) { isFromCache.and(hasPendingWrites()) }
                         val conversationItem = it.toConversationItem()
-                        conversationItem.copy(isSent = !isDeviceOffline)
+                        conversationItem.copy(isSent = !it.isDeviceOffline())
                     }
 
             onNewMessage(
@@ -403,6 +402,10 @@ class MessagingRepositoryImpl(
                     messages = messages
                 ))
         }
+    }
+
+    private fun DocumentSnapshot.isDeviceOffline(): Boolean{
+        return with(this.metadata) { isFromCache.and(hasPendingWrites()) }
     }
 
     private inline fun chatListener(
@@ -428,16 +431,18 @@ class MessagingRepositoryImpl(
 
                     DocumentChange.Type.ADDED -> {
                         val chat = item.document.toConversionChatItem(uid = uid)
-                        onAddedChat(chat)
-                    }
-
-                    DocumentChange.Type.MODIFIED -> {
-                        val chat = item.document.toConversionChatItem(uid = uid)
-                        onModifiedChat(chat)
+                        onAddedChat(chat.copy(isSent = !item.document.isDeviceOffline()))
                     }
 
                     else -> {}
                 }
+            }
+
+
+
+            value.documents.forEach { item ->
+                val chat = item.toConversionChatItem(uid = uid)
+                onModifiedChat(chat.copy(isSent = !item.isDeviceOffline()))
             }
 
 
