@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.list.ListUtils
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_VM_STATE_KEY
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_LAST_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
@@ -240,6 +241,11 @@ class ConversationViewModel @Inject constructor(
 
     private fun MutableList<ConversationItemModel>.updateMessages(apiMessage: List<ConversationItemModel>){
         val notEqualIndex = zip(apiMessage).indexOfLast { (n1, n2) -> n1.isSent != n2.isSent }
+
+        if(ListUtils.isEqual(first = this, second = apiMessage)){
+            return
+        }
+
         if(notEqualIndex == -1){
             clear()
             addAll(apiMessage)
