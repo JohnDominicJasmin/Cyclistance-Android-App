@@ -52,7 +52,8 @@ fun NavGraph(
 
         emergencyCallGraph(
             navController = navController,
-            paddingValues = paddingValues
+            paddingValues = paddingValues,
+            changeEditMode = { event(NavUiEvent.ChangeEditMode(it)) }
         )
 
         messagingGraph(

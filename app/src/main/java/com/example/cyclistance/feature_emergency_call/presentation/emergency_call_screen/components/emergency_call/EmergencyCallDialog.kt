@@ -45,7 +45,7 @@ import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILI
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyCallModel
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
-import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.add_edit_contact.AddEditContactImage
+import com.example.cyclistance.feature_emergency_call.presentation.add_edit_contact.components.AddEditContactImage
 import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 

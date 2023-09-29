@@ -1,0 +1,10 @@
+package com.example.cyclistance.feature_emergency_call.presentation.add_edit_contact.event
+
+import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
+
+sealed class AddEditContactVmEvent{
+
+    data class SaveContact(val emergencyContactModel: EmergencyContactModel) :
+        AddEditContactVmEvent()
+
+}

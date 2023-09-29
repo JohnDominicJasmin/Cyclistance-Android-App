@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.add_edit_contact
+package com.example.cyclistance.feature_emergency_call.presentation.add_edit_contact.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,7 +35,7 @@ fun AddEditContactImage(
 
         val isDefaultContact = remember(photoUrl) {
             (photoUrl == EmergencyCallConstants.NATIONAL_EMERGENCY_PHOTO ||
-             photoUrl == EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO) && photoUrl.isNotEmpty()
+             photoUrl == EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO) || photoUrl?.isEmpty() == true
         }
 
 

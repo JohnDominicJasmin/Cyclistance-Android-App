@@ -246,12 +246,9 @@ fun NavScreen(
     }
 
     val newConversationDetails = remember {
-        {user: MessagingUserItemModel ->
+        { user: MessagingUserItemModel ->
             navUiState = navUiState.copy(
-                conversationName = user.userDetails.name,
-                conversationPhotoUrl = user.userDetails.photo,
-                conversationAvailability = user.isUserAvailable,
-                conversationId = user.userDetails.uid
+                conversationUser = user
             )
         }
     }
@@ -259,6 +256,12 @@ fun NavScreen(
     val openUserProfile = remember(editProfileState.userId){{
         closeDrawer()
         navController.navigateScreen(Screens.UserProfileNavigation.UserProfile.passArgument(userId = editProfileState.userId))
+    }}
+
+    val changeEditMode = remember{{ editMode: Boolean ->
+        navUiState = navUiState.copy(
+            emergencyContactOnEditMode = editMode
+        )
     }}
 
 
@@ -317,6 +320,7 @@ fun NavScreen(
                                     is NavUiEvent.NewConversationDetails -> newConversationDetails(event.messageUser)
                                     is NavUiEvent.OnChangeNavigation -> onChangeNavigatingState(event.isNavigating)
                                     is NavUiEvent.OnToggleTheme -> onToggleTheme()
+                                    is NavUiEvent.ChangeEditMode -> changeEditMode(event.isEditMode)
                                 }
                             }
                         )

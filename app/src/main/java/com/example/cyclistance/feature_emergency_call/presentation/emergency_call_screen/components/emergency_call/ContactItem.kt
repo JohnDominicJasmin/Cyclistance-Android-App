@@ -19,7 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.core.presentation.dialogs.common.DropDownMenu
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
-import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.add_edit_contact.AddEditContactImage
+import com.example.cyclistance.feature_emergency_call.presentation.add_edit_contact.components.AddEditContactImage
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallUIState
 import com.example.cyclistance.theme.Black500
