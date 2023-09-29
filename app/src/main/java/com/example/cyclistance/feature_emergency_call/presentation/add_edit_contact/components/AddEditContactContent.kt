@@ -55,7 +55,7 @@ fun AddEditContactContent(
         derivedStateOf {
             name.text != state.nameSnapshot ||
             phoneNumber.text != state.phoneNumberSnapshot ||
-            uiState.selectedImageUri.isNotEmpty()
+            uiState.selectedImageUri?.isNotEmpty() == true
         }
     }
 
@@ -98,7 +98,7 @@ fun AddEditContactContent(
 
                     AddEditPhotoSection(
                         isOnEditMode = isOnEditMode,
-                        selectedImage = selectedImage,
+                        selectedImage = selectedImage ?: "",
                         event = event)
 
                 }

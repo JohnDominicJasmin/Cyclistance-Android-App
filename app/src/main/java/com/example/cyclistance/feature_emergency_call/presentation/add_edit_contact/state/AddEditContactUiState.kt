@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class AddEditContactUiState(
-    val selectedImageUri: String = "",
+    val selectedImageUri: String? = null,
     val nameErrorMessage: String = "",
     val phoneNumberErrorMessage: String = "",
 
