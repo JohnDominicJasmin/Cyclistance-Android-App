@@ -738,7 +738,7 @@ fun MappingScreen(
 
     val onAddEmergencyContact = remember {
         {
-            navController.navigateScreen(Screens.EmergencyCallNavigation.EmergencyCall.passArgument(shouldOpenContactDialog = true))
+            navController.navigateScreen(Screens.EmergencyCallNavigation.AddEditEmergencyContact.screenRoute)
         }
     }
 

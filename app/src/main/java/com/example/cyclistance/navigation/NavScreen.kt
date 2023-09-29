@@ -246,12 +246,9 @@ fun NavScreen(
     }
 
     val newConversationDetails = remember {
-        {user: MessagingUserItemModel ->
+        { user: MessagingUserItemModel ->
             navUiState = navUiState.copy(
-                conversationName = user.userDetails.name,
-                conversationPhotoUrl = user.userDetails.photo,
-                conversationAvailability = user.isUserAvailable,
-                conversationId = user.userDetails.uid
+                conversationUser = user
             )
         }
     }
@@ -260,6 +257,8 @@ fun NavScreen(
         closeDrawer()
         navController.navigateScreen(Screens.UserProfileNavigation.UserProfile.passArgument(userId = editProfileState.userId))
     }}
+
+
 
 
 

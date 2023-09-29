@@ -120,6 +120,7 @@ fun PermissionDialogCreator(
                         onClick = {
                             dialogOpen = false
                             onClickGoToSettings()
+                            onDismiss()
                         }, colors = ButtonDefaults.textButtonColors(
                             backgroundColor = MaterialTheme.colors.primary,
                             contentColor = MaterialTheme.colors.onPrimary),

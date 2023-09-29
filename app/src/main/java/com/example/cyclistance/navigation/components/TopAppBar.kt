@@ -115,6 +115,15 @@ fun TopAppBar(
                 })
         }
 
+        Screens.EmergencyCallNavigation.AddEditEmergencyContact.screenRoute -> {
+            TopAppBarCreator(
+                icon = Icons.Default.Close,
+                onClickIcon = onClickArrowBackIcon,
+                topAppBarTitle = {
+                    TitleTopAppBar(title = "Manage Emergency Contacts")
+                })
+        }
+
         Screens.MessagingNavigation.Chats.screenRoute -> {
 
             TopAppBarCreator(
@@ -155,13 +164,13 @@ fun TopAppBar(
                                 .clip(CircleShape)
                                 .size(48.dp)
                                 .clickable {
-                                    viewProfile(uiState.conversationId)
+                                    viewProfile(uiState.conversationUser?.userDetails!!.uid)
                                 },
-                            isOnline = if(!uiState.internetAvailable) null else uiState.conversationAvailability,
-                            photoUrl = uiState.conversationPhotoUrl)
+                            isOnline = if(!uiState.internetAvailable) null else uiState.conversationUser?.isUserAvailable,
+                            photoUrl = uiState.conversationUser?.userDetails!!.photo)
 
                         TitleTopAppBar(
-                            title = uiState.conversationName,
+                            title = uiState.conversationUser.userDetails.name,
                             modifier = Modifier
                                 .padding(start = 5.dp)
                                 .animateContentSize(animationSpec = spring(stiffness = Spring.StiffnessLow)))

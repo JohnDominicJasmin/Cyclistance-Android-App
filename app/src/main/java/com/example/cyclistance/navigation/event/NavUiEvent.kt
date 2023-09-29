@@ -4,6 +4,6 @@ import com.example.cyclistance.feature_messaging.domain.model.ui.chats.Messaging
 
 sealed class NavUiEvent{
     data class OnChangeNavigation(val isNavigating:Boolean): NavUiEvent()
-    object OnToggleTheme: NavUiEvent()
+    data object OnToggleTheme: NavUiEvent()
     data class NewConversationDetails(val messageUser: MessagingUserItemModel): NavUiEvent()
 }

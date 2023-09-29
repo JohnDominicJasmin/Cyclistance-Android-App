@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.add_edit_contact
+package com.example.cyclistance.feature_emergency_call.presentation.add_edit_contact.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,14 +18,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
-import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent
+import com.example.cyclistance.feature_emergency_call.presentation.add_edit_contact.event.AddEditContactUiEvent
 
 
 @Composable
 fun AddEditPhotoSection(
     isOnEditMode: Boolean,
     selectedImage: String,
-    event: (EmergencyCallUiEvent) -> Unit) {
+    event: (AddEditContactUiEvent) -> Unit) {
 
 
     val shouldShowAddEditImage = remember(isOnEditMode, selectedImage) {
@@ -44,7 +44,7 @@ fun AddEditPhotoSection(
                 modifier = Modifier
                     .size(125.dp)
                     .clip(CircleShape)
-                    .clickable { event(EmergencyCallUiEvent.ToggleBottomSheet) })
+                    .clickable { event(AddEditContactUiEvent.ToggleBottomSheet) })
 
         } else {
 
@@ -55,7 +55,7 @@ fun AddEditPhotoSection(
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape)
-                    .clickable { event(EmergencyCallUiEvent.ToggleBottomSheet) }
+                    .clickable { event(AddEditContactUiEvent.ToggleBottomSheet) }
             )
 
         }
@@ -66,7 +66,7 @@ fun AddEditPhotoSection(
                 append(if (isOnEditMode) "Change Photo" else "Add Photo")
             },
             onClick = {
-                event(EmergencyCallUiEvent.ToggleBottomSheet)
+                event(AddEditContactUiEvent.ToggleBottomSheet)
             },
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.onBackground))
