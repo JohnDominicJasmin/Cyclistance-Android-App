@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.core.presentation.dialogs.common.DropDownMenu
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
@@ -55,21 +56,25 @@ fun ContactItem(
             )
 
 
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp), modifier =  Modifier.weight(0.95f)) {
                 Text(
                     text = emergencyContact.name,
                     style = MaterialTheme.typography.body1,
-                    color = MaterialTheme.colors.onBackground
+                    color = MaterialTheme.colors.onBackground,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
                 Text(
                     text = emergencyContact.phoneNumber,
                     style = MaterialTheme.typography.caption,
-                    color = Black500
+                    color = Black500,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
             }
 
             DropDownMenu(
-                modifier = Modifier.wrapContentSize(),
+                modifier = Modifier.wrapContentSize().weight(0.2f),
                 onClickEdit = { event(
                     EmergencyCallUiEvent.OnClickEditContact(
                         emergencyContact))},
