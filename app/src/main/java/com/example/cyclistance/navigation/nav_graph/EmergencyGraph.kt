@@ -15,7 +15,7 @@ import com.example.cyclistance.navigation.Screens
 fun NavGraphBuilder.emergencyCallGraph(
     navController: NavController,
     paddingValues: PaddingValues,
-    changeEditMode : (isOnEditMode: Boolean) -> Unit
+
 ) {
     navigation(
         startDestination = Screens.EmergencyCallNavigation.EmergencyCall.screenRoute,
@@ -29,7 +29,7 @@ fun NavGraphBuilder.emergencyCallGraph(
                     defaultValue = 0
                 })) {
 
-            AddEditContactScreen(navController = navController, paddingValues = paddingValues, changeEditMode = changeEditMode)
+            AddEditContactScreen(navController = navController, paddingValues = paddingValues)
         }
         composable(
             route = Screens.EmergencyCallNavigation.EmergencyCall.screenRoute) {

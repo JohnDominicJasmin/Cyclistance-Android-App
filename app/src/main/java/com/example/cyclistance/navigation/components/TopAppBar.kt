@@ -120,7 +120,7 @@ fun TopAppBar(
                 icon = Icons.Default.Close,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
-                    TitleTopAppBar(title = if (uiState.emergencyContactOnEditMode) "Edit Contact" else "New Contact")
+                    TitleTopAppBar(title = "Manage Emergency Contacts")
                 })
         }
 

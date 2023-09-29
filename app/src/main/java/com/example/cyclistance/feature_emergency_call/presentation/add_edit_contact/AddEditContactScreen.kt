@@ -52,8 +52,7 @@ import kotlinx.coroutines.launch
 fun AddEditContactScreen(
     viewModel: AddEditContactViewModel = hiltViewModel(),
     navController: NavController,
-    paddingValues: PaddingValues,
-    changeEditMode : (isOnEditMode: Boolean) -> Unit) {
+    paddingValues: PaddingValues) {
 
 
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -208,7 +207,7 @@ fun AddEditContactScreen(
                     emergencyContactModel = EmergencyContactModel(
                         name = name.text,
                         phoneNumber = phoneNumber.text,
-                        photo = uiState.selectedImageUri
+                        photo = uiState.selectedImageUri ?: state.emergencyContact?.photo!!
                     )
                 ))
         }
@@ -277,9 +276,6 @@ fun AddEditContactScreen(
         }
     }
 
-    LaunchedEffect(key1 = true, key2 = state.emergencyContact){
-        changeEditMode(state.emergencyContact != null)
-    }
 
     AddEditContactContent(
         modifier = Modifier.padding(paddingValues),
