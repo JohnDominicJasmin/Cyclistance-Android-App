@@ -56,7 +56,7 @@ fun ContactItem(
             )
 
 
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp), modifier =  Modifier.weight(0.95f)) {
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp), modifier =  Modifier.weight(0.99f)) {
                 Text(
                     text = emergencyContact.name,
                     style = MaterialTheme.typography.body1,
@@ -74,7 +74,7 @@ fun ContactItem(
             }
 
             DropDownMenu(
-                modifier = Modifier.wrapContentSize().weight(0.2f),
+                modifier = Modifier.wrapContentSize().weight(0.1f),
                 onClickEdit = { event(
                     EmergencyCallUiEvent.OnClickEditContact(
                         emergencyContact))},
