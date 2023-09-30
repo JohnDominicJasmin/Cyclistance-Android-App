@@ -16,6 +16,7 @@ interface MessagingRepository {
 
     fun addUserListener(onNewMessageUser: (MessagingUserModel) -> Unit)
     fun removeUserListener()
+    suspend fun reEnableNetworkSync()
 
 
     suspend fun sendMessage(sendMessageModel: SendMessageModel)

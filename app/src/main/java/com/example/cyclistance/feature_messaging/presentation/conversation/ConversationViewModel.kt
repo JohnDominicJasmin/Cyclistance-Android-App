@@ -81,6 +81,7 @@ class ConversationViewModel @Inject constructor(
             is ConversationVmEvent.OnInitialized -> initialize(
                 userReceiverMessage = event.userReceiverMessage,
                 userSenderMessage = event.userSenderMessage)
+            ConversationVmEvent.ResendMessage -> resendMessage()
         }
         saveState()
     }
@@ -90,6 +91,17 @@ class ConversationViewModel @Inject constructor(
         savedStateHandle[CONVERSATION_VM_STATE_KEY] = state.value
     }
 
+    private fun resendMessage(){
+        viewModelScope.launch {
+            runCatching {
+                messagingUseCase.reEnableNetworkSyncUseCase()
+            }.onSuccess {
+                Timber.v("Success to re-enable network sync")
+            }.onFailure {
+                _event.emit(value = ConversationEvent.ResendMessageFailed(it.message!!))
+            }
+        }
+    }
 
     private fun getName() {
         viewModelScope.launch {
@@ -177,15 +189,9 @@ class ConversationViewModel @Inject constructor(
 
     private fun sendMessage(model: SendMessageModel) {
         viewModelScope.launch(SupervisorJob()) {
-            runCatching {
-                setConversion(model.message)
-                messagingUseCase.sendMessageUseCase(model)
-                sendMessageNotification(model.message)
-            }.onSuccess {
-                _event.emit(ConversationEvent.MessageSent)
-            }.onFailure {
-                _event.emit(ConversationEvent.MessageNotSent)
-            }
+            setConversion(model.message)
+            messagingUseCase.sendMessageUseCase(model)
+            sendMessageNotification(model.message)
         }
     }
 

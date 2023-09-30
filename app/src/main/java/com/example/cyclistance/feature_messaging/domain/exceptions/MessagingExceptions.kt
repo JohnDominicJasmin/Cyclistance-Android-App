@@ -7,5 +7,6 @@ object MessagingExceptions {
     class ListenMessagingFailure(message: String) : RuntimeException(message)
     class GetMessageUsersFailure(message: String) : RuntimeException(message)
     class GetChatsFailure(message: String) : RuntimeException(message)
+    class ReSyncFailure(message: String) : RuntimeException(message)
 
 }

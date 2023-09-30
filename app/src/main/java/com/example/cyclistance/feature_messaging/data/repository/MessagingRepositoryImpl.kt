@@ -81,6 +81,16 @@ class MessagingRepositoryImpl(
     private var dataStore = appContext.dataStore
 
 
+    override suspend fun reEnableNetworkSync() {
+        suspendCoroutine { continuation ->
+            fireStore.enableNetwork().addOnCompleteListener {
+                continuation.resume(Unit)
+            }.addOnFailureListener {
+                continuation.resumeWithException(MessagingExceptions.ReSyncFailure(message = it.message!!))
+            }
+        }
+    }
+
     override suspend fun getMessagingUser(uid: String): MessagingUserItemModel {
 
         return suspendCoroutine {
@@ -106,7 +116,7 @@ class MessagingRepositoryImpl(
                 Filter.or(
                     Filter.equalTo(KEY_RECEIVER_ID, userId),
                     Filter.equalTo(KEY_SENDER_ID, userId)))
-            .orderBy(KEY_TIMESTAMP, Query.Direction.DESCENDING)
+            .orderBy(KEY_TIMESTAMP, Query.Direction.ASCENDING)
             .addSnapshotListener(MetadataChanges.INCLUDE,
                 chatListener(
                     onAddedChat = onAddedChat,
@@ -117,6 +127,7 @@ class MessagingRepositoryImpl(
     override suspend fun getConversionId(receiverId: String): String {
         val userId = getUid()
         return suspendCancellableCoroutine { continuation ->
+
             fireStore.collection(KEY_COLLECTION_CHATS)
                 .where(
                     Filter.and(
