@@ -32,6 +32,7 @@ fun ConversationChatItems(
     conversation: List<ConversationItemModel>,
     state: ConversationState,
     uiState: ConversationUiState,
+    resendMessage: (message: String) -> Unit,
     event: (ConversationUiEvent) -> Unit) {
 
 
@@ -71,14 +72,13 @@ fun ConversationChatItems(
                 currentIndex = index,
                 selectedIndex = uiState.chatItemSelectedIndex,
                 state = state,
-                onSelectChatMessage = {
-                    event(
-                        ConversationUiEvent.SelectChatItem(
-                            index = it))
+                onSelectChatMessage = { index ->
+                    event(ConversationUiEvent.SelectChatItem(index = index))
                 },
                 conversation = message,
                 isSender = isSender,
-                isInternetAvailable = isInternetAvailable
+                isInternetAvailable = isInternetAvailable,
+                resendMessage = resendMessage
             )
         }
 

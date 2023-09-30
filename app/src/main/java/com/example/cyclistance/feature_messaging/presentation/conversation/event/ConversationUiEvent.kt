@@ -3,13 +3,15 @@ package com.example.cyclistance.feature_messaging.presentation.conversation.even
 import androidx.compose.ui.text.input.TextFieldValue
 
 sealed class ConversationUiEvent {
-    object ToggleMessageArea : ConversationUiEvent()
-    object ResetSelectedIndex : ConversationUiEvent()
-    object OnSendMessage : ConversationUiEvent()
+    data object ToggleMessageArea : ConversationUiEvent()
+    data object ResetSelectedIndex : ConversationUiEvent()
+    data object OnSendMessage : ConversationUiEvent()
     data class SelectChatItem(val index: Int) : ConversationUiEvent()
     data class OnChangeValueMessage(val message: TextFieldValue) : ConversationUiEvent()
-    object CloseConversationScreen : ConversationUiEvent()
-    object DismissNotificationPermissionDialog : ConversationUiEvent()
+    data object CloseConversationScreen : ConversationUiEvent()
+    data object DismissNotificationPermissionDialog : ConversationUiEvent()
+    data class ResendDialogVisibility(val visible: Boolean) : ConversationUiEvent()
+    data class ResendMessage(val message: String) : ConversationUiEvent()
 
 
 }

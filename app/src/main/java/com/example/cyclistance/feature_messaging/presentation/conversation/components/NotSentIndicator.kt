@@ -17,12 +17,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.composable_utils.noRippleClickable
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun NotSentIndicator(modifier: Modifier = Modifier) {
+fun NotSentIndicator(modifier: Modifier = Modifier, resendMessage : () -> Unit ) {
+
     Row(
-        modifier = modifier.wrapContentSize(),
+        modifier = modifier.wrapContentSize().noRippleClickable {  },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center) {
 
@@ -46,7 +48,7 @@ fun NotSentIndicator(modifier: Modifier = Modifier) {
 fun PreviewNotSentIndicator() {
     CyclistanceTheme(darkTheme = true) {
         Box(modifier = Modifier.background(MaterialTheme.colors.background)){
-            NotSentIndicator()
+            NotSentIndicator(resendMessage = {})
         }
     }
 }

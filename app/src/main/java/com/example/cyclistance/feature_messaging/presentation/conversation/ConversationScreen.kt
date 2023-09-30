@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_messaging.presentation.conversation
 
 import android.Manifest
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -43,12 +45,12 @@ fun ConversationScreen(
     newConversationDetails: (MessagingUserItemModel) -> Unit,
     isInternetAvailable: Boolean
 ) {
-
+    val context = LocalContext.current
 
     val conversationState = viewModel.conversationState
     val state by viewModel.state.collectAsStateWithLifecycle()
     var uiState by rememberSaveable { mutableStateOf(ConversationUiState()) }
-    var message by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+    var messageInput by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
 
@@ -61,7 +63,7 @@ fun ConversationScreen(
     }
     val onChangeValueMessage = remember<(TextFieldValue) -> Unit> {
         {
-            message = it
+            messageInput = it
         }
     }
 
@@ -92,17 +94,17 @@ fun ConversationScreen(
 
 
     val sendMessage = remember {
-        {
+        { message: String ->
 
-            val receiverId = state.userReceiverMessage!!.userDetails.uid
+        val receiverId = state.userReceiverMessage!!.userDetails.uid
             viewModel.onEvent(
                 event = ConversationVmEvent.SendMessage(
                     sendMessageModel = SendMessageModel(
                         receiverId = receiverId,
-                        message = message.text
+                        message = message
                     )
                 )).also {
-                message = TextFieldValue()
+                messageInput = TextFieldValue()
             }
 
         }
@@ -115,7 +117,7 @@ fun ConversationScreen(
     val notificationLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
         onResult = {
-            sendMessage()
+            sendMessage(messageInput.text)
         }
     )
 
@@ -136,7 +138,7 @@ fun ConversationScreen(
 
 
 
-    val onSendMessage = remember{{
+    val onSendMessage = remember(messageInput){{
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             notificationPermissionState.requestPermission(onGranted = {
@@ -144,13 +146,16 @@ fun ConversationScreen(
             }, onExplain = {
                 notificationPermissionDialogVisibility(true)
             }, onDenied = {
-                sendMessage()
+                sendMessage(messageInput.text)
             })
         } else {
-            sendMessage()
+            sendMessage(messageInput.text)
         }
     }}
 
+    val resendMessageDialogVisibility = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(resendDialogVisible = visibility)
+    }}
 
 
 
@@ -193,7 +198,7 @@ fun ConversationScreen(
         isInternetAvailable = isInternetAvailable,
         uiState = uiState,
         state = state,
-        message = message,
+        message = messageInput,
         event = { event ->
             when (event) {
                 is ConversationUiEvent.CloseConversationScreen -> closeConversationMessage()
@@ -203,6 +208,10 @@ fun ConversationScreen(
                 is ConversationUiEvent.ToggleMessageArea -> onToggleExpand()
                 is ConversationUiEvent.OnChangeValueMessage -> onChangeValueMessage(event.message)
                 is ConversationUiEvent.DismissNotificationPermissionDialog -> notificationPermissionDialogVisibility(false)
+                is ConversationUiEvent.ResendDialogVisibility -> resendMessageDialogVisibility(event.visible)
+                is ConversationUiEvent.ResendMessage -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     )

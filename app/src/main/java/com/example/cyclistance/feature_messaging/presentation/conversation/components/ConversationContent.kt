@@ -16,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,9 +43,6 @@ import kotlinx.coroutines.launch
 import java.util.Date
 
 
-
-
-
 @Composable
 fun ConversationContent(
     conversation: List<ConversationItemModel>,
@@ -53,7 +51,8 @@ fun ConversationContent(
     isInternetAvailable: Boolean,
     uiState: ConversationUiState,
     state: ConversationState,
-    event: (ConversationUiEvent) -> Unit) {
+    event: (ConversationUiEvent) -> Unit
+) {
 
     val conversationAvailable = remember(conversation.size) {
         conversation.isNotEmpty()
@@ -64,6 +63,9 @@ fun ConversationContent(
     val scope = rememberCoroutineScope()
 
 
+    var resendMessage by rememberSaveable {
+        mutableStateOf("")
+    }
     val stateFirstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
     var farthestVisibleItemIndex by rememberSaveable { mutableIntStateOf(0) }
     val isScrollingUp by remember { derivedStateOf { farthestVisibleItemIndex > stateFirstVisibleItemIndex + 4 } }
@@ -101,32 +103,36 @@ fun ConversationContent(
                 }
                 focusManager.clearFocus()
             },
-        color = MaterialTheme.colors.background) {
+        color = MaterialTheme.colors.background
+    ) {
 
 
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
-            if(uiState.notificationPermissionVisible){
+            if (uiState.notificationPermissionVisible) {
                 DialogNotificationPermission(
                     modifier = Modifier.align(Alignment.Center),
-                    onDismiss = {event(ConversationUiEvent.DismissNotificationPermissionDialog)}
+                    onDismiss = { event(ConversationUiEvent.DismissNotificationPermissionDialog) }
                 )
             }
 
             Box(
                 modifier = Modifier.fillMaxSize(),
-                contentAlignment = if (conversationAvailable) Alignment.BottomCenter else Alignment.Center) {
+                contentAlignment = if (conversationAvailable) Alignment.BottomCenter else Alignment.Center
+            ) {
 
 
                 Column(
-                    modifier = Modifier.fillMaxSize()) {
+                    modifier = Modifier.fillMaxSize()
+                ) {
 
 
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .weight(1f),
-                        contentAlignment = Alignment.Center) {
+                        contentAlignment = Alignment.Center
+                    ) {
 
                         if (state.isLoading) {
                             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -142,15 +148,30 @@ fun ConversationContent(
                                 uiState = uiState,
                                 state = state,
                                 isInternetAvailable = isInternetAvailable,
-                                event = event)
+                                event = event,
+                                resendMessage = {
+                                    resendMessage = it
+                                }
+                            )
 
                         }
 
                         if (!conversationAvailable && !state.isLoading) {
                             PlaceholderEmptyConversation(
                                 modifier = Modifier
-                                    .fillMaxSize())
+                                    .fillMaxSize()
+                            )
                         }
+
+                        if (uiState.resendDialogVisible) {
+                            DialogResendMessage(
+                                onDismiss = { event(ConversationUiEvent.ResendDialogVisibility(false)) },
+                                modifier = Modifier.align(Alignment.Center),
+                                onClickResend = {
+                                    event(ConversationUiEvent.ResendMessage(message = resendMessage ))
+                                })
+                        }
+
                     }
 
 
@@ -161,7 +182,8 @@ fun ConversationContent(
                         modifier = Modifier.wrapContentHeight(),
                         onClickSend = { event(ConversationUiEvent.OnSendMessage) },
                         onToggleExpand = { event(ConversationUiEvent.ToggleMessageArea) },
-                        isExpanded = uiState.messageAreaExpanded)
+                        isExpanded = uiState.messageAreaExpanded
+                    )
 
                 }
 
@@ -233,9 +255,9 @@ private val fakeConversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                      "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
-                      "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
-                      "optio, eaque rerum! Provident similique accusantium nemo autem.",
+                    "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
+                    "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
+                    "optio, eaque rerum! Provident similique accusantium nemo autem.",
             timestamp = Date()
         ),
         ConversationItemModel(
@@ -285,9 +307,9 @@ private val fakeConversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                      "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
-                      "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
-                      "optio, eaque rerum! Provident similique accusantium nemo autem.",
+                    "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
+                    "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
+                    "optio, eaque rerum! Provident similique accusantium nemo autem.",
             timestamp = Date()
         ),
         ConversationItemModel(
@@ -295,9 +317,9 @@ private val fakeConversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "orem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                      "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
-                      "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
-                      "optio, eaque rerum! Provident similique accusantium nemo autem.",
+                    "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
+                    "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
+                    "optio, eaque rerum! Provident similique accusantium nemo autem.",
             timestamp = Date()
         ),
     )
@@ -314,7 +336,8 @@ fun PreviewMessagingConversationContentDark() {
                 ),
                 conversation = fakeConversationsModel.messages,
                 event = {}, state = ConversationState(
-                ), message = TextFieldValue("Hello"), isInternetAvailable = false)
+                ), message = TextFieldValue("Hello"), isInternetAvailable = false
+            )
         }
     }
 }
@@ -332,7 +355,8 @@ fun PreviewMessagingConversationContentLight() {
                 ),
                 event = {}, state = ConversationState(
 
-                ), message = TextFieldValue("Hello"), isInternetAvailable = true)
+                ), message = TextFieldValue("Hello"), isInternetAvailable = true
+            )
         }
     }
 }

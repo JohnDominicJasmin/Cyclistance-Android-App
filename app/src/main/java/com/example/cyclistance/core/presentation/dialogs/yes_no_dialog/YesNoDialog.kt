@@ -34,8 +34,7 @@ fun YesNoDialog(
     negativeButtonText: String = "Cancel",
     positiveButtonText: String = "Confirm",
     onClickNegativeButton: () -> Unit = {},
-    onClickPositiveButton: () -> Unit = {}
-) {
+    onClickPositiveButton: () -> Unit = {}) {
 
     val (isDialogOpen, onDialogVisibilityToggle) = rememberSaveable { mutableStateOf(true) }
 
@@ -96,7 +95,7 @@ fun YesNoDialog(
 @Composable
 fun PreviewYesNoDialog() {
     CyclistanceTheme(darkTheme = true){
-        YesNoDialog(onDismissRequest = { /*TODO*/ })
+        YesNoDialog(onDismissRequest = { /*TODO*/ }, title = "Title Sample", message = "oansdoiasd")
 
     }
 }

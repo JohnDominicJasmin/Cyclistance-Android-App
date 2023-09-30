@@ -9,5 +9,6 @@ import kotlinx.parcelize.Parcelize
 data class ConversationUiState(
     val chatItemSelectedIndex: Int = -1,
     val messageAreaExpanded: Boolean = false,
-    val notificationPermissionVisible: Boolean = false
+    val notificationPermissionVisible: Boolean = false,
+    val resendDialogVisible: Boolean = false
 ) : Parcelable
