@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.feature_messaging.presentation.common.MessageUserImage
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.state.NavUiState
@@ -149,6 +150,9 @@ fun TopAppBar(
 
 
         Screens.MessagingNavigation.Conversation.screenRoute -> {
+
+            val conversationUser = uiState.conversationUser?.userDetails ?: UserDetails()
+            val isUserAvailable = uiState.conversationUser?.isUserAvailable ?: false
             TopAppBarCreator(
                 icon = Icons.Default.Close,
                 onClickIcon = onClickArrowBackIcon,
@@ -164,13 +168,13 @@ fun TopAppBar(
                                 .clip(CircleShape)
                                 .size(48.dp)
                                 .clickable {
-                                    viewProfile(uiState.conversationUser?.userDetails!!.uid)
+                                    viewProfile(conversationUser.uid)
                                 },
-                            isOnline = if(!uiState.internetAvailable) null else uiState.conversationUser?.isUserAvailable,
-                            photoUrl = uiState.conversationUser?.userDetails!!.photo)
+                            isOnline = if(!uiState.internetAvailable) null else isUserAvailable,
+                            photoUrl = conversationUser.photo)
 
                         TitleTopAppBar(
-                            title = uiState.conversationUser.userDetails.name,
+                            title = conversationUser.name,
                             modifier = Modifier
                                 .padding(start = 5.dp)
                                 .animateContentSize(animationSpec = spring(stiffness = Spring.StiffnessLow)))
