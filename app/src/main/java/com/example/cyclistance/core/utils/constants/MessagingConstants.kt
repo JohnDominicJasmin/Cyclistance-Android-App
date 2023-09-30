@@ -12,6 +12,7 @@ object MessagingConstants {
     const val KEY_RECEIVER_ID = "receiverId"
     const val KEY_MESSAGE = "message"
     const val KEY_TIMESTAMP = "timestamp"
+    const val KEY_IS_SEEN = "isSeen"
     val SAVED_TOKEN = stringPreferencesKey("saved_token")
 
 

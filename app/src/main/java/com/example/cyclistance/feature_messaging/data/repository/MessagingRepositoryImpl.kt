@@ -7,6 +7,7 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_AVAIL
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_COLLECTION_CHATS
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_CONVERSATIONS_COLLECTION
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_IS_SEEN
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_LAST_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
@@ -280,7 +281,9 @@ class MessagingRepositoryImpl(
             KEY_SENDER_ID to uid,
             KEY_RECEIVER_ID to sendMessageModel.receiverId,
             KEY_MESSAGE to sendMessageModel.message.trimEnd(),
-            KEY_TIMESTAMP to Date()
+            KEY_TIMESTAMP to Date(),
+            KEY_IS_SEEN to false
+
         )
 
         suspendCancellableCoroutine { continuation ->
