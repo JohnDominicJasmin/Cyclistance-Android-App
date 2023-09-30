@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -40,7 +39,6 @@ import com.example.cyclistance.feature_messaging.presentation.conversation.state
 import com.example.cyclistance.theme.CyclistanceTheme
 import java.util.Date
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ChatItem(
     modifier: Modifier = Modifier,
@@ -50,7 +48,8 @@ fun ChatItem(
     state: ConversationState,
     currentIndex: Int? = null,
     selectedIndex: Int? = null,
-    onSelectChatMessage: (Int) -> Unit = {},
+    onSelectChatMessage: (Int) -> Unit,
+    resendMessage: (message: String) -> Unit,
     contentAlignment: Alignment = Alignment.Center,
 ) {
 
@@ -155,7 +154,9 @@ fun ChatItem(
                     AnimatedVisibility(
                         visible = shouldShowNotSentIndicator,
                         modifier = Modifier.padding(horizontal = 0.dp)) {
-                        NotSentIndicator()
+                        NotSentIndicator(resendMessage = {
+                            resendMessage(conversation.message)
+                        })
                     }
                 }
 
@@ -183,7 +184,7 @@ fun PreviewChatItemSenderDark() {
                 receiverId = "2",
                 timestamp = Date(),
                 messageId = "1",
-            ))
+            ), resendMessage = {}, onSelectChatMessage = {})
     }
 }
 
@@ -204,7 +205,7 @@ fun PreviewChatItemSenderLight() {
                 receiverId = "2",
                 timestamp = Date(),
                 messageId = "1",
-            ))
+            ), onSelectChatMessage = {}, resendMessage = {})
     }
 }
 
@@ -229,7 +230,7 @@ fun PreviewChatItemRecipientDark() {
                     receiverId = "2",
                     timestamp = Date(),
                     messageId = "1",
-                ))
+                ),resendMessage = {}, onSelectChatMessage = {})
         }
     }
 }
@@ -252,7 +253,7 @@ fun PreviewChatItemRecipientLight() {
                     timestamp = Date(),
                     messageId = "1",
                     isSent = true
-                ))
+                ),resendMessage = {}, onSelectChatMessage = {})
         }
     }
 }
