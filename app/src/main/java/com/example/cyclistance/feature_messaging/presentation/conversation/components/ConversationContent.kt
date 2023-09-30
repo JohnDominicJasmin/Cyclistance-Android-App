@@ -16,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -63,9 +62,7 @@ fun ConversationContent(
     val scope = rememberCoroutineScope()
 
 
-    var resendMessage by rememberSaveable {
-        mutableStateOf("")
-    }
+
     val stateFirstVisibleItemIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
     var farthestVisibleItemIndex by rememberSaveable { mutableIntStateOf(0) }
     val isScrollingUp by remember { derivedStateOf { farthestVisibleItemIndex > stateFirstVisibleItemIndex + 4 } }
@@ -150,7 +147,7 @@ fun ConversationContent(
                                 isInternetAvailable = isInternetAvailable,
                                 event = event,
                                 resendMessage = {
-                                    resendMessage = it
+                                    event(ConversationUiEvent.ResendDialogVisibility(true))
                                 }
                             )
 
@@ -168,7 +165,7 @@ fun ConversationContent(
                                 onDismiss = { event(ConversationUiEvent.ResendDialogVisibility(false)) },
                                 modifier = Modifier.align(Alignment.Center),
                                 onClickResend = {
-                                    event(ConversationUiEvent.ResendMessage(message = resendMessage ))
+                                    event(ConversationUiEvent.ResendMessage)
                                 })
                         }
 

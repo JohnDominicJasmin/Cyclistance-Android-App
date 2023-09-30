@@ -32,7 +32,7 @@ fun ConversationChatItems(
     conversation: List<ConversationItemModel>,
     state: ConversationState,
     uiState: ConversationUiState,
-    resendMessage: (message: String) -> Unit,
+    resendMessage: () -> Unit,
     event: (ConversationUiEvent) -> Unit) {
 
 
