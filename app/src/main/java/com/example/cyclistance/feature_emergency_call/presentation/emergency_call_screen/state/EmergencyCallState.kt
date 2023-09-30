@@ -11,6 +11,4 @@ import kotlinx.parcelize.Parcelize
 data class EmergencyCallState(
     val isLoading: Boolean = false,
     val emergencyCallModel: EmergencyCallModel = EmergencyCallModel(),
-    val nameSnapshot: String = "",
-    val phoneNumberSnapshot: String = "",
 ) : Parcelable

@@ -40,6 +40,9 @@ class EditProfileViewModel @Inject constructor(
         MutableSharedFlow<EditProfileEvent>(replay = 5, extraBufferCapacity = 5)
     val eventFlow = _eventFlow.asSharedFlow()
 
+    init {
+        loadProfile()
+    }
 
     private fun loadProfile() {
         viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {

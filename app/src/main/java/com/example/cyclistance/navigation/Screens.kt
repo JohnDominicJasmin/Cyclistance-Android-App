@@ -1,6 +1,6 @@
 package com.example.cyclistance.navigation
 
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.SHOULD_OPEN_CONTACT_DIALOG
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.EDIT_CONTACT_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_OBJ
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_OBJ
 import com.example.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
@@ -35,10 +35,9 @@ sealed class Screens {
             const val ROUTE = "emergency_call_navigation"
         }
 
-        object EmergencyCall :
-            EmergencyCallNavigation(screenRoute = "emergency_call_screen?$SHOULD_OPEN_CONTACT_DIALOG={$SHOULD_OPEN_CONTACT_DIALOG}") {
-            fun passArgument(shouldOpenContactDialog: Boolean) =
-                "emergency_call_screen?$SHOULD_OPEN_CONTACT_DIALOG=$shouldOpenContactDialog"
+        object EmergencyCall : EmergencyCallNavigation(screenRoute = "emergency_call_screen")
+        object AddEditEmergencyContact :EmergencyCallNavigation(screenRoute = "add_edit_emergency_contact_screen?$EDIT_CONTACT_ID={$EDIT_CONTACT_ID}"){
+            fun passArgument(contactId: Int) = "add_edit_emergency_contact_screen?$EDIT_CONTACT_ID=$contactId"
         }
     }
 

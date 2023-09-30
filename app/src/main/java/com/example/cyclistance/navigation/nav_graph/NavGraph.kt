@@ -52,7 +52,7 @@ fun NavGraph(
 
         emergencyCallGraph(
             navController = navController,
-            paddingValues = paddingValues
+            paddingValues = paddingValues,
         )
 
         messagingGraph(
