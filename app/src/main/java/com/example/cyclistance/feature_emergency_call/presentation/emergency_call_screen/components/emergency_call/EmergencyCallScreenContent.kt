@@ -85,7 +85,6 @@ fun EmergencyCallScreenContent(
                         ContactItem(
                             emergencyContact = item,
                             event = event,
-                            uiState = uiState,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(vertical = 1.dp))
