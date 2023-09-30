@@ -115,7 +115,9 @@ class ChatsViewModel @Inject constructor(
         val uid = messagingUseCase.getUidUseCase()
         messageUserFlow.collect { messageUser ->
             val currentChatUser = messageUser.filterWithout(uid).findUser(chat.conversionId)
-            _state.update { it.copy(messageUserInfo = messageUser.findUser(uid)) }
+            messageUser.findUser(uid)?.let { info ->
+                _state.update { it.copy(messageUserInfo = info) }
+            }
             val messagingUserHandler = currentChatUser?.let { foundUser ->
                 MessagingUserHandler(
                     currentChatUser = foundUser,
@@ -131,8 +133,9 @@ class ChatsViewModel @Inject constructor(
 
     private fun handleModifiedChat(chat: ChatItemModel) {
         val uid = messagingUseCase.getUidUseCase()
-        _state.update { it.copy(messageUserInfo = messageUserFlow.value.findUser(uid)) }
-
+        messageUserFlow.value.findUser(uid)?.let { info ->
+            _state.update { it.copy(messageUserInfo = info) }
+        }
         val currentChatUser = messageUserFlow.value.findUser(chat.conversionId)
         val messagingUserHandler = currentChatUser?.let { foundUser ->
             MessagingUserHandler(

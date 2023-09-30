@@ -24,7 +24,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 fun NotSentIndicator(modifier: Modifier = Modifier, resendMessage : () -> Unit ) {
 
     Row(
-        modifier = modifier.wrapContentSize().noRippleClickable {  },
+        modifier = modifier.wrapContentSize().noRippleClickable { resendMessage()  },
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center) {
 

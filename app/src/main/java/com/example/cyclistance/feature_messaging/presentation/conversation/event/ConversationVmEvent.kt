@@ -8,4 +8,6 @@ sealed class ConversationVmEvent {
     data class OnInitialized(
         val userReceiverMessage: MessagingUserItemModel,
         val userSenderMessage: MessagingUserItemModel) : ConversationVmEvent()
+
+    data object ResendMessage : ConversationVmEvent()
 }

@@ -49,7 +49,7 @@ fun ChatItem(
     currentIndex: Int? = null,
     selectedIndex: Int? = null,
     onSelectChatMessage: (Int) -> Unit,
-    resendMessage: (message: String) -> Unit,
+    resendMessage: () -> Unit,
     contentAlignment: Alignment = Alignment.Center,
 ) {
 
@@ -155,7 +155,7 @@ fun ChatItem(
                         visible = shouldShowNotSentIndicator,
                         modifier = Modifier.padding(horizontal = 0.dp)) {
                         NotSentIndicator(resendMessage = {
-                            resendMessage(conversation.message)
+                            resendMessage()
                         })
                     }
                 }

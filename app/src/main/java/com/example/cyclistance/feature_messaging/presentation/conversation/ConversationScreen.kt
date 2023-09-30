@@ -45,8 +45,8 @@ fun ConversationScreen(
     newConversationDetails: (MessagingUserItemModel) -> Unit,
     isInternetAvailable: Boolean
 ) {
-    val context = LocalContext.current
 
+    val context = LocalContext.current
     val conversationState = viewModel.conversationState
     val state by viewModel.state.collectAsStateWithLifecycle()
     var uiState by rememberSaveable { mutableStateOf(ConversationUiState()) }
@@ -96,7 +96,7 @@ fun ConversationScreen(
     val sendMessage = remember {
         { message: String ->
 
-        val receiverId = state.userReceiverMessage!!.userDetails.uid
+            val receiverId = state.userReceiverMessage!!.userDetails.uid
             viewModel.onEvent(
                 event = ConversationVmEvent.SendMessage(
                     sendMessageModel = SendMessageModel(
@@ -157,7 +157,9 @@ fun ConversationScreen(
         uiState = uiState.copy(resendDialogVisible = visibility)
     }}
 
-
+    val resendMessage = remember{{
+        viewModel.onEvent(event = ConversationVmEvent.ResendMessage)
+    }}
 
 
     LaunchedEffect(key1 = userReceiverMessage){
@@ -174,8 +176,10 @@ fun ConversationScreen(
     LaunchedEffect(key1 = true){
         viewModel.event.collectLatest { event ->
             when(event){
-                ConversationEvent.MessageNotSent -> {}
-                ConversationEvent.MessageSent -> {}
+
+                is ConversationEvent.ResendMessageFailed -> {
+                    Toast.makeText(context, "Resend failed", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
@@ -209,9 +213,8 @@ fun ConversationScreen(
                 is ConversationUiEvent.OnChangeValueMessage -> onChangeValueMessage(event.message)
                 is ConversationUiEvent.DismissNotificationPermissionDialog -> notificationPermissionDialogVisibility(false)
                 is ConversationUiEvent.ResendDialogVisibility -> resendMessageDialogVisibility(event.visible)
-                is ConversationUiEvent.ResendMessage -> {
-                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
-                }
+                is ConversationUiEvent.ResendMessage -> resendMessage()
+
             }
         }
     )
