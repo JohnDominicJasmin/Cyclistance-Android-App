@@ -12,9 +12,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -126,7 +129,7 @@ fun ChatItem(
 
                     Box(
                         modifier = Modifier
-                            .wrapContentSize()
+                            .wrapContentHeight().widthIn(max = 270.dp)
                             .clip(RoundedCornerShape(12.dp))
                             .clickable {
                                 currentIndex?.let { onSelectChatMessage(it) }
@@ -171,20 +174,24 @@ fun ChatItem(
 fun PreviewChatItemSenderDark() {
 
     CyclistanceTheme(darkTheme = true) {
-        ChatItem(
-            isSender = true,
-            state = ConversationState(
-                userReceiverMessage = MessagingUserItemModel(userDetails = UserDetails())
-            ),
-            isInternetAvailable = true,
-            conversation = ConversationItemModel(
-                senderId = "1",
-                message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                          "molestiae quas vel sint commodi repudiandae consequuntur",
-                receiverId = "2",
-                timestamp = Date(),
-                messageId = "1",
-            ), resendMessage = {}, onSelectChatMessage = {})
+        Box(modifier = Modifier
+            .background(MaterialTheme.colors.background)
+            .fillMaxSize()) {
+            ChatItem(
+                isSender = true,
+                state = ConversationState(
+                    userReceiverMessage = MessagingUserItemModel(userDetails = UserDetails())
+                ),
+                isInternetAvailable = true,
+                conversation = ConversationItemModel(
+                    senderId = "1",
+                    message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
+                              "molestiae quas vel sint commodi repudiandae consequuntur",
+                    receiverId = "2",
+                    timestamp = Date(),
+                    messageId = "1",
+                ), resendMessage = {}, onSelectChatMessage = {})
+        }
     }
 }
 
@@ -194,18 +201,22 @@ fun PreviewChatItemSenderDark() {
 fun PreviewChatItemSenderLight() {
 
     CyclistanceTheme(darkTheme = false) {
-        ChatItem(
-            isSender = true,
-            state = ConversationState(),
-            isInternetAvailable = true,
-            conversation = ConversationItemModel(
-                senderId = "1",
-                message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                          "molestiae quas vel sint commodi repudiandae consequuntur",
-                receiverId = "2",
-                timestamp = Date(),
-                messageId = "1",
-            ), onSelectChatMessage = {}, resendMessage = {})
+        Box(modifier = Modifier
+            .background(MaterialTheme.colors.background)
+            .fillMaxSize()) {
+            ChatItem(
+                isSender = true,
+                state = ConversationState(),
+                isInternetAvailable = true,
+                conversation = ConversationItemModel(
+                    senderId = "1",
+                    message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
+                              "molestiae quas vel sint commodi repudiandae consequuntur",
+                    receiverId = "2",
+                    timestamp = Date(),
+                    messageId = "1",
+                ), onSelectChatMessage = {}, resendMessage = {})
+        }
     }
 }
 
@@ -215,7 +226,9 @@ fun PreviewChatItemSenderLight() {
 fun PreviewChatItemRecipientDark() {
 
     CyclistanceTheme(darkTheme = true) {
-        Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Box(modifier = Modifier
+            .background(MaterialTheme.colors.background)
+            .fillMaxSize(), ) {
             ChatItem(
                 currentIndex = 1, selectedIndex = 1,
                 isSender = false,
@@ -240,7 +253,9 @@ fun PreviewChatItemRecipientDark() {
 fun PreviewChatItemRecipientLight() {
 
     CyclistanceTheme(darkTheme = false) {
-        Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+        Box(modifier = Modifier
+            .background(MaterialTheme.colors.background)
+            .fillMaxSize(),) {
             ChatItem(
                 isSender = false,
                 currentIndex = 1, selectedIndex = 1,
