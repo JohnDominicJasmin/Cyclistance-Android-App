@@ -36,4 +36,7 @@ interface MessagingRepository {
     suspend fun sendNotification(model : SendNotificationModel)
 
     suspend fun getMessagingUser(uid: String): MessagingUserItemModel
+
+    suspend fun markAsSeen(messageId: String)
+
 }

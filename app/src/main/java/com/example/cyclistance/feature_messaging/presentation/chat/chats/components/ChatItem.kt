@@ -87,39 +87,22 @@ fun ChatItem(
                     color = MaterialTheme.colors.onBackground, maxLines = 1,
                 )
 
-
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-
-                   if(chatItem.isSent){
-                       Icon(
-                           painter = painterResource(id = R.drawable.ic_sent),
-                           contentDescription = "Sent Icon",
-                           modifier = Modifier.size(18.dp))
-                   }else{
-                          Icon(
-                            painter = painterResource(id = R.drawable.ic_not_sent),
-                            contentDescription = "Unsent Icon",
-                            modifier = Modifier.size(18.dp),
-                              tint = MaterialTheme.colors.error)
-                   }
-
-                    Text(
-                        text = chatItem.lastMessage,
-                        overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colors.onBackground,
-                        maxLines = 1,
-                    )
-                }
+                Text(
+                    text = chatItem.lastMessage,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colors.onBackground,
+                    maxLines = 1,
+                )
 
             }
 
             Column(
                 modifier = Modifier,
                 verticalArrangement = Arrangement.spacedBy(
-                    3.dp,
+                    7.dp,
                     alignment = Alignment.CenterVertically),
                 horizontalAlignment = Alignment.End) {
+
 
                 Text(
                     text = chatItem.timeStamp!!.toReadableDateTime(pattern = "hh:mm a"),
@@ -127,6 +110,20 @@ fun ChatItem(
                     style = MaterialTheme.typography.body2.copy(
                         fontWeight = FontWeight.Light,
                         letterSpacing = TextUnit(0.7f, type = TextUnitType.Sp)))
+
+
+                if (chatItem.isSent) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_sent),
+                        contentDescription = "Sent Icon",
+                        modifier = Modifier.size(18.dp))
+                } else {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_not_sent),
+                        contentDescription = "Unsent Icon",
+                        modifier = Modifier.size(18.dp),
+                        tint = MaterialTheme.colors.error)
+                }
 
 
             }

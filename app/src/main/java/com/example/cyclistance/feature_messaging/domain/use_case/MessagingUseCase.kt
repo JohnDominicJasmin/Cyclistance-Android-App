@@ -15,6 +15,7 @@ import com.example.cyclistance.feature_messaging.domain.use_case.message.RemoveM
 import com.example.cyclistance.feature_messaging.domain.use_case.message.SendMessageUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.network.ReEnableNetworkSyncUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.notification.SendNotificationUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.seen.MarkAsSeenUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.token.DeleteTokenUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.token.RefreshTokenUseCase
 
@@ -35,5 +36,6 @@ data class MessagingUseCase(
     val updateUserAvailability: UpdateUserAvailability,
     val sendNotificationUseCase: SendNotificationUseCase,
     val getMessagingUserUseCase: GetMessagingUser,
-    val reEnableNetworkSyncUseCase: ReEnableNetworkSyncUseCase
+    val reEnableNetworkSyncUseCase: ReEnableNetworkSyncUseCase,
+    val markAsSeenUseCase: MarkAsSeenUseCase
 )

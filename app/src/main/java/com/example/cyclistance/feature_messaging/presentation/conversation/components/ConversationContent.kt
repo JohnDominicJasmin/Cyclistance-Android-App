@@ -39,6 +39,7 @@ import com.example.cyclistance.feature_messaging.presentation.conversation.state
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.Date
 
 
@@ -68,6 +69,7 @@ fun ConversationContent(
     val isScrollingUp by remember { derivedStateOf { farthestVisibleItemIndex > stateFirstVisibleItemIndex + 4 } }
 
     LaunchedEffect(key1 = listState.isScrollInProgress) {
+        Timber.v("isSeen: ${!isScrollingUp}")
         if (stateFirstVisibleItemIndex > farthestVisibleItemIndex) {
             farthestVisibleItemIndex = stateFirstVisibleItemIndex
         }

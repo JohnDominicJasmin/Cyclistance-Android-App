@@ -17,13 +17,16 @@ object MessagingConversationItemMapper {
                 message = "Message not found")
         val timeStamp = getDate(MessagingConstants.KEY_TIMESTAMP) ?: throw MessagingExceptions.ListenMessagingFailure(
                 message = "Timestamp not found")
+        val isSeen = getBoolean(MessagingConstants.KEY_IS_SEEN) ?: throw MessagingExceptions.ListenMessagingFailure(
+                message = "Is seen not found")
 
         return ConversationItemModel(
             messageId = messageId,
             senderId = senderId,
             receiverId = receiverId,
             message = messageText,
-            timestamp = timeStamp
+            timestamp = timeStamp,
+            isSeen = isSeen
         )
     }
 

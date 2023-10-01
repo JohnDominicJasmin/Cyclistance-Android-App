@@ -17,6 +17,7 @@ import com.example.cyclistance.feature_messaging.domain.use_case.message.RemoveM
 import com.example.cyclistance.feature_messaging.domain.use_case.message.SendMessageUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.network.ReEnableNetworkSyncUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.notification.SendNotificationUseCase
+import com.example.cyclistance.feature_messaging.domain.use_case.seen.MarkAsSeenUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.token.DeleteTokenUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.token.RefreshTokenUseCase
 import dagger.Module
@@ -52,7 +53,8 @@ object MessagingViewModelModule {
             updateUserAvailability = UpdateUserAvailability(repository = repository),
             sendNotificationUseCase = SendNotificationUseCase(repository = repository),
             getMessagingUserUseCase = GetMessagingUser(repository = repository),
-            reEnableNetworkSyncUseCase = ReEnableNetworkSyncUseCase(repository = repository)
+            reEnableNetworkSyncUseCase = ReEnableNetworkSyncUseCase(repository = repository),
+            markAsSeenUseCase = MarkAsSeenUseCase(repository = repository)
         )
     }
 }

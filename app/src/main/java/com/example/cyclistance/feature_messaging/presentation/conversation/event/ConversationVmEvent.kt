@@ -10,4 +10,5 @@ sealed class ConversationVmEvent {
         val userSenderMessage: MessagingUserItemModel) : ConversationVmEvent()
 
     data object ResendMessage : ConversationVmEvent()
+    data class MarkAsSeen(val messageId: String) : ConversationVmEvent()
 }

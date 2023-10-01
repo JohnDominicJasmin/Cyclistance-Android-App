@@ -7,6 +7,7 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_AVAIL
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_COLLECTION_CHATS
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_CONVERSATIONS_COLLECTION
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN
+import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_IS_SEEN
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_LAST_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
@@ -50,6 +51,9 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.tasks.await
@@ -73,13 +77,40 @@ class MessagingRepositoryImpl(
     private val appContext: Context,
     private val api: MessagingApi,
 
-) : MessagingRepository {
+    ) : MessagingRepository {
     private var messageListener: ListenerRegistration? = null
     private var chatListener: ListenerRegistration? = null
     private var messageUserListener: ListenerRegistration? = null
     private val scope: CoroutineContext = Dispatchers.IO
     private var dataStore = appContext.dataStore
 
+    override suspend fun markAsSeen(messageId: String) {
+        try {
+
+            coroutineScope {
+
+                val conversationUpdateTask = async {
+                    fireStore
+                        .collection(KEY_CONVERSATIONS_COLLECTION)
+                        .document(messageId)
+                        .update(KEY_IS_SEEN, true)
+                }
+
+                val chatUpdateTask = async {
+                    fireStore
+                        .collection(KEY_COLLECTION_CHATS)
+                        .document(messageId)
+                        .update(KEY_IS_SEEN, true)
+                }
+
+                awaitAll(conversationUpdateTask, chatUpdateTask)
+            }
+        } catch (e: Exception) {
+            throw MessagingExceptions.MarkAsSeenFailure(
+                message = e.message ?: "Mark as seen failure"
+            )
+        }
+    }
 
     override suspend fun reEnableNetworkSync() {
         suspendCoroutine { continuation ->
@@ -108,19 +139,25 @@ class MessagingRepositoryImpl(
 
     override fun addChatListener(
         onAddedChat: (ChatItemModel) -> Unit,
-        onModifiedChat: (ChatItemModel) -> Unit) {
+        onModifiedChat: (ChatItemModel) -> Unit
+    ) {
         val userId = getUid()
 
         chatListener = fireStore.collection(KEY_COLLECTION_CHATS)
             .where(
                 Filter.or(
                     Filter.equalTo(KEY_RECEIVER_ID, userId),
-                    Filter.equalTo(KEY_SENDER_ID, userId)))
+                    Filter.equalTo(KEY_SENDER_ID, userId)
+                )
+            )
             .orderBy(KEY_TIMESTAMP, Query.Direction.ASCENDING)
-            .addSnapshotListener(MetadataChanges.INCLUDE,
+            .addSnapshotListener(
+                MetadataChanges.INCLUDE,
                 chatListener(
                     onAddedChat = onAddedChat,
-                    onModifiedChat = onModifiedChat))
+                    onModifiedChat = onModifiedChat
+                )
+            )
 
     }
 
@@ -139,7 +176,8 @@ class MessagingRepositoryImpl(
                             Filter.equalTo(KEY_RECEIVER_ID, userId),
                             Filter.equalTo(KEY_RECEIVER_ID, receiverId)
                         )
-                    ))
+                    )
+                )
                 .get()
                 .addOnCompleteListener { task ->
 
@@ -160,7 +198,8 @@ class MessagingRepositoryImpl(
 
     override fun addConversion(
         conversion: HashMap<String, Any>,
-        onNewConversionId: (String) -> Unit) {
+        onNewConversionId: (String) -> Unit
+    ) {
 
         fireStore.collection(KEY_COLLECTION_CHATS)
             .add(conversion)
@@ -187,7 +226,8 @@ class MessagingRepositoryImpl(
 
     override fun addMessageListener(
         receiverId: String,
-        onNewMessage: (ConversationsModel) -> Unit) {
+        onNewMessage: (ConversationsModel) -> Unit
+    ) {
 
         val userUid = getUid()
 
@@ -201,7 +241,9 @@ class MessagingRepositoryImpl(
                     Filter.or(
                         Filter.equalTo(KEY_RECEIVER_ID, userUid),
                         Filter.equalTo(KEY_RECEIVER_ID, receiverId)
-                    )))
+                    )
+                )
+            )
             .orderBy(KEY_TIMESTAMP, Query.Direction.ASCENDING)
             .addSnapshotListener(MetadataChanges.INCLUDE, messageListener(onNewMessage))
 
@@ -230,7 +272,8 @@ class MessagingRepositoryImpl(
                 }
                 if (error != null) {
                     throw MessagingExceptions.GetMessageUsersFailure(
-                        message = error.message ?: "Unknown error occurred")
+                        message = error.message ?: "Unknown error occurred"
+                    )
                 }
 
                 val users = value.documentChanges.map {
@@ -241,7 +284,8 @@ class MessagingRepositoryImpl(
                     onNewMessageUser(
                         MessagingUserModel(
                             users = users
-                        ))
+                        )
+                    )
                 }
 
             }
@@ -280,7 +324,9 @@ class MessagingRepositoryImpl(
             KEY_SENDER_ID to uid,
             KEY_RECEIVER_ID to sendMessageModel.receiverId,
             KEY_MESSAGE to sendMessageModel.message.trimEnd(),
-            KEY_TIMESTAMP to Date()
+            KEY_TIMESTAMP to Date(),
+            KEY_IS_SEEN to false
+
         )
 
         suspendCancellableCoroutine { continuation ->
@@ -292,7 +338,9 @@ class MessagingRepositoryImpl(
                 }.addOnFailureListener {
                     continuation.resumeWithException(
                         MessagingExceptions.SendMessagingFailure(
-                            message = it.message!!))
+                            message = it.message!!
+                        )
+                    )
                 }.addOnCanceledListener {
                     Timber.e("Message sending cancelled by user")
                 }
@@ -380,7 +428,8 @@ class MessagingRepositoryImpl(
             }
         } catch (exception: Exception) {
             throw MessagingExceptions.TokenException(
-                message = exception.message ?: "Token update failed")
+                message = exception.message ?: "Token update failed"
+            )
         }
     }
 
@@ -398,7 +447,8 @@ class MessagingRepositoryImpl(
 
             if (error != null) {
                 throw MessagingExceptions.ListenMessagingFailure(
-                    message = error.message ?: "Unknown error occurred")
+                    message = error.message ?: "Unknown error occurred"
+                )
             }
 
             val messages: List<ConversationItemModel> =
@@ -411,17 +461,19 @@ class MessagingRepositoryImpl(
             onNewMessage(
                 ConversationsModel(
                     messages = messages
-                ))
+                )
+            )
         }
     }
 
-    private fun DocumentSnapshot.isDeviceOffline(): Boolean{
+    private fun DocumentSnapshot.isDeviceOffline(): Boolean {
         return with(this.metadata) { isFromCache.and(hasPendingWrites()) }
     }
 
     private inline fun chatListener(
         crossinline onAddedChat: (ChatItemModel) -> Unit,
-        crossinline onModifiedChat: (ChatItemModel) -> Unit): (QuerySnapshot?, FirebaseFirestoreException?) -> Unit {
+        crossinline onModifiedChat: (ChatItemModel) -> Unit
+    ): (QuerySnapshot?, FirebaseFirestoreException?) -> Unit {
 
         return { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
 
@@ -429,7 +481,8 @@ class MessagingRepositoryImpl(
 
             if (error != null) {
                 throw MessagingExceptions.GetChatsFailure(
-                    message = error.message ?: "Unknown error occurred")
+                    message = error.message ?: "Unknown error occurred"
+                )
             }
 
             if (value == null) {
