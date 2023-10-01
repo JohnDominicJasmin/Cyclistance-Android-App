@@ -82,11 +82,24 @@ class ConversationViewModel @Inject constructor(
                 userReceiverMessage = event.userReceiverMessage,
                 userSenderMessage = event.userSenderMessage)
             ConversationVmEvent.ResendMessage -> resendMessage()
+            is ConversationVmEvent.MarkAsSeen -> markAsSeen(event.messageId)
         }
         saveState()
     }
 
 
+
+    private fun markAsSeen(messageId: String){
+        viewModelScope.launch {
+            runCatching {
+                messagingUseCase.markAsSeenUseCase(messageId)
+            }.onSuccess {
+
+            }.onFailure {
+
+            }
+        }
+    }
     private fun saveState() {
         savedStateHandle[CONVERSATION_VM_STATE_KEY] = state.value
     }
