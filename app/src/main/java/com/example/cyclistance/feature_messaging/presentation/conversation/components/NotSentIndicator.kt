@@ -29,7 +29,7 @@ fun NotSentIndicator(modifier: Modifier = Modifier, resendMessage : () -> Unit )
         horizontalArrangement = Arrangement.Center) {
 
         Icon(
-            modifier = Modifier.size(24.dp),
+            modifier = Modifier.size(18.dp),
             painter = painterResource(id = R.drawable.ic_not_sent),
             contentDescription = "Sent",
             tint = MaterialTheme.colors.error.copy(alpha = 0.7f)
