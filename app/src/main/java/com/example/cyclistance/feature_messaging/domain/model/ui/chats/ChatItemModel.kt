@@ -20,6 +20,7 @@ data class ChatItemModel(
     val lastMessage: String = "",
     val timeStamp: Date? = null,
     val isSent: Boolean = false,
+    val isSeen: Boolean = false,
 
 
     ) : Parcelable
