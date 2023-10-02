@@ -160,6 +160,9 @@ fun ConversationScreen(
     val resendMessage = remember{{
         viewModel.onEvent(event = ConversationVmEvent.ResendMessage)
     }}
+    val markAsSeen = remember{{ messageId: String ->
+        viewModel.onEvent(event = ConversationVmEvent.MarkAsSeen(messageId))
+    }}
 
 
     LaunchedEffect(key1 = userReceiverMessage){
@@ -214,6 +217,7 @@ fun ConversationScreen(
                 is ConversationUiEvent.DismissNotificationPermissionDialog -> notificationPermissionDialogVisibility(false)
                 is ConversationUiEvent.ResendDialogVisibility -> resendMessageDialogVisibility(event.visible)
                 is ConversationUiEvent.ResendMessage -> resendMessage()
+                is ConversationUiEvent.MarkAsSeen -> markAsSeen(event.messageId)
 
             }
         }

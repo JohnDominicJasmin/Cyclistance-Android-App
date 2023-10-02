@@ -33,6 +33,7 @@ fun ConversationChatItems(
     state: ConversationState,
     uiState: ConversationUiState,
     resendMessage: () -> Unit,
+    markAsSeen: (messageId: String) -> Unit,
     event: (ConversationUiEvent) -> Unit) {
 
 
@@ -78,7 +79,9 @@ fun ConversationChatItems(
                 conversation = message,
                 isSender = isSender,
                 isInternetAvailable = isInternetAvailable,
-                resendMessage = resendMessage
+                resendMessage = resendMessage,
+                markAsSeen = markAsSeen
+
             )
         }
 

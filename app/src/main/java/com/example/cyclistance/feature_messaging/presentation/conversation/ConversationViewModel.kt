@@ -91,13 +91,7 @@ class ConversationViewModel @Inject constructor(
 
     private fun markAsSeen(messageId: String){
         viewModelScope.launch {
-            runCatching {
-                messagingUseCase.markAsSeenUseCase(messageId)
-            }.onSuccess {
-
-            }.onFailure {
-
-            }
+           messagingUseCase.markAsSeenUseCase(messageId)
         }
     }
     private fun saveState() {

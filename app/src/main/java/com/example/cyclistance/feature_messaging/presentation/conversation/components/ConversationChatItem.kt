@@ -21,18 +21,22 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.R
 import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
@@ -53,6 +57,7 @@ fun ChatItem(
     selectedIndex: Int? = null,
     onSelectChatMessage: (Int) -> Unit,
     resendMessage: () -> Unit,
+    markAsSeen: (messageId: String) -> Unit,
     contentAlignment: Alignment = Alignment.Center,
 ) {
 
@@ -62,9 +67,6 @@ fun ChatItem(
         }
     }
 
-    val shouldShowSentIndicator = remember(conversation.isSent, isSender) {
-        conversation.isSent.and(!isSender)
-    }
 
     val shouldShowNotSentIndicator = remember(conversation.isSent, isSender) {
         conversation.isSent.not().and(!isSender)
@@ -76,6 +78,12 @@ fun ChatItem(
     val backgroundColor =
         if (isSender) MaterialTheme.colors.surface else MaterialTheme.colors.primaryVariant
 
+
+    LaunchedEffect(key1 = conversation) {
+        if (!conversation.isSeen && isSender) {
+            markAsSeen(conversation.messageId)
+        }
+    }
 
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = contentAlignment) {
 
@@ -110,7 +118,7 @@ fun ChatItem(
 
 
                     Text(
-                        text = conversation.timestamp!!.toReadableDateTime(),
+                        text = conversation.timestamp!!.toReadableDateTime(pattern = "dd/m"),
                         color = MaterialTheme.colors.onBackground,
                         modifier = Modifier
                             .wrapContentSize()
@@ -129,34 +137,54 @@ fun ChatItem(
 
                     Box(
                         modifier = Modifier
-                            .wrapContentHeight().widthIn(max = 270.dp)
+                            .wrapContentHeight()
+                            .widthIn(max = 270.dp)
                             .clip(RoundedCornerShape(12.dp))
                             .clickable {
                                 currentIndex?.let { onSelectChatMessage(it) }
                             }
                             .then(
                                 if (isSelected) Modifier.background(backgroundColor) else Modifier.background(
-                                    backgroundColor.copy(alpha = 0.8f)))){
+                                    backgroundColor.copy(alpha = 0.8f)))) {
 
-                        Text(
-                            text = conversation.message,
-                            modifier = Modifier
-                                .padding(all = 12.dp),
-                            style = MaterialTheme.typography.body1.copy(
-                                color = contentColor,
-                                textAlign = TextAlign.Start),
-                        )
-                    }
+                        Column(
+                            modifier = Modifier.wrapContentSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.End) {
 
-                    AnimatedVisibility(
-                        visible = shouldShowSentIndicator.and(isSelected),
-                        modifier = Modifier.padding(horizontal = 0.dp)) {
-                        SentIndicator()
+                            Text(
+                                text = conversation.message,
+                                modifier = Modifier
+                                    .padding(horizontal = 12.dp)
+                                    .padding(top = 12.dp, bottom = 6.dp),
+                                style = MaterialTheme.typography.body1.copy(
+                                    color = contentColor,
+                                    textAlign = TextAlign.Start),
+                            )
+
+
+                            AnimatedVisibility(
+                                visible = !isSender,
+                                enter = fadeIn(),
+                                exit = fadeOut()) {
+
+                                Icon(
+                                    painter = painterResource(if (conversation.isSeen) R.drawable.ic_seen else R.drawable.ic_not_seen),
+                                    contentDescription = "Arrow Forward",
+                                    tint = contentColor,
+                                    modifier = Modifier
+                                        .padding(end = 12.dp, bottom = 8.dp)
+                                        .size(16.dp))
+                            }
+
+
+
+                        }
                     }
 
                     AnimatedVisibility(
                         visible = shouldShowNotSentIndicator,
-                        modifier = Modifier.padding(horizontal = 0.dp)) {
+                        modifier = Modifier.padding(top = 8.dp)) {
                         NotSentIndicator(resendMessage = {
                             resendMessage()
                         })
@@ -169,14 +197,16 @@ fun ChatItem(
     }
 }
 
+
 @Preview
 @Composable
 fun PreviewChatItemSenderDark() {
 
     CyclistanceTheme(darkTheme = true) {
-        Box(modifier = Modifier
-            .background(MaterialTheme.colors.background)
-            .fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colors.background)
+                .fillMaxSize()) {
             ChatItem(
                 isSender = true,
                 state = ConversationState(
@@ -190,7 +220,7 @@ fun PreviewChatItemSenderDark() {
                     receiverId = "2",
                     timestamp = Date(),
                     messageId = "1",
-                ), resendMessage = {}, onSelectChatMessage = {})
+                ), resendMessage = {}, onSelectChatMessage = {}, markAsSeen = {})
         }
     }
 }
@@ -201,9 +231,10 @@ fun PreviewChatItemSenderDark() {
 fun PreviewChatItemSenderLight() {
 
     CyclistanceTheme(darkTheme = false) {
-        Box(modifier = Modifier
-            .background(MaterialTheme.colors.background)
-            .fillMaxSize()) {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colors.background)
+                .fillMaxSize()) {
             ChatItem(
                 isSender = true,
                 state = ConversationState(),
@@ -215,7 +246,8 @@ fun PreviewChatItemSenderLight() {
                     receiverId = "2",
                     timestamp = Date(),
                     messageId = "1",
-                ), onSelectChatMessage = {}, resendMessage = {})
+                ), onSelectChatMessage = {}, resendMessage = {}, markAsSeen = {}
+            )
         }
     }
 }
@@ -226,9 +258,11 @@ fun PreviewChatItemSenderLight() {
 fun PreviewChatItemRecipientDark() {
 
     CyclistanceTheme(darkTheme = true) {
-        Box(modifier = Modifier
-            .background(MaterialTheme.colors.background)
-            .fillMaxSize(), ) {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colors.background)
+                .fillMaxSize(),
+        ) {
             ChatItem(
                 currentIndex = 1, selectedIndex = 1,
                 isSender = false,
@@ -243,7 +277,7 @@ fun PreviewChatItemRecipientDark() {
                     receiverId = "2",
                     timestamp = Date(),
                     messageId = "1",
-                ),resendMessage = {}, onSelectChatMessage = {})
+                ), resendMessage = {}, onSelectChatMessage = {}, markAsSeen = {})
         }
     }
 }
@@ -253,9 +287,11 @@ fun PreviewChatItemRecipientDark() {
 fun PreviewChatItemRecipientLight() {
 
     CyclistanceTheme(darkTheme = false) {
-        Box(modifier = Modifier
-            .background(MaterialTheme.colors.background)
-            .fillMaxSize(),) {
+        Box(
+            modifier = Modifier
+                .background(MaterialTheme.colors.background)
+                .fillMaxSize(),
+        ) {
             ChatItem(
                 isSender = false,
                 currentIndex = 1, selectedIndex = 1,
@@ -263,12 +299,13 @@ fun PreviewChatItemRecipientLight() {
                 isInternetAvailable = true,
                 conversation = ConversationItemModel(
                     senderId = "1",
-                    message = "iniONINOiOOInoinOINoInOinI",
+                    message = "iniONINOiOOInoinOINoInOinIiniONINOiOOInoinOINoInOinIiniONINOiOOInoinOINoInOinIiniONINOiOOInoinOINoInOinI",
                     receiverId = "2",
                     timestamp = Date(),
                     messageId = "1",
-                    isSent = true
-                ),resendMessage = {}, onSelectChatMessage = {})
+                    isSent = true,
+                    isSeen = true
+                ), resendMessage = {}, onSelectChatMessage = {}, markAsSeen = {})
         }
     }
 }

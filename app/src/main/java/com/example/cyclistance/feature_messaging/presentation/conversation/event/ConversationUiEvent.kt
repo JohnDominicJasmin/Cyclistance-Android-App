@@ -12,6 +12,7 @@ sealed class ConversationUiEvent {
     data object DismissNotificationPermissionDialog : ConversationUiEvent()
     data class ResendDialogVisibility(val visible: Boolean) : ConversationUiEvent()
     data object ResendMessage : ConversationUiEvent()
+    data class MarkAsSeen(val messageId: String): ConversationUiEvent()
 
 
 }
