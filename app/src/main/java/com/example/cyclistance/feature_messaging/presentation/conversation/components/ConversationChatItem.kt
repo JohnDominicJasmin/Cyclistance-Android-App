@@ -155,8 +155,7 @@ fun ChatItem(
                             Text(
                                 text = conversation.message,
                                 modifier = Modifier
-                                    .padding(horizontal = 12.dp)
-                                    .padding(top = 12.dp, bottom = 6.dp),
+                                    .padding(horizontal = 12.dp, vertical = 8.dp),
                                 style = MaterialTheme.typography.body1.copy(
                                     color = contentColor,
                                     textAlign = TextAlign.Start),
