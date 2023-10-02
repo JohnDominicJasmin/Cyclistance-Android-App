@@ -9,11 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.ChatState
 
 
 @Composable
 internal fun ChatsSection(
     modifier: Modifier = Modifier,
+    state: ChatState,
     isInternetAvailable: Boolean,
     chatState: List<Pair<MessagingUserItemModel,ChatItemModel>>,
     onClick: (MessagingUserItemModel) -> Unit) {
@@ -32,6 +34,7 @@ internal fun ChatsSection(
                 isInternetAvailable = isInternetAvailable,
                 chatItem = item.second,
                 user = item.first,
+                chatState = state,
                 onClick = onClick)
 
         }

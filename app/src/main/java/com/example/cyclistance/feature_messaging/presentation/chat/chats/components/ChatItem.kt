@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,6 +34,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
+import com.example.cyclistance.feature_messaging.presentation.chat.chats.state.ChatState
 import com.example.cyclistance.feature_messaging.presentation.common.MessageUserImage
 import com.example.cyclistance.theme.CyclistanceTheme
 import java.util.Date
@@ -40,10 +42,11 @@ import java.util.Date
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun ChatItem(
-    isInternetAvailable: Boolean,
     modifier: Modifier = Modifier,
+    isInternetAvailable: Boolean,
     user: MessagingUserItemModel,
     chatItem: ChatItemModel,
+    chatState: ChatState,
     onClick: (MessagingUserItemModel) -> Unit) {
 
 
@@ -84,11 +87,17 @@ fun ChatItem(
                 Text(
                     text = user.userDetails.name,
                     overflow = TextOverflow.Ellipsis,
-                    color = MaterialTheme.colors.onBackground, maxLines = 1,
+                    color = MaterialTheme.colors.onBackground,
+                    maxLines = 1,
                 )
 
                 Text(
-                    text = chatItem.lastMessage,
+                    text = buildAnnotatedString {
+                        if(chatItem.senderId == chatState.messageUserInfo?.getUid()) {
+                            append("You: ")
+                        }
+                        append(chatItem.lastMessage)
+                    },
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colors.onBackground,
                     maxLines = 1,
@@ -113,8 +122,9 @@ fun ChatItem(
 
 
                 if (chatItem.isSent) {
+
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_sent),
+                        painter = painterResource(id = if(chatItem.isSeen) R.drawable.ic_seen else R.drawable.ic_not_seen),
                         contentDescription = "Sent Icon",
                         modifier = Modifier.size(18.dp))
                 } else {
@@ -162,7 +172,8 @@ fun PreviewChatItemDark() {
                     timeStamp = Date(),
 
                     ),
-                onClick = {}
+                onClick = {},
+                chatState = ChatState()
 
             )
 
@@ -200,7 +211,8 @@ fun PreviewChatItemLight() {
                     timeStamp = Date(),
 
                     ),
-                onClick = {}
+                onClick = {},
+                chatState = ChatState()
             )
         }
     }
