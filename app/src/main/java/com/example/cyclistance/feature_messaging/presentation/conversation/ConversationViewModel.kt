@@ -88,12 +88,14 @@ class ConversationViewModel @Inject constructor(
     }
 
 
-
-    private fun markAsSeen(messageId: String){
+    private fun markAsSeen(messageId: String) {
         viewModelScope.launch {
-           messagingUseCase.markAsSeenUseCase(messageId)
+            state.value.conversionId?.let { conversionId ->
+                messagingUseCase.markAsSeenUseCase(messageId = messageId, conversionId = conversionId)
+            }
         }
     }
+
     private fun saveState() {
         savedStateHandle[CONVERSATION_VM_STATE_KEY] = state.value
     }

@@ -37,6 +37,6 @@ interface MessagingRepository {
 
     suspend fun getMessagingUser(uid: String): MessagingUserItemModel
 
-    suspend fun markAsSeen(messageId: String)
+    suspend fun markAsSeen(messageId: String, conversionId: String)
 
 }
