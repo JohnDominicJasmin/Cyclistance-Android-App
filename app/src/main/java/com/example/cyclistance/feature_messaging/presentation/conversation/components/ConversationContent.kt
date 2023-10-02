@@ -150,6 +150,9 @@ fun ConversationContent(
                                 event = event,
                                 resendMessage = {
                                     event(ConversationUiEvent.ResendDialogVisibility(true))
+                                },
+                                markAsSeen = {
+                                    event(ConversationUiEvent.MarkAsSeen(it))
                                 }
                             )
 

@@ -28,7 +28,7 @@ interface MessagingRepository {
 
 
     suspend fun getConversionId(receiverId: String): String
-    fun addConversion(conversion: HashMap<String, Any>, onNewConversionId: (String) -> Unit)
+    fun addConversion(receiverId: String, message: String,  onNewConversionId: (String) -> Unit)
     fun updateConversion(message: String, conversionId: String)
 
     fun updateUserAvailability(isUserAvailable: Boolean)
@@ -37,6 +37,6 @@ interface MessagingRepository {
 
     suspend fun getMessagingUser(uid: String): MessagingUserItemModel
 
-    suspend fun markAsSeen(messageId: String)
+    suspend fun markAsSeen(messageId: String, conversionId: String)
 
 }

@@ -17,4 +17,8 @@ data class ConversationState(
     val conversionId: String? = null,
     val isLoading: Boolean = false,
     val conversationsModel: ConversationsModel? = null,
-) : Parcelable
+) : Parcelable{
+    fun getReceiverId():String {
+        return userReceiverMessage?.getUid() ?: ""
+    }
+}

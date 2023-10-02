@@ -84,7 +84,7 @@ class MessagingRepositoryImpl(
     private val scope: CoroutineContext = Dispatchers.IO
     private var dataStore = appContext.dataStore
 
-    override suspend fun markAsSeen(messageId: String) {
+    override suspend fun markAsSeen(messageId: String, conversionId: String) {
         try {
 
             coroutineScope {
@@ -99,7 +99,7 @@ class MessagingRepositoryImpl(
                 val chatUpdateTask = async {
                     fireStore
                         .collection(KEY_COLLECTION_CHATS)
-                        .document(messageId)
+                        .document(conversionId)
                         .update(KEY_IS_SEEN, true)
                 }
 
@@ -197,22 +197,30 @@ class MessagingRepositoryImpl(
     }
 
     override fun addConversion(
-        conversion: HashMap<String, Any>,
-        onNewConversionId: (String) -> Unit
-    ) {
+        receiverId: String,
+        message: String,
+        onNewConversionId: (String) -> Unit) {
 
-        fireStore.collection(KEY_COLLECTION_CHATS)
-            .add(conversion)
-            .addOnSuccessListener { documentReference ->
-                onNewConversionId(documentReference.id)
-            }
+        val senderId = getUid()
+        fireStore.collection(KEY_COLLECTION_CHATS).add(mapOf(
+            KEY_SENDER_ID to senderId,
+            KEY_RECEIVER_ID to receiverId,
+            KEY_LAST_MESSAGE to message,
+            KEY_TIMESTAMP to Date(),
+            KEY_IS_SEEN to false
+        )
+        ).addOnSuccessListener { documentReference ->
+            onNewConversionId(documentReference.id)
+        }
+
     }
+
 
 
     override fun updateConversion(message: String, conversionId: String) {
         fireStore.collection(KEY_COLLECTION_CHATS)
             .document(conversionId)
-            .update(KEY_LAST_MESSAGE, message, KEY_TIMESTAMP, Date())
+            .update(KEY_LAST_MESSAGE, message, KEY_TIMESTAMP, Date(), KEY_IS_SEEN, false)
             .addOnSuccessListener {
                 Timber.v("Conversion updated successfully")
             }.addOnFailureListener {
@@ -508,7 +516,6 @@ class MessagingRepositoryImpl(
                 val chat = item.toConversionChatItem(uid = uid)
                 onModifiedChat(chat.copy(isSent = !item.isDeviceOffline()))
             }
-
 
         }
     }

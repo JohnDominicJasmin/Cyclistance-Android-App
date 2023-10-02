@@ -73,9 +73,13 @@ internal fun ChatScreenContent(
                             modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
                         )
 
-                        ChatsSection(isInternetAvailable = isInternetAvailable, chatState = chatState, onClick = {
-                            event(ChatUiEvent.OnSelectConversation(it))
-                        })
+                        ChatsSection(
+                            isInternetAvailable = isInternetAvailable,
+                            chatState = chatState,
+                            state = state,
+                            onClick = {
+                                event(ChatUiEvent.OnSelectConversation(it))
+                            })
                     }
                 }
 

@@ -6,10 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.list.ListUtils
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_VM_STATE_KEY
-import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_LAST_MESSAGE
-import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
-import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_ID
-import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_TIMESTAMP
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.SendNotificationModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
@@ -23,13 +19,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.util.Date
 import javax.inject.Inject
 
 @HiltViewModel
@@ -88,18 +82,14 @@ class ConversationViewModel @Inject constructor(
     }
 
 
-
-    private fun markAsSeen(messageId: String){
+    private fun markAsSeen(messageId: String) {
         viewModelScope.launch {
-            runCatching {
-                messagingUseCase.markAsSeenUseCase(messageId)
-            }.onSuccess {
-
-            }.onFailure {
-
+            state.value.conversionId?.let { conversionId ->
+                messagingUseCase.markAsSeenUseCase(messageId = messageId, conversionId = conversionId)
             }
         }
     }
+
     private fun saveState() {
         savedStateHandle[CONVERSATION_VM_STATE_KEY] = state.value
     }
@@ -155,11 +145,14 @@ class ConversationViewModel @Inject constructor(
 
     private fun addConversion(message: String) {
         runCatching {
+            val receiverId = state.value.getReceiverId()
             messagingUseCase.addConversionUseCase(
-                conversion = state.handleConversion(message),
+                receiverId = receiverId,
+                message = message,
                 onNewConversionId = { id ->
                     _state.update { it.copy(conversionId = id) }
-                })
+                }
+            )
         }.onSuccess {
             Timber.v("Success to add conversion")
         }.onFailure {
@@ -167,16 +160,6 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    private fun StateFlow<ConversationState>.handleConversion(message: String): HashMap<String, Any> {
-        return with(value) {
-            hashMapOf(
-                KEY_SENDER_ID to userUid,
-                KEY_RECEIVER_ID to userReceiverMessage?.userDetails?.uid!!,
-                KEY_LAST_MESSAGE to message,
-                KEY_TIMESTAMP to Date()
-            )
-        }
-    }
 
     private fun getConversionId(receiverId: String) {
         viewModelScope.launch {
