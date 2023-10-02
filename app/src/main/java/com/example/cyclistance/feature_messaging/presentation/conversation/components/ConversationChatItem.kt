@@ -118,7 +118,7 @@ fun ChatItem(
 
 
                     Text(
-                        text = conversation.timestamp!!.toReadableDateTime(pattern = "dd/m"),
+                        text = conversation.timestamp!!.toReadableDateTime(pattern = "MMM dd hh:mm a"),
                         color = MaterialTheme.colors.onBackground,
                         modifier = Modifier
                             .wrapContentSize()
