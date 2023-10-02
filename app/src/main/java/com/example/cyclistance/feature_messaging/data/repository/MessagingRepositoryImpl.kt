@@ -197,16 +197,24 @@ class MessagingRepositoryImpl(
     }
 
     override fun addConversion(
-        conversion: HashMap<String, Any>,
-        onNewConversionId: (String) -> Unit
-    ) {
+        receiverId: String,
+        message: String,
+        onNewConversionId: (String) -> Unit) {
 
-        fireStore.collection(KEY_COLLECTION_CHATS)
-            .add(conversion)
-            .addOnSuccessListener { documentReference ->
-                onNewConversionId(documentReference.id)
-            }
+        val senderId = getUid()
+        fireStore.collection(KEY_COLLECTION_CHATS).add(mapOf(
+            KEY_SENDER_ID to senderId,
+            KEY_RECEIVER_ID to receiverId,
+            KEY_LAST_MESSAGE to message,
+            KEY_TIMESTAMP to Date(),
+            KEY_IS_SEEN to false
+        )
+        ).addOnSuccessListener { documentReference ->
+            onNewConversionId(documentReference.id)
+        }
+
     }
+
 
 
     override fun updateConversion(message: String, conversionId: String) {
