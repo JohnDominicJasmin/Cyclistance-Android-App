@@ -42,6 +42,7 @@ class ChatsViewModel @Inject constructor(
     init {
         refreshToken()
         initializeListener()
+        getMessageUserInfo()
         saveState()
     }
 
@@ -53,6 +54,19 @@ class ChatsViewModel @Inject constructor(
                 removeChatListener()
                 removeUserListener()
                 initializeListener()
+            }
+        }
+    }
+
+    private fun getMessageUserInfo(){
+        viewModelScope.launch {
+            runCatching {
+                val uid = messagingUseCase.getUidUseCase()
+                messagingUseCase.getMessagingUserUseCase(uid = uid)
+            }.onSuccess { messageUser ->
+                _state.update { it.copy(messageUserInfo = messageUser) }
+            }.onFailure {
+                Timber.e("Failed to retrieve chats ${it.message}")
             }
         }
     }
@@ -115,9 +129,6 @@ class ChatsViewModel @Inject constructor(
         val uid = messagingUseCase.getUidUseCase()
         messageUserFlow.collect { messageUser ->
             val currentChatUser = messageUser.filterWithout(uid).findUser(chat.conversionId)
-            messageUser.findUser(uid)?.let { info ->
-                _state.update { it.copy(messageUserInfo = info) }
-            }
             val messagingUserHandler = currentChatUser?.let { foundUser ->
                 MessagingUserHandler(
                     currentChatUser = foundUser,
@@ -132,10 +143,6 @@ class ChatsViewModel @Inject constructor(
 
 
     private fun handleModifiedChat(chat: ChatItemModel) {
-        val uid = messagingUseCase.getUidUseCase()
-        messageUserFlow.value.findUser(uid)?.let { info ->
-            _state.update { it.copy(messageUserInfo = info) }
-        }
         val currentChatUser = messageUserFlow.value.findUser(chat.conversionId)
         val messagingUserHandler = currentChatUser?.let { foundUser ->
             MessagingUserHandler(
