@@ -38,7 +38,9 @@ fun ConversationChatItems(
 
 
     LaunchedEffect(key1 = true, conversation.size, keyboardIsOpen) {
-        listState.scrollToItem(conversation.indices.last)
+        if(conversation.isNotEmpty()){
+            listState.scrollToItem(conversation.indices.last)
+        }
     }
 
 
@@ -73,8 +75,8 @@ fun ConversationChatItems(
                 currentIndex = index,
                 selectedIndex = uiState.chatItemSelectedIndex,
                 state = state,
-                onSelectChatMessage = { index ->
-                    event(ConversationUiEvent.SelectChatItem(index = index))
+                onSelectChatMessage = { chatIndex ->
+                    event(ConversationUiEvent.SelectChatItem(index = chatIndex))
                 },
                 conversation = message,
                 isSender = isSender,
