@@ -1,0 +1,1276 @@
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/data/repository/MessagingRepositoryImpl.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_messaging.data.repository\n\nimport android.content.Context\nimport com.example.cyclistance.R\nimport com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_AVAILABILITY\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_COLLECTION_CHATS\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_CONVERSATIONS_COLLECTION\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_FCM_TOKEN\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_IS_SEEN\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_LAST_MESSAGE\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSAGE\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_ID\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_TIMESTAMP\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_OBJ\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.REMOTE_MSG_DATA\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.REMOTE_MSG_REGISTRATION_IDS\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.SAVED_TOKEN\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_OBJ\nimport com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME\nimport com.example.cyclistance.core.utils.constants.UtilConstants.USER_COLLECTION\nimport com.example.cyclistance.core.utils.contexts.dataStore\nimport com.example.cyclistance.core.utils.data_store_ext.editData\nimport com.example.cyclistance.core.utils.data_store_ext.getData\nimport com.example.cyclistance.feature_messaging.data.MessagingApi\nimport com.example.cyclistance.feature_messaging.data.data_source.remote.header.RemoteHeader\nimport com.example.cyclistance.feature_messaging.data.mapper.MessagingChatItemMapper.toConversionChatItem\nimport com.example.cyclistance.feature_messaging.data.mapper.MessagingConversationItemMapper.toConversationItem\nimport com.example.cyclistance.feature_messaging.data.mapper.MessagingUserItemMapper.toMessageUser\nimport com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions\nimport com.example.cyclistance.feature_messaging.domain.model.SendMessageModel\nimport com.example.cyclistance.feature_messaging.domain.model.SendNotificationModel\nimport com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel\nimport com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel\nimport com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel.Companion.toJsonString\nimport com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel\nimport com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel\nimport com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel\nimport com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository\nimport com.google.firebase.auth.FirebaseAuth\nimport com.google.firebase.firestore.DocumentChange\nimport com.google.firebase.firestore.DocumentSnapshot\nimport com.google.firebase.firestore.FieldValue\nimport com.google.firebase.firestore.Filter\nimport com.google.firebase.firestore.FirebaseFirestore\nimport com.google.firebase.firestore.FirebaseFirestoreException\nimport com.google.firebase.firestore.ListenerRegistration\nimport com.google.firebase.firestore.MetadataChanges\nimport com.google.firebase.firestore.Query\nimport com.google.firebase.firestore.QuerySnapshot\nimport com.google.firebase.messaging.FirebaseMessaging\nimport kotlinx.coroutines.Dispatchers\nimport kotlinx.coroutines.async\nimport kotlinx.coroutines.awaitAll\nimport kotlinx.coroutines.coroutineScope\nimport kotlinx.coroutines.flow.firstOrNull\nimport kotlinx.coroutines.suspendCancellableCoroutine\nimport kotlinx.coroutines.tasks.await\nimport kotlinx.coroutines.withContext\nimport org.json.JSONArray\nimport org.json.JSONObject\nimport retrofit2.Call\nimport retrofit2.Callback\nimport retrofit2.Response\nimport timber.log.Timber\nimport java.util.Date\nimport kotlin.coroutines.CoroutineContext\nimport kotlin.coroutines.resume\nimport kotlin.coroutines.resumeWithException\nimport kotlin.coroutines.suspendCoroutine\n\nclass MessagingRepositoryImpl(\n    private val fireStore: FirebaseFirestore,\n    private val firebaseMessaging: FirebaseMessaging,\n    private val auth: FirebaseAuth,\n    private val appContext: Context,\n    private val api: MessagingApi,\n\n    ) : MessagingRepository {\n    private var messageListener: ListenerRegistration? = null\n    private var chatListener: ListenerRegistration? = null\n    private var messageUserListener: ListenerRegistration? = null\n    private val scope: CoroutineContext = Dispatchers.IO\n    private var dataStore = appContext.dataStore\n\n    override suspend fun markAsSeen(messageId: String, conversionId: String) {\n        try {\n\n            coroutineScope {\n\n                val conversationUpdateTask = async {\n                    fireStore\n                        .collection(KEY_CONVERSATIONS_COLLECTION)\n                        .document(messageId)\n                        .update(KEY_IS_SEEN, true)\n                }\n\n                val chatUpdateTask = async {\n                    fireStore\n                        .collection(KEY_COLLECTION_CHATS)\n                        .document(conversionId)\n                        .update(KEY_IS_SEEN, true)\n                }\n\n                awaitAll(conversationUpdateTask, chatUpdateTask)\n            }\n        } catch (e: Exception) {\n            throw MessagingExceptions.MarkAsSeenFailure(\n                message = e.message ?: \"Mark as seen failure\"\n            )\n        }\n    }\n\n    override suspend fun reEnableNetworkSync() {\n        suspendCoroutine { continuation ->\n            fireStore.enableNetwork().addOnCompleteListener {\n                continuation.resume(Unit)\n            }.addOnFailureListener {\n                continuation.resumeWithException(MessagingExceptions.ReSyncFailure(message = it.message!!))\n            }\n        }\n    }\n\n    override suspend fun getMessagingUser(uid: String): MessagingUserItemModel {\n\n        return suspendCoroutine {\n            fireStore.collection(USER_COLLECTION)\n                .document(uid)\n                .get()\n                .addOnSuccessListener { documentSnapshot ->\n                    it.resume(documentSnapshot.toMessageUser())\n                }.addOnFailureListener { exception ->\n                    it.resumeWithException(MessagingExceptions.GetMessageUsersFailure(message = exception.message!!))\n                }\n        }\n    }\n\n\n    override fun addChatListener(\n        onAddedChat: (ChatItemModel) -> Unit,\n        onModifiedChat: (ChatItemModel) -> Unit\n    ) {\n        val userId = getUid()\n\n        chatListener = fireStore.collection(KEY_COLLECTION_CHATS)\n            .where(\n                Filter.or(\n                    Filter.equalTo(KEY_RECEIVER_ID, userId),\n                    Filter.equalTo(KEY_SENDER_ID, userId)\n                )\n            )\n            .orderBy(KEY_TIMESTAMP, Query.Direction.ASCENDING)\n            .addSnapshotListener(\n                MetadataChanges.INCLUDE,\n                chatListener(\n                    onAddedChat = onAddedChat,\n                    onModifiedChat = onModifiedChat\n                )\n            )\n\n    }\n\n    override suspend fun getConversionId(receiverId: String): String {\n        val userId = getUid()\n        return suspendCancellableCoroutine { continuation ->\n\n            fireStore.collection(KEY_COLLECTION_CHATS)\n                .where(\n                    Filter.and(\n                        Filter.or(\n                            Filter.equalTo(KEY_SENDER_ID, userId),\n                            Filter.equalTo(KEY_SENDER_ID, receiverId),\n                        ),\n                        Filter.or(\n                            Filter.equalTo(KEY_RECEIVER_ID, userId),\n                            Filter.equalTo(KEY_RECEIVER_ID, receiverId)\n                        )\n                    )\n                )\n                .get()\n                .addOnCompleteListener { task ->\n\n                    val documents = task.result?.documents ?: emptyList()\n                    if (!task.isSuccessful) {\n                        return@addOnCompleteListener\n                    }\n\n                    if (documents.isEmpty()) {\n                        return@addOnCompleteListener\n                    }\n\n                    val documentSnapshot = documents.first()\n                    continuation.resume(documentSnapshot.id)\n                }\n        }\n    }\n\n    override fun addConversion(\n        receiverId: String,\n        message: String,\n        onNewConversionId: (String) -> Unit) {\n\n        val senderId = getUid()\n        fireStore.collection(KEY_COLLECTION_CHATS).add(mapOf(\n            KEY_SENDER_ID to senderId,\n            KEY_RECEIVER_ID to receiverId,\n            KEY_LAST_MESSAGE to message,\n            KEY_TIMESTAMP to Date(),\n            KEY_IS_SEEN to false\n        )\n        ).addOnSuccessListener { documentReference ->\n            onNewConversionId(documentReference.id)\n        }\n\n    }\n\n\n\n    override fun updateConversion(message: String, conversionId: String) {\n        fireStore.collection(KEY_COLLECTION_CHATS)\n            .document(conversionId)\n            .update(KEY_LAST_MESSAGE, message, KEY_TIMESTAMP, Date(), KEY_IS_SEEN, false)\n            .addOnSuccessListener {\n                Timber.v(\"Conversion updated successfully\")\n            }.addOnFailureListener {\n                Timber.e(\"Conversion update failed ${it.message}\")\n            }\n    }\n\n    override fun getUserUid(): String {\n        return getUid()\n    }\n\n    override fun addMessageListener(\n        receiverId: String,\n        onNewMessage: (ConversationsModel) -> Unit\n    ) {\n\n        val userUid = getUid()\n\n        messageListener = fireStore.collection(KEY_CONVERSATIONS_COLLECTION)\n            .where(\n                Filter.and(\n                    Filter.or(\n                        Filter.equalTo(KEY_SENDER_ID, userUid),\n                        Filter.equalTo(KEY_SENDER_ID, receiverId),\n                    ),\n                    Filter.or(\n                        Filter.equalTo(KEY_RECEIVER_ID, userUid),\n                        Filter.equalTo(KEY_RECEIVER_ID, receiverId)\n                    )\n                )\n            )\n            .orderBy(KEY_TIMESTAMP, Query.Direction.ASCENDING)\n            .addSnapshotListener(MetadataChanges.INCLUDE, messageListener(onNewMessage))\n\n    }\n\n    override suspend fun refreshToken() {\n        withContext(scope) {\n\n            val token = getMessagingToken()\n            val savedToken = dataStore.getData(key = SAVED_TOKEN, defaultValue = \"\").firstOrNull()\n\n            if (token == savedToken) {\n                return@withContext\n            }\n\n            updateMessagingToken(token = token)\n        }\n    }\n\n    override fun addUserListener(onNewMessageUser: (MessagingUserModel) -> Unit) {\n\n        messageUserListener = fireStore.collection(USER_COLLECTION)\n            .addSnapshotListener(MetadataChanges.INCLUDE) { value: QuerySnapshot?, error: FirebaseFirestoreException? ->\n                if (value == null) {\n                    throw MessagingExceptions.GetMessageUsersFailure(message = \"Cannot get message users, value is null\")\n                }\n                if (error != null) {\n                    throw MessagingExceptions.GetMessageUsersFailure(\n                        message = error.message ?: \"Unknown error occurred\"\n                    )\n                }\n\n                val users = value.documentChanges.map {\n                    it.document.toMessageUser()\n                }\n\n                if (users.isNotEmpty()) {\n                    onNewMessageUser(\n                        MessagingUserModel(\n                            users = users\n                        )\n                    )\n                }\n\n            }\n\n\n    }\n\n    override fun updateUserAvailability(isUserAvailable: Boolean) {\n        val uid = getUid()\n        fireStore.collection(USER_COLLECTION)\n            .document(uid)\n            .update(KEY_AVAILABILITY, isUserAvailable)\n            .addOnSuccessListener {\n                Timber.v(\"User availability updated successfully\")\n            }.addOnFailureListener {\n                Timber.v(\"User availability update failed\")\n            }\n    }\n\n    override fun removeMessageListener() {\n        messageListener?.remove()\n    }\n\n    override fun removeUserListener() {\n        messageUserListener?.remove()\n    }\n\n    override fun removeChatListener() {\n        chatListener?.remove()\n    }\n\n    override suspend fun sendMessage(sendMessageModel: SendMessageModel) {\n\n        val uid = getUid()\n        val message = mapOf(\n            KEY_SENDER_ID to uid,\n            KEY_RECEIVER_ID to sendMessageModel.receiverId,\n            KEY_MESSAGE to sendMessageModel.message.trimEnd(),\n            KEY_TIMESTAMP to Date(),\n            KEY_IS_SEEN to false\n\n        )\n\n        suspendCancellableCoroutine { continuation ->\n            fireStore\n                .collection(KEY_CONVERSATIONS_COLLECTION)\n                .add(message)\n                .addOnSuccessListener {\n                    continuation.resume(Unit)\n                }.addOnFailureListener {\n                    continuation.resumeWithException(\n                        MessagingExceptions.SendMessagingFailure(\n                            message = it.message!!\n                        )\n                    )\n                }.addOnCanceledListener {\n                    Timber.e(\"Message sending cancelled by user\")\n                }\n        }\n\n    }\n\n    override suspend fun deleteToken() {\n        checkInternetConnection()\n        dataStore.editData(key = SAVED_TOKEN, value = \"\")\n        suspendCancellableCoroutine { continuation ->\n            fireStore.collection(\n                USER_COLLECTION\n            ).document(getUid()).update(KEY_FCM_TOKEN, FieldValue.delete()).addOnSuccessListener {\n                continuation.resume(Unit)\n            }.addOnFailureListener {\n                continuation.resumeWithException(MessagingExceptions.TokenException(message = it.message!!))\n            }\n        }\n    }\n\n    override suspend fun sendNotification(model: SendNotificationModel) {\n\n        val tokens = JSONArray().put(model.userReceiverMessage.fcmToken)\n        val data = JSONObject().apply {\n            put(KEY_NAME, model.senderName)\n            put(KEY_MESSAGE, model.message)\n            put(RECEIVER_MESSAGE_OBJ, model.userReceiverMessage.toJsonString())\n            put(SENDER_MESSAGE_OBJ, model.userSenderMessage.toJsonString())\n        }\n\n        val body = JSONObject().apply {\n            put(REMOTE_MSG_DATA, data)\n            put(REMOTE_MSG_REGISTRATION_IDS, tokens)\n        }\n\n\n        api.sendMessage(\n            headers = RemoteHeader.getRemoteMsgHeader(appContext),\n            message = body.toString()\n        ).enqueue(object : Callback<String> {\n            override fun onResponse(call: Call<String>, response: Response<String>) {\n                Timber.v(\"Notification sent successfully ${response.isSuccessful} | ${response.raw()}\")\n            }\n\n            override fun onFailure(call: Call<String>, t: Throwable) {\n                Timber.v(\"Notification sending failed ${t.message}\")\n            }\n\n        })\n    }\n\n\n    private suspend fun getMessagingToken(): String {\n        return suspendCancellableCoroutine { continuation ->\n            firebaseMessaging.token.addOnSuccessListener { token: String ->\n                if (continuation.isActive) {\n                    continuation.resume(token)\n                }\n            }.addOnFailureListener {\n                continuation.resumeWithException(\n                    MessagingExceptions.TokenException(\n                        it.message!!\n                    )\n                )\n            }\n        }\n    }\n\n    private fun getUid(): String {\n        return auth.uid ?: throw MessagingExceptions.TokenException(message = \"User not logged in\")\n    }\n\n\n    private suspend fun updateMessagingToken(token: String) {\n        val uid = getUid()\n\n        try {\n            fireStore.collection(USER_COLLECTION).document(uid).update(\n                KEY_FCM_TOKEN, token\n            ).await()\n\n            withContext(Dispatchers.IO) {\n                dataStore.editData(key = SAVED_TOKEN, value = token)\n            }\n        } catch (exception: Exception) {\n            throw MessagingExceptions.TokenException(\n                message = exception.message ?: \"Token update failed\"\n            )\n        }\n    }\n\n    private fun checkInternetConnection() {\n        if (!appContext.hasInternetConnection()) {\n            throw MessagingExceptions.NetworkException(message = appContext.getString(R.string.no_internet_message))\n        }\n    }\n\n    private fun messageListener(onNewMessage: (ConversationsModel) -> Unit): (QuerySnapshot?, FirebaseFirestoreException?) -> Unit {\n        return { value: QuerySnapshot?, error: FirebaseFirestoreException? ->\n            if (value == null) {\n                throw MessagingExceptions.ListenMessagingFailure(message = \"Cannot listen to messages, value is null\")\n            }\n\n            if (error != null) {\n                throw MessagingExceptions.ListenMessagingFailure(\n                    message = error.message ?: \"Unknown error occurred\"\n                )\n            }\n\n            val messages: List<ConversationItemModel> =\n                value.documents\n                    .map {\n                        val conversationItem = it.toConversationItem()\n                        conversationItem.copy(isSent = !it.isDeviceOffline())\n                    }\n\n            onNewMessage(\n                ConversationsModel(\n                    messages = messages\n                )\n            )\n        }\n    }\n\n    private fun DocumentSnapshot.isDeviceOffline(): Boolean {\n        return with(this.metadata) { isFromCache.and(hasPendingWrites()) }\n    }\n\n    private inline fun chatListener(\n        crossinline onAddedChat: (ChatItemModel) -> Unit,\n        crossinline onModifiedChat: (ChatItemModel) -> Unit\n    ): (QuerySnapshot?, FirebaseFirestoreException?) -> Unit {\n\n        return { value: QuerySnapshot?, error: FirebaseFirestoreException? ->\n\n            val uid = getUid()\n\n            if (error != null) {\n                throw MessagingExceptions.GetChatsFailure(\n                    message = error.message ?: \"Unknown error occurred\"\n                )\n            }\n\n            if (value == null) {\n                throw MessagingExceptions.GetChatsFailure(message = \"Cannot get chats, value is null\")\n            }\n\n            value.documentChanges.forEach { item ->\n\n                when (item.type) {\n\n                    DocumentChange.Type.ADDED -> {\n                        val chat = item.document.toConversionChatItem(uid = uid)\n                        onAddedChat(chat.copy(isSent = !item.document.isDeviceOffline()))\n                    }\n\n                    else -> {}\n                }\n            }\n\n\n\n            value.documents.forEach { item ->\n                val chat = item.toConversionChatItem(uid = uid)\n                onModifiedChat(chat.copy(isSent = !item.isDeviceOffline()))\n            }\n\n        }\n    }\n\n\n}\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/data/repository/MessagingRepositoryImpl.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/data/repository/MessagingRepositoryImpl.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_messaging/data/repository/MessagingRepositoryImpl.kt	(revision ca02bca67dba7aa2542d1cb7bab2d51ea1aa1e82)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/data/repository/MessagingRepositoryImpl.kt	(date 1696307031998)
+@@ -163,6 +163,7 @@
+ 
+     override suspend fun getConversionId(receiverId: String): String {
+         val userId = getUid()
++        Timber.v("Get conversion id $userId | $receiverId")
+         return suspendCancellableCoroutine { continuation ->
+ 
+             fireStore.collection(KEY_COLLECTION_CHATS)
+@@ -202,13 +203,14 @@
+         onNewConversionId: (String) -> Unit) {
+ 
+         val senderId = getUid()
+-        fireStore.collection(KEY_COLLECTION_CHATS).add(mapOf(
+-            KEY_SENDER_ID to senderId,
+-            KEY_RECEIVER_ID to receiverId,
+-            KEY_LAST_MESSAGE to message,
+-            KEY_TIMESTAMP to Date(),
+-            KEY_IS_SEEN to false
+-        )
++        fireStore.collection(KEY_COLLECTION_CHATS).add(
++            mapOf(
++                KEY_SENDER_ID to senderId,
++                KEY_RECEIVER_ID to receiverId,
++                KEY_LAST_MESSAGE to message,
++                KEY_TIMESTAMP to Date(),
++                KEY_IS_SEEN to false
++            )
+         ).addOnSuccessListener { documentReference ->
+             onNewConversionId(documentReference.id)
+         }
+@@ -216,11 +218,16 @@
+     }
+ 
+ 
+-
+-    override fun updateConversion(message: String, conversionId: String) {
++    override fun updateConversion(message: String, conversionId: String, receiverId: String) {
++        val senderId = getUid()
+         fireStore.collection(KEY_COLLECTION_CHATS)
+             .document(conversionId)
+-            .update(KEY_LAST_MESSAGE, message, KEY_TIMESTAMP, Date(), KEY_IS_SEEN, false)
++            .update(
++                KEY_LAST_MESSAGE, message,
++                KEY_TIMESTAMP, Date(),
++                KEY_IS_SEEN, false,
++                KEY_SENDER_ID, senderId,
++                KEY_RECEIVER_ID, receiverId)
+             .addOnSuccessListener {
+                 Timber.v("Conversion updated successfully")
+             }.addOnFailureListener {
+@@ -506,16 +513,21 @@
+                         onAddedChat(chat.copy(isSent = !item.document.isDeviceOffline()))
+                     }
+ 
++                    DocumentChange.Type.MODIFIED -> {
++                        val chat = item.document.toConversionChatItem(uid = uid)
++                        onModifiedChat(chat.copy(isSent = !item.document.isDeviceOffline()))
++                    }
++
+                     else -> {}
+                 }
+             }
+ 
+ 
+ 
+-            value.documents.forEach { item ->
++          /*  value.documents.forEach { item ->
+                 val chat = item.toConversionChatItem(uid = uid)
+                 onModifiedChat(chat.copy(isSent = !item.isDeviceOffline()))
+-            }
++            }*/
+ 
+         }
+     }
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/state/ConversationState.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_messaging.presentation.conversation.state\n\nimport android.os.Parcelable\nimport com.example.cyclistance.core.utils.annotations.StableState\nimport com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel\nimport com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel\nimport kotlinx.parcelize.Parcelize\n\n\n@Parcelize\n@StableState\ndata class ConversationState(\n    val userReceiverMessage: MessagingUserItemModel? = null,\n    val userSenderMessage: MessagingUserItemModel? = null,\n    val userUid: String = \"\",\n    val userName: String = \"\",\n    val conversionId: String? = null,\n    val isLoading: Boolean = false,\n    val conversationsModel: ConversationsModel? = null,\n) : Parcelable{\n    fun getReceiverId():String {\n        return userReceiverMessage?.getUid() ?: \"\"\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/state/ConversationState.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/state/ConversationState.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/state/ConversationState.kt	(revision ca02bca67dba7aa2542d1cb7bab2d51ea1aa1e82)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/state/ConversationState.kt	(date 1696300307716)
+@@ -21,4 +21,7 @@
+     fun getReceiverId():String {
+         return userReceiverMessage?.getUid() ?: ""
+     }
++    fun getSenderId():String {
++        return userSenderMessage?.getUid() ?: ""
++    }
+ }
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/conversion/UpdateConversionUseCase.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_messaging.domain.use_case.conversion\n\nimport com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository\n\nclass UpdateConversionUseCase(private val repository: MessagingRepository) {\n    operator fun invoke(message: String, conversionId: String){\n        repository.updateConversion(message = message, conversionId = conversionId)\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/conversion/UpdateConversionUseCase.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/conversion/UpdateConversionUseCase.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/conversion/UpdateConversionUseCase.kt	(revision ca02bca67dba7aa2542d1cb7bab2d51ea1aa1e82)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/domain/use_case/conversion/UpdateConversionUseCase.kt	(date 1696300158760)
+@@ -3,7 +3,7 @@
+ import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
+ 
+ class UpdateConversionUseCase(private val repository: MessagingRepository) {
+-    operator fun invoke(message: String, conversionId: String){
+-        repository.updateConversion(message = message, conversionId = conversionId)
++    operator fun invoke(message: String, conversionId: String, receiverId: String){
++        repository.updateConversion(message = message, conversionId = conversionId, receiverId = receiverId)
+     }
+ }
+\ No newline at end of file
+Index: firestore-debug.log
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>Oct 03, 2023 9:13:54 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://0.0.0.0:38827\nAPI endpoint: http://0.0.0.0:9299\nIf you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\n\n   export FIRESTORE_EMULATOR_HOST=0.0.0.0:9299\n\nDev App Server is now running.\n\nOct 03, 2023 9:14:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:12 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\nOct 03, 2023 9:14:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:14:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:14:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:14:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:14:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:15:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:15:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:15:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:16:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:16:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:17:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:17:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:18:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:18:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:19:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:20:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:20:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:21:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:22:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:22:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:22:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:22:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:22:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:22:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:22:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:23:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:05 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\nOct 03, 2023 9:24:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:06 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\nOct 03, 2023 9:24:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:24:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:25:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:26:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:26:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:26:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:27:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:28:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:29:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:29:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:29:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:30:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:31:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:32:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:38 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\nOct 03, 2023 9:32:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:38 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\nOct 03, 2023 9:32:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:32:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:32:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:33:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:34:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:35:18 AM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException\nWARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.\njava.net.SocketException: Connection reset\n\tat java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:394)\n\tat java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:426)\n\tat io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)\n\tat io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)\n\tat io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)\n\tat io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:151)\n\tat io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722)\n\tat io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658)\n\tat io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584)\n\tat io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496)\n\tat io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:986)\n\tat io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)\n\tat io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)\n\tat java.base/java.lang.Thread.run(Thread.java:833)\n\nOct 03, 2023 9:35:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:36:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:36:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:36:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:37:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:38:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:38:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:39:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:39:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:40:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:41:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:41:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:42:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:43:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:44:06 AM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException\nWARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.\njava.net.SocketException: Connection reset\n\tat java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:394)\n\tat java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:426)\n\tat io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)\n\tat io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)\n\tat io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)\n\tat io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:151)\n\tat io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722)\n\tat io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658)\n\tat io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584)\n\tat io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496)\n\tat io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:986)\n\tat io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)\n\tat io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)\n\tat java.base/java.lang.Thread.run(Thread.java:833)\n\nOct 03, 2023 9:44:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:44:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:45:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:45:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:46:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:47:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:48:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:48:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:49:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:49:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:49:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:50:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:51:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:52:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:52:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:52:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:52:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:52:14 AM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException\nWARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.\njava.net.SocketException: Connection reset\n\tat java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:394)\n\tat java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:426)\n\tat io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)\n\tat io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)\n\tat io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)\n\tat io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:151)\n\tat io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722)\n\tat io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658)\n\tat io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584)\n\tat io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496)\n\tat io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:986)\n\tat io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)\n\tat io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)\n\tat java.base/java.lang.Thread.run(Thread.java:833)\n\nOct 03, 2023 9:52:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 03, 2023 9:52:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:53:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:53:56 AM com.google.cloud.datastore.emulator.impl.util.WrappedStreamObserver onError\nINFO: operation failed: no entity to update: app: \"dev~cyclistance-cc715\"\npath <\n  Element {\n    type: \"conversations\"\n    name: \"5GbAgea6KTmYzPO5zSoq\"\n  }\n>\n\ncom.google.cloud.datastore.core.exception.DatastoreException: no entity to update: app: \"dev~cyclistance-cc715\"\npath <\n  Element {\n    type: \"conversations\"\n    name: \"5GbAgea6KTmYzPO5zSoq\"\n  }\n>\n\n\tat com.google.cloud.datastore.core.exception.DatastoreException.withProblem(DatastoreException.java:184)\n\tat com.google.cloud.datastore.emulator.impl.util.FirestoreEmulatorConverters.checkMutation(FirestoreEmulatorConverters.java:169)\n\tat com.google.cloud.datastore.emulator.impl.CloudFirestoreV1.commitHelper(CloudFirestoreV1.java:967)\n\tat com.google.cloud.datastore.emulator.impl.CloudFirestoreV1.internalCommit(CloudFirestoreV1.java:868)\n\tat com.google.cloud.datastore.emulator.impl.CloudFirestoreV1.internalCommit(CloudFirestoreV1.java:851)\n\tat com.google.cloud.datastore.emulator.impl.CloudFirestoreV1.write(CloudFirestoreV1.java:840)\n\tat com.google.cloud.datastore.emulator.impl.CloudFirestoreV1WriteStream.handleRequest(CloudFirestoreV1WriteStream.java:208)\n\tat com.google.cloud.datastore.emulator.impl.CloudFirestoreV1WriteStream.write(CloudFirestoreV1WriteStream.java:136)\n\tat com.google.cloud.datastore.emulator.impl.CloudFirestoreV1WriteStream.onNext(CloudFirestoreV1WriteStream.java:92)\n\tat com.google.cloud.datastore.emulator.impl.CloudFirestoreV1WriteStream.onNext(CloudFirestoreV1WriteStream.java:25)\n\tat io.grpc.stub.ServerCalls$StreamingServerCallHandler$StreamingServerCallListener.onMessage(ServerCalls.java:262)\n\tat io.grpc.ForwardingServerCallListener.onMessage(ForwardingServerCallListener.java:33)\n\tat io.grpc.Contexts$ContextualizedServerCallListener.onMessage(Contexts.java:76)\n\tat io.grpc.ForwardingServerCallListener.onMessage(ForwardingServerCallListener.java:33)\n\tat io.grpc.Contexts$ContextualizedServerCallListener.onMessage(Contexts.java:76)\n\tat io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.messagesAvailableInternal(ServerCallImpl.java:330)\n\tat io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.messagesAvailable(ServerCallImpl.java:313)\n\tat io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1MessagesAvailable.runInContext(ServerImpl.java:834)\n\tat io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37)\n\tat io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:133)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)\n\tat java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)\n\tat java.base/java.lang.Thread.run(Thread.java:833)\n\nOct 03, 2023 9:54:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:56:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:56:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 03, 2023 9:57:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/firestore-debug.log b/firestore-debug.log
+--- a/firestore-debug.log	(revision ca02bca67dba7aa2542d1cb7bab2d51ea1aa1e82)
++++ b/firestore-debug.log	(date 1696307115360)
+@@ -614,3 +614,1070 @@
+ INFO: Detected non-HTTP/2 connection.
+ Oct 03, 2023 9:57:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
++Oct 03, 2023 9:58:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 9:58:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 9:58:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 9:58:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 9:58:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 9:58:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 9:58:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 9:58:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 9:58:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 9:59:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 9:59:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 9:59:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 9:59:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:00:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:01:01 AM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException
++WARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
++java.net.SocketException: Connection reset
++	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:394)
++	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:426)
++	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)
++	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)
++	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)
++	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:151)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584)
++	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496)
++	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:986)
++	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
++	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
++	at java.base/java.lang.Thread.run(Thread.java:833)
++
++Oct 03, 2023 10:02:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:02:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:03:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:04:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:05:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:05:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:07:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:07:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:08:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:08:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:09:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:09:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:09:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:09:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:10:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:10:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:10:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:11:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:12:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:13:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:13:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:13:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:13:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:13:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:13:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:13:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:13:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:13:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:13:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:13:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:13:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:14:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:14:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:14:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:15:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:15:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:15:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:16:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:16:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:17:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:17:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:18:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:19:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:19:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:19:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:19:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:19:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:19:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:19:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:19:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:19:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:19:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:19:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:20:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:20:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:20:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:21:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:22:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:22:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:22:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:23:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:24:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:24:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:25:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:25:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:26:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:27:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:28:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:30:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:30:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:32:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:33:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:33:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:33:16 AM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException
++WARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
++java.net.SocketException: Connection reset
++	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:394)
++	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:426)
++	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)
++	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)
++	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)
++	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:151)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584)
++	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496)
++	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:986)
++	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
++	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
++	at java.base/java.lang.Thread.run(Thread.java:833)
++
++Oct 03, 2023 10:33:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:34:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:35:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:35:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:35:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:36:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:36:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:36:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:36:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:36:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:36:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:36:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:36:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:36:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:36:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:36:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:36:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:36:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:37:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:37:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:37:19 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
++INFO: Websocket client disconnected
++Oct 03, 2023 10:37:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:37:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:37:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:37:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:37:19 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
++INFO: Connected to new websocket client
++Oct 03, 2023 10:37:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:37:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:37:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:29 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
++INFO: Websocket client disconnected
++Oct 03, 2023 10:38:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:30 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
++INFO: Connected to new websocket client
++Oct 03, 2023 10:38:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:38:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:39:01 AM com.google.cloud.datastore.emulator.impl.util.WrappedStreamObserver onError
++INFO: operation failed: no entity to update: app: "dev~cyclistance-cc715"
++path <
++  Element {
++    type: "conversations"
++    name: "Qg4GAmuym9Qbti6LISPc"
++  }
++>
++
++com.google.cloud.datastore.core.exception.DatastoreException: no entity to update: app: "dev~cyclistance-cc715"
++path <
++  Element {
++    type: "conversations"
++    name: "Qg4GAmuym9Qbti6LISPc"
++  }
++>
++
++	at com.google.cloud.datastore.core.exception.DatastoreException.withProblem(DatastoreException.java:184)
++	at com.google.cloud.datastore.emulator.impl.util.FirestoreEmulatorConverters.checkMutation(FirestoreEmulatorConverters.java:169)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1.commitHelper(CloudFirestoreV1.java:967)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1.internalCommit(CloudFirestoreV1.java:868)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1.internalCommit(CloudFirestoreV1.java:851)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1.write(CloudFirestoreV1.java:840)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1WriteStream.handleRequest(CloudFirestoreV1WriteStream.java:208)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1WriteStream.write(CloudFirestoreV1WriteStream.java:136)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1WriteStream.onNext(CloudFirestoreV1WriteStream.java:92)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1WriteStream.onNext(CloudFirestoreV1WriteStream.java:25)
++	at io.grpc.stub.ServerCalls$StreamingServerCallHandler$StreamingServerCallListener.onMessage(ServerCalls.java:262)
++	at io.grpc.ForwardingServerCallListener.onMessage(ForwardingServerCallListener.java:33)
++	at io.grpc.Contexts$ContextualizedServerCallListener.onMessage(Contexts.java:76)
++	at io.grpc.ForwardingServerCallListener.onMessage(ForwardingServerCallListener.java:33)
++	at io.grpc.Contexts$ContextualizedServerCallListener.onMessage(Contexts.java:76)
++	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.messagesAvailableInternal(ServerCallImpl.java:330)
++	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.messagesAvailable(ServerCallImpl.java:313)
++	at io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1MessagesAvailable.runInContext(ServerImpl.java:834)
++	at io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37)
++	at io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:133)
++	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
++	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
++	at java.base/java.lang.Thread.run(Thread.java:833)
++
++Oct 03, 2023 10:39:01 AM com.google.cloud.datastore.emulator.impl.util.WrappedStreamObserver onError
++INFO: operation failed: no entity to update: app: "dev~cyclistance-cc715"
++path <
++  Element {
++    type: "chats"
++    name: "1hru6j8igMDEqbn7SBMg"
++  }
++>
++
++com.google.cloud.datastore.core.exception.DatastoreException: no entity to update: app: "dev~cyclistance-cc715"
++path <
++  Element {
++    type: "chats"
++    name: "1hru6j8igMDEqbn7SBMg"
++  }
++>
++
++	at com.google.cloud.datastore.core.exception.DatastoreException.withProblem(DatastoreException.java:184)
++	at com.google.cloud.datastore.emulator.impl.util.FirestoreEmulatorConverters.checkMutation(FirestoreEmulatorConverters.java:169)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1.commitHelper(CloudFirestoreV1.java:967)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1.internalCommit(CloudFirestoreV1.java:868)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1.internalCommit(CloudFirestoreV1.java:851)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1.write(CloudFirestoreV1.java:840)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1WriteStream.handleRequest(CloudFirestoreV1WriteStream.java:208)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1WriteStream.write(CloudFirestoreV1WriteStream.java:136)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1WriteStream.onNext(CloudFirestoreV1WriteStream.java:92)
++	at com.google.cloud.datastore.emulator.impl.CloudFirestoreV1WriteStream.onNext(CloudFirestoreV1WriteStream.java:25)
++	at io.grpc.stub.ServerCalls$StreamingServerCallHandler$StreamingServerCallListener.onMessage(ServerCalls.java:262)
++	at io.grpc.ForwardingServerCallListener.onMessage(ForwardingServerCallListener.java:33)
++	at io.grpc.Contexts$ContextualizedServerCallListener.onMessage(Contexts.java:76)
++	at io.grpc.ForwardingServerCallListener.onMessage(ForwardingServerCallListener.java:33)
++	at io.grpc.Contexts$ContextualizedServerCallListener.onMessage(Contexts.java:76)
++	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.messagesAvailableInternal(ServerCallImpl.java:330)
++	at io.grpc.internal.ServerCallImpl$ServerStreamListenerImpl.messagesAvailable(ServerCallImpl.java:313)
++	at io.grpc.internal.ServerImpl$JumpToApplicationThreadServerStreamListener$1MessagesAvailable.runInContext(ServerImpl.java:834)
++	at io.grpc.internal.ContextRunnable.run(ContextRunnable.java:37)
++	at io.grpc.internal.SerializingExecutor.run(SerializingExecutor.java:133)
++	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
++	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
++	at java.base/java.lang.Thread.run(Thread.java:833)
++
++Oct 03, 2023 10:39:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:40:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:40:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:41:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:41:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:41:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:43 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
++INFO: Websocket client disconnected
++Oct 03, 2023 10:41:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:43 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
++INFO: Connected to new websocket client
++Oct 03, 2023 10:41:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:41:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:42:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:42:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:42:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:42:59 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
++INFO: Websocket client disconnected
++Oct 03, 2023 10:42:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:42:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:42:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:42:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:42:59 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
++INFO: Connected to new websocket client
++Oct 03, 2023 10:42:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:42:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:42:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:43:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:43:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:43:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:43:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:44:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:44:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:44:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:44:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:44:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:44:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:44:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:45:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:45:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:45:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:45:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:45:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:46:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:46:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:47:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:47:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:48:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:49:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:49:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:49:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:49:38 AM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException
++WARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
++java.net.SocketException: Connection reset
++	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:394)
++	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:426)
++	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)
++	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)
++	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)
++	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:151)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584)
++	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496)
++	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:986)
++	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
++	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
++	at java.base/java.lang.Thread.run(Thread.java:833)
++
++Oct 03, 2023 10:49:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:51:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:52:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 10:52:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:52:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:54:03 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
++INFO: Websocket client disconnected
++Oct 03, 2023 10:54:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:54:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 10:54:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:14:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:14:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:15:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:15:26 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
++INFO: Connected to new websocket client
++Oct 03, 2023 11:16:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:16:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:17:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:18:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:18:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:19:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:20:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:21:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:21:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:21:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:21:19 AM io.gapi.emulators.netty.TcpProxyHandler$1 operationComplete
++WARNING: Failed to complete operation
++io.netty.channel.StacklessClosedChannelException
++	at io.netty.channel.AbstractChannel$AbstractUnsafe.write(Object, ChannelPromise)(Unknown Source)
++
++Oct 03, 2023 11:21:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:22:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:23:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:24:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:24:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:24:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:25:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:26:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:26:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:27:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:28:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:29:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:30:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:31:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:32:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:33:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:34:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:35:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:35:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:35:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:35:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:35:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:35:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:35:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:36:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:37:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:37:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:38:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:39:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:41:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:42:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:43:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:44:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:45:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:46:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:48:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:48:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:49:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:49:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:50:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:50:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:51:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:51:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:51:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:52:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:53:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:25 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
++INFO: Websocket client disconnected
++Oct 03, 2023 11:54:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:26 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
++INFO: Connected to new websocket client
++Oct 03, 2023 11:54:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:54:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:55:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:56:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:57:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:57:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:57:32 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:57:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:57:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:57:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:58:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:58:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:58:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:58:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:58:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 11:59:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 11:59:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:00:16 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:00:52 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:01:01 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:01:39 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:01:50 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:01:52 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:02:53 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:03:08 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:03:08 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:03:11 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:03:13 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:04:13 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:04:17 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:04:23 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:04:50 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:05:09 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:05:11 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:09 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:30 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:32 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:37 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:39 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:39 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:06:41 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:43 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:45 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:47 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:49 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:51 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:53 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:54 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:55 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:57 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:06:59 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:07:01 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:07:04 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:07:06 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:07:08 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:07:51 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:08:03 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:08:07 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:08:20 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:08:50 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:09:53 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:09:57 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:10:47 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:10:57 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:11:09 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:11:55 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:12:19 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:12:24 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:12:42 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:12:50 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:12:52 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:12:54 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:12:56 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:12:58 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:13:00 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:13:02 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:13:04 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:13:06 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:13:08 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:13:10 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:13:12 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:13:14 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:13:16 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:14:07 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:14:48 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:14:50 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:14:52 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:14:57 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:14:57 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:14:59 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:15:04 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:15:06 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:15:08 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:15:10 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:15:12 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:15:19 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:15:33 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:16:00 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:16:45 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:18:01 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:19:01 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:19:11 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:20:01 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:20:30 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:20:47 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:21:06 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:21:06 PM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException
++WARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
++java.net.SocketException: Connection reset
++	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:394)
++	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:426)
++	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)
++	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)
++	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)
++	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:151)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584)
++	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496)
++	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:986)
++	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
++	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
++	at java.base/java.lang.Thread.run(Thread.java:833)
++
++Oct 03, 2023 12:21:12 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:21:14 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:21:36 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:22:22 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:23:38 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:23:52 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:24:24 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
++Oct 03, 2023 12:24:26 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 03, 2023 12:25:15 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected non-HTTP/2 connection.
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/domain/repository/MessagingRepository.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_messaging.domain.repository\n\nimport com.example.cyclistance.feature_messaging.domain.model.SendMessageModel\nimport com.example.cyclistance.feature_messaging.domain.model.SendNotificationModel\nimport com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel\nimport com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel\nimport com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel\nimport com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel\n\ninterface MessagingRepository {\n\n    suspend fun refreshToken()\n\n    suspend fun deleteToken()\n    fun getUserUid(): String\n\n    fun addUserListener(onNewMessageUser: (MessagingUserModel) -> Unit)\n    fun removeUserListener()\n    suspend fun reEnableNetworkSync()\n\n\n    suspend fun sendMessage(sendMessageModel: SendMessageModel)\n    fun addMessageListener(receiverId: String, onNewMessage: (ConversationsModel) -> Unit)\n    fun removeMessageListener()\n\n    fun addChatListener(onAddedChat: (ChatItemModel) -> Unit, onModifiedChat: (ChatItemModel) -> Unit)\n    fun removeChatListener()\n\n\n    suspend fun getConversionId(receiverId: String): String\n    fun addConversion(receiverId: String, message: String,  onNewConversionId: (String) -> Unit)\n    fun updateConversion(message: String, conversionId: String)\n\n    fun updateUserAvailability(isUserAvailable: Boolean)\n\n    suspend fun sendNotification(model : SendNotificationModel)\n\n    suspend fun getMessagingUser(uid: String): MessagingUserItemModel\n\n    suspend fun markAsSeen(messageId: String, conversionId: String)\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/domain/repository/MessagingRepository.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/domain/repository/MessagingRepository.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_messaging/domain/repository/MessagingRepository.kt	(revision ca02bca67dba7aa2542d1cb7bab2d51ea1aa1e82)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/domain/repository/MessagingRepository.kt	(date 1696299927968)
+@@ -29,7 +29,7 @@
+ 
+     suspend fun getConversionId(receiverId: String): String
+     fun addConversion(receiverId: String, message: String,  onNewConversionId: (String) -> Unit)
+-    fun updateConversion(message: String, conversionId: String)
++    fun updateConversion(message: String, conversionId: String,  receiverId: String,)
+ 
+     fun updateUserAvailability(isUserAvailable: Boolean)
+ 
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetDropDown\">\n    <runningDeviceTargetSelectedWithDropDown>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"SERIAL_NUMBER\" />\n            <value value=\"194a89050404\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </runningDeviceTargetSelectedWithDropDown>\n    <timeTargetWasSelectedWithDropDown value=\"2023-10-03T01:15:08.357799993Z\" />\n    <multipleDevicesSelectedInDropDown value=\"true\" />\n    <runningDeviceTargetsSelectedWithDialog>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"SERIAL_NUMBER\" />\n            <value value=\"194a89050404\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </runningDeviceTargetsSelectedWithDialog>\n    <targetsSelectedWithDialog>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetsSelectedWithDialog>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(revision ca02bca67dba7aa2542d1cb7bab2d51ea1aa1e82)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1696305818378)
+@@ -6,14 +6,13 @@
+         <type value="RUNNING_DEVICE_TARGET" />
+         <deviceKey>
+           <Key>
+-            <type value="SERIAL_NUMBER" />
+-            <value value="194a89050404" />
++            <type value="VIRTUAL_DEVICE_PATH" />
++            <value value="$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd" />
+           </Key>
+         </deviceKey>
+       </Target>
+     </runningDeviceTargetSelectedWithDropDown>
+-    <timeTargetWasSelectedWithDropDown value="2023-10-03T01:15:08.357799993Z" />
+-    <multipleDevicesSelectedInDropDown value="true" />
++    <timeTargetWasSelectedWithDropDown value="2023-10-03T04:03:34.452672824Z" />
+     <runningDeviceTargetsSelectedWithDialog>
+       <Target>
+         <type value="RUNNING_DEVICE_TARGET" />
+Index: app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/ConversationViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_messaging.presentation.conversation\n\nimport androidx.compose.runtime.mutableStateListOf\nimport androidx.lifecycle.SavedStateHandle\nimport androidx.lifecycle.ViewModel\nimport androidx.lifecycle.viewModelScope\nimport com.example.cyclistance.core.list.ListUtils\nimport com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_VM_STATE_KEY\nimport com.example.cyclistance.feature_messaging.domain.model.SendMessageModel\nimport com.example.cyclistance.feature_messaging.domain.model.SendNotificationModel\nimport com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel\nimport com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel\nimport com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase\nimport com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationEvent\nimport com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationVmEvent\nimport com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationState\nimport com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase\nimport dagger.hilt.android.lifecycle.HiltViewModel\nimport kotlinx.coroutines.SupervisorJob\nimport kotlinx.coroutines.flow.MutableSharedFlow\nimport kotlinx.coroutines.flow.MutableStateFlow\nimport kotlinx.coroutines.flow.asSharedFlow\nimport kotlinx.coroutines.flow.asStateFlow\nimport kotlinx.coroutines.flow.update\nimport kotlinx.coroutines.launch\nimport timber.log.Timber\nimport javax.inject.Inject\n\n@HiltViewModel\nclass ConversationViewModel @Inject constructor(\n    private val savedStateHandle: SavedStateHandle,\n    private val messagingUseCase: MessagingUseCase,\n    private val userProfileUseCase: UserProfileUseCase\n) : ViewModel() {\n\n\n    private val _conversationState = mutableStateListOf<ConversationItemModel>()\n    val conversationState: List<ConversationItemModel> = _conversationState\n\n    private val _state = MutableStateFlow(\n        savedStateHandle[CONVERSATION_VM_STATE_KEY] ?: ConversationState())\n\n    val state = _state.asStateFlow()\n\n    private val _event = MutableSharedFlow<ConversationEvent>()\n    val event = _event.asSharedFlow()\n\n\n    private fun initialize(\n        userReceiverMessage: MessagingUserItemModel,\n        userSenderMessage: MessagingUserItemModel) {\n\n        val isInitialized = state.value.userReceiverMessage != null\n        if (isInitialized) {\n            return\n        }\n\n        _state.update {\n            it.copy(\n                userReceiverMessage = userReceiverMessage,\n                userSenderMessage = userSenderMessage)\n        }\n\n        val receiverId = userReceiverMessage.userDetails.uid\n        addMessageListener(receiverId = receiverId)\n        getConversionId(receiverId = receiverId)\n        getUid()\n        getName()\n        saveState()\n    }\n\n    fun onEvent(event: ConversationVmEvent) {\n        when (event) {\n            is ConversationVmEvent.SendMessage -> sendMessage(event.sendMessageModel)\n            is ConversationVmEvent.OnInitialized -> initialize(\n                userReceiverMessage = event.userReceiverMessage,\n                userSenderMessage = event.userSenderMessage)\n            ConversationVmEvent.ResendMessage -> resendMessage()\n            is ConversationVmEvent.MarkAsSeen -> markAsSeen(event.messageId)\n        }\n        saveState()\n    }\n\n\n    private fun markAsSeen(messageId: String) {\n        viewModelScope.launch {\n            state.value.conversionId?.let { conversionId ->\n                messagingUseCase.markAsSeenUseCase(messageId = messageId, conversionId = conversionId)\n            }\n        }\n    }\n\n    private fun saveState() {\n        savedStateHandle[CONVERSATION_VM_STATE_KEY] = state.value\n    }\n\n    private fun resendMessage(){\n        viewModelScope.launch {\n            runCatching {\n                messagingUseCase.reEnableNetworkSyncUseCase()\n            }.onSuccess {\n                Timber.v(\"Success to re-enable network sync\")\n            }.onFailure {\n                _event.emit(value = ConversationEvent.ResendMessageFailed(it.message!!))\n            }\n        }\n    }\n\n    private fun getName() {\n        viewModelScope.launch {\n            runCatching {\n                userProfileUseCase.getNameUseCase()\n            }.onSuccess { name ->\n                _state.update { it.copy(userName = name) }\n            }.onFailure {\n                Timber.v(\"Failed to get name: ${it.message}\")\n            }\n        }\n    }\n\n\n\n    private fun setConversion(message: String) {\n        if (state.value.conversionId == null) {\n            addConversion(message = message)\n            return\n        }\n        updateConversion(message = message)\n    }\n\n    private fun updateConversion(message: String) {\n        val conversionId = state.value.conversionId\n        viewModelScope.launch {\n            runCatching {\n                messagingUseCase.updateConversionUseCase(\n                    message = message,\n                    conversionId = conversionId!!)\n            }.onSuccess {\n                Timber.v(\"Success to update conversion\")\n            }.onFailure {\n                Timber.e(\"Failed to update conversion: ${it.message}\")\n            }\n        }\n    }\n\n    private fun addConversion(message: String) {\n        runCatching {\n            val receiverId = state.value.getReceiverId()\n            messagingUseCase.addConversionUseCase(\n                receiverId = receiverId,\n                message = message,\n                onNewConversionId = { id ->\n                    _state.update { it.copy(conversionId = id) }\n                }\n            )\n        }.onSuccess {\n            Timber.v(\"Success to add conversion\")\n        }.onFailure {\n            Timber.e(\"Failed to add conversion: ${it.message}\")\n        }\n    }\n\n\n    private fun getConversionId(receiverId: String) {\n        viewModelScope.launch {\n            runCatching {\n                messagingUseCase.getConversionIdUseCase(receiverId = receiverId)\n            }.onSuccess { id ->\n                _state.update { it.copy(conversionId = id) }\n            }.onFailure {\n                Timber.e(\"Failed to get conversation id: ${it.message}\")\n            }\n        }\n    }\n\n    private fun getUid() {\n        runCatching {\n            messagingUseCase.getUidUseCase()\n        }.onSuccess { id ->\n            _state.update { it.copy(userUid = id) }\n        }.onFailure {\n            Timber.e(\"Failed to get uid: ${it.message}\")\n        }\n    }\n\n    private fun sendMessage(model: SendMessageModel) {\n        viewModelScope.launch(SupervisorJob()) {\n            setConversion(model.message)\n            messagingUseCase.sendMessageUseCase(model)\n            sendMessageNotification(model.message)\n        }\n    }\n\n    private fun sendMessageNotification(message: String){\n        val userReceiver = state.value.userReceiverMessage\n        val messageUser = state.value.userSenderMessage!!\n        if(userReceiver!!.isUserAvailable){\n            return\n        }\n        viewModelScope.launch {\n            runCatching {\n                messagingUseCase.sendNotificationUseCase(\n                    SendNotificationModel(\n                        userReceiverMessage = userReceiver,\n                        userSenderMessage = messageUser,\n                        senderName = state.value.userName,\n                        message = message\n                    ))\n            }.onSuccess {\n                Timber.v(\"Successfully send message notification\")\n            }.onFailure {\n                Timber.e(\"Failed to send message notification\")\n            }\n        }\n    }\n\n    private fun removeMessageListener() {\n        messagingUseCase.removeMessageListenerUseCase()\n    }\n\n    private fun isLoading(isLoading: Boolean) {\n        _state.update { it.copy(isLoading = isLoading) }\n    }\n\n    private fun addMessageListener(receiverId: String) {\n        viewModelScope.launch {\n            runCatching {\n                isLoading(true)\n                messagingUseCase.addMessageListenerUseCase(\n                    receiverId = receiverId,\n                    onNewMessage = { conversation ->\n                        _conversationState.updateMessages(conversation.messages)\n                        isLoading(false)\n                    })\n            }.onSuccess {\n                Timber.v(\"Success to add message listener\")\n            }.onFailure {\n                isLoading(false)\n                Timber.e(\"Failed to add message listener ${it.message}\")\n            }\n        }\n    }\n\n    private fun MutableList<ConversationItemModel>.updateMessages(apiMessage: List<ConversationItemModel>){\n        val notEqualIndex = zip(apiMessage).indexOfLast { (n1, n2) -> n1.isSent != n2.isSent }\n\n        if(ListUtils.isEqual(first = this, second = apiMessage)){\n            return\n        }\n\n        if(notEqualIndex == -1){\n            clear()\n            addAll(apiMessage)\n            return\n        }\n        set(notEqualIndex, element = apiMessage[notEqualIndex])\n    }\n\n\n\n    override fun onCleared() {\n        super.onCleared()\n        removeMessageListener()\n        _conversationState.clear()\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/ConversationViewModel.kt b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/ConversationViewModel.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/ConversationViewModel.kt	(revision ca02bca67dba7aa2542d1cb7bab2d51ea1aa1e82)
++++ b/app/src/main/java/com/example/cyclistance/feature_messaging/presentation/conversation/ConversationViewModel.kt	(date 1696300457475)
+@@ -130,10 +130,14 @@
+ 
+     private fun updateConversion(message: String) {
+         val conversionId = state.value.conversionId
++        val receiverId = state.value.getReceiverId()
++        val senderId = state.value.getSenderId()
+         viewModelScope.launch {
+             runCatching {
++                Timber.v("Receiver ID: $receiverId | Sender ID: $senderId ")
+                 messagingUseCase.updateConversionUseCase(
+                     message = message,
++                    receiverId =  receiverId,
+                     conversionId = conversionId!!)
+             }.onSuccess {
+                 Timber.v("Success to update conversion")
