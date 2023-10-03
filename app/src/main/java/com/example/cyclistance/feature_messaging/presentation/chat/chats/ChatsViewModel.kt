@@ -10,7 +10,6 @@ import com.example.cyclistance.feature_messaging.domain.model.helper.MessagingUs
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel.Companion.filterWithout
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel.Companion.findUser
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatVmEvent
@@ -126,9 +125,8 @@ class ChatsViewModel @Inject constructor(
 
 
     private suspend fun handleAddChat(chat: ChatItemModel) {
-        val uid = messagingUseCase.getUidUseCase()
         messageUserFlow.collect { messageUser ->
-            val currentChatUser = messageUser.filterWithout(uid).findUser(chat.conversionId)
+            val currentChatUser = messageUser.findUser(chat.conversionId)
             val messagingUserHandler = currentChatUser?.let { foundUser ->
                 MessagingUserHandler(
                     currentChatUser = foundUser,
