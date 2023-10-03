@@ -21,9 +21,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
@@ -49,6 +51,8 @@ fun ChatItem(
     chatState: ChatState,
     onClick: (MessagingUserItemModel) -> Unit) {
 
+    val isReceiver = chatState.messageUserInfo?.getUid() == chatItem.receiverId
+    val isNewMessageUnread = isReceiver && !chatItem.isSeen
 
     Surface(
         onClick = { onClick(user) },
@@ -93,10 +97,12 @@ fun ChatItem(
 
                 Text(
                     text = buildAnnotatedString {
-                        if(chatItem.senderId == chatState.messageUserInfo?.getUid()) {
+                        if (chatItem.senderId == chatState.messageUserInfo?.getUid()) {
                             append("You: ")
                         }
-                        append(chatItem.lastMessage)
+                        withStyle(style = SpanStyle(fontWeight = if (isNewMessageUnread) FontWeight.Bold else FontWeight.Normal)) {
+                            append(chatItem.lastMessage)
+                        }
                     },
                     overflow = TextOverflow.Ellipsis,
                     color = MaterialTheme.colors.onBackground,
@@ -112,8 +118,8 @@ fun ChatItem(
                     alignment = Alignment.CenterVertically),
                 horizontalAlignment = Alignment.End) {
 
-
                 Text(
+                    modifier = Modifier,
                     text = chatItem.timeStamp!!.toReadableDateTime(pattern = "hh:mm a"),
                     color = MaterialTheme.colors.onBackground,
                     style = MaterialTheme.typography.body2.copy(
@@ -121,19 +127,23 @@ fun ChatItem(
                         letterSpacing = TextUnit(0.7f, type = TextUnitType.Sp)))
 
 
-                if (chatItem.isSent) {
+                if (isReceiver) {
+                    return@Column
+                }
 
+                if (chatItem.isSent) {
                     Icon(
-                        painter = painterResource(id = if(chatItem.isSeen) R.drawable.ic_seen else R.drawable.ic_not_seen),
+                        painter = painterResource(id = if (chatItem.isSeen) R.drawable.ic_seen else R.drawable.ic_not_seen),
                         contentDescription = "Sent Icon",
                         modifier = Modifier.size(18.dp))
-                } else {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_not_sent),
-                        contentDescription = "Unsent Icon",
-                        modifier = Modifier.size(18.dp),
-                        tint = MaterialTheme.colors.error)
+                    return@Column
                 }
+
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_not_sent),
+                    contentDescription = "Unsent Icon",
+                    modifier = Modifier.size(18.dp),
+                    tint = MaterialTheme.colors.error)
 
 
             }

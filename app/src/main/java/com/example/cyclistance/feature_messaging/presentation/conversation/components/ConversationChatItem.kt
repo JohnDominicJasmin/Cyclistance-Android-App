@@ -89,9 +89,33 @@ fun ChatItem(
 
         val userAvailable = state.userReceiverMessage?.isUserAvailable
 
-        Row(
+        Column(
+            horizontalAlignment = if (isSender) Alignment.Start else Alignment.End,
+            modifier = Modifier.fillMaxWidth()) {
+
+
+            AnimatedVisibility(
+                visible = timeStampAvailable.and(isSelected),
+                enter = fadeIn() + expandVertically(animationSpec = tween(durationMillis = 320)),
+                exit = fadeOut() + shrinkVertically(animationSpec = tween(durationMillis = 300)),
+                modifier = Modifier.fillMaxWidth()) {
+
+
+                Text(
+                    text = conversation.timestamp!!.toReadableDateTime(pattern = "MMM dd hh:mm a"),
+                    color = MaterialTheme.colors.onBackground,
+                    modifier = Modifier
+                        .wrapContentSize()
+                        .padding(vertical = 6.dp),
+                    style = MaterialTheme.typography.caption.copy(
+                        textAlign = TextAlign.Start))
+            }
+
+
+
+            Row(
             modifier = Modifier,
-            verticalAlignment = Alignment.Bottom,
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center) {
 
             if (isSender) {
@@ -105,27 +129,7 @@ fun ChatItem(
                 )
             }
 
-            Column(
-                horizontalAlignment = if (isSender) Alignment.Start else Alignment.End,
-                modifier = Modifier.fillMaxWidth()) {
 
-
-                AnimatedVisibility(
-                    visible = timeStampAvailable.and(isSelected),
-                    enter = fadeIn() + expandVertically(animationSpec = tween(durationMillis = 320)),
-                    exit = fadeOut() + shrinkVertically(animationSpec = tween(durationMillis = 300)),
-                    modifier = Modifier.fillMaxWidth()) {
-
-
-                    Text(
-                        text = conversation.timestamp!!.toReadableDateTime(pattern = "MMM dd hh:mm a"),
-                        color = MaterialTheme.colors.onBackground,
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(vertical = 6.dp),
-                        style = MaterialTheme.typography.caption.copy(
-                            textAlign = TextAlign.Start))
-                }
 
 
 
@@ -172,7 +176,7 @@ fun ChatItem(
                                     contentDescription = "Arrow Forward",
                                     tint = contentColor,
                                     modifier = Modifier
-                                        .padding(end = 12.dp, bottom = 8.dp)
+                                        .padding(end = 4.dp, bottom = 8.dp)
                                         .size(16.dp))
                             }
 
@@ -190,11 +194,11 @@ fun ChatItem(
                     }
                 }
 
+            }
 
             }
         }
     }
-}
 
 
 @Preview
@@ -240,11 +244,12 @@ fun PreviewChatItemSenderLight() {
                 isInternetAvailable = true,
                 conversation = ConversationItemModel(
                     senderId = "1",
-                    message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
-                              "molestiae quas vel sint commodi repudiandae consequuntur",
+                    message = "i",
                     receiverId = "2",
                     timestamp = Date(),
                     messageId = "1",
+                    isSent = true,
+                    isSeen = true
                 ), onSelectChatMessage = {}, resendMessage = {}, markAsSeen = {}
             )
         }
@@ -298,7 +303,7 @@ fun PreviewChatItemRecipientLight() {
                 isInternetAvailable = true,
                 conversation = ConversationItemModel(
                     senderId = "1",
-                    message = "iniONINOiOOInoinOINoInOinIiniONINOiOOInoinOINoInOinIiniONINOiOOInoinOINoInOinIiniONINOiOOInoinOINoInOinI",
+                    message = "i",
                     receiverId = "2",
                     timestamp = Date(),
                     messageId = "1",
