@@ -130,10 +130,12 @@ class ConversationViewModel @Inject constructor(
 
     private fun updateConversion(message: String) {
         val conversionId = state.value.conversionId
+        val receiverId = state.value.getReceiverId()
         viewModelScope.launch {
             runCatching {
                 messagingUseCase.updateConversionUseCase(
                     message = message,
+                    receiverId =  receiverId,
                     conversionId = conversionId!!)
             }.onSuccess {
                 Timber.v("Success to update conversion")

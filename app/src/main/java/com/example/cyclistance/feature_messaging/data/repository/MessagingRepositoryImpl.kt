@@ -202,13 +202,14 @@ class MessagingRepositoryImpl(
         onNewConversionId: (String) -> Unit) {
 
         val senderId = getUid()
-        fireStore.collection(KEY_COLLECTION_CHATS).add(mapOf(
-            KEY_SENDER_ID to senderId,
-            KEY_RECEIVER_ID to receiverId,
-            KEY_LAST_MESSAGE to message,
-            KEY_TIMESTAMP to Date(),
-            KEY_IS_SEEN to false
-        )
+        fireStore.collection(KEY_COLLECTION_CHATS).add(
+            mapOf(
+                KEY_SENDER_ID to senderId,
+                KEY_RECEIVER_ID to receiverId,
+                KEY_LAST_MESSAGE to message,
+                KEY_TIMESTAMP to Date(),
+                KEY_IS_SEEN to false
+            )
         ).addOnSuccessListener { documentReference ->
             onNewConversionId(documentReference.id)
         }
@@ -216,11 +217,16 @@ class MessagingRepositoryImpl(
     }
 
 
-
-    override fun updateConversion(message: String, conversionId: String) {
+    override fun updateConversion(message: String, conversionId: String, receiverId: String) {
+        val senderId = getUid()
         fireStore.collection(KEY_COLLECTION_CHATS)
             .document(conversionId)
-            .update(KEY_LAST_MESSAGE, message, KEY_TIMESTAMP, Date(), KEY_IS_SEEN, false)
+            .update(
+                KEY_LAST_MESSAGE, message,
+                KEY_TIMESTAMP, Date(),
+                KEY_IS_SEEN, false,
+                KEY_SENDER_ID, senderId,
+                KEY_RECEIVER_ID, receiverId)
             .addOnSuccessListener {
                 Timber.v("Conversion updated successfully")
             }.addOnFailureListener {
@@ -496,6 +502,7 @@ class MessagingRepositoryImpl(
             if (value == null) {
                 throw MessagingExceptions.GetChatsFailure(message = "Cannot get chats, value is null")
             }
+            Timber.v("Chat listener called ${value.documentChanges.size} | ${value.documents.size}")
 
             value.documentChanges.forEach { item ->
 

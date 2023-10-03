@@ -29,7 +29,7 @@ interface MessagingRepository {
 
     suspend fun getConversionId(receiverId: String): String
     fun addConversion(receiverId: String, message: String,  onNewConversionId: (String) -> Unit)
-    fun updateConversion(message: String, conversionId: String)
+    fun updateConversion(message: String, conversionId: String, receiverId: String,)
 
     fun updateUserAvailability(isUserAvailable: Boolean)
 
