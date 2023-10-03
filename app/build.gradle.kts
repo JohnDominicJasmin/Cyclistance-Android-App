@@ -162,25 +162,25 @@ android {
 dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
     implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.compose.ui:ui:1.6.0-alpha01")
-    implementation("androidx.compose.material:material:1.6.0-alpha01")
-    implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
-    implementation("androidx.navigation:navigation-compose:2.7.0")
-    implementation("androidx.compose.material:material-icons-extended:1.5.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.compose.ui:ui:1.6.0-alpha06")
+    implementation("androidx.compose.material:material:1.6.0-alpha06")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.5.2")
+    implementation("androidx.navigation:navigation-compose:2.7.3")
+    implementation("androidx.compose.material:material-icons-extended:1.5.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation("androidx.legacy:legacy-support-v4:1.0.0")
     implementation("com.google.android.material:material:1.9.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("com.google.android.gms:play-services-auth:20.6.0")
     implementation("com.google.android.gms:play-services-maps:18.1.0")
-    implementation("androidx.compose.material:material:1.5.0")
-    implementation("androidx.compose.material3:material3:1.1.1")
+    implementation("androidx.compose.material:material:1.5.2")
+    implementation("androidx.compose.material3:material3:1.1.2")
     implementation("androidx.test.ext:junit-ktx:1.1.5")
-    implementation("androidx.core:core-ktx:1.10.1")
-    implementation("androidx.compose.foundation:foundation:1.4.3")
-    debugImplementation("androidx.compose.ui:ui-tooling:1.5.0")
-    implementation("androidx.compose.compiler:compiler:1.5.1")
+    implementation("androidx.core:core-ktx:1.12.0")
+    implementation("androidx.compose.foundation:foundation:1.5.2")
+    debugImplementation("androidx.compose.ui:ui-tooling:1.5.2")
+    implementation("androidx.compose.compiler:compiler:1.5.3")
     implementation("androidx.constraintlayout:constraintlayout-compose:1.0.1")
 
     //unit test
@@ -212,10 +212,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
 
     // Coroutine Lifecycle Scopes
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
     //leakCanary
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.8.1")
