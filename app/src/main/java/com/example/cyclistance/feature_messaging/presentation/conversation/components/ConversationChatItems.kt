@@ -1,6 +1,5 @@
 package com.example.cyclistance.feature_messaging.presentation.conversation.components
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationUiEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.state.ConversationState
@@ -51,21 +49,13 @@ fun ConversationChatItems(
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)) {
 
+
+
         itemsIndexed(
             items = conversation,
             key = { _, item -> item.messageId }) { index, message ->
 
             val isSender by remember { derivedStateOf { message.senderId != state.userUid } }
-            val timeStampAvailable by remember { derivedStateOf { message.messageDuration != null && message.timestamp != null } }
-
-            AnimatedVisibility(visible = timeStampAvailable) {
-
-                MessagingTimeStamp(
-                    value = message.timestamp!!.toReadableDateTime(),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp))
-            }
 
             ChatItem(
                 modifier = Modifier

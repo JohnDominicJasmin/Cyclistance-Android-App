@@ -102,7 +102,7 @@ fun ChatItem(
 
 
                 Text(
-                    text = conversation.timestamp!!.toReadableDateTime(pattern = "MMM dd hh:mm a"),
+                    text = conversation.timestamp!!,
                     color = MaterialTheme.colors.onBackground,
                     modifier = Modifier
                         .wrapContentSize()
@@ -221,7 +221,7 @@ fun PreviewChatItemSenderDark() {
                     message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                               "molestiae quas vel sint commodi repudiandae consequuntur",
                     receiverId = "2",
-                    timestamp = Date(),
+                    timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
                     messageId = "1",
                 ), resendMessage = {}, onSelectChatMessage = {}, markAsSeen = {})
         }
@@ -246,7 +246,7 @@ fun PreviewChatItemSenderLight() {
                     senderId = "1",
                     message = "i",
                     receiverId = "2",
-                    timestamp = Date(),
+                    timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
                     messageId = "1",
                     isSent = true,
                     isSeen = true
@@ -279,7 +279,7 @@ fun PreviewChatItemRecipientDark() {
                     message = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime mollitia,\n" +
                               "molestiae quas vel sint commodi repudiandae consequuntur",
                     receiverId = "2",
-                    timestamp = Date(),
+                    timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
                     messageId = "1",
                 ), resendMessage = {}, onSelectChatMessage = {}, markAsSeen = {})
         }
@@ -305,7 +305,7 @@ fun PreviewChatItemRecipientLight() {
                     senderId = "1",
                     message = "i",
                     receiverId = "2",
-                    timestamp = Date(),
+                    timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
                     messageId = "1",
                     isSent = true,
                     isSeen = true
