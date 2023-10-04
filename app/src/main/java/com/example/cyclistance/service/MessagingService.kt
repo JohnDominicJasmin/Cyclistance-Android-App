@@ -11,11 +11,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
 import com.example.cyclistance.MainActivity
+import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSAGE
 import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_URI
 import com.example.cyclistance.core.utils.constants.MessagingConstants.NOTIFICATION_ID
-import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_OBJ
-import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_OBJ
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -41,14 +40,12 @@ class MessagingService : FirebaseMessagingService() {
         super.onMessageReceived(message)
 
         val data = message.data
-        val userReceiverMessage = data[RECEIVER_MESSAGE_OBJ]!!
-        val userSenderMessage = data[SENDER_MESSAGE_OBJ]!!
+        val conversationId = data[CONVERSATION_ID]!!
         val name = data[KEY_NAME]!!
         val receivedMessage = data[KEY_MESSAGE] ?: ""
 
 
-        val uri =
-            "$MESSAGING_URI/$RECEIVER_MESSAGE_OBJ=$userSenderMessage&$SENDER_MESSAGE_OBJ=$userReceiverMessage".toUri()
+        val uri =  "$MESSAGING_URI/$CONVERSATION_ID=$conversationId".toUri()
         val clickIntent = Intent(
             Intent.ACTION_VIEW,
             uri,

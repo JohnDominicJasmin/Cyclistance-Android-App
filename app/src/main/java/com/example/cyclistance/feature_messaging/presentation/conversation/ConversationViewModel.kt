@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.list.ListUtils
 import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_VM_STATE_KEY
+import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.SendNotificationModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationEvent
@@ -17,6 +17,7 @@ import com.example.cyclistance.feature_messaging.presentation.conversation.state
 import com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -30,7 +31,8 @@ import javax.inject.Inject
 class ConversationViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val messagingUseCase: MessagingUseCase,
-    private val userProfileUseCase: UserProfileUseCase
+    private val userProfileUseCase: UserProfileUseCase,
+    private val authUseCase: AuthenticationUseCase
 ) : ViewModel() {
 
 
@@ -42,39 +44,65 @@ class ConversationViewModel @Inject constructor(
 
     val state = _state.asStateFlow()
 
-    private val _event = MutableSharedFlow<ConversationEvent>()
-    val event = _event.asSharedFlow()
+    private val _eventFlow = MutableSharedFlow<ConversationEvent>()
+    val event = _eventFlow.asSharedFlow()
 
 
     private fun initialize(
-        userReceiverMessage: MessagingUserItemModel,
-        userSenderMessage: MessagingUserItemModel) {
-
-        val isInitialized = state.value.userReceiverMessage != null
-        if (isInitialized) {
-            return
-        }
-
-        _state.update {
-            it.copy(
-                userReceiverMessage = userReceiverMessage,
-                userSenderMessage = userSenderMessage)
-        }
-
-        val receiverId = userReceiverMessage.userDetails.uid
-        addMessageListener(receiverId = receiverId)
-        getConversionId(receiverId = receiverId)
+        userReceiverId: String,
+    ) {
+        loadConversationSelected(receiverId = userReceiverId)
+        addMessageListener(receiverId = userReceiverId)
+        getConversionId(receiverId = userReceiverId)
         getUid()
         getName()
         saveState()
     }
 
+    private fun getId(): String = authUseCase.getIdUseCase()
+
+    private fun loadConversationSelected(receiverId: String) {
+        viewModelScope.launch {
+            runCatching {
+
+                val sender = async {
+                    if (state.value.userSenderMessage == null) {
+                        messagingUseCase.getMessagingUserUseCase(uid = getId())
+                    } else {
+                        state.value.userSenderMessage
+                    }
+                }.await()
+
+                val receiver = async {
+                    if (state.value.userReceiverMessage?.userDetails?.uid != receiverId) {
+                        messagingUseCase.getMessagingUserUseCase(uid = receiverId)
+                    } else {
+                        state.value.userReceiverMessage
+                    }
+                }.await()
+
+                _state.update {
+                    it.copy(
+                        userSenderMessage = sender,
+                        userReceiverMessage = receiver
+                    )
+                }
+                _eventFlow.emit(
+                    value = ConversationEvent.LoadConversationSuccess(
+                        message = receiver!!
+                    ))
+            }.onSuccess {
+                Timber.v("Messaging User Success")
+            }.onFailure {
+                Timber.e("Messaging User Error: ${it.localizedMessage}")
+            }
+        }
+    }
+
     fun onEvent(event: ConversationVmEvent) {
         when (event) {
             is ConversationVmEvent.SendMessage -> sendMessage(event.sendMessageModel)
-            is ConversationVmEvent.OnInitialized -> initialize(
-                userReceiverMessage = event.userReceiverMessage,
-                userSenderMessage = event.userSenderMessage)
+            is ConversationVmEvent.OnInitialized -> initialize(userReceiverId = event.userReceiverId)
             ConversationVmEvent.ResendMessage -> resendMessage()
             is ConversationVmEvent.MarkAsSeen -> markAsSeen(event.messageId)
         }
@@ -85,7 +113,9 @@ class ConversationViewModel @Inject constructor(
     private fun markAsSeen(messageId: String) {
         viewModelScope.launch {
             state.value.conversionId?.let { conversionId ->
-                messagingUseCase.markAsSeenUseCase(messageId = messageId, conversionId = conversionId)
+                messagingUseCase.markAsSeenUseCase(
+                    messageId = messageId,
+                    conversionId = conversionId)
             }
         }
     }
@@ -94,14 +124,14 @@ class ConversationViewModel @Inject constructor(
         savedStateHandle[CONVERSATION_VM_STATE_KEY] = state.value
     }
 
-    private fun resendMessage(){
+    private fun resendMessage() {
         viewModelScope.launch {
             runCatching {
                 messagingUseCase.reEnableNetworkSyncUseCase()
             }.onSuccess {
                 Timber.v("Success to re-enable network sync")
             }.onFailure {
-                _event.emit(value = ConversationEvent.ResendMessageFailed(it.message!!))
+                _eventFlow.emit(value = ConversationEvent.ResendMessageFailed(it.message!!))
             }
         }
     }
@@ -119,7 +149,6 @@ class ConversationViewModel @Inject constructor(
     }
 
 
-
     private fun setConversion(message: String) {
         if (state.value.conversionId == null) {
             addConversion(message = message)
@@ -135,7 +164,7 @@ class ConversationViewModel @Inject constructor(
             runCatching {
                 messagingUseCase.updateConversionUseCase(
                     message = message,
-                    receiverId =  receiverId,
+                    receiverId = receiverId,
                     conversionId = conversionId!!)
             }.onSuccess {
                 Timber.v("Success to update conversion")
@@ -193,20 +222,19 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    private fun sendMessageNotification(message: String){
-        val userReceiver = state.value.userReceiverMessage
-        val messageUser = state.value.userSenderMessage!!
-        if(userReceiver!!.isUserAvailable){
+    private fun sendMessageNotification(message: String) {
+        val userReceiver = state.value
+        if (userReceiver.isReceiverAvailable()) {
             return
         }
         viewModelScope.launch {
             runCatching {
                 messagingUseCase.sendNotificationUseCase(
                     SendNotificationModel(
-                        userReceiverMessage = userReceiver,
-                        userSenderMessage = messageUser,
+                        conversationId = state.value.userSenderMessage!!.getUid(),
                         senderName = state.value.userName,
-                        message = message
+                        message = message,
+                        userReceiverToken = userReceiver.getReceiverToken()
                     ))
             }.onSuccess {
                 Timber.v("Successfully send message notification")
@@ -243,21 +271,20 @@ class ConversationViewModel @Inject constructor(
         }
     }
 
-    private fun MutableList<ConversationItemModel>.updateMessages(apiMessage: List<ConversationItemModel>){
+    private fun MutableList<ConversationItemModel>.updateMessages(apiMessage: List<ConversationItemModel>) {
         val notEqualIndex = zip(apiMessage).indexOfLast { (n1, n2) -> n1.isSent != n2.isSent }
 
-        if(ListUtils.isEqual(first = this, second = apiMessage)){
+        if (ListUtils.isEqual(first = this, second = apiMessage)) {
             return
         }
 
-        if(notEqualIndex == -1){
+        if (notEqualIndex == -1) {
             clear()
             addAll(apiMessage)
             return
         }
         set(notEqualIndex, element = apiMessage[notEqualIndex])
     }
-
 
 
     override fun onCleared() {

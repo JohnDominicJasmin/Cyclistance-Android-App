@@ -17,7 +17,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel.Companion.toJsonString
 import com.example.cyclistance.feature_messaging.presentation.search_user.components.SearchUserContent
 import com.example.cyclistance.feature_messaging.presentation.search_user.event.SearchUserUiEvent
 import com.example.cyclistance.navigation.Screens
@@ -44,12 +43,9 @@ fun SearchUserScreen(
     val onSelectConversation = remember {
         { selectedUser: MessagingUserItemModel ->
 
-            val user = state.messageUserInfo
             navController.navigateScreen(
                 route = Screens.MessagingNavigation.Conversation.passArgument(
-                    receiverMessageUser =  selectedUser.toJsonString(),
-                    senderMessageUser = user!!.toJsonString()
-
+                    receiverMessageId =  selectedUser.getUid()
                 )
             )
 

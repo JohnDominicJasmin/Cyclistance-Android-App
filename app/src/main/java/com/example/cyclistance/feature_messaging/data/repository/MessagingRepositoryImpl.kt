@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_messaging.data.repository
 import android.content.Context
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
+import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_AVAILABILITY
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_COLLECTION_CHATS
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_CONVERSATIONS_COLLECTION
@@ -13,11 +14,9 @@ import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSA
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_RECEIVER_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_SENDER_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_TIMESTAMP
-import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_OBJ
 import com.example.cyclistance.core.utils.constants.MessagingConstants.REMOTE_MSG_DATA
 import com.example.cyclistance.core.utils.constants.MessagingConstants.REMOTE_MSG_REGISTRATION_IDS
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SAVED_TOKEN
-import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_OBJ
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME
 import com.example.cyclistance.core.utils.constants.UtilConstants.USER_COLLECTION
 import com.example.cyclistance.core.utils.contexts.dataStore
@@ -33,7 +32,6 @@ import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.SendNotificationModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel.Companion.toJsonString
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
@@ -378,12 +376,11 @@ class MessagingRepositoryImpl(
 
     override suspend fun sendNotification(model: SendNotificationModel) {
 
-        val tokens = JSONArray().put(model.userReceiverMessage.fcmToken)
+        val tokens = JSONArray().put(model.userReceiverToken)
         val data = JSONObject().apply {
             put(KEY_NAME, model.senderName)
             put(KEY_MESSAGE, model.message)
-            put(RECEIVER_MESSAGE_OBJ, model.userReceiverMessage.toJsonString())
-            put(SENDER_MESSAGE_OBJ, model.userSenderMessage.toJsonString())
+            put(CONVERSATION_ID, model.conversationId)
         }
 
         val body = JSONObject().apply {

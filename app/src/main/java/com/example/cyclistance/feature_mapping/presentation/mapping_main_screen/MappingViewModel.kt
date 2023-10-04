@@ -43,7 +43,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -520,7 +519,6 @@ class MappingViewModel @Inject constructor(
                 )
             }
 
-            is MappingVmEvent.LoadConversationSelected -> loadConversationSelected(receiverId = event.id)
             is MappingVmEvent.CancelRespondHelp -> cancelRespondToHelp(respondentId = event.id)
             MappingVmEvent.RescuerArrived -> rescuerArrived()
         }
@@ -550,44 +548,6 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-    private fun loadConversationSelected(receiverId: String) {
-        viewModelScope.launch {
-            runCatching {
-
-                val sender = async {
-                    if (state.value.userSenderMessage == null) {
-                        messagingUseCase.getMessagingUserUseCase(uid = getId())
-                    } else {
-                        state.value.userSenderMessage
-                    }
-                }.await()
-
-                val receiver = async {
-                    if(state.value.userReceiverMessage?.userDetails?.uid != receiverId){
-                        messagingUseCase.getMessagingUserUseCase(uid = receiverId)
-                    }else{
-                        state.value.userReceiverMessage
-                    }
-                }.await()
-
-                _state.update {
-                    it.copy(
-                        userSenderMessage = sender,
-                        userReceiverMessage = receiver
-                    )
-                }
-                _eventFlow.emit(value = MappingEvent.LoadConversationSuccess(
-                    userSenderMessage = sender!!,
-                    userReceiverMessage = receiver!!
-                ))
-
-            }.onSuccess {
-                Timber.v("Messaging User Success")
-            }.onFailure {
-                Timber.e("Messaging User Error: ${it.localizedMessage}")
-            }
-        }
-    }
 
     private fun updateReportedIncident(marker: HazardousLaneMarker) {
         viewModelScope.launch {

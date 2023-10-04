@@ -52,7 +52,6 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.changeToNormalPuckIcon
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.openNavigationApp
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MarkerSnippet
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel.Companion.toJsonString
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -519,10 +518,11 @@ fun MappingScreen(
 
     val onClickChatButton = remember(state.rescueTransaction, state.user.getRole()) {
         {
+            navController.navigateScreen(
+                route = Screens.MessagingNavigation.Conversation.passArgument(
+                    receiverMessageId = getConversationSelectedId())
+            )
 
-            mappingViewModel.onEvent(event = MappingVmEvent.LoadConversationSelected(
-                id = getConversationSelectedId()
-            ))
         }
     }
 
@@ -1176,15 +1176,6 @@ fun MappingScreen(
                     uiState = uiState.copy(
                         generateRouteFailed = true
                     )
-                }
-                is MappingEvent.LoadConversationSuccess -> {
-                    navController.navigateScreen(
-                        route = Screens.MessagingNavigation.Conversation.passArgument(
-                            receiverMessageUser = event.userReceiverMessage.toJsonString(),
-                            senderMessageUser = event.userSenderMessage.toJsonString()
-                        )
-                    )
-
                 }
 
                 MappingEvent.CancelRespondSuccess -> {

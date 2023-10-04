@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MessagingConstants.SEARCH_USER_VM_STATE_KEY
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel.Companion.filterWithout
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel.Companion.findUser
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.example.cyclistance.feature_messaging.presentation.search_user.state.SearchUserState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -39,7 +38,6 @@ class SearchUserViewModel @Inject constructor(
                     _state.update {
                         it.copy(
                             messagingUsers = model.filterWithout(uid),
-                            messageUserInfo = model.findUser(uid)
                         )
                     }
                 })
