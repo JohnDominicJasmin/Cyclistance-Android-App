@@ -127,24 +127,24 @@ fun ChatItem(
                         letterSpacing = TextUnit(0.7f, type = TextUnitType.Sp)))
 
 
-                if (isReceiver) {
-                    return@Column
+                if (!isReceiver) {
+
+
+                    if (chatItem.isSent) {
+                        Icon(
+                            painter = painterResource(id = if (chatItem.isSeen) R.drawable.ic_seen else R.drawable.ic_not_seen),
+                            contentDescription = "Sent Icon",
+                            modifier = Modifier.size(18.dp))
+                    }else {
+
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_not_sent),
+                            contentDescription = "Unsent Icon",
+                            modifier = Modifier.size(18.dp),
+                            tint = MaterialTheme.colors.error)
+                    }
+
                 }
-
-                if (chatItem.isSent) {
-                    Icon(
-                        painter = painterResource(id = if (chatItem.isSeen) R.drawable.ic_seen else R.drawable.ic_not_seen),
-                        contentDescription = "Sent Icon",
-                        modifier = Modifier.size(18.dp))
-                    return@Column
-                }
-
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_not_sent),
-                    contentDescription = "Unsent Icon",
-                    modifier = Modifier.size(18.dp),
-                    tint = MaterialTheme.colors.error)
-
 
             }
         }
@@ -228,4 +228,5 @@ fun PreviewChatItemLight() {
     }
 
 }
+
 
