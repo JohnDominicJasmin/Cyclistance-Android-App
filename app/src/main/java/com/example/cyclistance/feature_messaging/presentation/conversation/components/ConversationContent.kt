@@ -30,6 +30,7 @@ import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.Dial
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
 import com.example.cyclistance.core.utils.composable_utils.keyboardAsState
 import com.example.cyclistance.core.utils.composable_utils.noRippleClickable
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.MessageDuration
@@ -211,7 +212,7 @@ private val fakeConversationsModel = ConversationsModel(
             senderId = "gfjltEWoLYZ5sQ80bSAL5zljiIS7",
             receiverId = "f80O4Y2BtrqIicuHTgjIYQ06AIPH",
             message = "Hello",
-            timestamp = Date(),
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
             messageDuration = MessageDuration.OneDay,
 
             ),
@@ -220,21 +221,21 @@ private val fakeConversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "How are you?",
-            timestamp = Date()
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
         ),
         ConversationItemModel(
             messageId = "14",
             senderId = "1",
             receiverId = "2",
             message = "I'm fine, thanks",
-            timestamp = Date()
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
         ),
         ConversationItemModel(
             messageId = "15",
             senderId = "1",
             receiverId = "2",
             message = "How about you?",
-            timestamp = Date(),
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
             messageDuration = MessageDuration.OneMonth
         ),
         ConversationItemModel(
@@ -242,7 +243,7 @@ private val fakeConversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "I'm fine too",
-            timestamp = Date(),
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
             messageDuration = MessageDuration.OneHour
         ),
         ConversationItemModel(
@@ -250,7 +251,7 @@ private val fakeConversationsModel = ConversationsModel(
             senderId = "1",
             receiverId = "2",
             message = "Good to hear that",
-            timestamp = Date()
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
         ),
         ConversationItemModel(
             messageId = "18",
@@ -260,49 +261,49 @@ private val fakeConversationsModel = ConversationsModel(
                     "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                     "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                     "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timestamp = Date()
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
         ),
         ConversationItemModel(
             messageId = "19357846457",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            timestamp = Date()
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
         ),
         ConversationItemModel(
             messageId = "23457570",
             senderId = "2",
             receiverId = "1",
             message = "Sure",
-            timestamp = Date()
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
         ),
         ConversationItemModel(
             messageId = "19",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            timestamp = Date()
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
         ),
         ConversationItemModel(
             messageId = "23453450",
             senderId = "2",
             receiverId = "1",
             message = "Sure",
-            timestamp = Date()
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
         ),
         ConversationItemModel(
             messageId = "194533467",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            timestamp = Date()
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
         ),
         ConversationItemModel(
             messageId = "203223",
             senderId = "2",
             receiverId = "1",
             message = "Sure asdasdasd",
-            timestamp = Date()
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
         ),
         ConversationItemModel(
             messageId = "18553",
@@ -312,7 +313,7 @@ private val fakeConversationsModel = ConversationsModel(
                     "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                     "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                     "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timestamp = Date()
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
         ),
         ConversationItemModel(
             messageId = "2546718",
@@ -322,7 +323,7 @@ private val fakeConversationsModel = ConversationsModel(
                     "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                     "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                     "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timestamp = Date()
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
         ),
     )
 )

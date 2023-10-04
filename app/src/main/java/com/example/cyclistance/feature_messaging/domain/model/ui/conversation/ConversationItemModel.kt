@@ -3,7 +3,6 @@ package com.example.cyclistance.feature_messaging.domain.model.ui.conversation
 import android.os.Parcelable
 import com.example.cyclistance.core.utils.annotations.StableState
 import kotlinx.parcelize.Parcelize
-import java.util.Date
 
 
 @StableState
@@ -13,7 +12,7 @@ data class ConversationItemModel(
     val senderId: String,
     val receiverId: String,
     val message: String,
-    val timestamp: Date? = null,
+    val timestamp: String? = null,
     val messageDuration: MessageDuration? = null,
     val isSent : Boolean = false,
     val isSeen: Boolean = false
