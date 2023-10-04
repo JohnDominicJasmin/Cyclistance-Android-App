@@ -10,7 +10,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel.Companion.toJsonString
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.components.ChatScreenContent
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatUiEvent
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.event.ChatVmEvent
@@ -28,14 +27,13 @@ fun ChatsScreen(
     val chatState = viewModel.chatsState.distinctBy { it.second.conversionId }
 
 
-    val onSelectConversation = remember(state.messageUserInfo) {
+    val onSelectConversation = remember() {
         { selectedUser: MessagingUserItemModel ->
 
-            val user = state.messageUserInfo
             navController.navigateScreen(
                 route = Screens.MessagingNavigation.Conversation.passArgument(
-                    receiverMessageUser = selectedUser.toJsonString(),
-                    senderMessageUser = user!!.toJsonString()
+                    receiverMessageId = selectedUser.getUid(),
+
                 )
             )
         }

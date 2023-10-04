@@ -29,7 +29,9 @@ class ChatsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val messagingUseCase: MessagingUseCase) : ViewModel() {
 
-    private val _state = MutableStateFlow(savedStateHandle[MESSAGING_VM_STATE_KEY] ?: ChatState())
+    private val _state = MutableStateFlow(savedStateHandle[MESSAGING_VM_STATE_KEY] ?: ChatState(
+        userId = messagingUseCase.getUidUseCase()
+    ))
     val state = _state.asStateFlow()
 
     private val messageUserFlow = MutableStateFlow(MessagingUserModel())
@@ -41,7 +43,6 @@ class ChatsViewModel @Inject constructor(
     init {
         refreshToken()
         initializeListener()
-        getMessageUserInfo()
         saveState()
     }
 
@@ -57,18 +58,6 @@ class ChatsViewModel @Inject constructor(
         }
     }
 
-    private fun getMessageUserInfo(){
-        viewModelScope.launch {
-            runCatching {
-                val uid = messagingUseCase.getUidUseCase()
-                messagingUseCase.getMessagingUserUseCase(uid = uid)
-            }.onSuccess { messageUser ->
-                _state.update { it.copy(messageUserInfo = messageUser) }
-            }.onFailure {
-                Timber.e("Failed to retrieve chats ${it.message}")
-            }
-        }
-    }
 
 
     private fun isLoading(isLoading: Boolean) {

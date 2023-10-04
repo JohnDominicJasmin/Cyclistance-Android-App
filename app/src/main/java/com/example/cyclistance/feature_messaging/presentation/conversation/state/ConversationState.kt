@@ -21,4 +21,10 @@ data class ConversationState(
     fun getReceiverId():String {
         return userReceiverMessage?.getUid() ?: ""
     }
+    fun isReceiverAvailable():Boolean {
+        return userReceiverMessage!!.isUserAvailable
+    }
+    fun getReceiverToken(): String{
+        return userReceiverMessage?.fcmToken!!
+    }
 }

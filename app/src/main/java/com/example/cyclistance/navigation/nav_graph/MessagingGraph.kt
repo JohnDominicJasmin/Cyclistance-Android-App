@@ -6,15 +6,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
+import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_ID
 import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_URI
-import com.example.cyclistance.core.utils.constants.MessagingConstants.RECEIVER_MESSAGE_OBJ
-import com.example.cyclistance.core.utils.constants.MessagingConstants.SENDER_MESSAGE_OBJ
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.chat.chats.ChatsScreen
 import com.example.cyclistance.feature_messaging.presentation.conversation.ConversationScreen
 import com.example.cyclistance.feature_messaging.presentation.search_user.SearchUserScreen
 import com.example.cyclistance.navigation.Screens
-import com.google.gson.Gson
 
 
 fun NavGraphBuilder.messagingGraph(
@@ -48,20 +46,16 @@ fun NavGraphBuilder.messagingGraph(
             deepLinks = listOf(
                 navDeepLink {
                     uriPattern =
-                        "$MESSAGING_URI/$RECEIVER_MESSAGE_OBJ={$RECEIVER_MESSAGE_OBJ}&$SENDER_MESSAGE_OBJ={$SENDER_MESSAGE_OBJ}"
+                        "$MESSAGING_URI/${CONVERSATION_ID}={${CONVERSATION_ID}}"
                 })) {
 
             val arguments = it.arguments!!
-            val userReceiverObject = arguments.getString(RECEIVER_MESSAGE_OBJ)
-            val userSenderObject = arguments.getString(SENDER_MESSAGE_OBJ)
-            val userReceiverMessage = Gson().fromJson(userReceiverObject, MessagingUserItemModel::class.java)
-            val userSenderMessage = Gson().fromJson(userSenderObject, MessagingUserItemModel::class.java)
+            val receiverId = arguments.getString(CONVERSATION_ID)!!
 
             ConversationScreen(
                 navController = navController,
                 paddingValues = paddingValues,
-                userReceiverMessage = userReceiverMessage,
-                userSenderMessage = userSenderMessage,
+                userReceiverId = receiverId,
                 newConversationDetails = newConversationDetails,
                 isInternetAvailable = isInternetAvailable
             )

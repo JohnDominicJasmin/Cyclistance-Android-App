@@ -51,7 +51,7 @@ fun ChatItem(
     chatState: ChatState,
     onClick: (MessagingUserItemModel) -> Unit) {
 
-    val isReceiver = chatState.messageUserInfo?.getUid() == chatItem.receiverId
+    val isReceiver = chatState.userId == chatItem.receiverId
     val isNewMessageUnread = isReceiver && !chatItem.isSeen
 
     Surface(
@@ -97,7 +97,7 @@ fun ChatItem(
 
                 Text(
                     text = buildAnnotatedString {
-                        if (chatItem.senderId == chatState.messageUserInfo?.getUid()) {
+                        if (chatItem.senderId == chatState.userId) {
                             append("You: ")
                         }
                         withStyle(style = SpanStyle(fontWeight = if (isNewMessageUnread) FontWeight.Bold else FontWeight.Normal)) {

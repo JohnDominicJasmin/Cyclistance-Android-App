@@ -40,8 +40,8 @@ fun ConversationScreen(
     viewModel: ConversationViewModel = hiltViewModel(),
     navController: NavController,
     paddingValues: PaddingValues,
-    userReceiverMessage: MessagingUserItemModel,
-    userSenderMessage: MessagingUserItemModel,
+    userReceiverId: String,
+
     newConversationDetails: (MessagingUserItemModel) -> Unit,
     isInternetAvailable: Boolean
 ) {
@@ -165,14 +165,10 @@ fun ConversationScreen(
     }}
 
 
-    LaunchedEffect(key1 = userReceiverMessage){
+    LaunchedEffect(key1 = userReceiverId){
 
         viewModel.onEvent(
-            event = ConversationVmEvent.OnInitialized(
-                userReceiverMessage = userReceiverMessage,
-                userSenderMessage = userSenderMessage))
-
-        newConversationDetails(userReceiverMessage)
+            event = ConversationVmEvent.OnInitialized(userReceiverId = userReceiverId))
     }
 
 
@@ -182,6 +178,10 @@ fun ConversationScreen(
 
                 is ConversationEvent.ResendMessageFailed -> {
                     Toast.makeText(context, "Resend failed", Toast.LENGTH_SHORT).show()
+                }
+
+                is ConversationEvent.LoadConversationSuccess -> {
+                    newConversationDetails(event.message)
                 }
             }
         }
