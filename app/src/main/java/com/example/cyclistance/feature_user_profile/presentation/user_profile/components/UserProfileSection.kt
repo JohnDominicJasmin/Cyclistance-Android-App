@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.outlined.DirectionsBike
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material.icons.outlined.Message
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,7 +37,6 @@ fun UserProfileSection(
     modifier: Modifier = Modifier,
     state: UserProfileState,
     onClickEditProfile: () -> Unit,
-    onClickMessageProfile: () -> Unit,
 ) {
 
 
@@ -106,7 +104,9 @@ fun UserProfileSection(
                 Row(
                     modifier = Modifier,
                     verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterHorizontally)) {
+                    horizontalArrangement = Arrangement.spacedBy(
+                        8.dp,
+                        alignment = Alignment.CenterHorizontally)) {
                     Icon(
                         imageVector = Icons.Outlined.LocationOn,
                         contentDescription = "User Address",
@@ -125,7 +125,9 @@ fun UserProfileSection(
                 Row(
                     modifier = Modifier.padding(top = 4.dp),
                     verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.CenterHorizontally)) {
+                    horizontalArrangement = Arrangement.spacedBy(
+                        8.dp,
+                        alignment = Alignment.CenterHorizontally)) {
                     Icon(
                         imageVector = Icons.Outlined.DirectionsBike,
                         contentDescription = "User Bike Group",
@@ -136,7 +138,7 @@ fun UserProfileSection(
                         style = MaterialTheme.typography.body2,
                         overflow = TextOverflow.Ellipsis,
                         maxLines = 2
-                        )
+                    )
                 }
             }
 
@@ -145,9 +147,10 @@ fun UserProfileSection(
 
 
 
-        Column(modifier = Modifier
-            .wrapContentSize(align = Alignment.TopEnd)
-            .weight(0.2f)) {
+        Column(
+            modifier = Modifier
+                .wrapContentSize(align = Alignment.TopEnd)
+                .weight(0.2f)) {
 
             val isYourProfile = state.userId == state.profileSelectedId
             if (isYourProfile) {
@@ -161,21 +164,9 @@ fun UserProfileSection(
                         .padding(all = 8.dp)
                         .wrapContentSize(align = Alignment.TopCenter))
             }
-
-            if (!isYourProfile) {
-                Icon(
-                    imageVector = Icons.Outlined.Message,
-                    contentDescription = "Message Profile",
-                    tint = MaterialTheme.colors.primary,
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .clickable { onClickMessageProfile() }
-                        .padding(all = 8.dp)
-                        .wrapContentSize(align = Alignment.BottomCenter))
-
-            }
         }
 
 
     }
+
 }

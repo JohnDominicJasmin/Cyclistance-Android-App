@@ -32,7 +32,6 @@ import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.SendNotificationModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
@@ -135,29 +134,6 @@ class MessagingRepositoryImpl(
     }
 
 
-    override fun addChatListener(
-        onAddedChat: (ChatItemModel) -> Unit,
-        onModifiedChat: (ChatItemModel) -> Unit
-    ) {
-        val userId = getUid()
-
-        chatListener = fireStore.collection(KEY_COLLECTION_CHATS)
-            .where(
-                Filter.or(
-                    Filter.equalTo(KEY_RECEIVER_ID, userId),
-                    Filter.equalTo(KEY_SENDER_ID, userId)
-                )
-            )
-            .orderBy(KEY_TIMESTAMP, Query.Direction.ASCENDING)
-            .addSnapshotListener(
-                MetadataChanges.INCLUDE,
-                chatListener(
-                    onAddedChat = onAddedChat,
-                    onModifiedChat = onModifiedChat
-                )
-            )
-
-    }
 
     override suspend fun getConversionId(receiverId: String): String {
         val userId = getUid()
@@ -275,35 +251,6 @@ class MessagingRepositoryImpl(
         }
     }
 
-    override fun addUserListener(onNewMessageUser: (MessagingUserModel) -> Unit) {
-
-        messageUserListener = fireStore.collection(USER_COLLECTION)
-            .addSnapshotListener(MetadataChanges.INCLUDE) { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
-                if (value == null) {
-                    throw MessagingExceptions.GetMessageUsersFailure(message = "Cannot get message users, value is null")
-                }
-                if (error != null) {
-                    throw MessagingExceptions.GetMessageUsersFailure(
-                        message = error.message ?: "Unknown error occurred"
-                    )
-                }
-
-                val users = value.documentChanges.map {
-                    it.document.toMessageUser()
-                }
-
-                if (users.isNotEmpty()) {
-                    onNewMessageUser(
-                        MessagingUserModel(
-                            users = users
-                        )
-                    )
-                }
-
-            }
-
-
-    }
 
     override fun updateUserAvailability(isUserAvailable: Boolean) {
         val uid = getUid()
@@ -319,14 +266,6 @@ class MessagingRepositoryImpl(
 
     override fun removeMessageListener() {
         messageListener?.remove()
-    }
-
-    override fun removeUserListener() {
-        messageUserListener?.remove()
-    }
-
-    override fun removeChatListener() {
-        chatListener?.remove()
     }
 
     override suspend fun sendMessage(sendMessageModel: SendMessageModel) {

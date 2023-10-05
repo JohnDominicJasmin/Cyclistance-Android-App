@@ -45,8 +45,6 @@ sealed class Screens {
             const val ROUTE = "messaging_navigation"
         }
 
-        object Chats : MessagingNavigation(screenRoute = "chat_screen")
-        object SearchUser : MessagingNavigation(screenRoute = "search_user_screen")
         object Conversation :
             MessagingNavigation(screenRoute = "conversation_screen/{${CONVERSATION_ID}}") {
             fun passArgument(receiverMessageId: String) =

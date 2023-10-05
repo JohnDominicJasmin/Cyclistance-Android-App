@@ -28,7 +28,6 @@ fun NoInternetStatusBar(internetAvailable: Boolean, route: String?) {
             Screens.RescueRecordNavigation.RideHistory.screenRoute,
             Screens.RescueRecordNavigation.RideHistoryDetails.screenRoute,
             Screens.EmergencyCallNavigation.EmergencyCall.screenRoute,
-            Screens.MessagingNavigation.SearchUser.screenRoute
         )
         route !in nonShowableScreens
     }

@@ -45,7 +45,6 @@ fun NavigationDrawerContent(
     onClickEmergencyCall: () -> Unit = {},
     onClickSettings: () -> Unit = {},
     onClickRideHistory: () -> Unit = {},
-    onClickChat: () -> Unit = {},
     onClickSignOut: () -> Unit = {},
     onClickUserProfile: () -> Unit = {},
     uiState: NavUiState = NavUiState()
@@ -134,17 +133,6 @@ fun NavigationDrawerContent(
                 buttonText = "Ride History",
                 onClick = onClickRideHistory)
 
-
-            DrawerContentButtonItem(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                iconId = R.drawable.ic_baseline_chat_bubble_outline_24,
-                buttonText = "Chat",
-                onClick = onClickChat)
-
-
-
             DrawerContentButtonItem(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -168,7 +156,7 @@ fun MappingDrawerContentPreview() {
     CyclistanceTheme(true) {
         NavigationDrawerContent(
             onClickSettings = {},
-            onClickChat = {},
+
             onClickSignOut = {},
             uiState = NavUiState(
                 drawerDisplayName = "John Doe",

@@ -1,36 +1,16 @@
 package com.example.cyclistance.navigation.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.example.cyclistance.core.domain.model.UserDetails
-import com.example.cyclistance.feature_messaging.presentation.common.MessageUserImage
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.state.NavUiState
 import com.example.cyclistance.theme.CyclistanceTheme
@@ -42,7 +22,6 @@ import com.example.cyclistance.top_bars.TopAppBarCreator
 fun TopAppBar(
     onClickArrowBackIcon: () -> Unit = {},
     onClickMenuIcon: () -> Unit = {},
-    onClickSearchMessagingUser: () -> Unit = {},
     viewProfile: (id: String) -> Unit = {},
     uiState: NavUiState,
     route: String?) {
@@ -61,7 +40,7 @@ fun TopAppBar(
 
         Screens.MappingNavigation.Cancellation.screenRoute -> {
             TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Cancellation Reason")
@@ -70,7 +49,7 @@ fun TopAppBar(
 
         Screens.MappingNavigation.ConfirmDetails.screenRoute -> {
             TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(
@@ -81,7 +60,7 @@ fun TopAppBar(
 
         Screens.AuthenticationNavigation.ResetPassword.screenRoute -> {
             TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Reset Password")
@@ -90,7 +69,7 @@ fun TopAppBar(
 
         Screens.UserProfileNavigation.EditProfile.screenRoute -> {
             TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Edit Profile")
@@ -99,7 +78,7 @@ fun TopAppBar(
 
         Screens.SettingsNavigation.Setting.screenRoute -> {
             TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Settings")
@@ -109,7 +88,7 @@ fun TopAppBar(
         Screens.EmergencyCallNavigation.EmergencyCall.screenRoute -> {
 
             TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Emergency Call")
@@ -125,67 +104,20 @@ fun TopAppBar(
                 })
         }
 
-        Screens.MessagingNavigation.Chats.screenRoute -> {
-
-            TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
-                onClickIcon = onClickArrowBackIcon,
-                topAppBarTitle = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween) {
-
-                        TitleTopAppBar(title = "Chats")
-                        IconButton(onClick = onClickSearchMessagingUser) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "Search",
-                                tint = MaterialTheme.colors.onBackground,
-                            )
-                        }
-                    }
-                })
-        }
-
 
         Screens.MessagingNavigation.Conversation.screenRoute -> {
 
-            val conversationUser = uiState.conversationUser?.userDetails ?: UserDetails()
-            val isUserAvailable = uiState.conversationUser?.isUserAvailable ?: false
             TopAppBarCreator(
-                icon = Icons.Default.Close,
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
-
-                    Row(
-                        modifier = Modifier.wrapContentSize().padding(vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(5.dp)) {
-
-                        MessageUserImage(
-                            modifier = Modifier
-                                .clip(CircleShape)
-                                .size(48.dp)
-                                .clickable {
-                                    viewProfile(conversationUser.uid)
-                                },
-                            isOnline = if(!uiState.internetAvailable) null else isUserAvailable,
-                            photoUrl = conversationUser.photo)
-
-                        TitleTopAppBar(
-                            title = conversationUser.name,
-                            modifier = Modifier
-                                .padding(start = 5.dp)
-                                .animateContentSize(animationSpec = spring(stiffness = Spring.StiffnessLow)))
-
-                    }
+                    TitleTopAppBar(title = "Contact your rescuer")
                 })
         }
 
         Screens.RescueRecordNavigation.RideHistory.screenRoute -> {
             TopAppBarCreator(
-                icon = Icons.Default.ArrowBack,
+                icon = Icons.AutoMirrored.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Ride History")

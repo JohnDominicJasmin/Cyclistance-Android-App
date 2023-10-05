@@ -14,7 +14,6 @@ import com.example.cyclistance.feature_user_profile.presentation.user_profile.co
 import com.example.cyclistance.feature_user_profile.presentation.user_profile.event.UserProfileUiEvent
 import com.example.cyclistance.feature_user_profile.presentation.user_profile.event.UserProfileVmEvent
 import com.example.cyclistance.navigation.Screens
-import com.example.cyclistance.navigation.nav_graph.navigateScreen
 
 @Composable
 fun UserProfileScreen(
@@ -33,27 +32,6 @@ fun UserProfileScreen(
     }
 
 
-    val onClickMessagingProfile = remember {
-        {
-            navController.navigateScreen(
-                route = Screens.MessagingNavigation.Conversation.passArgument(
-                    receiverMessageId = userId,
-                )
-            )
-
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
     LaunchedEffect(key1 = userId) {
         viewModel.onEvent(event = UserProfileVmEvent.LoadProfile(userId = userId))
     }
@@ -66,7 +44,6 @@ fun UserProfileScreen(
         event = { event ->
             when (event) {
                 UserProfileUiEvent.OnClickEditProfile -> navigateToEditProfile()
-                is UserProfileUiEvent.OnClickMessageProfile -> onClickMessagingProfile()
             }
         }
     )

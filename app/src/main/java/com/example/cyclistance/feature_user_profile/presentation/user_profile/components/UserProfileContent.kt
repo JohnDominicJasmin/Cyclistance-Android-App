@@ -54,12 +54,6 @@ fun UserProfileContent(
                     onClickEditProfile = {
                         event(UserProfileUiEvent.OnClickEditProfile)
                     },
-                    onClickMessageProfile = {
-                        event(
-                            UserProfileUiEvent.OnClickMessageProfile(
-                                userId = state.profileSelectedId
-                            ))
-                    }
 
                 )
 

@@ -24,7 +24,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.presentation.conversation.components.ConversationContent
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationEvent
 import com.example.cyclistance.feature_messaging.presentation.conversation.event.ConversationUiEvent
@@ -41,8 +40,6 @@ fun ConversationScreen(
     navController: NavController,
     paddingValues: PaddingValues,
     userReceiverId: String,
-
-    newConversationDetails: (MessagingUserItemModel) -> Unit,
     isInternetAvailable: Boolean
 ) {
 
@@ -180,9 +177,7 @@ fun ConversationScreen(
                     Toast.makeText(context, "Resend failed", Toast.LENGTH_SHORT).show()
                 }
 
-                is ConversationEvent.LoadConversationSuccess -> {
-                    newConversationDetails(event.message)
-                }
+
             }
         }
     }
