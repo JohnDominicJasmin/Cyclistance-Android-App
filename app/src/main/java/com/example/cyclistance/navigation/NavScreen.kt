@@ -180,14 +180,6 @@ fun NavScreen(
         }
     }
 
-
-    val onClickChat = remember {
-        {
-            closeDrawer()
-            navController.navigateScreen(Screens.MessagingNavigation.ROUTE)
-        }
-    }
-
     val onClickSignOut = remember {
         {
             navViewModel.onEvent(NavVmEvent.DeleteMessagingToken)
@@ -283,7 +275,6 @@ fun NavScreen(
                     drawerContent = {
                         NavigationDrawerContent(
                             onClickSettings = onClickSettings,
-                            onClickChat = onClickChat,
                             onClickSignOut = onClickSignOut,
                             onClickEmergencyCall = onClickEmergencyCall,
                             onClickRideHistory = onClickRideHistory,
