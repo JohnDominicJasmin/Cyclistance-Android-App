@@ -1043,7 +1043,7 @@ class MappingViewModel @Inject constructor(
                 trackingHandler.updateLocation(location)
                 broadcastRescueTransactionToRespondent(location)
                 updateSpeedometer(location)
-                if(state.value.getCurrentLocation() == null) {
+                if(state.value.nearbyCyclist == null) {
                     broadcastToNearbyCyclists()
                 }
 

@@ -7,7 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +40,7 @@ fun TopAppBar(
 
         Screens.MappingNavigation.Cancellation.screenRoute -> {
             TopAppBarCreator(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                icon = Icons.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Cancellation Reason")
@@ -49,7 +49,7 @@ fun TopAppBar(
 
         Screens.MappingNavigation.ConfirmDetails.screenRoute -> {
             TopAppBarCreator(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                icon = Icons.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(
@@ -60,7 +60,7 @@ fun TopAppBar(
 
         Screens.AuthenticationNavigation.ResetPassword.screenRoute -> {
             TopAppBarCreator(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                icon = Icons.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Reset Password")
@@ -69,7 +69,7 @@ fun TopAppBar(
 
         Screens.UserProfileNavigation.EditProfile.screenRoute -> {
             TopAppBarCreator(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                icon = Icons.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Edit Profile")
@@ -78,7 +78,7 @@ fun TopAppBar(
 
         Screens.SettingsNavigation.Setting.screenRoute -> {
             TopAppBarCreator(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                icon = Icons.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Settings")
@@ -88,7 +88,7 @@ fun TopAppBar(
         Screens.EmergencyCallNavigation.EmergencyCall.screenRoute -> {
 
             TopAppBarCreator(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                icon = Icons.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Emergency Call")
@@ -108,7 +108,7 @@ fun TopAppBar(
         Screens.MessagingNavigation.Conversation.screenRoute -> {
 
             TopAppBarCreator(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                icon = Icons.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Contact your rescuer")
@@ -117,7 +117,7 @@ fun TopAppBar(
 
         Screens.RescueRecordNavigation.RideHistory.screenRoute -> {
             TopAppBarCreator(
-                icon = Icons.AutoMirrored.Filled.ArrowBack,
+                icon = Icons.Filled.ArrowBack,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
                     TitleTopAppBar(title = "Ride History")

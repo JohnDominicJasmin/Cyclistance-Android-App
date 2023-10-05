@@ -62,6 +62,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.MultiplePermissionsState
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.mapbox.mapboxsdk.maps.MapboxMap
+import timber.log.Timber
 
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class)
@@ -173,6 +174,7 @@ fun MappingScreenContent(
                     )
 
 
+                    Timber.v("Banner Status: ${uiState.mapSelectedRescuee != null && bottomSheetScaffoldState.bottomSheetState.isCollapsed}")
 
 
                     AnimatedVisibility(
@@ -352,7 +354,14 @@ fun MappingScreenContent(
                                 event(MappingUiEvent.HazardousLaneMarkerDialog(
                                     visibility = false))
                             },
-                            modifier = Modifier,
+                            modifier = Modifier.constrainAs(dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                width = Dimension.matchParent
+                                height = Dimension.wrapContent
+                                this.centerTo(parent)
+                            },
                             onClickConfirmButton = {
                                 event(MappingUiEvent.OnConfirmDeleteIncident)
                                 event(MappingUiEvent.HazardousLaneMarkerDialog(visibility = false))
@@ -447,7 +456,8 @@ fun MappingScreenContent(
                         val rescueTransaction = state.rescueTransaction ?: return@AnimatedVisibility
 
                         MappingRequestCancelled(
-                            modifier = Modifier.fillMaxSize(),
+                            modifier = Modifier.fillMaxSize()
+                            ,
                             onClickOkButton = { event(MappingUiEvent.CancelledRescueConfirmed) },
                             cancelledRescueModel = CancelledRescueModel(
                                 transactionID = rescueTransaction.id,
