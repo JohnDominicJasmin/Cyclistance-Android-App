@@ -98,6 +98,7 @@ class MappingViewModel @Inject constructor(
         observeDataChanges()
         getMapType()
         getShouldShowHazardousStartingInfo()
+        refreshToken()
     }
 
     private fun setShouldShowHazardousStartingInfo(shouldShow: Boolean) {
@@ -209,6 +210,8 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun getNearbyCyclist() {
         val userLocation = state.value.getCurrentLocation()
+        Timber.v("Getting nearby cyclist $userLocation")
+
         val dataLoaded = state.value.user.id != null
         userLocation?.latitude ?: return
         userLocation.longitude ?: return
@@ -219,6 +222,7 @@ class MappingViewModel @Inject constructor(
 
         coroutineScope {
 
+
             mappingUseCase.getUsersUseCase(
                 latitude = userLocation.latitude,
                 longitude = userLocation.longitude
@@ -227,6 +231,7 @@ class MappingViewModel @Inject constructor(
             }.onEach {
                 it.filterUser()
                 it.updateNearbyCyclists()
+                Timber.v("Receiving from getNearbyCyclist")
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }.launchIn(this)
 
@@ -388,6 +393,21 @@ class MappingViewModel @Inject constructor(
         }
     }
 
+    private fun refreshToken() {
+        viewModelScope.launch(SupervisorJob()) {
+            runCatching {
+                isLoading(true)
+                messagingUseCase.refreshTokenUseCase()
+            }.onSuccess {
+                Timber.v("Successfully refreshed token")
+            }.onFailure {
+                Timber.e("Failed to refresh token ${it.message}")
+            }.also {
+                isLoading(false)
+            }
+        }
+    }
+
     private fun declineRescueRequest(id: String) {
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
@@ -509,8 +529,8 @@ class MappingViewModel @Inject constructor(
                 updateReportedIncident(marker = event.marker)
             }
 
-            is MappingVmEvent.ShouldShowHazardousStartingInfo -> setShouldShowHazardousStartingInfo(
-                event.shouldShow)
+            is MappingVmEvent.ShouldShowHazardousStartingInfo ->
+                setShouldShowHazardousStartingInfo(event.shouldShow)
 
             is MappingVmEvent.NotifyUser -> {
                 mappingUseCase.showNotificationUseCase(
@@ -1023,6 +1043,9 @@ class MappingViewModel @Inject constructor(
                 trackingHandler.updateLocation(location)
                 broadcastRescueTransactionToRespondent(location)
                 updateSpeedometer(location)
+                if(state.value.getCurrentLocation() == null) {
+                    broadcastToNearbyCyclists()
+                }
 
             }.launchIn(this@launch).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
@@ -1054,6 +1077,7 @@ class MappingViewModel @Inject constructor(
             }.onEach {
                 it.filterUser()
                 it.updateNearbyCyclists()
+                Timber.v("Receiving from subscribeToNearbyUsersChanges")
                 trackingHandler.updateClient()
             }.launchIn(this).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value

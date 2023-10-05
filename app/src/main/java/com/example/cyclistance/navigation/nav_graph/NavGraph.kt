@@ -59,10 +59,6 @@ fun NavGraph(
             navController = navController,
             paddingValues = paddingValues,
             isInternetAvailable = uiState.internetAvailable,
-            newConversationDetails = {
-                event(
-                    NavUiEvent.NewConversationDetails(it))
-            }
         )
 
         onBoardingGraph(

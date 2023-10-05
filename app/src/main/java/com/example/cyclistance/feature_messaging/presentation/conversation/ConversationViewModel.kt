@@ -87,10 +87,6 @@ class ConversationViewModel @Inject constructor(
                         userReceiverMessage = receiver
                     )
                 }
-                _eventFlow.emit(
-                    value = ConversationEvent.LoadConversationSuccess(
-                        message = receiver!!
-                    ))
             }.onSuccess {
                 Timber.v("Messaging User Success")
             }.onFailure {

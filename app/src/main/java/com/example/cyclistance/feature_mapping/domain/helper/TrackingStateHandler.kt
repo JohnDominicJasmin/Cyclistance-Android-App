@@ -147,11 +147,11 @@ class TrackingStateHandler(
     fun updateLocation(location: LocationModel) {
         val latitude = location.latitude ?: return
         val longitude = location.longitude ?: return
-        state.update {
+     /*   state.update {
             it.copy(
                 userLocation = LocationModel()
             )
-        }
+        }*/
         state.update {
             it.copy(
                 userLocation = LocationModel(

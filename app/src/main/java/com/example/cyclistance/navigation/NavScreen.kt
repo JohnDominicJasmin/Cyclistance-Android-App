@@ -32,7 +32,6 @@ import androidx.navigation.compose.rememberNavController
 import com.example.cyclistance.core.utils.composable_utils.ComposableLifecycle
 import com.example.cyclistance.feature_mapping.data.data_source.local.network_observer.NetworkConnectivityChecker
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.drawer.NavigationDrawerContent
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_settings.presentation.setting_screen.SettingViewModel
 import com.example.cyclistance.feature_settings.presentation.setting_screen.event.SettingEvent
 import com.example.cyclistance.feature_settings.presentation.setting_screen.event.SettingVmEvent
@@ -224,12 +223,7 @@ fun NavScreen(
         }
     }
 
-    val onClickSearchMessagingUser = remember {
-        {
-            navController.navigateScreen(
-                route = Screens.MessagingNavigation.SearchUser.screenRoute)
-        }
-    }
+
 
     val viewProfile = remember{{ id: String ->
         navController.navigateScreen(route = Screens.UserProfileNavigation.UserProfile.passArgument(userId = id))
@@ -245,13 +239,6 @@ fun NavScreen(
         }
     }
 
-    val newConversationDetails = remember {
-        { user: MessagingUserItemModel ->
-            navUiState = navUiState.copy(
-                conversationUser = user
-            )
-        }
-    }
 
     val openUserProfile = remember(editProfileState.userId){{
         closeDrawer()
@@ -283,7 +270,6 @@ fun NavScreen(
                                     route = navBackStackEntry?.destination?.route,
                                     onClickMenuIcon = onClickMenuIcon,
                                     onClickArrowBackIcon = onClickArrowBackIcon,
-                                    onClickSearchMessagingUser = onClickSearchMessagingUser,
                                     viewProfile = viewProfile,
                                     uiState = navUiState)
 
@@ -313,7 +299,6 @@ fun NavScreen(
                             paddingValues = paddingValues,
                             event = { event ->
                                 when (event) {
-                                    is NavUiEvent.NewConversationDetails -> newConversationDetails(event.messageUser)
                                     is NavUiEvent.OnChangeNavigation -> onChangeNavigatingState(event.isNavigating)
                                     is NavUiEvent.OnToggleTheme -> onToggleTheme()
                                 }
