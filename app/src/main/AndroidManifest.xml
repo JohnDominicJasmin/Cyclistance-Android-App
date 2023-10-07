@@ -50,6 +50,7 @@
             android:windowSoftInputMode="adjustResize"
             android:hardwareAccelerated="true"
             android:largeHeap="true"
+            android:launchMode="singleTop"
             android:theme="@style/Theme.Cyclistance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
