@@ -1,0 +1,745 @@
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetDropDown\">\n    <multipleDevicesSelectedInDropDown value=\"true\" />\n    <runningDeviceTargetsSelectedWithDialog>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </runningDeviceTargetsSelectedWithDialog>\n    <targetsSelectedWithDialog>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetsSelectedWithDialog>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(revision a4ac85465bc712b349c15a6e6dba4574e654c3f3)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1696672960790)
+@@ -2,17 +2,6 @@
+ <project version="4">
+   <component name="deploymentTargetDropDown">
+     <multipleDevicesSelectedInDropDown value="true" />
+-    <runningDeviceTargetsSelectedWithDialog>
+-      <Target>
+-        <type value="RUNNING_DEVICE_TARGET" />
+-        <deviceKey>
+-          <Key>
+-            <type value="VIRTUAL_DEVICE_PATH" />
+-            <value value="$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd" />
+-          </Key>
+-        </deviceKey>
+-      </Target>
+-    </runningDeviceTargetsSelectedWithDialog>
+     <targetsSelectedWithDialog>
+       <Target>
+         <type value="QUICK_BOOT_TARGET" />
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen\n\nimport androidx.compose.runtime.mutableStateListOf\nimport androidx.lifecycle.SavedStateHandle\nimport androidx.lifecycle.ViewModel\nimport androidx.lifecycle.viewModelScope\nimport com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_RADIUS\nimport com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY\nimport com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS\nimport com.example.cyclistance.core.utils.formatter.FormatterUtils\nimport com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm\nimport com.example.cyclistance.core.utils.formatter.FormatterUtils.isLocationAvailable\nimport com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase\nimport com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toRescueRequest\nimport com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions\nimport com.example.cyclistance.feature_mapping.domain.helper.TrackingStateHandler\nimport com.example.cyclistance.feature_mapping.domain.model.Role\nimport com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker\nimport com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel\nimport com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue.RescueRequestItemModel\nimport com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction\nimport com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem\nimport com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel\nimport com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist\nimport com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RescuePending\nimport com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RescueRequest\nimport com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserAssistanceModel\nimport com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem\nimport com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee\nimport com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel\nimport com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase\nimport com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent\nimport com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent\nimport com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState\nimport com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers\nimport com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase\nimport com.example.cyclistance.feature_rescue_record.domain.use_case.RescueRecordUseCase\nimport com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase\nimport com.google.maps.android.SphericalUtil\nimport com.mapbox.geojson.Point\nimport com.mapbox.mapboxsdk.geometry.LatLng\nimport dagger.hilt.android.lifecycle.HiltViewModel\nimport kotlinx.coroutines.CoroutineDispatcher\nimport kotlinx.coroutines.Job\nimport kotlinx.coroutines.SupervisorJob\nimport kotlinx.coroutines.coroutineScope\nimport kotlinx.coroutines.delay\nimport kotlinx.coroutines.flow.MutableSharedFlow\nimport kotlinx.coroutines.flow.MutableStateFlow\nimport kotlinx.coroutines.flow.SharedFlow\nimport kotlinx.coroutines.flow.asSharedFlow\nimport kotlinx.coroutines.flow.asStateFlow\nimport kotlinx.coroutines.flow.catch\nimport kotlinx.coroutines.flow.distinctUntilChanged\nimport kotlinx.coroutines.flow.launchIn\nimport kotlinx.coroutines.flow.onEach\nimport kotlinx.coroutines.flow.update\nimport kotlinx.coroutines.launch\nimport timber.log.Timber\nimport javax.inject.Inject\nimport com.google.android.gms.maps.model.LatLng as GoogleLatLng\n\n\n@HiltViewModel\nclass MappingViewModel @Inject constructor(\n    private val savedStateHandle: SavedStateHandle,\n    private val authUseCase: AuthenticationUseCase,\n    private val mappingUseCase: MappingUseCase,\n    private val userProfileUseCase: UserProfileUseCase,\n    private val defaultDispatcher: CoroutineDispatcher,\n    private val messagingUseCase: MessagingUseCase,\n    private val rescueRecordUseCase: RescueRecordUseCase\n) : ViewModel() {\n\n\n    private var loadDataJob: Job? = null\n    private var getUsersUpdatesJob: Job? = null\n    private var locationUpdatesJob: Job? = null\n    private var getRescueTransactionUpdatesJob: Job? = null\n    private var getTransactionLocationUpdatesJob: Job? = null\n    private var trackingHandler: TrackingStateHandler\n\n    private val _state: MutableStateFlow<MappingState> = MutableStateFlow(\n        savedStateHandle[MAPPING_VM_STATE_KEY] ?: MappingState(userId = getId())\n    )\n    val state = _state.asStateFlow()\n\n    private val _eventFlow: MutableSharedFlow<MappingEvent> = MutableSharedFlow()\n    val eventFlow: SharedFlow<MappingEvent> = _eventFlow.asSharedFlow()\n    private var travelledPath: MutableList<GoogleLatLng> = mutableStateListOf()\n\n    private val _hazardousLaneMarkers = mutableStateListOf<HazardousLaneMarker>()\n    val hazardousLaneMarkers: List<HazardousLaneMarker> = _hazardousLaneMarkers\n\n    init {\n        trackingHandler = TrackingStateHandler(state = _state, eventFlow = _eventFlow)\n        loadData()\n        observeDataChanges()\n        getMapType()\n        getShouldShowHazardousStartingInfo()\n        refreshToken()\n    }\n\n    private fun setShouldShowHazardousStartingInfo(shouldShow: Boolean) {\n        viewModelScope.launch {\n            mappingUseCase.shouldHazardousStartingInfoUseCase(shouldShow = shouldShow)\n        }\n    }\n\n    private fun getShouldShowHazardousStartingInfo() {\n        viewModelScope.launch {\n            mappingUseCase.shouldHazardousStartingInfoUseCase().catch {\n                it.handleException()\n            }.onEach { shouldShow ->\n                _state.update { it.copy(shouldShowHazardousStartingInfo = shouldShow) }\n            }.launchIn(this)\n        }\n    }\n\n\n    private fun observeDataChanges() {\n        subscribeToLocationUpdates()\n        subscribeToNearbyUsersChanges()\n        subscribeToRescueTransactionUpdates()\n        subscribeToTransactionLocationUpdates()\n        subscribeToBottomSheetTypeUpdates()\n        subscribeToHazardousLaneUpdates()\n    }\n\n    private fun getMapType() {\n        viewModelScope.launch {\n            mappingUseCase.mapTypeUseCase()\n                .distinctUntilChanged()\n                .catch {\n                    Timber.v(\"Error getting map type: ${it.message}\")\n                }.onEach { mapType ->\n                    _state.update { it.copy(mapType = mapType) }\n                }.launchIn(viewModelScope)\n\n        }\n    }\n\n    private fun subscribeToHazardousLaneUpdates() {\n        viewModelScope.launch(SupervisorJob() + defaultDispatcher) {\n\n            mappingUseCase.newHazardousLaneUseCase(\n                onAddedHazardousMarker = { marker ->\n\n                    _hazardousLaneMarkers.removeAll { modifiedMarker ->\n                        marker.id == modifiedMarker.id\n                    }\n                    _hazardousLaneMarkers.add(marker)\n                },\n                onModifiedHazardousMarker = { modifiedMarker ->\n                    _hazardousLaneMarkers.removeAll { marker ->\n                        marker.id == modifiedMarker.id\n                    }\n                    _hazardousLaneMarkers.add(modifiedMarker)\n                },\n                onRemovedHazardousMarker = { markerId ->\n                    _hazardousLaneMarkers.removeAll { marker ->\n                        marker.id == markerId\n                    }\n                }\n            )\n\n        }\n    }\n\n    private fun subscribeToBottomSheetTypeUpdates() {\n        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {\n            mappingUseCase.bottomSheetTypeUseCase().catch {\n                it.handleException()\n            }.onEach {\n                if(it.isEmpty()){\n                    return@onEach\n                }\n                _eventFlow.emit(value = MappingEvent.NewBottomSheetType(it))\n            }.launchIn(this)\n        }\n    }\n\n    private fun loadData() {\n        if (loadDataJob?.isActive == true) return\n        loadDataJob = viewModelScope.launch(SupervisorJob() + defaultDispatcher) {\n            // TODO: Remove when the backend is ready\n            createMockUpUsers()\n            getNearbyCyclist()\n            trackingHandler.updateClient()\n        }\n\n    }\n\n\n    private suspend fun loadRescueTransaction(transactionId: String) {\n        coroutineScope {\n            if (transactionId.isEmpty()) {\n                return@coroutineScope\n            }\n\n            mappingUseCase.getRescueTransactionByIdUseCase(transactionId).catch {\n                it.handleException()\n            }.onEach { rescueTransaction ->\n                _state.update { it.copy(rescueTransaction = rescueTransaction) }\n            }.launchIn(this).invokeOnCompletion {\n                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n            }\n        }\n    }\n\n    private suspend fun getNearbyCyclist() {\n        val userLocation = state.value.getCurrentLocation()\n        Timber.v(\"Getting nearby cyclist $userLocation\")\n\n        val dataLoaded = state.value.user.id != null\n        userLocation?.latitude ?: return\n        userLocation.longitude ?: return\n\n        if (dataLoaded) {\n            return\n        }\n\n        coroutineScope {\n\n\n            mappingUseCase.getUsersUseCase(\n                latitude = userLocation.latitude,\n                longitude = userLocation.longitude\n            ).distinctUntilChanged().catch {\n                it.handleException()\n            }.onEach {\n                it.filterUser()\n                it.updateNearbyCyclists()\n                Timber.v(\"Receiving from getNearbyCyclist\")\n                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n            }.launchIn(this)\n\n        }\n\n    }\n\n\n    private fun acceptRescueRequest(id: String) {\n        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {\n\n            val rescuer = state.value.nearbyCyclist?.findUser(id) ?: return@launch\n            _state.update { it.copy(rescueRequestAcceptedUser = rescuer) }\n            val transactionId = trackingHandler.getTransactionId(rescuer)\n            val user = state.value.user\n\n            trackingHandler.checkCurrentTransactions(user = user, rescuer = rescuer) {\n\n                coroutineScope {\n                    runCatching {\n                        isLoading(true)\n                        trackingHandler.getAcceptedRescueRequestItem(\n                            transactionId = transactionId,\n                            rescuer = rescuer\n                        ).apply {\n                            mappingUseCase.acceptRescueRequestUseCase(rescueTransaction = this)\n                        }\n\n                    }.onSuccess { rescueTransaction ->\n                        broadcastRescueTransaction()\n                        assignRequestTransaction(\n                            rescueTransaction = rescueTransaction,\n                            user = user,\n                            rescuer = rescuer,\n                            transactionId = transactionId\n                        )\n                        user.location?.let { broadcastRescueTransactionToRespondent(it) }\n                    }.onFailure { exception ->\n                        isLoading(false)\n                        exception.handleException()\n                    }\n                }\n\n                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n\n            }\n        }\n    }\n\n    private fun cancelHelpRequest() {\n        viewModelScope.launch(context = defaultDispatcher) {\n            runCatching {\n                isLoading(true)\n                cancelUserHelpRequest()\n            }.onSuccess {\n                _eventFlow.emit(value = MappingEvent.CancelHelpRequestSuccess)\n                broadcastToNearbyCyclists()\n                _state.update { it.copy(rescueRequestAcceptedUser = null) }\n            }.onFailure { exception ->\n                Timber.e(\"Failed to cancel search assistance: ${exception.message}\")\n                exception.handleException()\n            }\n            isLoading(false)\n            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n        }\n    }\n\n\n    private fun removeAssignedTransaction() {\n        viewModelScope.launch(context = defaultDispatcher) {\n            runCatching {\n                removeUserTransaction(id = getId())\n            }.onSuccess {\n                broadcastToNearbyCyclists()\n                broadcastRescueTransaction()\n                isLoading(false)\n                _eventFlow.emit(value = MappingEvent.RemoveAssignedTransactionSuccess)\n                trackingHandler.clearTransactionRoles()\n            }.onFailure { exception ->\n                isLoading(false)\n                exception.handleException()\n            }\n        }\n\n    }\n\n    private fun selectRescueeMapIcon(id: String) {\n        viewModelScope.launch(context = defaultDispatcher) {\n\n            val userLocation = state.value.user.location ?: state.value.userLocation\n\n            if (!userLocation.isLocationAvailable()) {\n                viewModelScope.launch(context = defaultDispatcher) {\n                    _eventFlow.emit(value = MappingEvent.LocationNotAvailable(\"Tracking your Location\"))\n                }\n                return@launch\n            }\n\n            calculateSelectedRescueeDistance(userLocation, id)\n\n        }\n    }\n\n    private fun respondToHelp(selectedRescuee: MapSelectedRescuee) {\n        viewModelScope.launch(context = defaultDispatcher) {\n            runCatching {\n                uploadUserProfile(onSuccess = {\n                    viewModelScope.launch(context = defaultDispatcher) {\n                        mappingUseCase.addRescueRespondentUseCase(\n                            userId = selectedRescuee.userId,\n                            respondentId = getId()\n                        )\n                    }\n                })\n            }.onSuccess {\n                _eventFlow.emit(value = MappingEvent.RespondToHelpSuccess())\n                broadcastToNearbyCyclists()\n                broadcastRescueTransaction()\n                _state.update { it.copy(respondedToHelp = true) }\n            }.onFailure {\n                it.handleException()\n            }\n\n        }\n    }\n\n    private fun showRouteDirection(origin: Point, destination: Point) {\n        viewModelScope.launch(context = defaultDispatcher) {\n            runCatching {\n                mappingUseCase.getRouteDirectionsUseCase(origin = origin, destination = destination)\n            }.onSuccess { routeDirection ->\n                _eventFlow.emit(value = MappingEvent.GenerateRouteNavigationSuccess(routeDirection))\n            }.onFailure {\n                it.handleException()\n            }\n        }\n    }\n\n\n    private suspend fun broadcastRescueTransaction() {\n        runCatching {\n            mappingUseCase.broadcastRescueTransactionUseCase()\n        }.onFailure {\n            it.handleException()\n        }\n    }\n\n    private suspend fun broadcastToNearbyCyclists() {\n        val location = state.value.userLocation ?: return\n        runCatching {\n            mappingUseCase.nearbyCyclistsUseCase(\n                locationModel = LiveLocationSocketModel(\n                    latitude = location.latitude,\n                    longitude = location.longitude\n                )\n            )\n        }.onFailure {\n            it.handleException()\n        }\n    }\n\n    private fun refreshToken() {\n        viewModelScope.launch(SupervisorJob()) {\n            runCatching {\n                isLoading(true)\n                messagingUseCase.refreshTokenUseCase()\n            }.onSuccess {\n                Timber.v(\"Successfully refreshed token\")\n            }.onFailure {\n                Timber.e(\"Failed to refresh token ${it.message}\")\n            }.also {\n                isLoading(false)\n            }\n        }\n    }\n\n    private fun declineRescueRequest(id: String) {\n        viewModelScope.launch(context = defaultDispatcher) {\n            runCatching {\n                isLoading(true)\n                mappingUseCase.deleteRescueRespondentUseCase(userId = getId(), respondentId = id)\n            }.onSuccess {\n                removeRescueRespondent(id)\n                broadcastToNearbyCyclists()\n            }.onFailure {\n                it.handleDeclineRescueRequest()\n            }\n            isLoading(false)\n            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n\n        }\n    }\n\n    private suspend fun removeRescueRespondent(id: String) {\n        state.value.newRescueRequest?.request?.toMutableList()?.apply {\n            val respondentRemoved = removeAll { it.id == id }\n            if (!respondentRemoved) {\n                _eventFlow.emit(value = MappingEvent.RemoveRespondentFailed())\n                return@apply\n            }\n            _state.update {\n                it.copy(\n                    newRescueRequest = NewRescueRequestsModel(this)\n                )\n            }\n        }\n    }\n\n\n    private fun requestHelp() {\n        viewModelScope.launch(context = defaultDispatcher) {\n            runCatching {\n                uploadUserProfile(onSuccess = {\n                    viewModelScope.launch(context = defaultDispatcher) {\n                        _eventFlow.emit(MappingEvent.RequestHelpSuccess)\n                    }\n                })\n            }.onFailure {\n                it.handleException()\n            }\n        }.invokeOnCompletion {\n            savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n        }\n    }\n\n    fun onEvent(event: MappingVmEvent) {\n        when (event) {\n\n            is MappingVmEvent.SubscribeToDataChanges -> {\n                observeDataChanges()\n            }\n\n\n            is MappingVmEvent.GetRouteDirections -> {\n                showRouteDirection(origin = event.origin, destination = event.destination)\n            }\n\n            is MappingVmEvent.RespondToHelp -> {\n                respondToHelp(event.selectedRescuee)\n            }\n\n            is MappingVmEvent.SelectRescueMapIcon -> {\n                selectRescueeMapIcon(event.id)\n            }\n\n            is MappingVmEvent.RequestHelp -> {\n                requestHelp()\n            }\n\n            is MappingVmEvent.CancelRescueTransaction -> {\n                removeAssignedTransaction()\n                clearTravelledPath()\n            }\n\n\n            is MappingVmEvent.LoadData -> {\n                loadData()\n            }\n\n\n            is MappingVmEvent.DeclineRescueRequest -> {\n                declineRescueRequest(event.id)\n                clearTravelledPath()\n            }\n\n            is MappingVmEvent.AcceptRescueRequest -> {\n                acceptRescueRequest(event.id)\n            }\n\n            is MappingVmEvent.CancelSearchingAssistance -> {\n                cancelHelpRequest()\n                clearTravelledPath()\n            }\n\n            is MappingVmEvent.ReportIncident -> {\n                calculateIncidentDistance(\n                    latLng = event.latLng,\n                    label = event.label,\n                    incidentDescription = event.description)\n            }\n\n            is MappingVmEvent.SetMapType -> {\n                setMapType(mapType = event.mapType)\n            }\n\n            is MappingVmEvent.SelectHazardousLaneMarker -> {\n                selectHazardousLaneMarker(id = event.id)\n            }\n\n            is MappingVmEvent.DeleteHazardousLaneMarker -> {\n                deleteHazardousLaneMarker(id = event.id)\n            }\n\n            is MappingVmEvent.UpdateReportedIncident -> {\n                updateReportedIncident(marker = event.marker)\n            }\n\n            is MappingVmEvent.ShouldShowHazardousStartingInfo ->\n                setShouldShowHazardousStartingInfo(event.shouldShow)\n\n            is MappingVmEvent.NotifyUser -> {\n                mappingUseCase.showNotificationUseCase(\n                    title = event.title,\n                    message = event.message\n                )\n            }\n\n            is MappingVmEvent.CancelRespondHelp -> cancelRespondToHelp(respondentId = event.id)\n            MappingVmEvent.RescuerArrived -> rescuerArrived()\n        }\n        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n    }\n\n\n    private fun rescuerArrived(){\n        viewModelScope.launch {\n            rescueRecordUseCase.rescueDetailsUseCase(details = trackingHandler.getRideDetails())\n        }\n    }\n\n    private fun cancelRespondToHelp(respondentId: String){\n        viewModelScope.launch {\n            runCatching {\n                isLoading(true)\n                mappingUseCase.cancelHelpRespondUseCase(userId = getId(), respondentId = respondentId)\n            }.onSuccess {\n                _eventFlow.emit(value = MappingEvent.CancelRespondSuccess)\n                broadcastToNearbyCyclists()\n            }.onFailure {\n                it.handleException()\n            }.also {\n                isLoading(false)\n            }\n        }\n    }\n\n\n    private fun updateReportedIncident(marker: HazardousLaneMarker) {\n        viewModelScope.launch {\n            runCatching {\n                mappingUseCase.updateHazardousLaneUseCase(\n                    hazardousLaneMarker = marker\n                )\n            }.onSuccess {\n                _eventFlow.emit(value = MappingEvent.UpdateIncidentSuccess)\n            }.onFailure {\n                _eventFlow.emit(\n                    value = MappingEvent.UpdateIncidentFailed(\n                        it.message ?: \"Failed to update incident\"))\n            }\n        }\n    }\n\n\n    private fun deleteHazardousLaneMarker(id: String) {\n        viewModelScope.launch {\n            runCatching {\n                mappingUseCase.deleteHazardousLaneUseCase(id)\n            }.onSuccess {\n                _eventFlow.emit(value = MappingEvent.DeleteHazardousLaneMarkerSuccess)\n            }.onFailure {\n                _eventFlow.emit(\n                    value = MappingEvent.DeleteHazardousLaneMarkerFailed(\n                        it.message ?: \"Failed to delete incident marker\"))\n            }\n        }\n    }\n\n    private fun selectHazardousLaneMarker(id: String) {\n        viewModelScope.launch {\n            hazardousLaneMarkers.find { it.id == id }?.let { marker ->\n                _eventFlow.emit(value = MappingEvent.SelectHazardousLaneMarker(marker))\n            }\n        }\n    }\n\n\n    private fun calculateIncidentDistance(\n        latLng: LatLng,\n        label: String,\n        incidentDescription: String) {\n\n        viewModelScope.launch {\n            val userLocation = state.value.getCurrentLocation()\n\n            if (userLocation == null) {\n                _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = \"Searching for GPS\"))\n                return@launch\n            }\n\n            val distance = mappingUseCase.getCalculatedDistanceUseCase(\n                startingLocation = userLocation,\n                destinationLocation = LocationModel(\n                    latitude = latLng.latitude,\n                    longitude = latLng.longitude\n                )\n            )\n\n            if (distance > DEFAULT_RADIUS) {\n                _eventFlow.emit(MappingEvent.IncidentDistanceTooFar)\n                return@launch\n            }\n\n            reportIncident(\n                label = label,\n                latLng = latLng,\n                incidentDescription = incidentDescription)\n\n\n        }\n\n    }\n\n    private fun setMapType(mapType: String) {\n        viewModelScope.launch {\n            runCatching {\n                mappingUseCase.mapTypeUseCase(mapType = mapType)\n            }.onSuccess {\n                Timber.v(\"Success setting map type: $it\")\n            }.onFailure {\n                Timber.e(\"Error setting map type: ${it.message}\")\n            }\n        }\n    }\n\n    private suspend fun reportIncident(\n        label: String,\n        latLng: LatLng,\n        incidentDescription: String) {\n\n\n        coroutineScope {\n            runCatching {\n                mappingUseCase.newHazardousLaneUseCase(\n                    hazardousLaneMarker = HazardousLaneMarker(\n                        id = getId() + System.currentTimeMillis(),\n                        idCreator = getId(),\n                        latitude = latLng.latitude,\n                        longitude = latLng.longitude,\n                        label = label,\n                        description = incidentDescription,\n\n                        ))\n            }.onSuccess {\n                _eventFlow.emit(value = MappingEvent.ReportIncidentSuccess)\n            }.onFailure {\n                _eventFlow.emit(\n                    value = MappingEvent.ReportIncidentFailed(\n                        reason = it.message ?: \"Failed to report incident\"))\n            }\n        }\n    }\n\n    private suspend fun calculateSelectedRescueeDistance(userLocation: LocationModel?, id: String) {\n        val selectedRescuee = state.value.nearbyCyclist?.findUser(id) ?: return\n        val selectedRescueeLocation = selectedRescuee.location\n\n\n        runCatching {\n            isLoading(true)\n            mappingUseCase.getCalculatedDistanceUseCase(\n                startingLocation = LocationModel(\n                    latitude = userLocation?.latitude,\n                    longitude = userLocation?.longitude\n                ), destinationLocation = LocationModel(\n                    latitude = selectedRescueeLocation!!.latitude,\n                    longitude = selectedRescueeLocation.longitude\n                )\n            )\n        }.onSuccess { distance ->\n            val timeRemaining = FormatterUtils.getCalculatedETA(distance)\n            trackingHandler.showSelectedRescuee(\n                selectedRescuee = selectedRescuee,\n                distance = distance,\n                timeRemaining = timeRemaining)\n        }.onFailure {\n            _eventFlow.emit(value = MappingEvent.FailedToCalculateDistance)\n        }.also {\n            isLoading(false)\n        }\n    }\n\n\n    private suspend fun removeUserTransaction(id: String) {\n        mappingUseCase.createUserUseCase(\n            user = UserItem.removeUserTransaction(id)\n        )\n    }\n\n\n    private fun subscribeToTransactionLocationUpdates() {\n        if (getTransactionLocationUpdatesJob?.isActive == true) {\n            return\n        }\n        getTransactionLocationUpdatesJob =\n            viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {\n                mappingUseCase.transactionLocationUseCase().distinctUntilChanged().catch {\n                    Timber.e(\"ERROR GETTING TRANSACTION LOCATION: ${it.message}\")\n                }.onEach { liveLocation ->\n                    trackingHandler.updateTransactionLocation(location = liveLocation)\n                    liveLocation.updateTransactionETA()\n                    liveLocation.updateTransactionDistance()\n                }.launchIn(this@launch)\n\n            }\n    }\n\n    private suspend fun LiveLocationSocketModel.updateTransactionDistance() {\n        coroutineScope {\n            val rescueTransaction = state.value.userLocation\n            latitude ?: return@coroutineScope\n            longitude ?: return@coroutineScope\n\n            rescueTransaction?.let { transaction ->\n\n                val distance = mappingUseCase.getCalculatedDistanceUseCase(\n                    startingLocation = LocationModel(latitude, longitude),\n                    destinationLocation = LocationModel(transaction.latitude, transaction.longitude)\n                ).toInt()\n\n\n                if (distance <= NEAREST_METERS) {\n                    _eventFlow.emit(value = MappingEvent.DestinationReached)\n                    removeAssignedTransaction()\n                    clearTravelledPath()\n                }\n\n            }\n        }\n    }\n\n\n    private fun LiveLocationSocketModel.updateTransactionETA() {\n        val userLocation = state.value.userLocation\n        userLocation ?: return\n        this.latitude ?: return\n        this.longitude ?: return\n\n        val eta = getETABetweenTwoPoints(\n            startingLocation = LocationModel(\n                latitude = this.latitude,\n                longitude = this.longitude\n            ), endLocation = userLocation\n        )\n\n        val distance = mappingUseCase.getCalculatedDistanceUseCase(\n            startingLocation = LocationModel(\n                latitude = this.latitude,\n                longitude = this.longitude\n            ),\n            destinationLocation = userLocation)\n        _state.update { it.copy(rescueETA = eta, rescueDistance = distance.formatToDistanceKm()) }\n    }\n\n    private fun getETABetweenTwoPoints(\n        startingLocation: LocationModel,\n        endLocation: LocationModel\n    ): String {\n        val distance = mappingUseCase.getCalculatedDistanceUseCase(\n            startingLocation = startingLocation,\n            destinationLocation = endLocation\n        )\n\n        return FormatterUtils.getCalculatedETA(distanceMeters = distance)\n    }\n\n\n    private suspend fun assignRequestTransaction(\n        rescueTransaction: RescueTransactionItem,\n        user: UserItem,\n        rescuer: UserItem,\n        transactionId: String\n    ) {\n\n        runCatching {\n\n            transactionId.assignRequestTransaction(\n                role = Role.RESCUEE.name.lowercase(),\n                id = user.id\n            )\n\n            transactionId.assignRequestTransaction(\n                role = Role.RESCUER.name.lowercase(),\n                id = rescuer.id\n            )\n\n        }.onSuccess {\n            broadcastToNearbyCyclists()\n            _eventFlow.emit(value = MappingEvent.AcceptRescueRequestSuccess)\n            delay(500)\n            updateTransactionETA(rescuer, rescueTransaction)\n            isLoading(false)\n            broadcastRescueTransaction()\n        }.onFailure { exception ->\n            isLoading(false)\n            exception.handleException()\n        }\n\n    }\n\n    private fun updateTransactionETA(rescuer: UserItem, rescueTransaction: RescueTransactionItem) {\n        val userLocation = state.value.userLocation ?: return\n\n        val estimatedTimeArrival = rescuer.location?.let {\n            getETABetweenTwoPoints(\n                startingLocation = it,\n                endLocation = userLocation\n            )\n        }\n\n        val distance = rescuer.location?.let { mappingUseCase.getCalculatedDistanceUseCase(\n            startingLocation = it,\n            destinationLocation = userLocation)\n        }\n        _state.update {\n            it.copy(\n                rescueTransaction = rescueTransaction,\n                rescueETA = estimatedTimeArrival ?: \"\",\n                rescueDistance = distance?.formatToDistanceKm() ?: \"\",\n                rescuer = rescuer\n            )\n        }\n    }\n\n    private fun isLoading(loading: Boolean) {\n        _state.update { it.copy(isLoading = loading) }\n    }\n\n\n    private suspend fun String.assignRequestTransaction(role: String, id: String?) {\n        mappingUseCase.createUserUseCase(\n            user = UserItem.empty(id = id, transactionId = this, role = role)\n        )\n    }\n\n\n    private suspend fun Throwable.handleDeclineRescueRequest() {\n        when (this) {\n            is MappingExceptions.NetworkException -> {\n                _eventFlow.emit(value = MappingEvent.NoInternetConnection)\n            }\n\n            else -> {\n                Timber.d(\"Failed to update user\")\n            }\n        }\n    }\n\n\n    private suspend fun cancelUserHelpRequest() {\n\n        mappingUseCase.createUserUseCase(\n            user = UserItem.cancelUserHelpRequest(id = getId()))\n    }\n\n\n    private suspend fun NearbyCyclist.filterUser() {\n\n        runCatching {\n            getId()\n        }.onSuccess { id ->\n            findUser(id = id)?.let { user ->\n                val respondents = user.getUserRescueRespondents(this)\n                _state.update {\n                    it.copy(\n                        newRescueRequest = NewRescueRequestsModel(request = respondents),\n                        user = user)\n                }\n                user.getTransactionId()?.let { loadRescueTransaction(transactionId = it) }\n            }\n\n        }.onFailure {\n            Timber.e(\"Failed to get user: ${it.message}\")\n        }\n\n    }\n\n\n\n    private fun UserItem.getUserRescueRespondents(nearbyCyclist: NearbyCyclist): List<RescueRequestItemModel> {\n        val rescueRespondentsSnapShot: MutableList<RescueRequestItemModel> = mutableListOf()\n\n        rescueRequest?.respondents?.forEach { respondent ->\n            val userRespondent = nearbyCyclist.findUser(id = respondent.clientId) ?: UserItem()\n            val distance =\n                calculateDistance(startLocation = location, endLocation = userRespondent.location)\n\n            distance?.let {\n                val formattedETA = FormatterUtils.getCalculatedETA(distanceMeters = it)\n                rescueRespondentsSnapShot.add(\n                    element = userRespondent.toRescueRequest(\n                        distance = it.formatToDistanceKm(),\n                        eta = formattedETA,\n                        timestamp = respondent.timeStamp\n                    )\n                )\n            }\n        }\n\n        return rescueRespondentsSnapShot.distinct()\n    }\n\n    private fun calculateDistance(\n        startLocation: LocationModel?,\n        endLocation: LocationModel?): Double? {\n        val startLatitude = startLocation?.latitude ?: return null\n        val startLongitude = startLocation.longitude ?: return null\n        val endLatitude = endLocation?.latitude ?: return null\n        val endLongitude = endLocation.longitude ?: return null\n\n        return mappingUseCase.getCalculatedDistanceUseCase(\n            startingLocation = LocationModel(latitude = startLatitude, longitude = startLongitude),\n            destinationLocation = LocationModel(latitude = endLatitude, longitude = endLongitude)\n        )\n    }\n\n    private fun NearbyCyclist.updateNearbyCyclists() {\n\n        _state.update {\n            it.copy(nearbyCyclist = NearbyCyclist())\n        }\n        _state.update {\n            it.copy(nearbyCyclist = this)\n        }\n    }\n\n    private suspend fun broadcastRescueTransactionToRespondent(location: LocationModel) {\n        val rescueTransaction = state.value.rescueTransaction ?: return\n        runCatching {\n\n            val user = state.value.user\n            mappingUseCase.transactionLocationUseCase(\n                LiveLocationSocketModel(\n                    latitude = location.latitude,\n                    longitude = location.longitude,\n                    room = rescueTransaction.id\n                ),\n                user = user,\n                rescueTransactionItem = rescueTransaction\n            )\n\n        }.onSuccess {\n            Timber.v(\"Broadcasting location to transaction success\")\n        }.onFailure {\n            Timber.v(\"Broadcasting location to transaction failed: ${it.message}\")\n        }\n    }\n\n\n    private fun unSubscribeToTransactionLocationUpdates() {\n        getTransactionLocationUpdatesJob?.cancel()\n    }\n\n    private fun removeHazardousLaneListener() {\n        mappingUseCase.removeHazardousListenerUseCase()\n    }\n\n\n    private fun subscribeToRescueTransactionUpdates() {\n        if (getRescueTransactionUpdatesJob?.isActive == true) {\n            return\n        }\n        getRescueTransactionUpdatesJob =\n            viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {\n\n                mappingUseCase.getRescueTransactionUpdatesUseCase().catch {\n                    Timber.e(\"ERROR GETTING RESCUE TRANSACTION: ${it.message}\")\n\n                }.onEach { rescueTransactions ->\n                    rescueTransactions.updateCurrentRescueTransaction()\n\n                    trackingHandler.checkRescueRequestAccepted(\n                        rescueTransaction = rescueTransactions,\n                        id = getId()\n                    )\n\n                    trackingHandler.updateClient()\n                }.launchIn(this@launch).invokeOnCompletion {\n                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n                }\n\n            }\n    }\n\n\n    private fun RescueTransaction.updateCurrentRescueTransaction() {\n        val rescueTransaction = trackingHandler.filterUserRescueTransaction(this)\n        _state.update { it.copy(rescueTransaction = rescueTransaction) }\n    }\n\n\n    private fun unSubscribeToRescueTransactionUpdates() {\n        getRescueTransactionUpdatesJob?.cancel()\n    }\n\n    private fun unSubscribeToNearbyUsersChanges() {\n        getUsersUpdatesJob?.cancel()\n    }\n\n    private fun subscribeToLocationUpdates() {\n        if (locationUpdatesJob?.isActive == true) {\n            return\n        }\n        locationUpdatesJob = viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {\n\n            mappingUseCase.getUserLocationUseCase().catch {\n                Timber.e(\"Error Location Updates: ${it.message}\")\n            }.onEach { location ->\n                trackingHandler.updateLocation(location)\n                broadcastRescueTransactionToRespondent(location)\n                updateSpeedometer(location)\n                if(state.value.nearbyCyclist == null) {\n                    broadcastToNearbyCyclists()\n                }\n\n            }.launchIn(this@launch).invokeOnCompletion {\n                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n            }\n        }\n    }\n\n    private fun updateSpeedometer(location: LocationModel) {\n        val isUserRescuer = state.value.user.isRescuer()\n        if (isUserRescuer) {\n            trackingHandler.setSpeed(location.speed)\n            trackingHandler.getTopSpeed(location.speed)\n            travelledPath.add(element = GoogleLatLng(location.latitude!!, location.longitude!!))\n            val distance = SphericalUtil.computeLength(travelledPath).formatToDistanceKm()\n            trackingHandler.setTravelledDistance(distance)\n        }\n    }\n\n\n    private fun subscribeToNearbyUsersChanges() {\n        if (getUsersUpdatesJob?.isActive == true) {\n            return\n        }\n\n        getUsersUpdatesJob = viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {\n\n            mappingUseCase.nearbyCyclistsUseCase().catch {\n                Timber.e(\"ERROR GETTING USERS: ${it.message}\")\n            }.onEach {\n                it.filterUser()\n                it.updateNearbyCyclists()\n                Timber.v(\"Receiving from subscribeToNearbyUsersChanges\")\n                trackingHandler.updateClient()\n            }.launchIn(this).invokeOnCompletion {\n                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n            }\n        }\n    }\n\n    private fun unSubscribeToLocationUpdates() {\n        locationUpdatesJob?.cancel()\n    }\n\n\n    private suspend inline fun uploadUserProfile(crossinline onSuccess: () -> Unit) {\n        coroutineScope {\n            val userLocation = state.value.userLocation\n\n            if (userLocation == null) {\n                _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = \"Searching for GPS\"))\n                return@coroutineScope\n            }\n\n            uploadProfile(location = userLocation, onSuccess = onSuccess)\n\n        }\n    }\n\n\n    private suspend inline fun uploadProfile(\n        location: LocationModel,\n        crossinline onSuccess: () -> Unit\n    ) {\n\n        val isProfileUploaded = state.value.profileUploaded\n\n        if (isProfileUploaded) {\n            onSuccess()\n            return\n        }\n\n        val fullAddress = mappingUseCase.getFullAddressUseCase(\n            latitude = location.latitude,\n            longitude = location.longitude\n        )\n\n        coroutineScope {\n\n            runCatching {\n                isLoading(true)\n                fullAddress?.let { mappingUseCase.addressUseCase(it) }\n                mappingUseCase.createUserUseCase(\n                    user = UserItem(\n                        id = getId(),\n                        name = getName(),\n                        address = fullAddress,\n                        profilePictureUrl = getPhotoUrl(),\n                        location = LocationModel(\n                            latitude = location.latitude,\n                            longitude = location.longitude\n                        ),\n                        rescueRequest = RescueRequest(),\n                        userAssistance = UserAssistanceModel(),\n                        rescuePending = RescuePending()\n                    )\n                )\n\n\n            }.onSuccess {\n                isLoading(false)\n                broadcastToNearbyCyclists()\n                onSuccess()\n                _state.update { it.copy(profileUploaded = true) }\n\n            }.onFailure { exception ->\n                Timber.e(\"Error uploading profile: ${exception.message}\")\n                isLoading(false)\n                exception.handleException()\n            }\n        }\n    }\n\n\n    private suspend fun Throwable.handleException() {\n        trackingHandler.handleException(this)\n        savedStateHandle[MAPPING_VM_STATE_KEY] = state.value\n    }\n\n\n    private suspend fun createMockUpUsers() {\n        runCatching {\n            mappingUseCase.createMockUsers()\n        }.onSuccess {\n            Timber.v(\"CREATED MOCK USERS!\")\n            broadcastToNearbyCyclists()\n        }.onFailure {\n            Timber.e(\"FAILED TO CREATE MOCK USERS: ${it.message}\")\n        }\n    }\n\n    private fun removeBottomSheet() {\n        viewModelScope.launch(SupervisorJob()) {\n            mappingUseCase.bottomSheetTypeUseCase(bottomSheet = \"\")\n        }\n    }\n\n\n    override fun onCleared() {\n        super.onCleared()\n        removeBottomSheet()\n        unSubscribeToLocationUpdates()\n        unSubscribeToNearbyUsersChanges()\n        unSubscribeToRescueTransactionUpdates()\n        unSubscribeToTransactionLocationUpdates()\n        removeHazardousLaneListener()\n\n\n    }\n\n\n    private fun getId(): String = authUseCase.getIdUseCase()\n\n    private suspend fun getName(): String = userProfileUseCase.getNameUseCase()\n\n    private suspend fun getPhotoUrl() = userProfileUseCase.getPhotoUrlUseCase()\n\n    private fun clearTravelledPath() {\n        travelledPath = mutableListOf()\n    }\n\n\n}\n\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingViewModel.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingViewModel.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingViewModel.kt	(revision a4ac85465bc712b349c15a6e6dba4574e654c3f3)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingViewModel.kt	(date 1696596041521)
+@@ -894,7 +894,7 @@
+             getId()
+         }.onSuccess { id ->
+             findUser(id = id)?.let { user ->
+-                val respondents = user.getUserRescueRespondents(this)
++                val respondents = user.getUserRescueRespondents(this).distinctBy { it.id }
+                 _state.update {
+                     it.copy(
+                         newRescueRequest = NewRescueRequestsModel(request = respondents),
+Index: firestore-debug.log
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>Oct 05, 2023 12:00:06 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://0.0.0.0:34545\nAPI endpoint: http://0.0.0.0:9299\nIf you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\n\n   export FIRESTORE_EMULATOR_HOST=0.0.0.0:9299\n\nDev App Server is now running.\n\nOct 05, 2023 12:03:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:03:07 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\nOct 05, 2023 12:03:08 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\nOct 05, 2023 12:03:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:03:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:03:09 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\nOct 05, 2023 12:03:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:03:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:03:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:05:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:08:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:14:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:15:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:15:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:15:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:16:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:17:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:18:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:18:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:18:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:18:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:18:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:18:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:18:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:18:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:18:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:19:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:20:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:20:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:22:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:23:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:24:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:24:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:25:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:26:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:27:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:27:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:27:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:27:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:27:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:27:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:27:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:27:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:27:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:27:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:27:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:27:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:27:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:27:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:28:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:30:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:30:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:30:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:30:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:31:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:32:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:32:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:33:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:33:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:33:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:34:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:34:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:36:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:36:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:37:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:37:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:38:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:39:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:39:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:40:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:41:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:42:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:42:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:42:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:43:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:43:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:44:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:44:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:44:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:44:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:45:27 AM io.grpc.netty.NettyServerHandler onStreamError\nWARNING: Stream Error\nio.netty.handler.codec.http2.Http2Exception$StreamException: Stream closed before write could take place\n\tat io.netty.handler.codec.http2.Http2Exception.streamError(Http2Exception.java:172)\n\tat io.netty.handler.codec.http2.DefaultHttp2RemoteFlowController$FlowState.cancel(DefaultHttp2RemoteFlowController.java:481)\n\tat io.netty.handler.codec.http2.DefaultHttp2RemoteFlowController$1.onStreamClosed(DefaultHttp2RemoteFlowController.java:105)\n\tat io.netty.handler.codec.http2.DefaultHttp2Connection.notifyClosed(DefaultHttp2Connection.java:357)\n\tat io.netty.handler.codec.http2.DefaultHttp2Connection$ActiveStreams.removeFromActiveStreams(DefaultHttp2Connection.java:1007)\n\tat io.netty.handler.codec.http2.DefaultHttp2Connection$ActiveStreams.deactivate(DefaultHttp2Connection.java:963)\n\tat io.netty.handler.codec.http2.DefaultHttp2Connection$DefaultStream.close(DefaultHttp2Connection.java:515)\n\tat io.netty.handler.codec.http2.DefaultHttp2Connection.close(DefaultHttp2Connection.java:153)\n\tat io.netty.handler.codec.http2.Http2ConnectionHandler$BaseDecoder.channelInactive(Http2ConnectionHandler.java:209)\n\tat io.netty.handler.codec.http2.Http2ConnectionHandler.channelInactive(Http2ConnectionHandler.java:417)\n\tat io.grpc.netty.NettyServerHandler.channelInactive(NettyServerHandler.java:627)\n\tat io.netty.channel.AbstractChannelHandlerContext.invokeChannelInactive(AbstractChannelHandlerContext.java:262)\n\tat io.netty.channel.AbstractChannelHandlerContext.invokeChannelInactive(AbstractChannelHandlerContext.java:248)\n\tat io.netty.channel.AbstractChannelHandlerContext.fireChannelInactive(AbstractChannelHandlerContext.java:241)\n\tat io.netty.channel.DefaultChannelPipeline$HeadContext.channelInactive(DefaultChannelPipeline.java:1405)\n\tat io.netty.channel.AbstractChannelHandlerContext.invokeChannelInactive(AbstractChannelHandlerContext.java:262)\n\tat io.netty.channel.AbstractChannelHandlerContext.invokeChannelInactive(AbstractChannelHandlerContext.java:248)\n\tat io.netty.channel.DefaultChannelPipeline.fireChannelInactive(DefaultChannelPipeline.java:901)\n\tat io.netty.channel.AbstractChannel$AbstractUnsafe$8.run(AbstractChannel.java:831)\n\tat io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:164)\n\tat io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:469)\n\tat io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:500)\n\tat io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:986)\n\tat io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)\n\tat io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)\n\tat java.base/java.lang.Thread.run(Thread.java:833)\n\nOct 05, 2023 12:45:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:46:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:47:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:47:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:47:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:47:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:48:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:49:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:50:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:51:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:51:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:52:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:52:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:52:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:53:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:53:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:54:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:54:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:54:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:54:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:54:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:55:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:55:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:55:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:56:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:56:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 12:56:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:57:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:58:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 12:59:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:00:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:01:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:02:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:02:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:03:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:04:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:05:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:06:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:06:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:07:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:08:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:09:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:10:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:11:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:13:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:13:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:15:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:15:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:17:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:18:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:19:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:19:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:21:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:22:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:22:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 1:22:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:23:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:25:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:26:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:27:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:27:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:29:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:29:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:30:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:31:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:32:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:33:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:34:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:35:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:36:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:37:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:38:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:39:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:40:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:41:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:42:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:44:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:44:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:45:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:47:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:47:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:48:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:49:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:50:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:51:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:52:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:53:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:53:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:54:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:55:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:56:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:57:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:58:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 1:59:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:00:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:01:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:01:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:03:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:04:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:05:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:05:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 2:06:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:07:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:08:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 2:08:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:09:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:10:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:11:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:12:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:13:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:13:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 2:14:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:15:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:15:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:15:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:15:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 2:15:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:15:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:15:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:15:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:15:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:15:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:15:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:15:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:16:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:17:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:18:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 05, 2023 2:18:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:19:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 05, 2023 2:20:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/firestore-debug.log b/firestore-debug.log
+--- a/firestore-debug.log	(revision a4ac85465bc712b349c15a6e6dba4574e654c3f3)
++++ b/firestore-debug.log	(date 1696676783947)
+@@ -1,5 +1,5 @@
+-Oct 05, 2023 12:00:06 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
+-INFO: Started WebSocket server on ws://0.0.0.0:34545
++Oct 07, 2023 7:05:16 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
++INFO: Started WebSocket server on ws://0.0.0.0:46235
+ API endpoint: http://0.0.0.0:9299
+ If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
+ 
+@@ -7,671 +7,17 @@
+ 
+ Dev App Server is now running.
+ 
+-Oct 05, 2023 12:03:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 07, 2023 7:05:42 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:03:07 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+-INFO: Connected to new websocket client
+-Oct 05, 2023 12:03:08 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
+-INFO: Websocket client disconnected
+-Oct 05, 2023 12:03:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 07, 2023 7:05:42 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:03:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 07, 2023 7:05:43 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:03:09 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
++Oct 07, 2023 7:05:43 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+ INFO: Connected to new websocket client
+-Oct 05, 2023 12:03:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:03:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:03:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:05:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:08:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:14:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:15:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:15:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:15:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:16:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:17:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:18:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:18:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:18:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:18:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:18:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:18:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:18:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:18:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:18:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:02 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:19:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:20:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:20:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:22:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:23:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:24:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:24:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:25:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:26:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:27:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:27:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:27:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:27:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:27:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:27:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:27:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:27:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:27:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:27:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:27:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:27:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:27:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:27:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:12 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:28:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:30:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:30:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:30:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:30:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 07, 2023 7:05:43 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:31:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 07, 2023 7:06:21 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:32:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:32:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:33:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:33:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:33:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:34:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:34:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:36:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:36:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:37:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:37:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:38:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:39:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:39:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:40:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:41:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:42:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:42:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:42:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:43:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:43:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:44:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:44:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:44:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:44:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:45:27 AM io.grpc.netty.NettyServerHandler onStreamError
+-WARNING: Stream Error
+-io.netty.handler.codec.http2.Http2Exception$StreamException: Stream closed before write could take place
+-	at io.netty.handler.codec.http2.Http2Exception.streamError(Http2Exception.java:172)
+-	at io.netty.handler.codec.http2.DefaultHttp2RemoteFlowController$FlowState.cancel(DefaultHttp2RemoteFlowController.java:481)
+-	at io.netty.handler.codec.http2.DefaultHttp2RemoteFlowController$1.onStreamClosed(DefaultHttp2RemoteFlowController.java:105)
+-	at io.netty.handler.codec.http2.DefaultHttp2Connection.notifyClosed(DefaultHttp2Connection.java:357)
+-	at io.netty.handler.codec.http2.DefaultHttp2Connection$ActiveStreams.removeFromActiveStreams(DefaultHttp2Connection.java:1007)
+-	at io.netty.handler.codec.http2.DefaultHttp2Connection$ActiveStreams.deactivate(DefaultHttp2Connection.java:963)
+-	at io.netty.handler.codec.http2.DefaultHttp2Connection$DefaultStream.close(DefaultHttp2Connection.java:515)
+-	at io.netty.handler.codec.http2.DefaultHttp2Connection.close(DefaultHttp2Connection.java:153)
+-	at io.netty.handler.codec.http2.Http2ConnectionHandler$BaseDecoder.channelInactive(Http2ConnectionHandler.java:209)
+-	at io.netty.handler.codec.http2.Http2ConnectionHandler.channelInactive(Http2ConnectionHandler.java:417)
+-	at io.grpc.netty.NettyServerHandler.channelInactive(NettyServerHandler.java:627)
+-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelInactive(AbstractChannelHandlerContext.java:262)
+-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelInactive(AbstractChannelHandlerContext.java:248)
+-	at io.netty.channel.AbstractChannelHandlerContext.fireChannelInactive(AbstractChannelHandlerContext.java:241)
+-	at io.netty.channel.DefaultChannelPipeline$HeadContext.channelInactive(DefaultChannelPipeline.java:1405)
+-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelInactive(AbstractChannelHandlerContext.java:262)
+-	at io.netty.channel.AbstractChannelHandlerContext.invokeChannelInactive(AbstractChannelHandlerContext.java:248)
+-	at io.netty.channel.DefaultChannelPipeline.fireChannelInactive(DefaultChannelPipeline.java:901)
+-	at io.netty.channel.AbstractChannel$AbstractUnsafe$8.run(AbstractChannel.java:831)
+-	at io.netty.util.concurrent.AbstractEventExecutor.safeExecute(AbstractEventExecutor.java:164)
+-	at io.netty.util.concurrent.SingleThreadEventExecutor.runAllTasks(SingleThreadEventExecutor.java:469)
+-	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:500)
+-	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:986)
+-	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+-	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+-	at java.base/java.lang.Thread.run(Thread.java:833)
+-
+-Oct 05, 2023 12:45:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:46:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:47:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:47:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:47:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:47:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:48:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:49:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:50:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:51:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:51:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:52:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:52:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:52:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:53:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:53:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:54:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:54:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:54:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:54:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:54:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:55:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:55:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:55:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:56:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:56:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 12:56:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:57:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:58:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 12:59:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:00:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:01:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:02:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:02:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:03:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:04:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:05:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:06:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:06:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:07:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:08:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:09:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:10:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:11:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:13:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:13:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:15:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:15:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:17:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:18:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:19:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:19:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:20:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:21:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:22:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:22:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 1:22:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:23:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:25:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:26:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:27:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:27:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:29:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:29:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:30:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:31:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:32:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:33:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:34:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:35:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:36:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:37:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:38:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:39:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:40:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:41:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:42:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:44:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:44:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:45:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:47:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:47:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:48:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:49:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:50:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:51:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:52:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:53:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:53:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:54:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:55:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:56:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:57:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:58:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 1:59:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:00:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:01:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:01:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:03:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:04:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:05:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:05:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 2:06:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:07:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:08:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 2:08:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:09:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:10:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:11:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:12:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:13:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:13:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 2:14:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:15:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:15:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:15:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:15:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 2:15:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:15:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:15:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:15:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:15:35 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:15:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:15:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:15:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:16:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:17:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:18:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Oct 05, 2023 2:18:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:19:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 05, 2023 2:20:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
++Oct 07, 2023 7:06:23 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
++INFO: Websocket client disconnected
