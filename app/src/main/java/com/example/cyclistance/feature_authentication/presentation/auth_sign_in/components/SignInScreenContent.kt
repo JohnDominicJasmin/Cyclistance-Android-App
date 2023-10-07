@@ -33,7 +33,6 @@ import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialo
 import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.core.presentation.dialogs.privacy_policy_dialog.PrivacyPolicyDialog
 import com.example.cyclistance.core.presentation.dialogs.webview_dialog.DialogWebView
-import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.presentation.auth_email.state.EmailAuthState
 import com.example.cyclistance.feature_authentication.presentation.auth_sign_in.event.SignInUiEvent
 import com.example.cyclistance.feature_authentication.presentation.auth_sign_in.state.SignInState
@@ -60,8 +59,8 @@ fun SignInScreenContent(
     password: TextFieldValue,
     event: (SignInUiEvent) -> Unit = {}) {
 
-    var lastClicked by remember {
-        mutableStateOf("")
+    var lastClicked by rememberSaveable {
+        mutableStateOf<SignInUiEvent?>(null)
     }
 
     Surface(modifier = modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
@@ -143,8 +142,7 @@ fun SignInScreenContent(
                     }
                     else{
                         event(SignInUiEvent.SetPrivacyPolicyVisibility(true))
-                        lastClicked=""
-                        lastClicked = SignInCredential.Facebook::javaClass.name
+                        lastClicked = SignInUiEvent.SignInWithFacebook
                     }
 
                 },
@@ -154,8 +152,7 @@ fun SignInScreenContent(
                     }
                     else {
                         event(SignInUiEvent.SetPrivacyPolicyVisibility(true))
-                        lastClicked=""
-                        lastClicked = SignInCredential.Google::javaClass.name
+                        lastClicked = SignInUiEvent.SignInWithGoogle
                     }
                 },
                 enabled = !isLoading
@@ -190,11 +187,9 @@ fun SignInScreenContent(
                     onDismiss = { event(SignInUiEvent.SetPrivacyPolicyVisibility(false)) },
                     onClickAgree = {
                         event(SignInUiEvent.AgreedToPrivacyPolicy)
-                        if (lastClicked == SignInCredential.Facebook::javaClass.name) {
-                            event(SignInUiEvent.SignInWithFacebook)
-                            return@PrivacyPolicyDialog
+                        lastClicked?.let {
+                            event(it)
                         }
-                        event(SignInUiEvent.SignInWithGoogle)
                     },
                     onClickLink = {
                         event(SignInUiEvent.OpenWebView(it))
