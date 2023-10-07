@@ -1,0 +1,28 @@
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetDropDown\">\n    <runningDeviceTargetSelectedWithDropDown>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </runningDeviceTargetSelectedWithDropDown>\n    <targetSelectedWithDropDown>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetSelectedWithDropDown>\n    <timeTargetWasSelectedWithDropDown value=\"2023-10-03T13:06:25.205726618Z\" />\n    <runningDeviceTargetsSelectedWithDialog>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </runningDeviceTargetsSelectedWithDialog>\n    <targetsSelectedWithDialog>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetsSelectedWithDialog>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(revision 2439e78ecfc03d600d52d8fde68a0117dc48f6aa)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1696417626108)
+@@ -1,17 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="deploymentTargetDropDown">
+-    <runningDeviceTargetSelectedWithDropDown>
+-      <Target>
+-        <type value="RUNNING_DEVICE_TARGET" />
+-        <deviceKey>
+-          <Key>
+-            <type value="VIRTUAL_DEVICE_PATH" />
+-            <value value="$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd" />
+-          </Key>
+-        </deviceKey>
+-      </Target>
+-    </runningDeviceTargetSelectedWithDropDown>
+     <targetSelectedWithDropDown>
+       <Target>
+         <type value="QUICK_BOOT_TARGET" />

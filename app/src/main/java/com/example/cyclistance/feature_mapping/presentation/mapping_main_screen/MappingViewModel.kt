@@ -894,7 +894,7 @@ class MappingViewModel @Inject constructor(
             getId()
         }.onSuccess { id ->
             findUser(id = id)?.let { user ->
-                val respondents = user.getUserRescueRespondents(this)
+                val respondents = user.getUserRescueRespondents(this).distinctBy { it.id }
                 _state.update {
                     it.copy(
                         newRescueRequest = NewRescueRequestsModel(request = respondents),
