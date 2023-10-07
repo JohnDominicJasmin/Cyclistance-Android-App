@@ -126,5 +126,6 @@ object MappingConstants {
 
 
     const val MAXIMUM_HAZARDOUS_MARKER = 3
+    const val MAPPING_URI = "cyclistance://mapping/"
 
 }
