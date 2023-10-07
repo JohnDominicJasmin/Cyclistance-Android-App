@@ -922,13 +922,14 @@ fun MappingScreen(
     BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
         checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
 
+            cancelOnGoingRescueDialogVisibility(hasTransaction)
+            cancelSearchDialogVisibility(hasTransaction)
+
             if(hasTransaction){
-               cancelOnGoingRescueDialogVisibility(true)
                return@checkIfHasEditingMarker
             }
 
             if(uiState.searchingAssistance){
-               cancelSearchDialogVisibility(true)
                return@checkIfHasEditingMarker
             }
 
