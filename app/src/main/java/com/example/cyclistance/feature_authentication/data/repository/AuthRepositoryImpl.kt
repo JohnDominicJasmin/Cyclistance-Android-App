@@ -47,7 +47,13 @@ class AuthRepositoryImpl(
         checkInternetConnection()
 
         suspendCancellableCoroutine { continuation ->
-            fireStore.document("${USER_COLLECTION}/${user.uid}").set(user).addOnSuccessListener {
+            fireStore
+                .document("${USER_COLLECTION}/${user.uid}")
+                .set(user)
+                .addOnCanceledListener {
+                 Timber.v("User creation cancelled")
+                }
+                .addOnSuccessListener {
                 Timber.v("User created successfully")
                 continuation.resume(Unit)
             }.addOnFailureListener { exception ->

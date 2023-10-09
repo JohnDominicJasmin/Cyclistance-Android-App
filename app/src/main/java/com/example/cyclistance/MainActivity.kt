@@ -30,11 +30,6 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    /*@Inject
-    @Named("messagingNotificationChannel") lateinit var notificationChannel: NotificationChannel*/
-
-   /* @Inject
-    @Named("rescueNotificationChannel") lateinit var rescueNotificationChannel: NotificationChannel*/
 
     @Inject lateinit var notificationManager: NotificationManager
 

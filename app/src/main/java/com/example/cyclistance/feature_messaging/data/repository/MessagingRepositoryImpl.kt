@@ -369,9 +369,10 @@ class MessagingRepositoryImpl(
         val uid = getUid()
 
         try {
-            fireStore.collection(USER_COLLECTION).document(uid).update(
-                KEY_FCM_TOKEN, token
-            ).await()
+            fireStore.collection(USER_COLLECTION)
+                .document(uid)
+                .update(KEY_FCM_TOKEN, token)
+                .await()
 
             withContext(Dispatchers.IO) {
                 dataStore.editData(key = SAVED_TOKEN, value = token)

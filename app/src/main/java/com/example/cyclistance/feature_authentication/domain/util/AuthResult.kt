@@ -18,11 +18,13 @@ class AuthResult :
     override fun createIntent(context: Context, input: Int): Intent {
 
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(context.getString(R.string.default_web_client_id))
+            .requestServerAuthCode(context.getString(R.string.default_web_client_id), false)
             .requestEmail()
-            .requestIdToken(context.getString(R.string.DefaultWebClientId))
+            .requestProfile()
             .build()
 
-        val signInClient =  GoogleSignIn.getClient(context, googleSignInOptions)
+        val signInClient = GoogleSignIn.getClient(context, googleSignInOptions)
         return signInClient.signInIntent.putExtra("Input", input)
     }
 

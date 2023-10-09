@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "297531421452",
+    "firebase_url": "https://cyclistance-cc715-default-rtdb.asia-southeast1.firebasedatabase.app",
     "project_id": "cyclistance-cc715",
     "storage_bucket": "cyclistance-cc715.appspot.com"
   },
@@ -21,35 +22,6 @@
             "certificate_hash": "7239184e5f13f736b14b170d046d139407ee715c"
           }
         },
-        {
-          "client_id": "297531421452-7kefpj7sm6rta6crg3u8k81uij5mg2ti.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBK1yc4oocYBKvlp-7FaJ2dCG_r1ZfrMBk"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "297531421452-7kefpj7sm6rta6crg3u8k81uij5mg2ti.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:297531421452:android:6583ec0eea1b259c208f29",
-        "android_client_info": {
-          "package_name": "com.example.jetpack_testing"
-        }
-      },
-      "oauth_client": [
         {
           "client_id": "297531421452-7kefpj7sm6rta6crg3u8k81uij5mg2ti.apps.googleusercontent.com",
           "client_type": 3
