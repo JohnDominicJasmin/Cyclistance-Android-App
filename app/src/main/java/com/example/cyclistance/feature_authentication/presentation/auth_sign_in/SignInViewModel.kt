@@ -131,7 +131,9 @@ class SignInViewModel @Inject constructor(
                 authUseCase.createUserUseCase(user = user)
             }.onSuccess {
                 _state.update { it.copy(isLoading = false) }
-                messagingUseCase.updateUserAvailability(true)
+                _eventFlow.emit(SignInEvent.SignInSuccess)
+
+
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
                 handleException(exception)
@@ -154,8 +156,8 @@ class SignInViewModel @Inject constructor(
                 _state.update { it.copy(isLoading = false) }
                 if (task.isSuccessful) {
                     createUser(task.user)
-                    _eventFlow.emit(SignInEvent.SignInSuccess)
                 }
+
             }.onFailure { exception ->
                 _state.update { it.copy(isLoading = false) }
                 handleException(exception)
