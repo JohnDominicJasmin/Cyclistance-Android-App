@@ -1,5 +1,6 @@
 package com.example.cyclistance.di.location_service
 
+import android.app.PendingIntent
 import android.content.Context
 import androidx.core.app.NotificationCompat
 import com.example.cyclistance.R
@@ -53,16 +54,19 @@ object LocationServiceModule {
     @ServiceScoped
     @Named("trackingNotification")
     fun provideNotificationBuilder(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        @Named("notificationContentIntentSingleTop") contentIntent: PendingIntent
     ): NotificationCompat.Builder {
         return lazy {
             NotificationCompat.Builder(context, LOCATION_SERVICE_CHANNEL_ID)
+                .setContentIntent(contentIntent)
                 .setOngoing(true)
                 .setSmallIcon(R.drawable.ic_app_notification_icon)
                 .setContentTitle("Cyclistance")
                 .setContentText("Tracking your ride")
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)
+                .setPriority(NotificationCompat.PRIORITY_LOW)
+                .setVibrate(longArrayOf(200,200,200,200))
+                .setAutoCancel(false)
         }.value
 
     }
