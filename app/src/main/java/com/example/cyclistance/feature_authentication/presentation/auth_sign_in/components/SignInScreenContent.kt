@@ -59,7 +59,7 @@ fun SignInScreenContent(
     password: TextFieldValue,
     event: (SignInUiEvent) -> Unit = {}) {
 
-    var lastClicked by rememberSaveable {
+    var lastClicked by remember {
         mutableStateOf<SignInUiEvent?>(null)
     }
 
