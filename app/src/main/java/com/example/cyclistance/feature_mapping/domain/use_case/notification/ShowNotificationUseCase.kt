@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping.domain.use_case.notification
 
 import android.annotation.SuppressLint
+import android.app.Notification
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.example.cyclistance.core.utils.constants.MappingConstants
@@ -19,6 +20,7 @@ class ShowNotificationUseCase(
         }
         notificationManagerCompat.notify(
             MappingConstants.RESCUE_NOTIFICATION_ID,
-            notificationCompat.build())
+            notificationCompat.build().apply { flags =
+                Notification.FLAG_AUTO_CANCEL } )
     }
 }
