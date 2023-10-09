@@ -48,7 +48,7 @@ object MappingNotificationModule {
                 .setVibrate(longArrayOf(200,200,200))
                 .setAutoCancel(true)
                 .setShowWhen(true)
-                .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
         }.value
     }
 
