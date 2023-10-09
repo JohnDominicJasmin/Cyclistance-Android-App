@@ -2,9 +2,7 @@ package com.example.cyclistance.di.mapping
 
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import androidx.core.app.NotificationCompat
-import com.example.cyclistance.MainActivity
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.MappingConstants.RESCUE_NOTIFICATION_CHANNEL_ID
 import dagger.Module
@@ -24,18 +22,9 @@ object MappingNotificationModule {
     @Singleton
     @Named("rescueNotification")
     fun provideRescueNotification(
-        @ApplicationContext context: Context
+        @ApplicationContext context: Context,
+        @Named("notificationContentIntentSingleTop") contentIntent: PendingIntent
     ): NotificationCompat.Builder{
-
-        val clickIntent = Intent(context, MainActivity::class.java).apply {
-            flags =
-                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
-        }
-
-        val contentIntent = PendingIntent.getActivity(
-            context, 0,
-            clickIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
         return lazy {
             NotificationCompat.Builder(context, RESCUE_NOTIFICATION_CHANNEL_ID)
