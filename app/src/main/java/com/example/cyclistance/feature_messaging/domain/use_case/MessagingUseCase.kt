@@ -5,7 +5,6 @@ import com.example.cyclistance.feature_messaging.domain.use_case.conversion.GetC
 import com.example.cyclistance.feature_messaging.domain.use_case.conversion.UpdateConversionUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetMessagingUserUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUidUseCase
-import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.UpdateUserAvailability
 import com.example.cyclistance.feature_messaging.domain.use_case.message.AddMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.RemoveMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.SendMessageUseCase
@@ -25,7 +24,6 @@ data class MessagingUseCase(
     val getConversionIdUseCase: GetConversionIdUseCase,
     val addConversionUseCase: AddConversionUseCase,
     val updateConversionUseCase: UpdateConversionUseCase,
-    val updateUserAvailability: UpdateUserAvailability,
     val sendNotificationUseCase: SendNotificationUseCase,
     val getMessagingUserUseCase: GetMessagingUserUseCase,
     val reEnableNetworkSyncUseCase: ReEnableNetworkSyncUseCase,

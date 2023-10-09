@@ -7,7 +7,6 @@ import com.example.cyclistance.feature_messaging.domain.use_case.conversion.GetC
 import com.example.cyclistance.feature_messaging.domain.use_case.conversion.UpdateConversionUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetMessagingUserUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.GetUidUseCase
-import com.example.cyclistance.feature_messaging.domain.use_case.manage_user.UpdateUserAvailability
 import com.example.cyclistance.feature_messaging.domain.use_case.message.AddMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.RemoveMessageListenerUseCase
 import com.example.cyclistance.feature_messaging.domain.use_case.message.SendMessageUseCase
@@ -42,7 +41,6 @@ object MessagingViewModelModule {
             getConversionIdUseCase = GetConversionIdUseCase(repository = repository),
             addConversionUseCase = AddConversionUseCase(repository = repository),
             updateConversionUseCase = UpdateConversionUseCase(repository = repository),
-            updateUserAvailability = UpdateUserAvailability(repository = repository),
             sendNotificationUseCase = SendNotificationUseCase(repository = repository),
             getMessagingUserUseCase = GetMessagingUserUseCase(repository = repository),
             reEnableNetworkSyncUseCase = ReEnableNetworkSyncUseCase(repository = repository),

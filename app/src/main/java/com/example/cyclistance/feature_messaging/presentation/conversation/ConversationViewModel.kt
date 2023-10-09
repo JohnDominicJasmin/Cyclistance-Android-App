@@ -220,9 +220,6 @@ class ConversationViewModel @Inject constructor(
 
     private fun sendMessageNotification(message: String) {
         val userReceiver = state.value
-        if (userReceiver.isReceiverAvailable()) {
-            return
-        }
         viewModelScope.launch {
             runCatching {
                 messagingUseCase.sendNotificationUseCase(

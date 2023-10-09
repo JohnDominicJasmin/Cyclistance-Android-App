@@ -27,7 +27,6 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun MessageUserImage(
     modifier: Modifier = Modifier,
-    isOnline: Boolean?,
     photoUrl: String?) {
 
     Box(modifier = Modifier.wrapContentSize()) {
@@ -49,15 +48,6 @@ fun MessageUserImage(
             fallback = painterResource(id = R.drawable.ic_empty_profile_placeholder_large))
 
 
-        isOnline?.let {
-
-            OnlineIndicator(
-                isOnline = it,
-                modifier = Modifier
-                    .size(15.dp)
-                    .align(Alignment.BottomEnd))
-
-        }
 
     }
 }
@@ -74,7 +64,6 @@ fun PreviewUserImage() {
                     .wrapContentSize()
                     .clip(CircleShape)
                     .size(48.dp),
-                isOnline = false,
                 photoUrl = MappingConstants.IMAGE_PLACEHOLDER_URL)
         }
     }

@@ -11,7 +11,6 @@ import kotlinx.parcelize.Parcelize
 data class MessagingUserItemModel(
     val userDetails: UserDetails = UserDetails(),
     val fcmToken: String = "",
-    val isUserAvailable: Boolean = false
 ) : Parcelable {
 
     fun getUid() = userDetails.uid
