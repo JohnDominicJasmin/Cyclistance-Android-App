@@ -1,5 +1,6 @@
 package com.example.cyclistance.service
 
+import android.app.Notification
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
@@ -55,7 +56,9 @@ class LocationService(
                 isServiceRunning = false
             }
             ACTION_START_FOREGROUND -> {
-                startForeground(LocationServiceConstants.LOCATION_NOTIFICATION_ID, notification.build())
+                startForeground(LocationServiceConstants.LOCATION_NOTIFICATION_ID, notification.build().apply {
+                    this.flags = Notification.FLAG_FOREGROUND_SERVICE
+                })
             }
             ACTION_STOP_FOREGROUND -> {
                 stopForeground(true)
