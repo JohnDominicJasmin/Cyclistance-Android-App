@@ -1,4 +1,4 @@
-<changelist name="Authentication__Clicking_Google_sign_in_starts_facebook_sign_in" date="1696661913061" recycled="false">
+<changelist name="Authentication__Clicking_Google_sign_in_starts_facebook_sign_in" date="1696838647561" recycled="false" deleted="true">
   <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Authentication__Clicking_Google_sign_in_starts_facebook_sign_in/shelved.patch" />
   <option name="DESCRIPTION" value="Authentication: Clicking Google sign in starts facebook sign in" />
 </changelist>
