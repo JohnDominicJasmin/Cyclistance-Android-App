@@ -57,10 +57,7 @@ android {
                 "string",
                 "FacebookClientToken",
                 localProperties.getProperty("FACEBOOK_CLIENT_TOKEN"))
-            resValue(
-                "string",
-                "DefaultWebClientId",
-                localProperties.getProperty("DEFAULT_WEB_CLIENT_ID"))
+
             resValue(
                 "string",
                 "CyclistanceApiBaseUrl",
@@ -89,10 +86,7 @@ android {
                 "string",
                 "FacebookClientToken",
                 localProperties.getProperty("FACEBOOK_CLIENT_TOKEN"))
-            resValue(
-                "string",
-                "DefaultWebClientId",
-                localProperties.getProperty("DEFAULT_WEB_CLIENT_ID"))
+
             resValue(
                 "string",
                 "CyclistanceApiBaseUrl",
