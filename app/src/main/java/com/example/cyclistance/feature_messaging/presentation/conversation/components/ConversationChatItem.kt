@@ -87,7 +87,6 @@ fun ChatItem(
 
     Box(modifier = modifier.fillMaxWidth(), contentAlignment = contentAlignment) {
 
-        val userAvailable = state.userReceiverMessage?.isUserAvailable
 
         Column(
             horizontalAlignment = if (isSender) Alignment.Start else Alignment.End,
@@ -124,7 +123,6 @@ fun ChatItem(
                         .padding(bottom = 4.dp, end = 4.dp)
                         .clip(CircleShape)
                         .size(36.dp),
-                    isOnline = if (!isInternetAvailable) null else userAvailable,
                     photoUrl = state.userReceiverMessage?.getPhoto(),
                 )
             }

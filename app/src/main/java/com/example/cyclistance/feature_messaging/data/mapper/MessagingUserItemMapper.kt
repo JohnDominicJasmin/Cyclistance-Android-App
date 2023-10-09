@@ -3,7 +3,6 @@ package com.example.cyclistance.feature_messaging.data.mapper
 import com.example.cyclistance.core.domain.model.UserDetails
 import com.example.cyclistance.core.utils.constants.MappingConstants.IMAGE_PLACEHOLDER_URL
 import com.example.cyclistance.core.utils.constants.MessagingConstants
-import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_AVAILABILITY
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_EMAIL
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_PHOTO
@@ -21,8 +20,6 @@ object MessagingUserItemMapper {
                 email = this[KEY_EMAIL].toString(),
             ),
             fcmToken = this[MessagingConstants.KEY_FCM_TOKEN].toString(),
-            isUserAvailable = getBoolean(KEY_AVAILABILITY) ?: false
-
         )
     }
 

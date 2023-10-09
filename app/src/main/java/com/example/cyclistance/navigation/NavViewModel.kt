@@ -11,7 +11,6 @@ import com.example.cyclistance.navigation.event.NavEvent
 import com.example.cyclistance.navigation.event.NavVmEvent
 import com.example.cyclistance.navigation.state.NavState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -41,20 +40,9 @@ class NavViewModel @Inject constructor(
 
     init {
         getStartingDestination()
-        setUserAvailability(true)
     }
 
-    private fun setUserAvailability(availability: Boolean){
-        viewModelScope.launch(SupervisorJob()) {
-            runCatching {
-                messagingUseCase.updateUserAvailability(availability)
-            }.onSuccess {
-                Timber.v("User Availability Updated Successfully")
-            }.onFailure {
-                Timber.e("User Availability Update Failed: ${it.localizedMessage}")
-            }
-        }
-    }
+
 
     private fun getStartingDestination() {
 
@@ -105,7 +93,6 @@ class NavViewModel @Inject constructor(
 
     override fun onCleared() {
         super.onCleared()
-        setUserAvailability(false)
     }
 
 }
