@@ -3,13 +3,8 @@ package com.example.cyclistance.feature_emergency_call.presentation.emergency_ca
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.utils.constants.EmergencyCallConstants
 import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.EMERGENCY_CALL_VM_STATE_KEY
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY_NUMBER
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.NATIONAL_EMERGENCY_PHOTO
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_NUMBER
-import com.example.cyclistance.core.utils.constants.EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.domain.use_case.EmergencyContactUseCase
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallEvent
@@ -91,20 +86,27 @@ class EmergencyCallViewModel @Inject constructor(
     private val isLastContact = state.value.emergencyCallModel.contacts.size == 1
 
     private suspend fun addDefaultContact() {
-        emergencyCallUseCase.upsertContactUseCase(
-            emergencyContact = EmergencyContactModel(
-                name = PHILIPPINE_RED_CROSS,
-                photo = PHILIPPINE_RED_CROSS_PHOTO,
-                phoneNumber = PHILIPPINE_RED_CROSS_NUMBER
+        runCatching {
+            emergencyCallUseCase.upsertContactUseCase(
+                emergencyContact = EmergencyContactModel(
+                    name = EmergencyCallConstants.PHILIPPINE_RED_CROSS,
+                    photo = EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO,
+                    phoneNumber = EmergencyCallConstants.PHILIPPINE_RED_CROSS_NUMBER
+                )
             )
-        )
-        emergencyCallUseCase.upsertContactUseCase(
-            emergencyContact = EmergencyContactModel(
-                name = NATIONAL_EMERGENCY,
-                photo = NATIONAL_EMERGENCY_PHOTO,
-                phoneNumber = NATIONAL_EMERGENCY_NUMBER
+            emergencyCallUseCase.upsertContactUseCase(
+                emergencyContact = EmergencyContactModel(
+                    name = EmergencyCallConstants.NATIONAL_EMERGENCY,
+                    photo = EmergencyCallConstants.NATIONAL_EMERGENCY_PHOTO,
+                    phoneNumber = EmergencyCallConstants.NATIONAL_EMERGENCY_NUMBER
+                )
             )
-        )
+        }.onSuccess {
+            Timber.v("Success adding default contact")
+        }.onFailure {
+            Timber.e("Error adding default contact")
+        }
+
     }
 
     fun onEvent(event: EmergencyCallVmEvent) {

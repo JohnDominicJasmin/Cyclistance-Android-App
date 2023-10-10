@@ -152,7 +152,7 @@ fun RequestItem(
 
 
             Row(
-                modifier = Modifier.padding(top = 12.dp).padding(horizontal = 15.dp),
+                modifier = Modifier.padding(top = 12.dp).padding(horizontal = 15.dp).fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)) {
 
