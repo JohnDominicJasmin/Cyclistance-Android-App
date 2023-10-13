@@ -9,9 +9,11 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_ID
+import com.example.cyclistance.core.utils.app.AppUtils.isAppInForeground
+import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_OPEN_CONVERSATION
+import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_URI
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSAGE
-import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_URI
 import com.example.cyclistance.core.utils.constants.MessagingConstants.NOTIFICATION_ID
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -38,18 +40,18 @@ class MessagingService : FirebaseMessagingService() {
         super.onMessageReceived(message)
 
         var messageData = message.data
-        val conversationId = messageData[CONVERSATION_ID]!!
+//        val conversationId = messageData[CONVERSATION_ID]!!
         val name = messageData[KEY_NAME]!!
         val receivedMessage = messageData[KEY_MESSAGE] ?: ""
 
 
-        val uri =  "$MESSAGING_URI/$CONVERSATION_ID=$conversationId".toUri()
+        val uri = "$MAPPING_URI/${MappingConstants.ACTION}=$ACTION_OPEN_CONVERSATION".toUri()
         val clickIntent = Intent(
             Intent.ACTION_VIEW,
-            uri,
-
+            uri
         ).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            putExtra(MappingConstants.ACTION, ACTION_OPEN_CONVERSATION)
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
 
         val clickPendingIntent: PendingIntent = PendingIntent.getActivity(
@@ -72,11 +74,11 @@ class MessagingService : FirebaseMessagingService() {
             }
         }
 
-        notificationManager.notify(NOTIFICATION_ID, notificationCompat.build())
-
+        if (!isAppInForeground(this)) {
+            notificationManager.notify(NOTIFICATION_ID, notificationCompat.build())
+        }
 
     }
-
 
 
 }
