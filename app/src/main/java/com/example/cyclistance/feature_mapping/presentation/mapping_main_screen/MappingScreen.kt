@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.os.Build
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -41,6 +42,7 @@ import com.example.cyclistance.core.utils.contexts.callPhoneNumber
 import com.example.cyclistance.core.utils.contexts.shareLocation
 import com.example.cyclistance.core.utils.contexts.startLocationServiceIntentAction
 import com.example.cyclistance.core.utils.permissions.requestPermission
+import com.example.cyclistance.feature_authentication.domain.util.findActivity
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.EmergencyCallViewModel
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallVmEvent
 import com.example.cyclistance.feature_mapping.domain.model.Role
@@ -931,9 +933,13 @@ fun MappingScreen(
 
 
 
-
-
-
+    DisposableEffect(key1 = Unit) {
+        val window = context.findActivity()?.window
+        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        onDispose {
+            window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        }
+    }
 
     BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
         checkIfHasEditingMarker(noMarkerCurrentlyEditing = {
