@@ -1,7 +1,6 @@
 package com.example.cyclistance.di.utils
 
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
@@ -39,23 +38,18 @@ object UtilsModule {
     @RequiresApi(Build.VERSION_CODES.M)
     fun provideNotificationManager(@ApplicationContext context: Context): NotificationManager {
         return context.getSystemService(NotificationManager::class.java)
-
     }
+
 
     @Provides
     @Singleton
-    @Named("notificationContentIntentSingleTop")
-    fun provideNotificationContentIntentSingleTop(@ApplicationContext context: Context): PendingIntent {
-        val clickIntent = Intent(context, MainActivity::class.java).apply {
+    @Named("notificationContentIntent")
+    fun provideNotificationContentIntent(@ApplicationContext context: Context): Intent {
+       return Intent(context, MainActivity::class.java).apply {
             flags =
                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
         }
-
-        return PendingIntent.getActivity(
-            context,
-            0,
-            clickIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     }
+
 
 }
