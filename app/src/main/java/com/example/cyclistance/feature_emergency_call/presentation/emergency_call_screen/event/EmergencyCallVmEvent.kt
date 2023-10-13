@@ -5,6 +5,7 @@ import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyCont
 sealed class EmergencyCallVmEvent {
 
 
+    data object LoadDefaultContact : EmergencyCallVmEvent()
     data class DeleteContact(val emergencyContactModel: EmergencyContactModel) :
         EmergencyCallVmEvent()
 

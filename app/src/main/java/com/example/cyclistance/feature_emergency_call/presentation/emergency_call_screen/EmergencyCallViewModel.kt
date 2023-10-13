@@ -11,17 +11,15 @@ import com.example.cyclistance.feature_emergency_call.presentation.emergency_cal
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallVmEvent
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import javax.inject.Inject
 
 @HiltViewModel
@@ -39,30 +37,23 @@ class EmergencyCallViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
 
-    init {
-        getContacts()
-    }
 
 
-    private fun getContacts(){
+    private fun loadDefaultContacts(){
 
-        emergencyCallUseCase.getContactsUseCase().catch {
-            Timber.v("Error: ${it.message}")
-        }.onEach { model ->
+        viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
+            emergencyCallUseCase.getContactsUseCase().collect { model ->
+                val isPurposefullyDeleted = emergencyCallUseCase.areContactsPurposelyDeletedUseCase().first()
+                if (model.contacts.isEmpty().and(isPurposefullyDeleted.not())) {
 
-            val isPurposefullyDeleted =
-                emergencyCallUseCase.areContactsPurposelyDeletedUseCase().first()
-            if (model.contacts.isEmpty().and(isPurposefullyDeleted.not())) {
-                addDefaultContact()
-                emergencyCallUseCase.addDefaultContactUseCase()
+                    addDefaultContact()
 
-            } else {
-                _state.update { it.copy(emergencyCallModel = model) }
+                } else {
+                    _state.update { it.copy(emergencyCallModel = model) }
+                }
+                savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value
             }
-            savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value
-
-        }.launchIn(viewModelScope)
-
+        }
     }
 
 
@@ -75,7 +66,7 @@ class EmergencyCallViewModel @Inject constructor(
             }.onSuccess {
                 _eventFlow.emit(value = EmergencyCallEvent.ContactDeleteSuccess)
                 if (isLastContact) {
-                    emergencyCallUseCase.addDefaultContactUseCase()
+                    emergencyCallUseCase.setContactsPurposelyDeletedUseCase()
                 }
             }.onFailure {
                 _eventFlow.emit(value = EmergencyCallEvent.ContactDeleteFailed)
@@ -86,14 +77,7 @@ class EmergencyCallViewModel @Inject constructor(
     private val isLastContact = state.value.emergencyCallModel.contacts.size == 1
 
     private suspend fun addDefaultContact() {
-        runCatching {
-            emergencyCallUseCase.upsertContactUseCase(
-                emergencyContact = EmergencyContactModel(
-                    name = EmergencyCallConstants.PHILIPPINE_RED_CROSS,
-                    photo = EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO,
-                    phoneNumber = EmergencyCallConstants.PHILIPPINE_RED_CROSS_NUMBER
-                )
-            )
+
             emergencyCallUseCase.upsertContactUseCase(
                 emergencyContact = EmergencyContactModel(
                     name = EmergencyCallConstants.NATIONAL_EMERGENCY,
@@ -101,17 +85,22 @@ class EmergencyCallViewModel @Inject constructor(
                     phoneNumber = EmergencyCallConstants.NATIONAL_EMERGENCY_NUMBER
                 )
             )
-        }.onSuccess {
-            Timber.v("Success adding default contact")
-        }.onFailure {
-            Timber.e("Error adding default contact")
-        }
+            emergencyCallUseCase.upsertContactUseCase(
+                emergencyContact = EmergencyContactModel(
+                    name = EmergencyCallConstants.PHILIPPINE_RED_CROSS,
+                    photo = EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO,
+                    phoneNumber = EmergencyCallConstants.PHILIPPINE_RED_CROSS_NUMBER
+                )
+            )
+        emergencyCallUseCase.setContactsPurposelyDeletedUseCase()
 
     }
+
 
     fun onEvent(event: EmergencyCallVmEvent) {
         when (event) {
             is EmergencyCallVmEvent.DeleteContact -> deleteContact(event.emergencyContactModel)
+            EmergencyCallVmEvent.LoadDefaultContact -> loadDefaultContacts()
         }
         savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value
     }
