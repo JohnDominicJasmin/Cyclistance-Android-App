@@ -181,7 +181,7 @@ fun MappingExpandableBanner(
 
                         Divider(
                             color = Black450,
-                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp))
+                            modifier = Modifier.padding(vertical = 16.dp))
 
                         Row(
                             modifier = Modifier
@@ -210,7 +210,7 @@ fun MappingExpandableBanner(
 
                         Divider(
                             color = Black450,
-                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp))
+                            modifier = Modifier.padding(vertical = 8.dp))
 
 
                         Row(
