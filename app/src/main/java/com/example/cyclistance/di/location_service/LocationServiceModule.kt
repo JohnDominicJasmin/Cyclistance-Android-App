@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
+import com.example.cyclistance.MainActivity
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.LocationServiceConstants.LOCATION_SERVICE_CHANNEL_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants
@@ -56,13 +57,19 @@ object LocationServiceModule {
     @Named("trackingNotification")
     fun provideNotificationBuilder(
         @ApplicationContext context: Context,
-        @Named("notificationContentIntent") intent: Intent
     ): NotificationCompat.Builder {
+
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags =
+                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
+
         val contentIntent = PendingIntent.getActivity(
             context,
-            0,
+            120,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
         return lazy {
             NotificationCompat.Builder(context, LOCATION_SERVICE_CHANNEL_ID)
                 .setContentIntent(contentIntent)

@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @StableState
 data class NavUiState(
-    val internetAvailable: Boolean = false,
+    val internetAvailable: Boolean = true,
     val isNavigating: Boolean = false,
     val startingDestination: String = "",
     val drawerPhotoUrl: String? = null,
