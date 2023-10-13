@@ -1043,9 +1043,7 @@ class MappingViewModel @Inject constructor(
                 trackingHandler.updateLocation(location)
                 broadcastRescueTransactionToRespondent(location)
                 updateSpeedometer(location)
-                if(state.value.nearbyCyclist == null) {
-                    broadcastToNearbyCyclists()
-                }
+                broadcastToNearbyCyclists()
 
             }.launchIn(this@launch).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
