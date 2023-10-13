@@ -1,0 +1,159 @@
+Index: app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/EmergencyCallScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen\n\nimport android.Manifest\nimport android.widget.Toast\nimport androidx.compose.foundation.layout.PaddingValues\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.material.ExperimentalMaterialApi\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.LaunchedEffect\nimport androidx.compose.runtime.derivedStateOf\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.saveable.rememberSaveable\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.ExperimentalComposeUiApi\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.platform.LocalContext\nimport androidx.hilt.navigation.compose.hiltViewModel\nimport androidx.lifecycle.compose.collectAsStateWithLifecycle\nimport androidx.navigation.NavController\nimport com.example.cyclistance.core.utils.constants.EmergencyCallConstants.MAX_CONTACTS\nimport com.example.cyclistance.core.utils.contexts.callPhoneNumber\nimport com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel\nimport com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call.EmergencyCallScreenContent\nimport com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallEvent\nimport com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallUiEvent\nimport com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallVmEvent\nimport com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallUIState\nimport com.example.cyclistance.navigation.Screens\nimport com.example.cyclistance.navigation.nav_graph.navigateScreen\nimport com.google.accompanist.permissions.ExperimentalPermissionsApi\nimport com.google.accompanist.permissions.isGranted\nimport com.google.accompanist.permissions.rememberPermissionState\nimport kotlinx.coroutines.flow.collectLatest\n\n@OptIn(\n    ExperimentalPermissionsApi::class, ExperimentalMaterialApi::class,\n    ExperimentalComposeUiApi::class)\n@Composable\nfun EmergencyCallScreen(\n    viewModel: EmergencyCallViewModel = hiltViewModel(),\n    navController: NavController,\n    paddingValues: PaddingValues) {\n\n    val context = LocalContext.current\n    val state by viewModel.state.collectAsStateWithLifecycle()\n\n\n    var uiState by rememberSaveable {\n        mutableStateOf(EmergencyCallUIState())\n    }\n\n    val showDeleteDialog = remember {\n        { emergencyContact: EmergencyContactModel ->\n            uiState = uiState.copy(deleteDialogVisible = true, contactToDelete = emergencyContact)\n        }\n    }\n\n    val dismissDeleteDialog = remember {\n        {\n            uiState =\n                uiState.copy(deleteDialogVisible = false, contactToDelete = EmergencyContactModel())\n        }\n    }\n\n    val maximumContactReached by remember(state.emergencyCallModel) {\n        derivedStateOf {\n            state.emergencyCallModel.contacts.size >= MAX_CONTACTS\n        }\n    }\n\n\n    val onClickAddContact = remember {\n        {\n\n            uiState = uiState.copy(maximumContactDialogVisible = maximumContactReached)\n\n            if (!maximumContactReached) {\n                navController.navigateScreen(route = Screens.EmergencyCallNavigation.AddEditEmergencyContact.screenRoute)\n            }\n\n\n        }\n    }\n\n    val onClickEditContact = remember {\n        { model: EmergencyContactModel ->\n\n            navController.navigateScreen(\n                route = Screens.EmergencyCallNavigation.AddEditEmergencyContact.passArgument(\n                    contactId = model.id))\n        }\n    }\n\n    val deleteContact = remember {\n        { emergencyContact: EmergencyContactModel ->\n            viewModel.onEvent(event = EmergencyCallVmEvent.DeleteContact(emergencyContact))\n        }\n    }\n\n    val callPhoneNumber = remember {\n        { phoneNumber: String ->\n            context.callPhoneNumber(phoneNumber)\n        }\n    }\n\n    val openPhoneCallPermissionState =\n        rememberPermissionState(permission = Manifest.permission.CALL_PHONE) { permissionGranted ->\n            if (permissionGranted) {\n                uiState.selectedPhoneNumber.takeIf { it.isNotEmpty() }\n                    ?.let { callPhoneNumber(it) }\n            }\n        }\n\n\n    val onClickContact = remember {\n        { phoneNumber: String ->\n            if (!openPhoneCallPermissionState.status.isGranted) {\n                uiState = uiState.copy(selectedPhoneNumber = phoneNumber)\n                openPhoneCallPermissionState.launchPermissionRequest()\n            } else {\n                callPhoneNumber(phoneNumber)\n            }\n\n        }\n    }\n\n    val dismissMaximumDialog = remember {\n        {\n            uiState = uiState.copy(maximumContactDialogVisible = false)\n        }\n    }\n\n\n\n    LaunchedEffect(key1 = true) {\n        viewModel.eventFlow.collectLatest { event ->\n            when (event) {\n                is EmergencyCallEvent.ContactDeleteFailed -> {\n                    Toast.makeText(context, \"Failed to delete contact\", Toast.LENGTH_SHORT).show()\n                }\n\n                is EmergencyCallEvent.ContactDeleteSuccess -> {\n                    Toast.makeText(context, \"Contact deleted\", Toast.LENGTH_SHORT).show()\n                }\n            }\n        }\n    }\n\n    EmergencyCallScreenContent(\n        uiState = uiState,\n        modifier = Modifier.padding(paddingValues),\n        state = state,\n        event = { event ->\n            when (event) {\n                is EmergencyCallUiEvent.OnClickContact -> onClickContact(event.phoneNumber)\n                is EmergencyCallUiEvent.OnClickAddContact -> onClickAddContact()\n                is EmergencyCallUiEvent.OnClickDeleteContact -> showDeleteDialog(event.emergencyContact)\n                is EmergencyCallUiEvent.OnClickEditContact -> onClickEditContact(event.emergencyContact)\n                is EmergencyCallUiEvent.DismissDeleteContactDialog -> dismissDeleteDialog()\n                is EmergencyCallUiEvent.DeleteContact -> deleteContact(event.emergencyContact)\n                is EmergencyCallUiEvent.DismissMaximumContactDialog -> dismissMaximumDialog()\n            }\n        })\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/EmergencyCallScreen.kt b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/EmergencyCallScreen.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/EmergencyCallScreen.kt	(revision edde95e359252c9b8f0fbe935979a865bc59f308)
++++ b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/EmergencyCallScreen.kt	(date 1697089443048)
+@@ -132,7 +132,9 @@
+         }
+     }
+ 
+-
++    LaunchedEffect(key1 = true){
++        viewModel.onEvent(event = EmergencyCallVmEvent.LoadDefaultContact)
++    }
+ 
+     LaunchedEffect(key1 = true) {
+         viewModel.eventFlow.collectLatest { event ->
+Index: app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/EmergencyCallViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen\n\nimport androidx.lifecycle.SavedStateHandle\nimport androidx.lifecycle.ViewModel\nimport androidx.lifecycle.viewModelScope\nimport com.example.cyclistance.core.utils.constants.EmergencyCallConstants\nimport com.example.cyclistance.core.utils.constants.EmergencyCallConstants.EMERGENCY_CALL_VM_STATE_KEY\nimport com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel\nimport com.example.cyclistance.feature_emergency_call.domain.use_case.EmergencyContactUseCase\nimport com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallEvent\nimport com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallVmEvent\nimport com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState\nimport dagger.hilt.android.lifecycle.HiltViewModel\nimport kotlinx.coroutines.flow.MutableSharedFlow\nimport kotlinx.coroutines.flow.MutableStateFlow\nimport kotlinx.coroutines.flow.asSharedFlow\nimport kotlinx.coroutines.flow.asStateFlow\nimport kotlinx.coroutines.flow.catch\nimport kotlinx.coroutines.flow.first\nimport kotlinx.coroutines.flow.launchIn\nimport kotlinx.coroutines.flow.onEach\nimport kotlinx.coroutines.flow.update\nimport kotlinx.coroutines.launch\nimport timber.log.Timber\nimport javax.inject.Inject\n\n@HiltViewModel\nclass EmergencyCallViewModel @Inject constructor(\n    private val emergencyCallUseCase: EmergencyContactUseCase,\n    private val savedStateHandle: SavedStateHandle,\n) : ViewModel() {\n\n\n    private val _state =\n        MutableStateFlow(savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] ?: EmergencyCallState())\n    val state = _state.asStateFlow()\n\n    private val _eventFlow: MutableSharedFlow<EmergencyCallEvent> = MutableSharedFlow()\n    val eventFlow = _eventFlow.asSharedFlow()\n\n\n    init {\n        getContacts()\n    }\n\n\n    private fun getContacts(){\n\n        emergencyCallUseCase.getContactsUseCase().catch {\n            Timber.v(\"Error: ${it.message}\")\n        }.onEach { model ->\n\n            val isPurposefullyDeleted =\n                emergencyCallUseCase.areContactsPurposelyDeletedUseCase().first()\n            if (model.contacts.isEmpty().and(isPurposefullyDeleted.not())) {\n                addDefaultContact()\n                emergencyCallUseCase.addDefaultContactUseCase()\n\n            } else {\n                _state.update { it.copy(emergencyCallModel = model) }\n            }\n            savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value\n\n        }.launchIn(viewModelScope)\n\n    }\n\n\n\n\n    private fun deleteContact(contact: EmergencyContactModel) {\n        viewModelScope.launch {\n            runCatching {\n                emergencyCallUseCase.deleteContactUseCase(contact)\n            }.onSuccess {\n                _eventFlow.emit(value = EmergencyCallEvent.ContactDeleteSuccess)\n                if (isLastContact) {\n                    emergencyCallUseCase.addDefaultContactUseCase()\n                }\n            }.onFailure {\n                _eventFlow.emit(value = EmergencyCallEvent.ContactDeleteFailed)\n            }\n        }\n    }\n\n    private val isLastContact = state.value.emergencyCallModel.contacts.size == 1\n\n    private suspend fun addDefaultContact() {\n        runCatching {\n            emergencyCallUseCase.upsertContactUseCase(\n                emergencyContact = EmergencyContactModel(\n                    name = EmergencyCallConstants.PHILIPPINE_RED_CROSS,\n                    photo = EmergencyCallConstants.PHILIPPINE_RED_CROSS_PHOTO,\n                    phoneNumber = EmergencyCallConstants.PHILIPPINE_RED_CROSS_NUMBER\n                )\n            )\n            emergencyCallUseCase.upsertContactUseCase(\n                emergencyContact = EmergencyContactModel(\n                    name = EmergencyCallConstants.NATIONAL_EMERGENCY,\n                    photo = EmergencyCallConstants.NATIONAL_EMERGENCY_PHOTO,\n                    phoneNumber = EmergencyCallConstants.NATIONAL_EMERGENCY_NUMBER\n                )\n            )\n        }.onSuccess {\n            Timber.v(\"Success adding default contact\")\n        }.onFailure {\n            Timber.e(\"Error adding default contact\")\n        }\n\n    }\n\n    fun onEvent(event: EmergencyCallVmEvent) {\n        when (event) {\n            is EmergencyCallVmEvent.DeleteContact -> deleteContact(event.emergencyContactModel)\n        }\n        savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value\n    }\n\n\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/EmergencyCallViewModel.kt b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/EmergencyCallViewModel.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/EmergencyCallViewModel.kt	(revision edde95e359252c9b8f0fbe935979a865bc59f308)
++++ b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/EmergencyCallViewModel.kt	(date 1697088505606)
+@@ -11,17 +11,15 @@
+ import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallVmEvent
+ import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
+ import dagger.hilt.android.lifecycle.HiltViewModel
++import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.SupervisorJob
+ import kotlinx.coroutines.flow.MutableSharedFlow
+ import kotlinx.coroutines.flow.MutableStateFlow
+ import kotlinx.coroutines.flow.asSharedFlow
+ import kotlinx.coroutines.flow.asStateFlow
+-import kotlinx.coroutines.flow.catch
+ import kotlinx.coroutines.flow.first
+-import kotlinx.coroutines.flow.launchIn
+-import kotlinx.coroutines.flow.onEach
+ import kotlinx.coroutines.flow.update
+ import kotlinx.coroutines.launch
+-import timber.log.Timber
+ import javax.inject.Inject
+ 
+ @HiltViewModel
+@@ -39,30 +37,24 @@
+     val eventFlow = _eventFlow.asSharedFlow()
+ 
+ 
+-    init {
+-        getContacts()
+-    }
+ 
+ 
+-    private fun getContacts(){
++    private fun loadDefaultContacts(){
+ 
+-        emergencyCallUseCase.getContactsUseCase().catch {
+-            Timber.v("Error: ${it.message}")
+-        }.onEach { model ->
+-
+-            val isPurposefullyDeleted =
+-                emergencyCallUseCase.areContactsPurposelyDeletedUseCase().first()
+-            if (model.contacts.isEmpty().and(isPurposefullyDeleted.not())) {
+-                addDefaultContact()
+-                emergencyCallUseCase.addDefaultContactUseCase()
++        viewModelScope.launch(Dispatchers.IO + SupervisorJob()) {
++            emergencyCallUseCase.getContactsUseCase().collect { model ->
++                val isPurposefullyDeleted =
++                    emergencyCallUseCase.areContactsPurposelyDeletedUseCase().first()
++                if (model.contacts.isEmpty().and(isPurposefullyDeleted.not())) {
++                    emergencyCallUseCase.addDefaultContactUseCase()
++                    addDefaultContact()
+ 
+-            } else {
+-                _state.update { it.copy(emergencyCallModel = model) }
+-            }
+-            savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value
+-
+-        }.launchIn(viewModelScope)
+-
++                } else {
++                    _state.update { it.copy(emergencyCallModel = model) }
++                }
++                savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value
++            }
++        }
+     }
+ 
+ 
+@@ -86,7 +78,14 @@
+     private val isLastContact = state.value.emergencyCallModel.contacts.size == 1
+ 
+     private suspend fun addDefaultContact() {
+-        runCatching {
++
++            emergencyCallUseCase.upsertContactUseCase(
++                emergencyContact = EmergencyContactModel(
++                    name = EmergencyCallConstants.NATIONAL_EMERGENCY,
++                    photo = EmergencyCallConstants.NATIONAL_EMERGENCY_PHOTO,
++                    phoneNumber = EmergencyCallConstants.NATIONAL_EMERGENCY_NUMBER
++                )
++            )
+             emergencyCallUseCase.upsertContactUseCase(
+                 emergencyContact = EmergencyContactModel(
+                     name = EmergencyCallConstants.PHILIPPINE_RED_CROSS,
+@@ -94,24 +93,15 @@
+                     phoneNumber = EmergencyCallConstants.PHILIPPINE_RED_CROSS_NUMBER
+                 )
+             )
+-            emergencyCallUseCase.upsertContactUseCase(
+-                emergencyContact = EmergencyContactModel(
+-                    name = EmergencyCallConstants.NATIONAL_EMERGENCY,
+-                    photo = EmergencyCallConstants.NATIONAL_EMERGENCY_PHOTO,
+-                    phoneNumber = EmergencyCallConstants.NATIONAL_EMERGENCY_NUMBER
+-                )
+-            )
+-        }.onSuccess {
+-            Timber.v("Success adding default contact")
+-        }.onFailure {
+-            Timber.e("Error adding default contact")
+-        }
++
++
++    }
+ 
+-    }
+ 
+     fun onEvent(event: EmergencyCallVmEvent) {
+         when (event) {
+             is EmergencyCallVmEvent.DeleteContact -> deleteContact(event.emergencyContactModel)
++            EmergencyCallVmEvent.LoadDefaultContact -> loadDefaultContacts()
+         }
+         savedStateHandle[EMERGENCY_CALL_VM_STATE_KEY] = state.value
+     }
+Index: app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/event/EmergencyCallVmEvent.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event\n\nimport com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel\n\nsealed class EmergencyCallVmEvent {\n\n\n    data class DeleteContact(val emergencyContactModel: EmergencyContactModel) :\n        EmergencyCallVmEvent()\n\n\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/event/EmergencyCallVmEvent.kt b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/event/EmergencyCallVmEvent.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/event/EmergencyCallVmEvent.kt	(revision edde95e359252c9b8f0fbe935979a865bc59f308)
++++ b/app/src/main/java/com/example/cyclistance/feature_emergency_call/presentation/emergency_call_screen/event/EmergencyCallVmEvent.kt	(date 1697088505586)
+@@ -5,6 +5,7 @@
+ sealed class EmergencyCallVmEvent {
+ 
+ 
++    data object LoadDefaultContact : EmergencyCallVmEvent()
+     data class DeleteContact(val emergencyContactModel: EmergencyContactModel) :
+         EmergencyCallVmEvent()
+ 

@@ -894,10 +894,17 @@ fun MappingScreen(
         uiState = uiState.copy(cancelOnGoingRescueDialogVisible = visibility)
     }}
 
-    fun notifyUser(title: String, message: String){
+    fun notifyNewRescueRequest(message: String){
         if(notificationPermissionState.status.isGranted && !AppUtils.isAppInForeground(context = context)){
-            mappingViewModel.onEvent(event = MappingVmEvent.NotifyUser(
-                title = title,
+            mappingViewModel.onEvent(event = MappingVmEvent.NotifyNewRescueRequest(
+                message = message
+            ))
+        }
+    }
+
+    fun notifyRequestAccepted(message: String){
+        if(notificationPermissionState.status.isGranted && !AppUtils.isAppInForeground(context = context)){
+            mappingViewModel.onEvent(event = MappingVmEvent.NotifyRequestAccepted(
                 message = message
             ))
         }
@@ -1377,7 +1384,8 @@ fun MappingScreen(
                 MappingUiEvent.CancelOnGoingRescue -> cancelOnGoingRescue()
                 is MappingUiEvent.CancelOnGoingRescueDialog -> cancelOnGoingRescueDialogVisibility(event.visibility)
                 is MappingUiEvent.NotificationPermissionDialog ->  notificationPermissionDialogVisibility(event.visibility)
-                is MappingUiEvent.NotifyUser -> notifyUser(title = event.title, message = event.message)
+                is MappingUiEvent.NotifyRequestAccepted -> notifyRequestAccepted(message = event.message)
+                is MappingUiEvent.NotifyNewRescueRequest -> notifyNewRescueRequest( message = event.message)
                 MappingUiEvent.OpenSinoTrack -> openSinoTrack()
                 MappingUiEvent.OpenRescueResults -> openRescueResults()
                 is MappingUiEvent.ViewProfile -> viewProfile(event.id)

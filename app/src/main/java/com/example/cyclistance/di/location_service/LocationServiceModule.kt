@@ -2,6 +2,7 @@ package com.example.cyclistance.di.location_service
 
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import androidx.core.app.NotificationCompat
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.constants.LocationServiceConstants.LOCATION_SERVICE_CHANNEL_ID
@@ -55,8 +56,13 @@ object LocationServiceModule {
     @Named("trackingNotification")
     fun provideNotificationBuilder(
         @ApplicationContext context: Context,
-        @Named("notificationContentIntentSingleTop") contentIntent: PendingIntent
+        @Named("notificationContentIntent") intent: Intent
     ): NotificationCompat.Builder {
+        val contentIntent = PendingIntent.getActivity(
+            context,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
         return lazy {
             NotificationCompat.Builder(context, LOCATION_SERVICE_CHANNEL_ID)
                 .setContentIntent(contentIntent)
@@ -65,7 +71,7 @@ object LocationServiceModule {
                 .setContentTitle("Cyclistance")
                 .setContentText("Tracking your ride")
                 .setPriority(NotificationCompat.PRIORITY_LOW)
-                .setVibrate(longArrayOf(200,200,200,200))
+                .setVibrate(longArrayOf(200, 200, 200, 200))
                 .setAutoCancel(false)
         }.value
 
