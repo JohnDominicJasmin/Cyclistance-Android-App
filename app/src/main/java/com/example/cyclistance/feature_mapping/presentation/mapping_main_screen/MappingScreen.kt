@@ -41,6 +41,7 @@ import com.example.cyclistance.core.utils.contexts.shareLocation
 import com.example.cyclistance.core.utils.contexts.startLocationServiceIntentAction
 import com.example.cyclistance.core.utils.permissions.requestPermission
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.EmergencyCallViewModel
+import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallVmEvent
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
 import com.example.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
@@ -943,8 +944,9 @@ fun MappingScreen(
             collapseBottomSheet()
         })
     }
-
-
+    LaunchedEffect(key1 = true){
+        emergencyViewModel.onEvent(event = EmergencyCallVmEvent.LoadDefaultContact)
+    }
 
     LaunchedEffect(key1 = mainState.mappingIntentAction){
 

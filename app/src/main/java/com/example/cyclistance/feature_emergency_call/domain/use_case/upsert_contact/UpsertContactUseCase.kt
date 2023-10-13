@@ -6,6 +6,7 @@ import com.example.cyclistance.feature_emergency_call.domain.exceptions.Emergenc
 import com.example.cyclistance.feature_emergency_call.domain.model.EmergencyContactModel
 import com.example.cyclistance.feature_emergency_call.domain.repository.EmergencyContactRepository
 import kotlinx.coroutines.flow.first
+import timber.log.Timber
 
 class UpsertContactUseCase(
     private val repository: EmergencyContactRepository
@@ -52,5 +53,6 @@ class UpsertContactUseCase(
 
 
         repository.upsertContact(emergencyContact = emergencyContact)
+        Timber.v("UpsertContactUseCase: $emergencyContact")
     }
 }

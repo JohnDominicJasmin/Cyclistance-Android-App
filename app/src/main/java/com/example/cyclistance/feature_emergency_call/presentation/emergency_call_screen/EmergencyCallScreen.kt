@@ -132,7 +132,9 @@ fun EmergencyCallScreen(
         }
     }
 
-
+    LaunchedEffect(key1 = true){
+        viewModel.onEvent(event = EmergencyCallVmEvent.LoadDefaultContact)
+    }
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->
