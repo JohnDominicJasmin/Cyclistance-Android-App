@@ -19,12 +19,15 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import com.example.cyclistance.MainViewModel
 import com.example.cyclistance.R
 import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection
+import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_START_FOREGROUND
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_STOP_FOREGROUND
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_ACTION
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE
@@ -82,14 +85,17 @@ fun MappingScreen(
     hasInternetConnection: Boolean,
     mappingViewModel: MappingViewModel = hiltViewModel(),
     emergencyViewModel: EmergencyCallViewModel = hiltViewModel(),
+    mainViewModel: MainViewModel = hiltViewModel(),
     paddingValues: PaddingValues,
     isNavigating: Boolean,
     onChangeNavigatingState: (isNavigating: Boolean) -> Unit,
     navController: NavController) {
 
 
+
     val context = LocalContext.current
     val state by mappingViewModel.state.collectAsStateWithLifecycle()
+    val mainState by mainViewModel.state.collectAsStateWithLifecycle()
     val hazardousMarkers = mappingViewModel.hazardousLaneMarkers
     val emergencyState by emergencyViewModel.state.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
@@ -504,25 +510,26 @@ fun MappingScreen(
             (state.rescueTransaction?.cancellation)?.rescueCancelled == true
         }
 
-    fun getConversationSelectedId():String{
+    fun getConversationSelectedId():String?{
         val transaction = state.rescueTransaction
         val rescueeId = transaction?.rescueeId
         val rescuerId = transaction?.rescuerId
         val userId = state.userId
         val isUserRescuee = userId == rescueeId
         val id = if(isUserRescuee) rescuerId else rescueeId
-        id ?: Toast.makeText(context, "No user id", Toast.LENGTH_SHORT).show()
+        id ?: Toast.makeText(context, "No current transaction", Toast.LENGTH_SHORT).show()
 
-        return id!!
+        return id
     }
 
     val onClickChatButton = remember(state.rescueTransaction, state.user.getRole()) {
         {
-            navController.navigateScreen(
-                route = Screens.MessagingNavigation.Conversation.passArgument(
-                    receiverMessageId = getConversationSelectedId())
-            )
-
+            getConversationSelectedId()?.let{id ->
+                navController.navigateScreen(
+                    route = Screens.MessagingNavigation.Conversation.passArgument(
+                        receiverMessageId = id)
+                )
+            }
         }
     }
 
@@ -938,12 +945,28 @@ fun MappingScreen(
     }
 
 
+
+    LaunchedEffect(key1 = mainState.mappingIntentAction){
+
+        when(mainState.mappingIntentAction){
+            MappingConstants.ACTION_OPEN_CONVERSATION -> {
+                onClickChatButton()
+                mainViewModel.setIntentAction(DEFAULT_ACTION)
+            }
+            MappingConstants.ACTION_OPEN_RESCUE_REQUEST -> {
+                rescueRequestDialogVisibility(true)
+                mainViewModel.setIntentAction(DEFAULT_ACTION)
+            }
+        }
+    }
+
     LaunchedEffect(key1 = userLocationAvailable, mapboxMap){
         if (userLocationAvailable) {
             val camera = cameraState
             locateUser(camera.zoom, camera.position, FAST_CAMERA_ANIMATION_DURATION)
         }
     }
+
     LaunchedEffect(key1 = true){
         mappingViewModel.eventFlow.collectLatest {
             when(it){
