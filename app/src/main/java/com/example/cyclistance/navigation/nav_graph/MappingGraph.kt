@@ -6,7 +6,10 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
+import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_URI
 import com.example.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUEE_TYPE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.CANCELLATION_TYPE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.CLIENT_ID
@@ -32,13 +35,18 @@ fun NavGraphBuilder.mappingGraph(
         startDestination = Screens.MappingNavigation.Mapping.screenRoute,
         route = Screens.MappingNavigation.ROUTE) {
 
-        composable(route = Screens.MappingNavigation.Mapping.screenRoute) {
+        composable(route = Screens.MappingNavigation.Mapping.screenRoute, deepLinks = listOf(
+            navDeepLink {
+                uriPattern = "$MAPPING_URI/${MappingConstants.ACTION}={${MappingConstants.ACTION}}"
+            })) {
+
+
             MappingScreen(
                 hasInternetConnection = hasInternetConnection,
                 navController = navController,
                 paddingValues = paddingValues,
                 isNavigating = isNavigating,
-                onChangeNavigatingState = onChangeNavigatingState
+                onChangeNavigatingState = onChangeNavigatingState,
             )
         }
 

@@ -65,9 +65,8 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="messaging"
-                    android:scheme="cyclistance" />
+                <data android:scheme="cyclistance"/>
+                <data android:host="mapping"/>
             </intent-filter>
         </activity>
 
