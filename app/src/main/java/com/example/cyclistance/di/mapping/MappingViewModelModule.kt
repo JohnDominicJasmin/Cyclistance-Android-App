@@ -14,6 +14,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.hazardous_lane.Ne
 import com.example.cyclistance.feature_mapping.domain.use_case.hazardous_lane.RemoveHazardousListenerUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.hazardous_lane.ShouldHazardousStartingInfoUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.hazardous_lane.UpdateHazardousLaneUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.intent_action.IntentActionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
@@ -102,7 +103,8 @@ object MappingViewModelModule {
                 notificationManagerCompat = notificationManagerCompat,
                 notificationBuilder = notificationBuilder
             ),
-            cancelHelpRespondUseCase = CancelHelpRespondUseCase(mappingRepository)
+            cancelHelpRespondUseCase = CancelHelpRespondUseCase(mappingRepository),
+            intentActionUseCase = IntentActionUseCase(mappingUiStoreRepository)
         )
 
     }

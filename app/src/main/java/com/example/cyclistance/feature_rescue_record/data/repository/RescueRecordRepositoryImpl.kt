@@ -79,7 +79,7 @@ class RescueRecordRepositoryImpl(
                     .document(transactionId)
                     .get()
                     .addOnSuccessListener {
-                        val rideDetails = it.toObject(RideDetails::class.java)!!
+                        val rideDetails = it.toObject(RideDetails::class.java) ?: RideDetails()
                         continuation.resume(rideDetails)
                     }.addOnFailureListener {
                         continuation.resumeWithException(

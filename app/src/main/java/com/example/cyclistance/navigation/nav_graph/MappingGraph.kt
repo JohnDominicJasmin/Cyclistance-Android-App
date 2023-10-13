@@ -1,5 +1,6 @@
 package com.example.cyclistance.navigation.nav_graph
 
+//import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_URI
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -33,12 +34,14 @@ fun NavGraphBuilder.mappingGraph(
         route = Screens.MappingNavigation.ROUTE) {
 
         composable(route = Screens.MappingNavigation.Mapping.screenRoute) {
+
+
             MappingScreen(
                 hasInternetConnection = hasInternetConnection,
                 navController = navController,
                 paddingValues = paddingValues,
                 isNavigating = isNavigating,
-                onChangeNavigatingState = onChangeNavigatingState
+                onChangeNavigatingState = onChangeNavigatingState,
             )
         }
 

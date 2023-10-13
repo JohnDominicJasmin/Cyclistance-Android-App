@@ -3,17 +3,17 @@ package com.example.cyclistance.service
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.PendingIntent
-import android.app.TaskStackBuilder
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.net.toUri
-import com.example.cyclistance.MainActivity
-import com.example.cyclistance.core.utils.constants.MessagingConstants.CONVERSATION_ID
+import com.example.cyclistance.core.utils.app.AppUtils.isAppInForeground
+import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_OPEN_CONVERSATION
+import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_URI
 import com.example.cyclistance.core.utils.constants.MessagingConstants.KEY_MESSAGE
-import com.example.cyclistance.core.utils.constants.MessagingConstants.MESSAGING_URI
 import com.example.cyclistance.core.utils.constants.MessagingConstants.NOTIFICATION_ID
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -39,23 +39,27 @@ class MessagingService : FirebaseMessagingService() {
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
 
-        val data = message.data
-        val conversationId = data[CONVERSATION_ID]!!
-        val name = data[KEY_NAME]!!
-        val receivedMessage = data[KEY_MESSAGE] ?: ""
+        var messageData = message.data
+//        val conversationId = messageData[CONVERSATION_ID]!!
+        val name = messageData[KEY_NAME]!!
+        val receivedMessage = messageData[KEY_MESSAGE] ?: ""
 
 
-        val uri =  "$MESSAGING_URI/$CONVERSATION_ID=$conversationId".toUri()
+        val uri = "$MAPPING_URI/${MappingConstants.ACTION}=$ACTION_OPEN_CONVERSATION".toUri()
         val clickIntent = Intent(
             Intent.ACTION_VIEW,
-            uri,
-            this,
-            MainActivity::class.java
-        )
-        val clickPendingIntent: PendingIntent = TaskStackBuilder.create(this).run {
-            addNextIntentWithParentStack(clickIntent)
-            getPendingIntent(1, PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
+            uri
+        ).apply {
+            putExtra(MappingConstants.ACTION, ACTION_OPEN_CONVERSATION)
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
+
+        val clickPendingIntent: PendingIntent = PendingIntent.getActivity(
+            this,
+            0,
+            clickIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
 
         val notificationStyle = NotificationCompat.BigTextStyle().bigText(receivedMessage)
         val notificationCompat = notificationBuilder.apply {
@@ -70,11 +74,11 @@ class MessagingService : FirebaseMessagingService() {
             }
         }
 
-        notificationManager.notify(NOTIFICATION_ID, notificationCompat.build())
-
+        if (!isAppInForeground(this)) {
+            notificationManager.notify(NOTIFICATION_ID, notificationCompat.build())
+        }
 
     }
-
 
 
 }

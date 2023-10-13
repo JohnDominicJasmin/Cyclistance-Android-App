@@ -2,6 +2,7 @@ package com.example.cyclistance.feature_mapping.data.repository
 
 import android.content.Context
 import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_ACTION
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAP_TYPE_KEY
 import com.example.cyclistance.core.utils.constants.MappingConstants.SHOW_HAZARDOUS_STARTING_INFO_KEY
 import com.example.cyclistance.core.utils.contexts.dataStore
@@ -22,6 +23,7 @@ class MappingUiStoreRepositoryImpl(
     private var dataStore = context.dataStore
     private val scope: CoroutineContext = Dispatchers.IO
     private var bikeTypeFlow: MutableStateFlow<String> = MutableStateFlow("")
+    private val intentActionFlow: MutableStateFlow<String> = MutableStateFlow("")
 
     override suspend fun getBikeType(): Flow<String> {
 
@@ -35,7 +37,7 @@ class MappingUiStoreRepositoryImpl(
     }
 
     override suspend fun getAddress(): Flow<String> {
-        return withContext(scope) { dataStore.getData(key = MappingConstants.ADDRESS_KEY, defaultValue = "") }
+        return withContext(scope) { dataStore.getData(key = MappingConstants.ADDRESS_KEY, defaultValue = DEFAULT_ACTION) }
     }
 
     override suspend fun setAddress(address: String) {
@@ -49,6 +51,18 @@ class MappingUiStoreRepositoryImpl(
             bikeTypeFlow
         }
 
+    }
+
+    override suspend fun getMappingActionIntent(): Flow<String> {
+        return withContext(scope){
+            intentActionFlow
+        }
+    }
+
+    override suspend fun setMappingActionIntent(actionIntent: String) {
+        withContext(scope){
+            intentActionFlow.emit(actionIntent)
+        }
     }
 
     override suspend fun setBottomSheetType(bottomSheetType: String) {

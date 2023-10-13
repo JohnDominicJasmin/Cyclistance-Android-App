@@ -8,11 +8,13 @@ import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.CompositionLocalProvider
 import com.example.cyclistance.core.utils.constants.LocationServiceConstants.LOCATION_CHANNEL_DESCRIPTION
 import com.example.cyclistance.core.utils.constants.LocationServiceConstants.LOCATION_NOTIFICATION_NAME
 import com.example.cyclistance.core.utils.constants.LocationServiceConstants.LOCATION_SERVICE_CHANNEL_ID
+import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.RESCUE_NOTIFICATION_CHANNEL_DESCRIPTION
 import com.example.cyclistance.core.utils.constants.MappingConstants.RESCUE_NOTIFICATION_CHANNEL_ID
 import com.example.cyclistance.core.utils.constants.MappingConstants.RESCUE_NOTIFICATION_CHANNEL_NAME
@@ -31,9 +33,10 @@ import javax.inject.Inject
 class MainActivity : ComponentActivity() {
 
 
-    @Inject lateinit var notificationManager: NotificationManager
+    @Inject
+    lateinit var notificationManager: NotificationManager
 
-
+    val mainViewModel: MainViewModel by viewModels()
     private var callbackManager = ActivityResultCallbackManager()
 
 
@@ -47,11 +50,20 @@ class MainActivity : ComponentActivity() {
         AppEventsLogger.activateApp(application);
         addNotificationChannel()
 
+        val action = intent.getStringExtra(MappingConstants.ACTION) ?: ""
+        mainViewModel.setIntentAction(action)
+
         setContent {
             CompositionLocalProvider(LocalActivityResultCallbackManager provides callbackManager) {
                 NavScreen()
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        val conversationId = intent?.getStringExtra(MappingConstants.ACTION) ?: ""
+        mainViewModel.setIntentAction(conversationId)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

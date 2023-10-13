@@ -24,8 +24,8 @@ object MappingConstants {
     const val CHARACTER_LIMIT = 110
     const val IMAGE_PLACEHOLDER_URL = "https://raw.githubusercontent.com/JohnDominicJasmin/JohnDominicJasmin/main/ic_empty_profile_placeholder.jpg"
 
-    const val LOCATION_UPDATES_INTERVAL: Long = 4000L
-    const val FASTEST_LOCATION_UPDATES_INTERVAL: Long = 1500L
+    const val LOCATION_UPDATES_INTERVAL: Long = 8000L
+    const val FASTEST_LOCATION_UPDATES_INTERVAL: Long = 4500L
 
     val BIKE_TYPE_KEY = stringPreferencesKey("bike_type")
     val ADDRESS_KEY = stringPreferencesKey("address")
@@ -126,5 +126,10 @@ object MappingConstants {
 
 
     const val MAXIMUM_HAZARDOUS_MARKER = 3
+    const val MAPPING_URI = "cyclistance://mapping/"
+    const val ACTION = "action"
+    const val ACTION_OPEN_CONVERSATION = "conversation"
+    const val ACTION_OPEN_RESCUE_REQUEST = "rescue_request"
+    const val DEFAULT_ACTION = "default_action"
 
 }
