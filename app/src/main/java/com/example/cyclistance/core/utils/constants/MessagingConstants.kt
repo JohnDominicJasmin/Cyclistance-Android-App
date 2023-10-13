@@ -36,8 +36,6 @@ object MessagingConstants {
     const val NOTIFICATION_REQUEST_CODE = 200
     const val CHANNEL_NAME = "Messaging Notification"
 
-
-    const val MESSAGING_URI = "cyclistance://messaging/conversation/"
     const val CONVERSATION_ID = "conversation_id"
 
 
