@@ -206,10 +206,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
 
     // Coroutine Lifecycle Scopes
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
 
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
 
     //leakCanary
     debugImplementation("com.squareup.leakcanary:leakcanary-android:2.8.1")
@@ -288,7 +288,7 @@ dependencies {
 
 
     //mapbox navigation sdk
-    implementation("androidx.compose.ui:ui-viewbinding:1.4.3")
+    implementation("androidx.compose.ui:ui-viewbinding:1.5.3")
 
     //mapbox directions
     implementation("com.mapbox.mapboxsdk:mapbox-sdk-services:6.9.0")
