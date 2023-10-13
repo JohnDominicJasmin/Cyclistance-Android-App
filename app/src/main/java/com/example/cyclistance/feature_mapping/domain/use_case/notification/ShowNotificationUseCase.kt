@@ -18,6 +18,7 @@ class ShowNotificationUseCase(
             setContentText(message)
             setStyle(notificationStyle)
         }
+
         notificationManagerCompat.notify(
             MappingConstants.RESCUE_NOTIFICATION_ID,
             notificationCompat.build().apply { flags =

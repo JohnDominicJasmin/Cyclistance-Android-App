@@ -22,6 +22,7 @@ import androidx.navigation.NavController
 import com.example.cyclistance.MainViewModel
 import com.example.cyclistance.R
 import com.example.cyclistance.core.domain.model.AlertDialogState
+import com.example.cyclistance.core.utils.app.AppUtils
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants
@@ -894,7 +895,7 @@ fun MappingScreen(
     }}
 
     fun notifyUser(title: String, message: String){
-        if(notificationPermissionState.status.isGranted){
+        if(notificationPermissionState.status.isGranted && !AppUtils.isAppInForeground(context = context)){
             mappingViewModel.onEvent(event = MappingVmEvent.NotifyUser(
                 title = title,
                 message = message
@@ -944,6 +945,8 @@ fun MappingScreen(
             collapseBottomSheet()
         })
     }
+
+
     LaunchedEffect(key1 = true){
         emergencyViewModel.onEvent(event = EmergencyCallVmEvent.LoadDefaultContact)
     }
