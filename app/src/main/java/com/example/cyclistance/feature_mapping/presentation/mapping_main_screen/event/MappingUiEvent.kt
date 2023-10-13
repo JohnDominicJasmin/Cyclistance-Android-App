@@ -46,7 +46,8 @@ sealed class MappingUiEvent {
 
     // Events with Parameters
 
-    data class NotifyUser(val title: String, val message: String) : MappingUiEvent()
+    data class NotifyNewRescueRequest(val message: String) : MappingUiEvent()
+    data class NotifyRequestAccepted(val message: String) : MappingUiEvent()
     data class HazardousLaneMarkerDialog(val visibility: Boolean) : MappingUiEvent()
     data class DiscardChangesMarkerDialog(val visibility: Boolean) : MappingUiEvent()
     data class CancelSearchDialog(val visibility: Boolean) : MappingUiEvent()

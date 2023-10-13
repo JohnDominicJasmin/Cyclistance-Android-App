@@ -100,7 +100,7 @@ fun MappingScreenContent(
             return@LaunchedEffect
         }
 
-        event(MappingUiEvent.NotifyUser(title = "New Rescue Request", message = "Request from ${request.name}, distance is ${request.distance}"))
+        event(MappingUiEvent.NotifyNewRescueRequest(message = "Request from ${request.name}, distance is ${request.distance}"))
         lastNotifiedRequestId = request.id ?: ""
     }
 
@@ -113,8 +113,7 @@ fun MappingScreenContent(
         }
         if (uiState.rescueRequestAccepted && uiState.isRescueCancelled.not()) {
 
-            event(MappingUiEvent.NotifyUser(
-                    title = "Request Accepted",
+            event(MappingUiEvent.NotifyRequestAccepted(
                     message = "${state.rescuee?.name} accepted your request"))
             lastNotifiedAcceptedId = rescueeId ?: ""
         }

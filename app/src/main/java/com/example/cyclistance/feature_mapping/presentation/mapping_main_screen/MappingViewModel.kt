@@ -532,15 +532,20 @@ class MappingViewModel @Inject constructor(
             is MappingVmEvent.ShouldShowHazardousStartingInfo ->
                 setShouldShowHazardousStartingInfo(event.shouldShow)
 
-            is MappingVmEvent.NotifyUser -> {
-                mappingUseCase.showNotificationUseCase(
-                    title = event.title,
+            is MappingVmEvent.NotifyNewRescueRequest -> {
+                mappingUseCase.newRescueRequestNotificationUseCase(
+                    message = event.message
+                )
+            }
+            is MappingVmEvent.NotifyRequestAccepted -> {
+                mappingUseCase.requestAcceptedNotificationUseCase(
                     message = event.message
                 )
             }
 
             is MappingVmEvent.CancelRespondHelp -> cancelRespondToHelp(respondentId = event.id)
             MappingVmEvent.RescuerArrived -> rescuerArrived()
+
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
