@@ -13,7 +13,8 @@ import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalcu
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.map_type.MapTypeUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.notification.ShowNotificationUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.notification.NewRescueRequestNotificationUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.notification.RequestAcceptedNotificationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.AcceptRescueRequestUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
@@ -75,6 +76,7 @@ data class MappingUseCase(
 
     val mapTypeUseCase: MapTypeUseCase,
 
-    val showNotificationUseCase: ShowNotificationUseCase,
+    val newRescueRequestNotificationUseCase: NewRescueRequestNotificationUseCase,
+    val requestAcceptedNotificationUseCase: RequestAcceptedNotificationUseCase,
     val intentActionUseCase: IntentActionUseCase
     )

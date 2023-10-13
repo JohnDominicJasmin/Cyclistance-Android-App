@@ -19,7 +19,8 @@ import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalcu
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.map_type.MapTypeUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.notification.ShowNotificationUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.notification.NewRescueRequestNotificationUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.notification.RequestAcceptedNotificationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.AcceptRescueRequestUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
@@ -58,7 +59,9 @@ object MappingViewModelModule {
         mappingUiStoreRepository: MappingUiStoreRepository,
         mappingSocketRepository: MappingSocketRepository,
         notificationManagerCompat: NotificationManagerCompat,
-        @Named("rescueNotification") notificationBuilder: NotificationCompat.Builder
+        @Named("newRescueNotification") newRescueNotification: NotificationCompat.Builder,
+        @Named("requestAcceptedNotification") requestAcceptedNotification: NotificationCompat.Builder,
+
     ): MappingUseCase {
         return MappingUseCase(
 
@@ -99,9 +102,13 @@ object MappingViewModelModule {
             updateHazardousLaneUseCase = UpdateHazardousLaneUseCase(mappingRepository),
             shouldHazardousStartingInfoUseCase = ShouldHazardousStartingInfoUseCase(
                 mappingUiStoreRepository),
-            showNotificationUseCase = ShowNotificationUseCase(
+            newRescueRequestNotificationUseCase = NewRescueRequestNotificationUseCase(
                 notificationManagerCompat = notificationManagerCompat,
-                notificationBuilder = notificationBuilder
+                notificationBuilder = newRescueNotification
+            ),
+            requestAcceptedNotificationUseCase = RequestAcceptedNotificationUseCase(
+                notificationManagerCompat = notificationManagerCompat,
+                notificationBuilder = requestAcceptedNotification
             ),
             cancelHelpRespondUseCase = CancelHelpRespondUseCase(mappingRepository),
             intentActionUseCase = IntentActionUseCase(mappingUiStoreRepository)
