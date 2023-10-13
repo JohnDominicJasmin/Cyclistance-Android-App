@@ -45,7 +45,7 @@ class RideHistoryViewModel @Inject constructor(
                 _eventFlow.emit(value = RideHistoryEvent.GetRideHistorySuccess(rideHistory = history))
             }.onFailure {
                 isLoading(false)
-                _eventFlow.emit(value = RideHistoryEvent.GetRideHistoryFailed(it.message!!))
+                _eventFlow.emit(value = RideHistoryEvent.GetRideHistoryFailed(it.message ?: "Failed to fetch ride history"))
             }.also {
 
                 savedStateHandle[RIDE_HISTORY_VM_STATE_KEY] = state.value
