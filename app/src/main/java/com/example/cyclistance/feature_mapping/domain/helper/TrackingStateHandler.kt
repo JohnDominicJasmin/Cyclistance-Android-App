@@ -41,7 +41,7 @@ class TrackingStateHandler(
             val cyclists = state.value.nearbyCyclist
             val userRole = state.value.user.getRole()
 
-            if (userRole == Role.RESCUEE.name.lowercase()) {
+            if (userRole == Role.Rescuee.name) {
                 rescueTransaction?.rescuerId?.let { id ->
                     state.update { it.copy(rescuer = cyclists?.findUser(id), rescuee = null) }
                 }

@@ -22,8 +22,8 @@ data class UserItem(
 
     fun getRole() = transaction?.role
 
-    fun isRescuee() = transaction?.role == Role.RESCUEE.name.lowercase()
-    fun isRescuer() = transaction?.role == Role.RESCUER.name.lowercase()
+    fun isRescuee() = transaction?.role == Role.Rescuee.name
+    fun isRescuer() = transaction?.role == Role.Rescuer.name
 
     fun getTransactionId() = transaction?.transactionId
     fun isUserNeedHelp() = userAssistance?.needHelp

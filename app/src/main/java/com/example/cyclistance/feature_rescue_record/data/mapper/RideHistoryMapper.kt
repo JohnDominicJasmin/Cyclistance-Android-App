@@ -10,7 +10,7 @@ object RideHistoryMapper {
 
         val rescuerId = this["rescuerId"].toString()
         val isRescuer = uid == rescuerId
-        val role = if (isRescuer) Role.RESCUER.name.lowercase() else Role.RESCUEE.name.lowercase()
+        val role = if (isRescuer) Role.Rescuer.name else Role.Rescuee.name
         val rideId = this["rideId"].toString()
         val photoUrl =
             if (isRescuer) this["rescueePhotoUrl"].toString() else this["rescuerPhotoUrl"].toString()

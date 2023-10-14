@@ -486,7 +486,7 @@ fun MappingScreen(
     val cancelOnGoingRescue = remember(state.rescuer, state.rescueTransaction) {
         {
             val role = state.user.transaction?.role
-            val isRescuee = role == Role.RESCUEE.name.lowercase()
+            val isRescuee = role == Role.Rescuee.name
             val transactionId = state.rescueTransaction?.id
             val selectionType = if (isRescuee) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
             val clientId = state.rescuer?.id ?: state.rescuee?.id
@@ -1117,7 +1117,7 @@ fun MappingScreen(
 
                 is MappingEvent.DestinationReached -> {
                     val role = state.user.transaction?.role
-                    val type = if (role == Role.RESCUEE.name.lowercase()) {
+                    val type = if (role == Role.Rescuee.name) {
                         BottomSheetType.RescuerArrived.type
                     } else {
                         BottomSheetType.DestinationReached.type
