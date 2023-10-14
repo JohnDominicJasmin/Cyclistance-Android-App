@@ -17,7 +17,6 @@ data class MappingState(
     val userLocation: LocationModel? = null,
     val rescueTransaction: RescueTransactionItem? = null,
     val user: UserItem = UserItem(),
-    val rescueRequestAcceptedUser: UserItem? = null,
     val rescuer: UserItem? = null,
     val rescuee: UserItem? = null,
     val profileUploaded: Boolean = false,
