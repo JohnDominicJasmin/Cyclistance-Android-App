@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_rescue_record.presentation.list_historie
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.cyclistance.core.utils.constants.RescueRecordConstants
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RIDE_HISTORY_VM_STATE_KEY
 import com.example.cyclistance.feature_rescue_record.domain.use_case.RescueRecordUseCase
 import com.example.cyclistance.feature_rescue_record.presentation.list_histories.presentation.event.RideHistoryEvent
@@ -24,7 +25,9 @@ class RideHistoryViewModel @Inject constructor(
 
 
     private val _state =
-        MutableStateFlow(savedStateHandle[RIDE_HISTORY_VM_STATE_KEY] ?: RideHistoryState())
+        MutableStateFlow(savedStateHandle[RIDE_HISTORY_VM_STATE_KEY] ?: RideHistoryState(
+            uid = savedStateHandle[RescueRecordConstants.RIDE_HISTORY_UID]!!
+        ))
     val state = _state.asStateFlow()
 
 
@@ -32,14 +35,15 @@ class RideHistoryViewModel @Inject constructor(
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        getRideHistory()
+        val uid = state.value.uid
+        getRideHistory(uid = uid)
     }
 
-    private fun getRideHistory() {
+    private fun getRideHistory(uid: String) {
         viewModelScope.launch {
             runCatching {
                 isLoading(true)
-                rescueRecordUseCase.getRideHistoryUseCase()
+                rescueRecordUseCase.getRideHistoryUseCase(uid = uid)
             }.onSuccess { history ->
                 isLoading(false)
                 _eventFlow.emit(value = RideHistoryEvent.GetRideHistorySuccess(rideHistory = history))

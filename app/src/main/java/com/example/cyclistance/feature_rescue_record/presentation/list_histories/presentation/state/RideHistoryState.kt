@@ -7,5 +7,6 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class RideHistoryState(
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val uid: String = ""
 ):Parcelable
