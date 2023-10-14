@@ -184,7 +184,7 @@ class MappingViewModel @Inject constructor(
         if (loadDataJob?.isActive == true) return
         loadDataJob = viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             // TODO: Remove when the backend is ready
-            createMockUpUsers()
+//            createMockUpUsers()
             getNearbyCyclist()
             trackingHandler.updateClient()
         }
@@ -244,7 +244,6 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
             val rescuer = state.value.nearbyCyclist?.findUser(id) ?: return@launch
-            _state.update { it.copy(rescueRequestAcceptedUser = rescuer) }
             val transactionId = trackingHandler.getTransactionId(rescuer)
             val user = state.value.user
 
@@ -289,7 +288,6 @@ class MappingViewModel @Inject constructor(
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.CancelHelpRequestSuccess)
                 broadcastToNearbyCyclists()
-                _state.update { it.copy(rescueRequestAcceptedUser = null) }
             }.onFailure { exception ->
                 Timber.e("Failed to cancel search assistance: ${exception.message}")
                 exception.handleException()
@@ -1048,7 +1046,9 @@ class MappingViewModel @Inject constructor(
                 trackingHandler.updateLocation(location)
                 broadcastRescueTransactionToRespondent(location)
                 updateSpeedometer(location)
-                broadcastToNearbyCyclists()
+                if(state.value.nearbyCyclist == null){
+                    broadcastToNearbyCyclists()
+                }
 
             }.launchIn(this@launch).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
