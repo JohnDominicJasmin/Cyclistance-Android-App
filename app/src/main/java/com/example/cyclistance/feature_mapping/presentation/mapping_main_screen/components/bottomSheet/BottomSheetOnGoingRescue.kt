@@ -41,10 +41,8 @@ fun BottomSheetOnGoingRescue(
     onGoingRescueModel: OnGoingRescueModel,
 ) {
 
-    val isRescuer by remember(role) {
-        derivedStateOf {
-            role == Role.RESCUER.name
-        }
+    val isRescuer = remember(role) {
+        role == Role.Rescuer.name
     }
 
     Card(
@@ -383,7 +381,7 @@ private fun PreviewBottomSheetOnGoingRescueDark() {
                     estimatedDistance = "9.0 km",
                     estimatedTime = "1h 20m",
                 ),
-                role = Role.RESCUER.name)
+                role = Role.Rescuer.name)
         }
     }
 }
@@ -413,7 +411,7 @@ private fun PreviewBottomSheetOnGoingRescueLight() {
                     estimatedDistance = "9.0 km",
                     estimatedTime = "1h 20m",
                 ),
-                role = Role.RESCUEE.name)
+                role = Role.Rescuee.name)
         }
     }
 }
