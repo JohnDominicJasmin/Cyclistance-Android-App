@@ -223,7 +223,7 @@ fun SpeedometerSection(
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .weight(0.3f),
-                    title = "Distance",
+                    title = "Travelled Distance",
                     content = distance)
 
                 Divider(

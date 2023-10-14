@@ -96,7 +96,6 @@ fun MappingScreen(
     navController: NavController) {
 
 
-
     val context = LocalContext.current
     val state by mappingViewModel.state.collectAsStateWithLifecycle()
     val mainState by mainViewModel.state.collectAsStateWithLifecycle()
@@ -194,35 +193,20 @@ fun MappingScreen(
     val showUserLocation = remember(mapboxMap, isNavigating, userLocationAvailable) {
         {
             mapboxMap?.style?.let { style ->
-                if (isNavigating) {
 
-                    val buildLocationComponentActivationOptions =
-                        LocationComponentActivationOptions.builder(context, style)
-                            .locationComponentOptions(locationComponentOptions.build())
-                            .build()
-                    mapboxMap?.locationComponent?.apply {
-                        activateLocationComponent(buildLocationComponentActivationOptions)
-                        isLocationComponentEnabled = userLocationAvailable
-                        cameraMode = CameraMode.NONE
-                        renderMode = RenderMode.GPS
-
-                    }
-
-                } else {
-                    val buildLocationComponentActivationOptions =
-                        LocationComponentActivationOptions.builder(context, style)
-                            .locationComponentOptions(
-                                locationComponentOptions
-                                    .changeToNormalPuckIcon(context)
-                                    .pulseEnabled(pulsingEnabled)
-                                    .build())
-                            .build()
-                    mapboxMap?.locationComponent?.apply {
-                        activateLocationComponent(buildLocationComponentActivationOptions)
-                        isLocationComponentEnabled = userLocationAvailable
-                        cameraMode = CameraMode.NONE
-                        renderMode = RenderMode.NORMAL
-                    }
+                val buildLocationComponentActivationOptions =
+                    LocationComponentActivationOptions.builder(context, style)
+                        .locationComponentOptions(
+                            locationComponentOptions
+                                .changeToNormalPuckIcon(context)
+                                .pulseEnabled(pulsingEnabled)
+                                .build())
+                        .build()
+                mapboxMap?.locationComponent?.apply {
+                    activateLocationComponent(buildLocationComponentActivationOptions)
+                    isLocationComponentEnabled = userLocationAvailable
+                    cameraMode = CameraMode.NONE
+                    renderMode = RenderMode.NORMAL
                 }
             }
             Unit
@@ -235,7 +219,8 @@ fun MappingScreen(
             { zoomLevel: Double, latLng: LatLng, cameraAnimationDuration: Int ->
 
                 val mapboxLoaded =
-                    (mapboxMap?.locationComponent != null) && (mapboxMap?.style?.isFullyLoaded ?: false)
+                    (mapboxMap?.locationComponent != null) && (mapboxMap?.style?.isFullyLoaded
+                                                               ?: false)
                 if (userLocationAvailable && mapboxLoaded) {
                     showUserLocation()
                     mapboxMap?.animateCameraPosition(
@@ -322,18 +307,19 @@ fun MappingScreen(
         }
     }}
 
-    val openRescueResult = remember(state.rescuer){{
-        val rescuer = state.rescuer
+    val openRescueResult = remember(state.rescuer) {
+        {
+            val rescuer = state.rescuer
 
-        navController.navigateScreen(route = Screens.RescueRecordNavigation.RescueResults.screenRoute)
-        mappingViewModel.onEvent(event = MappingVmEvent.RescuerArrived)
-        /*navController.navigateScreen(route = Screens.MappingNavigation.RescueResults.passArgument(
-            rescuerId = rescuer?.id ?: "",
-            rescuerName = rescuer?.name ?: "",
-            rescuerPhoto = rescuer?.profilePictureUrl?: "",
-        ))*/
-    }}
-
+            navController.navigateScreen(route = Screens.RescueRecordNavigation.RescueResults.screenRoute)
+            mappingViewModel.onEvent(event = MappingVmEvent.RescuerArrived)
+            /*navController.navigateScreen(route = Screens.MappingNavigation.RescueResults.passArgument(
+                rescuerId = rescuer?.id ?: "",
+                rescuerName = rescuer?.name ?: "",
+                rescuerPhoto = rescuer?.profilePictureUrl?: "",
+            ))*/
+        }
+    }
 
 
     val showRouteDirection = remember(uiState.routeDirection?.geometry, mapboxMap) {
@@ -345,7 +331,7 @@ fun MappingScreen(
                     if (style.isFullyLoaded.not()) {
                         return@getStyle
                     }
-                    if(geometry.isEmpty()){
+                    if (geometry.isEmpty()) {
                         return@getStyle
                     }
 
@@ -1133,11 +1119,12 @@ fun MappingScreen(
                 }
 
                 is MappingEvent.RescueHasTransaction -> {
-                    changeAlertDialogState(AlertDialogState(
-                        title = "Cannot Request",
-                        description = "Unfortunately the Rescuer is currently in a Rescue.",
-                        icon = R.raw.error
-                    ))
+                    changeAlertDialogState(
+                        AlertDialogState(
+                            title = "Cannot Request",
+                            description = "Unfortunately the Rescuer is currently in a Rescue.",
+                            icon = R.raw.error
+                        ))
                 }
 
                 is MappingEvent.UserHasCurrentTransaction -> {
