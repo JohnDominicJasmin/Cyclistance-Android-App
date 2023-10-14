@@ -54,6 +54,9 @@ fun UserProfileContent(
                     onClickEditProfile = {
                         event(UserProfileUiEvent.OnClickEditProfile)
                     },
+                    onClickRideHistory = {
+                        event(UserProfileUiEvent.OnClickRideHistory)
+                    }
 
                 )
 
@@ -96,10 +99,10 @@ fun UserProfileContent(
 val fakeUserProfile = UserProfileModel(
     userProfileInfo = UserProfileInfoModel(
         photoUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
-        name = "John Doe, John Doe John Doe John Doe John DoeJohn Doe John DoeJohn DoeJohn DoeJohn Doe",
+        name = "John Doe",
         averageRating = 4.0,
-        address = "Manila, Philippines, Manila, Philippines, Manila, Philippines, Manila, Philippines, Manila, Philippines",
-        bikeGroup = "Manila Bike Club, Manila Bike Club ,Manila Bike Club "
+        address = "Manila, Philippines",
+        bikeGroup = "Manila Bikers Club"
     ),
     userActivity = UserActivityModel(
         requestAssistanceFrequency = 100,

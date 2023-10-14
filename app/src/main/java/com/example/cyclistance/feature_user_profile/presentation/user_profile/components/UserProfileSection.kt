@@ -13,6 +13,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.outlined.DirectionsBike
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.runtime.Composable
@@ -37,6 +38,7 @@ fun UserProfileSection(
     modifier: Modifier = Modifier,
     state: UserProfileState,
     onClickEditProfile: () -> Unit,
+    onClickRideHistory: () -> Unit,
 ) {
 
 
@@ -164,6 +166,16 @@ fun UserProfileSection(
                         .padding(all = 8.dp)
                         .wrapContentSize(align = Alignment.TopCenter))
             }
+
+            Icon(
+                imageVector = Icons.Filled.History,
+                contentDescription = "Ride History",
+                tint = MaterialTheme.colors.onBackground,
+                modifier = Modifier
+                    .clip(CircleShape)
+                    .clickable { onClickRideHistory() }
+                    .padding(all = 8.dp)
+                    .wrapContentSize(align = Alignment.TopCenter))
         }
 
 

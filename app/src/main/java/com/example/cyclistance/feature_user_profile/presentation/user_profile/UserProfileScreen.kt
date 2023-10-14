@@ -25,11 +25,16 @@ fun UserProfileScreen(
 
     val state by viewModel.state.collectAsStateWithLifecycle()
 
-    val navigateToEditProfile = remember {
-        {
-            navController.navigate(Screens.UserProfileNavigation.EditProfile.screenRoute)
-        }
-    }
+    val navigateToEditProfile = remember {{
+        navController.navigate(Screens.UserProfileNavigation.EditProfile.screenRoute)
+    }}
+
+
+    val navigateToUserProfile = remember{{
+        navController.navigate(Screens.RescueRecordNavigation.RideHistory.passArgument(
+          rideHistoryUid = userId
+        ))
+    }}
 
 
     LaunchedEffect(key1 = userId) {
@@ -44,6 +49,7 @@ fun UserProfileScreen(
         event = { event ->
             when (event) {
                 UserProfileUiEvent.OnClickEditProfile -> navigateToEditProfile()
+                UserProfileUiEvent.OnClickRideHistory -> navigateToUserProfile()
             }
         }
     )

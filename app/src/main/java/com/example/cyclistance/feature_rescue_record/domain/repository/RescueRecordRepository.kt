@@ -8,7 +8,7 @@ interface RescueRecordRepository {
     suspend fun addRescueRecord(rideDetails: RideDetails)
     suspend fun getRescueRecord(transactionId: String): RideDetails
     suspend fun getRescueDetails(): Flow<RideDetails>
-    suspend fun getRideHistory(): RideHistory
+    suspend fun getRideHistory(uid: String): RideHistory
     suspend fun addRescueDetails(details: RideDetails)
 
 }
