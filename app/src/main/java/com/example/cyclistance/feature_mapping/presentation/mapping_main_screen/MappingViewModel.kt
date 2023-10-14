@@ -814,12 +814,12 @@ class MappingViewModel @Inject constructor(
         runCatching {
 
             transactionId.assignRequestTransaction(
-                role = Role.RESCUEE.name.lowercase(),
+                role = Role.Rescuee.name,
                 id = user.id
             )
 
             transactionId.assignRequestTransaction(
-                role = Role.RESCUER.name.lowercase(),
+                role = Role.Rescuer.name,
                 id = rescuer.id
             )
 

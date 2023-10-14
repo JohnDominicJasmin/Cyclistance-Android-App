@@ -323,7 +323,7 @@ fun MappingMapsScreen(
         { location: LocationModel ->
             dismissTransactionLocationIcon()
             val role = state.user.getRole()
-            val mapIcon = if (role == Role.RESCUEE.name.lowercase()) {
+            val mapIcon = if (role == Role.Rescuee.name) {
                 R.drawable.ic_map_rescuer
             } else {
                 R.drawable.ic_map_rescuee
