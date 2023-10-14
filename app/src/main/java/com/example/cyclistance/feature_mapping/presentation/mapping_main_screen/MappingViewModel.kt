@@ -334,7 +334,7 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun respondToHelp(selectedRescuee: MapSelectedRescuee) {
-        viewModelScope.launch(context = defaultDispatcher) {
+        viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {
             runCatching {
                 uploadUserProfile(onSuccess = {
                     viewModelScope.launch(context = defaultDispatcher) {
@@ -440,7 +440,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun requestHelp() {
-        viewModelScope.launch(context = defaultDispatcher) {
+        viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {
             runCatching {
                 uploadUserProfile(onSuccess = {
                     viewModelScope.launch(context = defaultDispatcher) {
