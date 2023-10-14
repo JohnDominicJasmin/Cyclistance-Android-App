@@ -198,7 +198,7 @@ fun NavScreen(
     val onClickRideHistory = remember {
         {
             closeDrawer()
-            navController.navigateScreen(Screens.RescueRecordNavigation.RideHistory.screenRoute)
+            navController.navigateScreen(Screens.RescueRecordNavigation.RideHistory.passArgument(rideHistoryUid = editProfileState.userId))
         }
     }
 

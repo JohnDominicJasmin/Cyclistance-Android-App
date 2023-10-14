@@ -45,7 +45,11 @@ fun NavGraphBuilder.rescueRecordGraph(
         }
 
 
-        composable(route = Screens.RescueRecordNavigation.RideHistory.screenRoute) {
+        composable(route = Screens.RescueRecordNavigation.RideHistory.screenRoute, arguments = listOf(
+            navArgument(name = RescueRecordConstants.RIDE_HISTORY_UID) {
+                this.type = NavType.StringType
+            }
+        )) {
             RideHistoryScreen(
                 navController = navController,
                 paddingValues = paddingValues)

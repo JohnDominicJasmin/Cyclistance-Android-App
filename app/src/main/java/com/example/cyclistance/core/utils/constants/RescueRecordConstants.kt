@@ -10,4 +10,5 @@ object RescueRecordConstants {
     const val RESCUEE_ID_KEY = "rescueeId"
     const val RESCUER_ID_KEY = "rescuerId"
     const val RIDE_DATE_KEY = "rideDate"
+    const val RIDE_HISTORY_UID = "rideHistoryUid"
 }

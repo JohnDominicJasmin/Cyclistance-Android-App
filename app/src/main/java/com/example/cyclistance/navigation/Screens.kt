@@ -128,7 +128,9 @@ sealed class Screens {
             fun passArgument(transactionId: String) = "rescue_details_screen/$transactionId"
         }
 
-        object RideHistory : RescueRecordNavigation(screenRoute = "ride_history_screen")
+        object RideHistory : RescueRecordNavigation(screenRoute = "ride_history_screen/{${RescueRecordConstants.RIDE_HISTORY_UID}}"){
+            fun passArgument(rideHistoryUid: String) = "ride_history_screen/$rideHistoryUid"
+        }
         object RideHistoryDetails :
             RescueRecordNavigation(screenRoute = "ride_history_details_screen/{${RescueRecordConstants.TRANSACTION_ID}}"){
                 fun passArgument(transactionId: String) = "ride_history_details_screen/$transactionId"
