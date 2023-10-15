@@ -248,7 +248,7 @@ class TrackingStateHandler(
             .takeLast(6)
     }
 
-    suspend fun checkRescueRequestAccepted(rescueTransaction: RescueTransaction, id: String) {
+    suspend fun filterRescueRequestAccepted(rescueTransaction: RescueTransaction, id: String) {
         val respondedToHelp = state.value.respondedToHelp
         val user = state.value.user
 
@@ -262,6 +262,10 @@ class TrackingStateHandler(
 
         filterUserRescueTransaction(rescueTransaction = rescueTransaction)
             ?.let { transaction ->
+
+                if(transaction.cancellation != null){
+                    return@let
+                }
 
                 if (transaction.isRescueCancelled()) {
                     return@let
