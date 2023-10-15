@@ -29,7 +29,10 @@ object RescueTransactionMapper {
 
     private fun CancellationDto.toCancellationModel(): CancellationModel {
         return CancellationModel(
-            cancellationReason = this.cancellationReason.toCancellationReasonModel()
+            cancellationReason = this.cancellationReason.toCancellationReasonModel(),
+            idCancelledBy = this.idCancelledBy,
+            nameCancelledBy = this.nameCancelledBy,
+            rescueCancelled = this.rescueCancelled
         )
     }
 

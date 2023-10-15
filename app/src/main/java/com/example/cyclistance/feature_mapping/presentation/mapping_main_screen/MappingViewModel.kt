@@ -379,6 +379,9 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun broadcastToNearbyCyclists() {
         val location = state.value.userLocation ?: return
+        location.longitude ?: return
+        location.latitude ?: return
+
         runCatching {
             mappingUseCase.nearbyCyclistsUseCase(
                 locationModel = LiveLocationSocketModel(
@@ -1006,7 +1009,7 @@ class MappingViewModel @Inject constructor(
                 }.onEach { rescueTransactions ->
                     rescueTransactions.updateCurrentRescueTransaction()
 
-                    trackingHandler.checkRescueRequestAccepted(
+                    trackingHandler.filterRescueRequestAccepted(
                         rescueTransaction = rescueTransactions,
                         id = getId()
                     )

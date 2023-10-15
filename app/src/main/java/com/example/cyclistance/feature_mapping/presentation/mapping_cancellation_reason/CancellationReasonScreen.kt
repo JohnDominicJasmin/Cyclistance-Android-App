@@ -46,7 +46,7 @@ fun CancellationReasonScreen(
         viewModel.eventFlow.collectLatest { event ->
             when (event) {
                 is CancellationReasonEvent.ConfirmCancellationReasonSuccess -> {
-                    navController.navigateScreen(Screens.MappingNavigation.Mapping.screenRoute)
+                    navController.popBackStack()
                 }
 
                 is CancellationReasonEvent.UnexpectedError -> {

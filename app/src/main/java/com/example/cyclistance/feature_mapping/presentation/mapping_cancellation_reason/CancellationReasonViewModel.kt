@@ -85,7 +85,7 @@ class CancellationReasonViewModel @Inject constructor(
 
             }.onSuccess {
                 broadcastRescueTransaction()
-                delay(500)
+                delay(1000)
                 finishLoading()
                 _eventFlow.emit(value = CancellationReasonEvent.ConfirmCancellationReasonSuccess)
             }.onFailure { exception ->
