@@ -346,7 +346,7 @@ fun MappingScreen(
         }
     }
 
-    val removeRouteDirection = remember(mapboxMap) {
+    val removeRouteDirection = remember(mapboxMap, uiState.routeDirection) {
         {
             mapboxMap?.getStyle { style ->
 
@@ -1214,11 +1214,11 @@ fun MappingScreen(
             }
         }
     }
-    LaunchedEffect(key1 = uiState.routeDirection, key2 = mapboxMap) {
+    LaunchedEffect(key1 = uiState.routeDirection?.geometry, key2 = mapboxMap) {
 
-        val route = uiState.routeDirection ?: return@LaunchedEffect
+        val route = uiState.routeDirection
 
-        if (route.geometry.isEmpty()) {
+        if (route == null) {
             removeRouteDirection()
             context.startLocationServiceIntentAction(intentAction = ACTION_STOP_FOREGROUND)
             return@LaunchedEffect
@@ -1226,19 +1226,6 @@ fun MappingScreen(
         showRouteDirection()
     }
 
-    LaunchedEffect(
-        key1 = state.rescueTransaction?.route,
-        key2 = hasTransaction,
-        key3 = isRescueCancelled) {
-
-
-        if (hasTransaction.not() || isRescueCancelled) {
-            uiState = uiState.copy(routeDirection = null)
-            return@LaunchedEffect
-        }
-
-        getRouteDirections()
-    }
 
 
     LaunchedEffect(key1 = hasInternetConnection) {
@@ -1257,6 +1244,20 @@ fun MappingScreen(
         mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
     }
 
+
+    LaunchedEffect(
+        key1 = state.rescueTransaction?.route,
+        key2 = hasTransaction,
+        key3 = isRescueCancelled) {
+
+
+        if (hasTransaction.not() || isRescueCancelled) {
+            uiState = uiState.copy(routeDirection = null)
+            return@LaunchedEffect
+        }
+
+        getRouteDirections()
+    }
 
     LaunchedEffect(
         key1 = hasInternetConnection,

@@ -172,7 +172,7 @@ class MappingViewModel @Inject constructor(
             mappingUseCase.bottomSheetTypeUseCase().catch {
                 it.handleException()
             }.onEach {
-                if(it.isEmpty()){
+                if (it.isEmpty()) {
                     return@onEach
                 }
                 _eventFlow.emit(value = MappingEvent.NewBottomSheetType(it))
@@ -191,22 +191,6 @@ class MappingViewModel @Inject constructor(
 
     }
 
-
-    private suspend fun loadRescueTransaction(transactionId: String) {
-        coroutineScope {
-            if (transactionId.isEmpty()) {
-                return@coroutineScope
-            }
-
-            mappingUseCase.getRescueTransactionByIdUseCase(transactionId).catch {
-                it.handleException()
-            }.onEach { rescueTransaction ->
-                _state.update { it.copy(rescueTransaction = rescueTransaction) }
-            }.launchIn(this).invokeOnCompletion {
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-            }
-        }
-    }
 
     private suspend fun getNearbyCyclist() {
         val userLocation = state.value.getCurrentLocation()
@@ -538,6 +522,7 @@ class MappingViewModel @Inject constructor(
                     message = event.message
                 )
             }
+
             is MappingVmEvent.NotifyRequestAccepted -> {
                 mappingUseCase.requestAcceptedNotificationUseCase(
                     message = event.message
@@ -552,17 +537,19 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun rescuerArrived(){
+    private fun rescuerArrived() {
         viewModelScope.launch {
             rescueRecordUseCase.rescueDetailsUseCase(details = trackingHandler.getRideDetails())
         }
     }
 
-    private fun cancelRespondToHelp(respondentId: String){
+    private fun cancelRespondToHelp(respondentId: String) {
         viewModelScope.launch {
             runCatching {
                 isLoading(true)
-                mappingUseCase.cancelHelpRespondUseCase(userId = getId(), respondentId = respondentId)
+                mappingUseCase.cancelHelpRespondUseCase(
+                    userId = getId(),
+                    respondentId = respondentId)
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.CancelRespondSuccess)
                 broadcastToNearbyCyclists()
@@ -848,9 +835,10 @@ class MappingViewModel @Inject constructor(
             )
         }
 
-        val distance = rescuer.location?.let { mappingUseCase.getCalculatedDistanceUseCase(
-            startingLocation = it,
-            destinationLocation = userLocation)
+        val distance = rescuer.location?.let {
+            mappingUseCase.getCalculatedDistanceUseCase(
+                startingLocation = it,
+                destinationLocation = userLocation)
         }
         _state.update {
             it.copy(
@@ -906,15 +894,12 @@ class MappingViewModel @Inject constructor(
                         newRescueRequest = NewRescueRequestsModel(request = respondents),
                         user = user)
                 }
-                user.getTransactionId()?.let { loadRescueTransaction(transactionId = it) }
             }
-
         }.onFailure {
             Timber.e("Failed to get user: ${it.message}")
         }
 
     }
-
 
 
     private fun UserItem.getUserRescueRespondents(nearbyCyclist: NearbyCyclist): List<RescueRequestItemModel> {
@@ -1049,7 +1034,7 @@ class MappingViewModel @Inject constructor(
                 trackingHandler.updateLocation(location)
                 broadcastRescueTransactionToRespondent(location)
                 updateSpeedometer(location)
-                if(state.value.nearbyCyclist == null){
+                if (state.value.nearbyCyclist == null) {
                     broadcastToNearbyCyclists()
                 }
 
