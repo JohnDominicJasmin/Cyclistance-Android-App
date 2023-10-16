@@ -1,7 +1,6 @@
 package com.example.cyclistance.feature_mapping.data
 
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.rescue_transaction.RescueTransactionItemDto
-import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserDto
 import com.example.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.UserItemDto
 import retrofit2.http.*
 
@@ -10,12 +9,6 @@ interface CyclistanceApi {
 
     @GET("/api/v1/get-user-by-id/{user_id}")
     suspend fun getUserById(@Path("user_id") userId: String): UserItemDto
-
-    @GET("/api/v1/get-users/{latitude}&{longitude}")
-    suspend fun getUsers(
-        @Path("latitude") latitude: Double,
-        @Path("longitude") longitude: Double,
-    ): UserDto
 
     @POST("/api/v1/create-user")
     suspend fun createUser(@Body userItemDto: UserItemDto)

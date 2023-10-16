@@ -28,7 +28,6 @@ import com.example.cyclistance.feature_mapping.domain.use_case.user.DeleteAllRes
 import com.example.cyclistance.feature_mapping.domain.use_case.user.DeleteRescueRespondentUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.user.DeleteUserUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.user.GetUserByIdUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.user.GetUsersUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.TransactionLocationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
@@ -39,7 +38,6 @@ data class MappingUseCase(
 
 
     val getUserByIdUseCase: GetUserByIdUseCase,
-    val getUsersUseCase: GetUsersUseCase,
     val createUserUseCase: CreateUserUseCase,
     val confirmDetailsUseCase: ConfirmDetailsUseCase,
     val deleteUserUseCase: DeleteUserUseCase,

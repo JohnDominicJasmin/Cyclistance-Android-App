@@ -14,7 +14,6 @@ import com.example.cyclistance.feature_mapping.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransaction
 import com.example.cyclistance.feature_mapping.data.mapper.RescueTransactionMapper.toRescueTransactionDto
 import com.example.cyclistance.feature_mapping.data.mapper.RouteDirectionMapper.toRouteDirection
-import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUser
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItem
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toUserItemDto
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
@@ -23,7 +22,6 @@ import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazard
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.example.cyclistance.service.LocationService
@@ -303,20 +301,6 @@ class MappingRepositoryImpl(
     override suspend fun getUserLocation(): Flow<LocationModel> {
         return withContext(scope) { LocationService.address }
     }
-
-    override suspend fun getUsers(latitude: Double, longitude: Double): Flow<NearbyCyclist> =
-        flow {
-            val users = api.getUsers(latitude = latitude, longitude = longitude)
-            emit(users)
-        }.retry(API_CALL_RETRY_COUNT) { cause ->
-            return@retry cause is IOException || cause is HttpException
-        }.catch { cause ->
-            if (cause is IOException || cause is HttpException) {
-                throw MappingExceptions.NetworkException()
-            }
-        }.map {
-            it.toUser()
-        }
 
 
     override suspend fun createUser(userItem: UserItem) =
