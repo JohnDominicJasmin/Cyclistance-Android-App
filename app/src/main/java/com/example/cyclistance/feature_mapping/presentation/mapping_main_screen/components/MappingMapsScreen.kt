@@ -83,13 +83,22 @@ fun MappingMapsScreen(
         }
     }
 
-    val showNearbyCyclistsIcon = remember(nearbyCyclist, mapboxMap) {
+    val showNearbyCyclistsIcon = remember(nearbyCyclist, mapboxMap,state.userLocation?.latitude) {
         {
             dismissNearbyUserMarkers()
             nearbyCyclist?.filter {
                 it.id != state.user.id
-            }?.filter {
-                it.isUserNeedHelp() == true
+            }?.filter {user ->
+
+                user.isUserNeedHelp() == true
+            }?.filter { user ->
+
+                val markerLocation = LatLng(user.location?.latitude!!, user.location.longitude!!)
+                val userLocation = LatLng(
+                    state.userLocation?.latitude!!,
+                    state.userLocation.longitude!!
+                )
+                markerLocation.distanceTo(userLocation)< MappingConstants.DEFAULT_RADIUS
             }?.forEach { cyclist ->
                 Timber.v("Cyclist Name: ${cyclist.name}")
                 val location = cyclist.location
@@ -198,21 +207,33 @@ fun MappingMapsScreen(
 
     }
 
-    LaunchedEffect(key1 = nearbyCyclist, key2 = state.mapType, key3 = mapboxMap) {
-
+    fun observeNearbyCyclistsIcon(){
         if (state.mapType in dismissibleNearbyUserMapTypes) {
-            return@LaunchedEffect
+            return
         }
 
         if (shouldDismissIcons) {
-            return@LaunchedEffect
+            return
         }
 
         if(uiState.searchingAssistance){
-            return@LaunchedEffect
+            return
+        }
+
+        if(state.userLocation == null){
+            return
         }
 
         showNearbyCyclistsIcon()
+    }
+
+    LaunchedEffect(key1 = nearbyCyclist, key2 = state.userLocation, key3 = mapboxMap) {
+        observeNearbyCyclistsIcon()
+    }
+
+
+    LaunchedEffect(key1 = nearbyCyclist, key2 = state.mapType, key3 = mapboxMap) {
+        observeNearbyCyclistsIcon()
     }
 
 

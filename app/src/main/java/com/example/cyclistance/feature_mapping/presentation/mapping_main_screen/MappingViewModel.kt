@@ -73,7 +73,6 @@ class MappingViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private var loadDataJob: Job? = null
     private var getUsersUpdatesJob: Job? = null
     private var locationUpdatesJob: Job? = null
     private var getRescueTransactionUpdatesJob: Job? = null
@@ -181,47 +180,15 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun loadData() {
-        if (loadDataJob?.isActive == true) return
-        loadDataJob = viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
+        viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             // TODO: Remove when the backend is ready
-//            createMockUpUsers()
-            getNearbyCyclist()
+            createMockUpUsers()
             trackingHandler.updateClient()
-        }
 
+        }
     }
 
 
-    private suspend fun getNearbyCyclist() {
-        val userLocation = state.value.getCurrentLocation()
-        Timber.v("Getting nearby cyclist $userLocation")
-
-        val dataLoaded = state.value.user.id != null
-        userLocation?.latitude ?: return
-        userLocation.longitude ?: return
-
-        if (dataLoaded) {
-            return
-        }
-
-        coroutineScope {
-
-
-            mappingUseCase.getUsersUseCase(
-                latitude = userLocation.latitude,
-                longitude = userLocation.longitude
-            ).distinctUntilChanged().catch {
-                it.handleException()
-            }.onEach {
-                it.filterUser()
-                it.updateNearbyCyclists()
-                Timber.v("Receiving from getNearbyCyclist")
-                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-            }.launchIn(this)
-
-        }
-
-    }
 
 
     private fun acceptRescueRequest(id: String) {
@@ -470,12 +437,6 @@ class MappingViewModel @Inject constructor(
                 removeAssignedTransaction()
                 clearTravelledPath()
             }
-
-
-            is MappingVmEvent.LoadData -> {
-                loadData()
-            }
-
 
             is MappingVmEvent.DeclineRescueRequest -> {
                 declineRescueRequest(event.id)

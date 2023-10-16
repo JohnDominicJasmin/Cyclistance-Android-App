@@ -4,14 +4,12 @@ import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazard
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.mapbox.geojson.Point
 import kotlinx.coroutines.flow.Flow
 
 interface MappingRepository {
     suspend fun getUserById(userId: String): Flow<UserItem>
-    suspend fun getUsers(latitude: Double, longitude: Double): Flow<NearbyCyclist>
     suspend fun createUser(userItem: UserItem)
     suspend fun deleteUser(id: String)
 

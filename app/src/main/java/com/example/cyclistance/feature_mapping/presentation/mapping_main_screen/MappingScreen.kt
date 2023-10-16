@@ -1237,8 +1237,8 @@ fun MappingScreen(
             return@LaunchedEffect
         }
 
-        if (dataHaveBeenLoaded.not()) {
-            mappingViewModel.onEvent(MappingVmEvent.LoadData)
+        if (dataHaveBeenLoaded) {
+            return@LaunchedEffect
         }
 
         mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
