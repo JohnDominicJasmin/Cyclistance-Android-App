@@ -1229,15 +1229,9 @@ fun MappingScreen(
 
 
     LaunchedEffect(key1 = hasInternetConnection) {
-        val nearbyCyclistLoaded = state.nearbyCyclist?.users?.isNotEmpty() ?: false
-        val userLoaded = state.user.id != null
-        val dataHaveBeenLoaded = userLoaded && nearbyCyclistLoaded
+
 
         if (hasInternetConnection.not()) {
-            return@LaunchedEffect
-        }
-
-        if (dataHaveBeenLoaded) {
             return@LaunchedEffect
         }
 
