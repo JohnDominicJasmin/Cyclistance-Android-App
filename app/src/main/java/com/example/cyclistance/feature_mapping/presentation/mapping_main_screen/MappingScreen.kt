@@ -945,6 +945,19 @@ fun MappingScreen(
         })
     }
 
+    LaunchedEffect(state.user.userAssistance){
+
+        if(state.user.isUserNeedHelp() == true){
+
+            uiState = uiState.copy(
+                bottomSheetType = BottomSheetType.SearchAssistance.type,
+                searchingAssistance = true)
+                .also {
+                    expandBottomSheet()
+                }
+
+        }
+    }
 
     LaunchedEffect(key1 = true){
         emergencyViewModel.onEvent(event = EmergencyCallVmEvent.LoadDefaultContact)
