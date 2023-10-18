@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.dp
 import com.example.cyclistance.core.utils.formatter.IconFormatter.toHazardousLaneIconMarker
 import com.example.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
@@ -33,13 +34,15 @@ fun MappingBottomSheet(
 
     val sheetGesturesEnabled = remember(uiState.bottomSheetType) {
         uiState.bottomSheetType != BottomSheetType.SearchAssistance.type &&
-        uiState.bottomSheetType != BottomSheetType.OnGoingRescue.type &&
         uiState.bottomSheetType != BottomSheetType.IncidentDescription.type
     }
+
     MappingBottomSheet(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         sheetGesturesEnabled = sheetGesturesEnabled,
+        sheetPeekHeight = if(uiState.bottomSheetType == BottomSheetType.OnGoingRescue.type) 60.dp else 0.dp,
         sheetContent = {
+
             when (uiState.bottomSheetType) {
 
                 BottomSheetType.RescuerArrived.type -> {

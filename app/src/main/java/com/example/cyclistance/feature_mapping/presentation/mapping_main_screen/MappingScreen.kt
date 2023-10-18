@@ -1331,8 +1331,6 @@ fun MappingScreen(
     }
 
 
-
-
     MappingScreenContent(
         modifier = Modifier.padding(paddingValues),
         state = state,
