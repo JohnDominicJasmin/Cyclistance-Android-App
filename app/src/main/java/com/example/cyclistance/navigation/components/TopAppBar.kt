@@ -22,7 +22,6 @@ import com.example.cyclistance.top_bars.TopAppBarCreator
 fun TopAppBar(
     onClickArrowBackIcon: () -> Unit = {},
     onClickMenuIcon: () -> Unit = {},
-    viewProfile: (id: String) -> Unit = {},
     uiState: NavUiState,
     route: String?) {
 
@@ -31,8 +30,8 @@ fun TopAppBar(
         Screens.MappingNavigation.Mapping.screenRoute -> {
             AnimatedVisibility(
                 visible = uiState.isNavigating.not(),
-                enter = fadeIn(initialAlpha = 0.4f, animationSpec = tween(durationMillis = 10000)),
-                exit = fadeOut(animationSpec = tween(durationMillis = 10000))) {
+                enter = fadeIn(initialAlpha = 0.4f, animationSpec = tween(durationMillis = 1000)),
+                exit = fadeOut(animationSpec = tween(durationMillis = 1000))) {
 
                 DefaultTopBar(onClickIcon = onClickMenuIcon)
             }
