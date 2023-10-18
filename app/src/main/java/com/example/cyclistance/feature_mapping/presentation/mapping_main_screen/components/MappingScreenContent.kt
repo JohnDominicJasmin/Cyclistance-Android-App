@@ -165,7 +165,6 @@ fun MappingScreenContent(
                             bottom.linkTo(parent.bottom)
                         },
                         mapboxMap = mapboxMap,
-                        routeDirection = uiState.routeDirection,
                         event = event,
                         uiState = uiState,
                         hazardousLaneMarkers = hazardousLaneMarkers
