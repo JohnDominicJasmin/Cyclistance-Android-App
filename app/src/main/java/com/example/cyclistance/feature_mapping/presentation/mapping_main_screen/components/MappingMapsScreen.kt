@@ -23,7 +23,6 @@ import com.example.cyclistance.core.utils.formatter.IconFormatter.getHazardousLa
 import com.example.cyclistance.core.utils.formatter.IconFormatter.getNearbyCyclistImage
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
@@ -61,7 +60,6 @@ fun MappingMapsScreen(
     state: MappingState,
     uiState: MappingUiState,
     mapboxMap: MapboxMap?,
-    routeDirection: RouteDirection?,
     hazardousLaneMarkers: List<HazardousLaneMarker>,
     event: (MappingUiEvent) -> Unit
 //    requestNavigationCameraToOverview: () -> Unit, //todo use this one
@@ -177,8 +175,8 @@ fun MappingMapsScreen(
         uiState.hasTransaction || uiState.isRescueCancelled
     }
 
-    val isUserNavigating = remember(key1 = uiState.isNavigating, key2 = routeDirection?.geometry) {
-        val geometry = routeDirection?.geometry
+    val isUserNavigating = remember(key1 = uiState.isNavigating, key2 = uiState.routeDirection?.geometry) {
+        val geometry = uiState.routeDirection?.geometry
         uiState.isNavigating || geometry?.isNotEmpty() == true
     }
 

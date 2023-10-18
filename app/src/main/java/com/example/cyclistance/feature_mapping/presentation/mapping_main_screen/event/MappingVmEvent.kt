@@ -17,6 +17,7 @@ sealed class MappingVmEvent {
     data class AcceptRescueRequest(val id: String): MappingVmEvent()
     data object SubscribeToDataChanges: MappingVmEvent()
     data object CancelRescueTransaction: MappingVmEvent()
+    data object RescueFinished: MappingVmEvent()
     data class GetRouteDirections(val origin: Point, val destination: Point): MappingVmEvent()
     data class ReportIncident(val label: String, val latLng: LatLng, val description: String): MappingVmEvent()
     data class UpdateReportedIncident(val marker: HazardousLaneMarker): MappingVmEvent()
