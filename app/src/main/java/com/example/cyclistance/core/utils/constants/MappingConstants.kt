@@ -24,8 +24,8 @@ object MappingConstants {
     const val CHARACTER_LIMIT = 110
     const val IMAGE_PLACEHOLDER_URL = "https://raw.githubusercontent.com/JohnDominicJasmin/JohnDominicJasmin/main/ic_empty_profile_placeholder.jpg"
 
-    const val LOCATION_UPDATES_INTERVAL: Long = 8000L
-    const val FASTEST_LOCATION_UPDATES_INTERVAL: Long = 4500L
+    const val LOCATION_UPDATES_INTERVAL: Long = 30000L
+    const val FASTEST_LOCATION_UPDATES_INTERVAL: Long = 20000L
 
     val BIKE_TYPE_KEY = stringPreferencesKey("bike_type")
     val ADDRESS_KEY = stringPreferencesKey("address")
@@ -75,7 +75,7 @@ object MappingConstants {
     const val SELECTION_RESCUER_TYPE = "rescuer_type"
     const val SELECTION_RESCUEE_TYPE = "rescuee_type"
 
-    const val NEAREST_METERS = 10.00
+    const val NEAREST_METERS = 100.00
     const val DEFAULT_RADIUS = 7000.00
     const val API_CALL_RETRY_COUNT: Long = 7
 
