@@ -59,7 +59,7 @@ fun BottomSheetOnGoingRescue(
             modifier = Modifier
                 .fillMaxWidth()) {
 
-            val (time, roundedButtonSection, distance, etaIcon, speedometer) = createRefs()
+            val (time, roundedButtonSection, distance, etaIcon, speedometer, grip) = createRefs()
 
             val etaAvailable by remember(onGoingRescueModel.estimatedTime) {
                 derivedStateOf {
@@ -67,7 +67,17 @@ fun BottomSheetOnGoingRescue(
                 }
             }
 
-
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth(0.1f)
+                    .padding(vertical = 4.dp)
+                    .constrainAs(grip) {
+                        top.linkTo(parent.top, margin = 4.dp)
+                        end.linkTo(parent.end)
+                        start.linkTo(parent.start)
+                    },
+                thickness = 1.dp, color = MaterialTheme.colors.primary
+            )
 
             if (!etaAvailable) {
 
@@ -76,7 +86,7 @@ fun BottomSheetOnGoingRescue(
                     color = MaterialTheme.colors.onSurface,
                     style = MaterialTheme.typography.subtitle2,
                     modifier = Modifier.constrainAs(time) {
-                        top.linkTo(parent.top, margin = 12.dp)
+                        top.linkTo(grip.bottom, margin = 12.dp)
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)
                     }
@@ -89,7 +99,7 @@ fun BottomSheetOnGoingRescue(
                 if (isRescuer) {
                     SpeedometerSection(
                         modifier = Modifier.constrainAs(speedometer) {
-                            top.linkTo(parent.top, margin = 4.dp)
+                            top.linkTo(grip.bottom)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                         },
@@ -107,8 +117,8 @@ fun BottomSheetOnGoingRescue(
                         .padding(horizontal = 12.dp)
                         .constrainAs(time) {
                             top.linkTo(
-                                if (isRescuer) speedometer.bottom else parent.top,
-                                margin = 12.dp)
+                                if (isRescuer) speedometer.bottom else grip.bottom,
+                                margin = 4.dp)
                             end.linkTo(etaIcon.start)
                         }
                 )
@@ -121,8 +131,8 @@ fun BottomSheetOnGoingRescue(
                         .size(20.dp)
                         .constrainAs(etaIcon) {
                             top.linkTo(
-                                if (isRescuer) speedometer.bottom else parent.top,
-                                margin = 12.dp)
+                                if (isRescuer) speedometer.bottom else grip.bottom,
+                                margin = 4.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                             this.centerHorizontallyTo(parent)
@@ -138,8 +148,8 @@ fun BottomSheetOnGoingRescue(
                         .padding(horizontal = 12.dp)
                         .constrainAs(distance) {
                             top.linkTo(
-                                if (isRescuer) speedometer.bottom else parent.top,
-                                margin = 12.dp,
+                                if (isRescuer) speedometer.bottom else grip.bottom,
+                                margin = 4.dp,
                             )
                             start.linkTo(etaIcon.end)
                         }
@@ -150,7 +160,7 @@ fun BottomSheetOnGoingRescue(
             RoundButtonSection(
                 modifier = Modifier.constrainAs(roundedButtonSection) {
                     val anchor = if (etaAvailable) etaIcon else time
-                    top.linkTo(anchor.bottom, margin = 10.dp)
+                    top.linkTo(anchor.bottom, margin = 6.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom, margin = 10.dp)
@@ -314,7 +324,6 @@ private fun RoundButtonSection(
 }
 
 
-
 @Composable
 private fun RoundedButtonItem(
     modifier: Modifier = Modifier,
@@ -326,7 +335,8 @@ private fun RoundedButtonItem(
 
     Column(
         modifier = modifier
-            .wrapContentSize().padding(vertical = 4.dp),
+            .wrapContentSize()
+            .padding(vertical = 4.dp),
         verticalArrangement = Arrangement.spacedBy(
             space = 7.dp,
             alignment = Alignment.CenterVertically),
@@ -356,39 +366,60 @@ private fun RoundedButtonItem(
 }
 
 
-
-
-
 @OptIn(ExperimentalMaterialApi::class)
 @Preview(name = "BottomSheetOnGoingRescue", device = "id:Galaxy Nexus")
 @Composable
 private fun PreviewBottomSheetOnGoingRescueDark() {
 
     CyclistanceTheme(true) {
-        Box(
-            contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colors.background)) {
-            BottomSheetOnGoingRescue(
-                onClickCancelButton = {},
-                onClickCallButton = {},
-                onClickChatButton = {},
-                onGoingRescueModel = OnGoingRescueModel(
-                    currentSpeed = "13.3",
-                    ridingDistance = "10.0 km",
-                    maxSpeed = "36 km/h",
-                    estimatedDistance = "9.0 km",
-                    estimatedTime = "1h 20m",
-                ),
-                role = Role.Rescuer.name)
+
+        val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
+            bottomSheetState = rememberBottomSheetState(
+                initialValue = BottomSheetValue.Expanded,
+                confirmStateChange = { false })
+        )
+
+        Box {
+
+            MappingBottomSheet(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp)
+                    .align(Alignment.BottomCenter),
+                bottomSheetScaffoldState = bottomSheetScaffoldState,
+                sheetGesturesEnabled = true,
+                sheetPeekHeight = 55.dp,
+                sheetContent = {
+                    BottomSheetOnGoingRescue(
+                        onClickCancelButton = {},
+                        onClickCallButton = {},
+                        onClickChatButton = {},
+                        onGoingRescueModel = OnGoingRescueModel(
+                            currentSpeed = "13.3",
+                            ridingDistance = "10.0 km",
+                            maxSpeed = "36 km/h",
+                            estimatedDistance = "9.0 km",
+                            estimatedTime = "1h 20m",
+                        ),
+                        role = Role.Rescuer.name)
+                }, content = {
+                    Box(
+                        contentAlignment = Alignment.BottomCenter,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(MaterialTheme.colors.background)) {
+
+                    }
+                })
+
         }
+
+
     }
 }
 
 
-@OptIn(ExperimentalMaterialApi::class)
-@Preview(name = "BottomSheetOnGoingRescue", device = "id:Galaxy Nexus")
+@Preview(name = "BottomSheetOnGoingRescue", device = "id:Nexus 5")
 @Composable
 private fun PreviewBottomSheetOnGoingRescueLight() {
 

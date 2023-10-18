@@ -1,4 +1,4 @@
-<changelist name="Fix_not_showing__Rescue_Cancelled__after_onGoingRescue_successfully_cancelled_" date="1697360787839" recycled="false">
+<changelist name="Fix_not_showing__Rescue_Cancelled__after_onGoingRescue_successfully_cancelled_" date="1697634103636" recycled="false" deleted="true">
   <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Fix_not_showing__Rescue_Cancelled__after_onGoingRescue_successfully_cancelled_/shelved.patch" />
   <option name="DESCRIPTION" value="Fix not showing &quot;Rescue Cancelled&quot; after onGoingRescue successfully cancelled." />
 </changelist>
