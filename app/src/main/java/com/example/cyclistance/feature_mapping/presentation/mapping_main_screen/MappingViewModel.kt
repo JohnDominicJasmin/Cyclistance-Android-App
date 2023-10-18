@@ -817,7 +817,7 @@ class MappingViewModel @Inject constructor(
             it.copy(
                 rescueTransaction = rescueTransaction,
                 rescueETA = estimatedTimeArrival ?: "",
-                rescueDistance = distance?.formatToDistanceKm() ?: "",
+                rescueDistance = distance,
                 rescuer = rescuer
             )
         }

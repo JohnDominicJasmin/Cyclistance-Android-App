@@ -351,9 +351,9 @@ class TrackingStateHandler(
         state.update { it.copy(speedometerState = it.speedometerState.copy(currentSpeedKph = currentSpeedKph)) }
     }
 
-    fun setTravelledDistance(distance: String){
+    fun setTravelledDistance(distance: Double){
 
-        state.update { it.copy(speedometerState = it.speedometerState.copy(travelledDistance = distance)) }
+        state.update { it.copy(speedometerState = it.speedometerState.copy(travelledDistance = distance.formatToDistanceKm())) }
     }
 }
 

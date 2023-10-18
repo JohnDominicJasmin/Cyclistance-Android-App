@@ -8,6 +8,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.formatter.IconFormatter.toHazardousLaneIconMarker
 import com.example.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
@@ -107,12 +108,13 @@ fun MappingBottomSheet(
                         role = state.user.transaction?.role ?: "",
                         onGoingRescueModel = OnGoingRescueModel(
                             estimatedTime = state.rescueETA,
-                            estimatedDistance = state.rescueDistance,
+                            estimatedDistance = state.rescueDistance?.formatToDistanceKm() ?: "",
                             currentSpeed = String.format(
                                 "%.2f",
                                 state.speedometerState.currentSpeedKph),
                             ridingDistance = state.speedometerState.travelledDistance,
-                            maxSpeed = String.format("%.2f", state.speedometerState.topSpeed)))
+                            maxSpeed = String.format("%.2f", state.speedometerState.topSpeed)),
+                        ableToEndRide = uiState.ableToEndRide)
 
                 }
 
