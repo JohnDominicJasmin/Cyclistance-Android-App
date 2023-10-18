@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_RADIUS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
+import com.example.cyclistance.core.utils.constants.MappingConstants.METERS_TO_END_RIDE
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
 import com.example.cyclistance.core.utils.formatter.FormatterUtils
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
@@ -717,6 +718,8 @@ class MappingViewModel @Inject constructor(
                     destinationLocation = LocationModel(location.latitude, location.longitude)
                 ).toInt()
 
+                _eventFlow.emit(value = if (distance <= METERS_TO_END_RIDE) MappingEvent.AbleToEndRide else MappingEvent.AbleToCancelRide)
+
 
                 if (distance <= NEAREST_METERS) {
                     _eventFlow.emit(value = MappingEvent.DestinationReached)
@@ -746,7 +749,7 @@ class MappingViewModel @Inject constructor(
                 longitude = this.longitude
             ),
             destinationLocation = userLocation)
-        _state.update { it.copy(rescueETA = eta, rescueDistance = distance.formatToDistanceKm()) }
+        _state.update { it.copy(rescueETA = eta, rescueDistance = distance) }
     }
 
     private fun getETABetweenTwoPoints(
@@ -1010,9 +1013,7 @@ class MappingViewModel @Inject constructor(
                 trackingHandler.updateLocation(location)
                 broadcastRescueTransactionToRespondent(location)
                 updateSpeedometer(location)
-                if (state.value.nearbyCyclist == null) {
-                    broadcastToNearbyCyclists()
-                }
+                broadcastToAllCyclists()
 
             }.launchIn(this@launch).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
@@ -1020,14 +1021,26 @@ class MappingViewModel @Inject constructor(
         }
     }
 
+    private suspend fun broadcastToAllCyclists(){
+        if (state.value.nearbyCyclist == null) {
+            broadcastToNearbyCyclists()
+        }
+    }
+
+
+
     private fun updateSpeedometer(location: LocationModel) {
         val isUserRescuer = state.value.user.isRescuer()
+        location.latitude ?: return
+        location.longitude ?: return
+        travelledPath.add(element = GoogleLatLng(location.latitude, location.longitude))
+        val travelledDistance = SphericalUtil.computeLength(travelledPath)
+
+
         if (isUserRescuer) {
             trackingHandler.setSpeed(location.speed)
             trackingHandler.getTopSpeed(location.speed)
-            travelledPath.add(element = GoogleLatLng(location.latitude!!, location.longitude!!))
-            val distance = SphericalUtil.computeLength(travelledPath).formatToDistanceKm()
-            trackingHandler.setTravelledDistance(distance)
+            trackingHandler.setTravelledDistance(travelledDistance)
         }
     }
 
@@ -1044,7 +1057,6 @@ class MappingViewModel @Inject constructor(
             }.onEach {
                 it.filterUser()
                 it.updateNearbyCyclists()
-                Timber.v("Receiving from subscribeToNearbyUsersChanges")
                 trackingHandler.updateClient()
             }.launchIn(this).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value

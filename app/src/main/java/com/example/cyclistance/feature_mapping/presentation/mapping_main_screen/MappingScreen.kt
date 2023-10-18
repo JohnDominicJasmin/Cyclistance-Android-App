@@ -1013,6 +1013,14 @@ fun MappingScreen(
                     }
                 }
 
+                is MappingEvent.AbleToEndRide -> {
+                    uiState = uiState.copy(ableToEndRide = true)
+                }
+
+                is MappingEvent.AbleToCancelRide -> {
+                    uiState = uiState.copy(ableToEndRide = false)
+                }
+
                 else -> {}
             }
         }

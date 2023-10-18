@@ -38,7 +38,8 @@ data class MappingUiState(
     val generateRouteFailed: Boolean = false,
     val cancelSearchDialogVisible: Boolean = false,
     val cancelOnGoingRescueDialogVisible: Boolean = false,
-    val notificationPermissionVisible: Boolean = false
+    val notificationPermissionVisible: Boolean = false,
+    val ableToEndRide: Boolean = false
 
 
 

@@ -27,6 +27,7 @@ import com.example.cyclistance.R
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
 import com.example.cyclistance.theme.Black440
+import com.example.cyclistance.theme.Blue600
 import com.example.cyclistance.theme.CyclistanceTheme
 import com.example.cyclistance.theme.Red900
 
@@ -38,6 +39,7 @@ fun BottomSheetOnGoingRescue(
     onClickChatButton: () -> Unit,
     onClickCancelButton: () -> Unit,
     role: String,
+    ableToEndRide: Boolean,
     onGoingRescueModel: OnGoingRescueModel,
 ) {
 
@@ -165,6 +167,7 @@ fun BottomSheetOnGoingRescue(
                     start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom, margin = 10.dp)
                 },
+                ableToEndRide = ableToEndRide,
                 onClickCallButton = onClickCallButton,
                 onClickChatButton = onClickChatButton,
                 onClickCancelButton = onClickCancelButton)
@@ -286,6 +289,7 @@ fun RowScope.ItemSpeed(modifier: Modifier, title: String, content: String) {
 @Composable
 private fun RoundButtonSection(
     modifier: Modifier = Modifier,
+    ableToEndRide: Boolean ,
     onClickCallButton: () -> Unit,
     onClickChatButton: () -> Unit,
     onClickCancelButton: () -> Unit) {
@@ -314,12 +318,24 @@ private fun RoundButtonSection(
             buttonSubtitle = "Chat", onClick = onClickChatButton)
 
 
-        RoundedButtonItem(
-            modifier = Modifier.weight(1f),
-            backgroundColor = Red900,
-            contentColor = Color.White,
-            imageId = R.drawable.ic_cancel_1,
-            buttonSubtitle = "Cancel", onClick = onClickCancelButton)
+        if(ableToEndRide){
+            RoundedButtonItem(
+                modifier = Modifier.weight(1f),
+                backgroundColor = Blue600,
+                contentColor = Color.White,
+                imageId = R.drawable.ic_end_ride,
+                buttonSubtitle = "End Ride",
+                onClick = {}
+            )
+        }else{
+            RoundedButtonItem(
+                modifier = Modifier.weight(1f),
+                backgroundColor = Red900,
+                contentColor = Color.White,
+                imageId = R.drawable.ic_cancel_1,
+                buttonSubtitle = "Cancel", onClick = onClickCancelButton)
+
+        }
     }
 }
 
@@ -401,7 +417,7 @@ private fun PreviewBottomSheetOnGoingRescueDark() {
                             estimatedDistance = "9.0 km",
                             estimatedTime = "1h 20m",
                         ),
-                        role = Role.Rescuer.name)
+                        role = Role.Rescuer.name, ableToEndRide = true)
                 }, content = {
                     Box(
                         contentAlignment = Alignment.BottomCenter,
@@ -442,6 +458,7 @@ private fun PreviewBottomSheetOnGoingRescueLight() {
                     estimatedDistance = "9.0 km",
                     estimatedTime = "1h 20m",
                 ),
+                ableToEndRide = false,
                 role = Role.Rescuee.name)
         }
     }

@@ -18,7 +18,8 @@ sealed class MappingEvent{
     data class RespondToHelpSuccess(val reason:String = "Rescue request sent"): MappingEvent()
     data class AddressFailed(val reason: String? = "Rescue transaction not found"): MappingEvent()
     data object NoInternetConnection: MappingEvent()
-
+    data object AbleToEndRide: MappingEvent()
+    data object AbleToCancelRide: MappingEvent()
 
     data class NewSelectedRescuee(val selectedRescuee: MapSelectedRescuee): MappingEvent()
     data class NewBottomSheetType(val bottomSheetType: String): MappingEvent()
