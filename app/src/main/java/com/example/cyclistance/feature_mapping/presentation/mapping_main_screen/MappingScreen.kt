@@ -77,6 +77,7 @@ import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -530,6 +531,10 @@ fun MappingScreen(
         }
     }
 
+    val onRescueFinished = remember{{
+        mappingViewModel.onEvent(event = MappingVmEvent.RescueFinished)
+    }}
+
     val onClickOkCancelledRescue = remember {
         {
             mappingViewModel.onEvent(event = MappingVmEvent.CancelRescueTransaction)
@@ -560,6 +565,9 @@ fun MappingScreen(
         val isCurrentlyEditing = uiState.currentlyEditingHazardousMarker != null
         if(isCurrentlyEditing){
             uiState = uiState.copy(discardHazardousMarkerDialogVisible = true)
+            return
+        }
+        if(uiState.bottomSheetType == BottomSheetType.SearchAssistance.type){
             return
         }
         noMarkerCurrentlyEditing()
@@ -985,10 +993,24 @@ fun MappingScreen(
     }
 
     LaunchedEffect(key1 = true){
-        mappingViewModel.eventFlow.collectLatest {
+        mappingViewModel.eventFlow.distinctUntilChanged().collectLatest {
             when(it){
+
                 is MappingEvent.NoInternetConnection -> {
                    noInternetDialogVisibility(true)
+                }
+
+                is MappingEvent.DestinationReached -> {
+                    Timber.v("Destination Reached")
+                    val role = state.user.transaction?.role
+                    val type = if (role == Role.Rescuee.name) {
+                        BottomSheetType.RescuerArrived.type
+                    } else {
+                        BottomSheetType.DestinationReached.type
+                    }
+                    uiState = uiState.copy(bottomSheetType = type).also {
+                        expandBottomSheet()
+                    }
                 }
 
                 else -> {}
@@ -1114,18 +1136,7 @@ fun MappingScreen(
                         .show()
                 }
 
-                is MappingEvent.DestinationReached -> {
-                    val role = state.user.transaction?.role
-                    val type = if (role == Role.Rescuee.name) {
-                        BottomSheetType.RescuerArrived.type
-                    } else {
-                        BottomSheetType.DestinationReached.type
-                    }
-                    uiState = uiState.copy(bottomSheetType = type).also {
-                        expandBottomSheet()
-                    }
 
-                }
 
                 is MappingEvent.RemoveRespondentFailed -> {
                     Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
@@ -1351,8 +1362,7 @@ fun MappingScreen(
                 is MappingUiEvent.RecenterRoute -> recenterRoute()
                 is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
-                is MappingUiEvent.RescueArrivedConfirmed -> {/*Todo*/}
-                is MappingUiEvent.DestinationReachedConfirmed -> {/*Todo*/}
+                is MappingUiEvent.RescueFinished -> onRescueFinished()
                 is MappingUiEvent.LocationPermission ->  locationPermissionDialogVisibility(event.visibility)
                 is MappingUiEvent.ExpandableFab -> expandableFab(event.expanded)
                 is MappingUiEvent.EmergencyCallDialog -> emergencyCallDialogVisibility(event.visibility)

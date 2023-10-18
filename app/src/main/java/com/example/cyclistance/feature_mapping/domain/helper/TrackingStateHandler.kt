@@ -65,11 +65,11 @@ class TrackingStateHandler(
         state.update {
             it.copy(
                 respondedToHelp = true,
-                rescueTransaction = RescueTransactionItem(),
+                rescueTransaction = null,
                 rescuee = null,
                 rescuer = null,
                 newRescueRequest = NewRescueRequestsModel(),
-                user = it.user.copy(transaction = TransactionModel())
+
             )
         }
     }

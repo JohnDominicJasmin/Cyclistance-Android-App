@@ -182,7 +182,7 @@ class MappingViewModel @Inject constructor(
     private fun loadData() {
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             // TODO: Remove when the backend is ready
-            createMockUpUsers()
+//            createMockUpUsers()
             trackingHandler.updateClient()
 
         }
@@ -254,10 +254,9 @@ class MappingViewModel @Inject constructor(
             runCatching {
                 removeUserTransaction(id = getId())
             }.onSuccess {
-                broadcastToNearbyCyclists()
-                broadcastRescueTransaction()
-                isLoading(false)
                 _eventFlow.emit(value = MappingEvent.RemoveAssignedTransactionSuccess)
+                broadcastToNearbyCyclists()
+                isLoading(false)
                 trackingHandler.clearTransactionRoles()
             }.onFailure { exception ->
                 isLoading(false)
@@ -491,8 +490,13 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingVmEvent.CancelRespondHelp -> cancelRespondToHelp(respondentId = event.id)
+
             MappingVmEvent.RescuerArrived -> rescuerArrived()
 
+            MappingVmEvent.RescueFinished -> {
+                removeAssignedTransaction()
+                clearTravelledPath()
+            }
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
@@ -695,22 +699,27 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun LiveLocationSocketModel.updateTransactionDistance() {
         coroutineScope {
-            val rescueTransaction = state.value.userLocation
+            val transaction = state.value.rescueTransaction
+            val rescueLocation = state.value.userLocation
+
+
+            if(transaction == null) {
+                return@coroutineScope
+            }
+
             latitude ?: return@coroutineScope
             longitude ?: return@coroutineScope
 
-            rescueTransaction?.let { transaction ->
+            rescueLocation?.let { location ->
 
                 val distance = mappingUseCase.getCalculatedDistanceUseCase(
                     startingLocation = LocationModel(latitude, longitude),
-                    destinationLocation = LocationModel(transaction.latitude, transaction.longitude)
+                    destinationLocation = LocationModel(location.latitude, location.longitude)
                 ).toInt()
 
 
                 if (distance <= NEAREST_METERS) {
                     _eventFlow.emit(value = MappingEvent.DestinationReached)
-                    removeAssignedTransaction()
-                    clearTravelledPath()
                 }
 
             }
@@ -914,7 +923,13 @@ class MappingViewModel @Inject constructor(
         val rescueTransaction = state.value.rescueTransaction ?: return
         runCatching {
 
+            val transaction = state.value.user.transaction
             val user = state.value.user
+
+            if (transaction == null) {
+                return@runCatching
+            }
+
             mappingUseCase.transactionLocationUseCase(
                 LiveLocationSocketModel(
                     latitude = location.latitude,
