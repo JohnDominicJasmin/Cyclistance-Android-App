@@ -217,10 +217,6 @@ fun NavScreen(
 
 
 
-    val viewProfile = remember{{ id: String ->
-        navController.navigateScreen(route = Screens.UserProfileNavigation.UserProfile.passArgument(userId = id))
-    }}
-
     val onClickMenuIcon = remember {
         {
             editProfileViewModel.onEvent(event = EditProfileVmEvent.LoadProfile)
@@ -262,7 +258,6 @@ fun NavScreen(
                                     route = navBackStackEntry?.destination?.route,
                                     onClickMenuIcon = onClickMenuIcon,
                                     onClickArrowBackIcon = onClickArrowBackIcon,
-                                    viewProfile = viewProfile,
                                     uiState = navUiState)
 
                                 NoInternetStatusBar(

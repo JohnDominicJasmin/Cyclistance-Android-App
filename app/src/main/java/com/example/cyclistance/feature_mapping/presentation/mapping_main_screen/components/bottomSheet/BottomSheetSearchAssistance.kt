@@ -19,7 +19,6 @@ import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
 
 
-@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun BottomSheetSearchingAssistance(
     modifier: Modifier = Modifier,
