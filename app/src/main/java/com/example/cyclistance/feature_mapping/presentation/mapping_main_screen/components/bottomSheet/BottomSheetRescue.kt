@@ -65,6 +65,7 @@ fun BottomSheetRescue(
                         end.linkTo(parent.end)
                         start.linkTo(parent.start)
                         width = Dimension.value(55.dp)
+                        height = Dimension.value(55.dp)
 
                     })
 
