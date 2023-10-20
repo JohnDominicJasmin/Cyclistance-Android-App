@@ -531,8 +531,8 @@ fun MappingScreen(
         }
     }
 
-    val onRescueFinished = remember{{
-        mappingViewModel.onEvent(event = MappingVmEvent.RescueFinished)
+    val destinationReached = remember{{
+        mappingViewModel.onEvent(event = MappingVmEvent.DestinationArrived)
     }}
 
     val onClickOkCancelledRescue = remember {

@@ -51,7 +51,7 @@ fun MappingBottomSheet(
                         bottomSheetScaffoldState = bottomSheetScaffoldState,
                         modifier = modifier,
                         onClickOkButton = {
-                            event(MappingUiEvent.RescueFinished)
+                            event(MappingUiEvent.DestinationArrived)
                         })
 
                 }
@@ -62,7 +62,7 @@ fun MappingBottomSheet(
                         bottomSheetScaffoldState = bottomSheetScaffoldState,
                         modifier = modifier,
                         onClickOkButton = {
-                            event(MappingUiEvent.RescueFinished)
+                            event(MappingUiEvent.DestinationArrived)
                         })
 
                 }
