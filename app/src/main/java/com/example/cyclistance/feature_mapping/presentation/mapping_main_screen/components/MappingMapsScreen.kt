@@ -96,7 +96,7 @@ fun MappingMapsScreen(
                     state.userLocation?.latitude!!,
                     state.userLocation.longitude!!
                 )
-                markerLocation.distanceTo(userLocation)< MappingConstants.DEFAULT_RADIUS
+                markerLocation.distanceTo(userLocation) < MappingConstants.DEFAULT_RADIUS
             }?.forEach { cyclist ->
                 Timber.v("Cyclist Name: ${cyclist.name}")
                 val location = cyclist.location

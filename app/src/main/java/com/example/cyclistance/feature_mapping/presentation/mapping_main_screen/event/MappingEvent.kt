@@ -25,7 +25,8 @@ sealed class MappingEvent{
 
 
 
-    data object RemoveAssignedTransactionSuccess: MappingEvent()
+    data object CancelRescueTransactionSuccess: MappingEvent()
+    data object DestinationArrivedSuccess: MappingEvent()
     data object RescueRequestAccepted: MappingEvent()
     data object CancelHelpRequestSuccess: MappingEvent()
 
