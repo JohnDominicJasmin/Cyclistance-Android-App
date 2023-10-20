@@ -719,7 +719,7 @@ class MappingViewModel @Inject constructor(
             val rescueLocation = state.value.userLocation
 
 
-            if(transaction == null) {
+            if (transaction == null) {
                 return@coroutineScope
             }
 
@@ -787,15 +787,8 @@ class MappingViewModel @Inject constructor(
 
         runCatching {
 
-            transactionId.assignRequestTransaction(
-                role = Role.Rescuee.name,
-                id = user.id
-            )
-
-            transactionId.assignRequestTransaction(
-                role = Role.Rescuer.name,
-                id = rescuer.id
-            )
+            user.assignRequestTransaction(role = Role.Rescuee.name, transactionId = transactionId)
+            rescuer.assignRequestTransaction(role = Role.Rescuer.name, transactionId = transactionId)
 
         }.onSuccess {
             broadcastToNearbyCyclists()
@@ -841,9 +834,9 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private suspend fun String.assignRequestTransaction(role: String, id: String?) {
+    private suspend fun UserItem.assignRequestTransaction(role: String, transactionId: String?) {
         mappingUseCase.createUserUseCase(
-            user = UserItem.empty(id = id, transactionId = this, role = role)
+            user = this.assignTransaction(transactionId = transactionId!!, role = role)
         )
     }
 
