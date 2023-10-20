@@ -15,5 +15,7 @@ data class RescueTransactionItemDto(
     @SerializedName("status")
     val status: StatusDto?,
     @SerializedName("route")
-    val route: RouteDto?
+    val route: RouteDto?,
+    @SerializedName("starting_millis")
+    val startingMillis: Long?,
 )

@@ -9,6 +9,8 @@ import com.example.cyclistance.feature_rescue_record.presentation.rescue_results
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.event.RescueResultVmEvent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.state.RescueResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -54,7 +56,7 @@ class RescueResultViewModel @Inject constructor(
     }
 
     private fun rateRescuer(rating: Float) {
-        viewModelScope.launch {
+        viewModelScope.launch(SupervisorJob() + Dispatchers.IO) {
             runCatching {
                 val validRating = rating.coerceIn(1f, 5f)
 

@@ -13,7 +13,8 @@ data class RescueTransactionItem(
     val rescueeId: String? = null,
     val rescuerId: String? = null,
     val status: StatusModel? = null,
-    val route: RouteModel? = null
+    val route: RouteModel? = null,
+    val startingMillis: Long? = null,
 ):Parcelable{
 
     fun getCancellationMessage() = cancellation?.cancellationReason?.message ?: ""

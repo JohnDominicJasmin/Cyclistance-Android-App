@@ -237,7 +237,8 @@ class TrackingStateHandler(
                     latitude = user.location!!.latitude,
                     longitude = user.location.longitude
                 )
-            )
+            ),
+            startingMillis = Date().time
         )
     }
 
