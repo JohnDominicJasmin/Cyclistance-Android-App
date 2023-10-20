@@ -206,8 +206,7 @@ fun RescueResultsScreenContent(
                 modifier = Modifier
                     .animateContentSize()
                     .padding(bottom = 30.dp)
-                    .align(alignment = Alignment.BottomCenter)
-            ) {
+                    .align(alignment = Alignment.BottomCenter)) {
 
 
                 Button(
@@ -246,9 +245,12 @@ fun PreviewRescueResultsScreenContentDark() {
 
     CompositionLocalProvider(IsDarkTheme provides true) {
         CyclistanceTheme(darkTheme = true) {
-            RescueResultsScreenContent(event = {}, uiState = RescueResultUiState(rating = 3.8f), state = RescueResultState(
-                isLoading = true,
-                rideDetails = fakeRideDetails))
+            RescueResultsScreenContent(
+                event = {},
+                uiState = RescueResultUiState(rating = 3.8f, step = 3),
+                state = RescueResultState(
+                    isLoading = true,
+                    rideDetails = fakeRideDetails))
         }
     }
 }
@@ -260,9 +262,10 @@ fun PreviewRescueResultsScreenContentLight() {
 
     CompositionLocalProvider(IsDarkTheme provides false) {
         CyclistanceTheme(darkTheme = false) {
-            RescueResultsScreenContent(event = {}, uiState = RescueResultUiState(rating = 2.0f), state = RescueResultState(
-                isLoading = true,
-                rideDetails = fakeRideDetails))
+            RescueResultsScreenContent(
+                event = {}, uiState = RescueResultUiState(rating = 2.0f), state = RescueResultState(
+                    isLoading = true,
+                    rideDetails = fakeRideDetails))
         }
     }
 }

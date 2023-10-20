@@ -248,13 +248,12 @@ class MappingViewModel @Inject constructor(
         }
     }
 
-
-    private fun removeAssignedTransaction() {
+    private fun destinationArrived() {
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
                 removeUserTransaction(id = getId())
             }.onSuccess {
-                _eventFlow.emit(value = MappingEvent.RemoveAssignedTransactionSuccess)
+                _eventFlow.emit(value = MappingEvent.DestinationArrivedSuccess)
                 broadcastToNearbyCyclists()
                 isLoading(false)
                 trackingHandler.clearTransactionRoles()
@@ -263,7 +262,22 @@ class MappingViewModel @Inject constructor(
                 exception.handleException()
             }
         }
+    }
 
+    private fun cancelRescueTransaction() {
+        viewModelScope.launch(context = defaultDispatcher) {
+            runCatching {
+                removeUserTransaction(id = getId())
+            }.onSuccess {
+                _eventFlow.emit(value = MappingEvent.CancelRescueTransactionSuccess)
+                broadcastToNearbyCyclists()
+                isLoading(false)
+                trackingHandler.clearTransactionRoles()
+            }.onFailure { exception ->
+                isLoading(false)
+                exception.handleException()
+            }
+        }
     }
 
     private fun selectRescueeMapIcon(id: String) {
@@ -432,10 +446,6 @@ class MappingViewModel @Inject constructor(
                 requestHelp()
             }
 
-            is MappingVmEvent.CancelRescueTransaction -> {
-                removeAssignedTransaction()
-                clearTravelledPath()
-            }
 
             is MappingVmEvent.DeclineRescueRequest -> {
                 declineRescueRequest(event.id)
@@ -491,12 +501,18 @@ class MappingViewModel @Inject constructor(
 
             is MappingVmEvent.CancelRespondHelp -> cancelRespondToHelp(respondentId = event.id)
 
-            MappingVmEvent.RescuerArrived -> rescuerArrived()
+            is MappingVmEvent.RescuerArrived -> rescuerArrived()
 
-            MappingVmEvent.RescueFinished -> {
-                removeAssignedTransaction()
+            is MappingVmEvent.CancelRescueTransaction -> {
+                cancelRescueTransaction()
                 clearTravelledPath()
             }
+
+            is MappingVmEvent.DestinationArrived -> {
+                destinationArrived()
+                clearTravelledPath()
+            }
+
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
@@ -852,7 +868,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private suspend fun NearbyCyclist.filterUser() {
+    private fun NearbyCyclist.filterUser() {
 
         runCatching {
             getId()

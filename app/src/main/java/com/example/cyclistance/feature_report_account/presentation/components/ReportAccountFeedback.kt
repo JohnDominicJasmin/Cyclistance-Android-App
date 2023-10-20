@@ -84,7 +84,7 @@ fun ReportAccountFeedback(
                 contentDescription = "User Profile Image",
                 modifier = Modifier
                     .clip(CircleShape)
-                    .size(45.dp),
+                    .size(55.dp),
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
                 error = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),
@@ -96,8 +96,8 @@ fun ReportAccountFeedback(
                 color = MaterialTheme.colors.onBackground,
                 style = MaterialTheme.typography.body1,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
-                modifier = Modifier.weight(0.3f)
+                maxLines = 3,
+                modifier = Modifier
 
             )
 
@@ -111,7 +111,7 @@ fun ReportAccountFeedback(
                 textAlign = TextAlign.Justify,
                 letterSpacing = TextUnit(0.6f, type = TextUnitType.Sp)),
             modifier = Modifier
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth(0.9f)
                 .padding(vertical = 16.dp),
         )
 

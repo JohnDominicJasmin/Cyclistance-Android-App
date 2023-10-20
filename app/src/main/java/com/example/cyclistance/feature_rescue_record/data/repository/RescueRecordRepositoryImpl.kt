@@ -21,6 +21,7 @@ import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
+import kotlin.coroutines.suspendCoroutine
 
 class RescueRecordRepositoryImpl(
     private val firestore: FirebaseFirestore,
@@ -31,7 +32,7 @@ class RescueRecordRepositoryImpl(
     private var rideDetailsFlow: MutableStateFlow<RideDetails> = MutableStateFlow(RideDetails())
 
     override suspend fun addRescueRecord(rideDetails: RideDetails) {
-        suspendCancellableCoroutine { continuation ->
+        suspendCoroutine { continuation ->
             firestore
                 .collection(RESCUE_RECORD_COLLECTION)
                 .document(rideDetails.rideId)

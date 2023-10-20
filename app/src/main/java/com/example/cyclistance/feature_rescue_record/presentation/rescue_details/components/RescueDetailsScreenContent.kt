@@ -134,8 +134,8 @@ fun RescueDetailsScreenContent(
 }
 
 val fakeRideSummary = RideSummary(
-    rating = 4.5,
-    ratingText = "Very good",
+    rating = 0.0,
+    ratingText = "No ratings",
     iconDescription = "Injury",
     bikeType = "Mountain Bike",
     date = "12/12/2020",

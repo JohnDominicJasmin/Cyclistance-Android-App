@@ -2,10 +2,12 @@ package com.example.cyclistance.core.utils.formatter
 
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
+import java.util.concurrent.TimeUnit
 
 object FormatterUtils {
 
@@ -59,6 +61,22 @@ object FormatterUtils {
             else -> "${diff / DAY_MILLIS}d ago"
         }
     }
+
+    fun formatDuration(startingMillis: Long): String {
+        val currentMillis = Date().time
+        val duration = kotlin.math.abs(currentMillis - startingMillis)
+        Timber.v("Current millis: $duration")
+        val hours = TimeUnit.MILLISECONDS.toHours(duration)
+        val minutes = TimeUnit.MILLISECONDS.toMinutes(duration) - TimeUnit.HOURS.toMinutes(hours)
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(duration) - TimeUnit.MINUTES.toSeconds(minutes) - TimeUnit.HOURS.toSeconds(hours)
+
+        return when {
+            hours > 0 -> "${hours}h ${minutes}m ${seconds}s"
+            minutes > 0 -> "${minutes}m ${seconds}s"
+            else -> "${seconds}s"
+        }
+    }
+
 
 
     fun getCalculatedETA(
