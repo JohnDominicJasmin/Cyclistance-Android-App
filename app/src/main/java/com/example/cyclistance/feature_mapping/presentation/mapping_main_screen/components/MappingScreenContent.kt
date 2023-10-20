@@ -452,8 +452,7 @@ fun MappingScreenContent(
                         val rescueTransaction = state.rescueTransaction ?: return@AnimatedVisibility
 
                         MappingRequestCancelled(
-                            modifier = Modifier.fillMaxSize()
-                            ,
+                            modifier = Modifier.fillMaxSize(),
                             onClickOkButton = { event(MappingUiEvent.CancelledRescueConfirmed) },
                             cancelledRescueModel = CancelledRescueModel(
                                 transactionID = rescueTransaction.id,

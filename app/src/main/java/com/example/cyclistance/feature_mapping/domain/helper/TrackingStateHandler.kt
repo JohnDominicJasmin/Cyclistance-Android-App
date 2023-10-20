@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_mapping.domain.helper
 
 import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatDuration
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.isLocationAvailable
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
@@ -17,7 +18,6 @@ import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.T
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
-import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.BikeType
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
@@ -64,7 +64,7 @@ class TrackingStateHandler(
     fun clearTransactionRoles() {
         state.update {
             it.copy(
-                respondedToHelp = true,
+                respondedToHelp = false,
                 rescueTransaction = null,
                 rescuee = null,
                 rescuer = null,
@@ -98,51 +98,60 @@ class TrackingStateHandler(
         )
     }
 
-    fun getRideDetails(): RideDetails {
-        /*val rescuer = state.value.rescuer!!
-        val rescuee = state.value.rescuee!!*/
-        return RideDetails(
-            rideId = "09qiwnf09qwnd",// transactionId
-            rescuerId = "mbmckVyzZYezIE8KzjYcj4NTcrGn",
-            rescuerName = "Juan",
-            rescuerPhotoUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
-            rescueeId = "poamfafosmafsmoafspo",
-            rescueeName = "Pedro",
-            rescueePhotoUrl = "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500",
-            rideSummary = RideSummary(
-                iconDescription = MappingConstants.INJURY_TEXT,
-                bikeType = BikeType.RoadBike.type,
-                startingTime = Date().toReadableDateTime(pattern = "hh:mm a"),
-                endTime = Date().toReadableDateTime(pattern = "hh:mm a"),
-                startingAddress = "Starting Address",
-                destinationAddress = "Destination Address",
-                duration = "30 mins",
-                distance = "1 km",
-                maxSpeed = "10",
-            )
-        )
 
-        /*RideDetails(
-                rescuerId = rescuer.id!!,
+    fun getRideDetails(): RideDetails {
+        val rescuer = state.value.rescuer
+        val rescuee = state.value.rescuee
+
+        val user = state.value.user
+        val role = user.getRole()
+        val speedometerState = state.value.speedometerState
+
+        val startingMillis = state.value.rescueTransaction?.startingMillis ?: Date().time
+        val startingAddress = rescuer?.address ?: user.address
+        val destinationAddress = rescuee?.address ?: user.address
+        val iconDescription = if(role == Role.Rescuee.name) user.getDescription() else rescuee?.getDescription()
+        val bikeType = if(role == Role.Rescuee.name) user.getBikeType() else rescuee?.getBikeType()
+        val startingTime = Date(startingMillis).toReadableDateTime(pattern = "hh:mm a")
+        val endTime = Date().toReadableDateTime(pattern = "hh:mm a")
+        val dateNow = Date().toReadableDateTime(pattern = "dd/MM/yyyy")
+        val durationTime = formatDuration(startingMillis = startingMillis)
+
+
+        val rideDetails = if(role == Role.Rescuee.name){
+            RideDetails(
+                rescueeId = user.id!!,
+                rescueeName = user.name!!,
+                rescueePhotoUrl = user.profilePictureUrl!!,
+                rescuerId = rescuer?.id!!,
                 rescuerName = rescuer.name!!,
-                rescuerPhotoUrl = rescuer.profilePictureUrl!!,
-                rescueeId = rescuee.id!!,
+                rescuerPhotoUrl = rescuer.profilePictureUrl!!)
+        }else{
+            RideDetails(
+                rescueeId = rescuee?.id!!,
                 rescueeName = rescuee.name!!,
                 rescueePhotoUrl = rescuee.profilePictureUrl!!,
-                rideSummary = RideSummary(
-                    textDescription = "Sample",
-                    bikeType = BikeType.RoadBike.type,
-                    date = Date().toReadableDateTime(pattern = "dd/MM/yyyy"),
-                    startingTime = Date().toReadableDateTime(pattern = "hh:mm a"),
-                    endTime = Date().toReadableDateTime(pattern = "hh:mm a"),
-                    startingAddress = rescuer.address!!,
-                    destinationAddress = rescuee.address!!,
-                    duration = "",
-                    distance = state.value.speedometerState.travelledDistance.toString(),
-                    maxSpeed = state.value.speedometerState.topSpeed.toString(),
-                )
+                rescuerId = user.id!!,
+                rescuerName = user.name!!,
+                rescuerPhotoUrl = user.profilePictureUrl!!)
+        }
+
+        return rideDetails.copy(
+            rideId = state.value.getTransactionId(),
+            rideSummary = RideSummary(
+                iconDescription = iconDescription!!,
+                bikeType = bikeType!!,
+                date = dateNow,
+                startingTime = startingTime,
+                endTime = endTime,
+                startingAddress = startingAddress!!,
+                destinationAddress = destinationAddress!!,
+                duration = durationTime,
+                distance = speedometerState.travelledDistance,
+                maxSpeed = speedometerState.topSpeed.toString(),
             )
-    */    }
+        )
+ }
 
     fun updateLocation(location: LocationModel) {
         val latitude = location.latitude ?: return
@@ -237,7 +246,8 @@ class TrackingStateHandler(
                     latitude = user.location!!.latitude,
                     longitude = user.location.longitude
                 )
-            )
+            ),
+            startingMillis = Date().time
         )
     }
 
@@ -282,7 +292,6 @@ class TrackingStateHandler(
                 if (transaction.rescueeId.isNullOrEmpty()) {
                     return@let
                 }
-
                 eventFlow.emit(value = MappingEvent.RescueRequestAccepted)
             }
 

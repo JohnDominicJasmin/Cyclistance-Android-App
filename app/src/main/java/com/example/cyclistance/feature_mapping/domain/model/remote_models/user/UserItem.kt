@@ -32,13 +32,13 @@ data class UserItem(
     fun getDescription() = userAssistance?.confirmationDetail?.description
     fun isRescueRequestPending(id: String?) = rescuePending?.respondents?.any { it.clientId == id }
 
+    fun assignTransaction(role:String, transactionId:String) = UserItem(
+        id = id, userAssistance = userAssistance?.copy(needHelp = false),
+        transaction = TransactionModel(role = role, transactionId = transactionId),
+        rescueRequest = RescueRequest()
+    )
 
     companion object {
-        fun empty(id:String?, role:String, transactionId:String) = UserItem(
-            id = id, userAssistance = UserAssistanceModel(needHelp = false),
-            transaction = TransactionModel(role = role, transactionId = transactionId),
-            rescueRequest = RescueRequest()
-        )
 
         fun cancelUserHelpRequest(id: String): UserItem {
             return UserItem(

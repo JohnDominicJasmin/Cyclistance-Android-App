@@ -13,7 +13,7 @@ sealed class MappingUiEvent {
     data object RequestHelp : MappingUiEvent()
     data object RespondToHelp : MappingUiEvent()
     data object CancelRespondHelp : MappingUiEvent()
-    data object RescueFinished : MappingUiEvent()
+    data object DestinationArrived : MappingUiEvent()
     data object CancelSearching : MappingUiEvent()
     data object SearchCancelled : MappingUiEvent()
     data object ChatRescueTransaction : MappingUiEvent()

@@ -308,19 +308,7 @@ fun MappingScreen(
         }
     }}
 
-    val openRescueResult = remember(state.rescuer) {
-        {
-            val rescuer = state.rescuer
 
-            navController.navigateScreen(route = Screens.RescueRecordNavigation.RescueResults.screenRoute)
-            mappingViewModel.onEvent(event = MappingVmEvent.RescuerArrived)
-            /*navController.navigateScreen(route = Screens.MappingNavigation.RescueResults.passArgument(
-                rescuerId = rescuer?.id ?: "",
-                rescuerName = rescuer?.name ?: "",
-                rescuerPhoto = rescuer?.profilePictureUrl?: "",
-            ))*/
-        }
-    }
 
 
     val showRouteDirection = remember(uiState.routeDirection?.geometry, mapboxMap) {
@@ -531,8 +519,8 @@ fun MappingScreen(
         }
     }
 
-    val onRescueFinished = remember{{
-        mappingViewModel.onEvent(event = MappingVmEvent.RescueFinished)
+    val destinationReached = remember{{
+        mappingViewModel.onEvent(event = MappingVmEvent.DestinationArrived)
     }}
 
     val onClickOkCancelledRescue = remember {
@@ -711,7 +699,8 @@ fun MappingScreen(
     }}
 
     val openRescueResults = remember{{
-//        navController.navigateScreen(Screens.RescueRecordNavigation.RescueResults.screenRoute)
+        mappingViewModel.onEvent(event = MappingVmEvent.RescuerArrived)
+        navController.navigateScreen(Screens.RescueRecordNavigation.RescueResults.screenRoute)
     }}
 
 
@@ -916,6 +905,19 @@ fun MappingScreen(
         }
     }}
 
+    val resetState = remember{{
+        uiState = uiState.copy(
+            rescueRequestAccepted = false,
+            requestHelpButtonVisible = true,
+            searchingAssistance = false,
+            routeDirection = null,
+            mapSelectedRescuee = null,
+        ).also {
+            collapseBottomSheet()
+        }
+        onChangeNavigatingState(false)
+    }}
+
 
 
 
@@ -1093,18 +1095,13 @@ fun MappingScreen(
 
                 }
 
-                is MappingEvent.RemoveAssignedTransactionSuccess -> {
-                    uiState = uiState.copy(
-                        rescueRequestAccepted = false,
-                        requestHelpButtonVisible = true,
-                        searchingAssistance = false,
-                        routeDirection = null,
-                        mapSelectedRescuee = null,
-                    ).also {
-                        collapseBottomSheet()
-                    }
-                    onChangeNavigatingState(false)
+                is MappingEvent.CancelRescueTransactionSuccess -> {
+                    resetState()
+                }
 
+                is MappingEvent.DestinationArrivedSuccess -> {
+                    resetState()
+                    openRescueResults()
                 }
 
                 is MappingEvent.RescueRequestAccepted -> {
@@ -1360,7 +1357,7 @@ fun MappingScreen(
                 is MappingUiEvent.RecenterRoute -> recenterRoute()
                 is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
-                is MappingUiEvent.RescueFinished -> onRescueFinished()
+                is MappingUiEvent.DestinationArrived -> destinationReached()
                 is MappingUiEvent.LocationPermission ->  locationPermissionDialogVisibility(event.visibility)
                 is MappingUiEvent.ExpandableFab -> expandableFab(event.expanded)
                 is MappingUiEvent.EmergencyCallDialog -> emergencyCallDialogVisibility(event.visibility)

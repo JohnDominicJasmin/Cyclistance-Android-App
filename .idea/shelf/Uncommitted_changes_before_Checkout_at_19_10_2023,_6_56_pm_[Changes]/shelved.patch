@@ -1,0 +1,37 @@
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetDropDown\">\n    <runningDeviceTargetSelectedWithDropDown>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"SERIAL_NUMBER\" />\n            <value value=\"194a89050404\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </runningDeviceTargetSelectedWithDropDown>\n    <timeTargetWasSelectedWithDropDown value=\"2023-10-18T18:04:28.243220459Z\" />\n    <multipleDevicesSelectedInDropDown value=\"true\" />\n    <runningDeviceTargetsSelectedWithDialog>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"SERIAL_NUMBER\" />\n            <value value=\"194a89050404\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </runningDeviceTargetsSelectedWithDialog>\n    <targetsSelectedWithDialog>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetsSelectedWithDialog>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(revision 6894f340f2894a6378952d232c47059f7db09b64)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1697712803469)
+@@ -14,26 +14,6 @@
+     </runningDeviceTargetSelectedWithDropDown>
+     <timeTargetWasSelectedWithDropDown value="2023-10-18T18:04:28.243220459Z" />
+     <multipleDevicesSelectedInDropDown value="true" />
+-    <runningDeviceTargetsSelectedWithDialog>
+-      <Target>
+-        <type value="RUNNING_DEVICE_TARGET" />
+-        <deviceKey>
+-          <Key>
+-            <type value="VIRTUAL_DEVICE_PATH" />
+-            <value value="$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd" />
+-          </Key>
+-        </deviceKey>
+-      </Target>
+-      <Target>
+-        <type value="RUNNING_DEVICE_TARGET" />
+-        <deviceKey>
+-          <Key>
+-            <type value="SERIAL_NUMBER" />
+-            <value value="194a89050404" />
+-          </Key>
+-        </deviceKey>
+-      </Target>
+-    </runningDeviceTargetsSelectedWithDialog>
+     <targetsSelectedWithDialog>
+       <Target>
+         <type value="QUICK_BOOT_TARGET" />
