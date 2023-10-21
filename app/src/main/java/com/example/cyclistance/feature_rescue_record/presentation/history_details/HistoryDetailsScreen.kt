@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -16,6 +17,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import com.example.cyclistance.feature_rescue_record.presentation.history_details.components.HistoryDetailsContent
 import com.example.cyclistance.feature_rescue_record.presentation.history_details.event.HistoryDetailsEvent
+import com.example.cyclistance.feature_rescue_record.presentation.history_details.event.HistoryDetailsUiEvent
 import com.example.cyclistance.feature_rescue_record.presentation.history_details.event.HistoryDetailsVmEvent
 import com.example.cyclistance.feature_rescue_record.presentation.history_details.state.HistoryDetailsUiState
 import kotlinx.coroutines.flow.collectLatest
@@ -32,6 +34,9 @@ fun HistoryDetailsScreen(
     var uiState by rememberSaveable { mutableStateOf(HistoryDetailsUiState()) }
     val state by viewModel.state.collectAsStateWithLifecycle()
 
+    val closeHistoryDetails =  remember{{
+        navController.popBackStack()
+    }}
     LaunchedEffect(key1 = transactionId){
         viewModel.onEvent(event = HistoryDetailsVmEvent.LoadRideDetails(transactionId = transactionId))
     }
@@ -53,6 +58,13 @@ fun HistoryDetailsScreen(
 
     HistoryDetailsContent(
         modifier = Modifier.padding(paddingValues),
-        uiState = uiState
+        uiState = uiState,
+        state = state,
+        event = {event ->
+            when(event){
+                HistoryDetailsUiEvent.CloseHistoryDetails -> closeHistoryDetails()
+            }
+
+        }
     )
 }

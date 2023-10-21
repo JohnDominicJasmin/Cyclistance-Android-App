@@ -83,7 +83,7 @@ fun RescueDetailsScreenContent(
                         )
 
                         RescueLocationDetails(
-                            modifier = Modifier.padding(vertical = 12.dp),
+                            modifier = Modifier,
                             date = rideSummary.date,
                             startingTime = rideSummary.startingTime,
                             endTime = rideSummary.endTime,
@@ -141,8 +141,8 @@ val fakeRideSummary = RideSummary(
     date = "12/12/2020",
     startingTime = "12:00",
     endTime = "13:00",
-    startingAddress = "Via Roma 1, Milano",
-    destinationAddress = "Via Roma 2, Milano",
+    startingAddress = "Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano,Via Roma 1, Milano",
+    destinationAddress = "Via Roma 2, Milano, Via Roma 2, Milano, Via Roma 2, Milano, Via Roma 2, Milano",
     duration = "1h 30m",
     distance = "10 km",
     maxSpeed = "30 km/h",

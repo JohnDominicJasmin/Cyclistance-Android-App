@@ -15,7 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
 internal fun RescueLocationDetails(
@@ -50,7 +52,8 @@ internal fun RescueLocationDetails(
 
             Column(
                 modifier = Modifier
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .weight(0.25f),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally) {
 
@@ -65,20 +68,23 @@ internal fun RescueLocationDetails(
             }
 
             PointToPointDisplay(
-                modifier = Modifier.fillMaxHeight())
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .padding(horizontal = 8.dp).weight(0.12f))
 
 
             Column(
                 modifier = Modifier
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .weight(0.7f),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.Start) {
 
                 Text(
                     text = startingAddress,
                     color = MaterialTheme.colors.onBackground,
-                    overflow = TextOverflow.Clip,
-                    maxLines = 4,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2,
                     style = MaterialTheme.typography.body2
                 )
 
@@ -86,13 +92,29 @@ internal fun RescueLocationDetails(
                     text = destinationAddress,
                     color = MaterialTheme.colors.onBackground,
                     style = MaterialTheme.typography.body2,
-                    overflow = TextOverflow.Clip,
-                    maxLines = 4,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 2,
                 )
 
 
             }
 
         }
+    }
+}
+
+
+@Preview
+@Composable
+fun PreviewRescueLocationDetails() {
+    CyclistanceTheme(darkTheme  = true){
+        RescueLocationDetails(
+            modifier = Modifier,
+            date = "Date sample",
+            startingTime = "Starting time",
+            endTime = "End time",
+            startingAddress = "Starting address, Starting address, Starting address, Starting address, Starting address, Starting address, Starting address, Starting address",
+            destinationAddress = "Destination address, Destination address, Destination address ,Destination address, Destination address, Destination address, Destination address ,Destination address"
+        )
     }
 }

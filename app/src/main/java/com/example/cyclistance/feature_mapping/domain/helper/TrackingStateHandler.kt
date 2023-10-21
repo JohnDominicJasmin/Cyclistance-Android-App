@@ -148,9 +148,10 @@ class TrackingStateHandler(
                 destinationAddress = destinationAddress!!,
                 duration = durationTime,
                 distance = speedometerState.travelledDistance,
-                maxSpeed = speedometerState.topSpeed.toString(),
+                maxSpeed = String.format("%.2f", speedometerState.topSpeed)
             )
         )
+
  }
 
     fun updateLocation(location: LocationModel) {

@@ -107,7 +107,7 @@ fun RescueReportAccountSection(
         }
 
         Text(
-            text = "Did your rescuer successfully assist you?",
+            text = "Would you like to rate your rescuer?",
             color = MaterialTheme.colors.onBackground,
             style = MaterialTheme.typography.subtitle1,
             modifier = Modifier

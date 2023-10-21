@@ -61,7 +61,7 @@ fun PointToPointDisplay(
 fun PreviewPointToPointDIsplay() {
     CyclistanceTheme(darkTheme = true) {
         PointToPointDisplay(
-            modifier = Modifier.requiredHeight(100.dp),
+            modifier = Modifier.requiredHeight(120.dp),
         )
     }
 }

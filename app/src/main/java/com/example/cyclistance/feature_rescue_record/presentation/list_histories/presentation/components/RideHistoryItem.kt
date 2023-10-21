@@ -33,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,6 +41,8 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescriptionToIcon
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideHistoryItem
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.components.PointToPointDisplay
 import com.example.cyclistance.navigation.IsDarkTheme
@@ -97,8 +100,9 @@ fun RideHistoryItem(
                 }, color = MaterialTheme.colors.onSurface)
 
                 Spacer(modifier = Modifier.weight(0.1f))
+
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_injury),
+                    painter = painterResource(id = rideHistoryItem.rescueDescription.rescueDescriptionToIcon()),
                     contentDescription = "Icon Description",
                     modifier = Modifier.size(50.dp),
                     tint = MaterialTheme.colors.onSurface
@@ -123,14 +127,23 @@ fun RideHistoryItem(
                 Column(
                     modifier = Modifier.fillMaxHeight(),
                     verticalArrangement = Arrangement.SpaceBetween) {
+
                     Text(
-                        text = "Starting Address",
+                        text = rideHistoryItem.startingAddress,
                         color = MaterialTheme.colors.onSurface,
-                        style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Medium))
+                        style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Medium),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2,)
+
+
+                    Spacer(modifier = Modifier.padding(vertical = 8.dp))
+
                     Text(
-                        text = "Destination Address",
+                        text = rideHistoryItem.destinationAddress,
                         color = MaterialTheme.colors.onSurface,
-                        style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Medium))
+                        style = MaterialTheme.typography.body1.copy(fontWeight = FontWeight.Medium),
+                        overflow = TextOverflow.Ellipsis,
+                        maxLines = 2,)
                 }
             }
         }
@@ -159,9 +172,9 @@ fun PreviewRideHistoryItem() {
                         date = "31, August, 11:30 AM",
                         duration = "28 min",
                         role = "Rescuer",
-                        rescueDescription = "Injury",
-                        startingAddress = "Lipa City Batangas",
-                        destinationAddress = "Lima Batangas",
+                        rescueDescription = MappingConstants.FAULTY_BRAKES_TEXT,
+                        startingAddress = "Lipa City Batangas, Lipa City Batangas, Lipa City Batangas, Lipa City Batangas, Lipa City Batangas",
+                        destinationAddress = "Lima Batangas, Lima Batangas, Lima Batangas, Lima Batangas, Lima Batangas",
                     ), onClick = {})
             }
         }
