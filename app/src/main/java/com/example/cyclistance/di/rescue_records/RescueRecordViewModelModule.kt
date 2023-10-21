@@ -4,6 +4,7 @@ import com.example.cyclistance.feature_rescue_record.domain.repository.RescueRec
 import com.example.cyclistance.feature_rescue_record.domain.use_case.AddRescueRecordUseCase
 import com.example.cyclistance.feature_rescue_record.domain.use_case.GetRescueRecordUseCase
 import com.example.cyclistance.feature_rescue_record.domain.use_case.GetRideHistoryUseCase
+import com.example.cyclistance.feature_rescue_record.domain.use_case.RateRescueUseCase
 import com.example.cyclistance.feature_rescue_record.domain.use_case.RescueDetailsUseCase
 import com.example.cyclistance.feature_rescue_record.domain.use_case.RescueRecordUseCase
 import dagger.Module
@@ -28,7 +29,8 @@ object RescueRecordViewModelModule {
             addRescueRecordUseCase = AddRescueRecordUseCase(repository = repository),
             rescueDetailsUseCase = RescueDetailsUseCase(repository = repository),
             getRescueRecordUseCase = GetRescueRecordUseCase(repository = repository),
-            getRideHistoryUseCase = GetRideHistoryUseCase(repository = repository)
+            getRideHistoryUseCase = GetRideHistoryUseCase(repository = repository),
+            rateRescueUseCase = RateRescueUseCase(repository = repository)
         )
     }
 

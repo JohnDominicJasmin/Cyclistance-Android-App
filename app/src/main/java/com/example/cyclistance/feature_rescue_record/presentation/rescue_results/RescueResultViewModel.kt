@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -62,16 +61,13 @@ class RescueResultViewModel @Inject constructor(
             runCatching {
                 val validRating = rating.coerceIn(1f, 5f)
 
-                val rideDetails = _state.updateAndGet {
-                    it.copy(
-                        rideDetails = it.rideDetails.copy(
-                            rideSummary = it.rideDetails.rideSummary.copy(
-                                rating = validRating.toDouble(),
-                                ratingText = ratingToDescription(validRating)))
-                    )
-                }.rideDetails
+                val rideDetails = state.value.rideDetails
 
-                rescueRecordUseCase.addRescueRecordUseCase(rideDetails = rideDetails)
+                rescueRecordUseCase.rateRescueUseCase(
+                    rescueId = rideDetails.rideId,
+                    rating = validRating.toDouble(),
+                    ratingText = ratingToDescription(validRating)
+                )
             }.onSuccess {
                 _eventFlow.emit(value = RescueResultEvent.RatingSuccess)
             }.onFailure {

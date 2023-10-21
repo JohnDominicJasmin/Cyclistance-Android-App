@@ -49,6 +49,30 @@ class RescueRecordRepositoryImpl(
         }
     }
 
+
+    override suspend fun rateRescue(rescueId: String, rating: Double, ratingText: String) {
+        suspendCoroutine { continuation ->
+            firestore.collection(
+                RESCUE_RECORD_COLLECTION
+            ).document(rescueId)
+                .update(
+                    mapOf(
+                        "rideSummary.rating" to rating,
+                        "rideSummary.ratingText" to ratingText
+                    )
+                ).addOnSuccessListener {
+                    continuation.resume(Unit)
+                }.addOnFailureListener{
+                    continuation.resumeWithException(
+                        RescueRecordExceptions.InsertRescueRecordException(
+                            it.message.toString()
+                        )
+                    )
+
+                }
+        }
+    }
+
     override suspend fun getRideHistory(uid: String): RideHistory {
 
         return suspendCancellableCoroutine { continuation ->
