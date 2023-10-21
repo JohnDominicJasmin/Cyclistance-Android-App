@@ -715,11 +715,11 @@ class MappingViewModel @Inject constructor(
 
     private suspend fun LiveLocationSocketModel.updateTransactionDistance() {
         coroutineScope {
-            val transaction = state.value.rescueTransaction
+            val transaction = state.value.user.transaction
             val rescueLocation = state.value.userLocation
 
 
-            if (transaction == null) {
+            if (transaction?.transactionId?.isEmpty() == true) {
                 return@coroutineScope
             }
 
@@ -935,7 +935,7 @@ class MappingViewModel @Inject constructor(
             val transaction = state.value.user.transaction
             val user = state.value.user
 
-            if (transaction == null) {
+            if (transaction?.transactionId?.isEmpty() == true) {
                 return@runCatching
             }
 

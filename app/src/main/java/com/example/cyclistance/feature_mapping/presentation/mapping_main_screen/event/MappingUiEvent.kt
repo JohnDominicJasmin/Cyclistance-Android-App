@@ -27,7 +27,6 @@ sealed class MappingUiEvent {
     data object RecenterRoute : MappingUiEvent()
     data object OpenNavigation : MappingUiEvent()
     data object OpenSinoTrack : MappingUiEvent()
-    data object OpenRescueResults : MappingUiEvent()
     data object OnRequestNavigationCameraToOverview : MappingUiEvent()
 
     data object OpenFamilyTracker : MappingUiEvent()
