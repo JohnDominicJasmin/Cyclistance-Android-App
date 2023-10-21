@@ -69,7 +69,7 @@ class MappingViewModel @Inject constructor(
     private val userProfileUseCase: UserProfileUseCase,
     private val defaultDispatcher: CoroutineDispatcher,
     private val messagingUseCase: MessagingUseCase,
-    private val rescueRecordUseCase: RescueRecordUseCase
+    private val rescueRecordUseCase: RescueRecordUseCase,
 ) : ViewModel() {
 
 
@@ -256,7 +256,6 @@ class MappingViewModel @Inject constructor(
                 _eventFlow.emit(value = MappingEvent.DestinationArrivedSuccess)
                 broadcastToNearbyCyclists()
                 isLoading(false)
-                trackingHandler.clearTransactionRoles()
             }.onFailure { exception ->
                 isLoading(false)
                 exception.handleException()
@@ -519,8 +518,16 @@ class MappingViewModel @Inject constructor(
 
 
     private fun rescuerArrived() {
-        viewModelScope.launch {
-            rescueRecordUseCase.rescueDetailsUseCase(details = trackingHandler.getRideDetails())
+        viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
+            runCatching {
+                rescueRecordUseCase.rescueDetailsUseCase(details = trackingHandler.getRideDetails())
+                rescueRecordUseCase.addRescueRecordUseCase(rideDetails = trackingHandler.getRideDetails())
+            }.onSuccess {
+                _eventFlow.emit(value = MappingEvent.RescueArrivedSuccess)
+                trackingHandler.clearTransactionRoles()
+            }.onFailure {
+                _eventFlow.emit(value = MappingEvent.RescueArrivedFailed(it.message!!))
+            }
         }
     }
 

@@ -50,7 +50,9 @@ class RescueResultViewModel @Inject constructor(
 
     fun onEvent(event: RescueResultVmEvent){
         when(event){
-            is RescueResultVmEvent.RateRescuer -> rateRescuer(event.rating)
+            is RescueResultVmEvent.RateRescuer -> {
+                rateRescuer(event.rating)
+            }
         }
         savedStateHandle[RESCUE_RESULT_VM_STATE_KEY] = state.value
     }

@@ -247,7 +247,7 @@ fun PreviewRescueResultsScreenContentDark() {
         CyclistanceTheme(darkTheme = true) {
             RescueResultsScreenContent(
                 event = {},
-                uiState = RescueResultUiState(rating = 3.8f, step = 3),
+                uiState = RescueResultUiState(rating = 3.8f, step = 2),
                 state = RescueResultState(
                     isLoading = true,
                     rideDetails = fakeRideDetails))

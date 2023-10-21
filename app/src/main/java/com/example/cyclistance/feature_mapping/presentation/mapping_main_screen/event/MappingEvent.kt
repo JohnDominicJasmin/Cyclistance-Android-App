@@ -50,6 +50,9 @@ sealed class MappingEvent{
     data class GenerateRouteNavigationSuccess(val routeDirection: RouteDirection): MappingEvent()
     data class GenerateRouteNavigationFailed(val reason: String = "Failed to generate route navigation"): MappingEvent()
 
+    data object RescueArrivedSuccess: MappingEvent()
+    data class RescueArrivedFailed(val reason: String): MappingEvent()
+
 
 
     data object CancelRespondSuccess: MappingEvent()
