@@ -25,6 +25,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescriptionToIcon
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
+import com.example.cyclistance.feature_rescue_record.presentation.history_details.event.HistoryDetailsUiEvent
 import com.example.cyclistance.feature_rescue_record.presentation.history_details.state.HistoryDetailsState
 import com.example.cyclistance.feature_rescue_record.presentation.history_details.state.HistoryDetailsUiState
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.components.RatingCard
@@ -37,8 +38,9 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun HistoryDetailsContent(
     modifier: Modifier = Modifier,
-    uiState: HistoryDetailsUiState = HistoryDetailsUiState(),
-    state: HistoryDetailsState = HistoryDetailsState(),
+    uiState: HistoryDetailsUiState,
+    state: HistoryDetailsState,
+    event: (HistoryDetailsUiEvent) -> Unit
 ) {
 
     val rideDetails = uiState.rideDetails
@@ -144,7 +146,9 @@ fun HistoryDetailsContent(
                 )
 
                 Button(
-                    onClick = {},
+                    onClick = {
+                        event(HistoryDetailsUiEvent.CloseHistoryDetails)
+                    },
                     modifier = Modifier.padding(top = 22.dp, bottom = 16.dp),
                     shape = RoundedCornerShape(12.dp)) {
                     Text(
@@ -173,12 +177,12 @@ val fakeRideHistoryDetailsModel = RideDetails(
         rating = 4.5,
         ratingText = "Very good",
         date = "12/12/2020",
-        iconDescription = MappingConstants.INCIDENT_TEXT,
+        iconDescription = MappingConstants.FAULTY_BRAKES_TEXT,
         bikeType = "Mountain Bike",
         startingTime = "12:00",
         endTime = "13:00",
-        startingAddress = "Via Roma 1, Milano",
-        destinationAddress = "Via Roma 2, Milano",
+        startingAddress = "Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano,Via Roma 1, Milano",
+        destinationAddress = "Via Roma 2, Milano,Via Roma 2, Milano,Via Roma 2, Milano,Via Roma 2, Milano,Via Roma 2, Milano",
         duration = "1h 30m",
         distance = "10 km",
         maxSpeed = "30 km/h",
@@ -193,8 +197,10 @@ fun PreviewRideHistoryDetailsContentDark() {
     CyclistanceTheme(darkTheme = true) {
         HistoryDetailsContent(
             uiState = HistoryDetailsUiState(
-                rideDetails = null
+                rideDetails = fakeRideHistoryDetailsModel
             ),
+            event = {},
+            state = HistoryDetailsState(isLoading = true)
 
         )
     }
