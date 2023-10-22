@@ -726,15 +726,7 @@ fun MappingScreen(
     }
 
 
-    val openRescueResults = remember(state.user.getRole()) {
-        {
-            val role = state.user.getRole()
-            if (role == Role.Rescuer.name) {
-                mappingViewModel.onEvent(event = MappingVmEvent.RescuerArrived)
-            }
 
-        }
-    }
 
 
     val callPhoneNumber = remember {
@@ -1174,7 +1166,6 @@ fun MappingScreen(
 
                 is MappingEvent.DestinationArrivedSuccess -> {
                     resetState()
-                    openRescueResults()
                 }
 
                 is MappingEvent.RescueRequestAccepted -> {
