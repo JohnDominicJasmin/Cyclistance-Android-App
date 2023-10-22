@@ -1298,7 +1298,18 @@ fun MappingScreen(
                 }
 
                 MappingEvent.RescueArrivedSuccess -> {
-                    navController.navigateScreen(Screens.RescueRecordNavigation.RescueResults.screenRoute)
+                    val role = state.user.getRole()
+                    val transactionId = state.getTransactionId()
+
+                    val route = if(role == Role.Rescuee.name){
+                        Screens.RescueRecordNavigation.RescueDetails.passArgument(
+                            transactionId = transactionId
+                        )
+                    }else{
+                        Screens.RescueRecordNavigation.RescueResults.screenRoute
+                    }
+
+                    navController.navigateScreen(route)
                 }
 
                 is MappingEvent.RescueArrivedFailed -> {
