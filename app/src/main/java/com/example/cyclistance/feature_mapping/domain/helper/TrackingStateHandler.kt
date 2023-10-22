@@ -256,7 +256,6 @@ class TrackingStateHandler(
         val user = state.value.user
         val idCombination =  user.id?.take(3) + rescuer.id?.take(3)
         return idCombination + System.currentTimeMillis().toString()
-            .takeLast(6)
     }
 
     suspend fun filterRescueRequestAccepted(rescueTransaction: RescueTransaction, id: String) {

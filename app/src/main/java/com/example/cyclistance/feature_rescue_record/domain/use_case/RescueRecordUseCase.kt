@@ -4,5 +4,6 @@ data class RescueRecordUseCase(
     val addRescueRecordUseCase: AddRescueRecordUseCase,
     val rescueDetailsUseCase: RescueDetailsUseCase,
     val getRescueRecordUseCase: GetRescueRecordUseCase,
-    val getRideHistoryUseCase: GetRideHistoryUseCase
+    val getRideHistoryUseCase: GetRideHistoryUseCase,
+    val rateRescueUseCase: RateRescueUseCase
 )

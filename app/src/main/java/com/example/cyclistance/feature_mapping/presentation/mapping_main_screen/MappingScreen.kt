@@ -731,7 +731,6 @@ fun MappingScreen(
             val role = state.user.getRole()
             if (role == Role.Rescuer.name) {
                 mappingViewModel.onEvent(event = MappingVmEvent.RescuerArrived)
-                navController.navigateScreen(Screens.RescueRecordNavigation.RescueResults.screenRoute)
             }
 
         }
@@ -1305,6 +1304,14 @@ fun MappingScreen(
 
                 MappingEvent.CancelRespondSuccess -> {
                     Toast.makeText(context, "Respond Cancelled", Toast.LENGTH_SHORT).show()
+                }
+
+                MappingEvent.RescueArrivedSuccess -> {
+                    navController.navigateScreen(Screens.RescueRecordNavigation.RescueResults.screenRoute)
+                }
+
+                is MappingEvent.RescueArrivedFailed -> {
+                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()
                 }
 
                 else -> {}
