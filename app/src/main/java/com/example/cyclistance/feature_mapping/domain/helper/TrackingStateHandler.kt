@@ -115,7 +115,8 @@ class TrackingStateHandler(
         val startingTime = Date(startingMillis).toReadableDateTime(pattern = "hh:mm a")
         val endTime = Date().toReadableDateTime(pattern = "hh:mm a")
         val dateNow = Date().toReadableDateTime(pattern = "dd/MM/yyyy")
-        val durationTime = formatDuration(startingMillis = startingMillis)
+        val durationTime = formatDuration(startingMillis = startingMillis, endingMillis = endingMillis)
+        val rideId = state.value.getTransactionId()
 
 
         val rideDetails = if(role == Role.Rescuee.name){
@@ -137,7 +138,7 @@ class TrackingStateHandler(
         }
 
         return rideDetails.copy(
-            rideId = state.value.getTransactionId(),
+            rideId = rideId,
             rideSummary = RideSummary(
                 iconDescription = iconDescription!!,
                 bikeType = bikeType!!,

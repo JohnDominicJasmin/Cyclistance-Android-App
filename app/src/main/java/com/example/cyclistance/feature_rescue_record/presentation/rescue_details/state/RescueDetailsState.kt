@@ -8,4 +8,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class RescueDetailsState(
     val isLoading: Boolean = false,
+    val transactionId: String? = null
 ):Parcelable
