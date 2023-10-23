@@ -251,12 +251,12 @@ class MappingViewModel @Inject constructor(
     private fun destinationArrived() {
         viewModelScope.launch(context = defaultDispatcher) {
             runCatching {
+                rescuerArrived()
                 removeUserTransaction(id = getId())
             }.onSuccess {
-                _eventFlow.emit(value = MappingEvent.DestinationArrivedSuccess)
-                rescuerArrived()
                 broadcastToNearbyCyclists()
                 isLoading(false)
+                _eventFlow.emit(value = MappingEvent.RescueArrivedSuccess)
             }.onFailure { exception ->
                 isLoading(false)
                 exception.handleException()
@@ -521,12 +521,13 @@ class MappingViewModel @Inject constructor(
         val role = state.value.user.getRole()
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             runCatching {
+                rescueRecordUseCase.rescueDetailsUseCase(details = trackingHandler.getRideDetails())
                 if (role == Role.Rescuer.name) {
-                    rescueRecordUseCase.rescueDetailsUseCase(details = trackingHandler.getRideDetails())
                     rescueRecordUseCase.addRescueRecordUseCase(rideDetails = trackingHandler.getRideDetails())
                 }
             }.onSuccess {
-                _eventFlow.emit(value = MappingEvent.RescueArrivedSuccess)
+
+                _eventFlow.emit(value = MappingEvent.DestinationArrivedSuccess)
                 trackingHandler.clearTransactionRoles()
             }.onFailure {
                 _eventFlow.emit(value = MappingEvent.RescueArrivedFailed(it.message!!))
