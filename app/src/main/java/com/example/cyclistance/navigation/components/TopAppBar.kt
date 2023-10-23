@@ -146,7 +146,7 @@ fun TopAppBar(
                 icon = Icons.Default.Close,
                 onClickIcon = onClickArrowBackIcon,
                 topAppBarTitle = {
-                    TitleTopAppBar(title = "Rescue Request")
+                    TitleTopAppBar(title = "Rescue Details")
                 })
 
         }
