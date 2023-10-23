@@ -74,7 +74,7 @@ fun RescueResultsScreen(
     }}
 
     val showRescueDetails = remember(rideDetails.rideId) {{
-        navController.navigateScreenInclusively(destination = Screens.RescueRecordNavigation.RescueDetails.passArgument(transactionId = state.rideDetails.rideId), popUpToDestination = Screens.RescueRecordNavigation.ROUTE)
+        navController.navigateScreenInclusively(destination = Screens.RescueRecordNavigation.RescueDetails.passArgument(transactionId = rideDetails.rideId), popUpToDestination = Screens.RescueRecordNavigation.ROUTE)
     }}
 
 

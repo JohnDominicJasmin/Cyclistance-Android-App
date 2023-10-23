@@ -18,7 +18,6 @@ import androidx.navigation.NavController
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.components.RescueDetailsScreenContent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.event.RescueDetailsEvent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.event.RescueDetailsUiEvent
-import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.event.RescueDetailsVmEvent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.state.RescueDetailsUiState
 import kotlinx.coroutines.flow.collectLatest
 
@@ -27,7 +26,7 @@ fun RescueDetailsScreen(
     paddingValues: PaddingValues,
     navController: NavController,
     viewModel: RescueDetailsViewModel = hiltViewModel(),
-    transactionId: String
+
 ) {
 
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -35,9 +34,7 @@ fun RescueDetailsScreen(
     var uiState by rememberSaveable { mutableStateOf(RescueDetailsUiState()) }
 
 
-    LaunchedEffect(key1 = transactionId) {
-        viewModel.onEvent(event = RescueDetailsVmEvent.LoadRescueDetails(transactionId = transactionId))
-    }
+
 
     LaunchedEffect(key1 = true) {
         viewModel.eventFlow.collectLatest { event ->

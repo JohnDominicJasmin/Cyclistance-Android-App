@@ -35,13 +35,14 @@ fun NavGraphBuilder.rescueRecordGraph(
         listOf(
             navArgument(name = RescueRecordConstants.TRANSACTION_ID) {
                 this.type = NavType.StringType
+                nullable = true
+                defaultValue = null
             })) {
-            it.arguments?.getString(RescueRecordConstants.TRANSACTION_ID)?.let { transactionId ->
+
                 RescueDetailsScreen(
                     paddingValues = paddingValues,
-                    navController = navController,
-                    transactionId = transactionId)
-            }
+                    navController = navController)
+
         }
 
 

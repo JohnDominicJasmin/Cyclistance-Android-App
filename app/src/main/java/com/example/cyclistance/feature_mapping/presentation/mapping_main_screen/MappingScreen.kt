@@ -1299,12 +1299,9 @@ fun MappingScreen(
 
                 MappingEvent.RescueArrivedSuccess -> {
                     val role = state.user.getRole()
-                    val transactionId = state.getTransactionId()
 
                     val route = if(role == Role.Rescuee.name){
-                        Screens.RescueRecordNavigation.RescueDetails.passArgument(
-                            transactionId = transactionId
-                        )
+                        Screens.RescueRecordNavigation.RescueDetails.screenRoute
                     }else{
                         Screens.RescueRecordNavigation.RescueResults.screenRoute
                     }
