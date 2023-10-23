@@ -46,7 +46,7 @@ fun HistoryDetailsContent(
     val rideDetails = uiState.rideDetails
     val rideSummary = rideDetails?.rideSummary
     val isRideLoaded = rideDetails != null
-    val shouldShowPlaceholder = !isRideLoaded && !state.isLoading
+    val shouldShowPlaceholder = !isRideLoaded && state.isLoading
     Surface(
         modifier = modifier
             .fillMaxSize(),
@@ -63,7 +63,7 @@ fun HistoryDetailsContent(
                     CircularProgressIndicator()
                 }
 
-                if (shouldShowPlaceholder) {
+                if (!isRideLoaded) {
                     HistoryDetailsPlaceholder()
                     return@item
                 }
