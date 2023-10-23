@@ -79,6 +79,8 @@ fun ExpandableFABSection(
         derivedStateOf { badgeCount > 0 }
     }
 
+    val badgeCountDisplay = if(badgeCount > 9) "9+" else "$badgeCount"
+
 
     Box(modifier = modifier, contentAlignment = Alignment.Center) {
 
@@ -111,7 +113,7 @@ fun ExpandableFABSection(
 
                     BadgeCount(
                         modifier = Modifier.padding(bottom = 20.dp),
-                        count = badgeCount.toString()
+                        count = badgeCountDisplay
                     )
                 }
             }
@@ -201,7 +203,7 @@ fun ExpandableFABSection(
 
                 BadgeCount(
                     modifier = Modifier.padding(bottom = 20.dp),
-                    count = badgeCount.toString()
+                    count = badgeCountDisplay
                 )
             }
         }
@@ -228,7 +230,7 @@ fun PreviewExpandableFABSection() {
                 onClickRescueRequest = { },
                 onClickFamilyTracker = { },
                 onClickEmergencyCall = { },
-                badgeCount = 99,
+                badgeCount = 10,
                 isFabExpanded = isFabExpanded,
                 onClickFab = {
 
