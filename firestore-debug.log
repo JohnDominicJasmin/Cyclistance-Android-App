@@ -67,11 +67,7 @@ Oct 24, 2023 9:00:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channe
 INFO: Detected non-HTTP/2 connection.
 Oct 24, 2023 9:00:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected non-HTTP/2 connection.
-Oct 24, 2023 9:00:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 24, 2023 9:00:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelReaOct 24, 2023 1:12:47 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected non-HTTP/2 connection.
-Oct 24, 2023 9:00:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+d
 INFO: Detected non-HTTP/2 connection.
-Oct 24, 2023 9:00:05 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
-INFO: Websocket client disconnected
-Oct 24, 2023 9:00:06 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed
-INFO: Websocket client disconnected
