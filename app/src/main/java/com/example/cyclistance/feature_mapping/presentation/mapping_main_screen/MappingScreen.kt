@@ -658,6 +658,7 @@ fun MappingScreen(
                 bottomSheetType = BottomSheetType.OnGoingRescue.type
             ).also {
                 expandBottomSheet()
+                onDismissRescueeBanner()
             }
         }
     }
@@ -1162,6 +1163,7 @@ fun MappingScreen(
 
                 is MappingEvent.CancelRescueTransactionSuccess -> {
                     resetState()
+                    onDismissRescueeBanner()
                 }
 
                 is MappingEvent.DestinationArrivedSuccess -> {
@@ -1172,6 +1174,7 @@ fun MappingScreen(
                     uiState = uiState.copy(
                         rescueRequestAccepted = true
                     )
+                    onDismissRescueeBanner()
                 }
 
                 is MappingEvent.CancelHelpRequestSuccess -> {
