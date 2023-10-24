@@ -530,7 +530,7 @@ class MappingViewModel @Inject constructor(
                 _eventFlow.emit(value = MappingEvent.DestinationArrivedSuccess)
                 trackingHandler.clearTransactionRoles()
             }.onFailure {
-                _eventFlow.emit(value = MappingEvent.RescueArrivedFailed(it.message!!))
+                _eventFlow.emit(value = MappingEvent.RescueArrivedFailed(it.message ?: "Rescuer Arrived"))
             }
         }
     }
