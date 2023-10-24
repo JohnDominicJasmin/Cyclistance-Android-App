@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @StableState
 data class SpeedometerState(
-    val travelledDistance: String = "",
+    val travelledDistance: String = "0m",
     val topSpeed: Double = 0.0,
     val currentSpeedKph: Double = 0.0,
 ):Parcelable

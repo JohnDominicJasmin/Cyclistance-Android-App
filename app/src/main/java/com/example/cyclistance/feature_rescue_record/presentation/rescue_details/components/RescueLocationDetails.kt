@@ -53,18 +53,21 @@ internal fun RescueLocationDetails(
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .weight(0.25f),
+                    .weight(0.20f),
                 verticalArrangement = Arrangement.SpaceBetween,
                 horizontalAlignment = Alignment.CenterHorizontally) {
 
                 Text(
                     text = startingTime,
                     color = MaterialTheme.colors.onBackground,
-                    style = MaterialTheme.typography.body2)
+                    style = MaterialTheme.typography.body2,
+                    textAlign = TextAlign.Center)
+
                 Text(
                     text = endTime,
                     color = MaterialTheme.colors.onBackground,
-                    style = MaterialTheme.typography.body2)
+                    style = MaterialTheme.typography.body2,
+                    textAlign = TextAlign.Center)
             }
 
             PointToPointDisplay(
@@ -113,8 +116,8 @@ fun PreviewRescueLocationDetails() {
             date = "Date sample",
             startingTime = "Starting time",
             endTime = "End time",
-            startingAddress = "Starting address, Starting address, Starting address, Starting address, Starting address, Starting address, Starting address, Starting address",
-            destinationAddress = "Destination address, Destination address, Destination address ,Destination address, Destination address, Destination address, Destination address ,Destination address"
+            startingAddress = "aoisd",
+            destinationAddress = "oiiiiwow"
         )
     }
 }

@@ -37,7 +37,7 @@ fun RatingCard(modifier: Modifier = Modifier, rating: Double, ratingText: String
                 RatingBar(rating = rating)
 
                 Text(
-                    text = ratingText,
+                    text = if(rating == 0.0) "No Ratings yet" else ratingText,
                     color = MaterialTheme.colors.onSurface,
                     style = MaterialTheme.typography.caption,
                     modifier = Modifier.padding(start = 8.dp)

@@ -84,7 +84,7 @@ fun RideHistoryItem(
                         .build(),
                     contentDescription = "User Picture",
                     modifier = Modifier
-                        .size(60.dp)
+                        .size(53.dp)
                         .clip(CircleShape),
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(id = R.drawable.ic_empty_profile_placeholder_large),

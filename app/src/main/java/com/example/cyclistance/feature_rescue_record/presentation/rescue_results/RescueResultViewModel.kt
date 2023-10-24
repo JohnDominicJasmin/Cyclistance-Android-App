@@ -44,16 +44,20 @@ class RescueResultViewModel @Inject constructor(
             rescueRecordUseCase.rescueDetailsUseCase().collect{ rideDetails ->
                 _state.update { it.copy(rideDetails = rideDetails) }
             }
+            saveState()
         }
     }
 
+    private fun saveState(){
+        savedStateHandle[RESCUE_RESULT_VM_STATE_KEY] = state.value
+    }
     fun onEvent(event: RescueResultVmEvent){
         when(event){
             is RescueResultVmEvent.RateRescuer -> {
                 rateRescuer(event.rating)
             }
         }
-        savedStateHandle[RESCUE_RESULT_VM_STATE_KEY] = state.value
+        saveState()
     }
 
     private fun rateRescuer(rating: Float) {
