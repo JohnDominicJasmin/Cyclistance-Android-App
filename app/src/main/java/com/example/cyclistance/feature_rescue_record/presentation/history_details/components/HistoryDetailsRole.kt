@@ -14,6 +14,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -61,7 +63,10 @@ fun HistoryDetailsRole(
         Text(
             text = name,
             color = MaterialTheme.colors.onBackground,
-            style = MaterialTheme.typography.subtitle1)
+            style = MaterialTheme.typography.subtitle1,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 1,
+            textAlign = TextAlign.Center)
 
     }
 }
@@ -73,6 +78,6 @@ fun PreviewRideHistoryDetailsRole() {
         HistoryDetailsRole(
             role = "Rescuer",
             photoUrl = "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cGVyc29ufGVufDB8fDB8fHww&w=1000&q=80",
-            name = "Juan Dela Cruz")
+            name = "Juan Dela Cruz, Juan Dela Cruz")
     }
 }

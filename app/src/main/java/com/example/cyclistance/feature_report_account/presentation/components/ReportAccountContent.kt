@@ -1,10 +1,5 @@
 package com.example.cyclistance.feature_report_account.presentation.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -74,18 +69,10 @@ fun ReportAccountContent(
         color = MaterialTheme.colors.background
     ) {
 
+        val shouldShowReportFeedback = uiState.shouldShowReportFeedback || state.reportedId == state.lastReportedId
+        val shouldShowReportAccount = !uiState.shouldShowReportFeedback && state.reportedId != state.lastReportedId
 
-        AnimatedVisibility(
-            visible = !uiState.shouldShowReportFeedback,
-            enter = fadeIn(
-                animationSpec = tween(
-                    durationMillis = 1200,
-                    delayMillis = 250,
-                    easing = FastOutSlowInEasing
-                )
-            ),
-            exit = fadeOut(),
-        ) {
+        if(shouldShowReportAccount) {
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxHeight()
@@ -205,17 +192,7 @@ fun ReportAccountContent(
         }
 
 
-        AnimatedVisibility(
-            visible = uiState.shouldShowReportFeedback,
-            enter = fadeIn(
-                animationSpec = tween(
-                    durationMillis = 1200,
-                    delayMillis = 250,
-                    easing = FastOutSlowInEasing
-                )
-            ),
-            exit = fadeOut(),
-        ) {
+        if(shouldShowReportFeedback) {
             ReportAccountFeedback(
                 modifier = Modifier
                     .fillMaxSize(),

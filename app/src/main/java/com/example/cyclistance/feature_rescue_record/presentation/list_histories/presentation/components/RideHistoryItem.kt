@@ -102,7 +102,7 @@ fun RideHistoryItem(
                 Spacer(modifier = Modifier.weight(0.1f))
 
                 Icon(
-                    painter = painterResource(id = rideHistoryItem.rescueDescription.rescueDescriptionToIcon()),
+                    painter = painterResource(id = rideHistoryItem.rescueDescription.rescueDescriptionToIcon() ?: R.drawable.not_available_circle_svgrepo_com),
                     contentDescription = "Icon Description",
                     modifier = Modifier.size(50.dp),
                     tint = MaterialTheme.colors.onSurface

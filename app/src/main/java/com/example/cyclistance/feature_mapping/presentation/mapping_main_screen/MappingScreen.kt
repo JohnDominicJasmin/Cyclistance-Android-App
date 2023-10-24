@@ -77,7 +77,6 @@ import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -1062,7 +1061,7 @@ fun MappingScreen(
     }
 
     LaunchedEffect(key1 = true) {
-        mappingViewModel.eventFlow.distinctUntilChanged().collectLatest {
+        mappingViewModel.eventFlow.collectLatest {
             when (it) {
 
                 is MappingEvent.NoInternetConnection -> {
@@ -1103,7 +1102,7 @@ fun MappingScreen(
     }
     LaunchedEffect(key1 = true) {
 
-        mappingViewModel.eventFlow.collect { event ->
+        mappingViewModel.eventFlow.collectLatest { event ->
             when (event) {
 
                 is MappingEvent.RequestHelpSuccess -> {
@@ -1304,9 +1303,9 @@ fun MappingScreen(
                     val role = state.user.getRole()
 
                     val route = if(role == Role.Rescuee.name){
-                        Screens.RescueRecordNavigation.RescueDetails.screenRoute
-                    }else{
                         Screens.RescueRecordNavigation.RescueResults.screenRoute
+                    }else{
+                        Screens.RescueRecordNavigation.RescueDetails.screenRoute
                     }
 
                     navController.navigateScreen(route)
@@ -1333,16 +1332,6 @@ fun MappingScreen(
     }
 
 
-
-    LaunchedEffect(key1 = hasInternetConnection) {
-
-
-        if (hasInternetConnection.not()) {
-            return@LaunchedEffect
-        }
-
-        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
-    }
 
 
     LaunchedEffect(

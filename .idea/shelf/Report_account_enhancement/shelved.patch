@@ -1,0 +1,445 @@
+Index: firestore-debug.log
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>Oct 24, 2023 8:59:22 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://0.0.0.0:40535\nAPI endpoint: http://0.0.0.0:9299\nIf you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\n\n   export FIRESTORE_EMULATOR_HOST=0.0.0.0:9299\n\nDev App Server is now running.\n\nOct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 8:59:58 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\nOct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nOct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:00 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel\nINFO: Connected to new websocket client\nOct 24, 2023 9:00:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected non-HTTP/2 connection.\nOct 24, 2023 9:00:05 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\nOct 24, 2023 9:00:06 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler channelClosed\nINFO: Websocket client disconnected\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/firestore-debug.log b/firestore-debug.log
+--- a/firestore-debug.log	(revision b7014c565c74d12abdc0e05a89a90a96aca10bfa)
++++ b/firestore-debug.log	(date 1698124291067)
+@@ -1,5 +1,5 @@
+-Oct 24, 2023 8:59:22 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
+-INFO: Started WebSocket server on ws://0.0.0.0:40535
++Oct 24, 2023 1:06:14 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
++INFO: Started WebSocket server on ws://0.0.0.0:34557
+ API endpoint: http://0.0.0.0:9299
+ If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
+ 
+@@ -7,67 +7,65 @@
+ 
+ Dev App Server is now running.
+ 
+-Oct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:15 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 24, 2023 1:06:15 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Oct 24, 2023 1:06:25 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:25 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 8:59:58 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
++Oct 24, 2023 1:06:25 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+ INFO: Connected to new websocket client
+-Oct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:25 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:25 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:25 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:25 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 8:59:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:25 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Oct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:25 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:25 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:26 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:26 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:26 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:26 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 8:59:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:27 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:27 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:29 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:00 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
+-INFO: Connected to new websocket client
+-Oct 24, 2023 9:00:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:31 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:33 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:35 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:06:37 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:07:43 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:08:43 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:09:29 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:09:48 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:09:48 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:09:48 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected non-HTTP/2 connection.
+-Oct 24, 2023 9:00:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Oct 24, 2023 1:10:45 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+ Oct 24, 2023 9:00:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected non-HTTP/2 connection.
+Index: app/src/main/java/com/example/cyclistance/feature_rescue_record/presentation/rescue_results/RescueResultsScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_rescue_record.presentation.rescue_results\n\nimport android.widget.Toast\nimport androidx.compose.foundation.layout.PaddingValues\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.LaunchedEffect\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.saveable.rememberSaveable\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.platform.LocalContext\nimport androidx.hilt.navigation.compose.hiltViewModel\nimport androidx.lifecycle.compose.collectAsStateWithLifecycle\nimport androidx.navigation.NavController\nimport com.example.cyclistance.feature_rescue_record.presentation.rescue_results.components.RescueResultsScreenContent\nimport com.example.cyclistance.feature_rescue_record.presentation.rescue_results.event.RescueResultEvent\nimport com.example.cyclistance.feature_rescue_record.presentation.rescue_results.event.RescueResultUiEvent\nimport com.example.cyclistance.feature_rescue_record.presentation.rescue_results.event.RescueResultVmEvent\nimport com.example.cyclistance.feature_rescue_record.presentation.rescue_results.state.RescueResultUiState\nimport com.example.cyclistance.navigation.Screens\nimport com.example.cyclistance.navigation.nav_graph.navigateScreen\nimport com.example.cyclistance.navigation.nav_graph.navigateScreenInclusively\n\n@Composable\nfun RescueResultsScreen(\n    paddingValues: PaddingValues,\n    navController: NavController,\n    viewModel: RescueResultViewModel = hiltViewModel()\n\n) {\n\n    val context = LocalContext.current\n    var uiState by rememberSaveable{ mutableStateOf(RescueResultUiState()) }\n    val state by viewModel.state.collectAsStateWithLifecycle()\n\n    val changeRating = remember{{ rate: Float ->\n        uiState = uiState.copy(rating = rate)\n    }}\n\n    val stepUp = remember{{\n        uiState = uiState.copy(\n            step = uiState.step + 1\n        )\n    }}\n\n    val stepDown = remember{{\n        uiState = uiState.copy(\n            step = uiState.step - 1\n        )\n    }}\n\n    val rideDetails = state.rideDetails\n\n    val viewProfile = remember{{ userId : String ->\n        navController.navigateScreen(route = Screens.UserProfileNavigation.UserProfile.passArgument(userId = userId))\n    }}\n\n    val reportAccount = remember {{ id: String, name: String, photo: String ->\n        navController.navigateScreen(\n            route = Screens.ReportAccountNavigation.ReportAccount.passArgument(\n                userId = id,\n                name = name,\n                userPhoto = photo))\n\n    }}\n\n    val rateRescuer = remember{{\n        viewModel.onEvent(event = RescueResultVmEvent.RateRescuer(\n            rating = uiState.rating\n        ))\n    }}\n\n    val showRescueDetails = remember(rideDetails.rideId) {{\n        navController.navigateScreenInclusively(destination = Screens.RescueRecordNavigation.RescueDetails.passArgument(transactionId = rideDetails.rideId), popUpToDestination = Screens.RescueRecordNavigation.ROUTE)\n    }}\n\n\n    LaunchedEffect(key1 = true){\n        viewModel.eventFlow.collect{ event ->\n            when(event){\n                is RescueResultEvent.RatingFailed -> {\n                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()\n                }\n                RescueResultEvent.RatingSuccess -> stepUp()\n            }\n        }\n    }\n\n    RescueResultsScreenContent(\n        uiState = uiState,\n        state = state,\n        modifier = Modifier.padding(paddingValues),\n        event = { event ->\n            when (event) {\n                RescueResultUiEvent.CloseRescueResults -> navController.popBackStack()\n                is RescueResultUiEvent.ChangeRating -> changeRating(event.rating)\n                RescueResultUiEvent.StepDown -> stepDown()\n                RescueResultUiEvent.StepUp -> stepUp()\n                is RescueResultUiEvent.ReportAccount -> reportAccount(event.id, event.name, event.photo)\n                is RescueResultUiEvent.ViewProfile -> viewProfile(event.id)\n                is RescueResultUiEvent.RateRescuer -> rateRescuer()\n                RescueResultUiEvent.ShowRescueDetails -> showRescueDetails()\n            }\n        })\n\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_rescue_record/presentation/rescue_results/RescueResultsScreen.kt b/app/src/main/java/com/example/cyclistance/feature_rescue_record/presentation/rescue_results/RescueResultsScreen.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_rescue_record/presentation/rescue_results/RescueResultsScreen.kt	(revision b7014c565c74d12abdc0e05a89a90a96aca10bfa)
++++ b/app/src/main/java/com/example/cyclistance/feature_rescue_record/presentation/rescue_results/RescueResultsScreen.kt	(date 1698119567017)
+@@ -74,7 +74,10 @@
+     }}
+ 
+     val showRescueDetails = remember(rideDetails.rideId) {{
+-        navController.navigateScreenInclusively(destination = Screens.RescueRecordNavigation.RescueDetails.passArgument(transactionId = rideDetails.rideId), popUpToDestination = Screens.RescueRecordNavigation.ROUTE)
++        navController.navigateScreenInclusively(
++            destination = Screens.RescueRecordNavigation.RescueDetails.passArgument(
++                transactionId = rideDetails.rideId),
++            popUpToDestination = Screens.RescueRecordNavigation.ROUTE)
+     }}
+ 
+ 
+Index: app/src/main/java/com/example/cyclistance/feature_report_account/domain/use_case/ReportAccountUseCase.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_report_account.domain.use_case\n\ndata class ReportAccountUseCase(\n    val reportUseCase: ReportUseCase\n)\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_report_account/domain/use_case/ReportAccountUseCase.kt b/app/src/main/java/com/example/cyclistance/feature_report_account/domain/use_case/ReportAccountUseCase.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_report_account/domain/use_case/ReportAccountUseCase.kt	(revision b7014c565c74d12abdc0e05a89a90a96aca10bfa)
++++ b/app/src/main/java/com/example/cyclistance/feature_report_account/domain/use_case/ReportAccountUseCase.kt	(date 1698122307234)
+@@ -1,5 +1,6 @@
+ package com.example.cyclistance.feature_report_account.domain.use_case
+ 
+ data class ReportAccountUseCase(
+-    val reportUseCase: ReportUseCase
++    val reportUseCase: ReportUseCase,
++    val lastReportIdUseCase: LastReportIdUseCase
+ )
+Index: app/src/main/java/com/example/cyclistance/feature_report_account/domain/repository/ReportAccountRepository.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_report_account.domain.repository\n\nimport com.example.cyclistance.feature_report_account.domain.model.ReportAccountDetails\n\ninterface ReportAccountRepository {\n    suspend fun reportAccount(reportAccountDetails: ReportAccountDetails)\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_report_account/domain/repository/ReportAccountRepository.kt b/app/src/main/java/com/example/cyclistance/feature_report_account/domain/repository/ReportAccountRepository.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_report_account/domain/repository/ReportAccountRepository.kt	(revision b7014c565c74d12abdc0e05a89a90a96aca10bfa)
++++ b/app/src/main/java/com/example/cyclistance/feature_report_account/domain/repository/ReportAccountRepository.kt	(date 1698120143631)
+@@ -1,7 +1,10 @@
+ package com.example.cyclistance.feature_report_account.domain.repository
+ 
+ import com.example.cyclistance.feature_report_account.domain.model.ReportAccountDetails
++import kotlinx.coroutines.flow.Flow
+ 
+ interface ReportAccountRepository {
+     suspend fun reportAccount(reportAccountDetails: ReportAccountDetails)
++    suspend fun getLastReportedId(): Flow<String>
++    suspend fun setLastReportedId(id: String)
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/core/utils/constants/ReportAccountConstants.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.core.utils.constants\n\nobject ReportAccountConstants {\n    const val REPORT_ACCOUNT_COLLECTION = \"reportAccount\"\n    const val REPORT_ACCOUNT_VM_STATE_KEY = \"reportAccountVmState\"\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/core/utils/constants/ReportAccountConstants.kt b/app/src/main/java/com/example/cyclistance/core/utils/constants/ReportAccountConstants.kt
+--- a/app/src/main/java/com/example/cyclistance/core/utils/constants/ReportAccountConstants.kt	(revision b7014c565c74d12abdc0e05a89a90a96aca10bfa)
++++ b/app/src/main/java/com/example/cyclistance/core/utils/constants/ReportAccountConstants.kt	(date 1698122077837)
+@@ -1,6 +1,9 @@
+ package com.example.cyclistance.core.utils.constants
+ 
++import androidx.datastore.preferences.core.stringPreferencesKey
++
+ object ReportAccountConstants {
+     const val REPORT_ACCOUNT_COLLECTION = "reportAccount"
+     const val REPORT_ACCOUNT_VM_STATE_KEY = "reportAccountVmState"
++    val LAST_REPORT_ID_KEY = stringPreferencesKey("lastReportId")
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_report_account/presentation/ReportAccountViewModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_report_account.presentation\n\nimport androidx.lifecycle.SavedStateHandle\nimport androidx.lifecycle.ViewModel\nimport androidx.lifecycle.viewModelScope\nimport com.example.cyclistance.core.utils.constants.ReportAccountConstants.REPORT_ACCOUNT_VM_STATE_KEY\nimport com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_ID\nimport com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_NAME\nimport com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_PHOTO\nimport com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase\nimport com.example.cyclistance.feature_report_account.domain.model.ReportAccountDetails\nimport com.example.cyclistance.feature_report_account.domain.use_case.ReportAccountUseCase\nimport com.example.cyclistance.feature_report_account.presentation.event.ReportAccountEvent\nimport com.example.cyclistance.feature_report_account.presentation.event.ReportAccountVmEvent\nimport com.example.cyclistance.feature_report_account.presentation.state.ReportAccountState\nimport dagger.hilt.android.lifecycle.HiltViewModel\nimport kotlinx.coroutines.flow.MutableSharedFlow\nimport kotlinx.coroutines.flow.MutableStateFlow\nimport kotlinx.coroutines.flow.asSharedFlow\nimport kotlinx.coroutines.flow.asStateFlow\nimport kotlinx.coroutines.launch\nimport timber.log.Timber\nimport javax.inject.Inject\n\n@HiltViewModel\nclass ReportAccountViewModel @Inject constructor(\n    private val savedStateHandle: SavedStateHandle,\n    private val reportAccountUseCase: ReportAccountUseCase,\n    private val authUseCase: AuthenticationUseCase\n): ViewModel() {\n\n    private val _state = MutableStateFlow(savedStateHandle[REPORT_ACCOUNT_VM_STATE_KEY] ?: ReportAccountState(\n        reportedName = savedStateHandle[USER_NAME]!!,\n        reportedPhoto = savedStateHandle[USER_PHOTO]!!,\n        reportedId = savedStateHandle[USER_ID]!!,\n        userId = getId()\n    ))\n\n\n    val state = _state.asStateFlow()\n\n    private val _eventFlow = MutableSharedFlow<ReportAccountEvent>()\n    val eventFlow = _eventFlow.asSharedFlow()\n\n    init {\n        Timber.v(\"Name ${state.value.reportedName} | Photo ${state.value.reportedPhoto} | Id ${state.value.reportedId}\")\n    }\n    fun onEvent(event: ReportAccountVmEvent){\n        when(event){\n            is ReportAccountVmEvent.ReportAccount -> reportAccount(event.reportAccountDetails)\n        }\n        savedStateHandle[REPORT_ACCOUNT_VM_STATE_KEY] = state.value\n    }\n\n    private fun reportAccount(reportAccountDetails: ReportAccountDetails){\n        viewModelScope.launch {\n            runCatching {\n                reportAccountUseCase.reportUseCase(reportAccountDetails)\n            }.onSuccess {\n                _eventFlow.emit(value = ReportAccountEvent.ReportAccountSuccess)\n            }.onFailure {\n                _eventFlow.emit(value = ReportAccountEvent.ReportAccountFailed(reason = it.message ?: \"Failed to report account\"))\n            }\n        }\n    }\n\n    private fun getId(): String = authUseCase.getIdUseCase()\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/ReportAccountViewModel.kt b/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/ReportAccountViewModel.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/ReportAccountViewModel.kt	(revision b7014c565c74d12abdc0e05a89a90a96aca10bfa)
++++ b/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/ReportAccountViewModel.kt	(date 1698122474617)
+@@ -14,12 +14,13 @@
+ import com.example.cyclistance.feature_report_account.presentation.event.ReportAccountVmEvent
+ import com.example.cyclistance.feature_report_account.presentation.state.ReportAccountState
+ import dagger.hilt.android.lifecycle.HiltViewModel
++import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.SupervisorJob
+ import kotlinx.coroutines.flow.MutableSharedFlow
+ import kotlinx.coroutines.flow.MutableStateFlow
+ import kotlinx.coroutines.flow.asSharedFlow
+ import kotlinx.coroutines.flow.asStateFlow
+ import kotlinx.coroutines.launch
+-import timber.log.Timber
+ import javax.inject.Inject
+ 
+ @HiltViewModel
+@@ -42,9 +43,7 @@
+     private val _eventFlow = MutableSharedFlow<ReportAccountEvent>()
+     val eventFlow = _eventFlow.asSharedFlow()
+ 
+-    init {
+-        Timber.v("Name ${state.value.reportedName} | Photo ${state.value.reportedPhoto} | Id ${state.value.reportedId}")
+-    }
++
+     fun onEvent(event: ReportAccountVmEvent){
+         when(event){
+             is ReportAccountVmEvent.ReportAccount -> reportAccount(event.reportAccountDetails)
+@@ -53,11 +52,12 @@
+     }
+ 
+     private fun reportAccount(reportAccountDetails: ReportAccountDetails){
+-        viewModelScope.launch {
++        viewModelScope.launch(SupervisorJob() + Dispatchers.IO){
+             runCatching {
+                 reportAccountUseCase.reportUseCase(reportAccountDetails)
+             }.onSuccess {
+                 _eventFlow.emit(value = ReportAccountEvent.ReportAccountSuccess)
++                reportAccountUseCase.lastReportIdUseCase(lastReportedId = reportAccountDetails.userId)
+             }.onFailure {
+                 _eventFlow.emit(value = ReportAccountEvent.ReportAccountFailed(reason = it.message ?: "Failed to report account"))
+             }
+Index: app/src/main/java/com/example/cyclistance/feature_report_account/domain/use_case/LastReportIdUseCase.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_report_account/domain/use_case/LastReportIdUseCase.kt b/app/src/main/java/com/example/cyclistance/feature_report_account/domain/use_case/LastReportIdUseCase.kt
+new file mode 100644
+--- /dev/null	(date 1698122307191)
++++ b/app/src/main/java/com/example/cyclistance/feature_report_account/domain/use_case/LastReportIdUseCase.kt	(date 1698122307191)
+@@ -0,0 +1,11 @@
++package com.example.cyclistance.feature_report_account.domain.use_case
++
++import com.example.cyclistance.feature_report_account.domain.repository.ReportAccountRepository
++
++class LastReportIdUseCase(private val repository: ReportAccountRepository) {
++    suspend operator fun invoke(lastReportedId: String){
++        repository.setLastReportedId(lastReportedId)
++    }
++
++    suspend operator fun invoke() = repository.getLastReportedId()
++}
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_report_account/presentation/ReportAccountScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_report_account.presentation\n\nimport androidx.compose.foundation.layout.PaddingValues\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.LaunchedEffect\nimport androidx.compose.runtime.derivedStateOf\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.saveable.rememberSaveable\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.text.input.TextFieldValue\nimport androidx.hilt.navigation.compose.hiltViewModel\nimport androidx.lifecycle.compose.collectAsStateWithLifecycle\nimport androidx.navigation.NavController\nimport com.example.cyclistance.R\nimport com.example.cyclistance.core.domain.model.AlertDialogState\nimport com.example.cyclistance.core.utils.composable_utils.rememberMutableStateListOf\nimport com.example.cyclistance.feature_report_account.domain.model.ReportAccountDetails\nimport com.example.cyclistance.feature_report_account.domain.model.ui.OptionsReport\nimport com.example.cyclistance.feature_report_account.presentation.components.ReportAccountContent\nimport com.example.cyclistance.feature_report_account.presentation.event.ReportAccountEvent\nimport com.example.cyclistance.feature_report_account.presentation.event.ReportAccountUiEvent\nimport com.example.cyclistance.feature_report_account.presentation.event.ReportAccountVmEvent\nimport com.example.cyclistance.feature_report_account.presentation.state.ReportAccountUiState\nimport kotlinx.coroutines.flow.collectLatest\nimport java.util.Date\n\n@Composable\nfun ReportAccountScreen(\n    paddingValues: PaddingValues,\n    navController: NavController,\n    viewModel: ReportAccountViewModel = hiltViewModel()) {\n\n    var uiState by remember {\n        mutableStateOf(ReportAccountUiState())\n    }\n\n    val state by viewModel.state.collectAsStateWithLifecycle()\n    val selectedOptions = rememberMutableStateListOf<String>()\n    var comment by rememberSaveable(stateSaver = TextFieldValue.Saver) {\n        mutableStateOf(TextFieldValue())\n    }\n\n    val onChangeComment = remember {\n        { _comment: TextFieldValue ->\n            comment = _comment\n        }\n    }\n\n    val reportAccount = remember{{\n        viewModel.onEvent(event = ReportAccountVmEvent.ReportAccount(\n            reportAccountDetails = ReportAccountDetails(\n               reasons = OptionsReport(selectedOptions = selectedOptions),\n                name = state.reportedName,\n                date = Date(),\n                comment = comment.text,\n                userId = state.reportedId,\n                idReportBy = state.userId\n            )\n        ))\n    }}\n\n    val onReasonChecked = remember {\n        { reason: String ->\n\n            selectedOptions.apply {\n                if (contains(reason)) {\n                    remove(reason)\n                    return@apply\n                }\n\n                if (uiState.isReportMaxLimitReached) {\n                    return@apply\n                }\n                selectedOptions.add(reason)\n\n            }.also {\n                uiState = uiState.copy(optionsReport = OptionsReport(selectedOptions = it))\n            }\n\n        }\n    }\n\n\n    val isReportMaxLimitReached by remember(uiState.optionsReport) { derivedStateOf { uiState.optionsReport.selectedOptions.size == 3 } }\n    val isReportButtonEnabled by remember(uiState.optionsReport) { derivedStateOf { uiState.optionsReport.selectedOptions.isNotEmpty() } }\n\n    val dismissAlertDialog = remember{{\n        uiState = uiState.copy(\n            alertDialogState = AlertDialogState()\n        )\n    }}\n\n    val showReportFeedback = remember {\n        {\n            uiState = uiState.copy(shouldShowReportFeedback = true)\n        }\n    }\n\n\n\n\n\n\n\n\n\n\n    LaunchedEffect(key1 = isReportButtonEnabled) {\n        uiState = uiState.copy(\n            isReportButtonEnabled = isReportButtonEnabled\n        )\n    }\n\n    LaunchedEffect(key1 = isReportMaxLimitReached) {\n        uiState = uiState.copy(\n            isReportMaxLimitReached = isReportMaxLimitReached\n        )\n    }\n\n    LaunchedEffect(key1 = true){\n        viewModel.eventFlow.collectLatest { event ->\n            when(event){\n                ReportAccountEvent.ReportAccountSuccess -> showReportFeedback()\n                is ReportAccountEvent.ReportAccountFailed -> {\n                    uiState = uiState.copy(\n                        alertDialogState = AlertDialogState(\n                            title = \"Failed to report account\",\n                            description = event.reason,\n                            icon = R.raw.error\n                        )\n                    )\n                }\n            }\n        }\n    }\n\n\n    ReportAccountContent(\n        modifier = Modifier.padding(paddingValues),\n        message = comment,\n        uiState = uiState,\n        event = { event ->\n            when (event) {\n                is ReportAccountUiEvent.CloseReportAccountScreen -> navController.popBackStack()\n                is ReportAccountUiEvent.ReportAccount -> reportAccount()\n                is ReportAccountUiEvent.OnReasonChecked -> onReasonChecked(event.reason)\n                is ReportAccountUiEvent.OnChangeMessage -> onChangeComment(event.message)\n                ReportAccountUiEvent.DismissAlertDialog -> dismissAlertDialog()\n            }\n        },\n        state = state\n\n    )\n\n}\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/ReportAccountScreen.kt b/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/ReportAccountScreen.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/ReportAccountScreen.kt	(revision b7014c565c74d12abdc0e05a89a90a96aca10bfa)
++++ b/app/src/main/java/com/example/cyclistance/feature_report_account/presentation/ReportAccountScreen.kt	(date 1698120143611)
+@@ -121,6 +121,7 @@
+         )
+     }
+ 
++
+     LaunchedEffect(key1 = true){
+         viewModel.eventFlow.collectLatest { event ->
+             when(event){
+Index: app/src/main/java/com/example/cyclistance/di/report_account/ReportAccountDataSourceModule.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.di.report_account\n\nimport com.example.cyclistance.feature_report_account.data.repository.ReportAccountRepositoryImpl\nimport com.example.cyclistance.feature_report_account.domain.repository.ReportAccountRepository\nimport com.google.firebase.firestore.FirebaseFirestore\nimport dagger.Module\nimport dagger.Provides\nimport dagger.hilt.InstallIn\nimport dagger.hilt.components.SingletonComponent\nimport javax.inject.Singleton\n\n@Module\n@InstallIn(SingletonComponent::class)\nobject ReportAccountDataSourceModule {\n\n    @Provides\n    @Singleton\n    fun provideReportAccountRepository(\n        fireStore: FirebaseFirestore): ReportAccountRepository {\n        return ReportAccountRepositoryImpl(\n            firestore = fireStore,\n        )\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/di/report_account/ReportAccountDataSourceModule.kt b/app/src/main/java/com/example/cyclistance/di/report_account/ReportAccountDataSourceModule.kt
+--- a/app/src/main/java/com/example/cyclistance/di/report_account/ReportAccountDataSourceModule.kt	(revision b7014c565c74d12abdc0e05a89a90a96aca10bfa)
++++ b/app/src/main/java/com/example/cyclistance/di/report_account/ReportAccountDataSourceModule.kt	(date 1698122077854)
+@@ -1,11 +1,13 @@
+ package com.example.cyclistance.di.report_account
+ 
++import android.content.Context
+ import com.example.cyclistance.feature_report_account.data.repository.ReportAccountRepositoryImpl
+ import com.example.cyclistance.feature_report_account.domain.repository.ReportAccountRepository
+ import com.google.firebase.firestore.FirebaseFirestore
+ import dagger.Module
+ import dagger.Provides
+ import dagger.hilt.InstallIn
++import dagger.hilt.android.qualifiers.ApplicationContext
+ import dagger.hilt.components.SingletonComponent
+ import javax.inject.Singleton
+ 
+@@ -16,9 +18,11 @@
+     @Provides
+     @Singleton
+     fun provideReportAccountRepository(
++        @ApplicationContext context: Context,
+         fireStore: FirebaseFirestore): ReportAccountRepository {
+         return ReportAccountRepositoryImpl(
+             firestore = fireStore,
++            context = context
+         )
+     }
+ }
+\ No newline at end of file
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetDropDown\">\n    <targetSelectedWithDropDown>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetSelectedWithDropDown>\n    <timeTargetWasSelectedWithDropDown value=\"2023-10-23T16:27:43.795840351Z\" />\n    <multipleDevicesSelectedInDropDown value=\"true\" />\n    <targetsSelectedWithDialog>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetsSelectedWithDialog>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(revision b7014c565c74d12abdc0e05a89a90a96aca10bfa)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1698118271674)
+@@ -14,6 +14,17 @@
+     </targetSelectedWithDropDown>
+     <timeTargetWasSelectedWithDropDown value="2023-10-23T16:27:43.795840351Z" />
+     <multipleDevicesSelectedInDropDown value="true" />
++    <runningDeviceTargetsSelectedWithDialog>
++      <Target>
++        <type value="RUNNING_DEVICE_TARGET" />
++        <deviceKey>
++          <Key>
++            <type value="SERIAL_NUMBER" />
++            <value value="194a89050404" />
++          </Key>
++        </deviceKey>
++      </Target>
++    </runningDeviceTargetsSelectedWithDialog>
+     <targetsSelectedWithDialog>
+       <Target>
+         <type value="QUICK_BOOT_TARGET" />
+Index: app/src/main/java/com/example/cyclistance/di/report_account/ReportAccountViewModelModule.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.di.report_account\n\nimport com.example.cyclistance.feature_report_account.domain.repository.ReportAccountRepository\nimport com.example.cyclistance.feature_report_account.domain.use_case.ReportAccountUseCase\nimport com.example.cyclistance.feature_report_account.domain.use_case.ReportUseCase\nimport dagger.Module\nimport dagger.Provides\nimport dagger.hilt.InstallIn\nimport dagger.hilt.android.components.ViewModelComponent\nimport dagger.hilt.android.scopes.ViewModelScoped\n\n\n@Module\n@InstallIn(ViewModelComponent::class)\nobject ReportAccountViewModelModule {\n\n\n\n    @Provides\n    @ViewModelScoped\n    fun provideReportAccountUseCase(\n        repository: ReportAccountRepository\n    ): ReportAccountUseCase {\n        return ReportAccountUseCase(\n            reportUseCase = ReportUseCase(\n                repository = repository)\n        )\n    }\n\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/di/report_account/ReportAccountViewModelModule.kt b/app/src/main/java/com/example/cyclistance/di/report_account/ReportAccountViewModelModule.kt
+--- a/app/src/main/java/com/example/cyclistance/di/report_account/ReportAccountViewModelModule.kt	(revision b7014c565c74d12abdc0e05a89a90a96aca10bfa)
++++ b/app/src/main/java/com/example/cyclistance/di/report_account/ReportAccountViewModelModule.kt	(date 1698122307201)
+@@ -1,6 +1,7 @@
+ package com.example.cyclistance.di.report_account
+ 
+ import com.example.cyclistance.feature_report_account.domain.repository.ReportAccountRepository
++import com.example.cyclistance.feature_report_account.domain.use_case.LastReportIdUseCase
+ import com.example.cyclistance.feature_report_account.domain.use_case.ReportAccountUseCase
+ import com.example.cyclistance.feature_report_account.domain.use_case.ReportUseCase
+ import dagger.Module
+@@ -22,8 +23,8 @@
+         repository: ReportAccountRepository
+     ): ReportAccountUseCase {
+         return ReportAccountUseCase(
+-            reportUseCase = ReportUseCase(
+-                repository = repository)
++            reportUseCase = ReportUseCase(repository = repository),
++            lastReportIdUseCase = LastReportIdUseCase(repository = repository)
+         )
+     }
+ 
+Index: app/src/main/java/com/example/cyclistance/feature_report_account/data/repository/ReportAccountRepositoryImpl.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_report_account.data.repository\n\nimport com.example.cyclistance.core.utils.constants.ReportAccountConstants.REPORT_ACCOUNT_COLLECTION\nimport com.example.cyclistance.feature_report_account.domain.exceptions.ReportAccountExceptions\nimport com.example.cyclistance.feature_report_account.domain.model.ReportAccountDetails\nimport com.example.cyclistance.feature_report_account.domain.repository.ReportAccountRepository\nimport com.google.firebase.firestore.FirebaseFirestore\nimport kotlinx.coroutines.suspendCancellableCoroutine\nimport kotlin.coroutines.resume\nimport kotlin.coroutines.resumeWithException\n\nclass ReportAccountRepositoryImpl(\n    private val firestore: FirebaseFirestore,\n) : ReportAccountRepository{\n\n    override suspend fun reportAccount(reportAccountDetails: ReportAccountDetails) {\n\n        suspendCancellableCoroutine { continuation ->\n            firestore\n                .collection(REPORT_ACCOUNT_COLLECTION)\n                .add(reportAccountDetails)\n                .addOnSuccessListener {\n                    continuation.resume(Unit)\n                }.addOnFailureListener {\n                    continuation.resumeWithException(\n                        ReportAccountExceptions.InsertReportException(\n                            it.message.toString()))\n                }\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_report_account/data/repository/ReportAccountRepositoryImpl.kt b/app/src/main/java/com/example/cyclistance/feature_report_account/data/repository/ReportAccountRepositoryImpl.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_report_account/data/repository/ReportAccountRepositoryImpl.kt	(revision b7014c565c74d12abdc0e05a89a90a96aca10bfa)
++++ b/app/src/main/java/com/example/cyclistance/feature_report_account/data/repository/ReportAccountRepositoryImpl.kt	(date 1698122307214)
+@@ -1,18 +1,31 @@
+ package com.example.cyclistance.feature_report_account.data.repository
+ 
++import android.content.Context
++import com.example.cyclistance.core.utils.constants.ReportAccountConstants.LAST_REPORT_ID_KEY
+ import com.example.cyclistance.core.utils.constants.ReportAccountConstants.REPORT_ACCOUNT_COLLECTION
++import com.example.cyclistance.core.utils.contexts.dataStore
++import com.example.cyclistance.core.utils.data_store_ext.editData
++import com.example.cyclistance.core.utils.data_store_ext.getData
+ import com.example.cyclistance.feature_report_account.domain.exceptions.ReportAccountExceptions
+ import com.example.cyclistance.feature_report_account.domain.model.ReportAccountDetails
+ import com.example.cyclistance.feature_report_account.domain.repository.ReportAccountRepository
+ import com.google.firebase.firestore.FirebaseFirestore
++import kotlinx.coroutines.Dispatchers
++import kotlinx.coroutines.flow.Flow
+ import kotlinx.coroutines.suspendCancellableCoroutine
++import kotlinx.coroutines.withContext
++import kotlin.coroutines.CoroutineContext
+ import kotlin.coroutines.resume
+ import kotlin.coroutines.resumeWithException
+ 
+ class ReportAccountRepositoryImpl(
+     private val firestore: FirebaseFirestore,
++    private val context: Context,
+ ) : ReportAccountRepository{
+ 
++    private var dataStore = context.dataStore
++    private val scope: CoroutineContext = Dispatchers.IO
++
+     override suspend fun reportAccount(reportAccountDetails: ReportAccountDetails) {
+ 
+         suspendCancellableCoroutine { continuation ->
+@@ -28,4 +41,16 @@
+                 }
+         }
+     }
++
++    override suspend fun getLastReportedId(): Flow<String> {
++        return withContext(scope){
++            dataStore.getData(key = LAST_REPORT_ID_KEY, defaultValue = "")
++        }
++    }
++
++    override suspend fun setLastReportedId(id: String) {
++        withContext(scope){
++            dataStore.editData(LAST_REPORT_ID_KEY, id)
++        }
++    }
+ }
+\ No newline at end of file

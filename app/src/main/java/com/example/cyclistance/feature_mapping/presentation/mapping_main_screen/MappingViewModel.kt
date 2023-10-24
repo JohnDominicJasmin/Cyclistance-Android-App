@@ -134,7 +134,7 @@ class MappingViewModel @Inject constructor(
                     Timber.v("Error getting map type: ${it.message}")
                 }.onEach { mapType ->
                     _state.update { it.copy(mapType = mapType) }
-                }.launchIn(viewModelScope)
+                }.launchIn(this)
 
         }
     }
@@ -299,24 +299,24 @@ class MappingViewModel @Inject constructor(
 
     private fun respondToHelp(selectedRescuee: MapSelectedRescuee) {
         viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {
-            runCatching {
                 uploadUserProfile(onSuccess = {
-                    viewModelScope.launch(context = defaultDispatcher) {
-                        mappingUseCase.addRescueRespondentUseCase(
-                            userId = selectedRescuee.userId,
-                            respondentId = getId()
-                        )
+                    viewModelScope.launch(this.coroutineContext) {
+                        runCatching {
+                            mappingUseCase.addRescueRespondentUseCase(
+                                userId = selectedRescuee.userId,
+                                respondentId = getId()
+                            )
+                        }.onSuccess {
+                            broadcastToNearbyCyclists()
+                            broadcastRescueTransaction()
+                            _state.update { it.copy(respondedToHelp = true) }
+                            _eventFlow.emit(value = MappingEvent.RespondToHelpSuccess())
+
+                        }.onFailure {
+                            it.handleException()
+                        }
                     }
                 })
-            }.onSuccess {
-                _eventFlow.emit(value = MappingEvent.RespondToHelpSuccess())
-                broadcastToNearbyCyclists()
-                broadcastRescueTransaction()
-                _state.update { it.copy(respondedToHelp = true) }
-            }.onFailure {
-                it.handleException()
-            }
-
         }
     }
 
@@ -522,7 +522,7 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             runCatching {
                 rescueRecordUseCase.rescueDetailsUseCase(details = trackingHandler.getRideDetails())
-                if (role == Role.Rescuer.name) {
+                if (role == Role.Rescuee.name) {
                     rescueRecordUseCase.addRescueRecordUseCase(rideDetails = trackingHandler.getRideDetails())
                 }
             }.onSuccess {
@@ -545,6 +545,7 @@ class MappingViewModel @Inject constructor(
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.CancelRespondSuccess)
                 broadcastToNearbyCyclists()
+                _state.update { it.copy(respondedToHelp = false) }
             }.onFailure {
                 it.handleException()
             }.also {
@@ -1081,10 +1082,18 @@ class MappingViewModel @Inject constructor(
         coroutineScope {
             val userLocation = state.value.userLocation
 
+
             if (userLocation == null) {
                 _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
                 return@coroutineScope
             }
+
+            if(userLocation.longitude == null && userLocation.latitude == null){
+                _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
+                return@coroutineScope
+            }
+
+
 
             uploadProfile(location = userLocation, onSuccess = onSuccess)
 

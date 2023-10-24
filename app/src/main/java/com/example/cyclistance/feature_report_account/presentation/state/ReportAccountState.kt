@@ -11,5 +11,6 @@ data class ReportAccountState(
     val reportedPhoto: String = "",
     val reportedId: String = "",
     val userId : String = "",
+    val lastReportedId: String? = null,
 
 ):Parcelable
