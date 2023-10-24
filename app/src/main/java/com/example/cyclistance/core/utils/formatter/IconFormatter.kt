@@ -21,7 +21,7 @@ object IconFormatter {
     }
 
 
-    fun String.rescueDescriptionToIcon(): Int {
+    fun String.rescueDescriptionToIcon(): Int? {
         return when (this) {
             MappingConstants.INJURY_TEXT -> R.drawable.ic_injury
             MappingConstants.BROKEN_FRAME_TEXT -> R.drawable.ic_broken_frame
@@ -29,11 +29,11 @@ object IconFormatter {
             MappingConstants.BROKEN_CHAIN_TEXT -> R.drawable.ic_broken_chain
             MappingConstants.FLAT_TIRES_TEXT -> R.drawable.ic_flat_tire
             MappingConstants.FAULTY_BRAKES_TEXT -> R.drawable.ic_faulty_brakes
-            else -> throw RuntimeException("No icon found for $this")
+            else -> null
         }
     }
 
-     fun String.getMapIconImage(): Int {
+     fun String.getMapIconImage(): Int? {
         return when (this) {
             MappingConstants.INJURY_TEXT -> R.drawable.ic_injury_em
             MappingConstants.BROKEN_FRAME_TEXT -> R.drawable.ic_broken_frame_em
@@ -41,7 +41,8 @@ object IconFormatter {
             MappingConstants.BROKEN_CHAIN_TEXT -> R.drawable.ic_broken_chain_em
             MappingConstants.FLAT_TIRES_TEXT -> R.drawable.ic_flat_tire_em
             MappingConstants.FAULTY_BRAKES_TEXT -> R.drawable.ic_faulty_brakes_em
-            else -> throw RuntimeException("No icon found for $this")
+            else -> null
+
         }
     }
 
@@ -54,7 +55,7 @@ object IconFormatter {
 
 
     fun String.getNearbyCyclistImage(context: Context): Drawable? {
-        return this.getMapIconImage().let { image ->
+        return this.getMapIconImage()?.let { image ->
              AppCompatResources.getDrawable(context, image)
         }
     }

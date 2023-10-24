@@ -23,13 +23,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.R
 import com.example.cyclistance.theme.Black500
 
 
 @Composable
 internal fun RescueDescription(
     modifier: Modifier = Modifier,
-    iconDescription: Int,
+    iconDescription: Int?,
     textDescription: String,
     bikeType: String) {
 
@@ -59,7 +60,8 @@ internal fun RescueDescription(
             ) {
 
                 Icon(
-                    painter = painterResource(id = iconDescription),
+                    painter = painterResource(
+                        id = iconDescription ?: R.drawable.not_available_circle_svgrepo_com),
                     contentDescription = "Description Icon",
                     tint = MaterialTheme.colors.onBackground,
                     modifier = Modifier.size(43.dp)
