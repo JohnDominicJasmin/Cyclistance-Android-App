@@ -1102,7 +1102,7 @@ fun MappingScreen(
     }
     LaunchedEffect(key1 = true) {
 
-        mappingViewModel.eventFlow.collect { event ->
+        mappingViewModel.eventFlow.collectLatest { event ->
             when (event) {
 
                 is MappingEvent.RequestHelpSuccess -> {
@@ -1332,16 +1332,6 @@ fun MappingScreen(
     }
 
 
-
-    LaunchedEffect(key1 = hasInternetConnection) {
-
-
-        if (hasInternetConnection.not()) {
-            return@LaunchedEffect
-        }
-
-        mappingViewModel.onEvent(MappingVmEvent.SubscribeToDataChanges)
-    }
 
 
     LaunchedEffect(
