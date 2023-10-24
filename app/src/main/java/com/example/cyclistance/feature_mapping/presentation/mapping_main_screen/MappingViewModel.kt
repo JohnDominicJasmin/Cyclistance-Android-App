@@ -1081,10 +1081,18 @@ class MappingViewModel @Inject constructor(
         coroutineScope {
             val userLocation = state.value.userLocation
 
+
             if (userLocation == null) {
                 _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
                 return@coroutineScope
             }
+
+            if(userLocation.longitude == null && userLocation.latitude == null){
+                _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
+                return@coroutineScope
+            }
+
+
 
             uploadProfile(location = userLocation, onSuccess = onSuccess)
 
