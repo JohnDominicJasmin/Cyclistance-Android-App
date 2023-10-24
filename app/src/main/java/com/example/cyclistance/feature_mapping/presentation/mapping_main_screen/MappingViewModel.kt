@@ -522,7 +522,7 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             runCatching {
                 rescueRecordUseCase.rescueDetailsUseCase(details = trackingHandler.getRideDetails())
-                if (role == Role.Rescuer.name) {
+                if (role == Role.Rescuee.name) {
                     rescueRecordUseCase.addRescueRecordUseCase(rideDetails = trackingHandler.getRideDetails())
                 }
             }.onSuccess {
