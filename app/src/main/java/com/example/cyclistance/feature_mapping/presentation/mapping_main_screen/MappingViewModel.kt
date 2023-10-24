@@ -545,6 +545,7 @@ class MappingViewModel @Inject constructor(
             }.onSuccess {
                 _eventFlow.emit(value = MappingEvent.CancelRespondSuccess)
                 broadcastToNearbyCyclists()
+                _state.update { it.copy(respondedToHelp = false) }
             }.onFailure {
                 it.handleException()
             }.also {
