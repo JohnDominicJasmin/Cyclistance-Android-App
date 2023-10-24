@@ -206,6 +206,9 @@ fun MappingMapsScreen(
     }
 
     fun observeNearbyCyclistsIcon(){
+        val userLocation = state.userLocation
+
+
         if (state.mapType in dismissibleNearbyUserMapTypes) {
             return
         }
@@ -218,7 +221,15 @@ fun MappingMapsScreen(
             return
         }
 
-        if(state.userLocation == null){
+        if(userLocation == null){
+            return
+        }
+
+        if(userLocation.latitude == null){
+            return
+        }
+
+        if (userLocation.longitude == null){
             return
         }
 
