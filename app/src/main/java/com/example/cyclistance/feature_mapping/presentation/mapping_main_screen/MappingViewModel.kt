@@ -134,7 +134,7 @@ class MappingViewModel @Inject constructor(
                     Timber.v("Error getting map type: ${it.message}")
                 }.onEach { mapType ->
                     _state.update { it.copy(mapType = mapType) }
-                }.launchIn(viewModelScope)
+                }.launchIn(this)
 
         }
     }
@@ -299,24 +299,24 @@ class MappingViewModel @Inject constructor(
 
     private fun respondToHelp(selectedRescuee: MapSelectedRescuee) {
         viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {
-            runCatching {
                 uploadUserProfile(onSuccess = {
-                    viewModelScope.launch(context = defaultDispatcher) {
-                        mappingUseCase.addRescueRespondentUseCase(
-                            userId = selectedRescuee.userId,
-                            respondentId = getId()
-                        )
+                    viewModelScope.launch(this.coroutineContext) {
+                        runCatching {
+                            mappingUseCase.addRescueRespondentUseCase(
+                                userId = selectedRescuee.userId,
+                                respondentId = getId()
+                            )
+                        }.onSuccess {
+                            broadcastToNearbyCyclists()
+                            broadcastRescueTransaction()
+                            _state.update { it.copy(respondedToHelp = true) }
+                            _eventFlow.emit(value = MappingEvent.RespondToHelpSuccess())
+
+                        }.onFailure {
+                            it.handleException()
+                        }
                     }
                 })
-            }.onSuccess {
-                _eventFlow.emit(value = MappingEvent.RespondToHelpSuccess())
-                broadcastToNearbyCyclists()
-                broadcastRescueTransaction()
-                _state.update { it.copy(respondedToHelp = true) }
-            }.onFailure {
-                it.handleException()
-            }
-
         }
     }
 
