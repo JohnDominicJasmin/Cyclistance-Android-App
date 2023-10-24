@@ -14,10 +14,16 @@ import com.example.cyclistance.feature_report_account.presentation.event.ReportA
 import com.example.cyclistance.feature_report_account.presentation.event.ReportAccountVmEvent
 import com.example.cyclistance.feature_report_account.presentation.state.ReportAccountState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import javax.inject.Inject
@@ -36,15 +42,27 @@ class ReportAccountViewModel @Inject constructor(
         userId = getId()
     ))
 
-
     val state = _state.asStateFlow()
 
     private val _eventFlow = MutableSharedFlow<ReportAccountEvent>()
     val eventFlow = _eventFlow.asSharedFlow()
 
     init {
-        Timber.v("Name ${state.value.reportedName} | Photo ${state.value.reportedPhoto} | Id ${state.value.reportedId}")
+        getLastReportedId()
     }
+
+    private fun getLastReportedId() {
+        viewModelScope.launch(SupervisorJob() + Dispatchers.IO) {
+            reportAccountUseCase.lastReportIdUseCase().catch {
+                Timber.v("Failed to get last reported id ${it.message}")
+            }.onEach { lastReportedId ->
+                _state.update { it.copy(lastReportedId = lastReportedId) }
+            }.launchIn(this)
+        }
+    }
+
+
+
     fun onEvent(event: ReportAccountVmEvent){
         when(event){
             is ReportAccountVmEvent.ReportAccount -> reportAccount(event.reportAccountDetails)
@@ -53,11 +71,12 @@ class ReportAccountViewModel @Inject constructor(
     }
 
     private fun reportAccount(reportAccountDetails: ReportAccountDetails){
-        viewModelScope.launch {
+        viewModelScope.launch(SupervisorJob() + Dispatchers.IO){
             runCatching {
                 reportAccountUseCase.reportUseCase(reportAccountDetails)
             }.onSuccess {
                 _eventFlow.emit(value = ReportAccountEvent.ReportAccountSuccess)
+                reportAccountUseCase.lastReportIdUseCase(lastReportedId = reportAccountDetails.userId)
             }.onFailure {
                 _eventFlow.emit(value = ReportAccountEvent.ReportAccountFailed(reason = it.message ?: "Failed to report account"))
             }
