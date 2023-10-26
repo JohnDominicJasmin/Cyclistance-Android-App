@@ -149,7 +149,7 @@ class TrackingStateHandler(
                 startingAddress = startingAddress!!,
                 destinationAddress = destinationAddress!!,
                 duration = durationTime,
-                distance = speedometerState.travelledDistance,
+                distance = speedometerState.travelledDistance.formatToDistanceKm(),
                 maxSpeed = String.format("%.2fkm/h", speedometerState.topSpeed)
             )
         )
@@ -362,7 +362,7 @@ class TrackingStateHandler(
         state.update { it.copy(speedometerState = it.speedometerState.copy(currentSpeedKph = currentSpeedKph)) }
     }
 
-    fun setTravelledDistance(distance: String){
+    fun setTravelledDistance(distance: Double){
 
         state.update { it.copy(speedometerState = it.speedometerState.copy(travelledDistance = distance)) }
     }
