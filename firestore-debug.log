@@ -1,5 +1,5 @@
-Oct 26, 2023 9:08:07 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
-INFO: Started WebSocket server on ws://0.0.0.0:35861
+Oct 26, 2023 11:11:37 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
+INFO: Started WebSocket server on ws://0.0.0.0:42435
 API endpoint: http://0.0.0.0:9299
 If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
 
@@ -7,57 +7,75 @@ If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment
 
 Dev App Server is now running.
 
-Oct 26, 2023 9:08:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:11:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:09:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:13:59 AM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException
+WARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:394)
+	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:426)
+	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)
+	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)
+	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:151)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:986)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+
+Oct 26, 2023 11:13:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:10:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:17:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:13:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:25:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:16:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:26:13 AM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException
+WARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
+java.net.SocketException: Connection reset
+	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:394)
+	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:426)
+	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)
+	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)
+	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)
+	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:151)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658)
+	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584)
+	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496)
+	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:986)
+	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
+	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
+	at java.base/java.lang.Thread.run(Thread.java:833)
+
+Oct 26, 2023 11:35:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:19:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:35:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:20:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:36:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:22:50 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:36:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:24:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:39:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:27:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:39:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:31:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:40:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:33:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:40:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:34:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:41:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:36:29 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:42:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:39:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:44:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:41:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:45:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:41:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:52:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:43:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
-INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:46:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
-INFO: Detected HTTP/2 connection.
-Oct 26, 2023 9:54:59 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
-INFO: Detected HTTP/2 connection.
-Oct 26, 2023 10:09:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
-INFO: Detected HTTP/2 connection.
-Oct 26, 2023 10:11:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
-INFO: Detected HTTP/2 connection.
-Oct 26, 2023 10:14:45 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
-INFO: Detected HTTP/2 connection.
-Oct 26, 2023 10:21:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
-INFO: Detected HTTP/2 connection.
-Oct 26, 2023 10:22:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
-INFO: Detected HTTP/2 connection.
-Oct 26, 2023 10:25:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
-INFO: Detected HTTP/2 connection.
-Oct 26, 2023 10:33:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+Oct 26, 2023 11:53:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
 INFO: Detected HTTP/2 connection.
