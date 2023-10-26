@@ -73,10 +73,7 @@ class MappingViewModel @Inject constructor(
 ) : ViewModel() {
 
 
-    private var getUsersUpdatesJob: Job? = null
     private var locationUpdatesJob: Job? = null
-    private var getRescueTransactionUpdatesJob: Job? = null
-    private var getTransactionLocationUpdatesJob: Job? = null
     private var trackingHandler: TrackingStateHandler
 
     private val _state: MutableStateFlow<MappingState> = MutableStateFlow(
@@ -119,7 +116,7 @@ class MappingViewModel @Inject constructor(
 
     private fun observeDataChanges() {
         subscribeToLocationUpdates()
-        subscribeToNearbyUsersChanges()
+        subscribeToNearbyUsersUpdates()
         subscribeToRescueTransactionUpdates()
         subscribeToTransactionLocationUpdates()
         subscribeToBottomSheetTypeUpdates()
@@ -182,7 +179,7 @@ class MappingViewModel @Inject constructor(
     private fun loadData() {
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             // TODO: Remove when the backend is ready
-//            createMockUpUsers()
+            createMockUpUsers()
             trackingHandler.updateClient()
 
         }
@@ -412,6 +409,9 @@ class MappingViewModel @Inject constructor(
                 uploadUserProfile(onSuccess = {
                     viewModelScope.launch(context = defaultDispatcher) {
                         _eventFlow.emit(MappingEvent.RequestHelpSuccess)
+                        subscribeToNearbyUsersUpdates()
+                        subscribeToRescueTransactionUpdates()
+                        subscribeToTransactionLocationUpdates()
                     }
                 })
             }.onFailure {
@@ -424,10 +424,6 @@ class MappingViewModel @Inject constructor(
 
     fun onEvent(event: MappingVmEvent) {
         when (event) {
-
-            is MappingVmEvent.SubscribeToDataChanges -> {
-                observeDataChanges()
-            }
 
 
             is MappingVmEvent.GetRouteDirections -> {
@@ -709,10 +705,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun subscribeToTransactionLocationUpdates() {
-        if (getTransactionLocationUpdatesJob?.isActive == true) {
-            return
-        }
-        getTransactionLocationUpdatesJob =
+
             viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
                 mappingUseCase.transactionLocationUseCase().distinctUntilChanged().catch {
                     Timber.e("ERROR GETTING TRANSACTION LOCATION: ${it.message}")
@@ -969,9 +962,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun unSubscribeToTransactionLocationUpdates() {
-        getTransactionLocationUpdatesJob?.cancel()
-    }
+
 
     private fun removeHazardousLaneListener() {
         mappingUseCase.removeHazardousListenerUseCase()
@@ -979,10 +970,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun subscribeToRescueTransactionUpdates() {
-        if (getRescueTransactionUpdatesJob?.isActive == true) {
-            return
-        }
-        getRescueTransactionUpdatesJob =
+
             viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
                 mappingUseCase.getRescueTransactionUpdatesUseCase().catch {
@@ -1010,14 +998,6 @@ class MappingViewModel @Inject constructor(
         _state.update { it.copy(rescueTransaction = rescueTransaction) }
     }
 
-
-    private fun unSubscribeToRescueTransactionUpdates() {
-        getRescueTransactionUpdatesJob?.cancel()
-    }
-
-    private fun unSubscribeToNearbyUsersChanges() {
-        getUsersUpdatesJob?.cancel()
-    }
 
     private fun subscribeToLocationUpdates() {
         if (locationUpdatesJob?.isActive == true) {
@@ -1053,12 +1033,8 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun subscribeToNearbyUsersChanges() {
-        if (getUsersUpdatesJob?.isActive == true) {
-            return
-        }
-
-        getUsersUpdatesJob = viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
+    private fun subscribeToNearbyUsersUpdates() {
+      viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
             mappingUseCase.nearbyCyclistsUseCase().catch {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
@@ -1183,9 +1159,6 @@ class MappingViewModel @Inject constructor(
         super.onCleared()
         removeBottomSheet()
         unSubscribeToLocationUpdates()
-        unSubscribeToNearbyUsersChanges()
-        unSubscribeToRescueTransactionUpdates()
-        unSubscribeToTransactionLocationUpdates()
         removeHazardousLaneListener()
 
 
