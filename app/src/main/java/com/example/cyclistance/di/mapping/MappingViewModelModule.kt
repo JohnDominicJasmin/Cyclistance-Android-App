@@ -25,6 +25,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transactio
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.RescueFinishUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDirectionsUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.user.AddRescueRespondentUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.user.CancelHelpRespondUseCase
@@ -109,7 +110,8 @@ object MappingViewModelModule {
                 notificationBuilder = requestAcceptedNotification
             ),
             cancelHelpRespondUseCase = CancelHelpRespondUseCase(mappingRepository),
-            intentActionUseCase = IntentActionUseCase(mappingUiStoreRepository)
+            intentActionUseCase = IntentActionUseCase(mappingUiStoreRepository),
+            rescueFinishUseCase = RescueFinishUseCase(mappingRepository)
         )
 
     }

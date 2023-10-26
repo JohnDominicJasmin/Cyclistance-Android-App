@@ -495,7 +495,7 @@ fun MappingScreen(
 
     val isRescueCancelled =
         remember(state.rescueTransaction) {
-            (state.rescueTransaction?.cancellation)?.rescueCancelled == true
+            state.rescueTransaction?.isRescueCancelled() ?: false
         }
 
     fun getConversationSelectedId(): String? {
@@ -528,7 +528,7 @@ fun MappingScreen(
         }
     }
 
-    val destinationReached = remember {
+    val confirmedDestinationArrived = remember {
         {
             mappingViewModel.onEvent(event = MappingVmEvent.DestinationArrived)
         }
@@ -983,6 +983,9 @@ fun MappingScreen(
         }
     }
 
+    val arrivedAtLocation = remember{{
+        mappingViewModel.onEvent(event = MappingVmEvent.ArrivedAtLocation)
+    }}
 
 
 
@@ -1068,23 +1071,39 @@ fun MappingScreen(
                     noInternetDialogVisibility(true)
                 }
 
-                is MappingEvent.DestinationReached -> {
-                    Timber.v("Destination Reached")
-                    val role = state.user.transaction?.role
-                    val type = if (role == Role.Rescuee.name) {
-                        BottomSheetType.RescuerArrived.type
-                    } else {
-                        BottomSheetType.DestinationReached.type
-                    }
-                    uiState = uiState.copy(bottomSheetType = type).also {
-                        expandBottomSheet()
-                    }
-                }
-
                 else -> {}
             }
         }
     }
+
+    LaunchedEffect(key1 = state.rescueTransaction?.status ){
+        val rescueTransaction = state.rescueTransaction
+        val isRescueFinished = rescueTransaction?.isRescueFinished() ?: false
+        val isRescueOnGoing = rescueTransaction?.isRescueOnGoing() ?: false
+
+        if(rescueTransaction == null){
+            return@LaunchedEffect
+        }
+
+        if(isRescueOnGoing){
+            return@LaunchedEffect
+        }
+
+        if(!isRescueFinished){
+            return@LaunchedEffect
+        }
+
+        val role = state.user.transaction?.role
+        val type = if (role == Role.Rescuee.name) {
+            BottomSheetType.RescuerArrived.type
+        } else {
+            BottomSheetType.DestinationReached.type
+        }
+        uiState = uiState.copy(bottomSheetType = type).also {
+            expandBottomSheet()
+        }
+    }
+
     LaunchedEffect(key1 = hasTransaction) {
         uiState = uiState.copy(
             hasTransaction = hasTransaction
@@ -1433,7 +1452,7 @@ fun MappingScreen(
                 is MappingUiEvent.RecenterRoute -> recenterRoute()
                 is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
-                is MappingUiEvent.DestinationArrived -> destinationReached()
+                is MappingUiEvent.ConfirmedDestinationArrived -> confirmedDestinationArrived()
                 is MappingUiEvent.LocationPermission -> locationPermissionDialogVisibility(event.visibility)
                 is MappingUiEvent.ExpandableFab -> expandableFab(event.expanded)
                 is MappingUiEvent.EmergencyCallDialog -> emergencyCallDialogVisibility(event.visibility)
@@ -1488,6 +1507,7 @@ fun MappingScreen(
 
                 is MappingUiEvent.ViewProfile -> viewProfile(event.id)
                 MappingUiEvent.CancelRespondHelp -> cancelRespondToHelp()
+                MappingUiEvent.ArrivedAtLocation -> arrivedAtLocation()
             }
         }
     )

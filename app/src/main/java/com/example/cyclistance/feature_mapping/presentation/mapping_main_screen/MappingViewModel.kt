@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_RADIUS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
-import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
 import com.example.cyclistance.core.utils.formatter.FormatterUtils
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.isLocationAvailable
@@ -41,6 +40,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
@@ -178,8 +178,7 @@ class MappingViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
-            // TODO: Remove when the backend is ready
-            createMockUpUsers()
+//            createMockUpUsers()
             trackingHandler.updateClient()
 
         }
@@ -200,12 +199,13 @@ class MappingViewModel @Inject constructor(
                 coroutineScope {
                     runCatching {
                         isLoading(true)
-                        trackingHandler.getAcceptedRescueRequestItem(
+
+                        mappingUseCase.acceptRescueRequestUseCase(
                             transactionId = transactionId,
-                            rescuer = rescuer
-                        ).apply {
-                            mappingUseCase.acceptRescueRequestUseCase(rescueTransaction = this)
-                        }
+                            rescuer = rescuer,
+                            user = state.value.user
+                        )
+
 
                     }.onSuccess { rescueTransaction ->
                         broadcastRescueTransaction()
@@ -296,24 +296,24 @@ class MappingViewModel @Inject constructor(
 
     private fun respondToHelp(selectedRescuee: MapSelectedRescuee) {
         viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {
-                uploadUserProfile(onSuccess = {
-                    viewModelScope.launch(this.coroutineContext) {
-                        runCatching {
-                            mappingUseCase.addRescueRespondentUseCase(
-                                userId = selectedRescuee.userId,
-                                respondentId = getId()
-                            )
-                        }.onSuccess {
-                            broadcastToNearbyCyclists()
-                            broadcastRescueTransaction()
-                            _state.update { it.copy(respondedToHelp = true) }
-                            _eventFlow.emit(value = MappingEvent.RespondToHelpSuccess())
+            uploadUserProfile(onSuccess = {
+                viewModelScope.launch(this.coroutineContext) {
+                    runCatching {
+                        mappingUseCase.addRescueRespondentUseCase(
+                            userId = selectedRescuee.userId,
+                            respondentId = getId()
+                        )
+                    }.onSuccess {
+                        broadcastToNearbyCyclists()
+                        broadcastRescueTransaction()
+                        _state.update { it.copy(respondedToHelp = true) }
+                        _eventFlow.emit(value = MappingEvent.RespondToHelpSuccess())
 
-                        }.onFailure {
-                            it.handleException()
-                        }
+                    }.onFailure {
+                        it.handleException()
                     }
-                })
+                }
+            })
         }
     }
 
@@ -508,10 +508,28 @@ class MappingViewModel @Inject constructor(
                 clearTravelledPath()
             }
 
+            MappingVmEvent.ArrivedAtLocation -> {
+                arrivedAtLocation()
+            }
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
+
+    private fun arrivedAtLocation(){
+        viewModelScope.launch(Dispatchers.IO){
+            runCatching {
+                val transactionId = state.value.getTransactionId()
+                mappingUseCase.rescueFinishUseCase(transactionId = transactionId)
+            }.onSuccess {
+                Timber.v("Successfully finished rescue transaction")
+                broadcastRescueTransaction()
+            }.onFailure {
+                Timber.e("Failed to finish rescue transaction ${it.message}")
+                it.handleException()
+            }
+        }
+    }
 
     private fun rescuerArrived() {
         val role = state.value.user.getRole()
@@ -706,46 +724,17 @@ class MappingViewModel @Inject constructor(
 
     private fun subscribeToTransactionLocationUpdates() {
 
-            viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
-                mappingUseCase.transactionLocationUseCase().distinctUntilChanged().catch {
-                    Timber.e("ERROR GETTING TRANSACTION LOCATION: ${it.message}")
-                }.onEach { liveLocation ->
-                    trackingHandler.updateTransactionLocation(location = liveLocation)
-                    liveLocation.updateTransactionETA()
-                    liveLocation.updateTransactionDistance()
-                }.launchIn(this@launch)
+        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
+            mappingUseCase.transactionLocationUseCase().distinctUntilChanged().catch {
+                Timber.e("ERROR GETTING TRANSACTION LOCATION: ${it.message}")
+            }.onEach { liveLocation ->
+                trackingHandler.updateTransactionLocation(location = liveLocation)
+                liveLocation.updateTransactionETA()
+            }.launchIn(this@launch)
 
-            }
-    }
-
-    private suspend fun LiveLocationSocketModel.updateTransactionDistance() {
-        coroutineScope {
-            val transaction = state.value.user.transaction
-            val rescueLocation = state.value.userLocation
-
-
-            if (transaction?.transactionId?.isEmpty() == true) {
-                return@coroutineScope
-            }
-
-            latitude ?: return@coroutineScope
-            longitude ?: return@coroutineScope
-
-            rescueLocation?.let { location ->
-
-                val distance = mappingUseCase.getCalculatedDistanceUseCase(
-                    startingLocation = LocationModel(latitude, longitude),
-                    destinationLocation = LocationModel(location.latitude, location.longitude)
-                ).toInt()
-
-
-                if (distance <= NEAREST_METERS) {
-                    _eventFlow.emit(value = MappingEvent.DestinationReached)
-                }
-
-            }
         }
     }
+
 
 
     private fun LiveLocationSocketModel.updateTransactionETA() {
@@ -767,7 +756,7 @@ class MappingViewModel @Inject constructor(
                 longitude = this.longitude
             ),
             destinationLocation = userLocation)
-        _state.update { it.copy(rescueETA = eta, rescueDistance = distance.formatToDistanceKm()) }
+        _state.update { it.copy(rescueETA = eta, rescueDistance = distance) }
     }
 
     private fun getETABetweenTwoPoints(
@@ -828,7 +817,7 @@ class MappingViewModel @Inject constructor(
             it.copy(
                 rescueTransaction = rescueTransaction,
                 rescueETA = estimatedTimeArrival ?: "",
-                rescueDistance = distance?.formatToDistanceKm() ?: "",
+                rescueDistance = distance ?: 0.0,
                 rescuer = rescuer
             )
         }
@@ -971,25 +960,25 @@ class MappingViewModel @Inject constructor(
 
     private fun subscribeToRescueTransactionUpdates() {
 
-            viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
+        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
-                mappingUseCase.getRescueTransactionUpdatesUseCase().catch {
-                    Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
+            mappingUseCase.getRescueTransactionUpdatesUseCase().catch {
+                Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
 
-                }.onEach { rescueTransactions ->
-                    rescueTransactions.updateCurrentRescueTransaction()
+            }.onEach { rescueTransactions ->
+                rescueTransactions.updateCurrentRescueTransaction()
 
-                    trackingHandler.filterRescueRequestAccepted(
-                        rescueTransaction = rescueTransactions,
-                        id = getId()
-                    )
+                trackingHandler.filterRescueRequestAccepted(
+                    rescueTransaction = rescueTransactions,
+                    id = getId()
+                )
 
-                    trackingHandler.updateClient()
-                }.launchIn(this@launch).invokeOnCompletion {
-                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                }
-
+                trackingHandler.updateClient()
+            }.launchIn(this@launch).invokeOnCompletion {
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }
+
+        }
     }
 
 
@@ -1023,18 +1012,23 @@ class MappingViewModel @Inject constructor(
 
     private fun updateSpeedometer(location: LocationModel) {
         val isUserRescuer = state.value.user.isRescuer()
-        if (isUserRescuer) {
-            trackingHandler.setSpeed(location.speed)
-            trackingHandler.getTopSpeed(location.speed)
-            travelledPath.add(element = GoogleLatLng(location.latitude!!, location.longitude!!))
-            val distance = SphericalUtil.computeLength(travelledPath).formatToDistanceKm()
-            trackingHandler.setTravelledDistance(distance)
+        if (!isUserRescuer) {
+            return
         }
+
+        val distance = SphericalUtil.computeLength(travelledPath)
+
+
+        trackingHandler.setSpeed(location.speed)
+        trackingHandler.getTopSpeed(location.speed)
+        travelledPath.add(element = GoogleLatLng(location.latitude!!, location.longitude!!))
+
+        trackingHandler.setTravelledDistance(distance)
     }
 
 
     private fun subscribeToNearbyUsersUpdates() {
-      viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
+        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
             mappingUseCase.nearbyCyclistsUseCase().catch {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
@@ -1089,15 +1083,16 @@ class MappingViewModel @Inject constructor(
             return
         }
 
-        val fullAddress = mappingUseCase.getFullAddressUseCase(
-            latitude = location.latitude,
-            longitude = location.longitude
-        )
-
         coroutineScope {
 
             runCatching {
                 isLoading(true)
+
+                val fullAddress = mappingUseCase.getFullAddressUseCase(
+                    latitude = location.latitude,
+                    longitude = location.longitude
+                )
+
                 fullAddress?.let { mappingUseCase.addressUseCase(it) }
                 mappingUseCase.createUserUseCase(
                     user = UserItem(

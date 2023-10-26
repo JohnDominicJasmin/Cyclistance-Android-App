@@ -77,7 +77,7 @@ class RescueResultViewModel @Inject constructor(
             }.onFailure {
                 _eventFlow.emit(value = RescueResultEvent.RatingFailed(message = it.message!!))
             }
-
+            saveState()
         }
     }
     private fun ratingToDescription(rating: Float): String {

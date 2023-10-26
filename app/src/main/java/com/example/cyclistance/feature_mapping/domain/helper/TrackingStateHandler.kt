@@ -11,8 +11,6 @@ import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteModel
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.StatusModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.TransactionModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
@@ -70,7 +68,7 @@ class TrackingStateHandler(
                 rescuer = null,
                 newRescueRequest = NewRescueRequestsModel(),
 
-            )
+                )
         }
     }
 
@@ -149,21 +147,21 @@ class TrackingStateHandler(
                 startingAddress = startingAddress!!,
                 destinationAddress = destinationAddress!!,
                 duration = durationTime,
-                distance = speedometerState.travelledDistance,
+                distance = speedometerState.travelledDistance.formatToDistanceKm(),
                 maxSpeed = String.format("%.2fkm/h", speedometerState.topSpeed)
             )
         )
 
- }
+    }
 
     fun updateLocation(location: LocationModel) {
         val latitude = location.latitude ?: return
         val longitude = location.longitude ?: return
-     /*   state.update {
-            it.copy(
-                userLocation = LocationModel()
-            )
-        }*/
+        /*   state.update {
+               it.copy(
+                   userLocation = LocationModel()
+               )
+           }*/
         state.update {
             it.copy(
                 userLocation = LocationModel(
@@ -229,30 +227,7 @@ class TrackingStateHandler(
     }
 
 
-    fun getAcceptedRescueRequestItem(
-        transactionId: String,
-        rescuer: UserItem,
 
-    ): RescueTransactionItem {
-        val user = state.value.user
-        return RescueTransactionItem(
-            id = transactionId,
-            rescuerId = rescuer.id,
-            rescueeId = user.id,
-            status = StatusModel(started = true, onGoing = true),
-            route = RouteModel(
-                startingLocation = LocationModel(
-                    latitude = rescuer.location!!.latitude,
-                    longitude = rescuer.location.longitude
-                ),
-                destinationLocation = LocationModel(
-                    latitude = user.location!!.latitude,
-                    longitude = user.location.longitude
-                )
-            ),
-            startingMillis = Date().time
-        )
-    }
 
     fun getTransactionId(rescuer: UserItem): String {
         val user = state.value.user
@@ -362,7 +337,7 @@ class TrackingStateHandler(
         state.update { it.copy(speedometerState = it.speedometerState.copy(currentSpeedKph = currentSpeedKph)) }
     }
 
-    fun setTravelledDistance(distance: String){
+    fun setTravelledDistance(distance: Double){
 
         state.update { it.copy(speedometerState = it.speedometerState.copy(travelledDistance = distance)) }
     }

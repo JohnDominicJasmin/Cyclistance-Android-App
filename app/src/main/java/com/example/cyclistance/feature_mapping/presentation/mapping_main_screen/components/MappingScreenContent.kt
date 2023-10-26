@@ -462,10 +462,13 @@ fun MappingScreenContent(
                             ))
                     }
 
+                    val shouldShowAcceptedRescue =  uiState.isRescueCancelled.not() && state.rescueTransaction?.isRescueOnGoing() == true && uiState.rescueRequestAccepted
+
                     AnimatedVisibility(
-                        visible = uiState.rescueRequestAccepted && uiState.isRescueCancelled.not(),
+                        visible = shouldShowAcceptedRescue,
                         enter = fadeIn(),
                         exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
+
                         MappingRequestAccepted(
                             modifier = Modifier.fillMaxSize(),
                             onClickOkButton = { event(MappingUiEvent.RescueRequestAccepted) },
