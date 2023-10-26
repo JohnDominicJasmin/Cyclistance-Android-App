@@ -143,7 +143,7 @@ fun BottomSheetOnGoingRescue(
 
 
                 Text(
-                    text = onGoingRescueModel.estimatedDistance,
+                    text = onGoingRescueModel.estimatedDistance ?: ".....",
                     color = MaterialTheme.colors.onSurface,
                     style = MaterialTheme.typography.subtitle2,
                     modifier = Modifier

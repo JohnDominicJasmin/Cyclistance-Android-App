@@ -11,6 +11,6 @@ data class OnGoingRescueModel(
     val ridingDistance: String = "",
     val maxSpeed: String = "",
     val estimatedTime: String = "",
-    val estimatedDistance: String = "",
+    val estimatedDistance: String? = "",
 
     ) : Parcelable

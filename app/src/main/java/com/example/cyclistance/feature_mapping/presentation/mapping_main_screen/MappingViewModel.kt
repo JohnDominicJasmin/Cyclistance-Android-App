@@ -40,6 +40,7 @@ import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.coroutineScope
@@ -177,8 +178,7 @@ class MappingViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
-            // TODO: Remove when the backend is ready
-            createMockUpUsers()
+//            createMockUpUsers()
             trackingHandler.updateClient()
 
         }
@@ -199,12 +199,13 @@ class MappingViewModel @Inject constructor(
                 coroutineScope {
                     runCatching {
                         isLoading(true)
-                        trackingHandler.getAcceptedRescueRequestItem(
+
+                        mappingUseCase.acceptRescueRequestUseCase(
                             transactionId = transactionId,
-                            rescuer = rescuer
-                        ).apply {
-                            mappingUseCase.acceptRescueRequestUseCase(rescueTransaction = this)
-                        }
+                            rescuer = rescuer,
+                            user = state.value.user
+                        )
+
 
                     }.onSuccess { rescueTransaction ->
                         broadcastRescueTransaction()
@@ -295,24 +296,24 @@ class MappingViewModel @Inject constructor(
 
     private fun respondToHelp(selectedRescuee: MapSelectedRescuee) {
         viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {
-                uploadUserProfile(onSuccess = {
-                    viewModelScope.launch(this.coroutineContext) {
-                        runCatching {
-                            mappingUseCase.addRescueRespondentUseCase(
-                                userId = selectedRescuee.userId,
-                                respondentId = getId()
-                            )
-                        }.onSuccess {
-                            broadcastToNearbyCyclists()
-                            broadcastRescueTransaction()
-                            _state.update { it.copy(respondedToHelp = true) }
-                            _eventFlow.emit(value = MappingEvent.RespondToHelpSuccess())
+            uploadUserProfile(onSuccess = {
+                viewModelScope.launch(this.coroutineContext) {
+                    runCatching {
+                        mappingUseCase.addRescueRespondentUseCase(
+                            userId = selectedRescuee.userId,
+                            respondentId = getId()
+                        )
+                    }.onSuccess {
+                        broadcastToNearbyCyclists()
+                        broadcastRescueTransaction()
+                        _state.update { it.copy(respondedToHelp = true) }
+                        _eventFlow.emit(value = MappingEvent.RespondToHelpSuccess())
 
-                        }.onFailure {
-                            it.handleException()
-                        }
+                    }.onFailure {
+                        it.handleException()
                     }
-                })
+                }
+            })
         }
     }
 
@@ -507,10 +508,28 @@ class MappingViewModel @Inject constructor(
                 clearTravelledPath()
             }
 
+            MappingVmEvent.ArrivedAtLocation -> {
+                arrivedAtLocation()
+            }
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
 
+
+    private fun arrivedAtLocation(){
+        viewModelScope.launch(Dispatchers.IO){
+            runCatching {
+                val transactionId = state.value.getTransactionId()
+                mappingUseCase.rescueFinishUseCase(transactionId = transactionId)
+            }.onSuccess {
+                Timber.v("Successfully finished rescue transaction")
+                broadcastRescueTransaction()
+            }.onFailure {
+                Timber.e("Failed to finish rescue transaction ${it.message}")
+                it.handleException()
+            }
+        }
+    }
 
     private fun rescuerArrived() {
         val role = state.value.user.getRole()
@@ -705,15 +724,15 @@ class MappingViewModel @Inject constructor(
 
     private fun subscribeToTransactionLocationUpdates() {
 
-            viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
-                mappingUseCase.transactionLocationUseCase().distinctUntilChanged().catch {
-                    Timber.e("ERROR GETTING TRANSACTION LOCATION: ${it.message}")
-                }.onEach { liveLocation ->
-                    trackingHandler.updateTransactionLocation(location = liveLocation)
-                    liveLocation.updateTransactionETA()
-                }.launchIn(this@launch)
+        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
+            mappingUseCase.transactionLocationUseCase().distinctUntilChanged().catch {
+                Timber.e("ERROR GETTING TRANSACTION LOCATION: ${it.message}")
+            }.onEach { liveLocation ->
+                trackingHandler.updateTransactionLocation(location = liveLocation)
+                liveLocation.updateTransactionETA()
+            }.launchIn(this@launch)
 
-            }
+        }
     }
 
 
@@ -941,25 +960,25 @@ class MappingViewModel @Inject constructor(
 
     private fun subscribeToRescueTransactionUpdates() {
 
-            viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
+        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
-                mappingUseCase.getRescueTransactionUpdatesUseCase().catch {
-                    Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
+            mappingUseCase.getRescueTransactionUpdatesUseCase().catch {
+                Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
 
-                }.onEach { rescueTransactions ->
-                    rescueTransactions.updateCurrentRescueTransaction()
+            }.onEach { rescueTransactions ->
+                rescueTransactions.updateCurrentRescueTransaction()
 
-                    trackingHandler.filterRescueRequestAccepted(
-                        rescueTransaction = rescueTransactions,
-                        id = getId()
-                    )
+                trackingHandler.filterRescueRequestAccepted(
+                    rescueTransaction = rescueTransactions,
+                    id = getId()
+                )
 
-                    trackingHandler.updateClient()
-                }.launchIn(this@launch).invokeOnCompletion {
-                    savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
-                }
-
+                trackingHandler.updateClient()
+            }.launchIn(this@launch).invokeOnCompletion {
+                savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
             }
+
+        }
     }
 
 
@@ -1009,7 +1028,7 @@ class MappingViewModel @Inject constructor(
 
 
     private fun subscribeToNearbyUsersUpdates() {
-      viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
+        viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
             mappingUseCase.nearbyCyclistsUseCase().catch {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
@@ -1064,15 +1083,16 @@ class MappingViewModel @Inject constructor(
             return
         }
 
-        val fullAddress = mappingUseCase.getFullAddressUseCase(
-            latitude = location.latitude,
-            longitude = location.longitude
-        )
-
         coroutineScope {
 
             runCatching {
                 isLoading(true)
+
+                val fullAddress = mappingUseCase.getFullAddressUseCase(
+                    latitude = location.latitude,
+                    longitude = location.longitude
+                )
+
                 fullAddress?.let { mappingUseCase.addressUseCase(it) }
                 mappingUseCase.createUserUseCase(
                     user = UserItem(

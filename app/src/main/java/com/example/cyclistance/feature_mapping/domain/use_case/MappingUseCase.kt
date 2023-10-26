@@ -19,6 +19,7 @@ import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transactio
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.RescueFinishUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDirectionsUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.user.AddRescueRespondentUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.user.CancelHelpRespondUseCase
@@ -50,6 +51,7 @@ data class MappingUseCase(
     val acceptRescueRequestUseCase: AcceptRescueRequestUseCase,
     val deleteRescueTransactionUseCase: DeleteRescueTransactionUseCase,
     val confirmCancellationUseCase: ConfirmCancellationUseCase,
+    val rescueFinishUseCase: RescueFinishUseCase,
 
     val getUserLocationUseCase: GetUserLocationUseCase,
     val getFullAddressUseCase: GetFullAddressUseCase,

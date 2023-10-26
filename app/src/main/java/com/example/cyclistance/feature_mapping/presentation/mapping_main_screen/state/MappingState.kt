@@ -23,7 +23,7 @@ data class MappingState(
     val respondedToHelp: Boolean = false,
     val transactionLocation: LocationModel? = null,
     val rescueETA: String = "",
-    val rescueDistance: Double = 0.0,
+    val rescueDistance: Double? = null,
     val newRescueRequest: NewRescueRequestsModel? = null,
     val speedometerState: SpeedometerState = SpeedometerState(),
     val nearbyCyclist: NearbyCyclist? = null,

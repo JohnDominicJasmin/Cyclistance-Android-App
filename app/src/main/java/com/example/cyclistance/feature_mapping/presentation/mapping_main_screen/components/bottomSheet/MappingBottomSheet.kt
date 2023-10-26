@@ -55,7 +55,7 @@ fun MappingBottomSheet(
                         bottomSheetScaffoldState = bottomSheetScaffoldState,
                         modifier = modifier,
                         onClickOkButton = {
-                            event(MappingUiEvent.DestinationArrived)
+                            event(MappingUiEvent.ConfirmedDestinationArrived)
                         })
 
                 }
@@ -66,7 +66,7 @@ fun MappingBottomSheet(
                         bottomSheetScaffoldState = bottomSheetScaffoldState,
                         modifier = modifier,
                         onClickOkButton = {
-                            event(MappingUiEvent.DestinationArrived)
+                            event(MappingUiEvent.ConfirmedDestinationArrived)
                         })
 
                 }
@@ -104,7 +104,7 @@ fun MappingBottomSheet(
                 BottomSheetType.OnGoingRescue.type -> {
 
                     val shouldShowArrivedLocation = remember(state.rescueDistance){
-                        state.rescueDistance <= MappingConstants.DISTANCE_MIN
+                        state.rescueDistance != null && state.rescueDistance <= MappingConstants.DISTANCE_MIN
                     }
 
                     BottomSheetOnGoingRescue(
@@ -113,11 +113,11 @@ fun MappingBottomSheet(
                         onClickCallButton = { event(MappingUiEvent.EmergencyCallDialog(visibility = true)) },
                         onClickChatButton = { event(MappingUiEvent.ChatRescueTransaction) },
                         onClickCancelButton = { event(MappingUiEvent.CancelRescueTransaction) },
-                        onClickArrivedLocation = {  },
+                        onClickArrivedLocation = { event(MappingUiEvent.ArrivedAtLocation) },
                         role = state.user.transaction?.role ?: "",
                         onGoingRescueModel = OnGoingRescueModel(
                             estimatedTime = state.rescueETA,
-                            estimatedDistance = state.rescueDistance.formatToDistanceKm(),
+                            estimatedDistance = state.rescueDistance?.formatToDistanceKm(),
                             currentSpeed = String.format(
                                 "%.2f",
                                 state.speedometerState.currentSpeedKph),

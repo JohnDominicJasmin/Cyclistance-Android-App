@@ -33,7 +33,6 @@ sealed class MappingEvent{
     data object RescueHasTransaction: MappingEvent()
     data object UserHasCurrentTransaction: MappingEvent()
 
-    data object DestinationReached: MappingEvent()
     data object FailedToCalculateDistance: MappingEvent()
     data class RemoveRespondentFailed(val reason: String = "Failed to remove respondent"): MappingEvent()
 
