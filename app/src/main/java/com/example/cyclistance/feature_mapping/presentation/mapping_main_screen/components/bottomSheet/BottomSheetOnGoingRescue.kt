@@ -1,5 +1,8 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -15,11 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -37,8 +37,10 @@ fun BottomSheetOnGoingRescue(
     onClickCallButton: () -> Unit,
     onClickChatButton: () -> Unit,
     onClickCancelButton: () -> Unit,
+    onClickArrivedLocation: () -> Unit,
     role: String,
     onGoingRescueModel: OnGoingRescueModel,
+    shouldShowArrivedLocation: Boolean
 ) {
 
     val isRescuer = remember(role) {
@@ -59,7 +61,7 @@ fun BottomSheetOnGoingRescue(
             modifier = Modifier
                 .fillMaxWidth()) {
 
-            val (time, roundedButtonSection, distance, etaIcon, speedometer, grip) = createRefs()
+            val (time, roundedButtonSection, distance, etaIcon, speedometer, grip, arrivedButton) = createRefs()
 
             val etaAvailable by remember(onGoingRescueModel.estimatedTime) {
                 derivedStateOf {
@@ -158,16 +160,41 @@ fun BottomSheetOnGoingRescue(
 
 
             RoundButtonSection(
-                modifier = Modifier.constrainAs(roundedButtonSection) {
+                modifier = Modifier.padding(bottom = 8.dp).constrainAs(roundedButtonSection) {
                     val anchor = if (etaAvailable) etaIcon else time
-                    top.linkTo(anchor.bottom, margin = 6.dp)
+                    top.linkTo(anchor.bottom, margin = 10.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
-                    bottom.linkTo(parent.bottom, margin = 10.dp)
                 },
                 onClickCallButton = onClickCallButton,
                 onClickChatButton = onClickChatButton,
                 onClickCancelButton = onClickCancelButton)
+
+            AnimatedVisibility(
+                modifier = Modifier.constrainAs(arrivedButton) {
+                    top.linkTo(roundedButtonSection.bottom, margin = 4.dp)
+                    end.linkTo(parent.end)
+                    start.linkTo(parent.start)
+                    bottom.linkTo(parent.bottom, margin = 10.dp)
+                },
+                visible = isRescuer && shouldShowArrivedLocation,
+                enter = fadeIn(),
+                exit = fadeOut()) {
+
+                Button(
+                    onClick = onClickArrivedLocation,
+                    colors = ButtonDefaults.buttonColors(
+                        backgroundColor = MaterialTheme.colors.primary,
+                        contentColor = MaterialTheme.colors.onPrimary),
+                    modifier = Modifier, shape = RoundedCornerShape(8.dp)) {
+
+                    Text(
+                        text = "Arrived at the Location",
+                        modifier = Modifier.padding(horizontal = 12.dp))
+                }
+
+            }
+
 
 
         }
@@ -188,33 +215,13 @@ fun SpeedometerSection(
         horizontalAlignment = Alignment.CenterHorizontally) {
 
 
-        Text(
-            text = "Current Speed",
-            style = MaterialTheme.typography.subtitle2.copy(
-                fontWeight = FontWeight.Normal,
-                fontSize = MaterialTheme.typography.caption.fontSize),
-            color = MaterialTheme.colors.onSurface,
-            modifier = Modifier.padding(vertical = 1.dp))
-
-        Text(color = MaterialTheme.colors.onSurface, text = buildAnnotatedString {
-            withStyle(
-                style = SpanStyle(
-                    fontSize = MaterialTheme.typography.subtitle1.fontSize,
-                    fontWeight = FontWeight.Medium)) {
-                append(currentSpeed)
-            }
-            withStyle(style = SpanStyle(fontSize = MaterialTheme.typography.overline.fontSize)) {
-                append(" km/h")
-            }
-        }, style = MaterialTheme.typography.subtitle1, modifier = Modifier.padding(vertical = 1.dp))
-
-
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .padding(vertical = 4.dp)
                 .fillMaxWidth()) {
+
 
             Divider(
                 modifier = Modifier.fillMaxWidth(),
@@ -233,7 +240,7 @@ fun SpeedometerSection(
                     modifier = Modifier
                         .padding(vertical = 4.dp)
                         .weight(0.3f),
-                    title = "Travelled Distance",
+                    title = "Travelled",
                     content = distance)
 
                 Divider(
@@ -241,6 +248,17 @@ fun SpeedometerSection(
                         .fillMaxHeight()
                         .width(1.dp))
 
+                ItemSpeed(
+                    modifier = Modifier
+                        .padding(vertical = 4.dp)
+                        .weight(0.3f),
+                    title = "Current Speed",
+                    content = currentSpeed)
+
+                Divider(
+                    color = Black440, modifier = Modifier
+                        .fillMaxHeight()
+                        .width(1.dp))
 
                 ItemSpeed(
                     modifier = Modifier
@@ -270,7 +288,7 @@ fun RowScope.ItemSpeed(modifier: Modifier, title: String, content: String) {
         Text(
             text = title,
             color = MaterialTheme.colors.onSurface,
-            style = MaterialTheme.typography.subtitle2.copy(
+            style = MaterialTheme.typography.caption.copy(
                 fontWeight = FontWeight.Normal,
                 fontSize = MaterialTheme.typography.caption.fontSize))
 
@@ -394,6 +412,7 @@ private fun PreviewBottomSheetOnGoingRescueDark() {
                         onClickCancelButton = {},
                         onClickCallButton = {},
                         onClickChatButton = {},
+                        onClickArrivedLocation = {},
                         onGoingRescueModel = OnGoingRescueModel(
                             currentSpeed = "13.3",
                             ridingDistance = "10.0 km",
@@ -401,7 +420,7 @@ private fun PreviewBottomSheetOnGoingRescueDark() {
                             estimatedDistance = "9.0 km",
                             estimatedTime = "1h 20m",
                         ),
-                        role = Role.Rescuer.name)
+                        role = Role.Rescuer.name, shouldShowArrivedLocation = false)
                 }, content = {
                     Box(
                         contentAlignment = Alignment.BottomCenter,
@@ -435,6 +454,7 @@ private fun PreviewBottomSheetOnGoingRescueLight() {
                 onClickCancelButton = {},
                 onClickCallButton = {},
                 onClickChatButton = {},
+                onClickArrivedLocation = {},
                 onGoingRescueModel = OnGoingRescueModel(
                     currentSpeed = "13.3",
                     ridingDistance = "10.0 km",
@@ -442,7 +462,7 @@ private fun PreviewBottomSheetOnGoingRescueLight() {
                     estimatedDistance = "9.0 km",
                     estimatedTime = "1h 20m",
                 ),
-                role = Role.Rescuee.name)
+                role = Role.Rescuee.name, shouldShowArrivedLocation = true)
         }
     }
 }

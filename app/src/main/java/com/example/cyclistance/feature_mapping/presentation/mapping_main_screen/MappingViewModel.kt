@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_RADIUS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_STATE_KEY
-import com.example.cyclistance.core.utils.constants.MappingConstants.NEAREST_METERS
 import com.example.cyclistance.core.utils.formatter.FormatterUtils
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.isLocationAvailable
@@ -712,40 +711,11 @@ class MappingViewModel @Inject constructor(
                 }.onEach { liveLocation ->
                     trackingHandler.updateTransactionLocation(location = liveLocation)
                     liveLocation.updateTransactionETA()
-                    liveLocation.updateTransactionDistance()
                 }.launchIn(this@launch)
 
             }
     }
 
-    private suspend fun LiveLocationSocketModel.updateTransactionDistance() {
-        coroutineScope {
-            val transaction = state.value.user.transaction
-            val rescueLocation = state.value.userLocation
-
-
-            if (transaction?.transactionId?.isEmpty() == true) {
-                return@coroutineScope
-            }
-
-            latitude ?: return@coroutineScope
-            longitude ?: return@coroutineScope
-
-            rescueLocation?.let { location ->
-
-                val distance = mappingUseCase.getCalculatedDistanceUseCase(
-                    startingLocation = LocationModel(latitude, longitude),
-                    destinationLocation = LocationModel(location.latitude, location.longitude)
-                ).toInt()
-
-
-                if (distance <= NEAREST_METERS) {
-                    _eventFlow.emit(value = MappingEvent.DestinationReached)
-                }
-
-            }
-        }
-    }
 
 
     private fun LiveLocationSocketModel.updateTransactionETA() {
@@ -767,7 +737,7 @@ class MappingViewModel @Inject constructor(
                 longitude = this.longitude
             ),
             destinationLocation = userLocation)
-        _state.update { it.copy(rescueETA = eta, rescueDistance = distance.formatToDistanceKm()) }
+        _state.update { it.copy(rescueETA = eta, rescueDistance = distance) }
     }
 
     private fun getETABetweenTwoPoints(
@@ -828,7 +798,7 @@ class MappingViewModel @Inject constructor(
             it.copy(
                 rescueTransaction = rescueTransaction,
                 rescueETA = estimatedTimeArrival ?: "",
-                rescueDistance = distance?.formatToDistanceKm() ?: "",
+                rescueDistance = distance ?: 0.0,
                 rescuer = rescuer
             )
         }
@@ -1023,13 +993,18 @@ class MappingViewModel @Inject constructor(
 
     private fun updateSpeedometer(location: LocationModel) {
         val isUserRescuer = state.value.user.isRescuer()
-        if (isUserRescuer) {
-            trackingHandler.setSpeed(location.speed)
-            trackingHandler.getTopSpeed(location.speed)
-            travelledPath.add(element = GoogleLatLng(location.latitude!!, location.longitude!!))
-            val distance = SphericalUtil.computeLength(travelledPath).formatToDistanceKm()
-            trackingHandler.setTravelledDistance(distance)
+        if (!isUserRescuer) {
+            return
         }
+
+        val distance = SphericalUtil.computeLength(travelledPath)
+
+
+        trackingHandler.setSpeed(location.speed)
+        trackingHandler.getTopSpeed(location.speed)
+        travelledPath.add(element = GoogleLatLng(location.latitude!!, location.longitude!!))
+
+        trackingHandler.setTravelledDistance(distance)
     }
 
 

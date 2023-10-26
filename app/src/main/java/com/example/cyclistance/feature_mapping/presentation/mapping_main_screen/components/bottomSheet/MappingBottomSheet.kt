@@ -8,6 +8,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.formatter.IconFormatter.toHazardousLaneIconMarker
 import com.example.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
@@ -101,19 +103,25 @@ fun MappingBottomSheet(
 
                 BottomSheetType.OnGoingRescue.type -> {
 
+                    val shouldShowArrivedLocation = remember(state.rescueDistance){
+                        state.rescueDistance <= MappingConstants.DISTANCE_MIN
+                    }
+
                     BottomSheetOnGoingRescue(
                         modifier = modifier,
+                        shouldShowArrivedLocation = shouldShowArrivedLocation,
                         onClickCallButton = { event(MappingUiEvent.EmergencyCallDialog(visibility = true)) },
                         onClickChatButton = { event(MappingUiEvent.ChatRescueTransaction) },
                         onClickCancelButton = { event(MappingUiEvent.CancelRescueTransaction) },
+                        onClickArrivedLocation = {  },
                         role = state.user.transaction?.role ?: "",
                         onGoingRescueModel = OnGoingRescueModel(
                             estimatedTime = state.rescueETA,
-                            estimatedDistance = state.rescueDistance,
+                            estimatedDistance = state.rescueDistance.formatToDistanceKm(),
                             currentSpeed = String.format(
                                 "%.2f",
                                 state.speedometerState.currentSpeedKph),
-                            ridingDistance = state.speedometerState.travelledDistance,
+                            ridingDistance = state.speedometerState.travelledDistance.formatToDistanceKm(),
                             maxSpeed = String.format("%.2f", state.speedometerState.topSpeed)))
 
                 }
