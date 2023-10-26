@@ -1,4 +1,0 @@
-<changelist name="Add_null_check_before_broadcasting_to_nearbyCyclist" date="1697634103636" recycled="false" deleted="true">
-  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Add_null_check_before_broadcasting_to_nearbyCyclist/shelved.patch" />
-  <option name="DESCRIPTION" value="Add null check before broadcasting to nearbyCyclist" />
-</changelist>
