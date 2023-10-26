@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescriptionToIcon
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
+import com.example.cyclistance.feature_rescue_record.presentation.history_details.components.HistoryDetailsPlaceholder
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.event.RescueDetailsUiEvent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.state.RescueDetailsState
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.state.RescueDetailsUiState
@@ -50,8 +51,9 @@ fun RescueDetailsScreenContent(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally) {
 
-                if (rideSummary != null) {
+
                     item {
+                        if (rideSummary != null) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_rescue_details_like),
                             contentDescription = "Like Image",
@@ -121,7 +123,9 @@ fun RescueDetailsScreenContent(
                                 modifier = Modifier.padding(vertical = 2.dp, horizontal = 22.dp))
                         }
 
-                    }
+                        } else {
+                            HistoryDetailsPlaceholder()
+                        }
 
                 }
 
@@ -155,7 +159,7 @@ fun PreviewRescueDetailsDark() {
     CyclistanceTheme(darkTheme = true) {
         RescueDetailsScreenContent(
             state = RescueDetailsState(isLoading = true),
-            uiState = RescueDetailsUiState(rideSummary = fakeRideSummary),
+            uiState = RescueDetailsUiState(rideSummary = null),
             event = {})
     }
 }

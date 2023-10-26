@@ -1,6 +1,7 @@
 package com.example.cyclistance.feature_rescue_record.presentation.history_details.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -52,114 +53,117 @@ fun HistoryDetailsContent(
             .fillMaxSize(),
         color = MaterialTheme.colors.background) {
 
-        LazyColumn(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            verticalArrangement = if (shouldShowPlaceholder) Arrangement.Center else Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally) {
-
-            item {
-
-                if (state.isLoading) {
-                    CircularProgressIndicator()
-                }
-
-                if (!isRideLoaded) {
-                    HistoryDetailsPlaceholder()
-                    return@item
-                }
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween) {
+            LazyColumn(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                verticalArrangement = if (shouldShowPlaceholder) Arrangement.Center else Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally) {
 
-                    HistoryDetailsRole(
+                item {
+
+
+                    if (!isRideLoaded) {
+                        HistoryDetailsPlaceholder()
+                        return@item
+                    }
+
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween) {
+
+                        HistoryDetailsRole(
+                            modifier = Modifier
+                                .weight(3f)
+                                .padding(vertical = 10.dp),
+                            role = "Rescuer",
+                            photoUrl = rideDetails!!.rescuerPhotoUrl,
+                            name = rideDetails.rescuerName,
+                        )
+
+                        AnimatedRawResIcon(
+                            modifier = Modifier
+                                .weight(1.25f)
+                                .requiredHeight(100.dp),
+                            resId = R.raw.handshake
+                        )
+
+                        HistoryDetailsRole(
+                            modifier = Modifier
+                                .weight(3f)
+                                .padding(vertical = 10.dp),
+                            role = "Rescuee",
+                            photoUrl = rideDetails.rescueePhotoUrl,
+                            name = rideDetails.rescueeName,
+                        )
+                    }
+
+                    RatingCard(
                         modifier = Modifier
-                            .weight(3f)
-                            .padding(vertical = 10.dp),
-                        role = "Rescuer",
-                        photoUrl = rideDetails!!.rescuerPhotoUrl,
-                        name = rideDetails.rescuerName,
+                            .fillMaxWidth()
+                            .padding(top = 12.dp),
+                        rating = rideSummary!!.rating,
+                        ratingText = rideSummary.ratingText
                     )
 
-                    AnimatedRawResIcon(
+                    RescueDescription(
                         modifier = Modifier
-                            .weight(1.25f)
-                            .requiredHeight(100.dp),
-                        resId = R.raw.handshake
+                            .fillMaxWidth()
+                            .padding(top = 12.dp),
+                        iconDescription = rideSummary.iconDescription.rescueDescriptionToIcon(),
+                        textDescription = rideSummary.iconDescription,
+                        bikeType = rideSummary.bikeType
                     )
 
-                    HistoryDetailsRole(
-                        modifier = Modifier
-                            .weight(3f)
-                            .padding(vertical = 10.dp),
-                        role = "Rescuee",
-                        photoUrl = rideDetails.rescueePhotoUrl,
-                        name = rideDetails.rescueeName,
+                    RescueLocationDetails(
+                        modifier = Modifier.padding(vertical = 12.dp),
+                        date = rideSummary.date,
+                        startingTime = rideSummary.startingTime,
+                        endTime = rideSummary.endTime,
+                        startingAddress = rideSummary.startingAddress,
+                        destinationAddress = rideSummary.destinationAddress
                     )
+
+
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp),
+                        color = Black500,
+                        thickness = 1.5.dp
+                    )
+
+
+                    RescueStats(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        duration = rideSummary.duration,
+                        distance = rideSummary.distance,
+                        maxSpeed = rideSummary.maxSpeed,
+                    )
+
+                    Button(
+                        onClick = {
+                            event(HistoryDetailsUiEvent.CloseHistoryDetails)
+                        },
+                        modifier = Modifier.padding(top = 22.dp, bottom = 16.dp),
+                        shape = RoundedCornerShape(12.dp)) {
+                        Text(
+                            text = "Okay",
+                            modifier = Modifier.padding(vertical = 2.dp, horizontal = 22.dp))
+                    }
+
+
                 }
-
-                RatingCard(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
-                    rating = rideSummary!!.rating,
-                    ratingText = rideSummary.ratingText
-                )
-
-                RescueDescription(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 12.dp),
-                    iconDescription = rideSummary.iconDescription.rescueDescriptionToIcon(),
-                    textDescription = rideSummary.iconDescription,
-                    bikeType = rideSummary.bikeType
-                )
-
-                RescueLocationDetails(
-                    modifier = Modifier.padding(vertical = 12.dp),
-                    date = rideSummary.date,
-                    startingTime = rideSummary.startingTime,
-                    endTime = rideSummary.endTime,
-                    startingAddress = rideSummary.startingAddress,
-                    destinationAddress = rideSummary.destinationAddress
-                )
-
-
-                Divider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp),
-                    color = Black500,
-                    thickness = 1.5.dp
-                )
-
-
-                RescueStats(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    duration = rideSummary.duration,
-                    distance = rideSummary.distance,
-                    maxSpeed = rideSummary.maxSpeed,
-                )
-
-                Button(
-                    onClick = {
-                        event(HistoryDetailsUiEvent.CloseHistoryDetails)
-                    },
-                    modifier = Modifier.padding(top = 22.dp, bottom = 16.dp),
-                    shape = RoundedCornerShape(12.dp)) {
-                    Text(
-                        text = "Okay",
-                        modifier = Modifier.padding(vertical = 2.dp, horizontal = 22.dp))
-                }
-
-
+            }
+            if (state.isLoading) {
+                CircularProgressIndicator(color = MaterialTheme.colors.primary)
             }
         }
-
 
     }
 
@@ -197,7 +201,7 @@ fun PreviewRideHistoryDetailsContentDark() {
     CyclistanceTheme(darkTheme = true) {
         HistoryDetailsContent(
             uiState = HistoryDetailsUiState(
-                rideDetails = fakeRideHistoryDetailsModel
+                rideDetails = null
             ),
             event = {},
             state = HistoryDetailsState(isLoading = true)
