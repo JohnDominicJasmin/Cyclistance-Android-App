@@ -15,7 +15,6 @@ import androidx.constraintlayout.compose.Dimension
 import com.example.cyclistance.R
 import com.example.cyclistance.feature_authentication.presentation.common.AnimatedImage
 import com.example.cyclistance.navigation.IsDarkTheme
-import com.example.cyclistance.theme.Black440
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -46,16 +45,7 @@ fun BottomSheetRescue(
 
             val (gripLine, animatedIcon, arrivedText, cancelButton) = createRefs()
 
-            Divider(
-                modifier = Modifier.constrainAs(gripLine) {
-                    top.linkTo(parent.top, margin = 8.5.dp)
-                    width = Dimension.percent(0.08f)
-                    end.linkTo(parent.end)
-                    start.linkTo(parent.start)
 
-                },
-                color = Black440,
-                thickness = 1.5.dp)
 
             AnimatedImage(
                 imageId = if (isDarkTheme) R.drawable.ic_dark_ellipsis else R.drawable.ic_light_ellipsis,

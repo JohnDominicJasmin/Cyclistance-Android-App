@@ -34,6 +34,8 @@ fun MappingBottomSheet(
 
     val sheetGesturesEnabled = remember(uiState.bottomSheetType) {
         uiState.bottomSheetType != BottomSheetType.SearchAssistance.type &&
+        uiState.bottomSheetType != BottomSheetType.DestinationReached.type &&
+        uiState.bottomSheetType != BottomSheetType.RescuerArrived.type &&
         uiState.bottomSheetType != BottomSheetType.IncidentDescription.type
     }
 
