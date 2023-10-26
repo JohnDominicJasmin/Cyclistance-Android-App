@@ -298,7 +298,7 @@ dependencies {
     implementation("com.github.a914-gowtham:compose-ratingbar:1.3.4")
 
 
-    val room_version = "2.5.2"
+    val room_version = "2.6.0"
 
     implementation("androidx.room:room-runtime:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
