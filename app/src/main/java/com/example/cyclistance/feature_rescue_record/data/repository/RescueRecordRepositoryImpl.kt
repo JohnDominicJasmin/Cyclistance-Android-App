@@ -4,7 +4,7 @@ import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RESCUE
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RESCUER_ID_KEY
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RESCUE_RECORD_COLLECTION
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RIDE_DATE_KEY
-import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_AVERAGE_RATING
+import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_USER_RATINGS
 import com.example.cyclistance.core.utils.constants.UtilConstants
 import com.example.cyclistance.feature_rescue_record.data.mapper.RideHistoryMapper.toRideHistoryItem
 import com.example.cyclistance.feature_rescue_record.domain.exceptions.RescueRecordExceptions
@@ -54,7 +54,7 @@ class RescueRecordRepositoryImpl(
         suspendCoroutine { continuation ->
             firestore.collection(UtilConstants.USER_COLLECTION)
                 .document(rescuerId)
-                .update(KEY_AVERAGE_RATING, FieldValue.arrayUnion(rating))
+                .update(KEY_USER_RATINGS, FieldValue.arrayUnion(rating))
                 .addOnSuccessListener {
                 continuation.resume(Unit)
             }.addOnFailureListener{

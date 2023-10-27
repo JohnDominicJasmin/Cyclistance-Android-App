@@ -1,9 +1,9 @@
 package com.example.cyclistance.feature_user_profile.data.mapper
 
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_ADDRESS
-import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_AVERAGE_RATING
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_BIKE_GROUP
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_USER_ACTIVITY
+import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_USER_RATINGS
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_USER_REASON_ASSISTANCE
 import com.example.cyclistance.core.utils.constants.UtilConstants
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME
@@ -29,12 +29,15 @@ object UserProfileInfoMapper {
         val incidentCount = (reasonAssistanceObject?.get("incidentCount") as? Long)?.toInt() ?: 0
         val faultyBrakesCount = (reasonAssistanceObject?.get("faultyBrakesCount") as? Long)?.toInt() ?: 0
 
+        @Suppress("UNCHECKED_CAST")
+        val ratings:List<Int> = get(KEY_USER_RATINGS) as? List<Int> ?: emptyList()
+        val averageRating = ratings.average()
 
         return UserProfileModel(
             userProfileInfo = UserProfileInfoModel(
                 photoUrl = getString(UtilConstants.KEY_PHOTO) ?: "",
                 address = getString(KEY_ADDRESS) ?: "",
-                averageRating = getDouble(KEY_AVERAGE_RATING) ?: 0.0,
+                averageRating = averageRating,
                 name = getString(KEY_NAME) ?: "",
                 bikeGroup = getString(KEY_BIKE_GROUP) ?: ""
             ),
