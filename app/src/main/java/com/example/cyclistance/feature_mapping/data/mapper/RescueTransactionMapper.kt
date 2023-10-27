@@ -24,7 +24,8 @@ object RescueTransactionMapper {
             rescuerId = this.rescuerId,
             status = this.status?.toStatusModel(),
             route = this.route?.toRouteModel(),
-            startingMillis = this.startingMillis
+            startingMillis = this.startingMillis,
+            endingMillis = this.endingMillis
         )
     }
 
@@ -81,7 +82,8 @@ object RescueTransactionMapper {
             rescuerId = this.rescuerId,
             status = this.status?.toStatusDto(),
             route = this.route?.toRouteDto(),
-            startingMillis = this.startingMillis
+            startingMillis = this.startingMillis,
+            endingMillis = this.endingMillis
         )
     }
 

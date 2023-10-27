@@ -15,6 +15,7 @@ data class RescueTransactionItem(
     val status: StatusModel? = null,
     val route: RouteModel? = null,
     val startingMillis: Long? = null,
+    val endingMillis: Long? = null
 ):Parcelable{
 
     fun getCancellationMessage() = cancellation?.cancellationReason?.message ?: ""

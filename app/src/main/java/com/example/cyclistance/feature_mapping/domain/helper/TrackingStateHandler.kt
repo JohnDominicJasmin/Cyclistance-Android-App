@@ -104,9 +104,10 @@ class TrackingStateHandler(
         val user = state.value.user
         val role = user.getRole()
         val speedometerState = state.value.speedometerState
+        val rescueTransaction = state.value.rescueTransaction
 
-        val startingMillis = state.value.rescueTransaction?.startingMillis ?: Date().time
-        val endingMillis = Date().time
+        val startingMillis = rescueTransaction?.startingMillis ?: Date().time
+        val endingMillis = rescueTransaction?.endingMillis ?: Date().time
         val startingAddress = rescuer?.address ?: user.address
         val destinationAddress = rescuee?.address ?: user.address
         val iconDescription = if(role == Role.Rescuee.name) user.getDescription() else rescuee?.getDescription()
