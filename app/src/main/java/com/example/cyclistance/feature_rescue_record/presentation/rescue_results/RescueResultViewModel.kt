@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RESCUE_RESULT_VM_STATE_KEY
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
 import com.example.cyclistance.feature_rescue_record.domain.use_case.RescueRecordUseCase
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.event.RescueResultEvent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.event.RescueResultVmEvent
@@ -11,6 +12,9 @@ import com.example.cyclistance.feature_rescue_record.presentation.rescue_results
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -53,25 +57,23 @@ class RescueResultViewModel @Inject constructor(
     }
     fun onEvent(event: RescueResultVmEvent){
         when(event){
-            is RescueResultVmEvent.RateRescuer -> {
-                rateRescuer(event.rating)
+            is RescueResultVmEvent.RateRescue -> {
+                rateRescue(event.rating)
             }
         }
         saveState()
     }
 
-    private fun rateRescuer(rating: Float) {
+    private fun rateRescue(rating: Float) {
+        val validRating = rating.coerceIn(1f, 5f)
+        val rideDetails = state.value.rideDetails
+
         viewModelScope.launch(SupervisorJob() + Dispatchers.IO) {
             runCatching {
-                val validRating = rating.coerceIn(1f, 5f)
+                val rateRescue = rateRescueUseCase(rideDetails, validRating)
+                val rateRescuer = rateRescuerUseCase(rideDetails, validRating)
 
-                val rideDetails = state.value.rideDetails
-
-                rescueRecordUseCase.rateRescueUseCase(
-                    rescueId = rideDetails.rideId,
-                    rating = validRating.toDouble(),
-                    ratingText = ratingToDescription(validRating)
-                )
+                awaitAll(rateRescue, rateRescuer)
             }.onSuccess {
                 _eventFlow.emit(value = RescueResultEvent.RatingSuccess)
             }.onFailure {
@@ -80,6 +82,32 @@ class RescueResultViewModel @Inject constructor(
             saveState()
         }
     }
+
+    private suspend fun rateRescueUseCase(rideDetails: RideDetails, rating: Float) =
+        coroutineScope {
+            async {
+                rescueRecordUseCase.rateRescueUseCase(
+                    rescueId = rideDetails.rideId,
+                    rating = rating.toDouble(),
+                    ratingText = ratingToDescription(rating)
+                )
+            }
+        }
+
+    private suspend fun rateRescuerUseCase(rideDetails: RideDetails, rating: Float) =
+        coroutineScope {
+            async {
+                rescueRecordUseCase.rateRescuerUseCase(
+                    rescuerId = rideDetails.rescuerId,
+                    rating = rating.toDouble()
+                )
+            }
+        }
+
+
+
+
+
     private fun ratingToDescription(rating: Float): String {
         return when (rating) {
             in 0.0f..1.0f -> "Poor"

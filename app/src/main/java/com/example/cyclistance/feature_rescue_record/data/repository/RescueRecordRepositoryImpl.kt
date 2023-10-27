@@ -4,12 +4,14 @@ import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RESCUE
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RESCUER_ID_KEY
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RESCUE_RECORD_COLLECTION
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RIDE_DATE_KEY
+import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_AVERAGE_RATING
+import com.example.cyclistance.core.utils.constants.UtilConstants
 import com.example.cyclistance.feature_rescue_record.data.mapper.RideHistoryMapper.toRideHistoryItem
 import com.example.cyclistance.feature_rescue_record.domain.exceptions.RescueRecordExceptions
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideHistory
 import com.example.cyclistance.feature_rescue_record.domain.repository.RescueRecordRepository
-import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -25,7 +27,6 @@ import kotlin.coroutines.suspendCoroutine
 
 class RescueRecordRepositoryImpl(
     private val firestore: FirebaseFirestore,
-    private val auth: FirebaseAuth
 
 ) : RescueRecordRepository {
     private val scope: CoroutineContext = Dispatchers.IO
@@ -49,6 +50,20 @@ class RescueRecordRepositoryImpl(
         }
     }
 
+    override suspend fun rateRescuer(rescuerId: String, rating: Double) {
+        suspendCoroutine { continuation ->
+            firestore.collection(UtilConstants.USER_COLLECTION)
+                .document(rescuerId)
+                .update(KEY_AVERAGE_RATING, FieldValue.arrayUnion(rating))
+                .addOnSuccessListener {
+                continuation.resume(Unit)
+            }.addOnFailureListener{
+                continuation.resumeWithException(
+                    RescueRecordExceptions.RateRescuerException(message = it.message.toString())
+                )
+            }
+        }
+    }
 
     override suspend fun rateRescue(rescueId: String, rating: Double, ratingText: String) {
         suspendCoroutine { continuation ->
@@ -73,6 +88,8 @@ class RescueRecordRepositoryImpl(
         }
     }
 
+
+
     override suspend fun getRideHistory(uid: String): RideHistory {
 
         return suspendCancellableCoroutine { continuation ->
@@ -82,8 +99,10 @@ class RescueRecordRepositoryImpl(
                     Filter.or(
                         Filter.equalTo(RESCUER_ID_KEY, uid),
                         Filter.equalTo(RESCUEE_ID_KEY, uid)
-                    )).orderBy(RIDE_DATE_KEY, Query.Direction.DESCENDING)
-                .get().addOnSuccessListener { result ->
+                    ))
+                .orderBy(RIDE_DATE_KEY, Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener { result ->
                     val rideHistoryItems = result.documents.map { it.toRideHistoryItem(uid = uid) }
                     continuation.resume(RideHistory(items = rideHistoryItems))
                 }.addOnFailureListener {

@@ -2,7 +2,6 @@ package com.example.cyclistance.di.rescue_records
 
 import com.example.cyclistance.feature_rescue_record.data.repository.RescueRecordRepositoryImpl
 import com.example.cyclistance.feature_rescue_record.domain.repository.RescueRecordRepository
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import dagger.Module
 import dagger.Provides
@@ -16,13 +15,8 @@ object RescueRecordDataSourceModule {
 
     @Provides
     @Singleton
-    fun provideRescueReportRepository(
-        fireStore: FirebaseFirestore,
-        firebaseAuth: FirebaseAuth): RescueRecordRepository {
-        return RescueRecordRepositoryImpl(
-            firestore = fireStore,
-            auth = firebaseAuth
-        )
+    fun provideRescueReportRepository(fireStore: FirebaseFirestore): RescueRecordRepository {
+        return RescueRecordRepositoryImpl(firestore = fireStore)
     }
 
 }

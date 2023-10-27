@@ -4,4 +4,5 @@ object RescueRecordExceptions {
     class InsertRescueRecordException(message: String = "Insert rescue record failed") : RuntimeException()
     class GetRescueRecordException(message: String = "Get rescue record failed") : RuntimeException()
     class GetRideHistoryException(message: String = "Get ride history failed") : RuntimeException()
+    class RateRescuerException(message: String = "Failed to rate rescuer") : RuntimeException()
 }
