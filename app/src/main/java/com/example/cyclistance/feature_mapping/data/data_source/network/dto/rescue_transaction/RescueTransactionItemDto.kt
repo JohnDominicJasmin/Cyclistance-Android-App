@@ -18,4 +18,6 @@ data class RescueTransactionItemDto(
     val route: RouteDto?,
     @SerializedName("starting_millis")
     val startingMillis: Long?,
+    @SerializedName("ending_millis")
+    val endingMillis: Long?,
 )
