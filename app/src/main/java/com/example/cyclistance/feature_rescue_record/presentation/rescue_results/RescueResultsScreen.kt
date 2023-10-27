@@ -67,8 +67,8 @@ fun RescueResultsScreen(
 
     }}
 
-    val rateRescuer = remember{{
-        viewModel.onEvent(event = RescueResultVmEvent.RateRescuer(
+    val rateRescue = remember{{
+        viewModel.onEvent(event = RescueResultVmEvent.RateRescue(
             rating = uiState.rating
         ))
     }}
@@ -101,7 +101,7 @@ fun RescueResultsScreen(
                 RescueResultUiEvent.StepUp -> stepUp()
                 is RescueResultUiEvent.ReportAccount -> reportAccount(event.id, event.name, event.photo)
                 is RescueResultUiEvent.ViewProfile -> viewProfile(event.id)
-                is RescueResultUiEvent.RateRescuer -> rateRescuer()
+                is RescueResultUiEvent.RateRescuer -> rateRescue()
                 RescueResultUiEvent.ShowRescueDetails -> showRescueDetails()
             }
         })
