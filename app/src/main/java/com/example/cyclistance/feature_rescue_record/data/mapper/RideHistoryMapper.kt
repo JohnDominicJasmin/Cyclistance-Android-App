@@ -14,7 +14,7 @@ object RideHistoryMapper {
         val rideId = this["rideId"].toString()
         val photoUrl =
             if (isRescuer) this["rescueePhotoUrl"].toString() else this["rescuerPhotoUrl"].toString()
-        val date = this.getDate("rideDate")?.toReadableDateTime(pattern = "MMM dd, yyyy hh:mm a")!!
+        val date = this.getDate("rideDate")?.toReadableDateTime(pattern = "MMM dd, yyyy hh:mm a")
         val duration = this["rideSummary.duration"].toString()
         val rescueDescription = this["rideSummary.iconDescription"].toString()
         val startingAddress = this["rideSummary.startingAddress"].toString()
@@ -26,7 +26,7 @@ object RideHistoryMapper {
             role = role,
             id = rideId,
             photoUrl = photoUrl,
-            date = date,
+            date = date ?: "Date not available",
             duration = duration,
             rescueDescription = rescueDescription,
             startingAddress = startingAddress,

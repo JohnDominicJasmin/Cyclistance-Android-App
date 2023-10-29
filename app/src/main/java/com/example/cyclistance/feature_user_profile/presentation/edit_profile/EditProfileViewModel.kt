@@ -120,7 +120,7 @@ class EditProfileViewModel @Inject constructor(
             _eventFlow.emit(value = EditProfileEvent.GetNameSuccess(name))
             _state.update { it.copy(nameSnapshot = name) }
         }.onFailure { exception ->
-            _eventFlow.emit(value = EditProfileEvent.NameInputFailed(exception.message!!))
+            _eventFlow.emit(value = EditProfileEvent.NameInputFailed(exception.message ?: "Failed to get name"))
         }
         savedStateHandle[EDIT_PROFILE_VM_STATE_KEY] = state.value
     }
