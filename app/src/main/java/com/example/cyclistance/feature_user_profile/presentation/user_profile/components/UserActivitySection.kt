@@ -32,7 +32,7 @@ fun UserActivitySection(modifier: Modifier = Modifier, userProfile: UserProfileM
             items(count = 4) { index ->
                 ActivityItemSection(
                     modifier = Modifier.padding(start = 16.dp),
-                    quantity = getActivityQuantity(index = index, userProfile = userProfile)!!,
+                    quantity = getActivityQuantity(index = index, userProfile = userProfile) ?: "0",
                     caption = getActivityCaption(index),
                     icon = getActivityIcon(index = index)
                 )
@@ -42,14 +42,14 @@ fun UserActivitySection(modifier: Modifier = Modifier, userProfile: UserProfileM
 
 }
 
-private fun getActivityQuantity(userProfile: UserProfileModel,index: Int): Int?{
+private fun getActivityQuantity(userProfile: UserProfileModel,index: Int): String?{
     return when (index) {
         0 -> userProfile.getRequestAssistanceFrequency()
         1 -> userProfile.getRescueFrequency()
-        2 -> userProfile.getOverallDistanceOfRescue()
+        2 -> userProfile.getOverallDistanceInMeters()
         3 -> userProfile.getAverageSpeed()
         else -> 0
-    }
+    }.toString()
 }
 
 private fun getActivityCaption(index: Int): String{

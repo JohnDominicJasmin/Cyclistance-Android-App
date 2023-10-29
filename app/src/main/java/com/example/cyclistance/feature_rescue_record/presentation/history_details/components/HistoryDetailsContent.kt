@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.core.presentation.dialogs.common.AnimatedRawResIcon
 import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescriptionToIcon
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
@@ -142,7 +143,7 @@ fun HistoryDetailsContent(
                             .fillMaxWidth()
                             .padding(top = 16.dp),
                         duration = rideSummary.duration,
-                        distance = rideSummary.distance,
+                        distance = rideSummary.distance.formatToDistanceKm(),
                         maxSpeed = rideSummary.maxSpeed,
                     )
 
@@ -188,7 +189,7 @@ val fakeRideHistoryDetailsModel = RideDetails(
         startingAddress = "Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano,Via Roma 1, Milano",
         destinationAddress = "Via Roma 2, Milano,Via Roma 2, Milano,Via Roma 2, Milano,Via Roma 2, Milano,Via Roma 2, Milano",
         duration = "1h 30m",
-        distance = "10 km",
+        distance = 1200.00,
         maxSpeed = "30 km/h",
     )
 

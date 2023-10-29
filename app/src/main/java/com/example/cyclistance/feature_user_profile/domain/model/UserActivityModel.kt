@@ -8,10 +8,10 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class UserActivityModel(
-    val requestAssistanceFrequency: Int,
-    val rescueFrequency: Int,
-    val overallDistanceOfRescue: Int,
-    val averageSpeed: Int
+    val requestAssistanceFrequency: Int = 0,
+    val rescueFrequency: Int = 0,
+    val overallDistanceOfRescueInMeters: Double = 0.0,
+    val averageSpeed: Double = 0.0
 ):Parcelable
 
 

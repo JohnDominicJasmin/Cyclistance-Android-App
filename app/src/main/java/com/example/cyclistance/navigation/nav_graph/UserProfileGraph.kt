@@ -7,7 +7,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navigation
-import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_ID
+import com.example.cyclistance.core.utils.constants.UserProfileConstants
 import com.example.cyclistance.feature_user_profile.presentation.edit_profile.EditProfileScreen
 import com.example.cyclistance.feature_user_profile.presentation.user_profile.UserProfileScreen
 import com.example.cyclistance.navigation.Screens
@@ -24,11 +24,11 @@ fun NavGraphBuilder.userProfileGraph(
 
         composable(Screens.UserProfileNavigation.UserProfile.screenRoute, arguments = listOf(
             navArgument(
-                name = USER_ID
+                name = UserProfileConstants.USER_ID
             ){
                 type = NavType.StringType
             })) { backStackEntry ->
-            val userId = backStackEntry.arguments?.getString(USER_ID)!!
+            val userId = backStackEntry.arguments?.getString(UserProfileConstants.USER_ID)!!
             UserProfileScreen(
                 navController = navController,
                 paddingValues = paddingValues,

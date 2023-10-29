@@ -20,8 +20,8 @@ object UserProfileInfoMapper {
         val reasonAssistanceObject = get(KEY_USER_REASON_ASSISTANCE) as? Map<*, *>
         val requestAssistanceFrequency = (userActivityObject?.get("requestAssistanceFrequency") as? Long)?.toInt() ?: 0
         val rescueFrequency = (userActivityObject?.get("rescueFrequency") as? Long)?.toInt() ?: 0
-        val overallDistanceOfRescue = (userActivityObject?.get("overallDistanceOfRescue") as? Long)?.toInt() ?: 0
-        val averageSpeed = (userActivityObject?.get("averageSpeed") as? Long)?.toInt() ?: 0
+        val overallDistanceOfRescue = (userActivityObject?.get("overallDistanceOfRescueInMeters") as? Long)?.toDouble() ?: 0.0
+        val averageSpeed = (userActivityObject?.get("averageSpeed") as? Long)?.toDouble() ?: 0.0
         val injuryCount = (reasonAssistanceObject?.get("injuryCount") as? Long)?.toInt() ?: 0
         val frameSnapCount = (reasonAssistanceObject?.get("frameSnapCount") as? Long)?.toInt() ?: 0
         val flatTireCount = (reasonAssistanceObject?.get("flatTireCount") as? Long)?.toInt() ?: 0
@@ -30,8 +30,8 @@ object UserProfileInfoMapper {
         val faultyBrakesCount = (reasonAssistanceObject?.get("faultyBrakesCount") as? Long)?.toInt() ?: 0
 
         @Suppress("UNCHECKED_CAST")
-        val ratings:List<Int> = get(KEY_USER_RATINGS) as? List<Int> ?: emptyList()
-        val averageRating = ratings.average()
+        val ratings:List<Float> = get(KEY_USER_RATINGS) as? List<Float> ?: emptyList()
+        val averageRating = if(ratings.isEmpty()) 0.0 else ratings.average()
 
         return UserProfileModel(
             userProfileInfo = UserProfileInfoModel(
@@ -44,7 +44,7 @@ object UserProfileInfoMapper {
             userActivity = UserActivityModel(
                 requestAssistanceFrequency = requestAssistanceFrequency,
                 rescueFrequency = rescueFrequency,
-                overallDistanceOfRescue = overallDistanceOfRescue,
+                overallDistanceOfRescueInMeters = overallDistanceOfRescue,
                 averageSpeed = averageSpeed
             ),
             reasonAssistance = ReasonAssistanceModel(

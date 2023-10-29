@@ -148,7 +148,7 @@ class TrackingStateHandler(
                 startingAddress = startingAddress!!,
                 destinationAddress = destinationAddress!!,
                 duration = durationTime,
-                distance = speedometerState.travelledDistance.formatToDistanceKm(),
+                distance = speedometerState.travelledDistance,
                 maxSpeed = String.format("%.2fkm/h", speedometerState.topSpeed)
             )
         )

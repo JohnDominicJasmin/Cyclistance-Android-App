@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescriptionToIcon
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
 import com.example.cyclistance.feature_rescue_record.presentation.history_details.components.HistoryDetailsPlaceholder
@@ -108,7 +109,7 @@ fun RescueDetailsScreenContent(
                                 .fillMaxWidth()
                                 .padding(top = 16.dp),
                             duration = rideSummary.duration,
-                            distance = rideSummary.distance,
+                            distance = rideSummary.distance.formatToDistanceKm(),
                             maxSpeed = rideSummary.maxSpeed
                         )
 
@@ -148,7 +149,7 @@ val fakeRideSummary = RideSummary(
     startingAddress = "Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano,Via Roma 1, Milano",
     destinationAddress = "Via Roma 2, Milano, Via Roma 2, Milano, Via Roma 2, Milano, Via Roma 2, Milano",
     duration = "1h 30m",
-    distance = "10 km",
+    distance = 1200.00,
     maxSpeed = "30 km/h",
 )
 
