@@ -26,7 +26,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -39,14 +38,14 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 @Composable
 fun DialogAnimatedIconCreator(
     modifier: Modifier = Modifier,
-    icon: Int,
+    @RawRes animatedResIcon: Int? = null,
+    @DrawableRes drawableResIcon: Int? = null,
     isDialogOpen: Boolean,
     usePlatformDefaultWidth: Boolean = true,
     onDialogVisibilityToggle: () -> Unit,
     onDismissRequest: () -> Unit,
     content: @Composable ColumnScope.() -> Unit
 ) {
-    val context = LocalContext.current
 
 
 
@@ -67,7 +66,6 @@ fun DialogAnimatedIconCreator(
                 contentAlignment = Alignment.Center
             ) {
 
-                val iconResourceType = remember { context.resources.getResourceTypeName(icon) }
                 val iconModifier = remember {
                     Modifier
                         .zIndex(100f)
@@ -79,12 +77,13 @@ fun DialogAnimatedIconCreator(
                             shape = CircleShape)
                 }
 
-
-                if (iconResourceType == "raw") {
-                    AnimatedRawResIcon(modifier = iconModifier, icon, iterations = 1)
-                } else {
-                    AnimatedDrawableResIcon(modifier = iconModifier, icon)
+                if(animatedResIcon != null) {
+                    AnimatedRawResIcon(modifier = iconModifier, animatedResIcon, iterations = 1)
                 }
+                if(drawableResIcon != null) {
+                    AnimatedDrawableResIcon(modifier = iconModifier, drawableResIcon)
+                }
+
 
                 Column(
                     Modifier

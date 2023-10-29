@@ -37,7 +37,7 @@ fun AlertDialog(
 
     DialogAnimatedIconCreator(
         modifier = modifier,
-        icon = alertDialog.icon,
+        animatedResIcon = alertDialog.icon,
         isDialogOpen = isDialogOpen,
         onDialogVisibilityToggle = { onDialogVisibilityToggle(!isDialogOpen) },
         onDismissRequest = onDismissRequest

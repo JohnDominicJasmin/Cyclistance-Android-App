@@ -39,7 +39,7 @@ fun YesNoDialog(
     val (isDialogOpen, onDialogVisibilityToggle) = rememberSaveable { mutableStateOf(true) }
 
     DialogAnimatedIconCreator(
-        icon = R.raw.question,
+        animatedResIcon = R.raw.question,
         isDialogOpen = isDialogOpen,
         onDialogVisibilityToggle = { onDialogVisibilityToggle(!isDialogOpen) },
         onDismissRequest = onDismissRequest) {
