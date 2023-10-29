@@ -8,6 +8,7 @@ import com.example.cyclistance.core.utils.constants.NavigationConstants.LATITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.LONGITUDE
 import com.example.cyclistance.core.utils.constants.NavigationConstants.TRANSACTION_ID
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants
+import com.example.cyclistance.core.utils.constants.UserProfileConstants
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_ID
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_NAME
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.USER_PHOTO
@@ -95,7 +96,7 @@ sealed class Screens {
         }
 
         object UserProfile :
-            UserProfileNavigation(screenRoute = "user_profile_screen/{$USER_ID}") {
+            UserProfileNavigation(screenRoute = "user_profile_screen/{${UserProfileConstants.USER_ID}}") {
             fun passArgument(userId: String) = "user_profile_screen/$userId"
 
         }

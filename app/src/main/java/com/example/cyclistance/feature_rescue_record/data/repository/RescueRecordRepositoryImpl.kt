@@ -11,11 +11,15 @@ import com.example.cyclistance.feature_rescue_record.domain.exceptions.RescueRec
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideHistory
 import com.example.cyclistance.feature_rescue_record.domain.repository.RescueRecordRepository
+import com.example.cyclistance.feature_user_profile.domain.model.UserStats
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
@@ -47,6 +51,44 @@ class RescueRecordRepositoryImpl(
                         )
                     )
                 }
+        }
+    }
+
+
+    override suspend fun updateStats(userStats: UserStats) {
+        try {
+            coroutineScope {
+                val overallDistance = userStats.rescueOverallDistanceInMeters
+                val averageSpeed = userStats.rescueAverageSpeed
+
+                val updateRescuerStatsTask = async {
+                    firestore
+                        .collection(UtilConstants.USER_COLLECTION)
+                        .document(userStats.rescuerId)
+                        .update(
+                            mapOf(
+                                "userActivity.rescueFrequency" to FieldValue.increment(1),
+                                "userActivity.overallDistanceOfRescueInMeters" to FieldValue.increment(overallDistance),
+                                "userActivity.averageSpeed" to FieldValue.arrayUnion(averageSpeed)
+                            )
+                        )
+                }
+
+                val updateRescueeStatsTask = async {
+                    firestore.collection(UtilConstants.USER_COLLECTION)
+                        .document(userStats.rescueeId)
+                        .update(
+                            mapOf(
+                                "userActivity.requestAssistanceFrequency" to FieldValue.increment(1),
+                                "reasonAssistance.${userStats.rescueDescription}" to FieldValue.increment(1),
+                            )
+                        )
+                }
+
+                awaitAll(updateRescuerStatsTask, updateRescueeStatsTask)
+            }
+        }  catch (e: Exception) {
+            throw RescueRecordExceptions.UpdateUserStatsException(e.message ?: "Failed to update user stats")
         }
     }
 
