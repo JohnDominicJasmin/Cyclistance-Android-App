@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping.domain.helper
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatDuration
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.getTimeDurationMillis
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.isLocationAvailable
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
@@ -117,6 +118,15 @@ class TrackingStateHandler(
         val dateNow = Date().toReadableDateTime(pattern = "dd/MM/yyyy")
         val durationTime = formatDuration(startingMillis = startingMillis, endingMillis = endingMillis)
         val rideId = state.value.getTransactionId()
+        val speedCalculator = SpeedCalculator()
+        val timeMillisDifference = getTimeDurationMillis(
+            startingMillis = startingMillis,
+            endingMillis = endingMillis
+        )
+        val calculateAverageSpeedInMetersPerSecond = speedCalculator.calculateAverageSpeedInMeters(
+            distanceMeters = speedometerState.travelledDistance,
+            timeMillis = timeMillisDifference)
+
 
 
         val rideDetails = if(role == Role.Rescuee.name){
@@ -149,11 +159,13 @@ class TrackingStateHandler(
                 destinationAddress = destinationAddress!!,
                 duration = durationTime,
                 distance = speedometerState.travelledDistance,
-                maxSpeed = String.format("%.2fkm/h", speedometerState.topSpeed)
+                maxSpeed = String.format("%.2fkm/h", speedometerState.topSpeed),
+                averageSpeed = calculateAverageSpeedInMetersPerSecond
             )
         )
 
     }
+
 
     fun updateLocation(location: LocationModel) {
         val latitude = location.latitude ?: return
