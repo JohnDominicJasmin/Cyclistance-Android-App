@@ -55,6 +55,22 @@ class RescueRecordRepositoryImpl(
         }
     }
 
+    override suspend fun addRideMetrics(rideId: String, rideMetrics: RideMetrics) {
+        suspendCoroutine { continuation ->
+            firestore.collection(RESCUE_RECORD_COLLECTION)
+                .document(rideId)
+                .set(mapOf("rideMetrics" to rideMetrics), SetOptions.merge())
+                .addOnSuccessListener {
+                    continuation.resume(Unit)
+                }.addOnFailureListener{
+                    continuation.resumeWithException(
+                        exception = RescueRecordExceptions.AddRideMetricsException(
+                            message = it.message.toString()
+                        )
+                    )
+                }
+        }
+    }
 
     override suspend fun updateStats(userStats: UserStats) {
         try {
@@ -70,7 +86,7 @@ class RescueRecordRepositoryImpl(
                             mapOf(
                                 "userActivity.rescueFrequency" to FieldValue.increment(1),
                                 "userActivity.overallDistanceOfRescueInMeters" to FieldValue.increment(overallDistance),
-                                "userActivity.averageSpeed" to FieldValue.arrayUnion(averageSpeed)
+                                "userActivity.averageSpeeds" to FieldValue.arrayUnion(averageSpeed)
                             )
                         )
                 }
@@ -176,15 +192,5 @@ class RescueRecordRepositoryImpl(
         }
     }
 
-    override suspend fun getRescueDetails(): Flow<RideDetails> {
-        return withContext(scope) {
-            rideDetailsFlow
-        }
-    }
 
-    override suspend fun addRescueDetails(details: RideDetails) {
-        withContext(scope) {
-            rideDetailsFlow.emit(details)
-        }
-    }
 }
