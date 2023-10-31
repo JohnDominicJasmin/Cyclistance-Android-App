@@ -7,7 +7,8 @@ import com.example.cyclistance.feature_user_profile.domain.model.UserStats
 
 interface RescueRecordRepository {
     suspend fun addRescueRecord(rideDetails: RideDetails)
-    suspend fun getRescueRecord(transactionId: String): RideDetails
+    suspend fun getRescueRecord(transactionId: String): RescueRide
+
     suspend fun rateRescue(rescueId: String, rating: Double, ratingText: String)
     suspend fun rateRescuer(rescuerId: String, rating: Double)
 

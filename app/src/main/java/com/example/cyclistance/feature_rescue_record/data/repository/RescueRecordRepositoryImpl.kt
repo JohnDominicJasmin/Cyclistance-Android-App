@@ -8,20 +8,21 @@ import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_USE
 import com.example.cyclistance.core.utils.constants.UtilConstants
 import com.example.cyclistance.feature_rescue_record.data.mapper.RideHistoryMapper.toRideHistoryItem
 import com.example.cyclistance.feature_rescue_record.domain.exceptions.RescueRecordExceptions
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RescueRide
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideHistory
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideMetrics
 import com.example.cyclistance.feature_rescue_record.domain.repository.RescueRecordRepository
 import com.example.cyclistance.feature_user_profile.domain.model.UserStats
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
@@ -34,14 +35,14 @@ class RescueRecordRepositoryImpl(
 
 ) : RescueRecordRepository {
     private val scope: CoroutineContext = Dispatchers.IO
-    private var rideDetailsFlow: MutableStateFlow<RideDetails> = MutableStateFlow(RideDetails())
+
 
     override suspend fun addRescueRecord(rideDetails: RideDetails) {
         suspendCoroutine { continuation ->
             firestore
                 .collection(RESCUE_RECORD_COLLECTION)
                 .document(rideDetails.rideId)
-                .set(rideDetails)
+                .set(rideDetails, SetOptions.merge())
                 .addOnSuccessListener {
                     continuation.resume(Unit)
                 }.addOnFailureListener {
@@ -156,7 +157,7 @@ class RescueRecordRepositoryImpl(
         }
     }
 
-    override suspend fun getRescueRecord(transactionId: String): RideDetails {
+    override suspend fun getRescueRecord(transactionId: String): RescueRide {
         return withContext(scope) {
             suspendCancellableCoroutine { continuation ->
                 firestore
@@ -164,7 +165,7 @@ class RescueRecordRepositoryImpl(
                     .document(transactionId)
                     .get()
                     .addOnSuccessListener {
-                        val rideDetails = it.toObject(RideDetails::class.java) ?: RideDetails()
+                        val rideDetails = it.toObject(RescueRide::class.java) ?: RescueRide()
                         continuation.resume(rideDetails)
                     }.addOnFailureListener {
                         continuation.resumeWithException(
