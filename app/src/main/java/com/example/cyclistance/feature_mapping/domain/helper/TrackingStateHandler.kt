@@ -20,6 +20,7 @@ import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueR
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideMetrics
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -104,7 +105,6 @@ class TrackingStateHandler(
 
         val user = state.value.user
         val role = user.getRole()
-        val speedometerState = state.value.speedometerState
         val rescueTransaction = state.value.rescueTransaction
 
         val startingMillis = rescueTransaction?.startingMillis ?: Date().time
@@ -118,14 +118,7 @@ class TrackingStateHandler(
         val dateNow = Date().toReadableDateTime(pattern = "dd/MM/yyyy")
         val durationTime = formatDuration(startingMillis = startingMillis, endingMillis = endingMillis)
         val rideId = state.value.getTransactionId()
-        val speedCalculator = SpeedCalculator()
-        val timeMillisDifference = getTimeDurationMillis(
-            startingMillis = startingMillis,
-            endingMillis = endingMillis
-        )
-        val calculateAverageSpeedInMetersPerSecond = speedCalculator.calculateAverageSpeedInMeters(
-            distanceMeters = speedometerState.travelledDistance,
-            timeMillis = timeMillisDifference)
+
 
 
 
@@ -158,12 +151,33 @@ class TrackingStateHandler(
                 startingAddress = startingAddress!!,
                 destinationAddress = destinationAddress!!,
                 duration = durationTime,
-                distance = speedometerState.travelledDistance,
-                maxSpeed = String.format("%.2fkm/h", speedometerState.topSpeed),
-                averageSpeed = calculateAverageSpeedInMetersPerSecond
+
             )
         )
 
+    }
+
+    fun getRideMetrics(): RideMetrics{
+        val rescueTransaction = state.value.rescueTransaction
+
+        val startingMillis = rescueTransaction?.startingMillis ?: Date().time
+        val endingMillis = rescueTransaction?.endingMillis ?: Date().time
+        val timeMillisDifference = getTimeDurationMillis(
+            startingMillis = startingMillis,
+            endingMillis = endingMillis)
+        val speedCalculator = SpeedCalculator()
+        val speedometerState = state.value.speedometerState
+
+        val calculateAverageSpeedInMetersPerSecond = speedCalculator.calculateAverageSpeedInMeters(
+            distanceMeters = speedometerState.travelledDistance,
+            timeMillis = timeMillisDifference)
+
+
+        return RideMetrics(
+            distanceInMeters = speedometerState.travelledDistance,
+            maxSpeed = String.format("%.2fkm/h", speedometerState.topSpeed),
+            averageSpeedKmh = calculateAverageSpeedInMetersPerSecond
+        )
     }
 
 

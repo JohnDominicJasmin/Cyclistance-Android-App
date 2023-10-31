@@ -17,9 +17,5 @@ data class RideSummary(
     val startingAddress: String = "",
     val destinationAddress: String = "",
     val duration: String = "",
-    val distance: Double = 0.0,
-    val maxSpeed: String = "",
-    val averageSpeed: Double = 0.0
-
 
     ) : Parcelable
