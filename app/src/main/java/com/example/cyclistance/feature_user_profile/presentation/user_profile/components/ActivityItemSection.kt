@@ -35,7 +35,7 @@ import com.example.cyclistance.theme.CyclistanceTheme
 @Composable
 fun ActivityItemSection(
     modifier: Modifier = Modifier,
-    quantity: Int,
+    quantity: String,
     caption: String,
     @DrawableRes icon: Int) {
 
@@ -110,7 +110,7 @@ fun PreviewActivityItemSection() {
                 contentAlignment = Alignment.Center) {
                 ActivityItemSection(
                     modifier = Modifier.wrapContentSize(),
-                    quantity = 273,
+                    quantity = "273",
                     caption = "Rescue Frequencies",
                     icon = R.drawable.ic_gear)
             }

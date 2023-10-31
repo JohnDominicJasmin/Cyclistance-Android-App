@@ -7,8 +7,6 @@ data class UserProfileUseCase(
     val getNameUseCase: GetNameUseCase,
     val updateProfileInfoUseCase: UpdateProfileInfoUseCase,
     val getUserProfileInfoUseCase: GetUserProfileInfoUseCase,
-    val updateReasonAssistanceUseCase: UpdateReasonAssistanceUseCase,
-    val updateUserActivityUseCase: UpdateUserActivityUseCase
 
 )
 

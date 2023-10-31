@@ -52,7 +52,7 @@ fun DeleteAccountDialog(
     val isDeletingAccountConfirm = remember(text) { text == "delete account" }
 
     DialogAnimatedIconCreator(
-        icon = icon,
+        animatedResIcon = icon,
         isDialogOpen = isDialogOpen,
         onDialogVisibilityToggle = {
             onDialogVisibilityToggle(!isDialogOpen)

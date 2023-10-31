@@ -41,8 +41,8 @@ class HistoryDetailsViewModel @Inject constructor(
             runCatching {
                 isLoading(true)
                 rescueRecordUseCase.getRescueRecordUseCase(transactionId = transactionId)
-            }.onSuccess { rideDetails ->
-                _eventFlow.emit(value = HistoryDetailsEvent.GetRideDetailsSuccess(rideDetails))
+            }.onSuccess { rescueRide ->
+                _eventFlow.emit(value = HistoryDetailsEvent.GetRideDetailsSuccess(rescueRide))
             }.onFailure {
                 _eventFlow.emit(value = HistoryDetailsEvent.GetRideDetailsFailed(it.message.toString()))
             }.also {

@@ -46,7 +46,7 @@ fun HistoryDetailsScreen(
             when(event){
                 is HistoryDetailsEvent.GetRideDetailsSuccess -> {
                     uiState = uiState.copy(
-                        rideDetails = event.rideDetails
+                        rescueRide = event.rescueRide
                     )
                 }
                 is HistoryDetailsEvent.GetRideDetailsFailed -> {

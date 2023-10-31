@@ -107,8 +107,8 @@ val fakeUserProfile = UserProfileModel(
     userActivity = UserActivityModel(
         requestAssistanceFrequency = 100,
         rescueFrequency = 100,
-        overallDistanceOfRescue = 235,
-        averageSpeed = 25
+        overallDistanceOfRescueInMeters = 235.0,
+        averageSpeed = 25.0
     ),
 
     reasonAssistance = ReasonAssistanceModel(

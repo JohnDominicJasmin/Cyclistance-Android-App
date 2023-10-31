@@ -21,7 +21,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescriptionToIcon
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RescueRide
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideMetrics
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
 import com.example.cyclistance.feature_rescue_record.presentation.history_details.components.HistoryDetailsPlaceholder
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.event.RescueDetailsUiEvent
@@ -31,7 +34,7 @@ import com.example.cyclistance.theme.Black500
 import com.example.cyclistance.theme.CyclistanceTheme
 
 @Composable
-fun RescueDetailsScreenContent(
+fun RescueDetailsContent(
     modifier: Modifier = Modifier,
     state: RescueDetailsState,
     uiState: RescueDetailsUiState,
@@ -39,7 +42,9 @@ fun RescueDetailsScreenContent(
 ) {
 
 
-    val rideSummary = uiState.rideSummary
+    val rescueRide = uiState.rescueRide
+    val rideSummary = rescueRide?.rideSummary
+    val rideMetrics = rescueRide?.rideMetrics
 
     Surface(
         modifier = modifier
@@ -108,8 +113,8 @@ fun RescueDetailsScreenContent(
                                 .fillMaxWidth()
                                 .padding(top = 16.dp),
                             duration = rideSummary.duration,
-                            distance = rideSummary.distance,
-                            maxSpeed = rideSummary.maxSpeed
+                            distance = rideMetrics?.distanceInMeters?.formatToDistanceKm() ?: "0.0m",
+                            maxSpeed = rideMetrics?.maxSpeed ?: "0.0km/h"
                         )
 
                         Button(
@@ -136,7 +141,6 @@ fun RescueDetailsScreenContent(
         }
     }
 }
-
 val fakeRideSummary = RideSummary(
     rating = 0.0,
     ratingText = "No ratings",
@@ -148,18 +152,29 @@ val fakeRideSummary = RideSummary(
     startingAddress = "Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano,Via Roma 1, Milano",
     destinationAddress = "Via Roma 2, Milano, Via Roma 2, Milano, Via Roma 2, Milano, Via Roma 2, Milano",
     duration = "1h 30m",
-    distance = "10 km",
-    maxSpeed = "30 km/h",
+
+    )
+
+val fakeRideMetrics = RideMetrics(
+    distanceInMeters = 2352.2,
+    maxSpeed = "20.0km/h",
+    averageSpeedKmh = 10.0
 )
+
+val fakeRescueRide = RescueRide(
+    rideSummary = fakeRideSummary,
+    rideMetrics = fakeRideMetrics
+)
+
 
 
 @Preview(device = "id:Galaxy Nexus")
 @Composable
 fun PreviewRescueDetailsDark() {
     CyclistanceTheme(darkTheme = true) {
-        RescueDetailsScreenContent(
+        RescueDetailsContent(
             state = RescueDetailsState(isLoading = true),
-            uiState = RescueDetailsUiState(rideSummary = null),
+            uiState = RescueDetailsUiState(rescueRide = fakeRescueRide),
             event = {})
     }
 }
@@ -168,9 +183,9 @@ fun PreviewRescueDetailsDark() {
 @Composable
 fun PreviewRescueDetailsLight() {
     CyclistanceTheme(darkTheme = false) {
-        RescueDetailsScreenContent(
+        RescueDetailsContent(
             state = RescueDetailsState(isLoading = true),
-            uiState = RescueDetailsUiState(rideSummary = fakeRideSummary),
+            uiState = RescueDetailsUiState(rescueRide = fakeRescueRide),
             event = {})
     }
 }

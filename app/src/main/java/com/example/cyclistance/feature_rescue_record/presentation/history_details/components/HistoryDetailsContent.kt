@@ -23,8 +23,10 @@ import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.core.presentation.dialogs.common.AnimatedRawResIcon
 import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescriptionToIcon
-import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RescueRide
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideMetrics
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
 import com.example.cyclistance.feature_rescue_record.presentation.history_details.event.HistoryDetailsUiEvent
 import com.example.cyclistance.feature_rescue_record.presentation.history_details.state.HistoryDetailsState
@@ -44,9 +46,10 @@ fun HistoryDetailsContent(
     event: (HistoryDetailsUiEvent) -> Unit
 ) {
 
-    val rideDetails = uiState.rideDetails
-    val rideSummary = rideDetails?.rideSummary
-    val isRideLoaded = rideDetails != null
+    val rescueRide = uiState.rescueRide
+    val rideSummary = rescueRide?.rideSummary
+    val rideMetrics = rescueRide?.rideMetrics
+    val isRideLoaded = rescueRide != null
     val shouldShowPlaceholder = !isRideLoaded && state.isLoading
     Surface(
         modifier = modifier
@@ -80,8 +83,8 @@ fun HistoryDetailsContent(
                                 .weight(3f)
                                 .padding(vertical = 10.dp),
                             role = "Rescuer",
-                            photoUrl = rideDetails!!.rescuerPhotoUrl,
-                            name = rideDetails.rescuerName,
+                            photoUrl = rescueRide!!.rescuerPhotoUrl,
+                            name = rescueRide.rescuerName,
                         )
 
                         AnimatedRawResIcon(
@@ -96,8 +99,8 @@ fun HistoryDetailsContent(
                                 .weight(3f)
                                 .padding(vertical = 10.dp),
                             role = "Rescuee",
-                            photoUrl = rideDetails.rescueePhotoUrl,
-                            name = rideDetails.rescueeName,
+                            photoUrl = rescueRide.rescueePhotoUrl,
+                            name = rescueRide.rescueeName,
                         )
                     }
 
@@ -142,8 +145,8 @@ fun HistoryDetailsContent(
                             .fillMaxWidth()
                             .padding(top = 16.dp),
                         duration = rideSummary.duration,
-                        distance = rideSummary.distance,
-                        maxSpeed = rideSummary.maxSpeed,
+                        distance = rideMetrics?.distanceInMeters?.formatToDistanceKm() ?: "0.0m",
+                        maxSpeed = rideMetrics?.maxSpeed ?: "0.0km/h"
                     )
 
                     Button(
@@ -170,7 +173,8 @@ fun HistoryDetailsContent(
 
 }
 
-val fakeRideHistoryDetailsModel = RideDetails(
+
+val fakeRescueRide = RescueRide(
     rescuerId = "1",
     rescuerName = "John Doe",
     rescuerPhotoUrl = "aksodnas",
@@ -188,11 +192,7 @@ val fakeRideHistoryDetailsModel = RideDetails(
         startingAddress = "Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano,Via Roma 1, Milano",
         destinationAddress = "Via Roma 2, Milano,Via Roma 2, Milano,Via Roma 2, Milano,Via Roma 2, Milano,Via Roma 2, Milano",
         duration = "1h 30m",
-        distance = "10 km",
-        maxSpeed = "30 km/h",
-    )
-
-)
+), rideMetrics = RideMetrics())
 
 
 @Preview
@@ -201,7 +201,7 @@ fun PreviewRideHistoryDetailsContentDark() {
     CyclistanceTheme(darkTheme = true) {
         HistoryDetailsContent(
             uiState = HistoryDetailsUiState(
-                rideDetails = null
+               rescueRide = fakeRescueRide
             ),
             event = {},
             state = HistoryDetailsState(isLoading = true)

@@ -286,11 +286,9 @@ val fakeRideDetails = RideDetails(
         startingAddress = "123 Main St",
         destinationAddress = "456 Main St",
         duration = "1h 30m",
-        distance = "10km",
-        maxSpeed = "30km/h",
         startingTime = "12:00",
-        endTime = "13:30"
+        endTime = "13:30",
+    ),
     )
-)
 
 

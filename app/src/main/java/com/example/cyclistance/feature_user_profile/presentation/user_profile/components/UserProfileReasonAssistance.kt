@@ -44,16 +44,16 @@ fun UserProfileReasonAssistance(modifier: Modifier = Modifier, state: UserProfil
 
             repeat(6) { index ->
                 AssistanceCountItem(
-                    iconId = getAssistanceIcon(index = index)!!,
+                    iconId = getAssistanceIcon(index = index),
                     count = getAssistanceCount(
                         index = index,
-                        userProfile = state.userProfileModel)!!)
+                        userProfile = state.userProfileModel))
             }
         }
     }
 }
 
-private fun getAssistanceIcon(index: Int): Int? {
+private fun getAssistanceIcon(index: Int): Int {
 
     return when (index) {
         0 -> R.drawable.ic_injury
@@ -62,11 +62,11 @@ private fun getAssistanceIcon(index: Int): Int? {
         3 -> R.drawable.ic_broken_chain
         4 -> R.drawable.ic_accident
         5 -> R.drawable.ic_faulty_brakes
-        else -> 0
+        else -> R.drawable.not_available_circle_svgrepo_com
     }
 }
 
-private fun getAssistanceCount(userProfile: UserProfileModel, index: Int): Int? {
+private fun getAssistanceCount(userProfile: UserProfileModel, index: Int): Int {
     return when (index) {
         0 -> userProfile.getInjuryCount()
         1 -> userProfile.getFrameSnapCount()

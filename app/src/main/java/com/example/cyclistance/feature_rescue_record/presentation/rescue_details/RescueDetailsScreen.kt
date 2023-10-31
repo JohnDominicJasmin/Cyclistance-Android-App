@@ -15,7 +15,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.components.RescueDetailsScreenContent
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideMetrics
+import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.components.RescueDetailsContent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.event.RescueDetailsEvent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.event.RescueDetailsUiEvent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_details.state.RescueDetailsUiState
@@ -43,10 +44,14 @@ fun RescueDetailsScreen(
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
 
-                is RescueDetailsEvent.GetRescueRecordSuccess -> {
+                is RescueDetailsEvent.GetRideSummarySuccess -> {
                     uiState = uiState.copy(
-                        rideSummary = event.rideSummary,
+                        rescueRide = uiState.rescueRide?.copy(rideSummary = event.rideSummary)
                     )
+                }
+
+                is RescueDetailsEvent.GetRideMetricsSuccess -> {
+                    uiState = uiState.copy(rescueRide = uiState.rescueRide?.copy(rideMetrics = event.rideMetrics ?: RideMetrics()))
                 }
             }
         }
@@ -58,7 +63,8 @@ fun RescueDetailsScreen(
         }
     }
 
-    RescueDetailsScreenContent(
+    RescueDetailsContent(
+        
         modifier = Modifier.padding(paddingValues),
         state = state,
         uiState = uiState,

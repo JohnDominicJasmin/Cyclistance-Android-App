@@ -18,8 +18,8 @@ data class UserProfileModel(
     fun getBikeGroup(): String? = userProfileInfo?.bikeGroup ?: ""
     fun getRequestAssistanceFrequency(): Int = userActivity?.requestAssistanceFrequency ?: 0
     fun getRescueFrequency(): Int = userActivity?.rescueFrequency ?: 0
-    fun getOverallDistanceOfRescue(): Int = userActivity?.overallDistanceOfRescue ?: 0
-    fun getAverageSpeed(): Int = userActivity?.averageSpeed ?: 0
+    fun getOverallDistanceInMeters(): Double = userActivity?.overallDistanceOfRescueInMeters ?: 0.0
+    fun getAverageSpeed(): Double = userActivity?.averageSpeed ?: 0.0
     fun getInjuryCount(): Int = reasonAssistance?.injuryCount ?: 0
     fun getFrameSnapCount(): Int = reasonAssistance?.frameSnapCount ?: 0
     fun getFlatTireCount(): Int = reasonAssistance?.flatTireCount ?: 0

@@ -10,9 +10,9 @@ import com.example.cyclistance.feature_mapping.data.CyclistanceApi
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.RescueTransactionClient
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.TransactionLiveLocationClient
 import com.example.cyclistance.feature_mapping.data.data_source.network.websockets.UserClient
+import com.example.cyclistance.feature_mapping.data.repository.MappingFlowRepositoryImpl
 import com.example.cyclistance.feature_mapping.data.repository.MappingRepositoryImpl
 import com.example.cyclistance.feature_mapping.data.repository.MappingSocketRepositoryImpl
-import com.example.cyclistance.feature_mapping.data.repository.MappingUiStoreRepositoryImpl
 import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.example.cyclistance.feature_mapping.domain.repository.MappingSocketRepository
 import com.example.cyclistance.feature_mapping.domain.repository.MappingUiStoreRepository
@@ -34,7 +34,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
-
 
 
 @Module
@@ -110,7 +109,7 @@ object MappingDataSourceModule {
     @Provides
     @Singleton
     fun provideMappingUiStoreRepository(@ApplicationContext context: Context): MappingUiStoreRepository {
-        return MappingUiStoreRepositoryImpl(context)
+        return MappingFlowRepositoryImpl(context)
     }
 
 

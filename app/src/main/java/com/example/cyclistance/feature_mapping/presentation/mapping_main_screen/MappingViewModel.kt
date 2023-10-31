@@ -533,12 +533,18 @@ class MappingViewModel @Inject constructor(
 
     private fun rescuerArrived() {
         val role = state.value.user.getRole()
+        val rideDetails = trackingHandler.getRideDetails()
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             runCatching {
-                rescueRecordUseCase.rescueDetailsUseCase(details = trackingHandler.getRideDetails())
+                rescueRecordUseCase.rescueDetailsUseCase(details = rideDetails)
                 if (role == Role.Rescuee.name) {
-                    rescueRecordUseCase.addRescueRecordUseCase(rideDetails = trackingHandler.getRideDetails())
+                    rescueRecordUseCase.addRescueRecordUseCase(rideDetails = rideDetails)
+                }else{
+                    val rideMetrics = trackingHandler.getRideMetrics()
+                    rescueRecordUseCase.addRideMetrics(rideId = rideDetails.rideId, rideMetrics = rideMetrics)
+                    rescueRecordUseCase.rideMetricsUseCase(rideMetrics = rideMetrics)
                 }
+
             }.onSuccess {
 
                 _eventFlow.emit(value = MappingEvent.DestinationArrivedSuccess)

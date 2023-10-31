@@ -62,8 +62,12 @@ object FormatterUtils {
         }
     }
 
+    fun getTimeDurationMillis(startingMillis: Long, endingMillis: Long): Long {
+        return kotlin.math.abs(endingMillis - startingMillis)
+    }
+
     fun formatDuration(startingMillis: Long, endingMillis: Long): String {
-        val duration = kotlin.math.abs(endingMillis - startingMillis)
+        val duration = getTimeDurationMillis(startingMillis, endingMillis)
         Timber.v("Current millis: $duration")
         val hours = TimeUnit.MILLISECONDS.toHours(duration)
         val minutes = TimeUnit.MILLISECONDS.toMinutes(duration) - TimeUnit.HOURS.toMinutes(hours)
