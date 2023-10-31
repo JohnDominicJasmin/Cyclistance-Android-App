@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_rescue_record.domain.repository
 
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RescueRide
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideHistory
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideMetrics
