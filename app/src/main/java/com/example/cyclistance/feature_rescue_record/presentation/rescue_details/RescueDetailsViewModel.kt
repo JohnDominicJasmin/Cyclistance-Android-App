@@ -53,13 +53,17 @@ class RescueDetailsViewModel @Inject constructor(
     private fun loadRescueDetails(){
         viewModelScope.launch(SupervisorJob()) {
             rescueRecordUseCase.rescueDetailsUseCase().collectLatest { rideDetails ->
-                _eventFlow.emit(value = RescueDetailsEvent.GetRideSummarySuccess(rideSummary =  rideDetails.rideSummary, ))
+                _eventFlow.emit(value = RescueDetailsEvent.GetRideSummarySuccess(rideSummary = rideDetails.rideSummary, ))
             }
+        }
+
+        viewModelScope.launch(SupervisorJob()){
             rescueRecordUseCase.rideMetricsUseCase().collectLatest { metrics ->
                 _eventFlow.emit(value = RescueDetailsEvent.GetRideMetricsSuccess(rideMetrics = metrics))
             }
-            saveState()
         }
+
+        saveState()
     }
     private fun loadRescueDetails(transactionId: String) {
         viewModelScope.launch(SupervisorJob()) {
@@ -68,6 +72,7 @@ class RescueDetailsViewModel @Inject constructor(
                 rescueRecordUseCase.getRescueRecordUseCase(transactionId = transactionId)
             }.onSuccess { rideRescue ->
                 _eventFlow.emit(value = RescueDetailsEvent.GetRideSummarySuccess(rideRescue.rideSummary))
+                _eventFlow.emit(value = RescueDetailsEvent.GetRideMetricsSuccess(rideRescue.rideMetrics))
             }.onFailure {
                 _eventFlow.emit(value = RescueDetailsEvent.GetRescueRecordFailed(it.message.toString()))
             }.also {

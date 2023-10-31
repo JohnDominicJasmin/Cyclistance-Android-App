@@ -541,8 +541,9 @@ class MappingViewModel @Inject constructor(
                     rescueRecordUseCase.addRescueRecordUseCase(rideDetails = rideDetails)
                 }else{
                     val rideMetrics = trackingHandler.getRideMetrics()
-                    rescueRecordUseCase.addRideMetrics(rideId = rideDetails.rideId, rideMetrics = rideMetrics)
                     rescueRecordUseCase.rideMetricsUseCase(rideMetrics = rideMetrics)
+                    rescueRecordUseCase.addRideMetrics(rideId = rideDetails.rideId, rideMetrics = rideMetrics)
+
                 }
 
             }.onSuccess {
