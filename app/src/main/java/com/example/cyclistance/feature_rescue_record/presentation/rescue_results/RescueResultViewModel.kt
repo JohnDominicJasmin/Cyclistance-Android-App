@@ -56,6 +56,9 @@ class RescueResultViewModel @Inject constructor(
             rescueRecordUseCase.rescueDetailsUseCase().collect{ rideDetails ->
                 _state.update { it.copy(rideDetails = rideDetails) }
             }
+            rescueRecordUseCase.rideMetricsUseCase().collect{ rideMetrics ->
+                _state.update { it.copy(rideMetrics = rideMetrics) }
+            }
             saveState()
         }
     }
@@ -80,14 +83,14 @@ class RescueResultViewModel @Inject constructor(
         viewModelScope.launch(SupervisorJob() + Dispatchers.IO) {
             runCatching {
                 val rideDetails = state.value.rideDetails
-                val summary = rideDetails.rideSummary
-                val averageSpeed = summary.averageSpeed
+                val metrics = state.value.rideMetrics
+
                 rescueRecordUseCase.updateStatsUseCase(userStats = UserStats(
                     rescuerId = rideDetails.rescuerId,
                     rescueeId = rideDetails.rescueeId,
-                    rescueOverallDistanceInMeters = summary.distance,
-                    rescueAverageSpeed = averageSpeed,
-                    rescueDescription = toRescueDescription(summary.iconDescription) ?: ""
+                    rescueOverallDistanceInMeters = metrics?.distanceInMeters ?: 0.0,
+                    rescueAverageSpeed = metrics?.averageSpeedKmh ?: 0.0,
+                    rescueDescription = toRescueDescription(rideDetails.rideSummary.iconDescription) ?: ""
                 ))
             }.onFailure {
                 Timber.e( "Failed to update user stats ${it.message}")
