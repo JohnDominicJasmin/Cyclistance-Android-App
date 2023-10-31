@@ -1,10 +1,10 @@
 package com.example.cyclistance.feature_rescue_record.domain.use_case
 
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
-import com.example.cyclistance.feature_rescue_record.domain.repository.RescueRecordRepository
+import com.example.cyclistance.feature_rescue_record.domain.repository.RescueRecordFlowRepository
 import kotlinx.coroutines.flow.Flow
 
-class RescueDetailsUseCase(private val repository: RescueRecordRepository) {
+class RescueDetailsUseCase(private val repository: RescueRecordFlowRepository) {
     suspend operator fun invoke(): Flow<RideDetails> {
         return repository.getRescueDetails()
     }

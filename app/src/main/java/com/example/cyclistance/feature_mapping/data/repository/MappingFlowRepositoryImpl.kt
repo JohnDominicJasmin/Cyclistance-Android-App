@@ -16,7 +16,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
 
-class MappingUiStoreRepositoryImpl(
+class MappingFlowRepositoryImpl(
     private val context: Context,
 ): MappingUiStoreRepository {
 
