@@ -7,6 +7,7 @@ import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_USE
 import com.example.cyclistance.core.utils.constants.UserProfileConstants.KEY_USER_REASON_ASSISTANCE
 import com.example.cyclistance.core.utils.constants.UtilConstants
 import com.example.cyclistance.core.utils.constants.UtilConstants.KEY_NAME
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.metersToKilometerPerHour
 import com.example.cyclistance.feature_user_profile.domain.model.ReasonAssistanceModel
 import com.example.cyclistance.feature_user_profile.domain.model.UserActivityModel
 import com.example.cyclistance.feature_user_profile.domain.model.UserProfileInfoModel
@@ -20,8 +21,8 @@ object UserProfileInfoMapper {
         val reasonAssistanceObject = get(KEY_USER_REASON_ASSISTANCE) as? Map<*, *>
         val requestAssistanceFrequency = (userActivityObject?.get("requestAssistanceFrequency") as? Long)?.toInt() ?: 0
         val rescueFrequency = (userActivityObject?.get("rescueFrequency") as? Long)?.toInt() ?: 0
-        val overallDistanceOfRescue = (userActivityObject?.get("overallDistanceOfRescueInMeters") as? Long)?.toDouble() ?: 0.0
-        val averageSpeed = (userActivityObject?.get("averageSpeed") as? Long)?.toDouble() ?: 0.0
+        val overallDistanceOfRescue = (userActivityObject?.get("overallDistanceOfRescueInMeters") as? Double) ?: 0.0
+        val averageSpeeds = (userActivityObject?.get("averageSpeeds") as? List<Double>)
         val injuryCount = (reasonAssistanceObject?.get("injuryCount") as? Long)?.toInt() ?: 0
         val frameSnapCount = (reasonAssistanceObject?.get("frameSnapCount") as? Long)?.toInt() ?: 0
         val flatTireCount = (reasonAssistanceObject?.get("flatTireCount") as? Long)?.toInt() ?: 0
@@ -32,7 +33,10 @@ object UserProfileInfoMapper {
         @Suppress("UNCHECKED_CAST")
         val ratings:List<Float> = get(KEY_USER_RATINGS) as? List<Float> ?: emptyList()
         val averageRating = if(ratings.isEmpty()) 0.0 else ratings.average()
-
+        val totalRides = averageSpeeds?.size?.toDouble() ?: 0.0
+        val totalSpeed = averageSpeeds?.sum() ?: 0.0
+        val averageSpeedMps = totalSpeed / totalRides
+        val averageSpeedKph = metersToKilometerPerHour(averageSpeedMps)
         return UserProfileModel(
             userProfileInfo = UserProfileInfoModel(
                 photoUrl = getString(UtilConstants.KEY_PHOTO) ?: "",
@@ -45,7 +49,7 @@ object UserProfileInfoMapper {
                 requestAssistanceFrequency = requestAssistanceFrequency,
                 rescueFrequency = rescueFrequency,
                 overallDistanceOfRescueInMeters = overallDistanceOfRescue,
-                averageSpeed = averageSpeed
+                averageSpeed = averageSpeedKph
             ),
             reasonAssistance = ReasonAssistanceModel(
                 injuryCount = injuryCount,

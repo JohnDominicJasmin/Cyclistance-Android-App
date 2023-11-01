@@ -156,7 +156,7 @@ val fakeRideSummary = RideSummary(
 val fakeRideMetrics = RideMetrics(
     distanceInMeters = 2352.2,
     maxSpeed = "20.0km/h",
-    averageSpeedKmh = 10.0
+    averageSpeedMps = 10.0
 )
 
 

@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.feature_user_profile.domain.model.UserProfileModel
 
 @Composable
@@ -42,12 +43,12 @@ fun UserActivitySection(modifier: Modifier = Modifier, userProfile: UserProfileM
 
 }
 
-private fun getActivityQuantity(userProfile: UserProfileModel,index: Int): String?{
+private fun getActivityQuantity(userProfile: UserProfileModel,index: Int): String {
     return when (index) {
         0 -> userProfile.getRequestAssistanceFrequency()
         1 -> userProfile.getRescueFrequency()
-        2 -> userProfile.getOverallDistanceInMeters()
-        3 -> userProfile.getAverageSpeed()
+        2 -> userProfile.getOverallDistanceInMeters().formatToDistanceKm()
+        3 -> String.format("%.2fkm/h", userProfile.getAverageSpeed())
         else -> 0
     }.toString()
 }

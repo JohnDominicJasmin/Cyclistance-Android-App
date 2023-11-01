@@ -76,7 +76,7 @@ class RescueRecordRepositoryImpl(
         try {
             coroutineScope {
                 val overallDistance = userStats.rescueOverallDistanceInMeters
-                val averageSpeed = userStats.rescueAverageSpeed
+                val averageSpeed = userStats.rescueAverageSpeedMps
 
                 val updateRescuerStatsTask = async {
                     firestore
