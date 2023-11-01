@@ -175,7 +175,7 @@ class TrackingStateHandler(
 
         return RideMetrics(
             distanceInMeters = speedometerState.travelledDistance,
-            maxSpeed = String.format("%.2fkm/h", speedometerState.topSpeed),
+            maxSpeed = String.format("%.2f km/h", speedometerState.topSpeed),
             averageSpeedMps = calculateAverageSpeedInMetersPerSecond
         )
     }

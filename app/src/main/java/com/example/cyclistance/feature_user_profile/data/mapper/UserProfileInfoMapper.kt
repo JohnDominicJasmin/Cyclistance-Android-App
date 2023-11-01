@@ -35,8 +35,9 @@ object UserProfileInfoMapper {
         val averageRating = if(ratings.isEmpty()) 0.0 else ratings.average()
         val totalRides = averageSpeeds?.size?.toDouble() ?: 0.0
         val totalSpeed = averageSpeeds?.sum() ?: 0.0
-        val averageSpeedMps = totalSpeed / totalRides
+        val averageSpeedMps = (totalSpeed / totalRides).takeIf { !it.isNaN() } ?: 0.0
         val averageSpeedKph = metersToKilometerPerHour(averageSpeedMps)
+
         return UserProfileModel(
             userProfileInfo = UserProfileInfoModel(
                 photoUrl = getString(UtilConstants.KEY_PHOTO) ?: "",
