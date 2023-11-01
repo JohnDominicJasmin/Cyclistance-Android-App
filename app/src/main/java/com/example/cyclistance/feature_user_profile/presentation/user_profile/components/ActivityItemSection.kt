@@ -61,7 +61,7 @@ fun ActivityItemSection(
                     overflow = TextOverflow.Ellipsis,
                     text = quantity.toString(),
                     color = MaterialTheme.colors.onSurface,
-                    style = MaterialTheme.typography.h4,
+                    style = MaterialTheme.typography.h6,
                     modifier = Modifier.constrainAs(quantityValue) {
                         top.linkTo(parent.top)
                         start.linkTo(parent.start)
@@ -110,8 +110,8 @@ fun PreviewActivityItemSection() {
                 contentAlignment = Alignment.Center) {
                 ActivityItemSection(
                     modifier = Modifier.wrapContentSize(),
-                    quantity = "273",
-                    caption = "Rescue Frequencies",
+                    quantity = "273.23 m",
+                    caption = "Overall Distance of Rescue",
                     icon = R.drawable.ic_gear)
             }
         }
