@@ -48,7 +48,7 @@ private fun getActivityQuantity(userProfile: UserProfileModel,index: Int): Strin
         0 -> userProfile.getRequestAssistanceFrequency()
         1 -> userProfile.getRescueFrequency()
         2 -> userProfile.getOverallDistanceInMeters().formatToDistanceKm()
-        3 -> String.format("%.2fkm/h", userProfile.getAverageSpeed())
+        3 -> String.format("%.2f km/h", userProfile.getAverageSpeed())
         else -> 0
     }.toString()
 }
