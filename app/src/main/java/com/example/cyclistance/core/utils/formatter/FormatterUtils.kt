@@ -28,8 +28,21 @@ object FormatterUtils {
         }
     }
 
+    fun toRescueDescription(description: String): String? {
+        return when (description) {
+            MappingConstants.INJURY_TEXT -> "injuryCount"
+            MappingConstants.BROKEN_FRAME_TEXT -> "frameSnapCount"
+            MappingConstants.INCIDENT_TEXT -> "incidentCount"
+            MappingConstants.BROKEN_CHAIN_TEXT -> "brokenChainCount"
+            MappingConstants.FLAT_TIRES_TEXT -> "flatTireCount"
+            MappingConstants.FAULTY_BRAKES_TEXT -> "faultyBrakesCount"
+            else -> null
+        }
+    }
 
-
+    fun metersToKilometerPerHour(metersPerSecond: Double): Double {
+        return metersPerSecond * 3.6
+    }
 
     // TODO: test this code
     fun LocationModel?.isLocationAvailable() = (this?.latitude != null).and(this?.longitude != null)
