@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.formatter.IconFormatter.rescueDescriptionToIcon
-import com.example.cyclistance.feature_rescue_record.domain.model.ui.RescueRide
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideMetrics
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
 import com.example.cyclistance.feature_rescue_record.presentation.history_details.components.HistoryDetailsPlaceholder
@@ -42,9 +41,8 @@ fun RescueDetailsContent(
 ) {
 
 
-    val rescueRide = uiState.rescueRide
-    val rideSummary = rescueRide?.rideSummary
-    val rideMetrics = rescueRide?.rideMetrics
+    val rideSummary = uiState.rideSummary
+    val rideMetrics = uiState.rideMetrics
 
     Surface(
         modifier = modifier
@@ -113,8 +111,8 @@ fun RescueDetailsContent(
                                 .fillMaxWidth()
                                 .padding(top = 16.dp),
                             duration = rideSummary.duration,
-                            distance = rideMetrics?.distanceInMeters?.formatToDistanceKm() ?: "0.0m",
-                            maxSpeed = rideMetrics?.maxSpeed ?: "0.0km/h"
+                            distance = rideMetrics?.distanceInMeters?.formatToDistanceKm() ?: "Not Available",
+                            maxSpeed = rideMetrics?.maxSpeed ?: "Not Available"
                         )
 
                         Button(
@@ -158,13 +156,10 @@ val fakeRideSummary = RideSummary(
 val fakeRideMetrics = RideMetrics(
     distanceInMeters = 2352.2,
     maxSpeed = "20.0km/h",
-    averageSpeedKmh = 10.0
+    averageSpeedMps = 10.0
 )
 
-val fakeRescueRide = RescueRide(
-    rideSummary = fakeRideSummary,
-    rideMetrics = fakeRideMetrics
-)
+
 
 
 
@@ -174,7 +169,7 @@ fun PreviewRescueDetailsDark() {
     CyclistanceTheme(darkTheme = true) {
         RescueDetailsContent(
             state = RescueDetailsState(isLoading = true),
-            uiState = RescueDetailsUiState(rescueRide = fakeRescueRide),
+            uiState = RescueDetailsUiState(rideSummary = fakeRideSummary, rideMetrics = fakeRideMetrics),
             event = {})
     }
 }
@@ -185,7 +180,7 @@ fun PreviewRescueDetailsLight() {
     CyclistanceTheme(darkTheme = false) {
         RescueDetailsContent(
             state = RescueDetailsState(isLoading = true),
-            uiState = RescueDetailsUiState(rescueRide = fakeRescueRide),
+            uiState = RescueDetailsUiState(rideMetrics = fakeRideMetrics, rideSummary = fakeRideSummary),
             event = {})
     }
 }

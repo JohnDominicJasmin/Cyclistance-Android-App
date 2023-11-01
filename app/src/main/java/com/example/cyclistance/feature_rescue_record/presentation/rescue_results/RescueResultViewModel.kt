@@ -3,19 +3,12 @@ package com.example.cyclistance.feature_rescue_record.presentation.rescue_result
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.cyclistance.core.utils.constants.MappingConstants.BROKEN_CHAIN_TEXT
-import com.example.cyclistance.core.utils.constants.MappingConstants.BROKEN_FRAME_TEXT
-import com.example.cyclistance.core.utils.constants.MappingConstants.FAULTY_BRAKES_TEXT
-import com.example.cyclistance.core.utils.constants.MappingConstants.FLAT_TIRES_TEXT
-import com.example.cyclistance.core.utils.constants.MappingConstants.INCIDENT_TEXT
-import com.example.cyclistance.core.utils.constants.MappingConstants.INJURY_TEXT
 import com.example.cyclistance.core.utils.constants.RescueRecordConstants.RESCUE_RESULT_VM_STATE_KEY
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
 import com.example.cyclistance.feature_rescue_record.domain.use_case.RescueRecordUseCase
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.event.RescueResultEvent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.event.RescueResultVmEvent
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.state.RescueResultState
-import com.example.cyclistance.feature_user_profile.domain.model.UserStats
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -26,6 +19,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -52,13 +48,14 @@ class RescueResultViewModel @Inject constructor(
     }
 
     private fun loadRideDetails(){
-        viewModelScope.launch {
-            rescueRecordUseCase.rescueDetailsUseCase().collect{ rideDetails ->
+        viewModelScope.launch(SupervisorJob() + Dispatchers.IO) {
+
+            rescueRecordUseCase.rescueDetailsUseCase().catch { rideDetails ->
+                Timber.e( "Failed to load ride details ${rideDetails.message}")
+            }.onEach {rideDetails ->
                 _state.update { it.copy(rideDetails = rideDetails) }
-            }
-            rescueRecordUseCase.rideMetricsUseCase().collect{ rideMetrics ->
-                _state.update { it.copy(rideMetrics = rideMetrics) }
-            }
+            }.launchIn(this)
+
             saveState()
         }
     }
@@ -72,43 +69,13 @@ class RescueResultViewModel @Inject constructor(
                 rateRescue(event.rating)
             }
 
-            RescueResultVmEvent.UpdateUserStats -> {
-                updateUserStats()
-            }
+
         }
         saveState()
     }
 
-    private fun updateUserStats() {
-        viewModelScope.launch(SupervisorJob() + Dispatchers.IO) {
-            runCatching {
-                val rideDetails = state.value.rideDetails
-                val metrics = state.value.rideMetrics
 
-                rescueRecordUseCase.updateStatsUseCase(userStats = UserStats(
-                    rescuerId = rideDetails.rescuerId,
-                    rescueeId = rideDetails.rescueeId,
-                    rescueOverallDistanceInMeters = metrics?.distanceInMeters ?: 0.0,
-                    rescueAverageSpeed = metrics?.averageSpeedKmh ?: 0.0,
-                    rescueDescription = toRescueDescription(rideDetails.rideSummary.iconDescription) ?: ""
-                ))
-            }.onFailure {
-                Timber.e( "Failed to update user stats ${it.message}")
-            }
-        }
-    }
 
-    private fun toRescueDescription(description: String): String? {
-        return when (description) {
-            INJURY_TEXT -> "injuryCount"
-            BROKEN_FRAME_TEXT -> "frameSnapCount"
-            INCIDENT_TEXT -> "incidentCount"
-            BROKEN_CHAIN_TEXT -> "brokenChainCount"
-            FLAT_TIRES_TEXT -> "flatTireCount"
-            FAULTY_BRAKES_TEXT -> "faultyBrakesCount"
-            else -> null
-        }
-    }
 
     private fun rateRescue(rating: Float) {
         val validRating = rating.coerceIn(1f, 5f)

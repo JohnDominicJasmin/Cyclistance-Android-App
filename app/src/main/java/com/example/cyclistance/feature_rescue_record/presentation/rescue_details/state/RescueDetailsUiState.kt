@@ -1,12 +1,14 @@
 package com.example.cyclistance.feature_rescue_record.presentation.rescue_details.state
 
 import android.os.Parcelable
-import com.example.cyclistance.feature_rescue_record.domain.model.ui.RescueRide
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideMetrics
+import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
 import com.google.android.material.bottomsheet.BottomSheetBehavior.StableState
 import kotlinx.parcelize.Parcelize
 
 @StableState
 @Parcelize
 data class RescueDetailsUiState(
-    val rescueRide: RescueRide? = null
+    val rideSummary: RideSummary? = null,
+    val rideMetrics: RideMetrics? = null
 ):Parcelable

@@ -71,7 +71,6 @@ fun RescueResultsScreen(
         viewModel.onEvent(event = RescueResultVmEvent.RateRescue(
             rating = uiState.rating
         ))
-        viewModel.onEvent(event = RescueResultVmEvent.UpdateUserStats)
     }}
 
     val showRescueDetails = remember(rideDetails.rideId) {{

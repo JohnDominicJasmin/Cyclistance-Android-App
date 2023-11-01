@@ -87,8 +87,8 @@ fun MappingMapsScreen(
             nearbyCyclist?.filter {
                 it.id != state.user.id
             }?.filter {user ->
-
-                user.isUserNeedHelp() == true
+                val locationAvailable = user.location?.latitude != null && user.location.longitude != null
+                locationAvailable && user.isUserNeedHelp() == true
             }?.filter { user ->
 
                 val markerLocation = LatLng(user.location?.latitude!!, user.location.longitude!!)

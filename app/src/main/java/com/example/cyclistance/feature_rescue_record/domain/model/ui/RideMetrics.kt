@@ -9,7 +9,7 @@ import kotlinx.parcelize.Parcelize
 data class RideMetrics(
     val distanceInMeters: Double = 0.0,
     val maxSpeed: String = "0.0km/h",
-    val averageSpeedKmh: Double = 0.0
+    val averageSpeedMps: Double = 0.0
 ):Parcelable{
 
 }

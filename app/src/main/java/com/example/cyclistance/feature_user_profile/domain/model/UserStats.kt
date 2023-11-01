@@ -8,6 +8,6 @@ data class UserStats(
     val rescueeId: String,
     val rescuerId: String,
     val rescueOverallDistanceInMeters: Double = 0.0,
-    val rescueAverageSpeed: Double = 0.0,
+    val rescueAverageSpeedMps: Double = 0.0,
     val rescueDescription: String = "",
 ):Parcelable

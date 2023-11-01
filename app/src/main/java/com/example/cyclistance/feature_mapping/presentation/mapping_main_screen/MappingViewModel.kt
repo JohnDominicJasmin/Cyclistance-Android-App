@@ -9,6 +9,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.MAPPING_VM_
 import com.example.cyclistance.core.utils.formatter.FormatterUtils
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.isLocationAvailable
+import com.example.cyclistance.core.utils.formatter.FormatterUtils.toRescueDescription
 import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
 import com.example.cyclistance.feature_mapping.data.mapper.UserMapper.toRescueRequest
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
@@ -34,6 +35,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
 import com.example.cyclistance.feature_rescue_record.domain.use_case.RescueRecordUseCase
+import com.example.cyclistance.feature_user_profile.domain.model.UserStats
 import com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
 import com.google.maps.android.SphericalUtil
 import com.mapbox.geojson.Point
@@ -541,8 +543,15 @@ class MappingViewModel @Inject constructor(
                     rescueRecordUseCase.addRescueRecordUseCase(rideDetails = rideDetails)
                 }else{
                     val rideMetrics = trackingHandler.getRideMetrics()
-                    rescueRecordUseCase.addRideMetrics(rideId = rideDetails.rideId, rideMetrics = rideMetrics)
                     rescueRecordUseCase.rideMetricsUseCase(rideMetrics = rideMetrics)
+                    rescueRecordUseCase.addRideMetrics(rideId = rideDetails.rideId, rideMetrics = rideMetrics)
+                    rescueRecordUseCase.updateStatsUseCase(userStats = UserStats(
+                        rescuerId = rideDetails.rescuerId,
+                        rescueeId = rideDetails.rescueeId,
+                        rescueOverallDistanceInMeters = rideMetrics.distanceInMeters,
+                        rescueAverageSpeedMps = rideMetrics.averageSpeedMps,
+                        rescueDescription = toRescueDescription(rideDetails.rideSummary.iconDescription) ?: ""
+                    ))
                 }
 
             }.onSuccess {
