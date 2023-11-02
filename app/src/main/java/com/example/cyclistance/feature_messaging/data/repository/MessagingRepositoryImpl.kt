@@ -24,19 +24,16 @@ import com.example.cyclistance.core.utils.data_store_ext.editData
 import com.example.cyclistance.core.utils.data_store_ext.getData
 import com.example.cyclistance.feature_messaging.data.MessagingApi
 import com.example.cyclistance.feature_messaging.data.data_source.remote.header.RemoteHeader
-import com.example.cyclistance.feature_messaging.data.mapper.MessagingChatItemMapper.toConversionChatItem
 import com.example.cyclistance.feature_messaging.data.mapper.MessagingConversationItemMapper.toConversationItem
 import com.example.cyclistance.feature_messaging.data.mapper.MessagingUserItemMapper.toMessageUser
 import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions
 import com.example.cyclistance.feature_messaging.domain.model.SendMessageModel
 import com.example.cyclistance.feature_messaging.domain.model.SendNotificationModel
-import com.example.cyclistance.feature_messaging.domain.model.ui.chats.ChatItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
 import com.example.cyclistance.feature_messaging.domain.repository.MessagingRepository
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Filter
@@ -421,48 +418,6 @@ class MessagingRepositoryImpl(
         return with(this.metadata) { isFromCache.and(hasPendingWrites()) }
     }
 
-    private inline fun chatListener(
-        crossinline onAddedChat: (ChatItemModel) -> Unit,
-        crossinline onModifiedChat: (ChatItemModel) -> Unit
-    ): (QuerySnapshot?, FirebaseFirestoreException?) -> Unit {
-
-        return { value: QuerySnapshot?, error: FirebaseFirestoreException? ->
-
-            val uid = getUid()
-
-            if (error != null) {
-                throw MessagingExceptions.GetChatsFailure(
-                    message = error.message ?: "Unknown error occurred"
-                )
-            }
-
-            if (value == null) {
-                throw MessagingExceptions.GetChatsFailure(message = "Cannot get chats, value is null")
-            }
-            Timber.v("Chat listener called ${value.documentChanges.size} | ${value.documents.size}")
-
-            value.documentChanges.forEach { item ->
-
-                when (item.type) {
-
-                    DocumentChange.Type.ADDED -> {
-                        val chat = item.document.toConversionChatItem(uid = uid)
-                        onAddedChat(chat.copy(isSent = !item.document.isDeviceOffline()))
-                    }
-
-                    else -> {}
-                }
-            }
-
-
-
-            value.documents.forEach { item ->
-                val chat = item.toConversionChatItem(uid = uid)
-                onModifiedChat(chat.copy(isSent = !item.isDeviceOffline()))
-            }
-
-        }
-    }
 
 
 }
