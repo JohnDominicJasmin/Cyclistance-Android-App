@@ -1378,12 +1378,18 @@ fun MappingScreen(
         key3 = isRescueCancelled) {
 
 
+        if(state.user.getTransactionId()?.isEmpty() == true){
+            uiState = uiState.copy(routeDirection = null)
+            return@LaunchedEffect
+        }
+
         if (hasTransaction.not() || isRescueCancelled) {
             uiState = uiState.copy(routeDirection = null)
             return@LaunchedEffect
         }
 
-        getRouteDirections()
+
+        startNavigation()
     }
 
     LaunchedEffect(
