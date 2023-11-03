@@ -18,6 +18,10 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,29 +45,39 @@ fun MappingRequestCancelled(
     modifier: Modifier = Modifier,
     cancelledRescueModel: CancelledRescueModel = CancelledRescueModel(),
     onClickOkButton: () -> Unit,
-    onDismiss: () -> Unit = {},
+    onDismiss: () -> Unit,
 
     ) {
-    Dialog(
-        onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            usePlatformDefaultWidth = false,
-            dismissOnBackPress = false,
-            dismissOnClickOutside = false),
-    ) {
-        Box(
-            modifier = modifier
-                .background(
-                    color = Color.Transparent,
-                )
+
+    var dialogOpen by rememberSaveable { mutableStateOf(true) }
+    if (dialogOpen) {
+        Dialog(
+            onDismissRequest = {
+                onDismiss()
+                dialogOpen = false
+            },
+            properties = DialogProperties(
+                usePlatformDefaultWidth = false,
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false),
         ) {
-            MappingRequestCancelledContent(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .fillMaxWidth(),
-                cancelledRescueModel = cancelledRescueModel,
-                onClickOkButton = onClickOkButton)
+            Box(
+                modifier = modifier
+                    .background(
+                        color = Color.Transparent,
+                    )
+            ) {
+                MappingRequestCancelledContent(
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .fillMaxWidth(),
+                    cancelledRescueModel = cancelledRescueModel,
+                    onClickOkButton = {
+                        onClickOkButton()
+                        onDismiss()
+                    })
 
+            }
         }
     }
 }

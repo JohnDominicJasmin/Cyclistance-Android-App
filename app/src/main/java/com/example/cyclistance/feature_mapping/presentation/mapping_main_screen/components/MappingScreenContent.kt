@@ -3,8 +3,6 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -444,12 +442,22 @@ fun MappingScreenContent(
                         )
                     }
 
-                    AnimatedVisibility(
-                        visible = uiState.isRescueCancelled && uiState.rescueRequestAccepted.not(),
-                        enter = fadeIn(),
-                        exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
 
-                        val rescueTransaction = state.rescueTransaction ?: return@AnimatedVisibility
+
+                    if(uiState.requestAcceptedVisible){
+
+                        MappingRequestAccepted(
+                            modifier = Modifier.fillMaxSize(),
+                            onClickOkButton = { event(MappingUiEvent.RescueRequestAccepted) },
+                            acceptedName = state.rescuee?.name ?: "Name placeholder",
+                            onDismiss = {
+                                event(MappingUiEvent.RescueRequestAccepted)
+                            })
+                    }
+
+                    val rescueTransaction = state.rescueTransaction
+
+                    if(uiState.requestCancelledVisible && rescueTransaction != null){
 
                         MappingRequestCancelled(
                             modifier = Modifier.fillMaxSize(),
@@ -459,22 +467,11 @@ fun MappingScreenContent(
                                 rescueCancelledBy = rescueTransaction.getCancellationName(),
                                 reason = rescueTransaction.getCancellationReason(),
                                 message = rescueTransaction.getCancellationMessage()
-                            ))
+                            ), onDismiss = {
+                                event(MappingUiEvent.CancelledRescueConfirmed)
+                            })
                     }
 
-                    val shouldShowAcceptedRescue =  uiState.isRescueCancelled.not() && state.rescueTransaction?.isRescueOnGoing() == true && uiState.rescueRequestAccepted
-
-                    AnimatedVisibility(
-                        visible = shouldShowAcceptedRescue,
-                        enter = fadeIn(),
-                        exit = fadeOut(animationSpec = tween(durationMillis = 220))) {
-
-                        MappingRequestAccepted(
-                            modifier = Modifier.fillMaxSize(),
-                            onClickOkButton = { event(MappingUiEvent.RescueRequestAccepted) },
-                            acceptedName = state.rescuee?.name ?: "Name placeholder",
-                        )
-                    }
                 }
             }
 

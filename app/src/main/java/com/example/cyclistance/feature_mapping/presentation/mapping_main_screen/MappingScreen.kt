@@ -668,11 +668,13 @@ fun MappingScreen(
             onChangeNavigatingState(true)
             uiState = uiState.copy(
                 rescueRequestAccepted = false,
-                bottomSheetType = BottomSheetType.OnGoingRescue.type
-            ).also {
-                expandBottomSheet()
-                onDismissRescueeBanner()
-            }
+                bottomSheetType = BottomSheetType.OnGoingRescue.type,
+                requestAcceptedVisible = false
+            )
+            expandBottomSheet()
+            onDismissRescueeBanner()
+
+
         }
     }
 
@@ -1024,6 +1026,47 @@ fun MappingScreen(
         onDispose {
             window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
+    }
+
+    LaunchedEffect(
+        key1 = state.rescueTransaction,
+        key2 = uiState.isRescueCancelled,
+        key3 = uiState.rescueRequestAccepted) {
+
+        if (uiState.isRescueCancelled) {
+            return@LaunchedEffect
+        }
+
+        if (state.rescueTransaction?.isRescueFinished() == true) {
+            return@LaunchedEffect
+        }
+
+        if (!uiState.rescueRequestAccepted) {
+            return@LaunchedEffect
+        }
+
+
+        uiState = uiState.copy(
+            requestAcceptedVisible = true
+        )
+    }
+
+
+    LaunchedEffect(
+        key1 = uiState.isRescueCancelled,
+        key2 = uiState.rescueRequestAccepted,
+        key3 = state.rescueTransaction) {
+
+        if(!uiState.isRescueCancelled){
+            return@LaunchedEffect
+        }
+        if(uiState.rescueRequestAccepted){
+            return@LaunchedEffect
+        }
+
+        uiState = uiState.copy(
+            requestCancelledVisible = true
+        )
     }
 
     BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
