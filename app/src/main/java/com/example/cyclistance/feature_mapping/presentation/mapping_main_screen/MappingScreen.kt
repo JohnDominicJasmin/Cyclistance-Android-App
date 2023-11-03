@@ -1204,9 +1204,6 @@ fun MappingScreen(
                     onDismissRescueeBanner()
                 }
 
-                is MappingEvent.DestinationArrivedSuccess -> {
-                    resetState()
-                }
 
                 is MappingEvent.RescueRequestAccepted -> {
                     uiState = uiState.copy(
