@@ -44,7 +44,7 @@ fun MappingBottomSheet(
     MappingBottomSheet(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         sheetGesturesEnabled = sheetGesturesEnabled,
-        sheetPeekHeight = if(uiState.bottomSheetType == BottomSheetType.OnGoingRescue.type) 60.dp else 0.dp,
+        sheetPeekHeight = if(uiState.bottomSheetType == BottomSheetType.OnGoingRescue.type) 75.dp else 0.dp,
         sheetContent = {
 
             when (uiState.bottomSheetType) {
