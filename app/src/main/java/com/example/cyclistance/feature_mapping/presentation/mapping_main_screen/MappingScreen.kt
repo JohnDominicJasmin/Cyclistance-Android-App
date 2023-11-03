@@ -987,7 +987,23 @@ fun MappingScreen(
         mappingViewModel.onEvent(event = MappingVmEvent.ArrivedAtLocation)
     }}
 
+    fun startNavigation() {
+        val role = state.user.getRole()
+        val isRescuer = role == Role.Rescuer.name
 
+
+        uiState = uiState.copy(
+            requestHelpButtonVisible = false,
+            bottomSheetType = BottomSheetType.OnGoingRescue.type,
+            isRescueRequestDialogVisible = false,
+            isNavigating = isRescuer
+        )
+        onChangeNavigatingState(isRescuer)
+        expandBottomSheet()
+        getRouteDirections()
+        showUserLocation()
+
+    }
 
 
 
@@ -1327,6 +1343,7 @@ fun MappingScreen(
                         Screens.RescueRecordNavigation.RescueDetails.screenRoute
                     }
 
+                    resetState()
                     navController.navigateScreen(route)
                 }
 
@@ -1379,7 +1396,7 @@ fun MappingScreen(
             return@LaunchedEffect
         }
 
-        getRouteDirections()
+        startNavigation()
     }
 
 
@@ -1393,19 +1410,7 @@ fun MappingScreen(
             }
         }
     }
-    LaunchedEffect(key1 = hasTransaction, key2 = isRescueCancelled) {
 
-        if (hasTransaction.not()) {
-            return@LaunchedEffect
-        }
-
-        if (isRescueCancelled) {
-            return@LaunchedEffect
-        }
-
-        onChangeNavigatingState(false)
-
-    }
 
     LaunchedEffect(key1 = foregroundLocationPermissionsState.allPermissionsGranted) {
         if (!foregroundLocationPermissionsState.allPermissionsGranted) {
