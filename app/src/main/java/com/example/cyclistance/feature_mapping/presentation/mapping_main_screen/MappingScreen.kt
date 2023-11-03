@@ -447,6 +447,12 @@ fun MappingScreen(
         }
     }
 
+    fun resetState() {
+
+        uiState = MappingUiState()
+        collapseBottomSheet()
+        onChangeNavigatingState(false)
+    }
 
     DisposableEffect(key1 = true) {
         onDispose {
@@ -466,17 +472,23 @@ fun MappingScreen(
 
     val cancelOnGoingRescue = remember(state.rescuer, state.rescueTransaction) {
         {
-            val role = state.user.transaction?.role
-            val isRescuee = role == Role.Rescuee.name
+
+            val isRescuee = state.user.isRescuee()
             val transactionId = state.rescueTransaction?.id
             val selectionType = if (isRescuee) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
             val clientId = state.rescuer?.id ?: state.rescuee?.id
 
-            navController.navigateScreen(
-                route = Screens.MappingNavigation.Cancellation.passArgument(
-                    cancellationType = selectionType,
-                    transactionId = transactionId!!,
-                    clientId = clientId!!))
+            if(transactionId == null || clientId == null){
+                resetState()
+                Toast.makeText(context, "Rescue not found", Toast.LENGTH_SHORT).show()
+            }else {
+                navController.navigateScreen(
+                    route = Screens.MappingNavigation.Cancellation.passArgument(
+                        cancellationType = selectionType,
+                        transactionId = transactionId,
+                        clientId = clientId))
+
+            }
 
         }
     }
@@ -973,20 +985,6 @@ fun MappingScreen(
         }
     }
 
-    val resetState = remember {
-        {
-            uiState = uiState.copy(
-                rescueRequestAccepted = false,
-                requestHelpButtonVisible = true,
-                searchingAssistance = false,
-                routeDirection = null,
-                mapSelectedRescuee = null,
-            ).also {
-                collapseBottomSheet()
-            }
-            onChangeNavigatingState(false)
-        }
-    }
 
     val arrivedAtLocation = remember{{
         mappingViewModel.onEvent(event = MappingVmEvent.ArrivedAtLocation)
