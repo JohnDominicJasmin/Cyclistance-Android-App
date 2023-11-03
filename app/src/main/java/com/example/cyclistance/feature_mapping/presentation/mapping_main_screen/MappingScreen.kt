@@ -913,6 +913,11 @@ fun MappingScreen(
         val destinationLongitude = rescueTransaction.getDestinationLongitude() ?: return
         val destinationLatitude = rescueTransaction.getDestinationLatitude() ?: return
 
+
+        if(uiState.routeDirection != null){
+            return
+        }
+
         mappingViewModel.onEvent(
             event = MappingVmEvent.GetRouteDirections(
                 origin = Point.fromLngLat(startingLongitude, startingLatitude),
