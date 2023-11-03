@@ -379,11 +379,13 @@ fun MappingScreen(
         }
     }
 
-    val changeCameraMode = remember {
+    val changeCameraMode = remember(mapboxMap) {
         { mode: Int ->
             mapboxMap?.locationComponent?.apply {
                 if (isLocationComponentActivated) {
                     cameraMode = mode
+                }else{
+                    onLocateUser()
                 }
             }
         }
