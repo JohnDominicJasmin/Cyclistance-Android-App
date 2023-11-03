@@ -1092,20 +1092,20 @@ fun MappingScreen(
         }
     }
 
-    LaunchedEffect(key1 = state.rescueTransaction?.status ){
+    LaunchedEffect(key1 = state.rescueTransaction?.status ) {
         val rescueTransaction = state.rescueTransaction
         val isRescueFinished = rescueTransaction?.isRescueFinished() ?: false
         val isRescueOnGoing = rescueTransaction?.isRescueOnGoing() ?: false
 
-        if(rescueTransaction == null){
+        if (rescueTransaction == null) {
             return@LaunchedEffect
         }
 
-        if(isRescueOnGoing){
+        if (isRescueOnGoing) {
             return@LaunchedEffect
         }
 
-        if(!isRescueFinished){
+        if (!isRescueFinished) {
             return@LaunchedEffect
         }
 
@@ -1115,9 +1115,8 @@ fun MappingScreen(
         } else {
             BottomSheetType.DestinationReached.type
         }
-        uiState = uiState.copy(bottomSheetType = type).also {
-            expandBottomSheet()
-        }
+        uiState = uiState.copy(bottomSheetType = type)
+
     }
 
     LaunchedEffect(key1 = hasTransaction) {
