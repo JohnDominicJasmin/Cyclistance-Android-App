@@ -264,14 +264,14 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun cancelRescueTransaction() {
-        viewModelScope.launch(context = defaultDispatcher) {
+        viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {
             runCatching {
                 removeUserTransaction(id = getId())
             }.onSuccess {
-                _eventFlow.emit(value = MappingEvent.CancelRescueTransactionSuccess)
                 broadcastToNearbyCyclists()
                 isLoading(false)
                 trackingHandler.clearTransactionRoles()
+                _eventFlow.emit(value = MappingEvent.CancelRescueTransactionSuccess)
             }.onFailure { exception ->
                 isLoading(false)
                 exception.handleException()
@@ -538,7 +538,6 @@ class MappingViewModel @Inject constructor(
         val rideDetails = trackingHandler.getRideDetails()
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             runCatching {
-                rescueRecordUseCase.rescueDetailsUseCase(details = rideDetails)
                 if (role == Role.Rescuee.name) {
                     rescueRecordUseCase.addRescueRecordUseCase(rideDetails = rideDetails)
                 }else{
