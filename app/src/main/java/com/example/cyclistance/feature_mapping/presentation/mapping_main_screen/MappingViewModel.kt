@@ -552,11 +552,10 @@ class MappingViewModel @Inject constructor(
                         rescueDescription = toRescueDescription(rideDetails.rideSummary.iconDescription) ?: ""
                     ))
                 }
-
             }.onSuccess {
-
-                _eventFlow.emit(value = MappingEvent.DestinationArrivedSuccess)
+                rescueRecordUseCase.rescueDetailsUseCase(details = rideDetails)
                 trackingHandler.clearTransactionRoles()
+
             }.onFailure {
                 _eventFlow.emit(value = MappingEvent.RescueArrivedFailed(it.message ?: "Rescuer Arrived"))
             }
