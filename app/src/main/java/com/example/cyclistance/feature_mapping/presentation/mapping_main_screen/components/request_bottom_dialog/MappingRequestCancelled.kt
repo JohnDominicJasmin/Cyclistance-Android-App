@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.request
+package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.request_bottom_dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
