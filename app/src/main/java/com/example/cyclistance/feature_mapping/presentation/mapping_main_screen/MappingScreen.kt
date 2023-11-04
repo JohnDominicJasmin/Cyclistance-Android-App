@@ -322,11 +322,18 @@ fun MappingScreen(
                         return@getStyle
                     }
 
-                    val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
-                    routeLineSource!!.setGeoJson(
-                        FeatureCollection.fromFeature(
-                            Feature.fromGeometry(
-                                LineString.fromPolyline(geometry, PRECISION_6))))
+                    runCatching {
+                        val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
+                        routeLineSource!!.setGeoJson(
+                            FeatureCollection.fromFeature(
+                                Feature.fromGeometry(
+                                    LineString.fromPolyline(geometry, PRECISION_6))))
+                    }.onFailure {
+                        Timber.e("Mapbox style not loaded ${it.message}")
+                    }
+
+
+
                 }
             }
             Unit
@@ -341,8 +348,13 @@ fun MappingScreen(
                     return@getStyle
                 }
 
-                val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
-                routeLineSource?.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
+                runCatching {
+                    val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
+                    routeLineSource?.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
+                }.onFailure {
+                    Timber.v("Mapbox style not loaded ${it.message}")
+                }
+
             }
             Unit
         }
