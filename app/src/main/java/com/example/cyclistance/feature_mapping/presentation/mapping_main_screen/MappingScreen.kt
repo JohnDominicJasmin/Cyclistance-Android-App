@@ -322,11 +322,18 @@ fun MappingScreen(
                         return@getStyle
                     }
 
-                    val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
-                    routeLineSource!!.setGeoJson(
-                        FeatureCollection.fromFeature(
-                            Feature.fromGeometry(
-                                LineString.fromPolyline(geometry, PRECISION_6))))
+                    runCatching {
+                        val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
+                        routeLineSource!!.setGeoJson(
+                            FeatureCollection.fromFeature(
+                                Feature.fromGeometry(
+                                    LineString.fromPolyline(geometry, PRECISION_6))))
+                    }.onFailure {
+                        Timber.e("Mapbox style not loaded ${it.message}")
+                    }
+
+
+
                 }
             }
             Unit
@@ -341,8 +348,13 @@ fun MappingScreen(
                     return@getStyle
                 }
 
-                val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
-                routeLineSource?.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
+                runCatching {
+                    val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
+                    routeLineSource?.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
+                }.onFailure {
+                    Timber.v("Mapbox style not loaded ${it.message}")
+                }
+
             }
             Unit
         }
@@ -379,11 +391,13 @@ fun MappingScreen(
         }
     }
 
-    val changeCameraMode = remember {
+    val changeCameraMode = remember(mapboxMap) {
         { mode: Int ->
             mapboxMap?.locationComponent?.apply {
                 if (isLocationComponentActivated) {
                     cameraMode = mode
+                }else{
+                    onLocateUser()
                 }
             }
         }
@@ -447,6 +461,12 @@ fun MappingScreen(
         }
     }
 
+    fun resetState() {
+
+        uiState = MappingUiState()
+        collapseBottomSheet()
+        onChangeNavigatingState(false)
+    }
 
     DisposableEffect(key1 = true) {
         onDispose {
@@ -466,17 +486,23 @@ fun MappingScreen(
 
     val cancelOnGoingRescue = remember(state.rescuer, state.rescueTransaction) {
         {
-            val role = state.user.transaction?.role
-            val isRescuee = role == Role.Rescuee.name
+
+            val isRescuee = state.user.isRescuee()
             val transactionId = state.rescueTransaction?.id
             val selectionType = if (isRescuee) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE
             val clientId = state.rescuer?.id ?: state.rescuee?.id
 
-            navController.navigateScreen(
-                route = Screens.MappingNavigation.Cancellation.passArgument(
-                    cancellationType = selectionType,
-                    transactionId = transactionId!!,
-                    clientId = clientId!!))
+            if(transactionId == null || clientId == null){
+                resetState()
+                Toast.makeText(context, "Rescue not found", Toast.LENGTH_SHORT).show()
+            }else {
+                navController.navigateScreen(
+                    route = Screens.MappingNavigation.Cancellation.passArgument(
+                        cancellationType = selectionType,
+                        transactionId = transactionId,
+                        clientId = clientId))
+
+            }
 
         }
     }
@@ -654,11 +680,13 @@ fun MappingScreen(
             onChangeNavigatingState(true)
             uiState = uiState.copy(
                 rescueRequestAccepted = false,
-                bottomSheetType = BottomSheetType.OnGoingRescue.type
-            ).also {
-                expandBottomSheet()
-                onDismissRescueeBanner()
-            }
+                bottomSheetType = BottomSheetType.OnGoingRescue.type,
+                requestAcceptedVisible = false
+            )
+            expandBottomSheet()
+            onDismissRescueeBanner()
+
+
         }
     }
 
@@ -913,6 +941,11 @@ fun MappingScreen(
         val destinationLongitude = rescueTransaction.getDestinationLongitude() ?: return
         val destinationLatitude = rescueTransaction.getDestinationLatitude() ?: return
 
+
+        if(uiState.routeDirection != null){
+            return
+        }
+
         mappingViewModel.onEvent(
             event = MappingVmEvent.GetRouteDirections(
                 origin = Point.fromLngLat(startingLongitude, startingLatitude),
@@ -968,26 +1001,28 @@ fun MappingScreen(
         }
     }
 
-    val resetState = remember {
-        {
-            uiState = uiState.copy(
-                rescueRequestAccepted = false,
-                requestHelpButtonVisible = true,
-                searchingAssistance = false,
-                routeDirection = null,
-                mapSelectedRescuee = null,
-            ).also {
-                collapseBottomSheet()
-            }
-            onChangeNavigatingState(false)
-        }
-    }
 
     val arrivedAtLocation = remember{{
         mappingViewModel.onEvent(event = MappingVmEvent.ArrivedAtLocation)
     }}
 
+    fun startNavigation() {
+        val role = state.user.getRole()
+        val isRescuer = role == Role.Rescuer.name
 
+
+        uiState = uiState.copy(
+            requestHelpButtonVisible = false,
+            bottomSheetType = BottomSheetType.OnGoingRescue.type,
+            isRescueRequestDialogVisible = false,
+            isNavigating = isRescuer
+        )
+        onChangeNavigatingState(isRescuer)
+        expandBottomSheet()
+        getRouteDirections()
+        showUserLocation()
+
+    }
 
 
 
@@ -1003,6 +1038,47 @@ fun MappingScreen(
         onDispose {
             window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         }
+    }
+
+    LaunchedEffect(
+        key1 = state.rescueTransaction,
+        key2 = uiState.isRescueCancelled,
+        key3 = uiState.rescueRequestAccepted) {
+
+        if (uiState.isRescueCancelled) {
+            return@LaunchedEffect
+        }
+
+        if (state.rescueTransaction?.isRescueFinished() == true) {
+            return@LaunchedEffect
+        }
+
+        if (!uiState.rescueRequestAccepted) {
+            return@LaunchedEffect
+        }
+
+
+        uiState = uiState.copy(
+            requestAcceptedVisible = true
+        )
+    }
+
+
+    LaunchedEffect(
+        key1 = uiState.isRescueCancelled,
+        key2 = uiState.rescueRequestAccepted,
+        key3 = state.rescueTransaction) {
+
+        if(!uiState.isRescueCancelled){
+            return@LaunchedEffect
+        }
+        if(uiState.rescueRequestAccepted){
+            return@LaunchedEffect
+        }
+
+        uiState = uiState.copy(
+            requestCancelledVisible = true
+        )
     }
 
     BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {
@@ -1076,20 +1152,20 @@ fun MappingScreen(
         }
     }
 
-    LaunchedEffect(key1 = state.rescueTransaction?.status ){
+    LaunchedEffect(key1 = state.rescueTransaction?.status ) {
         val rescueTransaction = state.rescueTransaction
         val isRescueFinished = rescueTransaction?.isRescueFinished() ?: false
         val isRescueOnGoing = rescueTransaction?.isRescueOnGoing() ?: false
 
-        if(rescueTransaction == null){
+        if (rescueTransaction == null) {
             return@LaunchedEffect
         }
 
-        if(isRescueOnGoing){
+        if (isRescueOnGoing) {
             return@LaunchedEffect
         }
 
-        if(!isRescueFinished){
+        if (!isRescueFinished) {
             return@LaunchedEffect
         }
 
@@ -1099,9 +1175,8 @@ fun MappingScreen(
         } else {
             BottomSheetType.DestinationReached.type
         }
-        uiState = uiState.copy(bottomSheetType = type).also {
-            expandBottomSheet()
-        }
+        uiState = uiState.copy(bottomSheetType = type)
+
     }
 
     LaunchedEffect(key1 = hasTransaction) {
@@ -1184,9 +1259,6 @@ fun MappingScreen(
                     onDismissRescueeBanner()
                 }
 
-                is MappingEvent.DestinationArrivedSuccess -> {
-                    resetState()
-                }
 
                 is MappingEvent.RescueRequestAccepted -> {
                     uiState = uiState.copy(
@@ -1327,6 +1399,7 @@ fun MappingScreen(
                         Screens.RescueRecordNavigation.RescueDetails.screenRoute
                     }
 
+                    resetState()
                     navController.navigateScreen(route)
                 }
 
@@ -1359,12 +1432,18 @@ fun MappingScreen(
         key3 = isRescueCancelled) {
 
 
+        if(state.user.getTransactionId()?.isEmpty() == true){
+            uiState = uiState.copy(routeDirection = null)
+            return@LaunchedEffect
+        }
+
         if (hasTransaction.not() || isRescueCancelled) {
             uiState = uiState.copy(routeDirection = null)
             return@LaunchedEffect
         }
 
-        getRouteDirections()
+
+        startNavigation()
     }
 
     LaunchedEffect(
@@ -1379,7 +1458,7 @@ fun MappingScreen(
             return@LaunchedEffect
         }
 
-        getRouteDirections()
+        startNavigation()
     }
 
 
@@ -1393,19 +1472,7 @@ fun MappingScreen(
             }
         }
     }
-    LaunchedEffect(key1 = hasTransaction, key2 = isRescueCancelled) {
 
-        if (hasTransaction.not()) {
-            return@LaunchedEffect
-        }
-
-        if (isRescueCancelled) {
-            return@LaunchedEffect
-        }
-
-        onChangeNavigatingState(false)
-
-    }
 
     LaunchedEffect(key1 = foregroundLocationPermissionsState.allPermissionsGranted) {
         if (!foregroundLocationPermissionsState.allPermissionsGranted) {

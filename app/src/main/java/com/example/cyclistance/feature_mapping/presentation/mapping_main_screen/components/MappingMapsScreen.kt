@@ -342,8 +342,13 @@ fun MappingMapsScreen(
             mapboxMap?.getStyle { style ->
                 if (style.isFullyLoaded) {
                     style.removeImage(TRANSACTION_ICON_ID)
-                    val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
-                    geoJsonSource?.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
+                    runCatching {
+                        val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
+                        geoJsonSource?.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))
+                    }.onFailure {
+                        Timber.v("Mapbox style not loaded ${it.message}")
+                    }
+
                 }
             }
         }
@@ -366,10 +371,14 @@ fun MappingMapsScreen(
                     ContextCompat.getDrawable(context, mapIcon)?.toBitmap(width = 100, height = 100)
                         ?.let { iconBitmap ->
                             style.addImage(TRANSACTION_ICON_ID, iconBitmap)
-                            val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
-                            val feature =
-                                Feature.fromGeometry(Point.fromLngLat(longitude, latitude))
-                            geoJsonSource?.setGeoJson(feature)
+                            runCatching {
+                                val geoJsonSource = style.getSourceAs<GeoJsonSource>(ICON_SOURCE_ID)
+                                val feature =
+                                    Feature.fromGeometry(Point.fromLngLat(longitude, latitude))
+                                geoJsonSource?.setGeoJson(feature)
+                            }.onFailure {
+                                Timber.v("Mapbox style not loaded ${it.message}")
+                            }
                         }
                 }
             }

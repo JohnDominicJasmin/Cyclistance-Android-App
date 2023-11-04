@@ -140,30 +140,28 @@ class MappingViewModel @Inject constructor(
 
     private fun subscribeToHazardousLaneUpdates() {
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
-
             mappingUseCase.newHazardousLaneUseCase(
-                onAddedHazardousMarker = { marker ->
-
-                    _hazardousLaneMarkers.removeAll { modifiedMarker ->
-                        marker.id == modifiedMarker.id
-                    }
-                    _hazardousLaneMarkers.add(marker)
-                },
-                onModifiedHazardousMarker = { modifiedMarker ->
-                    _hazardousLaneMarkers.removeAll { marker ->
-                        marker.id == modifiedMarker.id
-                    }
-                    _hazardousLaneMarkers.add(modifiedMarker)
-                },
-                onRemovedHazardousMarker = { markerId ->
-                    _hazardousLaneMarkers.removeAll { marker ->
-                        marker.id == markerId
-                    }
-                }
+                onAddedHazardousMarker = ::handleAddedHazardousMarker,
+                onModifiedHazardousMarker = ::handleModifiedHazardousMarker,
+                onRemovedHazardousMarker = ::handleRemovedHazardousMarker
             )
-
         }
     }
+
+    private fun handleAddedHazardousMarker(marker: HazardousLaneMarker) {
+        _hazardousLaneMarkers.removeAll { it.id == marker.id }
+        _hazardousLaneMarkers.add(marker)
+    }
+
+    private fun handleModifiedHazardousMarker(modifiedMarker: HazardousLaneMarker) {
+        _hazardousLaneMarkers.removeAll { it.id == modifiedMarker.id }
+        _hazardousLaneMarkers.add(modifiedMarker)
+    }
+
+    private fun handleRemovedHazardousMarker(markerId: String) {
+        _hazardousLaneMarkers.removeAll { it.id == markerId }
+    }
+
 
     private fun subscribeToBottomSheetTypeUpdates() {
         viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
@@ -264,14 +262,14 @@ class MappingViewModel @Inject constructor(
     }
 
     private fun cancelRescueTransaction() {
-        viewModelScope.launch(context = defaultDispatcher) {
+        viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {
             runCatching {
                 removeUserTransaction(id = getId())
             }.onSuccess {
-                _eventFlow.emit(value = MappingEvent.CancelRescueTransactionSuccess)
                 broadcastToNearbyCyclists()
                 isLoading(false)
                 trackingHandler.clearTransactionRoles()
+                _eventFlow.emit(value = MappingEvent.CancelRescueTransactionSuccess)
             }.onFailure { exception ->
                 isLoading(false)
                 exception.handleException()
@@ -538,7 +536,6 @@ class MappingViewModel @Inject constructor(
         val rideDetails = trackingHandler.getRideDetails()
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             runCatching {
-                rescueRecordUseCase.rescueDetailsUseCase(details = rideDetails)
                 if (role == Role.Rescuee.name) {
                     rescueRecordUseCase.addRescueRecordUseCase(rideDetails = rideDetails)
                 }else{
@@ -553,11 +550,10 @@ class MappingViewModel @Inject constructor(
                         rescueDescription = toRescueDescription(rideDetails.rideSummary.iconDescription) ?: ""
                     ))
                 }
-
             }.onSuccess {
-
-                _eventFlow.emit(value = MappingEvent.DestinationArrivedSuccess)
+                rescueRecordUseCase.rescueDetailsUseCase(details = rideDetails)
                 trackingHandler.clearTransactionRoles()
+
             }.onFailure {
                 _eventFlow.emit(value = MappingEvent.RescueArrivedFailed(it.message ?: "Rescuer Arrived"))
             }
@@ -976,18 +972,15 @@ class MappingViewModel @Inject constructor(
     private fun subscribeToRescueTransactionUpdates() {
 
         viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
-
             mappingUseCase.getRescueTransactionUpdatesUseCase().catch {
                 Timber.e("ERROR GETTING RESCUE TRANSACTION: ${it.message}")
 
             }.onEach { rescueTransactions ->
                 rescueTransactions.updateCurrentRescueTransaction()
-
                 trackingHandler.filterRescueRequestAccepted(
                     rescueTransaction = rescueTransactions,
                     id = getId()
                 )
-
                 trackingHandler.updateClient()
             }.launchIn(this@launch).invokeOnCompletion {
                 savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
@@ -1044,7 +1037,6 @@ class MappingViewModel @Inject constructor(
 
     private fun subscribeToNearbyUsersUpdates() {
         viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
-
             mappingUseCase.nearbyCyclistsUseCase().catch {
                 Timber.e("ERROR GETTING USERS: ${it.message}")
             }.onEach {

@@ -120,7 +120,7 @@ fun BottomSheetOnGoingRescue(
                         .constrainAs(time) {
                             top.linkTo(
                                 if (isRescuer) speedometer.bottom else grip.bottom,
-                                margin = 4.dp)
+                                margin = 8.dp)
                             end.linkTo(etaIcon.start)
                         }
                 )
@@ -134,7 +134,7 @@ fun BottomSheetOnGoingRescue(
                         .constrainAs(etaIcon) {
                             top.linkTo(
                                 if (isRescuer) speedometer.bottom else grip.bottom,
-                                margin = 4.dp)
+                                margin = 8.dp)
                             start.linkTo(parent.start)
                             end.linkTo(parent.end)
                             this.centerHorizontallyTo(parent)
@@ -151,7 +151,7 @@ fun BottomSheetOnGoingRescue(
                         .constrainAs(distance) {
                             top.linkTo(
                                 if (isRescuer) speedometer.bottom else grip.bottom,
-                                margin = 4.dp,
+                                margin = 8.dp,
                             )
                             start.linkTo(etaIcon.end)
                         }
@@ -162,7 +162,7 @@ fun BottomSheetOnGoingRescue(
             RoundButtonSection(
                 modifier = Modifier.padding(bottom = 8.dp).constrainAs(roundedButtonSection) {
                     val anchor = if (etaAvailable) etaIcon else time
-                    top.linkTo(anchor.bottom, margin = 10.dp)
+                    top.linkTo(anchor.bottom, margin = 12.dp)
                     end.linkTo(parent.end)
                     start.linkTo(parent.start)
                 },

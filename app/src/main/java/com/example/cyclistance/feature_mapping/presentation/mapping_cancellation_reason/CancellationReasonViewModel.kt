@@ -64,36 +64,42 @@ class CancellationReasonViewModel @Inject constructor(
 
     private fun confirmCancellationReason(reason: String, message: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            runCatching {
-                startLoading()
-                mappingUseCase.confirmCancellationUseCase(
-                    rescueTransaction = RescueTransactionItem(
-                        id = _transactionId,
-                        cancellation = CancellationModel(
-                            cancellationReason = CancellationReasonModel(
-                                reason = reason,
-                                message = message
-                            ),
-                            idCancelledBy = getId(),
-                            nameCancelledBy = getName(),
-                            rescueCancelled = true,
-                        ),
-                        status = StatusModel(),
-                        route = RouteModel()
-                    )
-                )
+            startLoading()
+            val result = runCatching { confirmCancellation(reason, message) }
+            handleResult(result)
+        }
+    }
 
-            }.onSuccess {
-                broadcastRescueTransaction()
-                delay(1000)
-                finishLoading()
-                _eventFlow.emit(value = CancellationReasonEvent.ConfirmCancellationReasonSuccess)
-            }.onFailure { exception ->
-                finishLoading()
-                exception.handleException()
-            }.also {
-                savedStateHandle[CANCELLATION_VM_STATE_KEY] = state.value
-            }
+    private suspend fun confirmCancellation(reason: String, message: String) {
+        mappingUseCase.confirmCancellationUseCase(
+            rescueTransaction = RescueTransactionItem(
+                id = _transactionId,
+                cancellation = CancellationModel(
+                    cancellationReason = CancellationReasonModel(
+                        reason = reason,
+                        message = message
+                    ),
+                    idCancelledBy = getId(),
+                    nameCancelledBy = getName(),
+                    rescueCancelled = true,
+                ),
+                status = StatusModel(),
+                route = RouteModel()
+            )
+        )
+    }
+
+    private suspend fun handleResult(result: Result<Unit>) {
+        result.onSuccess {
+            broadcastRescueTransaction()
+            delay(1000)
+            finishLoading()
+            _eventFlow.emit(value = CancellationReasonEvent.ConfirmCancellationReasonSuccess)
+        }.onFailure { exception ->
+            finishLoading()
+            exception.handleException()
+        }.also {
+            savedStateHandle[CANCELLATION_VM_STATE_KEY] = state.value
         }
     }
 
