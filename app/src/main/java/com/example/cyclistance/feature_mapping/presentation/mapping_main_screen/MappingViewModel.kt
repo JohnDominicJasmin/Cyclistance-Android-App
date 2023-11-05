@@ -190,7 +190,6 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
             val rescuer = state.value.nearbyCyclist?.findUser(id) ?: return@launch
-            val transactionId = trackingHandler.getTransactionId(rescuer)
             val user = state.value.user
 
             trackingHandler.checkCurrentTransactions(user = user, rescuer = rescuer) {
@@ -199,9 +198,8 @@ class MappingViewModel @Inject constructor(
                     runCatching {
                         isLoading(true)
                         mappingUseCase.acceptRescueRequestUseCase(
-                            transactionId = transactionId,
-                            rescuer = rescuer,
-                            user = state.value.user
+                            userId = getId(),
+                            rescuerId = id
                         )
                     }.onSuccess {
                         broadcastToNearbyCyclists()

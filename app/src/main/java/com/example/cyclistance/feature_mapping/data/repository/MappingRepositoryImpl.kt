@@ -363,6 +363,15 @@ class MappingRepositoryImpl(
         }
     }
 
+
+    override suspend fun acceptRescueRequest(userId: String, rescuerId: String) {
+        withContext(scope) {
+            handleException {
+                api.acceptRescueRequest(userId, rescuerId)
+            }
+        }
+    }
+
     override suspend fun addRescueRespondent(userId: String, respondentId: String) {
         withContext(scope) {
             handleException {
