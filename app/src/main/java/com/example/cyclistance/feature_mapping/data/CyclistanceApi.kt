@@ -33,6 +33,9 @@ interface CyclistanceApi {
     suspend fun cancelHelpRespond(@Path("user_id") userId: String, @Path("respondent_id") respondentId: String)
 
 
+    @PUT("api/v1/accept-rescue-request/{user_id}/{rescuer_id}")
+    suspend fun acceptRescueRequest(@Path("user_id") userId: String, @Path("rescuer_id") rescuerId: String)
+
     @GET("/api/v1/get-rescue-transaction-by-id/{rescue_transaction_id}")
     suspend fun getRescueTransactionById(@Path("rescue_transaction_id") userId: String): RescueTransactionItemDto
 

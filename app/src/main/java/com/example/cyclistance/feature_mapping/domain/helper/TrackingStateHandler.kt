@@ -256,12 +256,6 @@ class TrackingStateHandler(
 
 
 
-    fun getTransactionId(rescuer: UserItem): String {
-        val user = state.value.user
-        val idCombination =  user.id?.take(3) + rescuer.id?.take(3)
-        return idCombination + System.currentTimeMillis().toString()
-    }
-
     suspend fun filterRescueRequestAccepted(rescueTransaction: RescueTransaction, id: String) {
         val respondedToHelp = state.value.respondedToHelp
         val user = state.value.user

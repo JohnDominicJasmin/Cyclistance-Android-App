@@ -19,7 +19,6 @@ import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazard
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue.RescueRequestItemModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.RescuePending
@@ -191,7 +190,6 @@ class MappingViewModel @Inject constructor(
         viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
             val rescuer = state.value.nearbyCyclist?.findUser(id) ?: return@launch
-            val transactionId = trackingHandler.getTransactionId(rescuer)
             val user = state.value.user
 
             trackingHandler.checkCurrentTransactions(user = user, rescuer = rescuer) {
@@ -199,22 +197,17 @@ class MappingViewModel @Inject constructor(
                 coroutineScope {
                     runCatching {
                         isLoading(true)
-
                         mappingUseCase.acceptRescueRequestUseCase(
-                            transactionId = transactionId,
-                            rescuer = rescuer,
-                            user = state.value.user
+                            userId = getId(),
+                            rescuerId = id
                         )
-
-
-                    }.onSuccess { rescueTransaction ->
+                    }.onSuccess {
+                        broadcastToNearbyCyclists()
+                        _eventFlow.emit(value = MappingEvent.AcceptRescueRequestSuccess)
+                        delay(500)
+                        updateTransactionETA(rescuer)
+                        isLoading(false)
                         broadcastRescueTransaction()
-                        assignRequestTransaction(
-                            rescueTransaction = rescueTransaction,
-                            user = user,
-                            rescuer = rescuer,
-                            transactionId = transactionId
-                        )
                         user.location?.let { broadcastRescueTransactionToRespondent(it) }
                     }.onFailure { exception ->
                         isLoading(false)
@@ -783,33 +776,7 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private suspend fun assignRequestTransaction(
-        rescueTransaction: RescueTransactionItem,
-        user: UserItem,
-        rescuer: UserItem,
-        transactionId: String
-    ) {
-
-        runCatching {
-
-            user.assignRequestTransaction(role = Role.Rescuee.name, transactionId = transactionId)
-            rescuer.assignRequestTransaction(role = Role.Rescuer.name, transactionId = transactionId)
-
-        }.onSuccess {
-            broadcastToNearbyCyclists()
-            _eventFlow.emit(value = MappingEvent.AcceptRescueRequestSuccess)
-            delay(500)
-            updateTransactionETA(rescuer, rescueTransaction)
-            isLoading(false)
-            broadcastRescueTransaction()
-        }.onFailure { exception ->
-            isLoading(false)
-            exception.handleException()
-        }
-
-    }
-
-    private fun updateTransactionETA(rescuer: UserItem, rescueTransaction: RescueTransactionItem) {
+    private fun updateTransactionETA(rescuer: UserItem) {
         val userLocation = state.value.userLocation ?: return
 
         val estimatedTimeArrival = rescuer.location?.let {
@@ -826,7 +793,6 @@ class MappingViewModel @Inject constructor(
         }
         _state.update {
             it.copy(
-                rescueTransaction = rescueTransaction,
                 rescueETA = estimatedTimeArrival ?: "",
                 rescueDistance = distance ?: 0.0,
                 rescuer = rescuer
@@ -838,12 +804,6 @@ class MappingViewModel @Inject constructor(
         _state.update { it.copy(isLoading = loading) }
     }
 
-
-    private suspend fun UserItem.assignRequestTransaction(role: String, transactionId: String?) {
-        mappingUseCase.createUserUseCase(
-            user = this.assignTransaction(transactionId = transactionId!!, role = role)
-        )
-    }
 
 
     private suspend fun Throwable.handleDeclineRescueRequest() {
