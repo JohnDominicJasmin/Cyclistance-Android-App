@@ -1,6 +1,6 @@
 package com.example.cyclistance.feature_rescue_record.data.mapper
 
-import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
+import com.example.cyclistance.core.utils.date.DateUtils.toReadableDateTime
 import com.example.cyclistance.feature_mapping.domain.model.Role
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideHistoryItem
 import com.google.firebase.firestore.DocumentSnapshot

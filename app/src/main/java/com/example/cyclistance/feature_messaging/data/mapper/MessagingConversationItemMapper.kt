@@ -1,7 +1,7 @@
 package com.example.cyclistance.feature_messaging.data.mapper
 
 import com.example.cyclistance.core.utils.constants.MessagingConstants
-import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
+import com.example.cyclistance.core.utils.date.DateUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.exceptions.MessagingExceptions
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.google.firebase.firestore.DocumentSnapshot

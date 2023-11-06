@@ -38,7 +38,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
 import com.example.cyclistance.core.domain.model.UserDetails
-import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
+import com.example.cyclistance.core.utils.date.DateUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.chats.MessagingUserItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.presentation.common.MessageUserImage

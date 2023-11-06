@@ -1,11 +1,11 @@
 package com.example.cyclistance.feature_mapping.domain.helper
 
 import com.example.cyclistance.core.utils.constants.MappingConstants
+import com.example.cyclistance.core.utils.date.DateUtils.toReadableDateTime
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatDuration
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.getTimeDurationMillis
 import com.example.cyclistance.core.utils.formatter.FormatterUtils.isLocationAvailable
-import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
 import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
 import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import com.example.cyclistance.feature_mapping.domain.model.Role
