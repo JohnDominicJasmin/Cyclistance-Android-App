@@ -207,7 +207,7 @@ fun AddEditContactScreen(
                     emergencyContactModel = EmergencyContactModel(
                         name = name.text,
                         phoneNumber = phoneNumber.text,
-                        photo = uiState.selectedImageUri ?: state.emergencyContact?.photo!!
+                        photo = uiState.selectedImageUri ?: state.emergencyContact?.photo ?: ""
                     )
                 ))
         }
