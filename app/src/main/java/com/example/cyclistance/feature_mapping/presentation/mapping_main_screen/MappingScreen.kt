@@ -696,6 +696,10 @@ fun MappingScreen(
         }
     }
 
+    val banAccountDialogVisibility = remember{{ visibility: Boolean ->
+        uiState = uiState.copy(banAccountDialogVisible = visibility)
+    }}
+
     val onClickCancelButton = remember {
         { id: String ->
             mappingViewModel.onEvent(MappingVmEvent.DeclineRescueRequest(id))
@@ -1139,18 +1143,6 @@ fun MappingScreen(
         }
     }
 
-    LaunchedEffect(key1 = true) {
-        mappingViewModel.eventFlow.collectLatest {
-            when (it) {
-
-                is MappingEvent.NoInternetConnection -> {
-                    noInternetDialogVisibility(true)
-                }
-
-                else -> {}
-            }
-        }
-    }
 
     LaunchedEffect(key1 = state.rescueTransaction?.status ) {
         val rescueTransaction = state.rescueTransaction
@@ -1194,10 +1186,27 @@ fun MappingScreen(
             isNavigating = isNavigating
         )
     }
+
+    LaunchedEffect(key1 = true) {
+        mappingViewModel.eventFlow.collect { event ->
+            when (event) {
+                is MappingEvent.AccountBanned -> {
+                    banAccountDialogVisibility(true)
+                }
+
+                else -> {}
+            }
+
+        }
+    }
     LaunchedEffect(key1 = true) {
 
         mappingViewModel.eventFlow.collectLatest { event ->
             when (event) {
+
+                is MappingEvent.NoInternetConnection -> {
+                    noInternetDialogVisibility(true)
+                }
 
                 is MappingEvent.RequestHelpSuccess -> {
                     val location = state.userLocation!!
@@ -1520,7 +1529,7 @@ fun MappingScreen(
                 is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()
                 is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()
                 is MappingUiEvent.ConfirmedDestinationArrived -> confirmedDestinationArrived()
-                is MappingUiEvent.LocationPermission -> locationPermissionDialogVisibility(event.visibility)
+                is MappingUiEvent.LocationPermissionDialog -> locationPermissionDialogVisibility(event.visibility)
                 is MappingUiEvent.ExpandableFab -> expandableFab(event.expanded)
                 is MappingUiEvent.EmergencyCallDialog -> emergencyCallDialogVisibility(event.visibility)
                 is MappingUiEvent.OpenFamilyTracker -> shareLocation()
@@ -1575,6 +1584,7 @@ fun MappingScreen(
                 is MappingUiEvent.ViewProfile -> viewProfile(event.id)
                 MappingUiEvent.CancelRespondHelp -> cancelRespondToHelp()
                 MappingUiEvent.ArrivedAtLocation -> arrivedAtLocation()
+                is MappingUiEvent.BannedAccountDialog -> banAccountDialogVisibility(event.visibility)
             }
         }
     )

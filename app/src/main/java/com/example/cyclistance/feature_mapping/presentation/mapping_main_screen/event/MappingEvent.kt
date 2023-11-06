@@ -3,6 +3,7 @@ package com.example.cyclistance.feature_mapping.presentation.mapping_main_screen
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
+import com.example.cyclistance.feature_report_account.domain.model.BannedAccountDetails
 
 
 sealed class MappingEvent{
@@ -18,6 +19,7 @@ sealed class MappingEvent{
     data class RespondToHelpSuccess(val reason:String = "Rescue request sent"): MappingEvent()
     data class AddressFailed(val reason: String? = "Rescue transaction not found"): MappingEvent()
     data object NoInternetConnection: MappingEvent()
+    data class AccountBanned(val bannedAccountDetails: BannedAccountDetails): MappingEvent()
 
 
     data class NewSelectedRescuee(val selectedRescuee: MapSelectedRescuee): MappingEvent()

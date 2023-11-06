@@ -40,7 +40,8 @@ data class MappingUiState(
     val cancelOnGoingRescueDialogVisible: Boolean = false,
     val notificationPermissionVisible: Boolean = false,
     val requestAcceptedVisible: Boolean = false,
-    val requestCancelledVisible: Boolean = false
+    val requestCancelledVisible: Boolean = false,
+    val banAccountDialogVisible: Boolean = false,
 
 
 

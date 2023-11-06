@@ -33,6 +33,7 @@ import com.example.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialo
 import com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
 import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
 import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogNotificationPermission
+import com.example.cyclistance.core.utils.date.DateUtils.toReadableDateTime
 import com.example.cyclistance.feature_authentication.presentation.common.visible
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call.EmergencyCallDialog
 import com.example.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
@@ -43,6 +44,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.CancelRespondButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RequestHelpButton
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RespondToHelpButton
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.BannedAccountDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.CancelOnGoingRescueDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.CancelSearchDialog
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.DeleteHazardousLaneMarkerDialog
@@ -375,6 +377,22 @@ fun MappingScreenContent(
                             })
                     }
 
+                    if(uiState.banAccountDialogVisible && state.bannedAccountDetails != null){
+
+                        val period = state.bannedAccountDetails.endDate?.toReadableDateTime(pattern = "yyyy-MM-dd")!!
+                        val reason = state.bannedAccountDetails.reason
+                        BannedAccountDialog(modifier = Modifier.constrainAs(dialog){
+                            end.linkTo(parent.end)
+                            start.linkTo(parent.start)
+                            bottom.linkTo(parent.bottom)
+                            height = Dimension.wrapContent
+                            centerTo(parent)
+                        },period = period, reason = reason, onDismissRequest = {
+                            event(MappingUiEvent.BannedAccountDialog(visibility = false))
+                        })
+
+                    }
+
                     if (uiState.locationPermissionDialogVisible) {
                         DialogForegroundLocationPermission(
                             modifier = Modifier.constrainAs(
@@ -385,7 +403,7 @@ fun MappingScreenContent(
                                 height = Dimension.wrapContent
                                 centerTo(parent)
                             },
-                            onDismiss = { event(MappingUiEvent.LocationPermission(visibility = false)) }
+                            onDismiss = { event(MappingUiEvent.LocationPermissionDialog(visibility = false)) }
                         )
                     }
 
