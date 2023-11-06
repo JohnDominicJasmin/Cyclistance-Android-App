@@ -38,6 +38,9 @@ class ReportAccountRepositoryImpl(
             firestore.collection(BANNED_ACCOUNTS_COLLECTION).where(Filter.equalTo("userId", userId))
                 .get()
                 .addOnSuccessListener {
+                    if(it.documents.isEmpty()){
+                        return@addOnSuccessListener
+                    }
                     val data = it.documents.last()
                     val userId = data.getString("userId") ?: ""
                     val reason = data.getString("reason") ?: ""
