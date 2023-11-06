@@ -1,6 +1,7 @@
 package com.example.cyclistance.di.report_account
 
 import com.example.cyclistance.feature_report_account.domain.repository.ReportAccountRepository
+import com.example.cyclistance.feature_report_account.domain.use_case.GetBannedAccountDetailsUseCase
 import com.example.cyclistance.feature_report_account.domain.use_case.LastReportIdUseCase
 import com.example.cyclistance.feature_report_account.domain.use_case.ReportAccountUseCase
 import com.example.cyclistance.feature_report_account.domain.use_case.ReportUseCase
@@ -24,7 +25,8 @@ object ReportAccountViewModelModule {
     ): ReportAccountUseCase {
         return ReportAccountUseCase(
             reportUseCase = ReportUseCase(repository = repository),
-            lastReportIdUseCase = LastReportIdUseCase(repository = repository)
+            lastReportIdUseCase = LastReportIdUseCase(repository = repository),
+            getBannedAccountDetailsUseCase = GetBannedAccountDetailsUseCase(repository = repository)
         )
     }
 
