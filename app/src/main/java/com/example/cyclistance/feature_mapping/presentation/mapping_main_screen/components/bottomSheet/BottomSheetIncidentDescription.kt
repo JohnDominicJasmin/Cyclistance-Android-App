@@ -62,7 +62,7 @@ import com.example.cyclistance.core.utils.constants.MappingConstants.LANE_CLOSUR
 import com.example.cyclistance.core.utils.constants.MappingConstants.NEED_ASSISTANCE
 import com.example.cyclistance.core.utils.constants.MappingConstants.OBJECT_ON_ROAD
 import com.example.cyclistance.core.utils.constants.MappingConstants.SLOWDOWN
-import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
+import com.example.cyclistance.core.utils.date.DateUtils.toReadableDateTime
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
 import com.example.cyclistance.feature_mapping.presentation.common.AdditionalMessage
 import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation

@@ -39,7 +39,7 @@ import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.formatter.FormatterUtils.formatToTimeAgo
+import com.example.cyclistance.core.utils.date.DateUtils.formatToTimeAgo
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue.RescueRequestItemModel
 import com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation
 import com.example.cyclistance.theme.Black450

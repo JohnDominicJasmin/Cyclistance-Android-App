@@ -33,6 +33,8 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.createMockUsers
 import com.example.cyclistance.feature_messaging.domain.use_case.MessagingUseCase
+import com.example.cyclistance.feature_report_account.domain.model.BannedAccountDetails
+import com.example.cyclistance.feature_report_account.domain.use_case.ReportAccountUseCase
 import com.example.cyclistance.feature_rescue_record.domain.use_case.RescueRecordUseCase
 import com.example.cyclistance.feature_user_profile.domain.model.UserStats
 import com.example.cyclistance.feature_user_profile.domain.use_case.UserProfileUseCase
@@ -71,6 +73,7 @@ class MappingViewModel @Inject constructor(
     private val defaultDispatcher: CoroutineDispatcher,
     private val messagingUseCase: MessagingUseCase,
     private val rescueRecordUseCase: RescueRecordUseCase,
+    private val reportAccountUseCase: ReportAccountUseCase
 ) : ViewModel() {
 
 
@@ -91,11 +94,18 @@ class MappingViewModel @Inject constructor(
 
     init {
         trackingHandler = TrackingStateHandler(state = _state, eventFlow = _eventFlow)
+        getBannedAccountDetails()
         loadData()
         observeDataChanges()
         getMapType()
         getShouldShowHazardousStartingInfo()
         refreshToken()
+    }
+    private fun getBannedAccountDetails(){
+        viewModelScope.launch {
+            val bannedAccountDetails = reportAccountUseCase.getBannedAccountDetailsUseCase(userId = getId())
+            _state.update { it.copy(bannedAccountDetails = bannedAccountDetails) }
+        }
     }
 
     private fun setShouldShowHazardousStartingInfo(shouldShow: Boolean) {
@@ -189,9 +199,17 @@ class MappingViewModel @Inject constructor(
     private fun acceptRescueRequest(id: String) {
         viewModelScope.launch(context = SupervisorJob() + defaultDispatcher) {
 
+            val bannedAccountDetails = state.value.bannedAccountDetails ?: BannedAccountDetails()
+            val isAccountBanned = bannedAccountDetails.isAccountStillBanned
+            if(isAccountBanned){
+                _eventFlow.emit(value = MappingEvent.AccountBanned(bannedAccountDetails = bannedAccountDetails))
+                return@launch
+            }
+
             val rescuer = state.value.nearbyCyclist?.findUser(id) ?: return@launch
             val user = state.value.user
 
+        1
             trackingHandler.checkCurrentTransactions(user = user, rescuer = rescuer) {
 
                 coroutineScope {
@@ -289,6 +307,14 @@ class MappingViewModel @Inject constructor(
 
     private fun respondToHelp(selectedRescuee: MapSelectedRescuee) {
         viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {
+
+
+            val bannedAccountDetails = state.value.bannedAccountDetails ?: BannedAccountDetails()
+            val isAccountBanned = bannedAccountDetails.isAccountStillBanned
+            if(isAccountBanned){
+                _eventFlow.emit(value = MappingEvent.AccountBanned(bannedAccountDetails = bannedAccountDetails))
+                return@launch
+            }
             uploadUserProfile(onSuccess = {
                 viewModelScope.launch(this.coroutineContext) {
                     runCatching {
@@ -396,8 +422,17 @@ class MappingViewModel @Inject constructor(
     }
 
 
+
     private fun requestHelp() {
         viewModelScope.launch(context = defaultDispatcher + SupervisorJob()) {
+
+            val bannedAccountDetails = state.value.bannedAccountDetails ?: BannedAccountDetails()
+            val isAccountBanned = bannedAccountDetails.isAccountStillBanned
+            if(isAccountBanned){
+                _eventFlow.emit(value = MappingEvent.AccountBanned(bannedAccountDetails = bannedAccountDetails))
+                return@launch
+            }
+
             runCatching {
                 uploadUserProfile(onSuccess = {
                     viewModelScope.launch(context = defaultDispatcher) {

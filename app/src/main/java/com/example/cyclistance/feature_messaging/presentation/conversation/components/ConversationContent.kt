@@ -30,7 +30,7 @@ import com.example.cyclistance.core.presentation.dialogs.permissions_dialog.Dial
 import com.example.cyclistance.core.utils.composable_utils.Keyboard
 import com.example.cyclistance.core.utils.composable_utils.keyboardAsState
 import com.example.cyclistance.core.utils.composable_utils.noRippleClickable
-import com.example.cyclistance.core.utils.formatter.FormatterUtils.toReadableDateTime
+import com.example.cyclistance.core.utils.date.DateUtils.toReadableDateTime
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationItemModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.ConversationsModel
 import com.example.cyclistance.feature_messaging.domain.model.ui.conversation.MessageDuration
