@@ -13,6 +13,7 @@ import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExce
 import com.example.cyclistance.feature_authentication.domain.model.AuthenticationResult
 import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
 import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
+import com.google.firebase.FirebaseException
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.EmailAuthProvider
@@ -263,7 +264,7 @@ class AuthRepositoryImpl(
                                             R.string.no_internet_message)))
                             }
 
-                            if (exception is FirebaseNetworkException) {
+                            if (exception is FirebaseNetworkException || exception is FirebaseException) {
                                 continuation.resumeWithException(
                                     AuthExceptions.NetworkException(
                                         message = appContext.getString(R.string.no_internet_message)))
