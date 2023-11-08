@@ -265,6 +265,7 @@ fun EditProfileScreen(
                     name = name.text,
                     bikeGroup = cyclingGroup.text,
                     address = address.text,
+                    averageRating = 0.0
                 )))
     }}
 

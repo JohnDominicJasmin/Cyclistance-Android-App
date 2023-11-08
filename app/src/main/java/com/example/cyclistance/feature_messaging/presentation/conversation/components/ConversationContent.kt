@@ -214,6 +214,8 @@ private val fakeConversationsModel = ConversationsModel(
             message = "Hello",
             timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
             messageDuration = MessageDuration.OneDay,
+            isSent = true,
+            isSeen = false
 
             ),
         ConversationItemModel(
@@ -221,14 +223,20 @@ private val fakeConversationsModel = ConversationsModel(
             senderId = "2",
             receiverId = "1",
             message = "How are you?",
-            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
+            isSent = true,
+            isSeen = false,
+            messageDuration = MessageDuration.OneDay
         ),
         ConversationItemModel(
             messageId = "14",
             senderId = "1",
             receiverId = "2",
             message = "I'm fine, thanks",
-            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
+            isSent = true,
+            isSeen = false,
+            messageDuration = MessageDuration.OneDay
         ),
         ConversationItemModel(
             messageId = "15",
@@ -236,7 +244,9 @@ private val fakeConversationsModel = ConversationsModel(
             receiverId = "2",
             message = "How about you?",
             timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
-            messageDuration = MessageDuration.OneMonth
+            messageDuration = MessageDuration.OneMonth,
+            isSent = true,
+            isSeen = false
         ),
         ConversationItemModel(
             messageId = "16",
@@ -244,14 +254,19 @@ private val fakeConversationsModel = ConversationsModel(
             receiverId = "1",
             message = "I'm fine too",
             timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
-            messageDuration = MessageDuration.OneHour
+            messageDuration = MessageDuration.OneHour,
+            isSent = true,
+            isSeen = false
         ),
         ConversationItemModel(
             messageId = "17",
             senderId = "1",
             receiverId = "2",
             message = "Good to hear that",
-            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
+            isSent = true,
+            isSeen = false,
+            messageDuration = MessageDuration.OneDay
         ),
         ConversationItemModel(
             messageId = "18",
@@ -261,49 +276,70 @@ private val fakeConversationsModel = ConversationsModel(
                     "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                     "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                     "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
+            isSent = true,
+            isSeen = false,
+            messageDuration = MessageDuration.OneDay
         ),
         ConversationItemModel(
             messageId = "19357846457",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
+            isSent = true,
+            isSeen = false,
+            messageDuration = MessageDuration.OneDay
         ),
         ConversationItemModel(
             messageId = "23457570",
             senderId = "2",
             receiverId = "1",
             message = "Sure",
-            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
+            isSent = true,
+            isSeen = false,
+            messageDuration = MessageDuration.OneDay
         ),
         ConversationItemModel(
             messageId = "19",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
+            isSent = true,
+            isSeen = false,
+            messageDuration = MessageDuration.OneDay
         ),
         ConversationItemModel(
             messageId = "23453450",
             senderId = "2",
             receiverId = "1",
             message = "Sure",
-            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
+            isSent = true,
+            isSeen = false,
+            messageDuration = MessageDuration.OneDay
         ),
         ConversationItemModel(
             messageId = "194533467",
             senderId = "1",
             receiverId = "2",
             message = "Let's go for a ride?",
-            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
+            isSent = true,
+            isSeen = false,
+            messageDuration = MessageDuration.OneDay
         ),
         ConversationItemModel(
             messageId = "203223",
             senderId = "2",
             receiverId = "1",
             message = "Sure asdasdasd",
-            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
+            isSent = true,
+            isSeen = false,
+            messageDuration = MessageDuration.OneDay
         ),
         ConversationItemModel(
             messageId = "18553",
@@ -313,7 +349,10 @@ private val fakeConversationsModel = ConversationsModel(
                     "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                     "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                     "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
+            isSent = true,
+            isSeen = false,
+            messageDuration = MessageDuration.OneDay
         ),
         ConversationItemModel(
             messageId = "2546718",
@@ -323,7 +362,10 @@ private val fakeConversationsModel = ConversationsModel(
                     "molestiae quas vel sint commodi repudiandae consequuntur voluptatum laborum\n" +
                     "numquam blanditiis harum quisquam eius sed odit fugiat iusto fuga praesentium\n" +
                     "optio, eaque rerum! Provident similique accusantium nemo autem.",
-            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a")
+            timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
+            isSent = true,
+            isSeen = false,
+            messageDuration = MessageDuration.OneDay
         ),
     )
 )
