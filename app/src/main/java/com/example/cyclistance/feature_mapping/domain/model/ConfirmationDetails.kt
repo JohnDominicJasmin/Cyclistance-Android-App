@@ -11,4 +11,12 @@ data class ConfirmationDetails(
     val bikeType: String,
     val description: String,
     val message: String,
-) : Parcelable
+) : Parcelable{
+    @StableState
+    constructor() : this(
+        address = "",
+        bikeType = "",
+        description = "",
+        message = "",
+    )
+}

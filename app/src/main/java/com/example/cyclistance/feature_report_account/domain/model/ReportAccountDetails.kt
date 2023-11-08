@@ -9,11 +9,21 @@ import java.util.Date
 @Parcelize
 @StableState
 data class ReportAccountDetails(
-    val reasons: OptionsReport = OptionsReport(),
-    val name: String = "",
-    val userId: String = "",
-    val idReportBy: String = "",
-    val comment: String = "",
-    val date: Date? = null,
+    val reasons: OptionsReport,
+    val name: String,
+    val userId: String,
+    val idReportBy: String,
+    val comment: String,
+    val date: Date?,
 
-    ):Parcelable
+    ) : Parcelable {
+    @StableState
+    constructor() : this(
+        reasons = OptionsReport(),
+        name = "",
+        userId = "",
+        idReportBy = "",
+        comment = "",
+        date = null,
+    )
+}

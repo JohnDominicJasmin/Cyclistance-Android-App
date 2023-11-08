@@ -8,6 +8,12 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class SendMessageModel(
-    val receiverId: String = "",
-    val message: String = "",
-):Parcelable
+    val receiverId: String,
+    val message: String,
+):Parcelable{
+    @StableState
+    constructor(): this(
+        receiverId = "",
+        message = ""
+    )
+}

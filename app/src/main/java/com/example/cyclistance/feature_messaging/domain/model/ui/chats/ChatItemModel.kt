@@ -6,21 +6,35 @@ import kotlinx.parcelize.Parcelize
 import java.util.Date
 
 
-
 @StableState
 @Parcelize
 data class ChatItemModel(
-    val messageId: String = "",
+    val messageId: String,
 
-    val senderId: String = "",
-    val receiverId: String = "",
+    val senderId: String,
+    val receiverId: String,
 
-    val conversionId: String = "",
+    val conversionId: String,
 
-    val lastMessage: String = "",
-    val timeStamp: Date? = null,
-    val isSent: Boolean = false,
-    val isSeen: Boolean = false,
+    val lastMessage: String,
+    val timeStamp: Date?,
+    val isSent: Boolean,
+    val isSeen: Boolean,
 
 
-    ) : Parcelable
+    ) : Parcelable {
+    @StableState
+    constructor() : this(
+        messageId = "",
+
+        senderId = "",
+        receiverId = "",
+
+        conversionId = "",
+
+        lastMessage = "",
+        timeStamp = null,
+        isSent = false,
+        isSeen = false,
+    )
+}

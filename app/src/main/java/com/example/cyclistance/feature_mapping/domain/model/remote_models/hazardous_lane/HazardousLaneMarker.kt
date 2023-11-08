@@ -9,12 +9,24 @@ import java.util.Date
 @StableState
 @Parcelize
 data class HazardousLaneMarker(
-    val id: String = "",
-    val idCreator: String = "",
-    val latitude: Double? = null,
-    val longitude: Double? = null,
-    val label: String = "",
-    val datePosted: Date = Date(),
-    val description: String = "",
-    val address: String = "",
-):Parcelable
+    val id: String,
+    val idCreator: String,
+    val latitude: Double?,
+    val longitude: Double?,
+    val label: String,
+    val datePosted: Date,
+    val description: String,
+    val address: String,
+) : Parcelable {
+    @StableState
+    constructor() : this(
+        id = "",
+        idCreator = "",
+        latitude = 0.0,
+        longitude = 0.0,
+        label = "",
+        datePosted = Date(),
+        description = "",
+        address = "",
+    )
+}

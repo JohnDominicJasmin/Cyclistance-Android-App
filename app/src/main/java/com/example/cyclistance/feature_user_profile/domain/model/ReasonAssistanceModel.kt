@@ -14,4 +14,14 @@ data class ReasonAssistanceModel(
     val brokenChainCount: Int,
     val incidentCount: Int,
     val faultyBrakesCount: Int
-):Parcelable
+):Parcelable{
+    @StableState
+    constructor(): this(
+        injuryCount = 0,
+        frameSnapCount = 0,
+        flatTireCount = 0,
+        brokenChainCount = 0,
+        incidentCount = 0,
+        faultyBrakesCount = 0
+    )
+}

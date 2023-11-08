@@ -7,7 +7,7 @@ import com.google.errorprone.annotations.Keep
 @Immutable
 @Stable
 @Keep
-@Target(AnnotationTarget.CLASS)
+@Target(AnnotationTarget.CLASS, AnnotationTarget.CONSTRUCTOR)
 annotation class StableState
 
 

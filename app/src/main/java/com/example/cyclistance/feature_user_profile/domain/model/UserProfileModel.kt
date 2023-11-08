@@ -7,10 +7,16 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class UserProfileModel(
-    val userProfileInfo: UserProfileInfoModel? = null,
-    val userActivity: UserActivityModel? = null,
-    val reasonAssistance: ReasonAssistanceModel? = null
+    val userProfileInfo: UserProfileInfoModel?,
+    val userActivity: UserActivityModel?,
+    val reasonAssistance: ReasonAssistanceModel?
 ) : Parcelable {
+    @StableState
+    constructor() : this(
+        userProfileInfo = null,
+        userActivity = null,
+        reasonAssistance = null
+    )
     fun getPhoto(): String = userProfileInfo?.photoUrl ?: ""
     fun getName(): String = userProfileInfo?.name ?: ""
     fun getAverageRating(): Double = userProfileInfo?.averageRating ?: 0.0

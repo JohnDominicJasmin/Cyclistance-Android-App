@@ -8,13 +8,26 @@ import java.util.Date
 @StableState
 @Parcelize
 data class RideDetails(
-    val rideId: String = "",
-    val rescuerId: String = "",
-    val rescuerName: String = "",
-    val rescuerPhotoUrl: String = "",
-    val rescueeId: String = "",
-    val rescueeName: String = "",
-    val rescueePhotoUrl: String = "",
-    val rideDate: Date = Date(),
-    val rideSummary: RideSummary = RideSummary()
-) : Parcelable
+    val rideId: String,
+    val rescuerId: String,
+    val rescuerName: String,
+    val rescuerPhotoUrl: String,
+    val rescueeId: String,
+    val rescueeName: String,
+    val rescueePhotoUrl: String,
+    val rideDate: Date,
+    val rideSummary: RideSummary
+) : Parcelable{
+    @StableState
+    constructor(): this(
+        rideId = "",
+        rescuerId = "",
+        rescuerName = "",
+        rescuerPhotoUrl = "",
+        rescueeId = "",
+        rescueeName = "",
+        rescueePhotoUrl = "",
+        rideDate = Date(),
+        rideSummary = RideSummary()
+    )
+}

@@ -28,4 +28,8 @@
 
 -dontnote okhttp3.**, okio.**, retrofit2.**
 -dontwarn retrofit2.**
+-dontwarn okhttp3.internal.platform.**
+-dontwarn org.conscrypt.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.openjsse.**
 -keep class retrofit2.** { *; }
