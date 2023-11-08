@@ -7,15 +7,30 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class RideSummary(
-    val rating: Double = 0.0,
-    val ratingText: String = "",
-    val iconDescription: String = "",
-    val bikeType: String = "",
-    val date: String = "",
-    val startingTime: String = "",
-    val endTime: String = "",
-    val startingAddress: String = "",
-    val destinationAddress: String = "",
-    val duration: String = "",
+    val rating: Double,
+    val ratingText: String,
+    val iconDescription: String,
+    val bikeType: String,
+    val date: String,
+    val startingTime: String,
+    val endTime: String,
+    val startingAddress: String,
+    val destinationAddress: String,
+    val duration: String,
 
-    ) : Parcelable
+    ) : Parcelable{
+
+        @StableState
+        constructor(): this(
+            rating = 0.0,
+            ratingText = "",
+            iconDescription = "",
+            bikeType = "",
+            date = "",
+            startingTime = "",
+            endTime = "",
+            startingAddress = "",
+            destinationAddress = "",
+            duration = "",
+        )
+    }

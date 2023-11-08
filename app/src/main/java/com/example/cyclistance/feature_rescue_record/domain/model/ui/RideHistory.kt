@@ -8,5 +8,9 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class RideHistory(
-    val items: List<RideHistoryItem> = listOf(),
-) : Parcelable
+    val items: List<RideHistoryItem>,
+) : Parcelable{
+    @StableState
+    constructor(): this(
+        items = emptyList())
+}

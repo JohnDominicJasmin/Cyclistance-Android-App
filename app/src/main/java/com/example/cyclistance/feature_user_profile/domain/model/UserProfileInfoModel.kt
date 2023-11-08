@@ -10,9 +10,18 @@ import kotlinx.parcelize.Parcelize
 data class UserProfileInfoModel(
     val photoUrl: String,
     val name: String,
-    val averageRating: Double = 0.0,
+    val averageRating: Double,
     val address: String,
     val bikeGroup: String,
-):Parcelable
+):Parcelable{
+    @StableState
+    constructor(): this(
+        photoUrl = "",
+        name = "",
+        averageRating = 0.0,
+        address = "",
+        bikeGroup = ""
+    )
+}
 
 

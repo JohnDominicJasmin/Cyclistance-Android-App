@@ -712,6 +712,8 @@ class MappingViewModel @Inject constructor(
                         longitude = latLng.longitude,
                         label = label,
                         description = incidentDescription,
+                        datePosted = java.util.Date(),
+                        address = ""
 
                         ))
             }.onSuccess {

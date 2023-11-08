@@ -12,9 +12,24 @@ data class ConversationItemModel(
     val senderId: String,
     val receiverId: String,
     val message: String,
-    val timestamp: String? = null,
-    val messageDuration: MessageDuration? = null,
-    val isSent : Boolean = false,
-    val isSeen: Boolean = false
-) : Parcelable
+    val timestamp: String,
+    val messageDuration: MessageDuration?,
+    val isSent : Boolean,
+    val isSeen: Boolean
+) : Parcelable{
+
+    @StableState
+    constructor(): this(
+        messageId = "",
+        senderId = "",
+        receiverId = "",
+        message = "",
+        timestamp = "",
+        messageDuration = null,
+        isSent = false,
+        isSeen = false
+    )
+
+}
+
 

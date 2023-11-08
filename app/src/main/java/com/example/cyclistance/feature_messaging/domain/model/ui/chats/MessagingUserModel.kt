@@ -7,8 +7,13 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class MessagingUserModel(
-    val users: List<MessagingUserItemModel> = emptyList()
+    val users: List<MessagingUserItemModel>
 ) : Parcelable{
+    @StableState
+    constructor(): this(
+        users = emptyList())
+
+
     companion object{
         fun MessagingUserModel.filterWithout(userUid: String): MessagingUserModel {
             return MessagingUserModel(users.filter { it.userDetails.uid != userUid })

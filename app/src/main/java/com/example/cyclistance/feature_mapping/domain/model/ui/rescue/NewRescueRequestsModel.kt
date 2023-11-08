@@ -8,5 +8,10 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @StableState
 data class NewRescueRequestsModel(
-    val request: List<RescueRequestItemModel> = emptyList(),
-) : Parcelable
+    val request: List<RescueRequestItemModel> ,
+) : Parcelable{
+    @StableState
+    constructor(): this(
+        request = emptyList()
+    )
+}

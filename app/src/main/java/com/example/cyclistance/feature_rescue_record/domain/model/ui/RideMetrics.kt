@@ -7,9 +7,13 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class RideMetrics(
-    val distanceInMeters: Double = 0.0,
-    val maxSpeed: String = "0.0km/h",
-    val averageSpeedMps: Double = 0.0
+    val distanceInMeters: Double,
+    val maxSpeed: String,
+    val averageSpeedMps: Double
 ):Parcelable{
-
+    @StableState
+    constructor(): this(
+        distanceInMeters = 0.0,
+        maxSpeed = "0.0km/h",
+        averageSpeedMps = 0.0)
 }

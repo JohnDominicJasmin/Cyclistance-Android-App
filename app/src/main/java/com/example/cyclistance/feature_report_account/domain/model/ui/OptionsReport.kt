@@ -7,6 +7,11 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 @StableState
 data class OptionsReport(
-    val selectedOptions: List<String> = emptyList()
-): Parcelable
+    val selectedOptions: List<String>
+): Parcelable{
+    @StableState
+    constructor(): this(
+        selectedOptions = emptyList()
+    )
+}
 

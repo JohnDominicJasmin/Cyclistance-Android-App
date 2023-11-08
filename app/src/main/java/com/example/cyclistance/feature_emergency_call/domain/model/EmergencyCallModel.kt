@@ -7,5 +7,11 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class EmergencyCallModel(
-    val contacts: List<EmergencyContactModel> = emptyList()
-) : Parcelable
+    val contacts: List<EmergencyContactModel>
+) : Parcelable{
+    @StableState
+    constructor(): this(
+        contacts = emptyList()
+    )
+}
+

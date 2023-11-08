@@ -7,5 +7,9 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class ConversationsModel(
-    val messages: List<ConversationItemModel> = emptyList()
-) : Parcelable
+    val messages: List<ConversationItemModel>
+) : Parcelable{
+    @StableState
+    constructor(): this(
+        messages = emptyList())
+}

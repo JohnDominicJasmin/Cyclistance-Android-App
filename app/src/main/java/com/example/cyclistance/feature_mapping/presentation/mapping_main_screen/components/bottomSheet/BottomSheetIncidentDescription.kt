@@ -85,7 +85,7 @@ fun BottomSheetIncidentDescription(
     onClickGotItButton: () -> Unit,
     onClickConfirmButton: (description: String, label: String) -> Unit
 
-    ) {
+) {
 
 
     val isDarkTheme = IsDarkTheme.current
@@ -158,13 +158,13 @@ fun BottomSheetIncidentDescription(
 @Composable
 private fun HazardousStartingInfo(
 
-    modifier : Modifier = Modifier,
+    modifier: Modifier = Modifier,
     onClickGotItButton: () -> Unit) {
 
     val isDarkTheme = IsDarkTheme.current
 
 
-    Surface(modifier = modifier,) {
+    Surface(modifier = modifier) {
 
         Column(
             verticalArrangement = Arrangement.Center,
@@ -341,7 +341,7 @@ private fun IncidentDescriptionEditMode(
         mutableStateOf(TextFieldValue(""))
     }
 
-    val descriptionChanges = remember( description) {
+    val descriptionChanges = remember(description) {
         description.text != markerDescription
     }
     val labelChanges = remember(pagerState.currentPage) {
@@ -353,7 +353,7 @@ private fun IncidentDescriptionEditMode(
     }
 
 
-    LaunchedEffect(key1 = markerDescription){
+    LaunchedEffect(key1 = markerDescription) {
         description = TextFieldValue(markerDescription)
     }
 
@@ -378,7 +378,7 @@ private fun IncidentDescriptionEditMode(
             modifier = Modifier
                 .fillMaxWidth(0.91f)
                 .padding(top = 12.dp, bottom = 4.dp),
-            thickness =  1.2.dp,
+            thickness = 1.2.dp,
             color = Black500,
         )
 
@@ -557,32 +557,6 @@ private fun ReportItemDescription(
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @Preview(device = "id:Galaxy Nexus")
 @Composable
 fun PreviewBottomSheetIncidentDescriptionDark() {
@@ -596,7 +570,9 @@ fun PreviewBottomSheetIncidentDescriptionDark() {
                 BottomSheetIncidentDescription(
 
                     uiState = MappingUiState(
-                        currentlyEditingHazardousMarker = HazardousLaneMarker(label = "Crash", description = "Lorem ipsum dolor sit amet consectetur adipi"),
+                        currentlyEditingHazardousMarker = HazardousLaneMarker(
+
+                        ),
                         selectedHazardousMarker = HazardousLaneMarker(
                             id = "1",
                             label = "Crash",
@@ -605,14 +581,17 @@ fun PreviewBottomSheetIncidentDescriptionDark() {
                             idCreator = "1o3jjt90qin3f9n23",
                             description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.",
                             address = "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+                            datePosted = java.util.Date(),
                         )),
                     icon = R.drawable.ic_lane_closure_marker,
-                    state = MappingState(userId = "1o3jjt90qin3f39n23",shouldShowHazardousStartingInfo = true),
+                    state = MappingState(
+                        userId = "1o3jjt90qin3f39n23",
+                        shouldShowHazardousStartingInfo = true),
                     onClickDelete = {},
                     onClickEdit = {},
                     onDismissBottomSheet = {},
                     onClickCancelButton = {}, onClickGotItButton = {},
-                    onClickConfirmButton = { _, _ ->})
+                    onClickConfirmButton = { _, _ -> })
             }
         }
     }
@@ -631,7 +610,15 @@ fun PreviewBottomSheetIncidentDescriptionLight() {
                 BottomSheetIncidentDescription(
 
                     uiState = MappingUiState(
-                        currentlyEditingHazardousMarker = HazardousLaneMarker(label = "Crash", description = "Lorem ipsum dolor sit amet consectetur adipi"),
+                        currentlyEditingHazardousMarker = HazardousLaneMarker(
+                            label = "Crash",
+                            description = "Lorem ipsum dolor sit amet consectetur adipi",
+                            id = "1",
+                            idCreator = "1o3jjt90qin3f9n23",
+                            latitude = 14.123,
+                            longitude = 121.123,
+                            address = "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+                            datePosted = java.util.Date()),
                         selectedHazardousMarker = HazardousLaneMarker(
                             id = "1",
                             label = "Crash",
@@ -640,6 +627,7 @@ fun PreviewBottomSheetIncidentDescriptionLight() {
                             idCreator = "1o3jjt90qin3f9n23",
                             description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.",
                             address = "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+                            datePosted = java.util.Date(),
                         )),
                     icon = R.drawable.ic_lane_closure_marker,
                     state = MappingState(userId = "1o3jjt90qin3f39n23"),
@@ -648,7 +636,7 @@ fun PreviewBottomSheetIncidentDescriptionLight() {
                     onDismissBottomSheet = {},
                     onClickCancelButton = {},
                     onClickGotItButton = {},
-                    onClickConfirmButton = { _, _ ->})
+                    onClickConfirmButton = { _, _ -> })
             }
         }
     }
