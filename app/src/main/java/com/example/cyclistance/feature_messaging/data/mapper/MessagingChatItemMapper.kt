@@ -23,7 +23,8 @@ object MessagingChatItemMapper {
             conversionId =  getString(if (senderId == uid) KEY_RECEIVER_ID else KEY_SENDER_ID) ?: throw MessagingExceptions.GetChatsFailure(message = "Conversion id not found"),
             lastMessage = getString(KEY_LAST_MESSAGE) ?: throw MessagingExceptions.GetChatsFailure(message = "Last message not found"),
             timeStamp = getTimestamp(KEY_TIMESTAMP)?.toDate(),
-            isSeen = isSeen
+            isSeen = isSeen,
+            isSent = false
         )
     }
 }

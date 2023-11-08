@@ -26,7 +26,9 @@ object MessagingConversationItemMapper {
             receiverId = receiverId,
             message = messageText,
             timestamp = timeStamp.toReadableDateTime(pattern = "MMM dd hh:mm a"),
-            isSeen = isSeen
+            isSeen = isSeen,
+            messageDuration = null,
+            isSent = false
         )
     }
 

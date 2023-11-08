@@ -26,12 +26,9 @@ data class ChatItemModel(
     @StableState
     constructor() : this(
         messageId = "",
-
         senderId = "",
         receiverId = "",
-
         conversionId = "",
-
         lastMessage = "",
         timeStamp = null,
         isSent = false,

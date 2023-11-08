@@ -129,7 +129,11 @@ class TrackingStateHandler(
                 rescueePhotoUrl = user.profilePictureUrl!!,
                 rescuerId = rescuer?.id!!,
                 rescuerName = rescuer.name!!,
-                rescuerPhotoUrl = rescuer.profilePictureUrl!!)
+                rescuerPhotoUrl = rescuer.profilePictureUrl!!,
+                rideId = "",
+                rideDate = Date(),
+                rideSummary = RideSummary()
+                )
         }else{
             RideDetails(
                 rescueeId = rescuee?.id!!,
@@ -137,7 +141,11 @@ class TrackingStateHandler(
                 rescueePhotoUrl = rescuee.profilePictureUrl!!,
                 rescuerId = user.id!!,
                 rescuerName = user.name!!,
-                rescuerPhotoUrl = user.profilePictureUrl!!)
+                rescuerPhotoUrl = user.profilePictureUrl!!,
+                rideId = "",
+                rideDate = Date(),
+                rideSummary = RideSummary()
+                )
         }
 
         return rideDetails.copy(
@@ -151,6 +159,8 @@ class TrackingStateHandler(
                 startingAddress = startingAddress!!,
                 destinationAddress = destinationAddress!!,
                 duration = durationTime,
+                rating = 0.0,
+                ratingText = "No Ratings Yet"
 
             )
         )

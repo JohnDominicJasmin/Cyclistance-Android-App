@@ -211,7 +211,7 @@ fun PreviewChatItemSenderDark() {
             ChatItem(
                 isSender = true,
                 state = ConversationState(
-                    userReceiverMessage = MessagingUserItemModel(userDetails = UserDetails())
+                    userReceiverMessage = MessagingUserItemModel(userDetails = UserDetails(), fcmToken = "")
                 ),
                 isInternetAvailable = true,
                 conversation = ConversationItemModel(
@@ -221,6 +221,10 @@ fun PreviewChatItemSenderDark() {
                     receiverId = "2",
                     timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
                     messageId = "1",
+                    messageDuration = null,
+                    isSeen = false,
+                    isSent = false
+
                 ), resendMessage = {}, onSelectChatMessage = {}, markAsSeen = {})
         }
     }
@@ -247,7 +251,9 @@ fun PreviewChatItemSenderLight() {
                     timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
                     messageId = "1",
                     isSent = true,
-                    isSeen = true
+                    isSeen = true,
+                    messageDuration = null
+
                 ), onSelectChatMessage = {}, resendMessage = {}, markAsSeen = {}
             )
         }
@@ -279,6 +285,9 @@ fun PreviewChatItemRecipientDark() {
                     receiverId = "2",
                     timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
                     messageId = "1",
+                    messageDuration = null,
+                    isSent = false,
+                    isSeen = false
                 ), resendMessage = {}, onSelectChatMessage = {}, markAsSeen = {})
         }
     }
@@ -306,7 +315,8 @@ fun PreviewChatItemRecipientLight() {
                     timestamp = Date().toReadableDateTime(pattern = "MMM dd hh:mm a"),
                     messageId = "1",
                     isSent = true,
-                    isSeen = true
+                    isSeen = true,
+                    messageDuration = null
                 ), resendMessage = {}, onSelectChatMessage = {}, markAsSeen = {})
         }
     }

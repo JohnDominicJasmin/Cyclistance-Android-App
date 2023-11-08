@@ -38,6 +38,7 @@ import com.example.cyclistance.feature_rescue_record.presentation.rescue_results
 import com.example.cyclistance.feature_rescue_record.presentation.rescue_results.state.RescueResultUiState
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.CyclistanceTheme
+import java.util.Date
 
 @Composable
 fun RescueResultsScreenContent(
@@ -289,6 +290,8 @@ val fakeRideDetails = RideDetails(
         startingTime = "12:00",
         endTime = "13:30",
     ),
+    rideId = "",
+    rideDate = Date()
     )
 
 

@@ -192,7 +192,9 @@ val fakeRescueRide = RescueRide(
         startingAddress = "Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano, Via Roma 1, Milano,Via Roma 1, Milano",
         destinationAddress = "Via Roma 2, Milano,Via Roma 2, Milano,Via Roma 2, Milano,Via Roma 2, Milano,Via Roma 2, Milano",
         duration = "1h 30m",
-), rideMetrics = RideMetrics())
+), rideMetrics = RideMetrics(),
+    rideId = "",
+    rideDate = java.util.Date())
 
 
 @Preview
