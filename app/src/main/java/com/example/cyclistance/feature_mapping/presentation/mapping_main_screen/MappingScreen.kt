@@ -58,6 +58,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.animateCameraPosition
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.changeToNormalPuckIcon
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.openNavigationApp
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.showRoute
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MarkerSnippet
 import com.example.cyclistance.navigation.Screens
 import com.example.cyclistance.navigation.nav_graph.navigateScreen
@@ -65,10 +66,7 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
-import com.mapbox.core.constants.Constants.PRECISION_6
-import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
-import com.mapbox.geojson.LineString
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions
@@ -311,32 +309,20 @@ fun MappingScreen(
     }
 
 
-    val showRouteDirection = remember(uiState.routeDirection?.geometry, mapboxMap) {
-        {
+    val showRouteDirection = remember(mapboxMap) {
+        { geometry: String ->
 
-            uiState.routeDirection?.geometry?.let { geometry ->
+            mapboxMap?.getStyle { style ->
 
-                mapboxMap?.getStyle { style ->
-                    if (style.isFullyLoaded.not()) {
-                        return@getStyle
-                    }
-                    if (geometry.isEmpty()) {
-                        return@getStyle
-                    }
-
-                    runCatching {
-                        val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)
-                        routeLineSource!!.setGeoJson(
-                            FeatureCollection.fromFeature(
-                                Feature.fromGeometry(
-                                    LineString.fromPolyline(geometry, PRECISION_6))))
-                    }.onFailure {
-                        Timber.e("Mapbox style not loaded ${it.message}")
-                    }
-
-
-
+                if (style.isFullyLoaded.not()) {
+                    return@getStyle
                 }
+                if (geometry.isEmpty()) {
+                    return@getStyle
+                }
+
+                style.showRoute(geometry)
+
             }
             Unit
         }
@@ -1456,7 +1442,7 @@ fun MappingScreen(
             context.startLocationServiceIntentAction(intentAction = ACTION_STOP_FOREGROUND)
             return@LaunchedEffect
         }
-        showRouteDirection()
+        showRouteDirection(route.geometry)
     }
 
 
