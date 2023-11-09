@@ -38,6 +38,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MapType
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.example.cyclistance.theme.Black500
@@ -49,8 +50,10 @@ import kotlinx.coroutines.launch
 fun MapTypeBottomSheet(
     modifier: Modifier = Modifier,
     bottomSheetScaffoldState: BottomSheetScaffoldState,
-    selectedMapType: String,
-    onClickMapType: (String) -> Unit
+    state: MappingState,
+    onToggleDefaultMapType: () -> Unit,
+    onToggleTrafficMapType: () -> Unit,
+    onToggleHazardousMapType: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val isDarkTheme = IsDarkTheme.current
@@ -107,31 +110,31 @@ fun MapTypeBottomSheet(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp, vertical = 4.dp),
+                        .padding(horizontal = 4.dp, vertical = 4.dp),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
 
                     MapTypeItem(
                         modifier = Modifier,
-                        isSelected = selectedMapType == MapType.HazardousLane.type,
+                        isSelected = state.hazardousMapTypeSelected,
                         imageId = if (isDarkTheme) R.drawable.ic_map_type_hazardous_dark else R.drawable.ic_map_type_hazardous_light,
                         mapTypeDescription = MapType.HazardousLane.type,
-                        onClick = {onClickMapType(MapType.HazardousLane.type)})
+                        onClick = onToggleHazardousMapType)
 
 
                     MapTypeItem(
                         modifier = Modifier,
-                        isSelected = selectedMapType == MapType.Traffic.type,
+                        isSelected = state.trafficMapTypeSelected,
                         imageId = if (isDarkTheme) R.drawable.ic_traffic_dark else R.drawable.ic_traffic_light,
                         mapTypeDescription = MapType.Traffic.type,
-                        onClick = {onClickMapType(MapType.Traffic.type)})
+                        onClick = onToggleTrafficMapType)
 
                     MapTypeItem(
                         modifier = Modifier,
-                        isSelected = selectedMapType == MapType.Default.type,
-                        imageId = if (isDarkTheme) R.drawable.ic_map_type_default_dark else R.drawable.ic_map_type_default_light,
-                        mapTypeDescription = MapType.Default.type,
-                        onClick = {onClickMapType(MapType.Default.type)})
+                        isSelected = state.defaultMapTypeSelected,
+                        imageId = if (isDarkTheme) R.drawable.ic_nearby_cyclist_dark else R.drawable.ic_nearby_cyclist_light,
+                        mapTypeDescription = MapType.NearbyCyclists.type,
+                        onClick = onToggleDefaultMapType)
 
                 }
             }
@@ -214,10 +217,17 @@ fun PreviewBottomSheetHazardousLane() {
                 MapTypeBottomSheet(
                     modifier = Modifier.align(Alignment.BottomCenter),
                     bottomSheetScaffoldState = bottomSheetScaffoldState,
-                    selectedMapType = MapType.Default.type,
-                    onClickMapType = {
+                    state = MappingState(),
+                    onToggleDefaultMapType = {
 
-                    })
+                    },
+                    onToggleHazardousMapType = {
+
+                    },
+                    onToggleTrafficMapType = {
+
+                    }
+                )
             }
         }
     }

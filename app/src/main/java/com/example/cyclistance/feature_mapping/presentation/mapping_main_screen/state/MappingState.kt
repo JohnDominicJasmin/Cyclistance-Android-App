@@ -7,7 +7,6 @@ import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.L
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
 import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
-import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MapType
 import com.example.cyclistance.feature_report_account.domain.model.BannedAccountDetails
 import kotlinx.parcelize.Parcelize
 
@@ -28,7 +27,9 @@ data class MappingState(
     val newRescueRequest: NewRescueRequestsModel? = null,
     val speedometerState: SpeedometerState = SpeedometerState(),
     val nearbyCyclist: NearbyCyclist? = null,
-    val mapType: String = MapType.Default.type,
+    val defaultMapTypeSelected: Boolean = true,
+    val hazardousMapTypeSelected: Boolean = false,
+    val trafficMapTypeSelected: Boolean = false,
     val userId: String = "",
     val shouldShowHazardousStartingInfo: Boolean = false,
     val lastRequestNotifiedId: String = "",

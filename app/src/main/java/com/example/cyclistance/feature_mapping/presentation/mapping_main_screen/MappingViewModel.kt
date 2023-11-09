@@ -97,7 +97,9 @@ class MappingViewModel @Inject constructor(
         getBannedAccountDetails()
         loadData()
         observeDataChanges()
-        getMapType()
+        getDefaultMapTypeSelected()
+        getHazardousMapTypeSelected()
+        getTrafficMapTypeSelected()
         getShouldShowHazardousStartingInfo()
         refreshToken()
     }
@@ -134,18 +136,61 @@ class MappingViewModel @Inject constructor(
         subscribeToHazardousLaneUpdates()
     }
 
-    private fun getMapType() {
+    private fun getDefaultMapTypeSelected() {
         viewModelScope.launch {
-            mappingUseCase.mapTypeUseCase()
+            mappingUseCase.defaultMapTypeUseCase()
                 .distinctUntilChanged()
                 .catch {
                     Timber.v("Error getting map type: ${it.message}")
-                }.onEach { mapType ->
-                    _state.update { it.copy(mapType = mapType) }
+                }.onEach { mapTypeSelected ->
+                    _state.update { it.copy(defaultMapTypeSelected = mapTypeSelected) }
                 }.launchIn(this)
 
         }
     }
+
+    private fun getHazardousMapTypeSelected(){
+        viewModelScope.launch {
+            mappingUseCase.hazardousMapTypeUseCase()
+                .distinctUntilChanged()
+                .catch {
+                    Timber.v("Error getting map type: ${it.message}")
+                }.onEach {hazardousMapSelected ->
+                    _state.update { it.copy(hazardousMapTypeSelected = hazardousMapSelected) }
+                }.launchIn(this)
+        }
+    }
+
+    private fun getTrafficMapTypeSelected(){
+        viewModelScope.launch {
+            mappingUseCase.trafficMapTypeUseCase()
+                .distinctUntilChanged()
+                .catch {
+                    Timber.v("Error getting map type: ${it.message}")
+                }.onEach { mapTypeSelected ->
+                    _state.update { it.copy(trafficMapTypeSelected = mapTypeSelected) }
+                }.launchIn(this)
+        }
+    }
+
+    private fun toggleDefaultMapType() {
+        viewModelScope.launch {
+            mappingUseCase.defaultMapTypeUseCase(isSelected = !state.value.defaultMapTypeSelected)
+        }
+    }
+
+    private fun toggleHazardousMapType(){
+        viewModelScope.launch {
+            mappingUseCase.hazardousMapTypeUseCase(isSelected = !state.value.hazardousMapTypeSelected)
+        }
+    }
+
+    private fun toggleTrafficMapType(){
+        viewModelScope.launch {
+            mappingUseCase.trafficMapTypeUseCase(isSelected = !state.value.trafficMapTypeSelected)
+        }
+    }
+
 
     private fun subscribeToHazardousLaneUpdates() {
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
@@ -492,9 +537,7 @@ class MappingViewModel @Inject constructor(
                     incidentDescription = event.description)
             }
 
-            is MappingVmEvent.SetMapType -> {
-                setMapType(mapType = event.mapType)
-            }
+
 
             is MappingVmEvent.SelectHazardousLaneMarker -> {
                 selectHazardousLaneMarker(id = event.id)
@@ -539,6 +582,10 @@ class MappingViewModel @Inject constructor(
             MappingVmEvent.ArrivedAtLocation -> {
                 arrivedAtLocation()
             }
+
+            MappingVmEvent.ToggleDefaultMapType -> toggleDefaultMapType()
+            MappingVmEvent.ToggleHazardousMapType -> toggleHazardousMapType()
+            MappingVmEvent.ToggleTrafficMapType -> toggleTrafficMapType()
         }
         savedStateHandle[MAPPING_VM_STATE_KEY] = state.value
     }
@@ -684,17 +731,7 @@ class MappingViewModel @Inject constructor(
 
     }
 
-    private fun setMapType(mapType: String) {
-        viewModelScope.launch {
-            runCatching {
-                mappingUseCase.mapTypeUseCase(mapType = mapType)
-            }.onSuccess {
-                Timber.v("Success setting map type: $it")
-            }.onFailure {
-                Timber.e("Error setting map type: ${it.message}")
-            }
-        }
-    }
+
 
     private suspend fun reportIncident(
         label: String,

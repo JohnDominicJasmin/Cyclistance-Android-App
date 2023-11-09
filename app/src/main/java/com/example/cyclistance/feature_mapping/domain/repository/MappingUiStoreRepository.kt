@@ -13,8 +13,15 @@ interface MappingUiStoreRepository {
     suspend fun getBottomSheetType(): Flow<String>
     suspend fun setBottomSheetType(bottomSheetType: String)
 
-    suspend fun setMapType(mapType: String)
-    suspend fun getMapType(): Flow<String>
+
+    suspend fun setDefaultMapTypeSelected(isSelected: Boolean)
+    suspend fun isDefaultMapTypeSelected(): Flow<Boolean>
+
+    suspend fun setHazardousMapTypeSelected(isSelected: Boolean)
+    suspend fun isHazardousMapTypeSelected(): Flow<Boolean>
+
+    suspend fun setTrafficMapTypeSelected(isSelected: Boolean)
+    suspend fun isTrafficMapTypeSelected(): Flow<Boolean>
 
     suspend fun showHazardousStartingInfo(shouldShow: Boolean)
     suspend fun shouldShowHazardousStartingInfo(): Flow<Boolean>

@@ -33,6 +33,9 @@ sealed class MappingUiEvent {
     data object OpenFamilyTracker : MappingUiEvent()
 
     data object DiscardMarkerChanges : MappingUiEvent()
+    data object ToggleDefaultMapType : MappingUiEvent()
+    data object ToggleTrafficMapType : MappingUiEvent()
+    data object ToggleHazardousMapType : MappingUiEvent()
     data object CancelEditIncidentDescription : MappingUiEvent()
     data object OnAddEmergencyContact : MappingUiEvent()
     data object OnClickDeleteIncident : MappingUiEvent()
@@ -63,7 +66,6 @@ sealed class MappingUiEvent {
     data class OnMapLongClick(val latLng: LatLng) : MappingUiEvent()
     data class OnReportIncident(val labelIncident: String) : MappingUiEvent()
     data class OnEmergencyCall(val phoneNumber: String) : MappingUiEvent()
-    data class OnSelectMapType(val mapType: String) : MappingUiEvent()
     data class DeclineRequestHelp(val id: String) : MappingUiEvent()
     data class ConfirmRequestHelp(val id: String) : MappingUiEvent()
     data class ViewProfile(val id: String) : MappingUiEvent()

@@ -18,7 +18,9 @@ import com.example.cyclistance.feature_mapping.domain.use_case.intent_action.Int
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.map_type.MapTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.map_type.DefaultMapTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.map_type.HazardousMapTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.map_type.TrafficMapTypeUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.notification.NewRescueRequestNotificationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.notification.RequestAcceptedNotificationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.AcceptRescueRequestUseCase
@@ -96,7 +98,6 @@ object MappingViewModelModule {
             bottomSheetTypeUseCase = BottomSheetTypeUseCase(mappingUiStoreRepository),
             newHazardousLaneUseCase = NewHazardousLaneUseCase(mappingRepository),
             deleteHazardousLaneUseCase = DeleteHazardousLaneUseCase(mappingRepository),
-            mapTypeUseCase = MapTypeUseCase(mappingUiStoreRepository),
             removeHazardousListenerUseCase = RemoveHazardousListenerUseCase(mappingRepository),
             updateHazardousLaneUseCase = UpdateHazardousLaneUseCase(mappingRepository),
             shouldHazardousStartingInfoUseCase = ShouldHazardousStartingInfoUseCase(
@@ -111,7 +112,11 @@ object MappingViewModelModule {
             ),
             cancelHelpRespondUseCase = CancelHelpRespondUseCase(mappingRepository),
             intentActionUseCase = IntentActionUseCase(mappingUiStoreRepository),
-            rescueFinishUseCase = RescueFinishUseCase(mappingRepository)
+            rescueFinishUseCase = RescueFinishUseCase(mappingRepository),
+            defaultMapTypeUseCase = DefaultMapTypeUseCase(mappingUiStoreRepository),
+            hazardousMapTypeUseCase = HazardousMapTypeUseCase(mappingUiStoreRepository),
+            trafficMapTypeUseCase = TrafficMapTypeUseCase(mappingUiStoreRepository),
+
         )
 
     }
