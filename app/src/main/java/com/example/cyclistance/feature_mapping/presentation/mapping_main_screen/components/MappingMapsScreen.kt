@@ -32,6 +32,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.initLayers
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.initSource
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.setDefaultSettings
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.showRoute
 import com.example.cyclistance.navigation.IsDarkTheme
 import com.mapbox.geojson.Feature
 import com.mapbox.geojson.FeatureCollection
@@ -394,22 +395,36 @@ fun MappingMapsScreen(
         showTransactionLocationIcon(clientLocation)
     }
     val isDarkTheme = IsDarkTheme.current
-    LaunchedEffect(key1 = state.trafficMapTypeSelected, key2 = mapboxMap) {
-        val darkThemeMap =
-            if (state.trafficMapTypeSelected) Style.TRAFFIC_NIGHT else Style.DARK
-        val lightThemeMap =
-            if (state.trafficMapTypeSelected) Style.TRAFFIC_DAY else Style.LIGHT
 
-        mapboxMap?.setStyle(if (isDarkTheme) darkThemeMap else lightThemeMap){ loadedStyle ->
+    LaunchedEffect(
+        key1 = state.trafficMapTypeSelected,
+        key2 = mapboxMap,
+        key3 = uiState.routeDirection?.geometry) {
+
+        val geometry = uiState.routeDirection?.geometry
+        val darkThemeMap = if (state.trafficMapTypeSelected) Style.TRAFFIC_NIGHT else Style.DARK
+        val lightThemeMap = if (state.trafficMapTypeSelected) Style.TRAFFIC_DAY else Style.LIGHT
+
+        mapboxMap?.setStyle(if (isDarkTheme) darkThemeMap else lightThemeMap) { loadedStyle ->
 
             if (loadedStyle.isFullyLoaded) {
                 loadedStyle.initSource()
                 loadedStyle.initLayers(context)
             }
+
+            if (geometry == null) {
+                return@setStyle
+            }
+
+
+            loadedStyle.showRoute(geometry = geometry)
+
+
         }
     }
     Map(
         modifier = modifier,
+        uiState = uiState,
         trafficMapTypeSelected = state.trafficMapTypeSelected,
         event = event)
 
@@ -420,6 +435,7 @@ fun MappingMapsScreen(
 @Composable
 private fun Map(
     modifier: Modifier,
+    uiState: MappingUiState,
     trafficMapTypeSelected: Boolean,
     event: (MappingUiEvent) -> Unit) {
 
@@ -445,10 +461,11 @@ private fun Map(
             }
             CoroutineScope(Dispatchers.Main).launch {
 
-                val darkThemeMap =
-                    if (trafficMapTypeSelected) Style.TRAFFIC_NIGHT else Style.DARK
-                val lightThemeMap =
-                    if (trafficMapTypeSelected) Style.TRAFFIC_DAY else Style.LIGHT
+                val geometry = uiState.routeDirection?.geometry
+                val darkThemeMap = if (trafficMapTypeSelected) Style.TRAFFIC_NIGHT else Style.DARK
+                val lightThemeMap = if (trafficMapTypeSelected) Style.TRAFFIC_DAY else Style.LIGHT
+
+
                 mapView.getMapAsync { mapbox ->
                     mapbox.setStyle(if (isDarkTheme) darkThemeMap else lightThemeMap) { loadedStyle ->
 
@@ -456,8 +473,16 @@ private fun Map(
                             event(MappingUiEvent.OnInitializeMap(mapbox))
                             loadedStyle.initSource()
                             loadedStyle.initLayers(view.context)
-
                         }
+
+                        if (geometry == null) {
+                            return@setStyle
+                        }
+
+
+                        loadedStyle.showRoute(geometry = geometry)
+
+
                     }
                     mapbox.setDefaultSettings()
                 }

@@ -21,6 +21,10 @@ import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LOCATION_CIRCLE_PULSE_RADIUS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MAX_ZOOM_LEVEL_MAPS
 import com.example.cyclistance.core.utils.constants.MappingConstants.MIN_ZOOM_LEVEL_MAPS
+import com.mapbox.core.constants.Constants
+import com.mapbox.geojson.Feature
+import com.mapbox.geojson.FeatureCollection
+import com.mapbox.geojson.LineString
 import com.mapbox.mapboxsdk.camera.CameraPosition
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory
 import com.mapbox.mapboxsdk.geometry.LatLng
@@ -32,6 +36,7 @@ import com.mapbox.mapboxsdk.style.layers.Property
 import com.mapbox.mapboxsdk.style.layers.PropertyFactory
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
+import timber.log.Timber
 
 
 internal object MappingUtils {
@@ -147,6 +152,22 @@ internal object MappingUtils {
                 )
             }, MappingConstants.ICON_LAYER_ID)
 
+    }
+
+
+    fun Style.showRoute(geometry: String){
+
+        runCatching {
+            val routeLineSource = getSourceAs<GeoJsonSource>(MappingConstants.ROUTE_SOURCE_ID)
+            routeLineSource!!.setGeoJson(
+                FeatureCollection.fromFeature(
+                    Feature.fromGeometry(
+                        LineString.fromPolyline(geometry, Constants.PRECISION_6))))
+
+
+        }.onFailure {
+            Timber.e("Mapbox style not loaded ${it.message}")
+        }
     }
 
 }
