@@ -124,7 +124,9 @@ fun MappingScreen(
         {
             coroutineScope.launch {
                 if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {
-                    bottomSheetScaffoldState.bottomSheetState.collapse()
+                    uiState = uiState.copy(bottomSheetType = null).also {
+                        bottomSheetScaffoldState.bottomSheetState.collapse()
+                    }
                 }
             }
         }
@@ -821,11 +823,9 @@ fun MappingScreen(
 
     val closeMapTypeBottomSheet = remember {
         {
-            uiState = uiState.copy(
-                bottomSheetType = null
-            ).also {
+
                 collapseBottomSheet()
-            }
+
         }
     }
 
