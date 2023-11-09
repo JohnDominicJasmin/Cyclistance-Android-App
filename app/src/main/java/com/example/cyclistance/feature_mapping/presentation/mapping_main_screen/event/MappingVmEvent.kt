@@ -20,11 +20,14 @@ sealed class MappingVmEvent {
     data class GetRouteDirections(val origin: Point, val destination: Point): MappingVmEvent()
     data class ReportIncident(val label: String, val latLng: LatLng, val description: String): MappingVmEvent()
     data class UpdateReportedIncident(val marker: HazardousLaneMarker): MappingVmEvent()
-    data class SetMapType(val mapType: String): MappingVmEvent()
     data class SelectHazardousLaneMarker(val id: String): MappingVmEvent()
     data class DeleteHazardousLaneMarker(val id: String): MappingVmEvent()
     data class ShouldShowHazardousStartingInfo(val shouldShow: Boolean): MappingVmEvent()
     data class NotifyNewRescueRequest(val message: String): MappingVmEvent()
     data class NotifyRequestAccepted(val message: String): MappingVmEvent()
     data object ArrivedAtLocation: MappingVmEvent()
+    data object ToggleDefaultMapType: MappingVmEvent()
+    data object ToggleTrafficMapType: MappingVmEvent()
+    data object ToggleHazardousMapType: MappingVmEvent()
+
 }

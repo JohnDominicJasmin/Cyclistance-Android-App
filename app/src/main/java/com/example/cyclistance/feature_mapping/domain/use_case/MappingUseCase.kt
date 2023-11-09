@@ -12,7 +12,9 @@ import com.example.cyclistance.feature_mapping.domain.use_case.intent_action.Int
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.map_type.MapTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.map_type.DefaultMapTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.map_type.HazardousMapTypeUseCase
+import com.example.cyclistance.feature_mapping.domain.use_case.map_type.TrafficMapTypeUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.notification.NewRescueRequestNotificationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.notification.RequestAcceptedNotificationUseCase
 import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.AcceptRescueRequestUseCase
@@ -74,7 +76,9 @@ data class MappingUseCase(
 
     val shouldHazardousStartingInfoUseCase: ShouldHazardousStartingInfoUseCase,
 
-    val mapTypeUseCase: MapTypeUseCase,
+    val defaultMapTypeUseCase: DefaultMapTypeUseCase,
+    val hazardousMapTypeUseCase: HazardousMapTypeUseCase,
+    val trafficMapTypeUseCase: TrafficMapTypeUseCase,
 
     val newRescueRequestNotificationUseCase: NewRescueRequestNotificationUseCase,
     val requestAcceptedNotificationUseCase: RequestAcceptedNotificationUseCase,

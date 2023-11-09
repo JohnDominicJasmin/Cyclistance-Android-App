@@ -842,14 +842,41 @@ fun MappingScreen(
         }
     }
 
-    val onSelectMapType = remember(key1 = state.userLocation) {
-        { mapType: String ->
+
+    val toggleDefaultMapType = remember(state.userLocation) {
+        {
             if (state.userLocation == null) {
                 Toast.makeText(context, "Searching for GPS", Toast.LENGTH_SHORT).show()
             } else {
-                mappingViewModel.onEvent(event = MappingVmEvent.SetMapType(mapType))
+                mappingViewModel.onEvent(event = MappingVmEvent.ToggleDefaultMapType)
             }
+            Unit
         }
+    }
+
+    val toggleTrafficMapType = remember(state.userLocation) {
+        {
+            if (state.userLocation == null) {
+                Toast.makeText(context, "Searching for GPS", Toast.LENGTH_SHORT).show()
+            } else {
+                mappingViewModel.onEvent(event = MappingVmEvent.ToggleTrafficMapType)
+            }
+            Unit
+
+        }
+    }
+
+    val toggleHazardousMapType = remember(state.userLocation) {
+        {
+            if (state.userLocation == null) {
+                Toast.makeText(context, "Searching for GPS", Toast.LENGTH_SHORT).show()
+            } else {
+                mappingViewModel.onEvent(event = MappingVmEvent.ToggleHazardousMapType)
+            }
+            Unit
+
+        }
+
     }
 
 
@@ -1542,7 +1569,6 @@ fun MappingScreen(
                 is MappingUiEvent.OnEmergencyCall -> onEmergencyCall(event.phoneNumber)
                 is MappingUiEvent.OnAddEmergencyContact -> onAddEmergencyContact()
                 is MappingUiEvent.MapTypeBottomSheet -> mapTypeBottomSheetVisibility(event.visibility)
-                is MappingUiEvent.OnSelectMapType -> onSelectMapType(event.mapType)
                 is MappingUiEvent.OnChangeIncidentDescription -> onChangeIncidentDescription(event.description)
                 is MappingUiEvent.OnChangeIncidentLabel -> onChangeIncidentLabel(event.label)
                 is MappingUiEvent.OnClickDeleteIncident -> onClickDeleteIncident()
@@ -1585,10 +1611,12 @@ fun MappingScreen(
                 MappingUiEvent.CancelRespondHelp -> cancelRespondToHelp()
                 MappingUiEvent.ArrivedAtLocation -> arrivedAtLocation()
                 is MappingUiEvent.BannedAccountDialog -> banAccountDialogVisibility(event.visibility)
+                MappingUiEvent.ToggleDefaultMapType -> toggleDefaultMapType()
+                MappingUiEvent.ToggleHazardousMapType -> toggleHazardousMapType()
+                MappingUiEvent.ToggleTrafficMapType -> toggleTrafficMapType()
             }
         }
     )
 
 }
 
-//on click cancel

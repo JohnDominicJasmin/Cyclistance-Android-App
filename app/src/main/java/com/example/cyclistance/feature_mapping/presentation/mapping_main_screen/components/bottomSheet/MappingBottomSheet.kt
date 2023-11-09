@@ -131,8 +131,11 @@ fun MappingBottomSheet(
                     MapTypeBottomSheet(
                         bottomSheetScaffoldState = bottomSheetScaffoldState,
                         modifier = modifier,
-                        selectedMapType = state.mapType,
-                        onClickMapType = { event(MappingUiEvent.OnSelectMapType(it)) })
+                        state = state,
+                        onToggleDefaultMapType = { event(MappingUiEvent.ToggleDefaultMapType) },
+                        onToggleTrafficMapType = { event(MappingUiEvent.ToggleTrafficMapType) },
+                        onToggleHazardousMapType = { event(MappingUiEvent.ToggleHazardousMapType) })
+
 
                 }
 

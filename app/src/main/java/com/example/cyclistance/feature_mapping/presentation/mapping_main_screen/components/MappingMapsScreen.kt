@@ -183,17 +183,12 @@ fun MappingMapsScreen(
     val shouldDismissIcons =
         remember(nearbyCyclist, isUserNavigating, hasActiveTransaction) {
             isUserNavigating || hasActiveTransaction
-
         }
-    val dismissibleNearbyUserMapTypes =
-        remember { listOf(MapType.HazardousLane.type, MapType.Traffic.type) }
-    val dismissibleHazardousMapTypes =
-        remember { listOf(MapType.Default.type, MapType.Traffic.type) }
 
 
-    LaunchedEffect(key1 = state.mapType, key2 = shouldDismissIcons, key3 = mapboxMap) {
+    LaunchedEffect(key1 = state.defaultMapTypeSelected, key2 = shouldDismissIcons, key3 = mapboxMap) {
 
-        if (state.mapType in dismissibleNearbyUserMapTypes) {
+        if (!state.defaultMapTypeSelected) {
             dismissNearbyUserMarkers()
             return@LaunchedEffect
         }
@@ -209,7 +204,7 @@ fun MappingMapsScreen(
         val userLocation = state.userLocation
 
 
-        if (state.mapType in dismissibleNearbyUserMapTypes) {
+        if (!state.defaultMapTypeSelected) {
             return
         }
 
@@ -241,7 +236,7 @@ fun MappingMapsScreen(
     }
 
 
-    LaunchedEffect(key1 = nearbyCyclist, key2 = state.mapType, key3 = mapboxMap) {
+    LaunchedEffect(key1 = nearbyCyclist, key2 = state.defaultMapTypeSelected, key3 = mapboxMap) {
         observeNearbyCyclistsIcon()
     }
 
@@ -249,7 +244,7 @@ fun MappingMapsScreen(
 
     LaunchedEffect(
         key1 = shouldDismissIcons,
-        key2 = state.mapType,
+        key2 = state.hazardousMapTypeSelected,
         key3 = mapboxMap) {
 
         if (shouldDismissIcons) {
@@ -257,7 +252,7 @@ fun MappingMapsScreen(
             return@LaunchedEffect
         }
 
-        if (state.mapType in dismissibleHazardousMapTypes) {
+        if (!state.hazardousMapTypeSelected) {
             dismissHazardousMarkers()
             return@LaunchedEffect
         }
@@ -275,7 +270,7 @@ fun MappingMapsScreen(
             return
         }
 
-        if (state.mapType in dismissibleHazardousMapTypes) {
+        if (!state.hazardousMapTypeSelected) {
             return
         }
 
@@ -286,7 +281,7 @@ fun MappingMapsScreen(
         showHazardousLaneIcon()
     }
 
-    LaunchedEffect(key1 = hazardousLaneMarkers.size, key2 = mapboxMap, key3 = state.mapType) {
+    LaunchedEffect(key1 = hazardousLaneMarkers.size, key2 = mapboxMap, key3 = state.hazardousMapTypeSelected) {
         observeHazardousMarker()
     }
 
@@ -399,11 +394,11 @@ fun MappingMapsScreen(
         showTransactionLocationIcon(clientLocation)
     }
     val isDarkTheme = IsDarkTheme.current
-    LaunchedEffect(key1 = state.mapType, key2 = mapboxMap) {
+    LaunchedEffect(key1 = state.trafficMapTypeSelected, key2 = mapboxMap) {
         val darkThemeMap =
-            if (state.mapType == MapType.Traffic.type) Style.TRAFFIC_NIGHT else Style.DARK
+            if (state.trafficMapTypeSelected) Style.TRAFFIC_NIGHT else Style.DARK
         val lightThemeMap =
-            if (state.mapType == MapType.Traffic.type) Style.TRAFFIC_DAY else Style.LIGHT
+            if (state.trafficMapTypeSelected) Style.TRAFFIC_DAY else Style.LIGHT
 
         mapboxMap?.setStyle(if (isDarkTheme) darkThemeMap else lightThemeMap){ loadedStyle ->
 
@@ -415,7 +410,7 @@ fun MappingMapsScreen(
     }
     Map(
         modifier = modifier,
-        mapType = state.mapType,
+        trafficMapTypeSelected = state.trafficMapTypeSelected,
         event = event)
 
 }
@@ -425,7 +420,7 @@ fun MappingMapsScreen(
 @Composable
 private fun Map(
     modifier: Modifier,
-    mapType: String,
+    trafficMapTypeSelected: Boolean,
     event: (MappingUiEvent) -> Unit) {
 
 
@@ -451,9 +446,9 @@ private fun Map(
             CoroutineScope(Dispatchers.Main).launch {
 
                 val darkThemeMap =
-                    if (mapType == MapType.Traffic.type) Style.TRAFFIC_NIGHT else Style.DARK
+                    if (trafficMapTypeSelected) Style.TRAFFIC_NIGHT else Style.DARK
                 val lightThemeMap =
-                    if (mapType == MapType.Traffic.type) Style.TRAFFIC_DAY else Style.LIGHT
+                    if (trafficMapTypeSelected) Style.TRAFFIC_DAY else Style.LIGHT
                 mapView.getMapAsync { mapbox ->
                     mapbox.setStyle(if (isDarkTheme) darkThemeMap else lightThemeMap) { loadedStyle ->
 

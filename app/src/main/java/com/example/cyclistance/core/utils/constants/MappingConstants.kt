@@ -29,8 +29,12 @@ object MappingConstants {
 
     val BIKE_TYPE_KEY = stringPreferencesKey("bike_type")
     val ADDRESS_KEY = stringPreferencesKey("address")
-    val MAP_TYPE_KEY = stringPreferencesKey("map_type")
     val SHOW_HAZARDOUS_STARTING_INFO_KEY = booleanPreferencesKey("show_hazardous_starting_info")
+
+    val MAP_TYPE_DEFAULT_KEY = booleanPreferencesKey("map_type_default")
+    val TRAFFIC_MAP_TYPE_KEY = booleanPreferencesKey("traffic_map_type_default")
+    val HAZARDOUS_MAP_TYPE_KEY = booleanPreferencesKey("hazardous_map_type_default")
+
 
     const val LOCATION_NAME = "Cyclistance Location"
     const val LOCATION_SERVICE_CHANNEL_ID = "cyclistance-location-channel-id"
