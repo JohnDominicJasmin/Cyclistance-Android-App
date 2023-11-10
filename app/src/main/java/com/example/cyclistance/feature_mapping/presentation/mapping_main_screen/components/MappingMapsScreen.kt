@@ -410,14 +410,18 @@ fun MappingMapsScreen(
             if (loadedStyle.isFullyLoaded) {
                 loadedStyle.initSource()
                 loadedStyle.initLayers(context)
+
+                if (geometry == null) {
+                    return@setStyle
+                }
+
+                loadedStyle.showRoute(geometry = geometry)
+
             }
 
-            if (geometry == null) {
-                return@setStyle
-            }
 
 
-            loadedStyle.showRoute(geometry = geometry)
+
 
 
         }
@@ -473,14 +477,16 @@ private fun Map(
                             event(MappingUiEvent.OnInitializeMap(mapbox))
                             loadedStyle.initSource()
                             loadedStyle.initLayers(view.context)
+                            if (geometry == null) {
+                                return@setStyle
+                            }
+
+                            loadedStyle.showRoute(geometry = geometry)
+
                         }
 
-                        if (geometry == null) {
-                            return@setStyle
-                        }
 
 
-                        loadedStyle.showRoute(geometry = geometry)
 
 
                     }
