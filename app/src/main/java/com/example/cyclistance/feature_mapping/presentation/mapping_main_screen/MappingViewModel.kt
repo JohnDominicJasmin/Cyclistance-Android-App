@@ -232,7 +232,7 @@ class MappingViewModel @Inject constructor(
 
     private fun loadData() {
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
-//            createMockUpUsers()
+            createMockUpUsers()
             trackingHandler.updateClient()
 
         }
@@ -322,10 +322,10 @@ class MappingViewModel @Inject constructor(
             runCatching {
                 removeUserTransaction(id = getId())
             }.onSuccess {
+                _eventFlow.emit(value = MappingEvent.CancelRescueTransactionSuccess)
                 broadcastToNearbyCyclists()
                 isLoading(false)
                 trackingHandler.clearTransactionRoles()
-                _eventFlow.emit(value = MappingEvent.CancelRescueTransactionSuccess)
             }.onFailure { exception ->
                 isLoading(false)
                 exception.handleException()
@@ -611,12 +611,14 @@ class MappingViewModel @Inject constructor(
         val rideDetails = trackingHandler.getRideDetails()
         viewModelScope.launch(SupervisorJob() + defaultDispatcher) {
             runCatching {
+                rescueRecordUseCase.rescueDetailsUseCase(details = rideDetails)
+
                 if (role == Role.Rescuee.name) {
                     rescueRecordUseCase.addRescueRecordUseCase(rideDetails = rideDetails)
                 }else{
                     val rideMetrics = trackingHandler.getRideMetrics()
                     rescueRecordUseCase.rideMetricsUseCase(rideMetrics = rideMetrics)
-                    rescueRecordUseCase.addRideMetrics(rideId = rideDetails.rideId, rideMetrics = rideMetrics)
+                    rescueRecordUseCase.addRideMetricsUseCase(rideId = rideDetails.rideId, rideMetrics = rideMetrics)
                     rescueRecordUseCase.updateStatsUseCase(userStats = UserStats(
                         rescuerId = rideDetails.rescuerId,
                         rescueeId = rideDetails.rescueeId,
@@ -626,9 +628,7 @@ class MappingViewModel @Inject constructor(
                     ))
                 }
             }.onSuccess {
-                rescueRecordUseCase.rescueDetailsUseCase(details = rideDetails)
                 trackingHandler.clearTransactionRoles()
-
             }.onFailure {
                 _eventFlow.emit(value = MappingEvent.RescueArrivedFailed(it.message ?: "Rescuer Arrived"))
             }
