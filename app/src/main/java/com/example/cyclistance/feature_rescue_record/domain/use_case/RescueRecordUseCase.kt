@@ -8,6 +8,6 @@ data class RescueRecordUseCase(
     val rateRescueUseCase: RateRescueUseCase,
     val rateRescuerUseCase: RateRescuerUseCase,
     val updateStatsUseCase: UpdateStatsUseCase,
-    val addRideMetrics: AddRideMetricsUseCase,
+    val addRideMetricsUseCase: AddRideMetricsUseCase,
     val rideMetricsUseCase: RideMetricsUseCase
 )

@@ -25,6 +25,15 @@ val userItems = listOf(
                 RespondentModel(clientId = "32362323"),
                 RespondentModel(clientId = "423623")
             )
+        ),
+
+        userAssistance = UserAssistanceModel(
+            needHelp = false,
+            confirmationDetail = ConfirmationDetailModel(
+                bikeType = BikeType.RoadBike.type,
+                description = MappingConstants.BROKEN_CHAIN_TEXT,
+                message = "I need help with my flat tire",
+            ),
         )),
 
     UserItem(

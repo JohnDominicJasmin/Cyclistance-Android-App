@@ -40,7 +40,7 @@ object RescueRecordViewModelModule {
             rateRescueUseCase = RateRescueUseCase(repository = rescueRecordRepository),
             rateRescuerUseCase = RateRescuerUseCase(repository = rescueRecordRepository),
             updateStatsUseCase = UpdateStatsUseCase(repository = rescueRecordRepository),
-            addRideMetrics = AddRideMetricsUseCase(repository = rescueRecordRepository),
+            addRideMetricsUseCase = AddRideMetricsUseCase(repository = rescueRecordRepository),
             rideMetricsUseCase = RideMetricsUseCase(repository = rescueRecordFlowRepository)
         )
     }

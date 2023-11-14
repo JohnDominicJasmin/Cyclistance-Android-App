@@ -151,19 +151,21 @@ fun MappingScreen(
         Timber.d("GPS Setting Request Denied")
     }
 
-    fun requestHelp() {
-        if (!context.hasGPSConnection()) {
-            context.checkLocationSetting(
-                onDisabled = settingResultRequest::launch,
-                onEnabled = {
-                    mappingViewModel.onEvent(
-                        event = MappingVmEvent.RequestHelp)
+    val requestHelp = remember {
+        {
+            if (!context.hasGPSConnection()) {
+                context.checkLocationSetting(
+                    onDisabled = settingResultRequest::launch,
+                    onEnabled = {
+                        mappingViewModel.onEvent(
+                            event = MappingVmEvent.RequestHelp)
 
-                })
-        } else {
-            mappingViewModel.onEvent(
-                event = MappingVmEvent.RequestHelp)
+                    })
+            } else {
+                mappingViewModel.onEvent(
+                    event = MappingVmEvent.RequestHelp)
 
+            }
         }
     }
 
@@ -449,12 +451,15 @@ fun MappingScreen(
         }
     }
 
-    fun resetState() {
 
+    val resetState = remember{{
         uiState = MappingUiState()
         collapseBottomSheet()
         onChangeNavigatingState(false)
-    }
+    }}
+
+
+
 
     DisposableEffect(key1 = true) {
         onDispose {
@@ -544,6 +549,7 @@ fun MappingScreen(
 
     val confirmedDestinationArrived = remember {
         {
+
             mappingViewModel.onEvent(event = MappingVmEvent.DestinationArrived)
         }
     }
@@ -1023,25 +1029,39 @@ fun MappingScreen(
         mappingViewModel.onEvent(event = MappingVmEvent.ArrivedAtLocation)
     }}
 
-    fun startNavigation() {
-        val role = state.user.getRole()
-        val isRescuer = role == Role.Rescuer.name
+    val startNavigation = remember(state.user.transaction?.transactionId) {
+        {
+            val role = state.user.getRole()
+            val isRescuer = role == Role.Rescuer.name
+            val userTransaction = state.user.transaction?.transactionId ?: ""
+            if (userTransaction.isNotEmpty()) {
+                uiState = uiState.copy(
+                    requestHelpButtonVisible = false,
+                    bottomSheetType = BottomSheetType.OnGoingRescue.type,
+                    isRescueRequestDialogVisible = false,
+                    isNavigating = isRescuer
+                )
+                onChangeNavigatingState(isRescuer)
+                expandBottomSheet()
+                getRouteDirections()
+                showUserLocation()
+            }
 
-
-        uiState = uiState.copy(
-            requestHelpButtonVisible = false,
-            bottomSheetType = BottomSheetType.OnGoingRescue.type,
-            isRescueRequestDialogVisible = false,
-            isNavigating = isRescuer
-        )
-        onChangeNavigatingState(isRescuer)
-        expandBottomSheet()
-        getRouteDirections()
-        showUserLocation()
-
+        }
     }
 
+    val stopNavigation = remember(){
+        uiState = uiState.copy(
+            requestHelpButtonVisible = true,
+            bottomSheetType = null,
+            isNavigating = false,
+            isRescueRequestDialogVisible = false
+        )
+        onChangeNavigatingState(false)
+        collapseBottomSheet()
 
+
+    }
 
 
 
@@ -1157,7 +1177,7 @@ fun MappingScreen(
     }
 
 
-    LaunchedEffect(key1 = state.rescueTransaction?.status ) {
+    LaunchedEffect(key1 = state.rescueTransaction?.status, key2 = hasTransaction) {
         val rescueTransaction = state.rescueTransaction
         val isRescueFinished = rescueTransaction?.isRescueFinished() ?: false
         val isRescueOnGoing = rescueTransaction?.isRescueOnGoing() ?: false
@@ -1171,6 +1191,10 @@ fun MappingScreen(
         }
 
         if (!isRescueFinished) {
+            return@LaunchedEffect
+        }
+
+        if(!hasTransaction){
             return@LaunchedEffect
         }
 
@@ -1468,10 +1492,10 @@ fun MappingScreen(
         startNavigation()
     }
 
-    LaunchedEffect(
+/*    LaunchedEffect(
         key1 = hasInternetConnection,
         key2 = uiState.generateRouteFailed,
-        key3 = state.rescueTransaction?.route) {
+        *//*key3 = state.rescueTransaction?.route*//*) {
 
         if (hasInternetConnection.not()) {
             return@LaunchedEffect
@@ -1481,7 +1505,7 @@ fun MappingScreen(
         }
 
         startNavigation()
-    }
+    }*/
 
 
     LaunchedEffect(key1 = isNavigating, key2 = userLocationAvailable, key3 = pulsingEnabled) {
