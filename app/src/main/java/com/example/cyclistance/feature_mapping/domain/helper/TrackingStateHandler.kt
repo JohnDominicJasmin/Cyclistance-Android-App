@@ -19,6 +19,7 @@ import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelecte
 import com.example.cyclistance.feature_mapping.domain.model.ui.rescue.NewRescueRequestsModel
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent
 import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
+import com.example.cyclistance.feature_mapping.presentation.mapping_main_screen.state.SpeedometerState
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideDetails
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideMetrics
 import com.example.cyclistance.feature_rescue_record.domain.model.ui.RideSummary
@@ -69,6 +70,7 @@ class TrackingStateHandler(
                 rescuee = null,
                 rescuer = null,
                 newRescueRequest = NewRescueRequestsModel(),
+                speedometerState = SpeedometerState()
 
                 )
         }

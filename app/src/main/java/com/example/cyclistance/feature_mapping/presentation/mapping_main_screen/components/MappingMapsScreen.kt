@@ -399,8 +399,7 @@ fun MappingMapsScreen(
 
     LaunchedEffect(
         key1 = state.trafficMapTypeSelected,
-        key2 = mapboxMap,
-        key3 = uiState.routeDirection?.geometry) {
+        key2 = mapboxMap) {
 
         val geometry = uiState.routeDirection?.geometry
         val darkThemeMap = if (state.trafficMapTypeSelected) Style.TRAFFIC_NIGHT else Style.DARK
@@ -408,19 +407,18 @@ fun MappingMapsScreen(
 
         mapboxMap?.setStyle(if (isDarkTheme) darkThemeMap else lightThemeMap) { loadedStyle ->
 
-            if (loadedStyle.isFullyLoaded) {
-                loadedStyle.initSource()
-                loadedStyle.initLayers(context)
+            if (!loadedStyle.isFullyLoaded) {
+                return@setStyle
             }
+
+            loadedStyle.initSource()
+            loadedStyle.initLayers(context)
 
             if (geometry == null) {
                 return@setStyle
             }
 
-
             loadedStyle.showRoute(geometry = geometry)
-
-
         }
     }
     Map(
@@ -470,19 +468,19 @@ private fun Map(
                 mapView.getMapAsync { mapbox ->
                     mapbox.setStyle(if (isDarkTheme) darkThemeMap else lightThemeMap) { loadedStyle ->
 
-                        if (loadedStyle.isFullyLoaded) {
-                            event(MappingUiEvent.OnInitializeMap(mapbox))
-                            loadedStyle.initSource()
-                            loadedStyle.initLayers(view.context)
+                        if (!loadedStyle.isFullyLoaded) {
+                            return@setStyle
                         }
+
+                        event(MappingUiEvent.OnInitializeMap(mapbox))
+                        loadedStyle.initSource()
+                        loadedStyle.initLayers(view.context)
 
                         if (geometry == null) {
                             return@setStyle
                         }
 
-
                         loadedStyle.showRoute(geometry = geometry)
-
 
                     }
                     mapbox.setDefaultSettings()

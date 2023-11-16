@@ -119,10 +119,10 @@ fun MappingBottomSheet(
                             estimatedTime = state.rescueETA,
                             estimatedDistance = state.rescueDistance?.formatToDistanceKm(),
                             currentSpeed = String.format(
-                                "%.2f",
+                                "%.2f km/h",
                                 state.speedometerState.currentSpeedKph),
                             ridingDistance = state.speedometerState.travelledDistance.formatToDistanceKm(),
-                            maxSpeed = String.format("%.2f", state.speedometerState.topSpeed)))
+                            maxSpeed = String.format("%.2f km/h", state.speedometerState.topSpeed)))
 
                 }
 
