@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -440,7 +441,7 @@ private fun Map(
 
     val isDarkTheme = IsDarkTheme.current
     val mapView = rememberMapViewWithLifecycle()
-    var isInitialized by remember {
+    var isInitialized by rememberSaveable {
         mutableStateOf(false)
     }
 
