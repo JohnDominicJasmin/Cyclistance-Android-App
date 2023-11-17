@@ -531,7 +531,7 @@ class MappingViewModel @Inject constructor(
             }
 
             is MappingVmEvent.ReportIncident -> {
-                calculateIncidentDistance(
+                reportHazardousIncident(
                     latLng = event.latLng,
                     label = event.label,
                     incidentDescription = event.description)
@@ -695,13 +695,15 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun calculateIncidentDistance(
+    private fun reportHazardousIncident(
         latLng: LatLng,
         label: String,
         incidentDescription: String) {
 
         viewModelScope.launch {
             val userLocation = state.value.getCurrentLocation()
+            val bannedAccountDetails = state.value.bannedAccountDetails ?: BannedAccountDetails()
+            val isAccountBanned = bannedAccountDetails.isAccountStillBanned
 
             if (userLocation == null) {
                 _eventFlow.emit(MappingEvent.LocationNotAvailable(reason = "Searching for GPS"))
@@ -720,6 +722,12 @@ class MappingViewModel @Inject constructor(
                 _eventFlow.emit(MappingEvent.IncidentDistanceTooFar)
                 return@launch
             }
+
+            if(isAccountBanned){
+                _eventFlow.emit(value = MappingEvent.AccountBanned(bannedAccountDetails = bannedAccountDetails))
+                return@launch
+            }
+
 
             reportIncident(
                 label = label,
