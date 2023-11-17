@@ -73,6 +73,12 @@ fun SignInScreenContent(
 
             Spacer(modifier = Modifier.layoutId(TOP_SPACER_ID))
 
+
+            Waves(
+                topWaveLayoutId = TOP_WAVE_ID,
+                bottomWaveLayoutId = BOTTOM_WAVE_ID,
+            )
+
             Image(
                 contentDescription = "App Icon",
                 painter = painterResource(R.drawable.ic_app_icon_cyclistance),
@@ -91,10 +97,6 @@ fun SignInScreenContent(
                     })
             }
 
-            Waves(
-                topWaveLayoutId = TOP_WAVE_ID,
-                bottomWaveLayoutId = BOTTOM_WAVE_ID,
-            )
 
             Column(
                 modifier = Modifier.layoutId(TEXT_FIELDS_ID)
