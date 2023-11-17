@@ -1,5 +1,6 @@
 package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,37 +37,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_deta
 import com.example.cyclistance.theme.Black440
 import com.example.cyclistance.theme.CyclistanceTheme
 
-@Preview(device = "id:pixel_xl")
-@Composable
-fun PreviewConfirmDetailsScreenDark() {
-    CyclistanceTheme(true) {
-        ConfirmDetailsContent(
-            modifier = Modifier,
-            state = ConfirmDetailsState(),
-            uiState = ConfirmDetailsUiState(),
-            bikeType = TextFieldValue(""),
-            message = TextFieldValue(""),
-            address = TextFieldValue(""),
-        )
-    }
-}
 
-@Preview(device = "id:pixel_xl")
-@Composable
-fun PreviewConfirmDetailsScreenLight() {
-    CyclistanceTheme(false) {
-        ConfirmDetailsContent(
-            modifier = Modifier,
-            state = ConfirmDetailsState(),
-            uiState = ConfirmDetailsUiState(
-                backgroundLocationPermissionDialogVisible = true,
-                isNoInternetVisible = true),
-            bikeType = TextFieldValue(""),
-            message = TextFieldValue(""),
-            address = TextFieldValue(""),
-        )
-    }
-}
 
 
 @Composable
@@ -77,21 +48,19 @@ fun ConfirmDetailsContent(
     message: TextFieldValue,
     address: TextFieldValue,
     uiState: ConfirmDetailsUiState = ConfirmDetailsUiState(),
+    scrollState: ScrollState,
     event: (ConfirmDetailsUiEvent) -> Unit = {}) {
 
 
     Surface(
         modifier = modifier.fillMaxSize(),
-        color = MaterialTheme.colors.background
-    ) {
+        color = MaterialTheme.colors.background) {
 
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
             modifier = Modifier
-                .verticalScroll(rememberScrollState())) {
-
-
+                .verticalScroll(scrollState)) {
             ConstraintLayout(
                 modifier = Modifier
                     .fillMaxSize()
@@ -274,4 +243,36 @@ fun ConfirmDetailsContent(
 
 }
 
+@Preview(device = "id:pixel_xl")
+@Composable
+fun PreviewConfirmDetailsScreenDark() {
+    CyclistanceTheme(true) {
+        ConfirmDetailsContent(
+            modifier = Modifier,
+            state = ConfirmDetailsState(),
+            uiState = ConfirmDetailsUiState(),
+            bikeType = TextFieldValue(""),
+            message = TextFieldValue(""),
+            address = TextFieldValue(""),
+            scrollState = rememberScrollState(),
+        )
+    }
+}
 
+@Preview(device = "id:pixel_xl")
+@Composable
+fun PreviewConfirmDetailsScreenLight() {
+    CyclistanceTheme(false) {
+        ConfirmDetailsContent(
+            modifier = Modifier,
+            state = ConfirmDetailsState(),
+            uiState = ConfirmDetailsUiState(
+                backgroundLocationPermissionDialogVisible = true,
+                isNoInternetVisible = true),
+            bikeType = TextFieldValue(""),
+            message = TextFieldValue(""),
+            address = TextFieldValue(""),
+            scrollState = rememberScrollState(),
+        )
+    }
+}
