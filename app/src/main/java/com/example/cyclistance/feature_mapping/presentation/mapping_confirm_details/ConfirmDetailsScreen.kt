@@ -6,11 +6,13 @@ import android.os.Build.VERSION_CODES.Q
 import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -30,6 +32,7 @@ import com.example.cyclistance.feature_mapping.presentation.mapping_confirm_deta
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -52,6 +55,9 @@ fun ConfirmDetailsScreen(
     var address by rememberSaveable(stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue())
     }
+
+    val coroutineScope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
 
     val foregroundLocationPermissionsState = rememberMultiplePermissionsState(
         permissions = listOf(
@@ -91,14 +97,23 @@ fun ConfirmDetailsScreen(
 
                 is ConfirmDetailsEvent.InvalidBikeType -> {
                     uiState = uiState.copy(bikeTypeErrorMessage = event.reason)
+                    coroutineScope.launch {
+                        scrollState.animateScrollTo(10)
+                    }
                 }
 
                 is ConfirmDetailsEvent.InvalidDescription -> {
                     uiState = uiState.copy(descriptionErrorMessage = event.reason)
+                    coroutineScope.launch {
+                        scrollState.animateScrollTo(350)
+                    }
                 }
 
                 is ConfirmDetailsEvent.InvalidAddress -> {
                     uiState = uiState.copy(addressErrorMessage = event.reason)
+                    coroutineScope.launch {
+                        scrollState.animateScrollTo(0)
+                    }
 
                 }
 
@@ -147,7 +162,6 @@ fun ConfirmDetailsScreen(
 
             if (Build.VERSION.SDK_INT >= Q) {
 
-
                 foregroundLocationPermissionsState.requestPermission(onGranted = {
                     backgroundLocationPermissionState.requestPermission(onGranted = {
                         viewModel.onEvent(
@@ -177,6 +191,7 @@ fun ConfirmDetailsScreen(
 
 
             } else {
+
                 foregroundLocationPermissionsState.requestPermission(
                     onGranted = {
                         viewModel.onEvent(
@@ -232,6 +247,7 @@ fun ConfirmDetailsScreen(
         bikeType = bikeType,
         message = message,
         address = address,
+        scrollState = scrollState,
         event = { event ->
             when (event) {
                 is ConfirmDetailsUiEvent.OnChangeAddress -> onValueChangeAddress(event.address)
