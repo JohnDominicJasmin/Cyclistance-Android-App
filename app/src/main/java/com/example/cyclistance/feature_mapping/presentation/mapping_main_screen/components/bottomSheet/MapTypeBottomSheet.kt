@@ -35,6 +35,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.cyclistance.R
@@ -111,11 +112,10 @@ fun MapTypeBottomSheet(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 4.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
+                    horizontalArrangement = Arrangement.SpaceEvenly) {
 
                     MapTypeItem(
-                        modifier = Modifier,
+                        modifier = Modifier.weight(1f),
                         isSelected = state.hazardousMapTypeSelected,
                         imageId = if (isDarkTheme) R.drawable.ic_map_type_hazardous_dark else R.drawable.ic_map_type_hazardous_light,
                         mapTypeDescription = MapType.HazardousLane.type,
@@ -123,14 +123,14 @@ fun MapTypeBottomSheet(
 
 
                     MapTypeItem(
-                        modifier = Modifier,
+                        modifier = Modifier.weight(1f),
                         isSelected = state.trafficMapTypeSelected,
                         imageId = if (isDarkTheme) R.drawable.ic_traffic_dark else R.drawable.ic_traffic_light,
                         mapTypeDescription = MapType.Traffic.type,
                         onClick = onToggleTrafficMapType)
 
                     MapTypeItem(
-                        modifier = Modifier,
+                        modifier = Modifier.weight(1f),
                         isSelected = state.defaultMapTypeSelected,
                         imageId = if (isDarkTheme) R.drawable.ic_nearby_cyclist_dark else R.drawable.ic_nearby_cyclist_light,
                         mapTypeDescription = MapType.NearbyCyclists.type,
@@ -178,7 +178,8 @@ private fun MapTypeItem(
         Text(
             text = mapTypeDescription,
             color = if (isSelected) MaterialTheme.colors.primary else Black500,
-            style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Normal)
+            style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Normal),
+            textAlign = TextAlign.Center
         )
     }
 }
