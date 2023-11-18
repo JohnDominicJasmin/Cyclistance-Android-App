@@ -1,0 +1,592 @@
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_confirm_details/components/ConfirmDetailsScreenContent.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components\n\nimport androidx.compose.foundation.background\nimport androidx.compose.foundation.layout.Arrangement\nimport androidx.compose.foundation.layout.Column\nimport androidx.compose.foundation.layout.Row\nimport androidx.compose.foundation.layout.fillMaxSize\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.layout.size\nimport androidx.compose.foundation.layout.wrapContentHeight\nimport androidx.compose.foundation.rememberScrollState\nimport androidx.compose.foundation.verticalScroll\nimport androidx.compose.material.CircularProgressIndicator\nimport androidx.compose.material.Icon\nimport androidx.compose.material.MaterialTheme\nimport androidx.compose.material.Surface\nimport androidx.compose.material.Text\nimport androidx.compose.material.icons.Icons\nimport androidx.compose.material.icons.filled.Info\nimport androidx.compose.runtime.Composable\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.text.input.TextFieldValue\nimport androidx.compose.ui.tooling.preview.Preview\nimport androidx.compose.ui.unit.dp\nimport androidx.constraintlayout.compose.ConstraintLayout\nimport androidx.constraintlayout.compose.Dimension\nimport com.example.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog\nimport com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogBackgroundLocationPermission\nimport com.example.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission\nimport com.example.cyclistance.feature_mapping.presentation.common.AdditionalMessage\nimport com.example.cyclistance.feature_mapping.presentation.common.ButtonNavigation\nimport com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsUiEvent\nimport com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsState\nimport com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsUiState\nimport com.example.cyclistance.theme.Black440\nimport com.example.cyclistance.theme.CyclistanceTheme\n\n@Preview(device = \"id:pixel_xl\")\n@Composable\nfun PreviewConfirmDetailsScreenDark() {\n    CyclistanceTheme(true) {\n        ConfirmDetailsContent(\n            modifier = Modifier,\n            state = ConfirmDetailsState(),\n            uiState = ConfirmDetailsUiState(),\n            bikeType = TextFieldValue(\"\"),\n            message = TextFieldValue(\"\"),\n            address = TextFieldValue(\"\"),\n        )\n    }\n}\n\n@Preview(device = \"id:pixel_xl\")\n@Composable\nfun PreviewConfirmDetailsScreenLight() {\n    CyclistanceTheme(false) {\n        ConfirmDetailsContent(\n            modifier = Modifier,\n            state = ConfirmDetailsState(),\n            uiState = ConfirmDetailsUiState(\n                backgroundLocationPermissionDialogVisible = true,\n                isNoInternetVisible = true),\n            bikeType = TextFieldValue(\"\"),\n            message = TextFieldValue(\"\"),\n            address = TextFieldValue(\"\"),\n        )\n    }\n}\n\n\n@Composable\nfun ConfirmDetailsContent(\n    modifier: Modifier,\n    state: ConfirmDetailsState = ConfirmDetailsState(),\n    bikeType: TextFieldValue,\n    message: TextFieldValue,\n    address: TextFieldValue,\n    uiState: ConfirmDetailsUiState = ConfirmDetailsUiState(),\n    event: (ConfirmDetailsUiEvent) -> Unit = {}) {\n\n\n    Surface(\n        modifier = modifier.fillMaxSize(),\n        color = MaterialTheme.colors.background\n    ) {\n\n        Column(\n            horizontalAlignment = Alignment.CenterHorizontally,\n            verticalArrangement = Arrangement.Center,\n            modifier = Modifier\n                .verticalScroll(rememberScrollState())) {\n\n\n            ConstraintLayout(\n                modifier = Modifier\n                    .fillMaxSize()\n                    .background(MaterialTheme.colors.background)) {\n\n                val (addressTextField, bikeTypeDropDownList, buttonDescriptionSection, additionalMessageSection, buttonNavButtonSection, noteText, circularProgressBar, dialog) = createRefs()\n\n                AddressTextField(\n                    modifier = Modifier\n                        .constrainAs(addressTextField) {\n                            top.linkTo(parent.top, margin = 15.dp)\n                            end.linkTo(parent.end)\n                            start.linkTo(parent.start)\n                            width = Dimension.percent(0.9f)\n                            height = Dimension.wrapContent\n                        },\n                    address = address,\n                    addressErrorMessage = uiState.addressErrorMessage,\n                    onValueChange = { event(ConfirmDetailsUiEvent.OnChangeAddress(it)) },\n                    enabled = !state.isLoading\n                )\n\n                DropDownBikeList(\n                    modifier = Modifier\n                        .constrainAs(bikeTypeDropDownList) {\n                            top.linkTo(addressTextField.bottom, margin = 10.dp)\n                            end.linkTo(parent.end)\n                            start.linkTo(parent.start)\n                            width = Dimension.percent(0.9f)\n                            height = Dimension.wrapContent\n                        },\n                    errorMessage = uiState.bikeTypeErrorMessage,\n                    selectedItem = bikeType,\n                    onClickItem = {\n                        event(ConfirmDetailsUiEvent.OnChangeBikeType(TextFieldValue(text = it)))\n                    },\n                    enabled = !state.isLoading)\n\n                ButtonDescriptionDetails(\n                    modifier = Modifier\n                        .wrapContentHeight()\n                        .constrainAs(buttonDescriptionSection) {\n                            top.linkTo(bikeTypeDropDownList.bottom, margin = 15.dp)\n                            end.linkTo(parent.end)\n                            start.linkTo(parent.start)\n                            height = Dimension.wrapContent\n                            width = Dimension.percent(0.9f)\n                        },\n                    selectedOption = uiState.description,\n                    errorMessage = uiState.descriptionErrorMessage,\n                    onClickButton = {\n                        event(ConfirmDetailsUiEvent.OnChangeDescription(it))\n                    },\n                    state = state,\n                )\n\n                AdditionalMessage(\n                    modifier = Modifier\n                        .constrainAs(additionalMessageSection) {\n                            top.linkTo(buttonDescriptionSection.bottom, margin = 15.dp)\n                            end.linkTo(parent.end)\n                            start.linkTo(parent.start)\n                            height = Dimension.percent(0.25f)\n                            width = Dimension.percent(0.9f)\n\n                        },\n                    message = message,\n                    onChangeValueMessage = {\n                        event(ConfirmDetailsUiEvent.OnChangeMessage(it))\n                    },\n                    enabled = !state.isLoading\n                )\n\n                Row(\n                    modifier = Modifier.constrainAs(noteText) {\n                        start.linkTo(parent.start)\n                        end.linkTo(parent.end)\n                        bottom.linkTo(buttonNavButtonSection.top)\n                    },\n                    verticalAlignment = Alignment.CenterVertically,\n                ) {\n\n                    Icon(\n                        imageVector = Icons.Filled.Info,\n                        contentDescription = \"Info icon\",\n                        tint = Black440,\n                        modifier = Modifier\n                            .size(22.dp)\n                            .padding(end = 2.dp)\n\n                    )\n\n                    Text(\n                        text = \"Your location will be shared with Rescuer\",\n                        color = Black440,\n                        style = MaterialTheme.typography.caption,\n\n                        )\n                }\n\n                ButtonNavigation(\n                    modifier = Modifier\n                        .constrainAs(buttonNavButtonSection) {\n                            top.linkTo(additionalMessageSection.bottom, margin = 50.dp)\n                            bottom.linkTo(parent.bottom, margin = 12.dp)\n                            end.linkTo(parent.end)\n                            start.linkTo(parent.start)\n                            height = Dimension.wrapContent\n                            width = Dimension.percent(0.9f)\n                        },\n                    onClickNegativeButton = {\n                        event(ConfirmDetailsUiEvent.CancelConfirmation)\n                    },\n                    onClickPositiveButton = {\n                        event(ConfirmDetailsUiEvent.ConfirmDetails)\n                    },\n                    negativeButtonEnabled = !state.isLoading,\n                    positiveButtonEnabled = !state.isLoading)\n\n\n                if (state.isLoading) {\n                    CircularProgressIndicator(\n                        modifier = Modifier\n                            .constrainAs(circularProgressBar) {\n                                top.linkTo(parent.top)\n                                end.linkTo(parent.end)\n                                start.linkTo(parent.start)\n                                bottom.linkTo(parent.bottom)\n                                centerTo(parent)\n                            }\n                    )\n                }\n\n\n\n                if (uiState.backgroundLocationPermissionDialogVisible) {\n                    DialogBackgroundLocationPermission(\n                        modifier = Modifier.constrainAs(dialog) {\n                            end.linkTo(parent.end)\n                            start.linkTo(parent.start)\n                            bottom.linkTo(parent.bottom)\n                            height = Dimension.wrapContent\n                            centerTo(parent)\n                        }, onDismiss = {\n                            event(ConfirmDetailsUiEvent.DismissBackgroundLocationDialog)\n                        })\n                }\n\n                if (uiState.isNoInternetVisible) {\n                    NoInternetDialog(\n                        onDismiss = { event(ConfirmDetailsUiEvent.DismissNoInternetDialog) },\n                        modifier = Modifier.constrainAs(dialog) {\n                            bottom.linkTo(parent.bottom)\n                            start.linkTo(parent.start)\n                            end.linkTo(parent.end)\n                            width = Dimension.matchParent\n                            height = Dimension.wrapContent\n                        })\n\n                }\n\n                if (uiState.foregroundLocationPermissionDialogVisible) {\n                    DialogForegroundLocationPermission(\n                        modifier = Modifier.constrainAs(dialog) {\n                            end.linkTo(parent.end)\n                            start.linkTo(parent.start)\n                            bottom.linkTo(parent.bottom)\n                            height = Dimension.wrapContent\n                            centerTo(parent)\n                        },\n                        onDismiss = {\n                            event(ConfirmDetailsUiEvent.DismissForegroundLocationDialog)\n                        }\n                    )\n                }\n            }\n\n        }\n    }\n\n}\n\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_confirm_details/components/ConfirmDetailsScreenContent.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_confirm_details/components/ConfirmDetailsScreenContent.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_confirm_details/components/ConfirmDetailsScreenContent.kt	(revision 1debefb860e64f48a6ebca431b3c1745f16608bc)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_confirm_details/components/ConfirmDetailsScreenContent.kt	(date 1700225030874)
+@@ -1,5 +1,6 @@
+ package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components
+ 
++import androidx.compose.foundation.ScrollState
+ import androidx.compose.foundation.background
+ import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Column
+@@ -36,37 +37,7 @@
+ import com.example.cyclistance.theme.Black440
+ import com.example.cyclistance.theme.CyclistanceTheme
+ 
+-@Preview(device = "id:pixel_xl")
+-@Composable
+-fun PreviewConfirmDetailsScreenDark() {
+-    CyclistanceTheme(true) {
+-        ConfirmDetailsContent(
+-            modifier = Modifier,
+-            state = ConfirmDetailsState(),
+-            uiState = ConfirmDetailsUiState(),
+-            bikeType = TextFieldValue(""),
+-            message = TextFieldValue(""),
+-            address = TextFieldValue(""),
+-        )
+-    }
+-}
+ 
+-@Preview(device = "id:pixel_xl")
+-@Composable
+-fun PreviewConfirmDetailsScreenLight() {
+-    CyclistanceTheme(false) {
+-        ConfirmDetailsContent(
+-            modifier = Modifier,
+-            state = ConfirmDetailsState(),
+-            uiState = ConfirmDetailsUiState(
+-                backgroundLocationPermissionDialogVisible = true,
+-                isNoInternetVisible = true),
+-            bikeType = TextFieldValue(""),
+-            message = TextFieldValue(""),
+-            address = TextFieldValue(""),
+-        )
+-    }
+-}
+ 
+ 
+ @Composable
+@@ -77,21 +48,19 @@
+     message: TextFieldValue,
+     address: TextFieldValue,
+     uiState: ConfirmDetailsUiState = ConfirmDetailsUiState(),
++    scrollState: ScrollState,
+     event: (ConfirmDetailsUiEvent) -> Unit = {}) {
+ 
+ 
+     Surface(
+         modifier = modifier.fillMaxSize(),
+-        color = MaterialTheme.colors.background
+-    ) {
++        color = MaterialTheme.colors.background) {
+ 
+         Column(
+             horizontalAlignment = Alignment.CenterHorizontally,
+             verticalArrangement = Arrangement.Center,
+             modifier = Modifier
+-                .verticalScroll(rememberScrollState())) {
+-
+-
++                .verticalScroll(scrollState)) {
+             ConstraintLayout(
+                 modifier = Modifier
+                     .fillMaxSize()
+@@ -274,4 +243,36 @@
+ 
+ }
+ 
++@Preview(device = "id:pixel_xl")
++@Composable
++fun PreviewConfirmDetailsScreenDark() {
++    CyclistanceTheme(true) {
++        ConfirmDetailsContent(
++            modifier = Modifier,
++            state = ConfirmDetailsState(),
++            uiState = ConfirmDetailsUiState(),
++            bikeType = TextFieldValue(""),
++            message = TextFieldValue(""),
++            address = TextFieldValue(""),
++            scrollState = rememberScrollState(),
++        )
++    }
++}
+ 
++@Preview(device = "id:pixel_xl")
++@Composable
++fun PreviewConfirmDetailsScreenLight() {
++    CyclistanceTheme(false) {
++        ConfirmDetailsContent(
++            modifier = Modifier,
++            state = ConfirmDetailsState(),
++            uiState = ConfirmDetailsUiState(
++                backgroundLocationPermissionDialogVisible = true,
++                isNoInternetVisible = true),
++            bikeType = TextFieldValue(""),
++            message = TextFieldValue(""),
++            address = TextFieldValue(""),
++            scrollState = rememberScrollState(),
++        )
++    }
++}
+Index: .idea/shelf/Fix_navigation_bottom_sheet.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><changelist name=\"Fix_navigation_bottom_sheet\" date=\"1697634094402\" recycled=\"false\">\n  <option name=\"PATH\" value=\"$PROJECT_DIR$/.idea/shelf/Fix_navigation_bottom_sheet/shelved.patch\" />\n  <option name=\"DESCRIPTION\" value=\"Fix navigation bottom sheet\" />\n</changelist>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/shelf/Fix_navigation_bottom_sheet.xml b/.idea/shelf/Fix_navigation_bottom_sheet.xml
+--- a/.idea/shelf/Fix_navigation_bottom_sheet.xml	(revision 1debefb860e64f48a6ebca431b3c1745f16608bc)
++++ b/.idea/shelf/Fix_navigation_bottom_sheet.xml	(date 1700229091864)
+@@ -1,4 +1,4 @@
+-<changelist name="Fix_navigation_bottom_sheet" date="1697634094402" recycled="false">
++<changelist name="Fix_navigation_bottom_sheet" date="1700229086739" recycled="false" deleted="true">
+   <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Fix_navigation_bottom_sheet/shelved.patch" />
+   <option name="DESCRIPTION" value="Fix navigation bottom sheet" />
+ </changelist>
+\ No newline at end of file
+Index: app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_confirm_details/ConfirmDetailsScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details\n\nimport android.Manifest\nimport android.os.Build\nimport android.os.Build.VERSION_CODES.Q\nimport android.widget.Toast\nimport androidx.compose.foundation.layout.PaddingValues\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.LaunchedEffect\nimport androidx.compose.runtime.getValue\nimport androidx.compose.runtime.mutableStateOf\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.saveable.rememberSaveable\nimport androidx.compose.runtime.setValue\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.platform.LocalContext\nimport androidx.compose.ui.text.input.TextFieldValue\nimport androidx.hilt.navigation.compose.hiltViewModel\nimport androidx.lifecycle.compose.collectAsStateWithLifecycle\nimport androidx.navigation.NavController\nimport com.example.cyclistance.core.domain.model.AlertDialogState\nimport com.example.cyclistance.core.utils.permissions.requestPermission\nimport com.example.cyclistance.feature_mapping.domain.model.ConfirmationDetails\nimport com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.components.ConfirmDetailsContent\nimport com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsEvent\nimport com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsUiEvent\nimport com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.event.ConfirmDetailsVmEvent\nimport com.example.cyclistance.feature_mapping.presentation.mapping_confirm_details.state.ConfirmDetailsUiState\nimport com.google.accompanist.permissions.ExperimentalPermissionsApi\nimport com.google.accompanist.permissions.rememberMultiplePermissionsState\nimport com.google.accompanist.permissions.rememberPermissionState\n\n\n@OptIn(ExperimentalPermissionsApi::class)\n@Composable\nfun ConfirmDetailsScreen(\n    viewModel: ConfirmDetailsViewModel = hiltViewModel(),\n    paddingValues: PaddingValues,\n    navController: NavController) {\n\n    val state by viewModel.state.collectAsStateWithLifecycle()\n    val context = LocalContext.current\n    var uiState by rememberSaveable { mutableStateOf(ConfirmDetailsUiState()) }\n\n    var bikeType by rememberSaveable(stateSaver = TextFieldValue.Saver) {\n        mutableStateOf(TextFieldValue())\n    }\n    var message by rememberSaveable(stateSaver = TextFieldValue.Saver) {\n        mutableStateOf(TextFieldValue())\n    }\n    var address by rememberSaveable(stateSaver = TextFieldValue.Saver) {\n        mutableStateOf(TextFieldValue())\n    }\n\n    val foregroundLocationPermissionsState = rememberMultiplePermissionsState(\n        permissions = listOf(\n            Manifest.permission.ACCESS_FINE_LOCATION,\n            Manifest.permission.ACCESS_COARSE_LOCATION))\n\n    val backgroundLocationPermissionState =\n        rememberPermissionState(Manifest.permission.ACCESS_BACKGROUND_LOCATION)\n\n\n    LaunchedEffect(key1 = true) {\n        viewModel.eventFlow.collect { event ->\n            when (event) {\n                is ConfirmDetailsEvent.ConfirmDetailsSuccess -> {\n                    navController.popBackStack()\n                }\n\n                is ConfirmDetailsEvent.UserError -> {\n                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()\n                }\n\n                is ConfirmDetailsEvent.UnexpectedError -> {\n                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()\n                }\n\n                is ConfirmDetailsEvent.GetSavedBikeType -> {\n                    bikeType = TextFieldValue(event.bikeType)\n                }\n\n                is ConfirmDetailsEvent.GetSavedAddress -> {\n                    address = TextFieldValue(event.address)\n                }\n\n                is ConfirmDetailsEvent.NoInternetConnection -> {\n                    uiState = uiState.copy(isNoInternetVisible = true)\n                }\n\n                is ConfirmDetailsEvent.InvalidBikeType -> {\n                    uiState = uiState.copy(bikeTypeErrorMessage = event.reason)\n                }\n\n                is ConfirmDetailsEvent.InvalidDescription -> {\n                    uiState = uiState.copy(descriptionErrorMessage = event.reason)\n                }\n\n                is ConfirmDetailsEvent.InvalidAddress -> {\n                    uiState = uiState.copy(addressErrorMessage = event.reason)\n\n                }\n\n            }\n        }\n    }\n\n\n    val onValueChangeAddress = remember {\n        { addressInput: TextFieldValue ->\n            uiState = uiState.copy(\n                addressErrorMessage = \"\"\n            )\n            address = addressInput\n        }\n    }\n    val onValueChangeMessage = remember {\n        { messageInput: TextFieldValue ->\n            message = messageInput\n        }\n    }\n    val onClickBikeType = remember {\n        { bikeTypeInput: TextFieldValue ->\n            uiState = uiState.copy(bikeTypeErrorMessage = \"\")\n            bikeType = bikeTypeInput\n        }\n    }\n    val onClickDescriptionButton = remember {\n        { descriptionInput: String ->\n\n            uiState = uiState.copy(\n                description = descriptionInput,\n                descriptionErrorMessage = \"\"\n            )\n        }\n    }\n\n    val onClickCancelButton = remember {\n        {\n            navController.popBackStack()\n        }\n    }\n\n    val onClickConfirmButton = remember {\n        {\n\n            if (Build.VERSION.SDK_INT >= Q) {\n\n\n                foregroundLocationPermissionsState.requestPermission(onGranted = {\n                    backgroundLocationPermissionState.requestPermission(onGranted = {\n                        viewModel.onEvent(\n                            event = ConfirmDetailsVmEvent.ConfirmDetails(\n                                confirmDetailsModel = ConfirmationDetails(\n                                    address = address.text,\n                                    bikeType = bikeType.text,\n                                    description = uiState.description,\n                                    message = message.text\n                                )\n                            ))\n                    }, onExplain = {\n                        uiState = uiState.copy(\n                            backgroundLocationPermissionDialogVisible = true)\n                    }, onDenied = {\n                        uiState = uiState.copy(\n                            backgroundLocationPermissionDialogVisible = true)\n                    })\n\n                }, onExplain = {\n                    uiState = uiState.copy(\n                        foregroundLocationPermissionDialogVisible = true)\n                }, onDenied = {\n                    uiState = uiState.copy(\n                        foregroundLocationPermissionDialogVisible = true)\n                })\n\n\n            } else {\n                foregroundLocationPermissionsState.requestPermission(\n                    onGranted = {\n                        viewModel.onEvent(\n                            event = ConfirmDetailsVmEvent.ConfirmDetails(\n                                confirmDetailsModel = ConfirmationDetails(\n                                    address = address.text,\n                                    bikeType = bikeType.text,\n                                    description = uiState.description,\n                                    message = message.text\n                                )\n                            ))\n                    },\n                    onExplain = {\n                        uiState = uiState.copy(\n                            foregroundLocationPermissionDialogVisible = true)\n                    },\n                    onDenied = {\n                        uiState = uiState.copy(\n                            foregroundLocationPermissionDialogVisible = true)\n                    }\n                )\n            }\n\n\n        }\n    }\n    val onDismissNoInternetDialog = remember {\n        {\n            uiState = uiState.copy(\n                alertDialogState = AlertDialogState()\n            )\n        }\n    }\n\n    val onDismissBackgroundLocationDialog = remember {\n        {\n            uiState = uiState.copy(backgroundLocationPermissionDialogVisible = false)\n        }\n    }\n\n    val onDismissForegroundLocationDialog = remember {\n        {\n            uiState = uiState.copy(foregroundLocationPermissionDialogVisible = false)\n        }\n    }\n\n\n\n    ConfirmDetailsContent(\n        modifier = Modifier.padding(paddingValues),\n        state = state,\n        uiState = uiState,\n        bikeType = bikeType,\n        message = message,\n        address = address,\n        event = { event ->\n            when (event) {\n                is ConfirmDetailsUiEvent.OnChangeAddress -> onValueChangeAddress(event.address)\n                is ConfirmDetailsUiEvent.OnChangeBikeType -> onClickBikeType(event.bikeType)\n                is ConfirmDetailsUiEvent.OnChangeDescription -> onClickDescriptionButton(event.description)\n                is ConfirmDetailsUiEvent.OnChangeMessage -> onValueChangeMessage(event.message)\n                is ConfirmDetailsUiEvent.ConfirmDetails -> onClickConfirmButton()\n                is ConfirmDetailsUiEvent.CancelConfirmation -> onClickCancelButton()\n                is ConfirmDetailsUiEvent.DismissNoInternetDialog -> onDismissNoInternetDialog()\n                is ConfirmDetailsUiEvent.DismissBackgroundLocationDialog -> onDismissBackgroundLocationDialog()\n                is ConfirmDetailsUiEvent.DismissForegroundLocationDialog -> onDismissForegroundLocationDialog()\n            }\n        }\n    )\n}\n\n\n\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_confirm_details/ConfirmDetailsScreen.kt b/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_confirm_details/ConfirmDetailsScreen.kt
+--- a/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_confirm_details/ConfirmDetailsScreen.kt	(revision 1debefb860e64f48a6ebca431b3c1745f16608bc)
++++ b/app/src/main/java/com/example/cyclistance/feature_mapping/presentation/mapping_confirm_details/ConfirmDetailsScreen.kt	(date 1700226830187)
+@@ -6,11 +6,13 @@
+ import android.widget.Toast
+ import androidx.compose.foundation.layout.PaddingValues
+ import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.rememberScrollState
+ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.LaunchedEffect
+ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.mutableStateOf
+ import androidx.compose.runtime.remember
++import androidx.compose.runtime.rememberCoroutineScope
+ import androidx.compose.runtime.saveable.rememberSaveable
+ import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Modifier
+@@ -30,6 +32,7 @@
+ import com.google.accompanist.permissions.ExperimentalPermissionsApi
+ import com.google.accompanist.permissions.rememberMultiplePermissionsState
+ import com.google.accompanist.permissions.rememberPermissionState
++import kotlinx.coroutines.launch
+ 
+ 
+ @OptIn(ExperimentalPermissionsApi::class)
+@@ -53,6 +56,9 @@
+         mutableStateOf(TextFieldValue())
+     }
+ 
++    val coroutineScope = rememberCoroutineScope()
++    val scrollState = rememberScrollState()
++
+     val foregroundLocationPermissionsState = rememberMultiplePermissionsState(
+         permissions = listOf(
+             Manifest.permission.ACCESS_FINE_LOCATION,
+@@ -91,14 +97,23 @@
+ 
+                 is ConfirmDetailsEvent.InvalidBikeType -> {
+                     uiState = uiState.copy(bikeTypeErrorMessage = event.reason)
++                    coroutineScope.launch {
++                        scrollState.animateScrollTo(10)
++                    }
+                 }
+ 
+                 is ConfirmDetailsEvent.InvalidDescription -> {
+                     uiState = uiState.copy(descriptionErrorMessage = event.reason)
++                    coroutineScope.launch {
++                        scrollState.animateScrollTo(350)
++                    }
+                 }
+ 
+                 is ConfirmDetailsEvent.InvalidAddress -> {
+                     uiState = uiState.copy(addressErrorMessage = event.reason)
++                    coroutineScope.launch {
++                        scrollState.animateScrollTo(0)
++                    }
+ 
+                 }
+ 
+@@ -147,7 +162,6 @@
+ 
+             if (Build.VERSION.SDK_INT >= Q) {
+ 
+-
+                 foregroundLocationPermissionsState.requestPermission(onGranted = {
+                     backgroundLocationPermissionState.requestPermission(onGranted = {
+                         viewModel.onEvent(
+@@ -177,6 +191,7 @@
+ 
+ 
+             } else {
++
+                 foregroundLocationPermissionsState.requestPermission(
+                     onGranted = {
+                         viewModel.onEvent(
+@@ -232,6 +247,7 @@
+         bikeType = bikeType,
+         message = message,
+         address = address,
++        scrollState = scrollState,
+         event = { event ->
+             when (event) {
+                 is ConfirmDetailsUiEvent.OnChangeAddress -> onValueChangeAddress(event.address)
+Index: firestore-debug.log
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>Nov 09, 2023 11:22:55 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://0.0.0.0:34609\nAPI endpoint: http://0.0.0.0:9299\nIf you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\n\n   export FIRESTORE_EMULATOR_HOST=0.0.0.0:9299\n\nDev App Server is now running.\n\nNov 09, 2023 11:48:58 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 09, 2023 11:49:34 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 09, 2023 11:50:03 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 09, 2023 11:50:03 PM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt\nWARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE\nNov 09, 2023 11:50:03 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 09, 2023 11:50:03 PM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt\nWARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE\nNov 09, 2023 11:51:34 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 09, 2023 11:54:34 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 09, 2023 11:55:22 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 09, 2023 11:56:38 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 09, 2023 11:57:53 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 09, 2023 11:58:08 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:00:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:01:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:02:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:04:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:08:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:08:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:15:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:16:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:19:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:22:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:24:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:27:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:28:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:31:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:31:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:31:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:32:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:32:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:35:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:35:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:36:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:36:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:39:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:39:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:39:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:40:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:40:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:43:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:43:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:48:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:51:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:57:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:57:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:57:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:57:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:57:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 12:59:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:02:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:10:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:10:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:11:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:11:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:11:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:13:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:16:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:16:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:19:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:20:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:20:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:23:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:23:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:25:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:26:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:28:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:29:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:30:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:30:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:32:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:32:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:34:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:36:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:41:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:41:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:42:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:43:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:45:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:48:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:48:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:50:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:51:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:53:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:53:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:54:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:54:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:58:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 1:59:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:00:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:00:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:03:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:06:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:06:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:07:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:08:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:21:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:21:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:23:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:24:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:24:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:25:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:26:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:26:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:28:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:28:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:29:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:30:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:33:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:33:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:36:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:36:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:38:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:39:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:41:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:44:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:45:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:46:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:47:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:48:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:50:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:51:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:55:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:55:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:57:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:57:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:57:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:58:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:59:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 2:59:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 3:02:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 3:02:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 3:05:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 10, 2023 3:05:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/firestore-debug.log b/firestore-debug.log
+--- a/firestore-debug.log	(revision 1debefb860e64f48a6ebca431b3c1745f16608bc)
++++ b/firestore-debug.log	(date 1700228932684)
+@@ -1,5 +1,5 @@
+-Nov 09, 2023 11:22:55 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
+-INFO: Started WebSocket server on ws://0.0.0.0:34609
++Nov 17, 2023 8:54:00 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
++INFO: Started WebSocket server on ws://0.0.0.0:40645
+ API endpoint: http://0.0.0.0:9299
+ If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
+ 
+@@ -7,269 +7,65 @@
+ 
+ Dev App Server is now running.
+ 
+-Nov 09, 2023 11:48:58 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 09, 2023 11:49:34 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 8:54:41 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 09, 2023 11:50:03 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 8:56:38 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 09, 2023 11:50:03 PM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++Nov 17, 2023 8:56:38 PM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
+ WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
+-Nov 09, 2023 11:50:03 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 09, 2023 11:50:03 PM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++Nov 17, 2023 8:56:41 PM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
+ WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
+-Nov 09, 2023 11:51:34 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 09, 2023 11:54:34 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 09, 2023 11:55:22 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 09, 2023 11:56:38 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 09, 2023 11:57:53 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 09, 2023 11:58:08 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:00:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:01:08 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:02:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:04:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:08:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:08:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:15:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:16:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:19:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:22:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:24:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:27:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:28:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:31:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:31:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:31:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:32:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:32:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:35:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:35:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:36:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:36:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:39:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:39:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:39:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:40:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:40:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:43:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:43:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:48:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:51:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:57:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:57:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:57:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:57:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:57:16 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 12:59:05 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:02:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:10:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:10:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:11:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:11:53 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:11:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:13:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:16:24 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:16:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:19:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:20:26 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:20:58 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:23:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:23:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:25:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:26:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:28:09 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:29:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:30:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:30:31 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:32:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:32:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:34:47 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:36:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:41:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:41:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:42:42 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:43:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:45:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:48:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:48:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:50:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 8:57:16 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:51:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 8:58:11 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:53:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 8:58:11 PM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
++Nov 17, 2023 9:00:16 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:53:23 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:00:28 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:54:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:00:28 PM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
++Nov 17, 2023 9:01:59 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:54:55 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:01:59 PM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
++Nov 17, 2023 9:02:07 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:58:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:02:07 PM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
++Nov 17, 2023 9:04:34 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 1:59:00 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:06:59 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:00:20 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:08:16 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:00:30 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:08:30 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:03:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:11:15 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:06:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:12:46 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:06:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:13:19 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:07:41 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:14:30 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:08:33 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:16:00 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:21:36 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:16:18 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:21:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:17:49 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:23:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:19:00 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:24:34 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:20:49 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:24:57 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:27:00 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:25:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:28:52 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:26:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:47:01 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:26:52 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:28:15 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:28:39 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:29:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:30:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:33:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:33:54 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:36:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:36:40 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:38:10 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:39:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:41:11 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:44:04 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:45:56 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:46:21 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:47:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:48:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:50:27 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:51:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:55:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:55:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:57:19 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:57:22 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:57:48 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:58:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:59:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 2:59:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 3:02:18 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 3:02:44 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 3:05:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+-INFO: Detected HTTP/2 connection.
+-Nov 10, 2023 3:05:28 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 17, 2023 9:48:52 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetDropDown\">\n    <runningDeviceTargetSelectedWithDropDown>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"SERIAL_NUMBER\" />\n            <value value=\"194a89050404\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </runningDeviceTargetSelectedWithDropDown>\n    <timeTargetWasSelectedWithDropDown value=\"2023-11-16T17:02:30.005606042Z\" />\n    <runningDeviceTargetsSelectedWithDialog>\n      <Target>\n        <type value=\"RUNNING_DEVICE_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"SERIAL_NUMBER\" />\n            <value value=\"194a89050404\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </runningDeviceTargetsSelectedWithDialog>\n    <targetsSelectedWithDialog>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetsSelectedWithDialog>\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(revision 1debefb860e64f48a6ebca431b3c1745f16608bc)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1700226961221)
+@@ -6,13 +6,13 @@
+         <type value="RUNNING_DEVICE_TARGET" />
+         <deviceKey>
+           <Key>
+-            <type value="SERIAL_NUMBER" />
+-            <value value="194a89050404" />
++            <type value="VIRTUAL_DEVICE_PATH" />
++            <value value="$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd" />
+           </Key>
+         </deviceKey>
+       </Target>
+     </runningDeviceTargetSelectedWithDropDown>
+-    <timeTargetWasSelectedWithDropDown value="2023-11-16T17:02:30.005606042Z" />
++    <timeTargetWasSelectedWithDropDown value="2023-11-17T13:15:59.178573480Z" />
+     <runningDeviceTargetsSelectedWithDialog>
+       <Target>
+         <type value="RUNNING_DEVICE_TARGET" />
+@@ -24,16 +24,5 @@
+         </deviceKey>
+       </Target>
+     </runningDeviceTargetsSelectedWithDialog>
+-    <targetsSelectedWithDialog>
+-      <Target>
+-        <type value="QUICK_BOOT_TARGET" />
+-        <deviceKey>
+-          <Key>
+-            <type value="VIRTUAL_DEVICE_PATH" />
+-            <value value="$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd" />
+-          </Key>
+-        </deviceKey>
+-      </Target>
+-    </targetsSelectedWithDialog>
+   </component>
+ </project>
+\ No newline at end of file
