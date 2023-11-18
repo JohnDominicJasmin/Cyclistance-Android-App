@@ -26,6 +26,7 @@ import com.example.cyclistance.core.domain.model.AlertDialogState
 import com.example.cyclistance.core.utils.app.AppUtils
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.checkLocationSetting
 import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection
+import com.example.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection
 import com.example.cyclistance.core.utils.constants.MappingConstants
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_START_FOREGROUND
 import com.example.cyclistance.core.utils.constants.MappingConstants.ACTION_STOP_FOREGROUND
@@ -75,6 +76,7 @@ import com.mapbox.mapboxsdk.location.modes.RenderMode
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -834,39 +836,35 @@ fun MappingScreen(
         }
     }
 
+    fun toggleMapType(event: MappingVmEvent){
+        if(!context.hasInternetConnection()){
+            noInternetDialogVisibility(true)
+            return
+        }
+        if(state.userLocation == null){
+            Toast.makeText(context, "Searching for GPS", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        mappingViewModel.onEvent(event = event)
+
+    }
 
     val toggleDefaultMapType = remember(state.userLocation) {
         {
-            if (state.userLocation == null) {
-                Toast.makeText(context, "Searching for GPS", Toast.LENGTH_SHORT).show()
-            } else {
-                mappingViewModel.onEvent(event = MappingVmEvent.ToggleDefaultMapType)
-            }
-            Unit
+            toggleMapType(MappingVmEvent.ToggleDefaultMapType)
         }
     }
 
     val toggleTrafficMapType = remember(state.userLocation) {
         {
-            if (state.userLocation == null) {
-                Toast.makeText(context, "Searching for GPS", Toast.LENGTH_SHORT).show()
-            } else {
-                mappingViewModel.onEvent(event = MappingVmEvent.ToggleTrafficMapType)
-            }
-            Unit
-
+            toggleMapType(MappingVmEvent.ToggleTrafficMapType)
         }
     }
 
     val toggleHazardousMapType = remember(state.userLocation) {
         {
-            if (state.userLocation == null) {
-                Toast.makeText(context, "Searching for GPS", Toast.LENGTH_SHORT).show()
-            } else {
-                mappingViewModel.onEvent(event = MappingVmEvent.ToggleHazardousMapType)
-            }
-            Unit
-
+            toggleMapType(MappingVmEvent.ToggleHazardousMapType)
         }
 
     }
@@ -1238,7 +1236,7 @@ fun MappingScreen(
     }
     LaunchedEffect(key1 = true) {
 
-        mappingViewModel.eventFlow.collectLatest { event ->
+        mappingViewModel.eventFlow.distinctUntilChanged().collectLatest { event ->
             when (event) {
 
                 is MappingEvent.NoInternetConnection -> {
