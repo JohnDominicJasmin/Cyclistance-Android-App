@@ -1,16 +1,16 @@
-package com.example.cyclistance.feature_mapping.data.repositories
+package com.myapp.cyclistance.feature_mapping.data.repositories
 
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
-import com.example.cyclistance.feature_mapping.data.remote.dto.user_dto.Respondent
-import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
-import com.example.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
-import com.example.cyclistance.feature_mapping.domain.repository.MappingRepository
 import com.mapbox.geojson.Point
+import com.myapp.cyclistance.feature_mapping.data.remote.dto.user_dto.Location
+import com.myapp.cyclistance.feature_mapping.data.remote.dto.user_dto.Respondent
+import com.myapp.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.live_location.LiveLocationSocketModel
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransaction
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.user.NearbyCyclist
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.user.UserItem
+import com.myapp.cyclistance.feature_mapping.domain.repository.MappingRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flow
