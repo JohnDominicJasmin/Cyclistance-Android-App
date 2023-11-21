@@ -1,9 +1,9 @@
-package com.example.cyclistance.feature_authentication.data.repositories
-import com.example.cyclistance.feature_authentication.data.repository.model.AuthenticationResult
-import com.example.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
-import com.example.cyclistance.feature_authentication.domain.model.SignInCredential
-import com.example.cyclistance.feature_authentication.domain.repository.AuthRepository
-import com.example.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
+package com.myapp.cyclistance.feature_authentication.data.repositories
+import com.myapp.cyclistance.feature_authentication.data.repository.model.AuthenticationResult
+import com.myapp.cyclistance.feature_authentication.domain.exceptions.AuthExceptions
+import com.myapp.cyclistance.feature_authentication.domain.model.SignInCredential
+import com.myapp.cyclistance.feature_authentication.domain.repository.AuthRepository
+import com.myapp.cyclistance.feature_mapping.domain.exceptions.MappingExceptions
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

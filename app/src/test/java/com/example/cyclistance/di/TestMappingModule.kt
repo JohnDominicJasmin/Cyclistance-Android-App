@@ -1,28 +1,28 @@
-package com.example.cyclistance.di
+package com.myapp.cyclistance.di
 
-import com.example.cyclistance.feature_mapping.data.repositories.FakeMappingRepository
-import com.example.cyclistance.feature_mapping.domain.use_case.MappingUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.address.AddressUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.bike_type.BikeTypeUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.AcceptRescueRequestUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDirectionsUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.user.AddRescueRespondentUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.user.ConfirmDetailsUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.user.CreateUserUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.user.DeleteAllRespondentsUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.user.DeleteRescueRespondentUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.user.DeleteUserUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.user.GetUserByIdUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.live_location.TransactionLocationUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
-import com.example.cyclistance.feature_mapping.domain.use_case.websockets.users.NearbyCyclistsUseCase
+import com.myapp.cyclistance.feature_mapping.data.repositories.FakeMappingRepository
+import com.myapp.cyclistance.feature_mapping.domain.use_case.MappingUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.address.AddressUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.bike_type.BikeTypeUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.location.GetCalculatedDistanceUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.location.GetFullAddressUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.location.GetUserLocationUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.AcceptRescueRequestUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.ConfirmCancellationUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.DeleteRescueTransactionUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.rescue_transaction.GetRescueTransactionByIdUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.routes.GetRouteDirectionsUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.user.AddRescueRespondentUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.user.ConfirmDetailsUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.user.CreateUserUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.user.DeleteAllRespondentsUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.user.DeleteRescueRespondentUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.user.DeleteUserUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.user.GetUserByIdUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.websockets.live_location.TransactionLocationUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.BroadcastRescueTransactionUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.websockets.rescue_transactions.GetRescueTransactionUpdatesUseCase
+import com.myapp.cyclistance.feature_mapping.domain.use_case.websockets.users.NearbyCyclistsUseCase
 
 object TestMappingModule {
     private val fakeMappingRepository: FakeMappingRepository = FakeMappingRepository()

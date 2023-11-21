@@ -1,4 +1,4 @@
-package com.example.cyclistance
+package com.myapp.cyclistance
 
 import android.app.Application
 import android.content.Context

@@ -1,4 +1,4 @@
-package com.example.cyclistance.test_rule
+package com.myapp.cyclistance.test_rule
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

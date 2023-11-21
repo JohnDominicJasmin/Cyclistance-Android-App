@@ -1,9 +1,9 @@
-package com.example.cyclistance.util
+package com.myapp.cyclistance.util
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.example.cyclistance.R
-import com.example.cyclistance.core.utils.constants.MappingConstants
-import com.example.cyclistance.core.utils.formatter.IconFormatter.getMapIconImage
+import com.myapp.cyclistance.R
+import com.myapp.cyclistance.core.utils.constants.MappingConstants
+import com.myapp.cyclistance.core.utils.formatter.IconFormatter.getMapIconImage
 import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith

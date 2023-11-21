@@ -23,16 +23,16 @@ android {
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.cyclistance"
+        applicationId = "com.myapp.cyclistance"
         minSdk = 21
         targetSdk = 33
 
         versionCode = 1
         versionName = "1.0"
         multiDexEnabled = true
-        namespace = "com.example.cyclistance"
+        namespace = "com.myapp.cyclistance"
 
-        testInstrumentationRunner = "com.example.cyclistance.HiltTestRunner"
+        testInstrumentationRunner = "com.myapp.cyclistance.HiltTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }

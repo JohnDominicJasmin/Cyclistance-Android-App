@@ -1,12 +1,12 @@
-package com.example.cyclistance.core.utils.validation
+package com.myapp.cyclistance.core.utils.validation
 
-import com.example.cyclistance.core.utils.validation.InputValidate.containsNumeric
-import com.example.cyclistance.core.utils.validation.InputValidate.containsSpecialCharacters
-import com.example.cyclistance.core.utils.validation.InputValidate.isDigit
-import com.example.cyclistance.core.utils.validation.InputValidate.isEmailValid
-import com.example.cyclistance.core.utils.validation.InputValidate.isPasswordStrong
-import com.example.cyclistance.core.utils.validation.InputValidate.isPhoneNumberEnough
-import com.example.cyclistance.core.utils.validation.InputValidate.numberOfCharactersEnough
+import com.myapp.cyclistance.core.utils.validation.InputValidate.containsNumeric
+import com.myapp.cyclistance.core.utils.validation.InputValidate.containsSpecialCharacters
+import com.myapp.cyclistance.core.utils.validation.InputValidate.isDigit
+import com.myapp.cyclistance.core.utils.validation.InputValidate.isEmailValid
+import com.myapp.cyclistance.core.utils.validation.InputValidate.isPasswordStrong
+import com.myapp.cyclistance.core.utils.validation.InputValidate.isPhoneNumberEnough
+import com.myapp.cyclistance.core.utils.validation.InputValidate.numberOfCharactersEnough
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test

@@ -1,21 +1,21 @@
-package com.example.cyclistance.di
+package com.myapp.cyclistance.di
 
-import com.example.cyclistance.feature_authentication.data.repositories.FakeAuthRepository
-import com.example.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.create_account.CreateUserUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.create_account.CreateWithEmailAndPasswordUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.create_account.SignInWithCredentialUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.create_account.SignInWithEmailAndPasswordUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.read_account.GetEmailUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.read_account.GetIdUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.ChangePasswordUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.HasAccountSignedInUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.IsEmailVerifiedUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.IsSignedInWithProviderUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.ReloadEmailUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.SendEmailVerificationUseCase
-import com.example.cyclistance.feature_authentication.domain.use_case.verify_account.SendPasswordResetEmailUseCase
+import com.myapp.cyclistance.feature_authentication.data.repositories.FakeAuthRepository
+import com.myapp.cyclistance.feature_authentication.domain.use_case.AuthenticationUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.create_account.CreateUserUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.create_account.CreateWithEmailAndPasswordUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.create_account.SignInWithCredentialUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.create_account.SignInWithEmailAndPasswordUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.read_account.GetEmailUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.read_account.GetIdUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.sign_out_account.SignOutUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.verify_account.ChangePasswordUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.verify_account.HasAccountSignedInUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.verify_account.IsEmailVerifiedUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.verify_account.IsSignedInWithProviderUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.verify_account.ReloadEmailUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.verify_account.SendEmailVerificationUseCase
+import com.myapp.cyclistance.feature_authentication.domain.use_case.verify_account.SendPasswordResetEmailUseCase
 
 object TestAuthModule {
     private val fakeAuthRepository: FakeAuthRepository = FakeAuthRepository()

@@ -1,4 +1,4 @@
-package com.example.cyclistance.feature_mapping.presentation
+package com.myapp.cyclistance.feature_mapping.presentation
 
 import dagger.hilt.android.testing.HiltAndroidTest
 

@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:297531421452:android:9599135169f47aa3208f29",
         "android_client_info": {
-          "package_name": "com.example.cyclistance"
+          "package_name": "com.myapp.cyclistance"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "297531421452-je1s63qvqb60neb5si46boorgk7mcapi.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.cyclistance",
+            "package_name": "com.myapp.cyclistance",
             "certificate_hash": "7239184e5f13f736b14b170d046d139407ee715c"
           }
         },
