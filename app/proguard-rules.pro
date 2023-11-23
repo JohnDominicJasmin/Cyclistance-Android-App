@@ -23,7 +23,6 @@
 
 -keep,allowobfuscation,allowshrinking class kotlin.coroutines.Continuation
 
--keep class com.myapp.cyclistance.feature_mapping.data.data_source.network.dto.hazardous_lane.** { *; }
 -keep class com.myapp.cyclistance.feature_mapping.data.data_source.network.dto.rescue_transaction.** { *; }
 -keep class com.myapp.cyclistance.feature_mapping.data.data_source.network.dto.user_dto.** { *; }
 -keep class com.myapp.cyclistance.feature_mapping.domain.model.remote_models.** { *; }
