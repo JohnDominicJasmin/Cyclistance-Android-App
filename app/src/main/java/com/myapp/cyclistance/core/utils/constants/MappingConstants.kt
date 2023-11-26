@@ -80,7 +80,7 @@ object MappingConstants {
     const val SELECTION_RESCUEE_TYPE = "rescuee_type"
 
     const val DISTANCE_MIN = 150.00
-    const val DEFAULT_RADIUS = 7000.00
+    const val DEFAULT_RADIUS = 12000.00
     const val API_CALL_RETRY_COUNT: Long = 7
 
 

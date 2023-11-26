@@ -44,11 +44,11 @@ android {
 
         getByName("debug") {
             isCrunchPngs = true
+            isDebuggable = true
+            isMinifyEnabled = false
             manifestPlaceholders["cleartextTrafficPermitted"] = "true"
-            resValue(
-                "string",
-                "MapsDownloadToken",
-                localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
+
+            resValue("string", "MapsDownloadToken", localProperties.getProperty("MAPBOX_DOWNLOADS_TOKEN"))
             resValue("string", "FacebookAppID", localProperties.getProperty("FACEBOOK_APP_ID"))
             resValue(
                 "string",
@@ -66,10 +66,12 @@ android {
             resValue("string", "FcmServerKey", localProperties.getProperty("FCM_SERVER_KEY"))
             resValue("string", "FcmBaseUrl", localProperties.getProperty("FCM_BASE_URL"))
         }
+
         getByName("release") {
             isMinifyEnabled = true
             isShrinkResources = true
             isCrunchPngs = true
+            isDebuggable = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -95,6 +97,7 @@ android {
             resValue("string", "FcmServerKey", localProperties.getProperty("FCM_SERVER_KEY"))
             resValue("string", "FcmBaseUrl", localProperties.getProperty("FCM_BASE_URL"))
         }
+
     }
 
     compileOptions {
@@ -108,6 +111,7 @@ android {
     buildFeatures {
         compose = true
         viewBinding = true
+        buildConfig = true
     }
 
     composeOptions {
