@@ -1209,7 +1209,13 @@ class MappingViewModel @Inject constructor(
     }
 
 
-    private fun getId(): String = authUseCase.getIdUseCase()
+    private fun getId(): String {
+        return try {
+            authUseCase.getIdUseCase()
+        }catch (exception: Exception) {
+           ""
+        }
+    }
 
     private suspend fun getName(): String = userProfileUseCase.getNameUseCase()
 
