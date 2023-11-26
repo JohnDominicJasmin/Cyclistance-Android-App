@@ -1,0 +1,2051 @@
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/BottomSheetReportIncident.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/BottomSheetReportIncident.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/report_incident/BottomSheetReportIncident.kt
+rename from app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/BottomSheetReportIncident.kt
+rename to app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/report_incident/BottomSheetReportIncident.kt
+--- a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/BottomSheetReportIncident.kt	(revision a030997938f61522e027f3227589cada04599c37)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/report_incident/BottomSheetReportIncident.kt	(date 1700669844441)
+@@ -1,7 +1,7 @@
+-package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet
++package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.report_incident
+ 
+-import androidx.annotation.DrawableRes
+-import androidx.compose.foundation.Image
++import androidx.compose.foundation.ExperimentalFoundationApi
++import androidx.compose.foundation.clickable
+ import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Box
+ import androidx.compose.foundation.layout.Column
+@@ -10,9 +10,9 @@
+ import androidx.compose.foundation.layout.fillMaxWidth
+ import androidx.compose.foundation.layout.height
+ import androidx.compose.foundation.layout.padding
+-import androidx.compose.foundation.layout.size
++import androidx.compose.foundation.layout.wrapContentHeight
+ import androidx.compose.foundation.layout.wrapContentSize
+-import androidx.compose.foundation.shape.CircleShape
++import androidx.compose.foundation.pager.rememberPagerState
+ import androidx.compose.foundation.shape.RoundedCornerShape
+ import androidx.compose.material.BottomSheetScaffoldState
+ import androidx.compose.material.BottomSheetValue
+@@ -24,47 +24,51 @@
+ import androidx.compose.material.Icon
+ import androidx.compose.material.IconButton
+ import androidx.compose.material.MaterialTheme
+-import androidx.compose.material.Surface
+ import androidx.compose.material.Text
+ import androidx.compose.material.rememberBottomSheetScaffoldState
+ import androidx.compose.material.rememberBottomSheetState
+ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.CompositionLocalProvider
++import androidx.compose.runtime.LaunchedEffect
+ import androidx.compose.runtime.derivedStateOf
+ import androidx.compose.runtime.getValue
+ import androidx.compose.runtime.remember
+ import androidx.compose.runtime.rememberCoroutineScope
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
++import androidx.compose.ui.draw.clip
++import androidx.compose.ui.draw.drawBehind
+ import androidx.compose.ui.draw.shadow
++import androidx.compose.ui.geometry.CornerRadius
+ import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.graphics.PathEffect
++import androidx.compose.ui.graphics.drawscope.Stroke
+ import androidx.compose.ui.res.painterResource
+ import androidx.compose.ui.text.font.FontWeight
+ import androidx.compose.ui.text.input.TextFieldValue
+-import androidx.compose.ui.text.style.TextAlign
+-import androidx.compose.ui.text.style.TextOverflow
+ import androidx.compose.ui.tooling.preview.Preview
+ import androidx.compose.ui.unit.dp
+ import com.myapp.cyclistance.R
+ import com.myapp.cyclistance.core.utils.constants.MappingConstants.MAXIMUM_HAZARDOUS_MARKER
+ import com.myapp.cyclistance.feature_mapping.presentation.common.AdditionalMessage
++import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.incident_description.ChooseMarkerSection
++import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.incident_description.HazardousIncidentIndicator
++import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.incident_description.incidentMarkers
+ import com.myapp.cyclistance.navigation.IsDarkTheme
+-import com.myapp.cyclistance.theme.Black440
+ import com.myapp.cyclistance.theme.Black500
+ import com.myapp.cyclistance.theme.Black900
+ import com.myapp.cyclistance.theme.CyclistanceTheme
+-import com.myapp.cyclistance.theme.Orange800
+ import com.myapp.cyclistance.theme.Red900
+ import kotlinx.coroutines.launch
+ 
+-@OptIn(ExperimentalMaterialApi::class)
++@OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
+ @Composable
+ fun BottomSheetReportIncident(
+     modifier: Modifier = Modifier,
+     bottomSheetScaffoldState: BottomSheetScaffoldState,
+     selectedLabel: String,
+     incidentDescription: TextFieldValue,
+-    onClick: (label: String) -> Unit,
++    onNewLabel: (label: String) -> Unit,
+     markerPostedCount: Int,
+     onChangeDescription: (TextFieldValue) -> Unit,
+     onClickConfirm: () -> Unit
+@@ -72,7 +76,15 @@
+ 
+     val scope = rememberCoroutineScope()
+     val isDarkTheme = IsDarkTheme.current
++    val pagerState = rememberPagerState(pageCount = {
++        6
++    })
+ 
++
++    LaunchedEffect(key1 = pagerState.currentPage, key2 = true) {
++        val label = incidentMarkers[pagerState.currentPage].first
++        onNewLabel(label)
++    }
+ 
+     Card(
+         modifier = modifier
+@@ -123,7 +135,50 @@
+                     modifier = Modifier.padding(bottom = 16.dp, top = 8.dp)
+                 )
+ 
+-                IncidentItemsSection(onClick = onClick, selectedLabel = selectedLabel)
++                ChooseMarkerSection(
++                    pagerState = pagerState
++                )
++
++                HazardousIncidentIndicator(
++                    pagerState = pagerState
++                )
++
++                val stroke = Stroke(
++                    width = 5f,
++                    pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
++                )
++                Box(
++                    Modifier
++                        .padding(vertical = 12.dp)
++                        .wrapContentHeight()
++                        .fillMaxWidth(0.7f)
++                        .drawBehind {
++                            drawRoundRect(
++                                color = Black500,
++                                style = stroke,
++                                cornerRadius = CornerRadius(12.dp.toPx()))
++                        }
++                        .clip(RoundedCornerShape(12.dp))
++                        .clickable {
++
++                        },
++                    contentAlignment = Alignment.Center
++                ) {
++
++                    Row(modifier = Modifier.padding(vertical = 12.dp)) {
++
++                        Icon(
++                            painter = painterResource(id = R.drawable.ic_add_image),
++                            contentDescription = "Add Image",
++                            modifier = Modifier.padding(end = 8.dp))
++
++                        Text(
++                            text = "Add Incident Image",
++                            color = MaterialTheme.colors.onBackground,
++                            style = MaterialTheme.typography.button
++                        )
++                    }
++                }
+ 
+                 val markerReachedLimit by remember(markerPostedCount) {
+                     derivedStateOf {
+@@ -131,8 +186,8 @@
+                     }
+                 }
+ 
+-                val startingText = remember(markerReachedLimit){
+-                    if(markerReachedLimit) "You have reached the maximum number of markers"
++                val startingText = remember(markerReachedLimit) {
++                    if (markerReachedLimit) "You have reached the maximum number of markers"
+                     else "You have posted $markerPostedCount out of $MAXIMUM_HAZARDOUS_MARKER markers"
+                 }
+ 
+@@ -158,7 +213,7 @@
+                 Button(
+                     modifier = Modifier.padding(top = 8.dp),
+                     onClick = onClickConfirm,
+-                    colors =  ButtonDefaults.buttonColors(
++                    colors = ButtonDefaults.buttonColors(
+                         backgroundColor = MaterialTheme.colors.primary,
+                         contentColor = MaterialTheme.colors.onPrimary,
+                         disabledBackgroundColor = Black500,
+@@ -179,139 +234,6 @@
+ }
+ 
+ 
+-@Composable
+-private fun IncidentItemsSection(
+-    modifier: Modifier = Modifier,
+-    selectedLabel: String,
+-    onClick: (label: String) -> Unit
+-) {
+-
+-
+-    Column(
+-        modifier = modifier,
+-        verticalArrangement = Arrangement.spacedBy(
+-            8.dp,
+-            alignment = Alignment.CenterVertically),
+-        horizontalAlignment = Alignment.CenterHorizontally) {
+-
+-        Row(
+-            modifier = Modifier.fillMaxWidth(),
+-            verticalAlignment = Alignment.CenterVertically,
+-            horizontalArrangement = Arrangement.SpaceEvenly) {
+-
+-            IncidentItem(
+-                modifier = Modifier
+-                    .padding(4.dp)
+-                    .weight(0.3f),
+-                icon = R.drawable.ic_construction,
+-                incidentLabel = "Construction",
+-                selectedLabel = selectedLabel,
+-                onClick = onClick
+-            )
+-
+-            IncidentItem(
+-                modifier = Modifier
+-                    .padding(4.dp)
+-                    .weight(0.3f),
+-                icon = R.drawable.ic_lane_closure,
+-                incidentLabel = "Lane closure",
+-                selectedLabel = selectedLabel,
+-                onClick = onClick
+-            )
+-
+-            IncidentItem(
+-                modifier = Modifier
+-                    .padding(4.dp)
+-                    .weight(0.3f),
+-                icon = R.drawable.ic_car_crash,
+-                incidentLabel = "Crash",
+-                buttonColor = Red900,
+-                selectedLabel = selectedLabel,
+-                onClick = onClick
+-            )
+-
+-
+-        }
+-        Row(
+-            modifier = Modifier.fillMaxWidth(),
+-            verticalAlignment = Alignment.CenterVertically,
+-            horizontalArrangement = Arrangement.SpaceEvenly) {
+-
+-
+-            IncidentItem(
+-                modifier = Modifier
+-                    .padding(4.dp)
+-                    .weight(0.3f),
+-                icon = R.drawable.ic_need_assistance,
+-                incidentLabel = "Need Assistance",
+-                selectedLabel = selectedLabel,
+-                onClick = onClick
+-            )
+-            IncidentItem(
+-                modifier = Modifier
+-                    .padding(4.dp)
+-                    .weight(0.3f),
+-                icon = R.drawable.ic_object_on_road,
+-                incidentLabel = "Object on Road",
+-                selectedLabel = selectedLabel,
+-                onClick = onClick
+-            )
+-            IncidentItem(
+-                modifier = Modifier
+-                    .padding(4.dp)
+-                    .weight(0.3f),
+-                icon = R.drawable.ic_slowdown,
+-                incidentLabel = "Slowdown",
+-                buttonColor = Red900,
+-                selectedLabel = selectedLabel,
+-                onClick = onClick
+-            )
+-
+-        }
+-    }
+-}
+-
+-@OptIn(ExperimentalMaterialApi::class)
+-@Composable
+-private fun IncidentItem(
+-    modifier: Modifier,
+-    @DrawableRes icon: Int,
+-    incidentLabel: String,
+-    buttonColor: Color = Orange800,
+-    selectedLabel: String,
+-    onClick: (label: String) -> Unit
+-) {
+-
+-    val isSelected by remember(incidentLabel, selectedLabel) {
+-        derivedStateOf { incidentLabel == selectedLabel }
+-    }
+-
+-    Column(
+-        modifier = modifier,
+-        verticalArrangement = Arrangement.spacedBy(4.dp, alignment = Alignment.CenterVertically),
+-        horizontalAlignment = Alignment.CenterHorizontally) {
+-
+-        Surface(
+-            shape = CircleShape,
+-            modifier = Modifier.size(54.dp),
+-            color = buttonColor,
+-            onClick = { onClick(incidentLabel) }) {
+-            Image(
+-                painter = painterResource(id = icon),
+-                contentDescription = "$incidentLabel Icon",
+-                modifier = Modifier.padding(all = 12.dp)
+-            )
+-        }
+-
+-        Text(
+-            text = incidentLabel,
+-            color = if(isSelected) MaterialTheme.colors.onSurface else Black440,
+-            style = MaterialTheme.typography.caption.copy(fontWeight = FontWeight.SemiBold),
+-            overflow = TextOverflow.Clip, textAlign = TextAlign.Center,
+-        )
+-
+-    }
+-}
+ 
+ 
+ @Preview
+@@ -346,7 +268,7 @@
+                     modifier = Modifier.align(Alignment.BottomCenter),
+                     bottomSheetScaffoldState = bottomSheetScaffoldState,
+                     selectedLabel = "Lane closure",
+-                    onClick = {
++                    onNewLabel = {
+ 
+                     }, onChangeDescription = {},
+                     onClickConfirm = {},
+@@ -374,7 +296,7 @@
+                     modifier = Modifier.align(Alignment.BottomCenter),
+                     bottomSheetScaffoldState = bottomSheetScaffoldState,
+                     selectedLabel = "Lane closure",
+-                    onClick = {
++                    onNewLabel = {
+ 
+                     },
+                     onChangeDescription = {},
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/ReportItemDescription.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/ReportItemDescription.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/ReportItemDescription.kt
+new file mode 100644
+--- /dev/null	(date 1700668625261)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/ReportItemDescription.kt	(date 1700668625261)
+@@ -0,0 +1,62 @@
++package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.incident_description
++
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.padding
++import androidx.compose.material.Icon
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.graphics.vector.ImageVector
++import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.unit.dp
++import com.myapp.cyclistance.theme.Black500
++
++@Composable
++fun ReportItemDescription(
++    modifier: Modifier = Modifier,
++    iconImage: ImageVector,
++    iconDescription: String,
++    description: String = "") {
++
++    Column(
++        modifier = modifier,
++        verticalArrangement = Arrangement.Center,
++        horizontalAlignment = Alignment.Start) {
++
++
++        Row(
++            verticalAlignment = Alignment.Top,
++            horizontalArrangement = Arrangement.Center
++        ) {
++
++            Icon(
++                imageVector = iconImage,
++                contentDescription = iconDescription,
++                tint = Black500,
++                modifier = Modifier.padding(end = 5.dp))
++
++            Column(
++                verticalArrangement = Arrangement.Center,
++                horizontalAlignment = Alignment.Start) {
++
++                Text(
++                    text = iconDescription,
++                    color = Black500,
++                    style = MaterialTheme.typography.caption.copy(fontWeight = FontWeight.Medium),
++                    modifier = Modifier.padding(top = 5.dp))
++
++                Text(
++                    text = description,
++                    color = MaterialTheme.colors.onSurface,
++                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Normal),
++                    modifier = Modifier.padding(vertical = 4.dp))
++
++            }
++        }
++
++    }
++}
+Index: app/src/main/res/drawable/ic_add_image.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_add_image.xml b/app/src/main/res/drawable/ic_add_image.xml
+new file mode 100644
+--- /dev/null	(date 1700671810599)
++++ b/app/src/main/res/drawable/ic_add_image.xml	(date 1700671810599)
+@@ -0,0 +1,11 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="20dp"
++    android:height="20dp"
++    android:viewportWidth="20"
++    android:viewportHeight="20">
++  <path
++      android:strokeWidth="1"
++      android:pathData="M14.753,15.5H15.253V15V12.5H16.208V15V15.5H16.708H19.141V16.5H16.708H16.208V17V19.5H15.253V17V16.5H14.753H12.321V15.5H14.753ZM10.934,8.697L7.897,12.692L5.854,10.184L5.453,9.692L5.068,10.197L1.647,14.697L1.037,15.5H2.045H9.377C9.365,15.678 9.365,15.843 9.365,15.97C9.365,15.98 9.365,15.99 9.365,16C9.365,16.506 9.413,17.017 9.512,17.5H2.045C1.256,17.5 0.59,16.835 0.59,16V2C0.59,1.165 1.256,0.5 2.045,0.5H15.731C16.519,0.5 17.186,1.165 17.186,2V9.647C16.717,9.548 16.222,9.5 15.731,9.5C14.727,9.5 13.716,9.741 12.834,10.231L11.738,8.708L11.343,8.16L10.934,8.697Z"
++      android:fillColor="#D7D7D7"
++      android:strokeColor="#A5A5A5"/>
++</vector>
+Index: firestore-debug.log
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>Nov 19, 2023 7:19:21 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start\nINFO: Started WebSocket server on ws://0.0.0.0:44263\nAPI endpoint: http://0.0.0.0:9299\nIf you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:\n\n   export FIRESTORE_EMULATOR_HOST=0.0.0.0:9299\n\nDev App Server is now running.\n\nNov 19, 2023 7:22:18 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 19, 2023 7:28:11 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 19, 2023 7:31:12 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 19, 2023 7:39:05 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 19, 2023 7:45:53 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\nNov 19, 2023 11:15:58 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead\nINFO: Detected HTTP/2 connection.\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/firestore-debug.log b/firestore-debug.log
+--- a/firestore-debug.log	(revision a030997938f61522e027f3227589cada04599c37)
++++ b/firestore-debug.log	(date 1700631460433)
+@@ -1,5 +1,5 @@
+-Nov 19, 2023 7:19:21 PM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
+-INFO: Started WebSocket server on ws://0.0.0.0:44263
++Nov 22, 2023 8:58:43 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer start
++INFO: Started WebSocket server on ws://0.0.0.0:34643
+ API endpoint: http://0.0.0.0:9299
+ If you are using a library that supports the FIRESTORE_EMULATOR_HOST environment variable, run:
+ 
+@@ -7,15 +7,70 @@
+ 
+ Dev App Server is now running.
+ 
+-Nov 19, 2023 7:22:18 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 22, 2023 8:59:03 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Nov 22, 2023 9:01:49 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 19, 2023 7:28:11 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 22, 2023 9:05:01 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 19, 2023 7:31:12 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 22, 2023 9:06:07 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 19, 2023 7:39:05 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 22, 2023 9:07:38 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 19, 2023 7:45:53 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 22, 2023 9:09:46 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
+-Nov 19, 2023 11:15:58 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++Nov 22, 2023 9:12:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+ INFO: Detected HTTP/2 connection.
++Nov 22, 2023 9:15:37 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Nov 22, 2023 9:22:17 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Nov 22, 2023 9:26:06 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Nov 22, 2023 9:26:07 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
++Nov 22, 2023 9:26:07 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
++Nov 22, 2023 9:26:20 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
++Nov 22, 2023 9:28:51 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Nov 22, 2023 9:28:51 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
++Nov 22, 2023 9:39:25 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Nov 22, 2023 9:39:25 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
++Nov 22, 2023 9:44:43 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Nov 22, 2023 9:44:43 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
++Nov 22, 2023 9:46:13 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Nov 22, 2023 9:46:13 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
++Nov 22, 2023 9:49:14 AM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
++INFO: Detected HTTP/2 connection.
++Nov 22, 2023 9:49:14 AM com.google.cloud.datastore.emulator.impl.context.EmulatorAuthorization warnAboutSecuredJwt
++WARNING: expected an unsecured JWT, the emulator does not validate JWTs and IS NOT SECURE
++Nov 22, 2023 9:51:13 AM io.netty.channel.DefaultChannelPipeline onUnhandledInboundException
++WARNING: An exceptionCaught() event was fired, and it reached at the tail of the pipeline. It usually means the last handler in the pipeline did not handle the exception.
++java.net.SocketException: Connection reset
++	at java.base/sun.nio.ch.SocketChannelImpl.throwConnectionReset(SocketChannelImpl.java:394)
++	at java.base/sun.nio.ch.SocketChannelImpl.read(SocketChannelImpl.java:426)
++	at io.netty.buffer.PooledByteBuf.setBytes(PooledByteBuf.java:253)
++	at io.netty.buffer.AbstractByteBuf.writeBytes(AbstractByteBuf.java:1132)
++	at io.netty.channel.socket.nio.NioSocketChannel.doReadBytes(NioSocketChannel.java:350)
++	at io.netty.channel.nio.AbstractNioByteChannel$NioByteUnsafe.read(AbstractNioByteChannel.java:151)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKey(NioEventLoop.java:722)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKeysOptimized(NioEventLoop.java:658)
++	at io.netty.channel.nio.NioEventLoop.processSelectedKeys(NioEventLoop.java:584)
++	at io.netty.channel.nio.NioEventLoop.run(NioEventLoop.java:496)
++	at io.netty.util.concurrent.SingleThreadEventExecutor$4.run(SingleThreadEventExecutor.java:986)
++	at io.netty.util.internal.ThreadExecutorMap$2.run(ThreadExecutorMap.java:74)
++	at io.netty.util.concurrent.FastThreadLocalRunnable.run(FastThreadLocalRunnable.java:30)
++	at java.base/java.lang.Thread.run(Thread.java:833)
++
++*** shutting down gRPC server since JVM is shutting down
++*** server shut down
++231122 13:37:40.426:I 1 [main] [com.google.cloud.datastore.emulator.firestore.websocket.WebSocketServer.stop:80] Stopping WebSocket server...
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/ReportItemsSection.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/ReportItemsSection.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/ReportItemsSection.kt
+new file mode 100644
+--- /dev/null	(date 1700668718997)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/ReportItemsSection.kt	(date 1700668718997)
+@@ -0,0 +1,58 @@
++package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.incident_description
++
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.padding
++import androidx.compose.material.icons.Icons
++import androidx.compose.material.icons.filled.AccessTimeFilled
++import androidx.compose.material.icons.filled.Info
++import androidx.compose.material.icons.filled.LocationOn
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.unit.dp
++import com.myapp.cyclistance.core.utils.date.DateUtils.toReadableDateTime
++import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
++
++@Composable
++fun ReportItemsSection(modifier: Modifier = Modifier, marker: HazardousLaneMarker) {
++    Column(
++        verticalArrangement = Arrangement.Center,
++        horizontalAlignment = Alignment.Start,
++        modifier = modifier
++            .fillMaxWidth()
++            .padding(horizontal = 12.dp, vertical = 4.dp)) {
++
++        ReportItemDescription(
++            modifier = Modifier
++                .padding(vertical = 4.dp)
++                .fillMaxWidth(),
++            iconImage = Icons.Default.AccessTimeFilled,
++            iconDescription = "Date and Time",
++            description = marker.datePosted.toReadableDateTime(pattern = "MMM dd, yyyy hh:mm a")
++        )
++
++        ReportItemDescription(
++            modifier = Modifier
++                .padding(vertical = 4.dp)
++                .fillMaxWidth(),
++            iconImage = Icons.Default.LocationOn,
++            iconDescription = "Address",
++            description = marker.address
++        )
++
++
++        marker.description.takeIf { it.isNotEmpty() }?.let { description ->
++            ReportItemDescription(
++                modifier = Modifier
++                    .padding(vertical = 4.dp)
++                    .fillMaxWidth(),
++                iconImage = Icons.Default.Info,
++                iconDescription = "Description",
++                description = description
++            )
++        }
++
++    }
++}
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/ChooseMarkerSection.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/ChooseMarkerSection.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/ChooseMarkerSection.kt
+new file mode 100644
+--- /dev/null	(date 1700668760451)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/ChooseMarkerSection.kt	(date 1700668760451)
+@@ -0,0 +1,56 @@
++package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.incident_description
++
++import androidx.compose.foundation.ExperimentalFoundationApi
++import androidx.compose.foundation.Image
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.layout.size
++import androidx.compose.foundation.layout.wrapContentHeight
++import androidx.compose.foundation.pager.HorizontalPager
++import androidx.compose.foundation.pager.PageSize
++import androidx.compose.foundation.pager.PagerState
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.res.painterResource
++import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.unit.dp
++
++@OptIn(ExperimentalFoundationApi::class)
++@Composable
++fun ChooseMarkerSection(modifier: Modifier = Modifier, pagerState: PagerState) {
++    HorizontalPager(
++        state = pagerState, pageSize = PageSize.Fill,
++        modifier = modifier
++            .wrapContentHeight()
++            .padding(horizontal = 4.dp),
++        verticalAlignment = Alignment.CenterVertically) { pageIndex ->
++
++        val item = incidentMarkers[pageIndex]
++        Row(
++            modifier = Modifier
++                .fillMaxWidth()
++                .padding(top = 8.dp, bottom = 4.dp),
++            verticalAlignment = Alignment.CenterVertically,
++            horizontalArrangement = Arrangement.spacedBy(
++                8.dp,
++                alignment = Alignment.CenterHorizontally)) {
++
++            Image(
++                modifier = Modifier.size(55.dp),
++                painter = painterResource(id = item.second),
++                contentDescription = "${item.first} icon",
++            )
++
++            Text(
++                text = item.first,
++                color = MaterialTheme.colors.onSurface,
++                style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Normal))
++
++        }
++    }
++}
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/HazardousIncidentIndicator.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/HazardousIncidentIndicator.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/HazardousIncidentIndicator.kt
+new file mode 100644
+--- /dev/null	(date 1700668718991)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/HazardousIncidentIndicator.kt	(date 1700668718991)
+@@ -0,0 +1,45 @@
++package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.incident_description
++
++import androidx.compose.foundation.ExperimentalFoundationApi
++import androidx.compose.foundation.background
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Box
++import androidx.compose.foundation.layout.Row
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.layout.size
++import androidx.compose.foundation.layout.wrapContentHeight
++import androidx.compose.foundation.pager.PagerState
++import androidx.compose.foundation.shape.CircleShape
++import androidx.compose.material.MaterialTheme
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.draw.clip
++import androidx.compose.ui.unit.dp
++import com.myapp.cyclistance.theme.Black500
++
++@OptIn(ExperimentalFoundationApi::class)
++@Composable
++fun HazardousIncidentIndicator(modifier: Modifier = Modifier, pagerState: PagerState) {
++
++    Row(
++        modifier = modifier
++            .wrapContentHeight()
++            .fillMaxWidth()
++            .padding(all = 8.dp),
++        horizontalArrangement = Arrangement.Center
++    ) {
++        repeat(6) { iteration ->
++            val isSelect = pagerState.currentPage == iteration
++            val color = if (isSelect) MaterialTheme.colors.primary else Black500
++            Box(
++                modifier = Modifier
++                    .padding(1.5.dp)
++                    .clip(CircleShape)
++                    .background(color)
++                    .size(9.dp)
++
++            )
++        }
++    }
++}
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"GradleMigrationSettings\" migrationVersion=\"1\" />\n  <component name=\"GradleSettings\">\n    <option name=\"linkedExternalProjectsSettings\">\n      <GradleProjectSettings>\n        <option name=\"testRunner\" value=\"GRADLE\" />\n        <option name=\"distributionType\" value=\"DEFAULT_WRAPPED\" />\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$\" />\n        <option name=\"gradleJvm\" value=\"jbr-17\" />\n        <option name=\"modules\">\n          <set>\n            <option value=\"$PROJECT_DIR$\" />\n            <option value=\"$PROJECT_DIR$/app\" />\n          </set>\n        </option>\n      </GradleProjectSettings>\n    </option>\n    <option name=\"offlineMode\" value=\"true\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+--- a/.idea/gradle.xml	(revision a030997938f61522e027f3227589cada04599c37)
++++ b/.idea/gradle.xml	(date 1700708678654)
+@@ -16,6 +16,5 @@
+         </option>
+       </GradleProjectSettings>
+     </option>
+-    <option name="offlineMode" value="true" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/BottomSheetIncidentDescription.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/BottomSheetIncidentDescription.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/BottomSheetIncidentDescription.kt
+rename from app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/BottomSheetIncidentDescription.kt
+rename to app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/BottomSheetIncidentDescription.kt
+--- a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/BottomSheetIncidentDescription.kt	(revision a030997938f61522e027f3227589cada04599c37)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/BottomSheetIncidentDescription.kt	(date 1700669070831)
+@@ -1,76 +1,36 @@
+-package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet
++package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.incident_description
+ 
+ import androidx.annotation.DrawableRes
+-import androidx.compose.foundation.ExperimentalFoundationApi
+-import androidx.compose.foundation.Image
+-import androidx.compose.foundation.background
+-import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Box
+-import androidx.compose.foundation.layout.Column
+-import androidx.compose.foundation.layout.Row
+ import androidx.compose.foundation.layout.fillMaxSize
+ import androidx.compose.foundation.layout.fillMaxWidth
+-import androidx.compose.foundation.layout.height
+-import androidx.compose.foundation.layout.padding
+-import androidx.compose.foundation.layout.size
+-import androidx.compose.foundation.layout.wrapContentHeight
+-import androidx.compose.foundation.layout.wrapContentSize
+-import androidx.compose.foundation.pager.HorizontalPager
+-import androidx.compose.foundation.pager.PageSize
+-import androidx.compose.foundation.pager.rememberPagerState
+-import androidx.compose.foundation.shape.CircleShape
+ import androidx.compose.foundation.shape.RoundedCornerShape
+-import androidx.compose.material.Button
+-import androidx.compose.material.ButtonDefaults
+ import androidx.compose.material.Card
+-import androidx.compose.material.Divider
+ import androidx.compose.material.Icon
+ import androidx.compose.material.IconButton
+-import androidx.compose.material.MaterialTheme
+-import androidx.compose.material.Surface
+-import androidx.compose.material.Text
+-import androidx.compose.material.icons.Icons
+-import androidx.compose.material.icons.filled.AccessTimeFilled
+-import androidx.compose.material.icons.filled.Info
+-import androidx.compose.material.icons.filled.LocationOn
+-import androidx.compose.material.icons.filled.MoreHoriz
+ import androidx.compose.runtime.Composable
+ import androidx.compose.runtime.CompositionLocalProvider
+-import androidx.compose.runtime.LaunchedEffect
+-import androidx.compose.runtime.getValue
+-import androidx.compose.runtime.mutableStateOf
+-import androidx.compose.runtime.remember
+-import androidx.compose.runtime.saveable.rememberSaveable
+-import androidx.compose.runtime.setValue
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+-import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.draw.shadow
+ import androidx.compose.ui.graphics.Color
+-import androidx.compose.ui.graphics.vector.ImageVector
+ import androidx.compose.ui.res.painterResource
+-import androidx.compose.ui.text.font.FontWeight
+-import androidx.compose.ui.text.input.TextFieldValue
+ import androidx.compose.ui.tooling.preview.Preview
+ import androidx.compose.ui.unit.dp
+ import androidx.compose.ui.zIndex
+ import com.myapp.cyclistance.R
+-import com.myapp.cyclistance.core.presentation.dialogs.common.DropDownMenu
+ import com.myapp.cyclistance.core.utils.constants.MappingConstants.CONSTRUCTION
+ import com.myapp.cyclistance.core.utils.constants.MappingConstants.CRASH
+ import com.myapp.cyclistance.core.utils.constants.MappingConstants.LANE_CLOSURE
+ import com.myapp.cyclistance.core.utils.constants.MappingConstants.NEED_ASSISTANCE
+ import com.myapp.cyclistance.core.utils.constants.MappingConstants.OBJECT_ON_ROAD
+ import com.myapp.cyclistance.core.utils.constants.MappingConstants.SLOWDOWN
+-import com.myapp.cyclistance.core.utils.date.DateUtils.toReadableDateTime
+ import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+-import com.myapp.cyclistance.feature_mapping.presentation.common.AdditionalMessage
+-import com.myapp.cyclistance.feature_mapping.presentation.common.ButtonNavigation
+ import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
+ import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
+ import com.myapp.cyclistance.navigation.IsDarkTheme
+-import com.myapp.cyclistance.theme.Black500
+ import com.myapp.cyclistance.theme.CyclistanceTheme
++import java.util.Date
+ 
+ @Composable
+ fun BottomSheetIncidentDescription(
+@@ -155,167 +115,11 @@
+     }
+ }
+ 
+-@Composable
+-private fun HazardousStartingInfo(
+-
+-    modifier: Modifier = Modifier,
+-    onClickGotItButton: () -> Unit) {
+-
+-    val isDarkTheme = IsDarkTheme.current
+-
+-
+-    Surface(modifier = modifier) {
+-
+-        Column(
+-            verticalArrangement = Arrangement.Center,
+-            horizontalAlignment = Alignment.CenterHorizontally,
+-            modifier = Modifier.padding(all = 8.dp)) {
+-
+-            Image(
+-                painter = painterResource(id = if (isDarkTheme) R.drawable.ic_marker_info_dark else R.drawable.ic_marker_info_light),
+-                contentDescription = "Image",
+-                modifier = Modifier.padding(vertical = 12.dp))
+-
+-            Text(
+-                text = "Hazardous Marker Visibility",
+-                color = MaterialTheme.colors.onSurface,
+-                style = MaterialTheme.typography.subtitle1,
+-                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp))
+-
+-            Text(
+-                text = "Your Hazardous Lane Marker\n" +
+-                       "will only be visible for a week",
+-                color = MaterialTheme.colors.onSurface,
+-                style = MaterialTheme.typography.subtitle2,
+-                modifier = Modifier.padding(vertical = 4.dp))
+-
+-            Button(
+-                onClick = onClickGotItButton,
+-                shape = RoundedCornerShape(12.dp),
+-                colors = ButtonDefaults.buttonColors(
+-                    backgroundColor = MaterialTheme.colors.primary,
+-                    contentColor = MaterialTheme.colors.onPrimary),
+-                modifier = Modifier.padding(vertical = 12.dp)) {
+-
+-                Text(
+-                    text = "Got it!",
+-                    color = MaterialTheme.colors.onPrimary,
+-                    style = MaterialTheme.typography.button,
+-                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 12.dp))
+-            }
+-
+-        }
+-
+-
+-    }
+-}
+-
+-
+-@Preview
+-@Composable
+-fun PreviewHazardousStartingInfo() {
+-    CyclistanceTheme(darkTheme = true) {
+-        HazardousStartingInfo(
+-            onClickGotItButton = {}
+-        )
+-    }
+-}
+ 
+ 
+-@Composable
+-private fun IncidentDescriptionSection(
+-    onDismissBottomSheet: () -> Unit,
+-    @DrawableRes icon: Int,
+-    uiState: MappingUiState,
+-    state: MappingState,
+-    marker: HazardousLaneMarker,
+-    onClickEdit: () -> Unit,
+-    onClickDelete: () -> Unit) {
+ 
+ 
+-    val isDarkTheme = IsDarkTheme.current
+-
+-    Column(
+-        modifier = Modifier.fillMaxWidth(),
+-        verticalArrangement = Arrangement.Center,
+-        horizontalAlignment = Alignment.CenterHorizontally) {
+-
+-
+-        Box(
+-            contentAlignment = Alignment.Center,
+-            modifier = Modifier
+-                .fillMaxWidth()
+-                ) {
+-
+-
+-            if (state.userId == marker.idCreator) {
+-                DropDownMenu(
+-                    iconImageVector = Icons.Default.MoreHoriz,
+-                    modifier = Modifier
+-                        .wrapContentSize()
+-                        .align(Alignment.BottomEnd),
+-                    onClickEdit = onClickEdit,
+-                    onClickDelete = onClickDelete
+-                )
+-            }
+-
+-
+-
+-            Column(
+-                horizontalAlignment = Alignment.CenterHorizontally,
+-                verticalArrangement = Arrangement.Center,
+-                modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp)
+-            ) {
+-
+-                Icon(
+-                    modifier = Modifier
+-                        .padding(vertical = 8.dp)
+-                        .shadow(
+-                            if (isDarkTheme) 0.dp else 8.dp,
+-                            shape = CircleShape),
+-                    painter = painterResource(id = icon),
+-                    contentDescription = "Marker Icon Description",
+-                    tint = Color.Unspecified)
+-
+-                Text(
+-                    text = uiState.selectedHazardousMarker!!.label,
+-                    color = MaterialTheme.colors.onSurface,
+-                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium),
+-                    modifier = Modifier
+-                        .padding(vertical = 2.dp)
+-                )
+-
+-            }
+-
+-        }
+-
+-        Column(
+-            verticalArrangement = Arrangement.Center,
+-            horizontalAlignment = Alignment.CenterHorizontally,
+-            modifier = Modifier
+-                .padding(horizontal = 12.dp)
+-                .padding(bottom = 12.dp)) {
+-
+-            ReportItemsSection(
+-                marker = marker,
+-                modifier = Modifier.fillMaxWidth()
+-            )
+-
+-            Button(
+-                shape = RoundedCornerShape(12.dp),
+-                onClick = onDismissBottomSheet,
+-                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary)) {
+-                Text(
+-                    text = "Okay",
+-                    color = MaterialTheme.colors.onPrimary,
+-                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
+-                    style = MaterialTheme.typography.button)
+-            }
+-        }
+-
+-    }
+-}
+-private val incidentMarkers = listOf(
++val incidentMarkers = listOf(
+     CONSTRUCTION to R.drawable.ic_construction_marker,
+     LANE_CLOSURE to R.drawable.ic_lane_closure_marker,
+     CRASH to R.drawable.ic_crash_marker,
+@@ -324,235 +128,14 @@
+     SLOWDOWN to R.drawable.ic_slow_down_marker
+ )
+ 
+-@OptIn(ExperimentalFoundationApi::class)
+-@Composable
+-private fun IncidentDescriptionEditMode(
+-    modifier: Modifier = Modifier,
+-    markerLabel: String,
+-    markerDescription: String,
+-    onClickCancelButton: () -> Unit,
+-    onClickConfirmButton: (description: String, label: String) -> Unit) {
+-
+-    val pagerState = rememberPagerState(pageCount = {
+-        6
+-    })
+-
+-    var description by rememberSaveable(stateSaver = TextFieldValue.Saver) {
+-        mutableStateOf(TextFieldValue(""))
+-    }
+-
+-    val descriptionChanges = remember(description) {
+-        description.text != markerDescription
+-    }
+-    val labelChanges = remember(pagerState.currentPage) {
+-        incidentMarkers[pagerState.currentPage].first != markerLabel
+-    }
+-
+-    val inputChanges = remember(descriptionChanges, labelChanges) {
+-        descriptionChanges || labelChanges
+-    }
+-
+-
+-    LaunchedEffect(key1 = markerDescription) {
+-        description = TextFieldValue(markerDescription)
+-    }
+-
+-
+-    LaunchedEffect(key1 = true) {
+-        pagerState.scrollToPage(page = incidentMarkers.indexOfFirst { it.first == markerLabel })
+-    }
+-
+-    Column(
+-        modifier = modifier.fillMaxWidth(),
+-        verticalArrangement = Arrangement.Center,
+-        horizontalAlignment = Alignment.CenterHorizontally) {
+-
+-        Text(
+-            text = "Edit Hazardous Marker",
+-            color = MaterialTheme.colors.onSurface,
+-            style = MaterialTheme.typography.subtitle1,
+-            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
+-        )
+-
+-        Divider(
+-            modifier = Modifier
+-                .fillMaxWidth(0.91f)
+-                .padding(top = 12.dp, bottom = 4.dp),
+-            thickness = 1.2.dp,
+-            color = Black500,
+-        )
+-
+-        HorizontalPager(
+-            state = pagerState, pageSize = PageSize.Fill,
+-            modifier = Modifier
+-                .wrapContentHeight()
+-                .padding(horizontal = 4.dp),
+-            verticalAlignment = Alignment.CenterVertically) { pageIndex ->
+-
+-            val item = incidentMarkers[pageIndex]
+-
+-            Row(
+-                modifier = Modifier
+-                    .fillMaxWidth()
+-                    .padding(top = 8.dp, bottom = 4.dp)
+-                    .align(Alignment.CenterHorizontally),
+-                verticalAlignment = Alignment.CenterVertically,
+-                horizontalArrangement = Arrangement.spacedBy(
+-                    8.dp,
+-                    alignment = Alignment.CenterHorizontally)) {
+-
+-                Image(
+-                    modifier = Modifier.size(55.dp),
+-                    painter = painterResource(id = item.second),
+-                    contentDescription = "${item.first} icon",
+-                )
+-
+-                Text(
+-                    text = item.first,
+-                    color = MaterialTheme.colors.onSurface,
+-                    style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Normal))
+ 
+-            }
+-        }
+-
+-
+-        Row(
+-            Modifier
+-                .wrapContentHeight()
+-                .fillMaxWidth()
+-                .padding(all = 8.dp),
+-            horizontalArrangement = Arrangement.Center
+-        ) {
+-            repeat(6) { iteration ->
+-                val isSelect = pagerState.currentPage == iteration
+-                val color = if (isSelect) MaterialTheme.colors.primary else Black500
+-                Box(
+-                    modifier = Modifier
+-                        .padding(1.5.dp)
+-                        .clip(CircleShape)
+-                        .background(color)
+-                        .size(9.dp)
+-
+-                )
+-            }
+-        }
+-
+-        AdditionalMessage(
+-            text = "Description",
+-            placeholderText = null,
+-            modifier = Modifier
+-                .fillMaxWidth(0.9f)
+-                .height(120.dp),
+-            message = description,
+-            enabled = true,
+-            onChangeValueMessage = {
+-                description = it
+-            })
+-
+-        ButtonNavigation(
+-            modifier = Modifier
+-                .fillMaxWidth(0.9f)
+-                .padding(vertical = 16.dp),
+-            positiveButtonEnabled = inputChanges,
+-            onClickNegativeButton = onClickCancelButton,
+-            onClickPositiveButton = {
+-                onClickConfirmButton(
+-                    description.text,
+-                    incidentMarkers[pagerState.currentPage].first)
+-            },
+-        )
+-
+-
+-    }
+-
+-}
+-
+-
++@Preview
+ @Composable
+-private fun ReportItemsSection(modifier: Modifier = Modifier, marker: HazardousLaneMarker) {
+-    Column(
+-        verticalArrangement = Arrangement.Center,
+-        horizontalAlignment = Alignment.Start,
+-        modifier = modifier
+-            .fillMaxWidth()
+-            .padding(horizontal = 12.dp, vertical = 4.dp)) {
+-
+-        ReportItemDescription(
+-            modifier = Modifier
+-                .padding(vertical = 4.dp)
+-                .fillMaxWidth(),
+-            iconImage = Icons.Default.AccessTimeFilled,
+-            iconDescription = "Date and Time",
+-            description = marker.datePosted.toReadableDateTime(pattern = "MMM dd, yyyy hh:mm a")
+-        )
+-
+-        ReportItemDescription(
+-            modifier = Modifier
+-                .padding(vertical = 4.dp)
+-                .fillMaxWidth(),
+-            iconImage = Icons.Default.LocationOn,
+-            iconDescription = "Address",
+-            description = marker.address
++fun PreviewHazardousStartingInfo() {
++    CyclistanceTheme(darkTheme = true) {
++        HazardousStartingInfo(
++            onClickGotItButton = {}
+         )
+-
+-
+-        marker.description.takeIf { it.isNotEmpty() }?.let { description ->
+-            ReportItemDescription(
+-                modifier = Modifier
+-                    .padding(vertical = 4.dp)
+-                    .fillMaxWidth(),
+-                iconImage = Icons.Default.Info,
+-                iconDescription = "Description",
+-                description = description
+-            )
+-        }
+-
+-    }
+-}
+-
+-@Composable
+-private fun ReportItemDescription(
+-    modifier: Modifier = Modifier,
+-    iconImage: ImageVector,
+-    iconDescription: String,
+-    description: String = "") {
+-
+-    Column(
+-        modifier = modifier,
+-        verticalArrangement = Arrangement.Center,
+-        horizontalAlignment = Alignment.Start) {
+-
+-
+-        Row(
+-            verticalAlignment = Alignment.Top,
+-            horizontalArrangement = Arrangement.Center
+-        ) {
+-
+-            Icon(
+-                imageVector = iconImage,
+-                contentDescription = iconDescription,
+-                tint = Black500,
+-                modifier = Modifier.padding(end = 5.dp))
+-
+-            Column(
+-                verticalArrangement = Arrangement.Center,
+-                horizontalAlignment = Alignment.Start) {
+-
+-                Text(
+-                    text = iconDescription,
+-                    color = Black500,
+-                    style = MaterialTheme.typography.caption.copy(fontWeight = FontWeight.Medium),
+-                    modifier = Modifier.padding(top = 5.dp))
+-
+-                Text(
+-                    text = description,
+-                    color = MaterialTheme.colors.onSurface,
+-                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Normal),
+-                    modifier = Modifier.padding(vertical = 4.dp))
+-
+-            }
+-        }
+-
+     }
+ }
+ 
+@@ -581,7 +164,7 @@
+                             idCreator = "1o3jjt90qin3f9n23",
+                             description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+                             address = "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+-                            datePosted = java.util.Date(),
++                            datePosted = Date(),
+                         )),
+                     icon = R.drawable.ic_lane_closure_marker,
+                     state = MappingState(
+@@ -618,7 +201,7 @@
+                             latitude = 14.123,
+                             longitude = 121.123,
+                             address = "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+-                            datePosted = java.util.Date()),
++                            datePosted = Date()),
+                         selectedHazardousMarker = HazardousLaneMarker(
+                             id = "1",
+                             label = "Crash",
+@@ -627,7 +210,7 @@
+                             idCreator = "1o3jjt90qin3f9n23",
+                             description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+                             address = "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
+-                            datePosted = java.util.Date(),
++                            datePosted = Date(),
+                         )),
+                     icon = R.drawable.ic_lane_closure_marker,
+                     state = MappingState(userId = "1o3jjt90qin3f39n23"),
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/IncidentDescriptionEditMode.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/IncidentDescriptionEditMode.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/IncidentDescriptionEditMode.kt
+new file mode 100644
+--- /dev/null	(date 1700668779251)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/IncidentDescriptionEditMode.kt	(date 1700668779251)
+@@ -0,0 +1,123 @@
++package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.incident_description
++
++import androidx.compose.foundation.ExperimentalFoundationApi
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.height
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.pager.rememberPagerState
++import androidx.compose.material.Divider
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.LaunchedEffect
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.mutableStateOf
++import androidx.compose.runtime.remember
++import androidx.compose.runtime.saveable.rememberSaveable
++import androidx.compose.runtime.setValue
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.text.input.TextFieldValue
++import androidx.compose.ui.unit.dp
++import com.myapp.cyclistance.feature_mapping.presentation.common.AdditionalMessage
++import com.myapp.cyclistance.feature_mapping.presentation.common.ButtonNavigation
++import com.myapp.cyclistance.theme.Black500
++
++@OptIn(ExperimentalFoundationApi::class)
++@Composable
++fun IncidentDescriptionEditMode(
++    modifier: Modifier = Modifier,
++    markerLabel: String,
++    markerDescription: String,
++    onClickCancelButton: () -> Unit,
++    onClickConfirmButton: (description: String, label: String) -> Unit) {
++
++    val pagerState = rememberPagerState(pageCount = {
++        6
++    })
++
++    var description by rememberSaveable(stateSaver = TextFieldValue.Saver) {
++        mutableStateOf(TextFieldValue(""))
++    }
++
++    val descriptionChanges = remember(description) {
++        description.text != markerDescription
++    }
++    val labelChanges = remember(pagerState.currentPage) {
++        incidentMarkers[pagerState.currentPage].first != markerLabel
++    }
++
++    val inputChanges = remember(descriptionChanges, labelChanges) {
++        descriptionChanges || labelChanges
++    }
++
++
++    LaunchedEffect(key1 = markerDescription) {
++        description = TextFieldValue(markerDescription)
++    }
++
++
++    LaunchedEffect(key1 = true) {
++        pagerState.scrollToPage(page = incidentMarkers.indexOfFirst { it.first == markerLabel })
++    }
++
++    Column(
++        modifier = modifier.fillMaxWidth(),
++        verticalArrangement = Arrangement.Center,
++        horizontalAlignment = Alignment.CenterHorizontally) {
++
++        Text(
++            text = "Edit Hazardous Marker",
++            color = MaterialTheme.colors.onSurface,
++            style = MaterialTheme.typography.subtitle1,
++            modifier = Modifier.padding(top = 12.dp, bottom = 4.dp)
++        )
++
++        Divider(
++            modifier = Modifier
++                .fillMaxWidth(0.91f)
++                .padding(top = 12.dp, bottom = 4.dp),
++            thickness = 1.2.dp,
++            color = Black500,
++        )
++
++        ChooseMarkerSection(
++            pagerState = pagerState
++        )
++
++        HazardousIncidentIndicator(
++            pagerState = pagerState
++        )
++
++
++        AdditionalMessage(
++            text = "Description",
++            placeholderText = null,
++            modifier = Modifier
++                .fillMaxWidth(0.9f)
++                .height(120.dp),
++            message = description,
++            enabled = true,
++            onChangeValueMessage = {
++                description = it
++            })
++
++        ButtonNavigation(
++            modifier = Modifier
++                .fillMaxWidth(0.9f)
++                .padding(vertical = 16.dp),
++            positiveButtonEnabled = inputChanges,
++            onClickNegativeButton = onClickCancelButton,
++            onClickPositiveButton = {
++                onClickConfirmButton(
++                    description.text,
++                    incidentMarkers[pagerState.currentPage].first)
++            },
++        )
++
++
++    }
++
++}
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/IncidentDescriptionSection.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/IncidentDescriptionSection.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/IncidentDescriptionSection.kt
+new file mode 100644
+--- /dev/null	(date 1700669070851)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/IncidentDescriptionSection.kt	(date 1700669070851)
+@@ -0,0 +1,125 @@
++package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.incident_description
++
++import androidx.annotation.DrawableRes
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Box
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.fillMaxWidth
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.layout.wrapContentSize
++import androidx.compose.foundation.shape.CircleShape
++import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.material.Button
++import androidx.compose.material.ButtonDefaults
++import androidx.compose.material.Icon
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Text
++import androidx.compose.material.icons.Icons
++import androidx.compose.material.icons.filled.MoreHoriz
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.draw.shadow
++import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.res.painterResource
++import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.unit.dp
++import com.myapp.cyclistance.core.presentation.dialogs.common.DropDownMenu
++import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
++import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
++import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
++import com.myapp.cyclistance.navigation.IsDarkTheme
++
++@Composable
++fun IncidentDescriptionSection(
++    onDismissBottomSheet: () -> Unit,
++    @DrawableRes icon: Int,
++    uiState: MappingUiState,
++    state: MappingState,
++    marker: HazardousLaneMarker,
++    onClickEdit: () -> Unit,
++    onClickDelete: () -> Unit) {
++
++
++    val isDarkTheme = IsDarkTheme.current
++
++    Column(
++        modifier = Modifier.fillMaxWidth(),
++        verticalArrangement = Arrangement.Center,
++        horizontalAlignment = Alignment.CenterHorizontally) {
++
++
++        Box(
++            contentAlignment = Alignment.Center,
++            modifier = Modifier
++                .fillMaxWidth()
++        ) {
++
++
++            if (state.userId == marker.idCreator) {
++                DropDownMenu(
++                    iconImageVector = Icons.Default.MoreHoriz,
++                    modifier = Modifier
++                        .wrapContentSize()
++                        .align(Alignment.BottomEnd),
++                    onClickEdit = onClickEdit,
++                    onClickDelete = onClickDelete
++                )
++            }
++
++
++
++            Column(
++                horizontalAlignment = Alignment.CenterHorizontally,
++                verticalArrangement = Arrangement.Center,
++                modifier = Modifier.padding(vertical = 8.dp, horizontal = 4.dp)
++            ) {
++
++                Icon(
++                    modifier = Modifier
++                        .padding(vertical = 8.dp)
++                        .shadow(
++                            if (isDarkTheme) 0.dp else 8.dp,
++                            shape = CircleShape),
++                    painter = painterResource(id = icon),
++                    contentDescription = "Marker Icon Description",
++                    tint = Color.Unspecified)
++
++                Text(
++                    text = uiState.selectedHazardousMarker!!.label,
++                    color = MaterialTheme.colors.onSurface,
++                    style = MaterialTheme.typography.subtitle1.copy(fontWeight = FontWeight.Medium),
++                    modifier = Modifier
++                        .padding(vertical = 2.dp)
++                )
++
++            }
++
++        }
++
++        Column(
++            verticalArrangement = Arrangement.Center,
++            horizontalAlignment = Alignment.CenterHorizontally,
++            modifier = Modifier
++                .padding(horizontal = 12.dp)
++                .padding(bottom = 12.dp)) {
++
++            ReportItemsSection(
++                marker = marker,
++                modifier = Modifier.fillMaxWidth()
++            )
++
++            Button(
++                shape = RoundedCornerShape(12.dp),
++                onClick = onDismissBottomSheet,
++                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary)) {
++                Text(
++                    text = "Okay",
++                    color = MaterialTheme.colors.onPrimary,
++                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp),
++                    style = MaterialTheme.typography.button)
++            }
++        }
++
++    }
++}
+Index: .idea/deploymentTargetDropDown.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<project version=\"4\">\n  <component name=\"deploymentTargetDropDown\">\n    <targetSelectedWithDropDown>\n      <Target>\n        <type value=\"QUICK_BOOT_TARGET\" />\n        <deviceKey>\n          <Key>\n            <type value=\"VIRTUAL_DEVICE_PATH\" />\n            <value value=\"$PROJECT_DIR$/../../.android/avd/Pixel_5_API_27.avd\" />\n          </Key>\n        </deviceKey>\n      </Target>\n    </targetSelectedWithDropDown>\n    <timeTargetWasSelectedWithDropDown value=\"2023-11-18T13:53:43.795934864Z\" />\n  </component>\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetDropDown.xml b/.idea/deploymentTargetDropDown.xml
+--- a/.idea/deploymentTargetDropDown.xml	(revision a030997938f61522e027f3227589cada04599c37)
++++ b/.idea/deploymentTargetDropDown.xml	(date 1700614664336)
+@@ -12,6 +12,6 @@
+         </deviceKey>
+       </Target>
+     </targetSelectedWithDropDown>
+-    <timeTargetWasSelectedWithDropDown value="2023-11-18T13:53:43.795934864Z" />
++    <timeTargetWasSelectedWithDropDown value="2023-11-22T00:56:41.154591636Z" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/report_incident/IncidentItem.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/report_incident/IncidentItem.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/report_incident/IncidentItem.kt
+new file mode 100644
+--- /dev/null	(date 1700669844431)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/report_incident/IncidentItem.kt	(date 1700669844431)
+@@ -0,0 +1,69 @@
++package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.report_incident
++
++import androidx.annotation.DrawableRes
++import androidx.compose.foundation.Image
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.layout.size
++import androidx.compose.foundation.shape.CircleShape
++import androidx.compose.material.ExperimentalMaterialApi
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Surface
++import androidx.compose.material.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.runtime.derivedStateOf
++import androidx.compose.runtime.getValue
++import androidx.compose.runtime.remember
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.res.painterResource
++import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.text.style.TextAlign
++import androidx.compose.ui.text.style.TextOverflow
++import androidx.compose.ui.unit.dp
++import com.myapp.cyclistance.theme.Black440
++import com.myapp.cyclistance.theme.Orange800
++
++@OptIn(ExperimentalMaterialApi::class)
++@Composable
++fun IncidentItem(
++    modifier: Modifier,
++    @DrawableRes icon: Int,
++    incidentLabel: String,
++    buttonColor: Color = Orange800,
++    selectedLabel: String,
++    onClick: (label: String) -> Unit
++) {
++
++    val isSelected by remember(incidentLabel, selectedLabel) {
++        derivedStateOf { incidentLabel == selectedLabel }
++    }
++
++    Column(
++        modifier = modifier,
++        verticalArrangement = Arrangement.spacedBy(4.dp, alignment = Alignment.CenterVertically),
++        horizontalAlignment = Alignment.CenterHorizontally) {
++
++        Surface(
++            shape = CircleShape,
++            modifier = Modifier.size(54.dp),
++            color = buttonColor,
++            onClick = { onClick(incidentLabel) }) {
++            Image(
++                painter = painterResource(id = icon),
++                contentDescription = "$incidentLabel Icon",
++                modifier = Modifier.padding(all = 12.dp)
++            )
++        }
++
++        Text(
++            text = incidentLabel,
++            color = if (isSelected) MaterialTheme.colors.onSurface else Black440,
++            style = MaterialTheme.typography.caption.copy(fontWeight = FontWeight.SemiBold),
++            overflow = TextOverflow.Clip, textAlign = TextAlign.Center,
++        )
++
++    }
++}
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/report_incident/ViewImageButton.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/report_incident/ViewImageButton.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/report_incident/ViewImageButton.kt
+new file mode 100644
+--- /dev/null	(date 1700702815050)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/report_incident/ViewImageButton.kt	(date 1700702815050)
+@@ -0,0 +1,47 @@
++package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.report_incident
++
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.material.Button
++import androidx.compose.material.ButtonDefaults
++import androidx.compose.material.Icon
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.res.painterResource
++import androidx.compose.ui.tooling.preview.Preview
++import androidx.compose.ui.unit.dp
++import com.myapp.cyclistance.R
++import com.myapp.cyclistance.theme.CyclistanceTheme
++
++@Composable
++fun ViewImageButton(modifier: Modifier = Modifier) {
++    Button(
++        modifier = modifier,
++        onClick = {
++
++        },
++        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.primary),
++        shape = RoundedCornerShape(8.dp)) {
++
++        Icon(
++            painter = painterResource(id = R.drawable.ic_view_image),
++            contentDescription = "View Image",
++            modifier = Modifier.padding(end = 4.dp)
++        )
++
++        Text(
++            text = "View Image",
++            color = MaterialTheme.colors.onPrimary
++        )
++    }
++}
++
++@Preview
++@Composable
++fun PreviewViewImageButton() {
++    CyclistanceTheme(darkTheme = true) {
++        ViewImageButton()
++    }
++}
+\ No newline at end of file
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/HazardousStartingInfo.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/HazardousStartingInfo.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/HazardousStartingInfo.kt
+new file mode 100644
+--- /dev/null	(date 1700669002474)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/incident_description/HazardousStartingInfo.kt	(date 1700669002474)
+@@ -0,0 +1,74 @@
++package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.incident_description
++
++import androidx.compose.foundation.Image
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.material.Button
++import androidx.compose.material.ButtonDefaults
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Surface
++import androidx.compose.material.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.res.painterResource
++import androidx.compose.ui.unit.dp
++import com.myapp.cyclistance.R
++import com.myapp.cyclistance.navigation.IsDarkTheme
++
++@Composable
++fun HazardousStartingInfo(
++
++    modifier: Modifier = Modifier,
++    onClickGotItButton: () -> Unit) {
++
++    val isDarkTheme = IsDarkTheme.current
++
++
++    Surface(modifier = modifier) {
++
++        Column(
++            verticalArrangement = Arrangement.Center,
++            horizontalAlignment = Alignment.CenterHorizontally,
++            modifier = Modifier.padding(all = 8.dp)) {
++
++            Image(
++                painter = painterResource(id = if (isDarkTheme) R.drawable.ic_marker_info_dark else R.drawable.ic_marker_info_light),
++                contentDescription = "Image",
++                modifier = Modifier.padding(vertical = 12.dp))
++
++            Text(
++                text = "Hazardous Marker Visibility",
++                color = MaterialTheme.colors.onSurface,
++                style = MaterialTheme.typography.subtitle1,
++                modifier = Modifier.padding(top = 8.dp, bottom = 4.dp))
++
++            Text(
++                text = "Your Hazardous Lane Marker\n" +
++                       "will only be visible for a week",
++                color = MaterialTheme.colors.onSurface,
++                style = MaterialTheme.typography.subtitle2,
++                modifier = Modifier.padding(vertical = 4.dp))
++
++            Button(
++                onClick = onClickGotItButton,
++                shape = RoundedCornerShape(12.dp),
++                colors = ButtonDefaults.buttonColors(
++                    backgroundColor = MaterialTheme.colors.primary,
++                    contentColor = MaterialTheme.colors.onPrimary),
++                modifier = Modifier.padding(vertical = 12.dp)) {
++
++                Text(
++                    text = "Got it!",
++                    color = MaterialTheme.colors.onPrimary,
++                    style = MaterialTheme.typography.button,
++                    modifier = Modifier.padding(vertical = 4.dp, horizontal = 12.dp))
++            }
++
++        }
++
++
++    }
++}
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/MapTypeBottomSheet.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/MapTypeBottomSheet.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/map_type/BottomSheetMapType.kt
+rename from app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/MapTypeBottomSheet.kt
+rename to app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/map_type/BottomSheetMapType.kt
+--- a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/MapTypeBottomSheet.kt	(revision a030997938f61522e027f3227589cada04599c37)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/map_type/BottomSheetMapType.kt	(date 1700668625267)
+@@ -1,10 +1,6 @@
+-package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet
++package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.map_type
+ 
+-import androidx.annotation.DrawableRes
+-import androidx.compose.foundation.Image
+ import androidx.compose.foundation.background
+-import androidx.compose.foundation.border
+-import androidx.compose.foundation.clickable
+ import androidx.compose.foundation.layout.Arrangement
+ import androidx.compose.foundation.layout.Box
+ import androidx.compose.foundation.layout.Column
+@@ -12,7 +8,6 @@
+ import androidx.compose.foundation.layout.fillMaxSize
+ import androidx.compose.foundation.layout.fillMaxWidth
+ import androidx.compose.foundation.layout.padding
+-import androidx.compose.foundation.layout.size
+ import androidx.compose.foundation.shape.RoundedCornerShape
+ import androidx.compose.material.BottomSheetScaffoldState
+ import androidx.compose.material.BottomSheetValue
+@@ -30,19 +25,15 @@
+ import androidx.compose.runtime.rememberCoroutineScope
+ import androidx.compose.ui.Alignment
+ import androidx.compose.ui.Modifier
+-import androidx.compose.ui.draw.clip
+ import androidx.compose.ui.draw.shadow
+ import androidx.compose.ui.graphics.Color
+ import androidx.compose.ui.res.painterResource
+-import androidx.compose.ui.text.font.FontWeight
+-import androidx.compose.ui.text.style.TextAlign
+ import androidx.compose.ui.tooling.preview.Preview
+ import androidx.compose.ui.unit.dp
+ import com.myapp.cyclistance.R
+ import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
+ import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MapType
+ import com.myapp.cyclistance.navigation.IsDarkTheme
+-import com.myapp.cyclistance.theme.Black500
+ import com.myapp.cyclistance.theme.CyclistanceTheme
+ import kotlinx.coroutines.launch
+ 
+@@ -146,43 +137,7 @@
+ 
+ 
+ 
+-@Composable
+-private fun MapTypeItem(
+-    modifier: Modifier = Modifier,
+-    isSelected: Boolean,
+-    @DrawableRes imageId: Int,
+-    mapTypeDescription: String,
+-    onClick: () -> Unit) {
+-
+-
+-    Column(
+-        modifier = modifier.padding(all = 8.dp),
+-        verticalArrangement = Arrangement.spacedBy(4.dp, alignment = Alignment.CenterVertically),
+-        horizontalAlignment = Alignment.CenterHorizontally) {
+-
+-
+-        Image(
+-            painter = painterResource(id = imageId),
+-            contentDescription = "Map Type Image",
+-            modifier = Modifier
+-                .size(88.dp)
+-                .clip(shape = RoundedCornerShape(16.dp))
+-                .border(
+-                    2.dp,
+-                    if (isSelected) MaterialTheme.colors.primary else Color.Transparent,
+-                    shape = RoundedCornerShape(16.dp))
+-                .clickable { onClick() })
+ 
+-
+-
+-        Text(
+-            text = mapTypeDescription,
+-            color = if (isSelected) MaterialTheme.colors.primary else Black500,
+-            style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Normal),
+-            textAlign = TextAlign.Center
+-        )
+-    }
+-}
+ 
+ 
+ @Preview
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/MappingBottomSheet.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet\n\nimport androidx.compose.foundation.layout.PaddingValues\nimport androidx.compose.material.*\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.remember\nimport androidx.compose.runtime.rememberCoroutineScope\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.text.input.TextFieldValue\nimport androidx.compose.ui.unit.dp\nimport com.myapp.cyclistance.core.utils.constants.MappingConstants\nimport com.myapp.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm\nimport com.myapp.cyclistance.core.utils.formatter.IconFormatter.toHazardousLaneIconMarker\nimport com.myapp.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType\nimport kotlinx.coroutines.launch\n\n@OptIn(ExperimentalMaterialApi::class)\n@Composable\nfun MappingBottomSheet(\n    modifier: Modifier = Modifier,\n    state: MappingState,\n    uiState: MappingUiState,\n    incidentDescription: TextFieldValue,\n    bottomSheetScaffoldState: BottomSheetScaffoldState,\n    markerPostedCount: Int,\n    event: (MappingUiEvent) -> Unit = {},\n    content: @Composable (PaddingValues) -> Unit,\n) {\n\n\n    val scope = rememberCoroutineScope()\n\n    val sheetGesturesEnabled = remember(uiState.bottomSheetType) {\n        uiState.bottomSheetType != BottomSheetType.SearchAssistance.type &&\n        uiState.bottomSheetType != BottomSheetType.DestinationReached.type &&\n        uiState.bottomSheetType != BottomSheetType.RescuerArrived.type &&\n        uiState.bottomSheetType != BottomSheetType.IncidentDescription.type\n    }\n\n    MappingBottomSheet(\n        bottomSheetScaffoldState = bottomSheetScaffoldState,\n        sheetGesturesEnabled = sheetGesturesEnabled,\n        sheetPeekHeight = if(uiState.bottomSheetType == BottomSheetType.OnGoingRescue.type) 75.dp else 0.dp,\n        sheetContent = {\n\n            when (uiState.bottomSheetType) {\n\n                BottomSheetType.RescuerArrived.type -> {\n\n                    BottomSheetRescueArrived(\n                        bottomSheetScaffoldState = bottomSheetScaffoldState,\n                        modifier = modifier,\n                        onClickOkButton = {\n                            event(MappingUiEvent.ConfirmedDestinationArrived)\n                        })\n\n                }\n\n                BottomSheetType.DestinationReached.type -> {\n\n                    BottomSheetReachedDestination(\n                        bottomSheetScaffoldState = bottomSheetScaffoldState,\n                        modifier = modifier,\n                        onClickOkButton = {\n                            event(MappingUiEvent.ConfirmedDestinationArrived)\n                        })\n\n                }\n\n                BottomSheetType.ReportIncident.type -> {\n\n                    BottomSheetReportIncident(\n                        bottomSheetScaffoldState = bottomSheetScaffoldState,\n                        modifier = modifier,\n                        selectedLabel = uiState.selectedIncidentLabel,\n                        onClick = {\n                            event(MappingUiEvent.OnChangeIncidentLabel(it))\n                        }, onChangeDescription = {\n                            event(MappingUiEvent.OnChangeIncidentDescription(it))\n                        }, onClickConfirm = {\n                            event(MappingUiEvent.OnReportIncident(uiState.selectedIncidentLabel))\n                            scope.launch {\n                                bottomSheetScaffoldState.bottomSheetState.collapse()\n                            }\n                        }, incidentDescription = incidentDescription,\n                        markerPostedCount = markerPostedCount)\n\n                }\n\n                BottomSheetType.SearchAssistance.type -> {\n\n                    BottomSheetSearchingAssistance(\n                        modifier = modifier,\n                        onClickCancelSearchButton = {\n                            event(MappingUiEvent.CancelSearching)\n                        },\n                    )\n                }\n\n                BottomSheetType.OnGoingRescue.type -> {\n\n                    val shouldShowArrivedLocation = remember(state.rescueDistance){\n                        state.rescueDistance != null && state.rescueDistance <= MappingConstants.DISTANCE_MIN\n                    }\n\n                    BottomSheetOnGoingRescue(\n                        modifier = modifier,\n                        shouldShowArrivedLocation = shouldShowArrivedLocation,\n                        onClickCallButton = { event(MappingUiEvent.EmergencyCallDialog(visibility = true)) },\n                        onClickChatButton = { event(MappingUiEvent.ChatRescueTransaction) },\n                        onClickCancelButton = { event(MappingUiEvent.CancelRescueTransaction) },\n                        onClickArrivedLocation = { event(MappingUiEvent.ArrivedAtLocation) },\n                        role = state.user.transaction?.role ?: \"\",\n                        onGoingRescueModel = OnGoingRescueModel(\n                            estimatedTime = state.rescueETA,\n                            estimatedDistance = state.rescueDistance?.formatToDistanceKm(),\n                            currentSpeed = String.format(\n                                \"%.2f km/h\",\n                                state.speedometerState.currentSpeedKph),\n                            ridingDistance = state.speedometerState.travelledDistance.formatToDistanceKm(),\n                            maxSpeed = String.format(\"%.2f km/h\", state.speedometerState.topSpeed)))\n\n                }\n\n                BottomSheetType.MapType.type -> {\n\n                    MapTypeBottomSheet(\n                        bottomSheetScaffoldState = bottomSheetScaffoldState,\n                        modifier = modifier,\n                        state = state,\n                        onToggleDefaultMapType = { event(MappingUiEvent.ToggleDefaultMapType) },\n                        onToggleTrafficMapType = { event(MappingUiEvent.ToggleTrafficMapType) },\n                        onToggleHazardousMapType = { event(MappingUiEvent.ToggleHazardousMapType) })\n\n\n                }\n\n                BottomSheetType.IncidentDescription.type -> {\n                    BottomSheetIncidentDescription(\n                        modifier = modifier,\n                        onDismissBottomSheet = { event(MappingUiEvent.DismissIncidentDescriptionBottomSheet) },\n                        uiState = uiState,\n                        state = state,\n                        icon = uiState.selectedHazardousMarker!!.label.toHazardousLaneIconMarker(),\n                        onClickEdit = { event(MappingUiEvent.OnClickEditIncidentDescription(uiState.selectedHazardousMarker)) },\n                        onClickDelete = { event(MappingUiEvent.OnClickDeleteIncident) },\n                        onClickCancelButton = { event(MappingUiEvent.CancelEditIncidentDescription) },\n                        onClickConfirmButton = { description, label ->\n                            event(\n                                MappingUiEvent.UpdateIncidentDescription(\n                                    label = label,\n                                    description = description))\n                        },\n                        onClickGotItButton = { event(MappingUiEvent.OnClickHazardousInfoGotIt) },\n                    )\n\n                }\n\n\n            }\n        }, content = content)\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/MappingBottomSheet.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/MappingBottomSheet.kt
+--- a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/MappingBottomSheet.kt	(revision a030997938f61522e027f3227589cada04599c37)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/MappingBottomSheet.kt	(date 1700669795184)
+@@ -12,6 +12,9 @@
+ import com.myapp.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
+ import com.myapp.cyclistance.core.utils.formatter.IconFormatter.toHazardousLaneIconMarker
+ import com.myapp.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
++import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.incident_description.BottomSheetIncidentDescription
++import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.map_type.MapTypeBottomSheet
++import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.report_incident.BottomSheetReportIncident
+ import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
+ import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
+ import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
+@@ -77,7 +80,7 @@
+                         bottomSheetScaffoldState = bottomSheetScaffoldState,
+                         modifier = modifier,
+                         selectedLabel = uiState.selectedIncidentLabel,
+-                        onClick = {
++                        onNewLabel = {
+                             event(MappingUiEvent.OnChangeIncidentLabel(it))
+                         }, onChangeDescription = {
+                             event(MappingUiEvent.OnChangeIncidentDescription(it))
+Index: app/src/main/res/drawable/ic_view_image.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/res/drawable/ic_view_image.xml b/app/src/main/res/drawable/ic_view_image.xml
+new file mode 100644
+--- /dev/null	(date 1700670298964)
++++ b/app/src/main/res/drawable/ic_view_image.xml	(date 1700670298964)
+@@ -0,0 +1,9 @@
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="21dp"
++    android:height="21dp"
++    android:viewportWidth="21"
++    android:viewportHeight="21">
++  <path
++      android:pathData="M4.913,17.5C4.511,17.5 4.175,17.365 3.905,17.096C3.635,16.826 3.5,16.489 3.5,16.087V4.913C3.5,4.511 3.635,4.175 3.905,3.905C4.175,3.635 4.511,3.5 4.913,3.5H16.087C16.489,3.5 16.825,3.635 17.095,3.905C17.365,4.175 17.5,4.511 17.5,4.913V16.087C17.5,16.489 17.365,16.825 17.096,17.095C16.826,17.365 16.489,17.5 16.087,17.5H4.913ZM4.913,16.625H16.087C16.221,16.625 16.344,16.569 16.457,16.457C16.569,16.344 16.625,16.221 16.625,16.087V4.913C16.625,4.779 16.569,4.656 16.457,4.543C16.344,4.431 16.221,4.375 16.087,4.375H4.913C4.779,4.375 4.656,4.431 4.543,4.543C4.431,4.656 4.375,4.779 4.375,4.913V16.087C4.375,16.221 4.431,16.344 4.543,16.457C4.656,16.569 4.779,16.625 4.913,16.625ZM6.563,14.438H14.572L12.099,11.139L9.811,14.033L8.279,12.183L6.563,14.438Z"
++      android:fillColor="#313131"/>
++</vector>
+Index: app/src/main/java/com/myapp/cyclistance/feature_user_profile/presentation/edit_profile/components/EditProfileBottomSheets.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.myapp.cyclistance.feature_user_profile.presentation.edit_profile.components\n\nimport androidx.annotation.DrawableRes\nimport androidx.compose.foundation.layout.Arrangement\nimport androidx.compose.foundation.layout.Column\nimport androidx.compose.foundation.layout.Row\nimport androidx.compose.foundation.layout.fillMaxWidth\nimport androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.shape.RoundedCornerShape\nimport androidx.compose.material.Button\nimport androidx.compose.material.ButtonDefaults\nimport androidx.compose.material.Card\nimport androidx.compose.material.ExperimentalMaterialApi\nimport androidx.compose.material.Icon\nimport androidx.compose.material.MaterialTheme\nimport androidx.compose.material.ModalBottomSheetDefaults\nimport androidx.compose.material.ModalBottomSheetLayout\nimport androidx.compose.material.ModalBottomSheetState\nimport androidx.compose.material.ModalBottomSheetValue\nimport androidx.compose.material.Text\nimport androidx.compose.material.TextButton\nimport androidx.compose.material.rememberModalBottomSheetState\nimport androidx.compose.runtime.Composable\nimport androidx.compose.runtime.rememberCoroutineScope\nimport androidx.compose.ui.Alignment\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.res.painterResource\nimport androidx.compose.ui.tooling.preview.Preview\nimport androidx.compose.ui.unit.dp\nimport com.myapp.cyclistance.R\nimport kotlinx.coroutines.launch\n\n@ExperimentalMaterialApi\n@Composable\nfun SelectImageBottomSheet(\n    isLoading: Boolean,\n    onClickGalleryButton: () -> Unit,\n    onClickCameraButton: () -> Unit,\n    bottomSheetScaffoldState: ModalBottomSheetState,\n    content: @Composable () -> Unit) {\n\n\n    ModalBottomSheetLayout(\n        sheetState = bottomSheetScaffoldState,\n        sheetContent = {\n            Card(\n                modifier = Modifier.fillMaxWidth()) {\n\n\n                Column(\n                    modifier = Modifier\n                        .padding(top = 4.dp, bottom = 4.dp)) {\n\n                    BottomSheetButtonItem(\n                        iconId = R.drawable.ic_gallery,\n                        buttonText = \"Open Gallery\",\n                        onClick = onClickGalleryButton,\n                        enabled = !isLoading)\n\n                    BottomSheetButtonItem(\n                        iconId = R.drawable.ic_camera,\n                        buttonText = \"Take Photo\",\n                        onClick = onClickCameraButton,\n                        enabled = !isLoading)\n                }\n\n            }\n        },\n        sheetShape = RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp),\n        sheetElevation = 12.dp,\n        sheetBackgroundColor = MaterialTheme.colors.surface,\n        sheetContentColor = MaterialTheme.colors.onSurface,\n        scrimColor = ModalBottomSheetDefaults.scrimColor.copy(alpha = 0.10f),\n        content = content\n    )\n\n\n}\n\n\n@Composable\nfun BottomSheetButtonItem(\n    @DrawableRes iconId: Int,\n    buttonText: String,\n    onClick: () -> Unit,\n    enabled: Boolean) {\n\n    TextButton(\n        enabled = enabled,\n        onClick = onClick,\n        modifier = Modifier.fillMaxWidth(),\n        elevation = ButtonDefaults.elevation(\n            defaultElevation = 0.dp,\n            pressedElevation = 0.dp)) {\n\n        Row(\n            horizontalArrangement = Arrangement.spacedBy(4.dp, alignment = Alignment.Start),\n            verticalAlignment = Alignment.CenterVertically,\n            modifier = Modifier\n                .weight(0.3f)\n                .padding(start = 8.5.dp)) {\n            Icon(\n                painter = painterResource(id = iconId),\n                contentDescription = \"$buttonText Icon\",\n                tint = MaterialTheme.colors.onSurface,\n                modifier = Modifier.padding(start = 3.dp, end = 12.dp))\n\n            Text(\n                text = buttonText,\n                color = MaterialTheme.colors.onSurface,\n                style = MaterialTheme.typography.button,\n\n                )\n        }\n    }\n\n}\n\n@ExperimentalMaterialApi\n@Preview(showSystemUi = true, showBackground = true)\n@Composable\nfun BottomSheetPreview() {\n    val bottomSheetScaffoldState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)\n\n    val scope = rememberCoroutineScope()\n\n    SelectImageBottomSheet(\n        onClickGalleryButton = {},\n        onClickCameraButton = {},\n        bottomSheetScaffoldState = bottomSheetScaffoldState,\n        isLoading = false) {\n        Button(onClick = {\n            scope.launch {\n\n                if (bottomSheetScaffoldState.isVisible) {\n                    bottomSheetScaffoldState.hide()\n                } else {\n                    bottomSheetScaffoldState.show()\n                }\n            }\n        }) {\n            Text(text = \"Expand/Collapse Bottom Sheet\")\n        }\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_user_profile/presentation/edit_profile/components/EditProfileBottomSheets.kt b/app/src/main/java/com/myapp/cyclistance/feature_user_profile/presentation/edit_profile/components/EditProfileBottomSheets.kt
+--- a/app/src/main/java/com/myapp/cyclistance/feature_user_profile/presentation/edit_profile/components/EditProfileBottomSheets.kt	(revision a030997938f61522e027f3227589cada04599c37)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_user_profile/presentation/edit_profile/components/EditProfileBottomSheets.kt	(date 1700667514801)
+@@ -102,7 +102,7 @@
+             Icon(
+                 painter = painterResource(id = iconId),
+                 contentDescription = "$buttonText Icon",
+-                tint = MaterialTheme.colors.onSurface,
++                tint = MaterialTheme.colors.primary,
+                 modifier = Modifier.padding(start = 3.dp, end = 12.dp))
+ 
+             Text(
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingScreen.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen\n\nimport android.Manifest\nimport android.annotation.SuppressLint\nimport android.app.Activity.RESULT_OK\nimport android.os.Build\nimport android.view.WindowManager\nimport android.widget.Toast\nimport androidx.activity.compose.BackHandler\nimport androidx.activity.compose.rememberLauncherForActivityResult\nimport androidx.activity.result.contract.ActivityResultContracts\nimport androidx.compose.animation.*\nimport androidx.compose.foundation.layout.*\nimport androidx.compose.material.*\nimport androidx.compose.runtime.*\nimport androidx.compose.runtime.saveable.rememberSaveable\nimport androidx.compose.ui.Modifier\nimport androidx.compose.ui.platform.LocalContext\nimport androidx.compose.ui.text.input.TextFieldValue\nimport androidx.hilt.navigation.compose.hiltViewModel\nimport androidx.lifecycle.compose.collectAsStateWithLifecycle\nimport androidx.navigation.NavController\nimport com.google.accompanist.permissions.ExperimentalPermissionsApi\nimport com.google.accompanist.permissions.isGranted\nimport com.google.accompanist.permissions.rememberMultiplePermissionsState\nimport com.google.accompanist.permissions.rememberPermissionState\nimport com.mapbox.geojson.FeatureCollection\nimport com.mapbox.geojson.Point\nimport com.mapbox.mapboxsdk.geometry.LatLng\nimport com.mapbox.mapboxsdk.location.LocationComponentActivationOptions\nimport com.mapbox.mapboxsdk.location.modes.CameraMode\nimport com.mapbox.mapboxsdk.location.modes.RenderMode\nimport com.mapbox.mapboxsdk.maps.MapboxMap\nimport com.mapbox.mapboxsdk.style.sources.GeoJsonSource\nimport com.myapp.cyclistance.MainViewModel\nimport com.myapp.cyclistance.R\nimport com.myapp.cyclistance.core.domain.model.AlertDialogState\nimport com.myapp.cyclistance.core.utils.app.AppUtils\nimport com.myapp.cyclistance.core.utils.connection.ConnectionStatus.checkLocationSetting\nimport com.myapp.cyclistance.core.utils.connection.ConnectionStatus.hasGPSConnection\nimport com.myapp.cyclistance.core.utils.connection.ConnectionStatus.hasInternetConnection\nimport com.myapp.cyclistance.core.utils.constants.MappingConstants\nimport com.myapp.cyclistance.core.utils.constants.MappingConstants.ACTION_START_FOREGROUND\nimport com.myapp.cyclistance.core.utils.constants.MappingConstants.ACTION_STOP_FOREGROUND\nimport com.myapp.cyclistance.core.utils.constants.MappingConstants.DEFAULT_ACTION\nimport com.myapp.cyclistance.core.utils.constants.MappingConstants.DEFAULT_CAMERA_ANIMATION_DURATION\nimport com.myapp.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LATITUDE\nimport com.myapp.cyclistance.core.utils.constants.MappingConstants.DEFAULT_LONGITUDE\nimport com.myapp.cyclistance.core.utils.constants.MappingConstants.FAST_CAMERA_ANIMATION_DURATION\nimport com.myapp.cyclistance.core.utils.constants.MappingConstants.LOCATE_USER_ZOOM_LEVEL\nimport com.myapp.cyclistance.core.utils.constants.MappingConstants.ROUTE_SOURCE_ID\nimport com.myapp.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUEE_TYPE\nimport com.myapp.cyclistance.core.utils.constants.MappingConstants.SELECTION_RESCUER_TYPE\nimport com.myapp.cyclistance.core.utils.contexts.callPhoneNumber\nimport com.myapp.cyclistance.core.utils.contexts.shareLocation\nimport com.myapp.cyclistance.core.utils.contexts.startLocationServiceIntentAction\nimport com.myapp.cyclistance.core.utils.permissions.requestPermission\nimport com.myapp.cyclistance.feature_authentication.domain.util.findActivity\nimport com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.EmergencyCallViewModel\nimport com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallVmEvent\nimport com.myapp.cyclistance.feature_mapping.domain.model.Role\nimport com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker\nimport com.myapp.cyclistance.feature_mapping.domain.model.ui.camera.CameraState\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.*\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingEvent\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingVmEvent\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.BottomSheetType\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.animateCameraPosition\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.changeToNormalPuckIcon\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.openNavigationApp\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MappingUtils.showRoute\nimport com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.utils.MarkerSnippet\nimport com.myapp.cyclistance.navigation.Screens\nimport com.myapp.cyclistance.navigation.nav_graph.navigateScreen\nimport kotlinx.coroutines.flow.collectLatest\nimport kotlinx.coroutines.flow.distinctUntilChanged\nimport kotlinx.coroutines.launch\nimport timber.log.Timber\n\n\n@SuppressLint(\"MissingPermission\")\n@OptIn(ExperimentalMaterialApi::class)\n@ExperimentalPermissionsApi\n@Composable\nfun MappingScreen(\n    hasInternetConnection: Boolean,\n    mappingViewModel: MappingViewModel = hiltViewModel(),\n    emergencyViewModel: EmergencyCallViewModel = hiltViewModel(),\n    mainViewModel: MainViewModel = hiltViewModel(),\n    paddingValues: PaddingValues,\n    isNavigating: Boolean,\n    onChangeNavigatingState: (isNavigating: Boolean) -> Unit,\n    navController: NavController) {\n\n\n    val context = LocalContext.current\n    val state by mappingViewModel.state.collectAsStateWithLifecycle()\n    val mainState by mainViewModel.state.collectAsStateWithLifecycle()\n    val hazardousMarkers = mappingViewModel.hazardousLaneMarkers\n    val emergencyState by emergencyViewModel.state.collectAsStateWithLifecycle()\n    val coroutineScope = rememberCoroutineScope()\n\n    var uiState by rememberSaveable { mutableStateOf(MappingUiState()) }\n    var cameraState by rememberSaveable { mutableStateOf(CameraState()) }\n    val locationComponentOptions = MappingUtils.rememberLocationComponentOptions()\n    var mapboxMap by remember<MutableState<MapboxMap?>> {\n        mutableStateOf(null)\n    }\n\n    var incidentDescription by rememberSaveable(stateSaver = TextFieldValue.Saver) {\n        mutableStateOf(TextFieldValue())\n    }\n\n    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(\n        bottomSheetState = rememberBottomSheetState(\n            initialValue = BottomSheetValue.Collapsed,\n            confirmStateChange = { false })\n    )\n\n    val collapseBottomSheet = remember {\n        {\n            coroutineScope.launch {\n                if (bottomSheetScaffoldState.bottomSheetState.isExpanded) {\n                    uiState = uiState.copy(bottomSheetType = null).also {\n                        bottomSheetScaffoldState.bottomSheetState.collapse()\n                    }\n                }\n            }\n        }\n    }\n\n    val expandBottomSheet = remember {\n        {\n            coroutineScope.launch {\n                if (bottomSheetScaffoldState.bottomSheetState.isCollapsed) {\n                    bottomSheetScaffoldState.bottomSheetState.expand()\n                }\n            }\n        }\n    }\n\n    val settingResultRequest = rememberLauncherForActivityResult(\n        contract = ActivityResultContracts.StartIntentSenderForResult()\n    ) { activityResult ->\n        if (activityResult.resultCode == RESULT_OK) {\n            context.startLocationServiceIntentAction()\n            Timber.d(\"GPS Setting Request Accepted\")\n            return@rememberLauncherForActivityResult\n        }\n        Timber.d(\"GPS Setting Request Denied\")\n    }\n\n    val requestHelp = remember {\n        {\n            if (!context.hasGPSConnection()) {\n                context.checkLocationSetting(\n                    onDisabled = settingResultRequest::launch,\n                    onEnabled = {\n                        mappingViewModel.onEvent(\n                            event = MappingVmEvent.RequestHelp)\n\n                    })\n            } else {\n                mappingViewModel.onEvent(\n                    event = MappingVmEvent.RequestHelp)\n\n            }\n        }\n    }\n\n    val foregroundLocationPermissionsState = rememberMultiplePermissionsState(\n        permissions = listOf(\n            Manifest.permission.ACCESS_FINE_LOCATION,\n            Manifest.permission.ACCESS_COARSE_LOCATION))\n\n\n    val userLocationAvailable by remember(\n        foregroundLocationPermissionsState.allPermissionsGranted,\n        state.userLocation) {\n        derivedStateOf {\n            foregroundLocationPermissionsState.allPermissionsGranted.and(state.userLocation != null)\n        }\n    }\n\n\n    val pulsingEnabled by remember(\n        uiState.searchingAssistance,\n        foregroundLocationPermissionsState.allPermissionsGranted\n    ) {\n        derivedStateOf { uiState.searchingAssistance.and(foregroundLocationPermissionsState.allPermissionsGranted) }\n    }\n\n\n    val showUserLocation = remember(mapboxMap, isNavigating, userLocationAvailable) {\n        {\n            mapboxMap?.style?.let { style ->\n\n                val buildLocationComponentActivationOptions =\n                    LocationComponentActivationOptions.builder(context, style)\n                        .locationComponentOptions(\n                            locationComponentOptions\n                                .changeToNormalPuckIcon(context)\n                                .pulseEnabled(pulsingEnabled)\n                                .build())\n                        .build()\n                mapboxMap?.locationComponent?.apply {\n                    activateLocationComponent(buildLocationComponentActivationOptions)\n                    isLocationComponentEnabled = userLocationAvailable\n                    cameraMode = CameraMode.NONE\n                    renderMode = RenderMode.NORMAL\n                }\n            }\n            Unit\n        }\n    }\n\n\n    val locateUser =\n        remember(userLocationAvailable, mapboxMap) {\n            { zoomLevel: Double, latLng: LatLng, cameraAnimationDuration: Int ->\n\n                val mapboxLoaded =\n                    (mapboxMap?.locationComponent != null) && (mapboxMap?.style?.isFullyLoaded\n                                                               ?: false)\n                if (userLocationAvailable && mapboxLoaded) {\n                    showUserLocation()\n                    mapboxMap?.animateCameraPosition(\n                        latLng = latLng,\n                        zoomLevel = zoomLevel,\n                        cameraAnimationDuration = cameraAnimationDuration)\n                }\n            }\n        }\n\n\n    val onInitializeMapboxMap = remember {\n        { mbm: MapboxMap ->\n            if (mapboxMap == null) {\n                mapboxMap = mbm\n            }\n        }\n    }\n\n\n    val onRequestHelp = remember {\n        {\n            foregroundLocationPermissionsState.requestPermission(\n                onGranted = {\n                    context.startLocationServiceIntentAction()\n                    requestHelp()\n                }, onExplain = {\n                    uiState = uiState.copy(locationPermissionDialogVisible = true)\n                }, onDenied = {\n                    uiState = uiState.copy(locationPermissionDialogVisible = true)\n                })\n        }\n    }\n\n\n    val notificationPermissionDialogVisibility = remember {\n        { visible: Boolean ->\n            uiState = uiState.copy(notificationPermissionVisible = visible)\n        }\n    }\n\n    val respondToHelp = remember {\n        {\n            uiState.mapSelectedRescuee?.let {\n                mappingViewModel.onEvent(\n                    event = MappingVmEvent.RespondToHelp(\n                        selectedRescuee = it\n                    ))\n            }\n            Unit\n        }\n    }\n    val notificationLauncher = rememberLauncherForActivityResult(\n        contract = ActivityResultContracts.RequestPermission(),\n        onResult = {\n            if (uiState.mapSelectedRescuee == null) {\n                onRequestHelp()\n            } else {\n                respondToHelp()\n            }\n        }\n    )\n    val notificationPermissionState = rememberPermissionState(\n        permission = Manifest.permission.POST_NOTIFICATIONS\n    ) { permissionGranted ->\n        if (permissionGranted) {\n            notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)\n        }\n\n    }\n\n    val startRequestingHelp = remember {\n        {\n            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {\n                notificationPermissionState.requestPermission(onGranted = {\n                    notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)\n                }, onExplain = {\n                    notificationPermissionDialogVisibility(true)\n                }, onDenied = {\n                    onRequestHelp()\n                })\n            } else {\n                onRequestHelp()\n            }\n        }\n    }\n\n\n    val showRouteDirection = remember(mapboxMap) {\n        { geometry: String ->\n\n            mapboxMap?.getStyle { style ->\n\n                if (style.isFullyLoaded.not()) {\n                    return@getStyle\n                }\n                if (geometry.isEmpty()) {\n                    return@getStyle\n                }\n\n                style.showRoute(geometry)\n\n            }\n            Unit\n        }\n    }\n\n    val removeRouteDirection = remember(mapboxMap, uiState.routeDirection) {\n        {\n            mapboxMap?.getStyle { style ->\n\n                if (style.isFullyLoaded.not()) {\n                    return@getStyle\n                }\n\n                runCatching {\n                    val routeLineSource = style.getSourceAs<GeoJsonSource>(ROUTE_SOURCE_ID)\n                    routeLineSource?.setGeoJson(FeatureCollection.fromFeatures(arrayOf()))\n                }.onFailure {\n                    Timber.v(\"Mapbox style not loaded ${it.message}\")\n                }\n\n            }\n            Unit\n        }\n    }\n\n\n    val onLocateUser = remember(uiState.routeDirection, mapboxMap) {\n        {\n\n            foregroundLocationPermissionsState.requestPermission(\n                onGranted = {\n                    if (!context.hasGPSConnection()) {\n                        context.checkLocationSetting(\n                            onDisabled = settingResultRequest::launch)\n                    }\n\n\n                    state.userLocation?.let {\n                        it.latitude ?: return@let\n                        it.longitude ?: return@let\n                        val point = LatLng(it.latitude, it.longitude)\n                        locateUser(\n                            LOCATE_USER_ZOOM_LEVEL,\n                            point,\n                            DEFAULT_CAMERA_ANIMATION_DURATION)\n\n                    }\n\n                }, onExplain = {\n                    uiState = uiState.copy(locationPermissionDialogVisible = true)\n                }, onDenied = {\n                    uiState = uiState.copy(locationPermissionDialogVisible = true)\n                })\n        }\n    }\n\n    val changeCameraMode = remember(mapboxMap) {\n        { mode: Int ->\n            mapboxMap?.locationComponent?.apply {\n                if (isLocationComponentActivated) {\n                    cameraMode = mode\n                }else{\n                    onLocateUser()\n                }\n            }\n        }\n    }\n\n    val routeOverView = remember {\n        {\n            changeCameraMode(CameraMode.TRACKING)\n\n        }\n    }\n\n    val onLocateUserButton = remember(uiState.routeDirection) {\n        {\n            if (uiState.routeDirection != null) {\n                routeOverView()\n            }\n            onLocateUser()\n        }\n    }\n\n    val recenterRoute = remember {\n        {\n            changeCameraMode(CameraMode.TRACKING_GPS)\n        }\n    }\n\n    val openNavigationApp = remember(state.rescueTransaction?.route) {\n        {\n            val rescueTransaction = state.rescueTransaction\n            rescueTransaction?.let {\n                val latitude = it.getDestinationLatitude() ?: return@let\n                val longitude = it.getDestinationLongitude() ?: return@let\n                context.openNavigationApp(latitude = latitude, longitude = longitude)\n            }\n\n        }\n    }\n\n\n    val onClickOpenNavigationButton = remember {\n        {\n            openNavigationApp()\n        }\n    }\n\n    val cancelSearchingAssistance = remember {\n        {\n            coroutineScope.launch {\n                collapseBottomSheet()\n            }.invokeOnCompletion {\n                mappingViewModel.onEvent(event = MappingVmEvent.CancelSearchingAssistance)\n                uiState = uiState.copy(searchingAssistance = false)\n            }\n            Unit\n        }\n    }\n    val onChangeCameraPosition = remember {\n        { _cameraState: CameraState ->\n            cameraState = _cameraState\n        }\n    }\n\n\n    val resetState = remember{{\n        uiState = MappingUiState()\n        collapseBottomSheet()\n        onChangeNavigatingState(false)\n    }}\n\n\n\n\n    DisposableEffect(key1 = true) {\n        onDispose {\n            val camera = mapboxMap?.cameraPosition\n            val cameraCenter = camera?.target ?: LatLng(\n                DEFAULT_LATITUDE,\n                DEFAULT_LONGITUDE,\n            )\n            val cameraZoom = camera?.zoom\n            onChangeCameraPosition(\n                CameraState(\n                    position = cameraCenter,\n                    zoom = cameraZoom ?: 0.0\n                ))\n        }\n    }\n\n    val cancelOnGoingRescue = remember(state.rescuer, state.rescueTransaction) {\n        {\n\n            val isRescuee = state.user.isRescuee()\n            val transactionId = state.rescueTransaction?.id\n            val selectionType = if (isRescuee) SELECTION_RESCUEE_TYPE else SELECTION_RESCUER_TYPE\n            val clientId = state.rescuer?.id ?: state.rescuee?.id\n\n            if(transactionId == null || clientId == null){\n                resetState()\n                Toast.makeText(context, \"Rescue not found\", Toast.LENGTH_SHORT).show()\n            }else {\n                navController.navigateScreen(\n                    route = Screens.MappingNavigation.Cancellation.passArgument(\n                        cancellationType = selectionType,\n                        transactionId = transactionId,\n                        clientId = clientId))\n\n            }\n\n        }\n    }\n\n    val noInternetDialogVisibility = remember {\n        { visibility: Boolean ->\n            uiState = uiState.copy(\n                isNoInternetVisible = visibility\n            )\n        }\n    }\n\n    val hasTransaction = remember(key1 = state.rescueTransaction, key2 = state.user.transaction) {\n        state.getTransactionId().isNotEmpty()\n    }\n\n    val isRescueCancelled =\n        remember(state.rescueTransaction) {\n            state.rescueTransaction?.isRescueCancelled() ?: false\n        }\n\n    fun getConversationSelectedId(): String? {\n        val transaction = state.rescueTransaction\n        val rescueeId = transaction?.rescueeId\n        val rescuerId = transaction?.rescuerId\n        val userId = state.userId\n        val isUserRescuee = userId == rescueeId\n        val id = if (isUserRescuee) rescuerId else rescueeId\n        id ?: Toast.makeText(context, \"No current transaction\", Toast.LENGTH_SHORT).show()\n\n        return id\n    }\n\n    val onClickChatButton = remember(state.rescueTransaction, state.user.getRole()) {\n        {\n            getConversationSelectedId()?.let { id ->\n                navController.navigateScreen(\n                    route = Screens.MessagingNavigation.Conversation.passArgument(\n                        receiverMessageId = id)\n                )\n            }\n        }\n    }\n\n    val onRequestNavigationCameraToOverview = remember(mapboxMap) {\n        {\n            val locationComponent = mapboxMap?.locationComponent\n            locationComponent?.cameraMode = CameraMode.TRACKING\n        }\n    }\n\n    val confirmedDestinationArrived = remember {\n        {\n\n            mappingViewModel.onEvent(event = MappingVmEvent.DestinationArrived)\n        }\n    }\n\n    val onClickOkCancelledRescue = remember {\n        {\n            mappingViewModel.onEvent(event = MappingVmEvent.CancelRescueTransaction)\n        }\n    }\n\n    val onDismissRescueeBanner = remember {\n        {\n            val isRescueeBannerVisible = uiState.mapSelectedRescuee != null\n            if (isRescueeBannerVisible) {\n                uiState = uiState.copy(\n                    mapSelectedRescuee = null,\n                    requestHelpButtonVisible = true\n                )\n            }\n        }\n    }\n\n\n    val expandableFab = remember {\n        { expanded: Boolean ->\n            uiState = uiState.copy(\n                isFabExpanded = expanded\n            )\n        }\n    }\n\n\n    fun checkIfHasEditingMarker(noMarkerCurrentlyEditing: () -> Unit) {\n        val isCurrentlyEditing = uiState.currentlyEditingHazardousMarker != null\n        if (isCurrentlyEditing) {\n            uiState = uiState.copy(discardHazardousMarkerDialogVisible = true)\n            return\n        }\n        if (uiState.bottomSheetType == BottomSheetType.SearchAssistance.type) {\n            return\n        }\n        noMarkerCurrentlyEditing()\n    }\n\n\n    val onMapMarkerClick = remember {\n        { snippet: String, id: String ->\n            if (snippet == MarkerSnippet.HazardousLaneSnippet.type) {\n                checkIfHasEditingMarker(noMarkerCurrentlyEditing = {\n                    mappingViewModel.onEvent(event = MappingVmEvent.SelectHazardousLaneMarker(id))\n                })\n            } else {\n                collapseBottomSheet()\n                mappingViewModel.onEvent(event = MappingVmEvent.SelectRescueMapIcon(id))\n            }\n        }\n    }\n\n    val hazardousLaneMarkerDialogVisibility = remember {\n        { visibility: Boolean ->\n            uiState = uiState.copy(\n                deleteHazardousMarkerDialogVisible = visibility\n            )\n        }\n    }\n\n\n    val onMapClick = remember {\n        {\n\n            if (uiState.bottomSheetType == BottomSheetType.ReportIncident.type) {\n                collapseBottomSheet()\n            }\n\n            if (uiState.bottomSheetType == BottomSheetType.IncidentDescription.type) {\n                checkIfHasEditingMarker(noMarkerCurrentlyEditing = {\n                    collapseBottomSheet()\n                })\n            }\n            onDismissRescueeBanner()\n            expandableFab(false)\n\n\n        }\n    }\n\n    val onMapLongClick = remember {\n        { latLng: LatLng ->\n            checkIfHasEditingMarker(noMarkerCurrentlyEditing = {\n                onDismissRescueeBanner()\n                expandableFab(false)\n                uiState = uiState.copy(\n                    lastLongPressedLocation = latLng,\n                    bottomSheetType = BottomSheetType.ReportIncident.type).also {\n                    expandBottomSheet()\n                }\n            })\n\n        }\n    }\n\n\n    val startRespondingToHelp = remember {\n        {\n            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {\n                notificationPermissionState.requestPermission(onGranted = {\n                    notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)\n                }, onExplain = {\n                    notificationPermissionDialogVisibility(true)\n                }, onDenied = {\n                    respondToHelp()\n                })\n            } else {\n                respondToHelp()\n            }\n        }\n    }\n\n\n    val onClickOkAcceptedRescue = remember {\n        {\n            onChangeNavigatingState(true)\n            uiState = uiState.copy(\n                rescueRequestAccepted = false,\n                bottomSheetType = BottomSheetType.OnGoingRescue.type,\n                requestAcceptedVisible = false\n            )\n            expandBottomSheet()\n            onDismissRescueeBanner()\n\n\n        }\n    }\n\n    val locationPermissionDialogVisibility = remember {\n        { visibility: Boolean ->\n            uiState = uiState.copy(locationPermissionDialogVisible = visibility)\n        }\n    }\n\n    val banAccountDialogVisibility = remember{{ visibility: Boolean ->\n        uiState = uiState.copy(banAccountDialogVisible = visibility)\n    }}\n\n    val onClickCancelButton = remember {\n        { id: String ->\n            mappingViewModel.onEvent(MappingVmEvent.DeclineRescueRequest(id))\n        }\n    }\n\n    val onClickConfirmButton = remember {\n        { id: String ->\n            mappingViewModel.onEvent(MappingVmEvent.AcceptRescueRequest(id))\n        }\n    }\n\n    val onClickReportIncident = remember {\n        { incidentLabel: String ->\n            uiState.lastLongPressedLocation?.let { locationLatLng ->\n                mappingViewModel.onEvent(\n                    event = MappingVmEvent.ReportIncident(\n                        label = incidentLabel,\n                        latLng = locationLatLng,\n                        description = incidentDescription.text\n                    ))\n                uiState = uiState.copy(selectedIncidentLabel = \"\")\n                incidentDescription = TextFieldValue()\n            }\n        }\n    }\n\n    val emergencyCallDialogVisibility = remember {\n        { visible: Boolean ->\n            uiState = uiState.copy(\n                isEmergencyCallDialogVisible = visible\n            )\n        }\n    }\n\n    val changeAlertDialogState = remember {\n        { alertDialogState: AlertDialogState ->\n            uiState = uiState.copy(\n                alertDialogState = alertDialogState\n            )\n        }\n    }\n\n    val rescueRequestDialogVisibility = remember {\n        { visibility: Boolean ->\n            uiState = uiState.copy(\n                isRescueRequestDialogVisible = visibility\n            )\n        }\n    }\n\n    val openSinoTrack = remember {\n        {\n            navController.navigateScreen(Screens.MappingNavigation.SinoTrack.screenRoute)\n        }\n    }\n\n\n\n\n\n    val callPhoneNumber = remember {\n        { phoneNumber: String ->\n            context.callPhoneNumber(phoneNumber)\n        }\n    }\n\n    val openPhoneCallPermissionState =\n        rememberPermissionState(permission = Manifest.permission.CALL_PHONE) { permissionGranted ->\n            if (permissionGranted) {\n                uiState.selectedPhoneNumber.takeIf { it.isNotEmpty() }\n                    ?.let { callPhoneNumber(it) }\n            }\n        }\n\n    val onEmergencyCall = remember {\n        { phoneNumber: String ->\n            if (!openPhoneCallPermissionState.status.isGranted) {\n                uiState = uiState.copy(selectedPhoneNumber = phoneNumber)\n                openPhoneCallPermissionState.launchPermissionRequest()\n            } else {\n                callPhoneNumber(phoneNumber)\n            }\n        }\n    }\n\n    val onAddEmergencyContact = remember {\n        {\n            navController.navigateScreen(Screens.EmergencyCallNavigation.AddEditEmergencyContact.screenRoute)\n        }\n    }\n\n    val shareLocation = remember(state.userLocation, state.user.location) {\n        {\n\n            val location = state.getCurrentLocation()\n\n            if (location == null) {\n                Toast.makeText(context, \"Searching for GPS\", Toast.LENGTH_SHORT).show()\n            } else {\n                context.shareLocation(\n                    latitude = location.latitude!!,\n                    longitude = location.longitude!!\n                )\n            }\n        }\n    }\n\n\n    val openMapTypeBottomSheet = remember {\n        {\n            uiState = uiState.copy(\n                bottomSheetType = BottomSheetType.MapType.type\n            ).also {\n                expandBottomSheet()\n            }\n        }\n    }\n\n    val closeMapTypeBottomSheet = remember {\n        {\n\n                collapseBottomSheet()\n\n        }\n    }\n\n\n    val mapTypeBottomSheetVisibility = remember {\n        { visibility: Boolean ->\n            checkIfHasEditingMarker(noMarkerCurrentlyEditing = {\n                if (visibility) {\n                    openMapTypeBottomSheet()\n                } else {\n                    closeMapTypeBottomSheet()\n                }\n            })\n        }\n    }\n\n    fun toggleMapType(event: MappingVmEvent){\n        if(!context.hasInternetConnection()){\n            noInternetDialogVisibility(true)\n            return\n        }\n        if(state.userLocation == null){\n            Toast.makeText(context, \"Searching for GPS\", Toast.LENGTH_SHORT).show()\n            return\n        }\n\n        mappingViewModel.onEvent(event = event)\n\n    }\n\n    val toggleDefaultMapType = remember(state.userLocation) {\n        {\n            toggleMapType(MappingVmEvent.ToggleDefaultMapType)\n        }\n    }\n\n    val toggleTrafficMapType = remember(state.userLocation) {\n        {\n            toggleMapType(MappingVmEvent.ToggleTrafficMapType)\n        }\n    }\n\n    val toggleHazardousMapType = remember(state.userLocation) {\n        {\n            toggleMapType(MappingVmEvent.ToggleHazardousMapType)\n        }\n\n    }\n\n\n    val onChangeIncidentLabel = remember {\n        { incidentLabel: String ->\n            uiState = uiState.copy(selectedIncidentLabel = incidentLabel)\n        }\n    }\n\n    val onChangeIncidentDescription = remember {\n        { input: TextFieldValue ->\n            incidentDescription = input\n        }\n    }\n\n\n    val onClickDeleteIncident = remember {\n        {\n\n            uiState = uiState.copy(\n                deleteHazardousMarkerDialogVisible = true\n            )\n\n        }\n    }\n\n    val onClickEditIncidentDescription = remember {\n        { marker: HazardousLaneMarker ->\n            uiState = uiState.copy(currentlyEditingHazardousMarker = marker)\n        }\n    }\n\n    val onConfirmDeleteIncident = remember(uiState.selectedHazardousMarker) {\n        {\n            mappingViewModel.onEvent(\n                event = MappingVmEvent.DeleteHazardousLaneMarker(\n                    id = uiState.selectedHazardousMarker!!.id\n                ))\n        }\n    }\n\n    val discardChangesMarkerDialogVisibility = remember {\n        { visibility: Boolean ->\n            uiState = uiState.copy(\n                discardHazardousMarkerDialogVisible = visibility\n            )\n        }\n    }\n\n\n    val onDiscardMarkerChanges = remember {\n        {\n            uiState = uiState.copy(currentlyEditingHazardousMarker = null)\n        }\n    }\n\n    val onDismissIncidentDescriptionBottomSheet = remember {\n        {\n            checkIfHasEditingMarker(noMarkerCurrentlyEditing = {\n                collapseBottomSheet()\n            })\n        }\n    }\n\n    val onCancelEditIncidentDescription = remember {\n        {\n            checkIfHasEditingMarker(onDiscardMarkerChanges)\n        }\n    }\n\n    val onUpdateReportedIncident = remember(uiState.currentlyEditingHazardousMarker) {\n        { description: String, label: String ->\n            mappingViewModel.onEvent(\n                event = MappingVmEvent.UpdateReportedIncident(\n                    marker = uiState.currentlyEditingHazardousMarker!!.copy(\n                        description = description,\n                        label = label)\n                ))\n        }\n    }\n\n    val onClickHazardousInfoGotIt = remember {\n        {\n            mappingViewModel.onEvent(event = MappingVmEvent.ShouldShowHazardousStartingInfo(false))\n        }\n    }\n\n    fun getRouteDirections() {\n        val rescueTransaction = state.rescueTransaction ?: return\n\n        val startingLongitude = rescueTransaction.getStartingLongitude() ?: return\n        val startingLatitude = rescueTransaction.getStartingLatitude() ?: return\n        val destinationLongitude = rescueTransaction.getDestinationLongitude() ?: return\n        val destinationLatitude = rescueTransaction.getDestinationLatitude() ?: return\n\n\n        if(uiState.routeDirection != null){\n            return\n        }\n\n        mappingViewModel.onEvent(\n            event = MappingVmEvent.GetRouteDirections(\n                origin = Point.fromLngLat(startingLongitude, startingLatitude),\n                destination = Point.fromLngLat(\n                    destinationLongitude,\n                    destinationLatitude)))\n    }\n\n\n    val cancelSearchDialogVisibility = remember {\n        { visibility: Boolean ->\n            uiState = uiState.copy(cancelSearchDialogVisible = visibility)\n        }\n    }\n\n    val cancelOnGoingRescueDialogVisibility = remember {\n        { visibility: Boolean ->\n            uiState = uiState.copy(cancelOnGoingRescueDialogVisible = visibility)\n        }\n    }\n\n    fun notifyNewRescueRequest(message: String) {\n        if (notificationPermissionState.status.isGranted && !AppUtils.isAppInForeground(context = context)) {\n            mappingViewModel.onEvent(\n                event = MappingVmEvent.NotifyNewRescueRequest(\n                    message = message\n                ))\n        }\n    }\n\n    fun notifyRequestAccepted(message: String) {\n        if (notificationPermissionState.status.isGranted && !AppUtils.isAppInForeground(context = context)) {\n            mappingViewModel.onEvent(\n                event = MappingVmEvent.NotifyRequestAccepted(\n                    message = message\n                ))\n        }\n    }\n\n    val viewProfile = remember {\n        { id: String ->\n            navController.navigateScreen(\n                Screens.UserProfileNavigation.UserProfile.passArgument(\n                    userId = id))\n        }\n    }\n\n    val cancelRespondToHelp = remember(uiState.mapSelectedRescuee) {\n        {\n            uiState.mapSelectedRescuee?.userId?.let { id ->\n                mappingViewModel.onEvent(event = MappingVmEvent.CancelRespondHelp(id = id))\n            }\n        }\n    }\n\n\n    val arrivedAtLocation = remember{{\n        mappingViewModel.onEvent(event = MappingVmEvent.ArrivedAtLocation)\n    }}\n\n    val startNavigation = remember(state.user.transaction?.transactionId) {\n        {\n            val role = state.user.getRole()\n            val isRescuer = role == Role.Rescuer.name\n            val userTransaction = state.user.transaction?.transactionId ?: \"\"\n            if (userTransaction.isNotEmpty()) {\n                uiState = uiState.copy(\n                    requestHelpButtonVisible = false,\n                    bottomSheetType = BottomSheetType.OnGoingRescue.type,\n                    isRescueRequestDialogVisible = false,\n                    isNavigating = isRescuer\n                )\n                onChangeNavigatingState(isRescuer)\n                expandBottomSheet()\n                getRouteDirections()\n                showUserLocation()\n            }\n\n        }\n    }\n\n    val stopNavigation = remember(){\n        uiState = uiState.copy(\n            requestHelpButtonVisible = true,\n            bottomSheetType = null,\n            isNavigating = false,\n            isRescueRequestDialogVisible = false\n        )\n        onChangeNavigatingState(false)\n        collapseBottomSheet()\n\n\n    }\n\n\n\n\n\n\n\n    DisposableEffect(key1 = Unit) {\n        val window = context.findActivity()?.window\n        window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)\n        onDispose {\n            window?.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)\n        }\n    }\n\n    LaunchedEffect(\n        key1 = state.rescueTransaction,\n        key2 = uiState.isRescueCancelled,\n        key3 = uiState.rescueRequestAccepted) {\n\n        if (uiState.isRescueCancelled) {\n            return@LaunchedEffect\n        }\n\n        if (state.rescueTransaction?.isRescueFinished() == true) {\n            return@LaunchedEffect\n        }\n\n        if (!uiState.rescueRequestAccepted) {\n            return@LaunchedEffect\n        }\n\n\n        uiState = uiState.copy(\n            requestAcceptedVisible = true\n        )\n    }\n\n\n    LaunchedEffect(\n        key1 = uiState.isRescueCancelled,\n        key2 = uiState.rescueRequestAccepted,\n        key3 = state.rescueTransaction) {\n\n        if(!uiState.isRescueCancelled){\n            return@LaunchedEffect\n        }\n        if(uiState.rescueRequestAccepted){\n            return@LaunchedEffect\n        }\n\n        uiState = uiState.copy(\n            requestCancelledVisible = true\n        )\n    }\n\n    BackHandler(enabled = bottomSheetScaffoldState.bottomSheetState.isExpanded) {\n        checkIfHasEditingMarker(noMarkerCurrentlyEditing = {\n\n            cancelOnGoingRescueDialogVisibility(hasTransaction)\n            cancelSearchDialogVisibility(hasTransaction)\n\n            if (hasTransaction) {\n                return@checkIfHasEditingMarker\n            }\n\n            if (uiState.searchingAssistance) {\n                return@checkIfHasEditingMarker\n            }\n\n            collapseBottomSheet()\n        })\n    }\n\n    LaunchedEffect(state.user.userAssistance) {\n\n        if (state.user.isUserNeedHelp() == true) {\n\n            uiState = uiState.copy(\n                bottomSheetType = BottomSheetType.SearchAssistance.type,\n                searchingAssistance = true)\n                .also {\n                    expandBottomSheet()\n                }\n\n        }\n    }\n\n    LaunchedEffect(key1 = true) {\n        emergencyViewModel.onEvent(event = EmergencyCallVmEvent.LoadDefaultContact)\n    }\n\n    LaunchedEffect(key1 = mainState.mappingIntentAction) {\n\n        when (mainState.mappingIntentAction) {\n            MappingConstants.ACTION_OPEN_CONVERSATION -> {\n                onClickChatButton()\n                mainViewModel.setIntentAction(DEFAULT_ACTION)\n            }\n\n            MappingConstants.ACTION_OPEN_RESCUE_REQUEST -> {\n                rescueRequestDialogVisibility(true)\n                mainViewModel.setIntentAction(DEFAULT_ACTION)\n            }\n        }\n    }\n\n    LaunchedEffect(key1 = userLocationAvailable, mapboxMap) {\n        if (userLocationAvailable) {\n            val camera = cameraState\n            locateUser(camera.zoom, camera.position, FAST_CAMERA_ANIMATION_DURATION)\n        }\n    }\n\n\n    LaunchedEffect(key1 = state.rescueTransaction?.status, key2 = hasTransaction) {\n        val rescueTransaction = state.rescueTransaction\n        val isRescueFinished = rescueTransaction?.isRescueFinished() ?: false\n        val isRescueOnGoing = rescueTransaction?.isRescueOnGoing() ?: false\n\n        if (rescueTransaction == null) {\n            return@LaunchedEffect\n        }\n\n        if (isRescueOnGoing) {\n            return@LaunchedEffect\n        }\n\n        if (!isRescueFinished) {\n            return@LaunchedEffect\n        }\n\n        if(!hasTransaction){\n            return@LaunchedEffect\n        }\n\n        val role = state.user.transaction?.role\n        val type = if (role == Role.Rescuee.name) {\n            BottomSheetType.RescuerArrived.type\n        } else {\n            BottomSheetType.DestinationReached.type\n        }\n        uiState = uiState.copy(bottomSheetType = type)\n\n    }\n\n    LaunchedEffect(key1 = hasTransaction) {\n        uiState = uiState.copy(\n            hasTransaction = hasTransaction\n        )\n    }\n    LaunchedEffect(key1 = isRescueCancelled) {\n        uiState = uiState.copy(\n            isRescueCancelled = isRescueCancelled\n        )\n    }\n    LaunchedEffect(key1 = isNavigating) {\n        uiState = uiState.copy(\n            isNavigating = isNavigating\n        )\n    }\n\n    LaunchedEffect(key1 = true) {\n        mappingViewModel.eventFlow.collect { event ->\n            when (event) {\n                is MappingEvent.AccountBanned -> {\n                    banAccountDialogVisibility(true)\n                }\n\n                else -> {}\n            }\n\n        }\n    }\n    LaunchedEffect(key1 = true) {\n\n        mappingViewModel.eventFlow.distinctUntilChanged().collectLatest { event ->\n            when (event) {\n\n                is MappingEvent.NoInternetConnection -> {\n                    noInternetDialogVisibility(true)\n                }\n\n                is MappingEvent.RequestHelpSuccess -> {\n                    val location = state.userLocation!!\n                    navController.navigateScreen(\n                        Screens.MappingNavigation.ConfirmDetails.passArgument(\n                            latitude = location.latitude!!.toFloat(),\n                            longitude = location.longitude!!.toFloat()\n                        ))\n                }\n\n                is MappingEvent.InsufficientUserCredential -> {\n                    navController.navigateScreen(\n                        Screens.UserProfileNavigation.EditProfile.screenRoute)\n                }\n\n                is MappingEvent.LocationNotAvailable -> {\n                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()\n                }\n\n                is MappingEvent.RescuerLocationNotAvailable -> {\n                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()\n                }\n\n                is MappingEvent.UnexpectedError -> {\n                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()\n                }\n\n                is MappingEvent.UserFailed -> {\n                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()\n                }\n\n                is MappingEvent.RespondToHelpSuccess -> {\n                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()\n                }\n\n                is MappingEvent.AddressFailed -> {\n                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()\n                }\n\n\n                is MappingEvent.NewSelectedRescuee -> {\n                    uiState = uiState.copy(\n                        mapSelectedRescuee = event.selectedRescuee,\n                        requestHelpButtonVisible = false\n                    )\n                }\n\n                is MappingEvent.GenerateRouteNavigationSuccess -> {\n                    uiState = uiState.copy(\n                        routeDirection = event.routeDirection,\n                        generateRouteFailed = false\n                    )\n                    context.startLocationServiceIntentAction(intentAction = ACTION_START_FOREGROUND)\n\n                }\n\n                is MappingEvent.CancelRescueTransactionSuccess -> {\n                    resetState()\n                    onDismissRescueeBanner()\n                }\n\n\n                is MappingEvent.RescueRequestAccepted -> {\n                    uiState = uiState.copy(\n                        rescueRequestAccepted = true\n                    )\n                    onDismissRescueeBanner()\n                }\n\n                is MappingEvent.CancelHelpRequestSuccess -> {\n                    uiState = uiState.copy(\n                        requestHelpButtonVisible = true\n                    )\n                }\n\n                is MappingEvent.AcceptRescueRequestSuccess -> {\n                    uiState = uiState.copy(\n                        requestHelpButtonVisible = false,\n                        bottomSheetType = BottomSheetType.OnGoingRescue.type,\n                        isRescueRequestDialogVisible = false\n                    ).also {\n                        expandBottomSheet()\n                        rescueRequestDialogVisibility(false)\n\n                    }\n                }\n\n                is MappingEvent.FailedToCalculateDistance -> {\n                    Toast.makeText(context, \"Failed to Calculate Distance\", Toast.LENGTH_SHORT)\n                        .show()\n                }\n\n\n                is MappingEvent.RemoveRespondentFailed -> {\n                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()\n                }\n\n                is MappingEvent.RescueHasTransaction -> {\n                    changeAlertDialogState(\n                        AlertDialogState(\n                            title = \"Cannot Request\",\n                            description = \"Unfortunately the Rescuer is currently in a Rescue.\",\n                            icon = R.raw.error\n                        ))\n                }\n\n                is MappingEvent.UserHasCurrentTransaction -> {\n                    changeAlertDialogState(\n                        AlertDialogState(\n                            title = \"Cannot Request\",\n                            description = \"You can only have one transaction at a time\",\n                            icon = R.raw.error\n                        )\n                    )\n                }\n\n                is MappingEvent.NewBottomSheetType -> {\n                    uiState = uiState.copy(\n                        bottomSheetType = event.bottomSheetType,\n                        searchingAssistance = event.bottomSheetType == BottomSheetType.SearchAssistance.type)\n                        .also {\n                            expandBottomSheet()\n                        }\n                }\n\n                is MappingEvent.ReportIncidentFailed -> {\n                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()\n                }\n\n                MappingEvent.ReportIncidentSuccess -> {\n                    Toast.makeText(context, \"Incident Reported\", Toast.LENGTH_SHORT).show()\n                }\n\n                is MappingEvent.IncidentDistanceTooFar -> {\n                    changeAlertDialogState(\n                        AlertDialogState(\n                            title = \"Exceeds Reachable Distance\",\n                            description = \"The incident is taking place quite a distance away from your current location, making it challenging to directly engage or intervene.\",\n                            icon = R.raw.error\n                        )\n                    )\n                }\n\n                is MappingEvent.SelectHazardousLaneMarker -> {\n                    uiState = uiState.copy(\n                        selectedHazardousMarker = event.marker,\n                        bottomSheetType = BottomSheetType.IncidentDescription.type).also {\n                        expandBottomSheet()\n                    }\n                }\n\n                is MappingEvent.DeleteHazardousLaneMarkerFailed -> {\n                    collapseBottomSheet()\n                    Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()\n                }\n\n                MappingEvent.DeleteHazardousLaneMarkerSuccess -> {\n                    collapseBottomSheet()\n                    Toast.makeText(context, \"Marker Deleted\", Toast.LENGTH_LONG).show()\n                }\n\n                is MappingEvent.UpdateIncidentFailed -> {\n                    Toast.makeText(context, event.reason, Toast.LENGTH_LONG).show()\n                }\n\n                MappingEvent.UpdateIncidentSuccess -> {\n                    changeAlertDialogState(\n                        AlertDialogState(\n                            title = \"Incident Updated\",\n                            description = \"The incident has been updated successfully\",\n                            icon = R.raw.success\n                        )\n                    )\n                    onDiscardMarkerChanges()\n                    collapseBottomSheet()\n                }\n\n                is MappingEvent.GenerateRouteNavigationFailed -> {\n                    changeAlertDialogState(\n                        AlertDialogState(\n                            title = \"Failed to Generate Route\",\n                            description = \"Failed to generate route to the destination due to a connection error.\",\n                        ))\n                    uiState = uiState.copy(\n                        generateRouteFailed = true\n                    )\n                }\n\n                MappingEvent.CancelRespondSuccess -> {\n                    Toast.makeText(context, \"Respond Cancelled\", Toast.LENGTH_SHORT).show()\n                }\n\n                MappingEvent.RescueArrivedSuccess -> {\n                    val role = state.user.getRole()\n\n                    val route = if(role == Role.Rescuee.name){\n                        Screens.RescueRecordNavigation.RescueResults.screenRoute\n                    }else{\n                        Screens.RescueRecordNavigation.RescueDetails.screenRoute\n                    }\n\n                    resetState()\n                    navController.navigateScreen(route)\n                }\n\n                is MappingEvent.RescueArrivedFailed -> {\n                    Toast.makeText(context, event.reason, Toast.LENGTH_SHORT).show()\n                }\n\n                else -> {}\n            }\n        }\n    }\n    LaunchedEffect(key1 = uiState.routeDirection?.geometry, key2 = mapboxMap) {\n\n        val route = uiState.routeDirection\n\n        if (route == null) {\n            removeRouteDirection()\n            context.startLocationServiceIntentAction(intentAction = ACTION_STOP_FOREGROUND)\n            return@LaunchedEffect\n        }\n        showRouteDirection(route.geometry)\n    }\n\n\n\n\n    LaunchedEffect(\n        key1 = state.rescueTransaction?.route,\n        key2 = hasTransaction,\n        key3 = isRescueCancelled) {\n\n\n        if(state.user.getTransactionId()?.isEmpty() == true){\n            uiState = uiState.copy(routeDirection = null)\n            return@LaunchedEffect\n        }\n\n        if (hasTransaction.not() || isRescueCancelled) {\n            uiState = uiState.copy(routeDirection = null)\n            return@LaunchedEffect\n        }\n\n\n        startNavigation()\n    }\n\n/*    LaunchedEffect(\n        key1 = hasInternetConnection,\n        key2 = uiState.generateRouteFailed,\n        *//*key3 = state.rescueTransaction?.route*//*) {\n\n        if (hasInternetConnection.not()) {\n            return@LaunchedEffect\n        }\n        if (!uiState.generateRouteFailed) {\n            return@LaunchedEffect\n        }\n\n        startNavigation()\n    }*/\n\n\n    LaunchedEffect(key1 = isNavigating, key2 = userLocationAvailable, key3 = pulsingEnabled) {\n        showUserLocation()\n    }\n    LaunchedEffect(key1 = uiState.bottomSheetType) {\n        coroutineScope.launch {\n            if (uiState.bottomSheetType?.isNotEmpty() == true) {\n                expandBottomSheet()\n            }\n        }\n    }\n\n\n    LaunchedEffect(key1 = foregroundLocationPermissionsState.allPermissionsGranted) {\n        if (!foregroundLocationPermissionsState.allPermissionsGranted) {\n            return@LaunchedEffect\n        }\n\n        if (!context.hasGPSConnection()) {\n            context.checkLocationSetting(onDisabled = settingResultRequest::launch)\n        }\n\n        context.startLocationServiceIntentAction()\n\n    }\n\n\n    MappingScreenContent(\n        modifier = Modifier.padding(paddingValues),\n        state = state,\n        locationPermissionState = foregroundLocationPermissionsState,\n        bottomSheetScaffoldState = bottomSheetScaffoldState,\n        hazardousLaneMarkers = hazardousMarkers,\n        mapboxMap = mapboxMap,\n        uiState = uiState,\n        emergencyState = emergencyState,\n        incidentDescription = incidentDescription,\n        event = { event ->\n            when (event) {\n                is MappingUiEvent.RequestHelp -> startRequestingHelp()\n                is MappingUiEvent.RespondToHelp -> startRespondingToHelp()\n                is MappingUiEvent.CancelSearching -> cancelSearchDialogVisibility(true)\n                is MappingUiEvent.ChatRescueTransaction -> onClickChatButton()\n                is MappingUiEvent.CancelRescueTransaction -> cancelOnGoingRescueDialogVisibility(\n                    true)\n\n                is MappingUiEvent.CancelledRescueConfirmed -> onClickOkCancelledRescue()\n                is MappingUiEvent.OnInitializeMap -> onInitializeMapboxMap(event.mapboxMap)\n                is MappingUiEvent.RescueRequestAccepted -> onClickOkAcceptedRescue()\n                is MappingUiEvent.OnChangeCameraState -> onChangeCameraPosition(event.cameraState)\n                is MappingUiEvent.NoInternetDialog -> noInternetDialogVisibility(event.visibility)\n                is MappingUiEvent.OnMapClick -> onMapClick()\n                is MappingUiEvent.DismissBanner -> onDismissRescueeBanner()\n                is MappingUiEvent.LocateUser -> onLocateUserButton()\n                is MappingUiEvent.RouteOverview -> routeOverView()\n                is MappingUiEvent.RecenterRoute -> recenterRoute()\n                is MappingUiEvent.OpenNavigation -> onClickOpenNavigationButton()\n                is MappingUiEvent.OnRequestNavigationCameraToOverview -> onRequestNavigationCameraToOverview()\n                is MappingUiEvent.ConfirmedDestinationArrived -> confirmedDestinationArrived()\n                is MappingUiEvent.LocationPermissionDialog -> locationPermissionDialogVisibility(event.visibility)\n                is MappingUiEvent.ExpandableFab -> expandableFab(event.expanded)\n                is MappingUiEvent.EmergencyCallDialog -> emergencyCallDialogVisibility(event.visibility)\n                is MappingUiEvent.OpenFamilyTracker -> shareLocation()\n                is MappingUiEvent.RescueRequestDialog -> rescueRequestDialogVisibility(event.visibility)\n                is MappingUiEvent.DeclineRequestHelp -> onClickCancelButton(event.id)\n                is MappingUiEvent.ConfirmRequestHelp -> onClickConfirmButton(event.id)\n                is MappingUiEvent.AlertDialog -> changeAlertDialogState(event.alertDialogState)\n                is MappingUiEvent.OnMapLongClick -> onMapLongClick(event.latLng)\n                is MappingUiEvent.OnReportIncident -> onClickReportIncident(event.labelIncident)\n                is MappingUiEvent.OnEmergencyCall -> onEmergencyCall(event.phoneNumber)\n                is MappingUiEvent.OnAddEmergencyContact -> onAddEmergencyContact()\n                is MappingUiEvent.MapTypeBottomSheet -> mapTypeBottomSheetVisibility(event.visibility)\n                is MappingUiEvent.OnChangeIncidentDescription -> onChangeIncidentDescription(event.description)\n                is MappingUiEvent.OnChangeIncidentLabel -> onChangeIncidentLabel(event.label)\n                is MappingUiEvent.OnClickDeleteIncident -> onClickDeleteIncident()\n                is MappingUiEvent.OnClickEditIncidentDescription -> onClickEditIncidentDescription(\n                    event.marker)\n\n                is MappingUiEvent.OnClickMapMarker -> onMapMarkerClick(\n                    event.markerSnippet,\n                    event.markerId)\n\n                is MappingUiEvent.HazardousLaneMarkerDialog -> hazardousLaneMarkerDialogVisibility(\n                    event.visibility)\n\n                MappingUiEvent.OnConfirmDeleteIncident -> onConfirmDeleteIncident()\n                is MappingUiEvent.DiscardChangesMarkerDialog -> discardChangesMarkerDialogVisibility(\n                    event.visibility)\n\n                MappingUiEvent.DiscardMarkerChanges -> onDiscardMarkerChanges()\n                MappingUiEvent.DismissIncidentDescriptionBottomSheet -> onDismissIncidentDescriptionBottomSheet()\n                MappingUiEvent.CancelEditIncidentDescription -> onCancelEditIncidentDescription()\n                is MappingUiEvent.UpdateIncidentDescription -> onUpdateReportedIncident(\n                    event.description,\n                    event.label)\n\n                MappingUiEvent.OnClickHazardousInfoGotIt -> onClickHazardousInfoGotIt()\n                is MappingUiEvent.CancelSearchDialog -> cancelSearchDialogVisibility(event.visibility)\n                MappingUiEvent.SearchCancelled -> cancelSearchingAssistance()\n                MappingUiEvent.CancelOnGoingRescue -> cancelOnGoingRescue()\n                is MappingUiEvent.CancelOnGoingRescueDialog -> cancelOnGoingRescueDialogVisibility(\n                    event.visibility)\n\n                is MappingUiEvent.NotificationPermissionDialog -> notificationPermissionDialogVisibility(\n                    event.visibility)\n\n                is MappingUiEvent.NotifyRequestAccepted -> notifyRequestAccepted(message = event.message)\n                is MappingUiEvent.NotifyNewRescueRequest -> notifyNewRescueRequest(message = event.message)\n                MappingUiEvent.OpenSinoTrack -> openSinoTrack()\n\n                is MappingUiEvent.ViewProfile -> viewProfile(event.id)\n                MappingUiEvent.CancelRespondHelp -> cancelRespondToHelp()\n                MappingUiEvent.ArrivedAtLocation -> arrivedAtLocation()\n                is MappingUiEvent.BannedAccountDialog -> banAccountDialogVisibility(event.visibility)\n                MappingUiEvent.ToggleDefaultMapType -> toggleDefaultMapType()\n                MappingUiEvent.ToggleHazardousMapType -> toggleHazardousMapType()\n                MappingUiEvent.ToggleTrafficMapType -> toggleTrafficMapType()\n            }\n        }\n    )\n\n}\n\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingScreen.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingScreen.kt
+--- a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingScreen.kt	(revision a030997938f61522e027f3227589cada04599c37)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/MappingScreen.kt	(date 1700610906529)
+@@ -1223,25 +1223,25 @@
+     }
+ 
+     LaunchedEffect(key1 = true) {
+-        mappingViewModel.eventFlow.collect { event ->
+-            when (event) {
+-                is MappingEvent.AccountBanned -> {
+-                    banAccountDialogVisibility(true)
+-                }
+-
+-                else -> {}
+-            }
+-
+-        }
+-    }
+-    LaunchedEffect(key1 = true) {
+-
+-        mappingViewModel.eventFlow.distinctUntilChanged().collectLatest { event ->
++        mappingViewModel.eventFlow.distinctUntilChanged().collectLatest{ event ->
+             when (event) {
+ 
+                 is MappingEvent.NoInternetConnection -> {
+                     noInternetDialogVisibility(true)
+                 }
++                else -> {}
++            }
++
++        }
++    }
++    LaunchedEffect(key1 = true) {
++
++        mappingViewModel.eventFlow.collectLatest { event ->
++            when (event) {
++
++                is MappingEvent.AccountBanned -> {
++                    banAccountDialogVisibility(true)
++                }
+ 
+                 is MappingEvent.RequestHelpSuccess -> {
+                     val location = state.userLocation!!
+Index: app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/map_type/MapTypeItem.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/map_type/MapTypeItem.kt b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/map_type/MapTypeItem.kt
+new file mode 100644
+--- /dev/null	(date 1700668625291)
++++ b/app/src/main/java/com/myapp/cyclistance/feature_mapping/presentation/mapping_main_screen/components/bottomSheet/map_type/MapTypeItem.kt	(date 1700668625291)
+@@ -0,0 +1,61 @@
++package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.map_type
++
++import androidx.annotation.DrawableRes
++import androidx.compose.foundation.Image
++import androidx.compose.foundation.border
++import androidx.compose.foundation.clickable
++import androidx.compose.foundation.layout.Arrangement
++import androidx.compose.foundation.layout.Column
++import androidx.compose.foundation.layout.padding
++import androidx.compose.foundation.layout.size
++import androidx.compose.foundation.shape.RoundedCornerShape
++import androidx.compose.material.MaterialTheme
++import androidx.compose.material.Text
++import androidx.compose.runtime.Composable
++import androidx.compose.ui.Alignment
++import androidx.compose.ui.Modifier
++import androidx.compose.ui.draw.clip
++import androidx.compose.ui.graphics.Color
++import androidx.compose.ui.res.painterResource
++import androidx.compose.ui.text.font.FontWeight
++import androidx.compose.ui.text.style.TextAlign
++import androidx.compose.ui.unit.dp
++import com.myapp.cyclistance.theme.Black500
++
++@Composable
++fun MapTypeItem(
++    modifier: Modifier = Modifier,
++    isSelected: Boolean,
++    @DrawableRes imageId: Int,
++    mapTypeDescription: String,
++    onClick: () -> Unit) {
++
++
++    Column(
++        modifier = modifier.padding(all = 8.dp),
++        verticalArrangement = Arrangement.spacedBy(4.dp, alignment = Alignment.CenterVertically),
++        horizontalAlignment = Alignment.CenterHorizontally) {
++
++
++        Image(
++            painter = painterResource(id = imageId),
++            contentDescription = "Map Type Image",
++            modifier = Modifier
++                .size(88.dp)
++                .clip(shape = RoundedCornerShape(16.dp))
++                .border(
++                    2.dp,
++                    if (isSelected) MaterialTheme.colors.primary else Color.Transparent,
++                    shape = RoundedCornerShape(16.dp))
++                .clickable { onClick() })
++
++
++
++        Text(
++            text = mapTypeDescription,
++            color = if (isSelected) MaterialTheme.colors.primary else Black500,
++            style = MaterialTheme.typography.subtitle2.copy(fontWeight = FontWeight.Normal),
++            textAlign = TextAlign.Center
++        )
++    }
++}
+\ No newline at end of file
