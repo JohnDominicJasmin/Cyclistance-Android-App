@@ -15,7 +15,23 @@
       },
       "oauth_client": [
         {
-          "client_id": "297531421452-je1s63qvqb60neb5si46boorgk7mcapi.apps.googleusercontent.com",
+          "client_id": "297531421452-50dtc514dtd6outmurhu0cum4bg34ei7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myapp.cyclistance",
+            "certificate_hash": "12e161ba0b945608c6e9d5836e1d155bc8e87427"
+          }
+        },
+        {
+          "client_id": "297531421452-tnk162i437hmsibolfbun4kc1rt1ilof.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.myapp.cyclistance",
+            "certificate_hash": "e1767d9488e5706aef26fb1dc9f35119702c771a"
+          }
+        },
+        {
+          "client_id": "297531421452-vtpdig97redr83u99fjoc91dto3vm0us.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.myapp.cyclistance",

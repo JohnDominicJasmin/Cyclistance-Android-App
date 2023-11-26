@@ -1,0 +1,9 @@
+<changelist name="Continue__Handle_Accessing_photo_from_gallery_and_camera_using_dialog" date="1700806777113" recycled="false">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Continue__Handle_Accessing_photo_from_gallery_and_camera_using_dialog/shelved.patch" />
+  <option name="DESCRIPTION" value="Continue: Handle Accessing photo from gallery and camera using dialog" />
+  <binary>
+    <option name="BEFORE_PATH" value="app/release/app-release.aab" />
+    <option name="AFTER_PATH" value="app/release/Cyclistance.apk" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Continue__Handle_Accessing_photo_from_gallery_and_camera_using_dialog/Cyclistance.apk" />
+  </binary>
+</changelist>

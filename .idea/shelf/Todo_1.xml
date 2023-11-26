@@ -1,0 +1,14 @@
+<changelist name="Todo_1" date="1700721747851" recycled="false">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Todo_1/shelved.patch" />
+  <option name="DESCRIPTION" value="Todo 1" />
+  <binary>
+    <option name="BEFORE_PATH" value="app/release/app-release.aab" />
+    <option name="AFTER_PATH" />
+    <option name="SHELVED_PATH" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" />
+    <option name="AFTER_PATH" value="app/release/Cyclistance.apk" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Todo_1/Cyclistance.apk" />
+  </binary>
+</changelist>
