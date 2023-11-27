@@ -1,4 +1,4 @@
-package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.report_incident.report_incident
+package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.report_incident
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
@@ -47,9 +47,6 @@ import com.myapp.cyclistance.feature_mapping.presentation.common.AdditionalMessa
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.incident_description.ChooseMarkerSection
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.incident_description.HazardousIncidentIndicator
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.incident_description.incidentMarkers
-import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.report_incident.AddIncidentImage
-import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.report_incident.IncidentItem
-import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.report_incident.ViewImageButton
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.myapp.cyclistance.navigation.IsDarkTheme
 import com.myapp.cyclistance.theme.Black500
