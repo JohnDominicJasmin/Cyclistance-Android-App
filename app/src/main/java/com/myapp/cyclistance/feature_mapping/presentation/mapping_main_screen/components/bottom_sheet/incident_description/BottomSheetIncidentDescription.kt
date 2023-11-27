@@ -40,6 +40,7 @@ fun BottomSheetIncidentDescription(
     @DrawableRes icon: Int,
     onClickEdit: () -> Unit,
     onClickDelete: () -> Unit,
+    viewProofIncident: () -> Unit,
     onClickCancelButton: () -> Unit,
     onDismissBottomSheet: () -> Unit,
     onClickGotItButton: () -> Unit,
@@ -108,7 +109,8 @@ fun BottomSheetIncidentDescription(
                 state = state,
                 marker = uiState.selectedHazardousMarker!!,
                 onClickEdit = onClickEdit,
-                onClickDelete = onClickDelete
+                onClickDelete = onClickDelete,
+                viewProofIncident = viewProofIncident
             )
 
         }
@@ -165,6 +167,7 @@ fun PreviewBottomSheetIncidentDescriptionDark() {
                             description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.",
                             address = "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
                             datePosted = Date(),
+                            incidentImageUri = ""
                         )),
                     icon = R.drawable.ic_lane_closure_marker,
                     state = MappingState(
@@ -174,7 +177,10 @@ fun PreviewBottomSheetIncidentDescriptionDark() {
                     onClickEdit = {},
                     onDismissBottomSheet = {},
                     onClickCancelButton = {}, onClickGotItButton = {},
-                    onClickConfirmButton = { _, _ -> })
+                    onClickConfirmButton = { _, _ -> },
+                    viewProofIncident = {
+
+                    })
             }
         }
     }
@@ -201,7 +207,9 @@ fun PreviewBottomSheetIncidentDescriptionLight() {
                             latitude = 14.123,
                             longitude = 121.123,
                             address = "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-                            datePosted = Date()),
+                            datePosted = Date(),
+                            incidentImageUri = ""
+                            ),
                         selectedHazardousMarker = HazardousLaneMarkerDetails(
                             id = "1",
                             label = "Crash",
@@ -211,6 +219,7 @@ fun PreviewBottomSheetIncidentDescriptionLight() {
                             description = "Lorem ipsum dolor sit amet consectetur adipisicing elit. Lorem ipsum dolor sit amet consectetur adipisicing elit.",
                             address = "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
                             datePosted = Date(),
+                            incidentImageUri = ""
                         )),
                     icon = R.drawable.ic_lane_closure_marker,
                     state = MappingState(userId = "1o3jjt90qin3f39n23"),
@@ -219,7 +228,8 @@ fun PreviewBottomSheetIncidentDescriptionLight() {
                     onDismissBottomSheet = {},
                     onClickCancelButton = {},
                     onClickGotItButton = {},
-                    onClickConfirmButton = { _, _ -> })
+                    onClickConfirmButton = { _, _ -> },
+                    viewProofIncident = {})
             }
         }
     }

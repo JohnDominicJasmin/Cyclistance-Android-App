@@ -168,6 +168,7 @@ fun MappingBottomSheet(
                                     description = description))
                         },
                         onClickGotItButton = { event(MappingUiEvent.OnClickHazardousInfoGotIt) },
+                        viewProofIncident = { event(MappingUiEvent.ViewImageIncidentDetails) },
                     )
 
                 }

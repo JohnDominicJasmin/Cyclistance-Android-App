@@ -23,6 +23,8 @@ sealed class MappingUiEvent {
     data object SelectImageFromGallery : MappingUiEvent()
     data object OpenCamera : MappingUiEvent()
     data object ViewImage : MappingUiEvent()
+    data object ViewImageIncidentDetails : MappingUiEvent()
+
 
 
     data object OnMapClick : MappingUiEvent()

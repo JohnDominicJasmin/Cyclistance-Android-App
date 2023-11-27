@@ -23,7 +23,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.myapp.cyclistance.R
 import com.myapp.cyclistance.core.presentation.dialogs.common.DropDownMenu
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
@@ -40,7 +42,8 @@ fun IncidentDescriptionSection(
     state: MappingState,
     marker: HazardousLaneMarkerDetails,
     onClickEdit: () -> Unit,
-    onClickDelete: () -> Unit) {
+    onClickDelete: () -> Unit,
+    viewProofIncident: () -> Unit) {
 
 
     val isDarkTheme = IsDarkTheme.current
@@ -108,7 +111,8 @@ fun IncidentDescriptionSection(
 
             ReportItemsSection(
                 marker = marker,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                viewProofIncident = viewProofIncident
             )
 
             Button(
@@ -124,4 +128,34 @@ fun IncidentDescriptionSection(
         }
 
     }
+}
+
+
+@Preview
+@Composable
+fun PreviewIncidentDescriptionSection() {
+    CyclistanceTheme(darkTheme = true){
+        IncidentDescriptionSection(
+            onDismissBottomSheet = {},
+            icon = R.drawable.ic_construction_marker,
+            uiState = MappingUiState(),
+            state = MappingState(),
+            marker = HazardousLaneMarkerDetails(
+                id = "1",
+                idCreator = "1",
+                label = "Construction",
+                description = "Construction",
+                latitude = 0.0,
+                longitude = 0.0,
+               datePosted = Date(),
+                address = "Tanauan Batangas",
+                incidentImageUri = ""
+
+            ),
+            onClickEdit = {},
+            onClickDelete = {},
+            viewProofIncident = {}
+        )
+    }
+    
 }
