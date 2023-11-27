@@ -17,6 +17,7 @@ data class HazardousLaneMarkerDetails(
     val datePosted: Date,
     val description: String,
     val address: String,
+    val incidentImageUri: String
 ) : Parcelable {
     @StableState
     constructor() : this(
@@ -28,5 +29,6 @@ data class HazardousLaneMarkerDetails(
         datePosted = Date(),
         description = "",
         address = "",
+        incidentImageUri = ""
     )
 }
