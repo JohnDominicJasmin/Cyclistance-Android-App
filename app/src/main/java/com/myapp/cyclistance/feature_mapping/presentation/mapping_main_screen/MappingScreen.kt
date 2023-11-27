@@ -3,12 +3,17 @@ package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.net.Uri
 import android.os.Build
+import android.provider.MediaStore
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
 import androidx.compose.animation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -55,6 +60,8 @@ import com.myapp.cyclistance.core.utils.contexts.callPhoneNumber
 import com.myapp.cyclistance.core.utils.contexts.shareLocation
 import com.myapp.cyclistance.core.utils.contexts.startLocationServiceIntentAction
 import com.myapp.cyclistance.core.utils.permissions.requestPermission
+import com.myapp.cyclistance.core.utils.save_images.ImageUtils
+import com.myapp.cyclistance.core.utils.save_images.ImageUtils.toImageUri
 import com.myapp.cyclistance.feature_authentication.domain.util.findActivity
 import com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.EmergencyCallViewModel
 import com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.event.EmergencyCallVmEvent
@@ -1048,22 +1055,117 @@ fun MappingScreen(
         }
     }
 
-    val stopNavigation = remember(){
+    val stopNavigation = remember() {
+        {
+            resetState()
+            onDismissRescueeBanner()
+
+        }
+    }
+    val accessPhotoDialog = remember{{ visibility: Boolean ->
         uiState = uiState.copy(
-            requestHelpButtonVisible = true,
-            bottomSheetType = null,
-            isNavigating = false,
-            isRescueRequestDialogVisible = false
+            accessPhotoDialogVisible = visibility
         )
-        onChangeNavigatingState(false)
-        collapseBottomSheet()
+    }}
+
+    var imageBitmap by remember { mutableStateOf<Bitmap?>(null) }
+
+    val openGalleryResultLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let { selectedUri ->
+                imageBitmap =
+                    when {
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.P -> {
+                            MediaStore.Images.Media.getBitmap(
+                                context.contentResolver,
+                                selectedUri)
+                        }
+
+                        else -> {
+                            val source =
+                                ImageDecoder.createSource(
+                                    context.contentResolver,
+                                    selectedUri)
+                            ImageDecoder.decodeBitmap(source)
+                        }
+                    }
+            }
+            val imageUri = if (imageBitmap == null) uri.toString() else ImageUtils.encodeImage(
+                imageBitmap!!)
+
+            uiState = uiState.copy(incidentImageUri = imageUri)
+
+        }
+
+    val openCameraResultLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap: Bitmap? ->
+            val uri = bitmap?.toImageUri().toString()
+            imageBitmap = bitmap
+            val imageUri = if (imageBitmap == null) uri else ImageUtils.encodeImage(
+                imageBitmap!!)
+
+            uiState = uiState.copy(incidentImageUri = imageUri)
+
+        }
+
+    val filesAndMediaPermissionState =
+        rememberMultiplePermissionsState(
+            permissions = listOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)) { permissionGranted ->
+            if (permissionGranted.values.all { it }) {
+                openGalleryResultLauncher.launch("image/*")
+            }
+        }
 
 
+    val openCameraPermissionState =
+        rememberPermissionState(permission = Manifest.permission.CAMERA) { permissionGranted ->
+
+            if (permissionGranted) {
+                openCameraResultLauncher.launch()
+            }
+        }
+    val openGallery = remember {
+        {
+            filesAndMediaPermissionState.requestPermission(
+                onGranted = {
+                    openGalleryResultLauncher.launch("image/*")
+                    accessPhotoDialog(false)
+                }, onExplain = {
+                    uiState = uiState.copy(filesAndMediaDialogVisible = true)
+                }, onDenied = {
+                    uiState = uiState.copy(filesAndMediaDialogVisible = true)
+                })
+
+        }
     }
 
+    val openCamera = remember {
+        {
+            openCameraPermissionState.requestPermission(
+                onGranted = {
+                    openCameraResultLauncher.launch()
+                    accessPhotoDialog(false)
+                }, onExplain = {
+                    uiState = uiState.copy(cameraPermissionDialogVisible = true)
+                }, onDenied = {
+                    uiState = uiState.copy(cameraPermissionDialogVisible = true)
+                })
+        }
+    }
 
+    val onDismissFilesAndMediaPermissionDialog = remember {
+        {
+            uiState = uiState.copy(filesAndMediaDialogVisible = false)
+        }
+    }
 
-
+    val onDismissCameraPermissionDialog = remember {
+        {
+            uiState = uiState.copy(cameraPermissionDialogVisible = false)
+        }
+    }
 
 
 
@@ -1223,12 +1325,12 @@ fun MappingScreen(
     }
 
     LaunchedEffect(key1 = true) {
-        mappingViewModel.eventFlow.collect { event ->
+        mappingViewModel.eventFlow.distinctUntilChanged().collectLatest{ event ->
             when (event) {
-                is MappingEvent.AccountBanned -> {
-                    banAccountDialogVisibility(true)
-                }
 
+                is MappingEvent.NoInternetConnection -> {
+                    noInternetDialogVisibility(true)
+                }
                 else -> {}
             }
 
@@ -1236,11 +1338,11 @@ fun MappingScreen(
     }
     LaunchedEffect(key1 = true) {
 
-        mappingViewModel.eventFlow.distinctUntilChanged().collectLatest { event ->
+        mappingViewModel.eventFlow.collectLatest { event ->
             when (event) {
 
-                is MappingEvent.NoInternetConnection -> {
-                    noInternetDialogVisibility(true)
+                is MappingEvent.AccountBanned -> {
+                    banAccountDialogVisibility(true)
                 }
 
                 is MappingEvent.RequestHelpSuccess -> {
@@ -1299,8 +1401,8 @@ fun MappingScreen(
                 }
 
                 is MappingEvent.CancelRescueTransactionSuccess -> {
-                    resetState()
-                    onDismissRescueeBanner()
+
+                    stopNavigation()
                 }
 
 
@@ -1622,6 +1724,12 @@ fun MappingScreen(
                 MappingUiEvent.ToggleDefaultMapType -> toggleDefaultMapType()
                 MappingUiEvent.ToggleHazardousMapType -> toggleHazardousMapType()
                 MappingUiEvent.ToggleTrafficMapType -> toggleTrafficMapType()
+                is MappingUiEvent.AccessPhotoDialog -> accessPhotoDialog(event.visibility)
+                MappingUiEvent.DismissCameraPermissionDialog -> onDismissCameraPermissionDialog()
+                MappingUiEvent.DismissFilesAndMediaDialog -> onDismissFilesAndMediaPermissionDialog()
+                MappingUiEvent.OpenCamera -> openCamera()
+                MappingUiEvent.SelectImageFromGallery -> openGallery()
+                MappingUiEvent.ViewImage -> TODO()
             }
         }
     )

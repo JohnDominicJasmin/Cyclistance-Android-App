@@ -42,6 +42,10 @@ data class MappingUiState(
     val requestAcceptedVisible: Boolean = false,
     val requestCancelledVisible: Boolean = false,
     val banAccountDialogVisible: Boolean = false,
+    val incidentImageUri: String? = null,
+    val cameraPermissionDialogVisible: Boolean = false,
+    val filesAndMediaDialogVisible: Boolean = false,
+    val accessPhotoDialogVisible: Boolean = false,
 
 
 

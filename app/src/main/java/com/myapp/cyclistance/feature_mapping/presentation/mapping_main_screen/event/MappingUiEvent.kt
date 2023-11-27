@@ -20,6 +20,12 @@ sealed class MappingUiEvent {
     data object ChatRescueTransaction : MappingUiEvent()
     data object CancelRescueTransaction : MappingUiEvent()
     data object CancelledRescueConfirmed : MappingUiEvent()
+    data object SelectImageFromGallery : MappingUiEvent()
+    data object OpenCamera : MappingUiEvent()
+    data object DismissCameraPermissionDialog : MappingUiEvent()
+    data object DismissFilesAndMediaDialog : MappingUiEvent()
+    data object ViewImage : MappingUiEvent()
+
 
     data object OnMapClick : MappingUiEvent()
     data object DismissBanner : MappingUiEvent()
@@ -47,7 +53,7 @@ sealed class MappingUiEvent {
     data class  MapTypeBottomSheet(val visibility: Boolean) : MappingUiEvent()
 
     // Events with Parameters
-
+    data class AccessPhotoDialog(val visibility: Boolean) : MappingUiEvent()
     data class NotifyNewRescueRequest(val message: String) : MappingUiEvent()
     data class NotifyRequestAccepted(val message: String) : MappingUiEvent()
     data class HazardousLaneMarkerDialog(val visibility: Boolean) : MappingUiEvent()
@@ -77,4 +83,5 @@ sealed class MappingUiEvent {
     data class OnClickEditIncidentDescription(val marker: HazardousLaneMarker) : MappingUiEvent()
     data class OnClickMapMarker(val markerSnippet: String, val markerId: String) : MappingUiEvent()
     data class OnChangeCameraState(val cameraState: CameraState) : MappingUiEvent()
+
 }

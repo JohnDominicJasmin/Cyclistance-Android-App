@@ -44,7 +44,7 @@ import com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
 import com.myapp.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.banner.MappingExpandableBanner
-import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet.MappingBottomSheet
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.MappingBottomSheet
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.CancelRespondButton
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RequestHelpButton
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RespondToHelpButton
@@ -428,6 +428,26 @@ fun MappingScreenContent(
                     }
 
 
+                    if(uiState.accessPhotoDialogVisible){
+                        AccessPhotoDialog(
+                            modifier = Modifier.constrainAs(dialog) {
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            },
+                            onDismissRequest = {
+                                event(MappingUiEvent.AccessPhotoDialog(visibility = false))
+                            },
+                            openGallery = {
+                                event(MappingUiEvent.SelectImageFromGallery)
+                            },
+                            takePhoto = {
+                                event(MappingUiEvent.OpenCamera)
+                            }
+                        )
+                    }
 
                     if(uiState.alertDialogState.visible()){
                         AlertDialog(
