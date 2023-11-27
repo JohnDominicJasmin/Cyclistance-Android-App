@@ -17,6 +17,7 @@ import com.myapp.cyclistance.theme.CyclistanceTheme
 
 @Composable
 fun ViewImageButton(modifier: Modifier = Modifier, viewImage: () -> Unit) {
+
     Button(
         modifier = modifier,
         onClick = viewImage,
@@ -31,7 +32,9 @@ fun ViewImageButton(modifier: Modifier = Modifier, viewImage: () -> Unit) {
 
         Text(
             text = "View Image",
-            color = MaterialTheme.colors.onPrimary
+            color = MaterialTheme.colors.onPrimary,
+            style = MaterialTheme.typography.button,
+
         )
     }
 }
