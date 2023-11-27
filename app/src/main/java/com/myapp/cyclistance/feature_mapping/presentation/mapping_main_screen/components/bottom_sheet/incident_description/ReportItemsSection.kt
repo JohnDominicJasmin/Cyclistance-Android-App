@@ -18,7 +18,7 @@ import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardou
 import com.myapp.cyclistance.theme.Blue600
 
 @Composable
-fun ReportItemsSection(modifier: Modifier = Modifier, marker: HazardousLaneMarkerDetails) {
+fun ReportItemsSection(modifier: Modifier = Modifier, marker: HazardousLaneMarkerDetails, viewProofIncident: () -> Unit) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp, alignment = Alignment.CenterVertically),
         horizontalAlignment = Alignment.Start,
@@ -43,16 +43,6 @@ fun ReportItemsSection(modifier: Modifier = Modifier, marker: HazardousLaneMarke
             description = marker.address
         )
 
-        ReportItemDescription(
-            modifier = Modifier.fillMaxWidth(),
-            iconImage = Icons.Default.Image,
-            isTextClickable = true,
-            textColor = Blue600,
-            iconDescription = "Incident Image",
-            description = "View proof of incident ")
-
-
-
         marker.description.takeIf { it.isNotEmpty() }?.let { description ->
             ReportItemDescription(
                 modifier = Modifier
@@ -62,6 +52,16 @@ fun ReportItemsSection(modifier: Modifier = Modifier, marker: HazardousLaneMarke
                 description = description
             )
         }
+
+        ReportItemDescription(
+            modifier = Modifier.fillMaxWidth(),
+            iconImage = Icons.Default.Image,
+            isTextClickable = true,
+            textColor = Blue600,
+            iconDescription = "Incident Image",
+            description = "View proof of incident ",
+            onClickText = viewProofIncident)
+
 
     }
 }
