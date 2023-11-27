@@ -1126,6 +1126,7 @@ fun MappingScreen(
                 openCameraResultLauncher.launch()
             }
         }
+
     val openGallery = remember {
         {
             filesAndMediaPermissionState.requestPermission(
@@ -1133,9 +1134,9 @@ fun MappingScreen(
                     openGalleryResultLauncher.launch("image/*")
                     accessPhotoDialog(false)
                 }, onExplain = {
-                    uiState = uiState.copy(filesAndMediaDialogVisible = true)
+                    uiState = uiState.copy(filesAndMediaPermissionDialogVisible = true)
                 }, onDenied = {
-                    uiState = uiState.copy(filesAndMediaDialogVisible = true)
+                    uiState = uiState.copy(filesAndMediaPermissionDialogVisible = true)
                 })
 
         }
@@ -1155,17 +1156,14 @@ fun MappingScreen(
         }
     }
 
-    val onDismissFilesAndMediaPermissionDialog = remember {
-        {
-            uiState = uiState.copy(filesAndMediaDialogVisible = false)
-        }
-    }
 
-    val onDismissCameraPermissionDialog = remember {
-        {
-            uiState = uiState.copy(cameraPermissionDialogVisible = false)
-        }
-    }
+    val cameraPermissionDialogVisibility = remember {{ visibility: Boolean ->
+        uiState = uiState.copy(cameraPermissionDialogVisible = visibility)
+    }}
+
+    val filesAndMediaPermissionDialogVisibility = remember{{ visibility : Boolean ->
+        uiState = uiState.copy(filesAndMediaPermissionDialogVisible = visibility)
+    }}
 
 
 

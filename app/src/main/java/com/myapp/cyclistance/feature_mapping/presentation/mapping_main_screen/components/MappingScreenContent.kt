@@ -35,6 +35,8 @@ import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.myapp.cyclistance.core.domain.model.AlertDialogState
 import com.myapp.cyclistance.core.presentation.dialogs.alert_dialog.AlertDialog
 import com.myapp.cyclistance.core.presentation.dialogs.no_internet_dialog.NoInternetDialog
+import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogCameraPermission
+import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogFilesAndMediaPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogForegroundLocationPermission
 import com.myapp.cyclistance.core.presentation.dialogs.permissions_dialog.DialogNotificationPermission
 import com.myapp.cyclistance.core.utils.date.DateUtils.toReadableDateTime
@@ -405,6 +407,36 @@ fun MappingScreenContent(
                                 centerTo(parent)
                             },
                             onDismiss = { event(MappingUiEvent.LocationPermissionDialog(visibility = false)) }
+                        )
+                    }
+
+                    if(uiState.filesAndMediaPermissionDialogVisible){
+                        DialogFilesAndMediaPermission(
+                            modifier = Modifier.constrainAs(dialog){
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            },
+                            onDismiss = {
+                                event(MappingUiEvent.FilesAndMediaPermissionDialog(visibility = false))
+                            }
+                        )
+                    }
+
+                    if(uiState.cameraPermissionDialogVisible){
+                        DialogCameraPermission(
+                            modifier = Modifier.constrainAs(dialog){
+                                end.linkTo(parent.end)
+                                start.linkTo(parent.start)
+                                bottom.linkTo(parent.bottom)
+                                height = Dimension.wrapContent
+                                centerTo(parent)
+                            },
+                            onDismiss = {
+                                event(MappingUiEvent.CameraPermissionDialog(visibility = false))
+                            }
                         )
                     }
 

@@ -44,7 +44,7 @@ data class MappingUiState(
     val banAccountDialogVisible: Boolean = false,
     val incidentImageUri: String? = null,
     val cameraPermissionDialogVisible: Boolean = false,
-    val filesAndMediaDialogVisible: Boolean = false,
+    val filesAndMediaPermissionDialogVisible: Boolean = false,
     val accessPhotoDialogVisible: Boolean = false,
 
 

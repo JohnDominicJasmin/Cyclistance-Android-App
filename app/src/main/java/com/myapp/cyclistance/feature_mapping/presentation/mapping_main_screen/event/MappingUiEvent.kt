@@ -22,8 +22,6 @@ sealed class MappingUiEvent {
     data object CancelledRescueConfirmed : MappingUiEvent()
     data object SelectImageFromGallery : MappingUiEvent()
     data object OpenCamera : MappingUiEvent()
-    data object DismissCameraPermissionDialog : MappingUiEvent()
-    data object DismissFilesAndMediaDialog : MappingUiEvent()
     data object ViewImage : MappingUiEvent()
 
 
@@ -62,6 +60,8 @@ sealed class MappingUiEvent {
     data class CancelOnGoingRescueDialog(val visibility: Boolean) : MappingUiEvent()
     data class NoInternetDialog(val visibility: Boolean) : MappingUiEvent()
     data class LocationPermissionDialog(val visibility: Boolean) : MappingUiEvent()
+    data class CameraPermissionDialog(val visibility: Boolean) : MappingUiEvent()
+    data class FilesAndMediaPermissionDialog(val visibility: Boolean) : MappingUiEvent()
     data class BannedAccountDialog(val visibility: Boolean) : MappingUiEvent()
     data class ExpandableFab(val expanded: Boolean) : MappingUiEvent()
     data class EmergencyCallDialog(val visibility: Boolean) : MappingUiEvent()
