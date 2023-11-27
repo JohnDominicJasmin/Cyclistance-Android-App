@@ -25,7 +25,7 @@ import com.myapp.cyclistance.core.utils.constants.MappingConstants.LANE_CLOSURE
 import com.myapp.cyclistance.core.utils.constants.MappingConstants.NEED_ASSISTANCE
 import com.myapp.cyclistance.core.utils.constants.MappingConstants.OBJECT_ON_ROAD
 import com.myapp.cyclistance.core.utils.constants.MappingConstants.SLOWDOWN
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.myapp.cyclistance.navigation.IsDarkTheme
@@ -153,10 +153,10 @@ fun PreviewBottomSheetIncidentDescriptionDark() {
                 BottomSheetIncidentDescription(
 
                     uiState = MappingUiState(
-                        currentlyEditingHazardousMarker = HazardousLaneMarker(
+                        currentlyEditingHazardousMarker = HazardousLaneMarkerDetails(
 
                         ),
-                        selectedHazardousMarker = HazardousLaneMarker(
+                        selectedHazardousMarker = HazardousLaneMarkerDetails(
                             id = "1",
                             label = "Crash",
                             latitude = 14.123,
@@ -193,7 +193,7 @@ fun PreviewBottomSheetIncidentDescriptionLight() {
                 BottomSheetIncidentDescription(
 
                     uiState = MappingUiState(
-                        currentlyEditingHazardousMarker = HazardousLaneMarker(
+                        currentlyEditingHazardousMarker = HazardousLaneMarkerDetails(
                             label = "Crash",
                             description = "Lorem ipsum dolor sit amet consectetur adipi",
                             id = "1",
@@ -202,7 +202,7 @@ fun PreviewBottomSheetIncidentDescriptionLight() {
                             longitude = 121.123,
                             address = "Lorem ipsum dolor sit amet consectetur adipisicing elit.",
                             datePosted = Date()),
-                        selectedHazardousMarker = HazardousLaneMarker(
+                        selectedHazardousMarker = HazardousLaneMarkerDetails(
                             id = "1",
                             label = "Crash",
                             latitude = 14.123,

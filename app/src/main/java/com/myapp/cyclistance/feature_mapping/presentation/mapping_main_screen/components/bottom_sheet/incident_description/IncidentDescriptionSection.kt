@@ -25,10 +25,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.myapp.cyclistance.core.presentation.dialogs.common.DropDownMenu
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
 import com.myapp.cyclistance.navigation.IsDarkTheme
+import com.myapp.cyclistance.theme.CyclistanceTheme
+import java.util.Date
 
 @Composable
 fun IncidentDescriptionSection(
@@ -36,7 +38,7 @@ fun IncidentDescriptionSection(
     @DrawableRes icon: Int,
     uiState: MappingUiState,
     state: MappingState,
-    marker: HazardousLaneMarker,
+    marker: HazardousLaneMarkerDetails,
     onClickEdit: () -> Unit,
     onClickDelete: () -> Unit) {
 

@@ -14,11 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.myapp.cyclistance.core.utils.date.DateUtils.toReadableDateTime
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.theme.Blue600
 
 @Composable
-fun ReportItemsSection(modifier: Modifier = Modifier, marker: HazardousLaneMarker) {
+fun ReportItemsSection(modifier: Modifier = Modifier, marker: HazardousLaneMarkerDetails) {
     Column(
         verticalArrangement = Arrangement.spacedBy(4.dp, alignment = Alignment.CenterVertically),
         horizontalAlignment = Alignment.Start,

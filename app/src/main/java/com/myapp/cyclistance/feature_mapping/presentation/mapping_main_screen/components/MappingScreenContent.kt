@@ -43,7 +43,7 @@ import com.myapp.cyclistance.core.utils.date.DateUtils.toReadableDateTime
 import com.myapp.cyclistance.feature_authentication.presentation.common.visible
 import com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.components.emergency_call.EmergencyCallDialog
 import com.myapp.cyclistance.feature_emergency_call.presentation.emergency_call_screen.state.EmergencyCallState
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.domain.model.ui.rescue.CancelledRescueModel
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.banner.MappingExpandableBanner
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.MappingBottomSheet
@@ -78,7 +78,7 @@ fun MappingScreenContent(
 
     uiState: MappingUiState,
     incidentDescription: TextFieldValue,
-    hazardousLaneMarkers: List<HazardousLaneMarker>,
+    hazardousLaneMarkers: List<HazardousLaneMarkerDetails>,
     locationPermissionState: MultiplePermissionsState = rememberMultiplePermissionsState(permissions = emptyList()),
     event: (MappingUiEvent) -> Unit = {},
 ) {

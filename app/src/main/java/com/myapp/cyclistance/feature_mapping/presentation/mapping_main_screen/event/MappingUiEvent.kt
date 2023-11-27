@@ -4,7 +4,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.mapbox.mapboxsdk.maps.MapboxMap
 import com.myapp.cyclistance.core.domain.model.AlertDialogState
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.domain.model.ui.camera.CameraState
 
 sealed class MappingUiEvent {
@@ -80,7 +80,7 @@ sealed class MappingUiEvent {
 
     data class OnChangeIncidentDescription(val description: TextFieldValue) : MappingUiEvent()
     data class OnChangeIncidentLabel(val label: String) : MappingUiEvent()
-    data class OnClickEditIncidentDescription(val marker: HazardousLaneMarker) : MappingUiEvent()
+    data class OnClickEditIncidentDescription(val marker: HazardousLaneMarkerDetails) : MappingUiEvent()
     data class OnClickMapMarker(val markerSnippet: String, val markerId: String) : MappingUiEvent()
     data class OnChangeCameraState(val cameraState: CameraState) : MappingUiEvent()
 

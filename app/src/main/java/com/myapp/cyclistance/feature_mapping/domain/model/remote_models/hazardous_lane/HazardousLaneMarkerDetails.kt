@@ -8,7 +8,7 @@ import java.util.Date
 
 @StableState
 @Parcelize
-data class HazardousLaneMarker(
+data class HazardousLaneMarkerDetails(
     val id: String,
     val idCreator: String,
     val latitude: Double?,

@@ -1,7 +1,7 @@
 package com.myapp.cyclistance.feature_mapping.domain.repository
 
 import com.mapbox.geojson.Point
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RescueTransactionItem
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.user.LocationModel
@@ -31,11 +31,11 @@ interface MappingRepository {
 
 
     suspend fun addHazardousLaneListener(
-        onAddedHazardousMarker: (HazardousLaneMarker) -> Unit,
-        onModifiedHazardousMarker: (HazardousLaneMarker) -> Unit,
+        onAddedHazardousMarker: (HazardousLaneMarkerDetails) -> Unit,
+        onModifiedHazardousMarker: (HazardousLaneMarkerDetails) -> Unit,
         onRemovedHazardousMarker: (id: String) -> Unit)
 
-    suspend fun addNewHazardousLane(hazardousLaneMarker: HazardousLaneMarker)
+    suspend fun addNewHazardousLane(hazardousLaneMarker: HazardousLaneMarkerDetails)
     suspend fun updateHazardousLane(label: String, description: String, id: String)
     suspend fun deleteHazardousLane(id: String)
     fun removeHazardousLaneListener()

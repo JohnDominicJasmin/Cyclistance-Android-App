@@ -7,7 +7,7 @@ import kotlinx.parcelize.Parcelize
 @StableState
 @Parcelize
 data class HazardousLane(
-    val markers: List<HazardousLaneMarker>
+    val markers: List<HazardousLaneMarkerDetails>
 ):Parcelable{
     @StableState
     constructor(): this(

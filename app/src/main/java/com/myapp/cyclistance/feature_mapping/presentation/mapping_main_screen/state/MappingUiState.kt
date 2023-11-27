@@ -4,7 +4,7 @@ import android.os.Parcelable
 import com.mapbox.mapboxsdk.geometry.LatLng
 import com.myapp.cyclistance.core.domain.model.AlertDialogState
 import com.myapp.cyclistance.core.utils.annotations.StableState
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.rescue_transaction.RouteDirection
 import com.myapp.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 import kotlinx.parcelize.Parcelize
@@ -28,10 +28,10 @@ data class MappingUiState(
     val selectedPhoneNumber: String = "",
     val lastLongPressedLocation: LatLng? = null,
     val selectedIncidentLabel: String = "",
-    val selectedHazardousMarker: HazardousLaneMarker? = HazardousLaneMarker(),
+    val selectedHazardousMarker: HazardousLaneMarkerDetails? = HazardousLaneMarkerDetails(),
     val deleteHazardousMarkerDialogVisible: Boolean = false,
     val discardHazardousMarkerDialogVisible: Boolean = false,
-    val currentlyEditingHazardousMarker: HazardousLaneMarker? = null,
+    val currentlyEditingHazardousMarker: HazardousLaneMarkerDetails? = null,
     val hasTransaction: Boolean = false,
     val isRescueCancelled: Boolean = false,
     val isNavigating: Boolean = false,

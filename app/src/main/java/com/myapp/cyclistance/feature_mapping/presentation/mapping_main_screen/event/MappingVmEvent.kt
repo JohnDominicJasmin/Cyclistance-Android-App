@@ -2,7 +2,7 @@ package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.e
 
 import com.mapbox.geojson.Point
 import com.mapbox.mapboxsdk.geometry.LatLng
-import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarker
+import com.myapp.cyclistance.feature_mapping.domain.model.remote_models.hazardous_lane.HazardousLaneMarkerDetails
 import com.myapp.cyclistance.feature_mapping.domain.model.ui.rescue.MapSelectedRescuee
 
 
@@ -18,8 +18,8 @@ sealed class MappingVmEvent {
     data object CancelRescueTransaction: MappingVmEvent()
     data object DestinationArrived: MappingVmEvent()
     data class GetRouteDirections(val origin: Point, val destination: Point): MappingVmEvent()
-    data class ReportIncident(val label: String, val latLng: LatLng, val description: String): MappingVmEvent()
-    data class UpdateReportedIncident(val marker: HazardousLaneMarker): MappingVmEvent()
+    data class ReportIncident(val label: String, val latLng: LatLng, val description: String, val imageUri: String): MappingVmEvent()
+    data class UpdateReportedIncident(val marker: HazardousLaneMarkerDetails): MappingVmEvent()
     data class SelectHazardousLaneMarker(val id: String): MappingVmEvent()
     data class DeleteHazardousLaneMarker(val id: String): MappingVmEvent()
     data class ShouldShowHazardousStartingInfo(val shouldShow: Boolean): MappingVmEvent()
