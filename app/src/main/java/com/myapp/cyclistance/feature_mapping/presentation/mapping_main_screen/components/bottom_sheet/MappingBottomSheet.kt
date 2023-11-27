@@ -1,4 +1,4 @@
-package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet
+package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material.*
@@ -12,6 +12,13 @@ import com.myapp.cyclistance.core.utils.constants.MappingConstants
 import com.myapp.cyclistance.core.utils.formatter.FormatterUtils.formatToDistanceKm
 import com.myapp.cyclistance.core.utils.formatter.IconFormatter.toHazardousLaneIconMarker
 import com.myapp.cyclistance.feature_mapping.domain.model.ui.bottomSheet.OnGoingRescueModel
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.destination_arrived.BottomSheetReachedDestination
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.destination_arrived.BottomSheetRescueArrived
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.incident_description.BottomSheetIncidentDescription
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.map_type.MapTypeBottomSheet
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.on_going_rescue.BottomSheetOnGoingRescue
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.report_incident.report_incident.BottomSheetReportIncident
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet.search_assistance.BottomSheetSearchingAssistance
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.event.MappingUiEvent
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingState
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.state.MappingUiState
@@ -76,8 +83,7 @@ fun MappingBottomSheet(
                     BottomSheetReportIncident(
                         bottomSheetScaffoldState = bottomSheetScaffoldState,
                         modifier = modifier,
-                        selectedLabel = uiState.selectedIncidentLabel,
-                        onClick = {
+                        onNewLabel = {
                             event(MappingUiEvent.OnChangeIncidentLabel(it))
                         }, onChangeDescription = {
                             event(MappingUiEvent.OnChangeIncidentDescription(it))
@@ -87,7 +93,13 @@ fun MappingBottomSheet(
                                 bottomSheetScaffoldState.bottomSheetState.collapse()
                             }
                         }, incidentDescription = incidentDescription,
-                        markerPostedCount = markerPostedCount)
+                        markerPostedCount = markerPostedCount,
+                        uiState = uiState,
+                        addIncidentImage = {
+                            event(MappingUiEvent.AccessPhotoDialog(visibility = true))
+                        }, viewImage = {
+                            event(MappingUiEvent.ViewImage)
+                        })
 
                 }
 

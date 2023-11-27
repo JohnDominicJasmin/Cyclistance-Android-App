@@ -1,4 +1,4 @@
-package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottomSheet
+package com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.bottom_sheet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxWidth

@@ -48,6 +48,7 @@ import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.co
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.CancelRespondButton
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RequestHelpButton
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.buttons.RespondToHelpButton
+import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.AccessPhotoDialog
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.BannedAccountDialog
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.CancelOnGoingRescueDialog
 import com.myapp.cyclistance.feature_mapping.presentation.mapping_main_screen.components.dialog.CancelSearchDialog
