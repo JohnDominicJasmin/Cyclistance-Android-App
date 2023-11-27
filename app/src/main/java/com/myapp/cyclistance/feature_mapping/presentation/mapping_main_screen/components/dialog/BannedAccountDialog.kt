@@ -51,8 +51,7 @@ fun BannedAccountDialog(
                 modifier = modifier
                     .clip(RoundedCornerShape(12.dp))
                     .fillMaxWidth()
-                    .background(MaterialTheme.colors.surface)
-                    ,
+                    .background(MaterialTheme.colors.surface),
                 horizontalAlignment = Alignment.CenterHorizontally) {
                 Image(
                     modifier = Modifier.padding(top = 16.dp),
