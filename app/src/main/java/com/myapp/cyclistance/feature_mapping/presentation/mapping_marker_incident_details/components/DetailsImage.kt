@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.imageResource
@@ -22,7 +21,6 @@ fun DetailsImage(modifier: Modifier = Modifier, photoBitmap: ImageBitmap) {
         contentDescription = "User Profile Image",
         alignment = Alignment.Center,
         modifier = modifier
-            .alpha(0.6f)
             .fillMaxSize(),
         contentScale = ContentScale.Crop,
 
