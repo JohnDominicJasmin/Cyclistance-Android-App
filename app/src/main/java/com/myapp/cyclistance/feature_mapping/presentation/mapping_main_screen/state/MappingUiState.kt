@@ -46,6 +46,7 @@ data class MappingUiState(
     val cameraPermissionDialogVisible: Boolean = false,
     val filesAndMediaPermissionDialogVisible: Boolean = false,
     val accessPhotoDialogVisible: Boolean = false,
+    val incidentImageErrorMessage: String = ""
 
 
 

@@ -153,7 +153,7 @@ fun BottomSheetReportIncident(
                         modifier = Modifier
                             .padding(vertical = 12.dp)
                             .wrapContentHeight()
-                            .fillMaxWidth(0.7f), addIncidentImage = addIncidentImage)
+                            .fillMaxWidth(0.7f), addIncidentImage = addIncidentImage, errorMessage = uiState.incidentImageErrorMessage)
                 }
 
                 
