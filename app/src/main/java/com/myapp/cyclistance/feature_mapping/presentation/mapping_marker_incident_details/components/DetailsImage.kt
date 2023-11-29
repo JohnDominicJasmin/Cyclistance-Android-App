@@ -32,7 +32,7 @@ fun DetailsImage(modifier: Modifier = Modifier, photoBitmap: ImageBitmap) {
 @Composable
 fun PreviewDetailsImage() {
     CyclistanceTheme(darkTheme = true) {
-        DetailsImage(photoBitmap = ImageBitmap.imageResource(id = R.drawable.receiving_order))
+        DetailsImage(photoBitmap = ImageBitmap.imageResource(id = R.drawable.ic_empty_profile_placeholder_large))
     }
 }
 
